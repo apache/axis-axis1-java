@@ -8,15 +8,19 @@
 <body>
 <h1 align="center"><IMG height=96 src="images/axis.jpg" width=176></h1>
 <h1>Axis Reference Guide</h1>
-<p><i>1.0 Version</i></p>
+<p><i>1.1 Version</i></p>
 <h3>Table of Contents</h3>
 <ul>
   <li><a href="#Tools">Tools Reference</a></li>
   <ul>
     <li><a href="#WSDL2Java">WSDL2Java</a></li>
     <li><a href="#Java2WSDL">Java2WSDL</a></li>
+    <li><a href="#Java2WSDL">Java2WSDL</a></li>
   </ul>
   <li><a href="#Deployment">Deployment (WSDD) Reference</a></li>
+  <li><a href="#global_configuration">Global Axis Configuration</a></li>
+  <li><a href="#individual_service">Individual Service Configuration</a></li>
+  <li><a href="#axis_components" >Pre-Configured Axis Components Reference</a></li>
 </ul>
 <h2> <a name="Tools"></a>Tools Reference</h2>
 <h3><a name="WSDL2Java"></a>WSDL2Java Reference</h3>
@@ -537,6 +541,123 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
     follow the JavaBean standard pattern of get/set accessors.</dd>
 </dl>
 <p> </p>
+
+
+
+<a name="global_configuration" />
+<h2>Global Axis Configuration</h2>
+
+The server is configured (by default) by values in the
+server-config.wsdd file, though a dedicated Axis user can write their
+own configuration handler, and so store configuration data in an LDAP
+server, database, remote web service, etc. Consult the source on details
+as to how to do that. You can also add options to the web.xml file and
+have them picked up automatically. We don't encourage that as it is nice
+to keep configuration stuff in one place.
+
+<p> 
+
+In the server-config file, there is a global configuration section,
+which supports parameter name/value pairs as nested elements. Here are
+the options that we currently document, though there may be more
+(consult the source, as usual). 
+
+<pre>   &lt;globalConfiguration&gt;
+    &lt;parameter name=&quot;adminPassword&quot; value=&quot;admin&quot;/&gt;
+    &lt;parameter name=&quot;attachments.Directory&quot; value=&quot;c:\temp\attachments&quot;/&gt;
+    &lt;parameter name=&quot;sendMultiRefs&quot; value=&quot;true&quot;/&gt;
+    &lt;parameter name=&quot;sendXsiTypes&quot; value=&quot;true&quot;/&gt;
+    &lt;parameter name=&quot;attachments.implementation&quot; value=&quot;org.apache.axis.attachments.AttachmentsImpl&quot;/&gt;
+    &lt;parameter name=&quot;sendXMLDeclaration&quot; value=&quot;true&quot;/&gt;
+    &lt;parameter name=&quot;enable2DArrayEncoding&quot; value=&quot;true&quot;/&gt;
+   &lt;/globalConfiguration&gt;
+</pre>
+<table>
+<tr><td><b>enable2DArrayEncoding</b></td>
+<td>Set this to "true" to turn 2D array encoding on; this encoding is incompatible with .NET 1.0: default="false".
+</td>
+</tr>
+
+<tr><td><b>adminPassword</b></td>
+<td>Adminstrator password, as used by AdminService.
+</td>
+</tr>
+
+<tr><td><b>attachments.Directory</b></td>
+<td>The directory where attachments end up. This should be in the syntax
+appropriate for the target platform. 
+</td>
+</tr>
+
+<tr><td><b>sendXsiTypes</b></td>
+<td>true/false flag to enable/disable sending the type of every value sent over the wire. 
+Defaults to true.
+</td>
+</tr>
+
+<tr><td><b>sendMultiRefs</b></td>
+<td>true/false flag to control whether multirefs are sent or not.
+</td>
+</tr>
+
+<tr><td><b>sendXMLDeclaration</b></td>
+<td>true/false flag to control whether the &lt;?xml?&gt; declaration is sent in messages
+</td>
+</tr>
+
+<tr><td><b>attachments.implementation</b></td>
+<td>
+
+Name of class that implements attachments support. Default is
+<tt>org.apache.axis.attachments.AttachmentsImpl</tt>
+
+</td>
+</tr>
+
+<tr><td><b></b></td>
+<td>
+</td>
+</tr>
+
+</table>
+
+<a name="individual_service" />
+ 
+<h2>Individual Service Configuration</h2>
+
+<i>TODO</i>
+<p>
+
+Here are some of the per-service configuration options are available;
+these can be set in the wsdd file used to deploy a service, from where
+they will be picked up.
+<p> 
+More may exist. 
+
+<table>
+
+<tr><td><b>style</b></td>
+<td>whether to use RPC:enc or doc/lit encoding
+</td>
+</tr>
+
+<tr><td><b>wsdlFile</b></td>
+<td>The path to a WSDL File; can be an absolute path or
+a resource that axis.jar can load. Useful to export
+your custom WSDL file. 
+
+</td>
+</tr>
+<!-- TODO: what does this mean?
+ <tr><td><b>streaming</b></td>
+<td>
+</td>
+</tr>
+ -->
+</table>
+
+<a name="axis_components" />
+
 <h2>Pre-Configured Axis Components Reference</h2>
 <h3>On the server:</h3>
 <dl> 
