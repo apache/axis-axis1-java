@@ -254,6 +254,13 @@ public class MessageElement implements SOAPElement
     public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
 
     public QName getType() {
+        // Try to get the type from our target if we're a reference...
+        if (typeQName == null && href != null && context != null) {
+            MessageElement referent = context.getElementByID(href);
+            if (referent != null) {
+                typeQName = referent.getType();
+            }
+        }
         return typeQName;
     }
     public void setType(QName qName) { typeQName = qName; }
