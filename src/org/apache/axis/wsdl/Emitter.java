@@ -63,6 +63,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import java.io.IOException;
@@ -132,57 +133,43 @@ public class Emitter {
     /**
      * Call this method if you have a uri for the WSDL document
      */
-    public void emit(String uri) throws IOException {
+    public void emit(String uri) throws IOException, WSDLException {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        try {
-            emit(XMLUtils.newDocument(uri));
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            System.out.println(
-                    JavaUtils.getMessage("parseError00", t.getMessage()));
-        }
+        emit(XMLUtils.newDocument(uri));
     } // emit
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
      */
-    public void emit(Document doc) throws IOException {
-        try {
-            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-            reader.setVerbose(bVerbose);
-            def = reader.readWSDL(null, doc);
-            this.doc = doc;
-            namespaces = new Namespaces(outputDir);
+    public void emit(Document doc) throws IOException, WSDLException {
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        reader.setVerbose(bVerbose);
+        def = reader.readWSDL(null, doc);
+        this.doc = doc;
+        namespaces = new Namespaces(outputDir);
 
-            // First, read the namespace mapping file - NStoPkg.properties - if it
-            // exists, and load the namespaceMap HashMap with its data.
-            getNStoPkgFromPropsFile(namespaces);
+        // First, read the namespace mapping file - NStoPkg.properties - if it
+        // exists, and load the namespaceMap HashMap with its data.
+        getNStoPkgFromPropsFile(namespaces);
 
-            if (delaySetMap != null) {
-                namespaces.putAll(delaySetMap);
-            }
-
-            symbolTable = new SymbolTable(namespaces, bGenerateImports);
-            symbolTable.add(def, doc);
-            writerFactory.writerPass(def, symbolTable);
-            emit(def, doc);
-
-            // Output extra stuff (deployment files and faults) 
-            // outside of the recursive emit method.
-            Writer writer = writerFactory.getWriter(def, symbolTable);
-            writer.write();
+        if (delaySetMap != null) {
+            namespaces.putAll(delaySetMap);
         }
-        catch (Throwable t) {
-            t.printStackTrace();
-            System.out.println(
-                    JavaUtils.getMessage("parseError00", t.getMessage()));
-        }
+
+        symbolTable = new SymbolTable(namespaces, bGenerateImports);
+        symbolTable.add(def, doc);
+        writerFactory.writerPass(def, symbolTable);
+        emit(def, doc);
+
+        // Output extra stuff (deployment files and faults) 
+        // outside of the recursive emit method.
+        Writer writer = writerFactory.getWriter(def, symbolTable);
+        writer.write();
     } // emit
 
-    private void emit(Definition def, Document doc) throws IOException {
+    private void emit(Definition def, Document doc) throws IOException, WSDLException {
         if (bVerbose) {
             System.out.println(JavaUtils.getMessage("types00"));
             dumpTypes();

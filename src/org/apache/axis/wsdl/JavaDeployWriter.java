@@ -101,16 +101,10 @@ public class JavaDeployWriter extends JavaWriter {
      * Write the body of the deploy.xml file.
      */
     protected void writeFileBody() throws IOException {
-        try {
-            writeDeployServices();
-            writeDeployTypes();
-            pw.println("</deployment>");
-            pw.close();
-        }
-        catch (IOException e) {
-            System.err.println(JavaUtils.getMessage("genDeployFail00"));
-            e.printStackTrace();
-        }
+        writeDeployServices();
+        writeDeployTypes();
+        pw.println("</deployment>");
+        pw.close();
     } // writeFileBody
 
     /**
