@@ -338,6 +338,13 @@ Got result : 1
 %</pre>
 (note that you may need to replace the "-p8080" with whatever port your
 J2EE server is running on)
+<p>
+<i><b>Important:</b></i> JWS web services are intended for simple web services.
+You cannot use packages in the pages, and as the code is compiled at run
+time you can not find out about errors until after deployment.
+Production quality web services should use Java classes with custom
+deployment.  
+
 <h3>
 Custom Deployment - Introducing WSDD</h3>
 JWS files are great quick ways to get your classes out there as Web Services, 
