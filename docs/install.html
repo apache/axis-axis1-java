@@ -53,27 +53,138 @@ Contents
       <h2>Introduction</h2>
 
       <p>This document describes how to install Apache Axis. It assumes
-      you already know how to write and run Java code and not be scare
-      of XML. You should also have an application server or servlet 
-      engine and be familiar with operating and deploying to it.
-      If you need an application server, we recommend 
-      <a href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>.
-      Other servlet engines are supported, provided they are version 2.2
-      or greater. Note also that Axis client and server requires Java1.3
-      or later. 
+      you already know how to write and run Java code and not be scared
+      of XML. You should also have an application server or servlet
+      engine and be familiar with operating and deploying to it. If you
+      need an application server, we recommend <a
+      href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>. [If
+      you are installing tomcat, get the latest 4.1.x version, and the
+      full distribution, not the LE version for Java1.4, as that omits
+      the Xerces XML parser]. Other servlet engines are supported,
+      provided they implement version 2.2 or greater of the servlet API.
+      Note also that Axis client and server requires Java1.3 or later.
       
-      <p>For more details on using Axis, please see the <a href="user-guide.html">user's
-        guide</a>.
+      <p>For more details on using Axis, please see the 
+      <a href="user-guide.html">user guide</a>.
         
+     <h2>Things you have to Know </h2>
+     
+     A lot of problems with Axis are encountered by people who are new
+     to Java, Server-side Java and SOAP. While you can learn about SOAP
+     as you go along, writing Axis clients and serves is not the right
+     time to be learning foundational Java concepts, such as what an
+     array is, or foundation App server concepts such as how Servlets
+     work, and the basics of the HTTP protocol. 
+     <p>
+     Things you need to know to begin to write a Web Service:
+     <ol>
+     
+     <li> Core Java datatypes, classes and programming concepts.
+     
+     <li> What threads are, race conditions, thread safety and
+     sychronization. 
+     
+     <li> What a classloader is, and what hierarchical classloaders are,
+     or 'common causes of a ClassNotFoundException'.
+     
+     <li> How to diagnose trouble from exception traces, what a
+     NullPointerException (NPE) and other common exceptions are, and how
+     to fix them. 
+     
+     <li> What a web application is; what a servlet is, where classes,
+     libraries and data go in a web application.
+     
+     <li> How to start your application server and deploy a web
+     application on it.
+     
+     <li> What a network is, the core concepts of the IP protocol suite
+     and the sockets API. Specifically, what is TCP/IP. 
+     
+     <li> What HTTP is. The core protocol and error codes, HTTP headers and
+     perhaps the details of basic authentication.
+     
+     <li> What XML is. Not how to parse it or anything, just what
+     constitutes well-formed and valid XML.
+     
+     </ol>
+     
+     Axis and SOAP depends on all these details. If you don't know them,
+     Axis (or anyone else's Web Service middleware) is a dangerous place
+     to learn. Sooner or later you will be forced to discover these
+     details, and there are easier places to learn than Axis.  
+     
+     <p>
+     
+     If you are completely new to Java, we recommend you start off with
+     things like the Java Tutorials on Sun's web sites, and perhaps a
+     classic book like <a
+     href="http://www.mindview.net/Books/TIJ/">Thinking in Java</a>,
+     until you have enough of a foundation to be able to work with
+     Axis. It is also useful to have written a simple web application,
+     as this will give you some knowledge of how HTTP works, and how
+     Java applications servers integrate with HTTP.
+     
+     <p>
+     
+     Be aware that there is a lot more to know to use Axis and SOAP
+     effectively than the listing above. The other big area is "how to
+     write internet scale distributed applications". Nobody knows how to
+     do that properly yet, so that you have to learn by doing.  
+     
      <h2>Step 0: Concepts</h2>
      
-     Axis is implemented in the JAR file <i>axis.jar</i>; implementing the
-     JAX-RPC API declared in the JAR files <i>jaxrpc.jar</i> and <i>saaj.jar</i>. It
-     needs various helper libraries, for logging, WSDL processing and
-     introspection. All these files can be packaged into a
-     web application, <i>axis.war</i>, that can be dropped into a servlet container. 
-	 Axis ships with some sample SOAP services. You can
-     add your own by adding new compiled classes to the Axis webapp registering them.
+     Apache Axis is an Open Source SOAP server and client. SOAP is a
+     mechanism for inter-application communication between systems
+     written in arbitrary languages, across the Internet. SOAP usually
+     exchanges messages over HTTP: the client POSTs a SOAP request, and
+     receives either an HTTP error code or an HTTP success code and a
+     SOAP response. 
+     
+     <p>
+     
+     SOAP messages are XML messages. These messages exchange structured
+     information between SOAP systems. Messages consist of one or more
+     SOAP elements inside an envelope, Headers and the SOAP Body.  
+     SOAP has two syntaxes for describing the data in these elements,
+     <i>Section 5</i>, which is a clear descendent of the XML RPC
+     system, and <i>XML Schema</i>, which is the newer (and usually
+     better) system. Axis handles the magic of converting Java objects
+     to SOAP data when it sends it over the wire or receives results.
+     SOAP Faults are sent by the server when something goes wrong; Again
+     Axis converts these to Java exceptions. 
+     
+     <p>
+     
+     SOAP is intended to link disparate systems. It is not a mechanism
+     to tightly bind Java programs written by the same team together. It
+     can bind Java programs together, but not as tightly as RMI or
+     Corba. If you try sending many Java objects that RMI would happily
+     serialize, you will be disappointed at how badly Axis fails. This
+     is by design: if Axis copied RMI and serialized Java objects to
+     byte streams, you would be stuck to a particular version of Java
+     everywhere.
+
+     <p>     
+     
+     Axis implements the JAX-RPC API, one of the standard ways to program
+     Java services. If you look at the specification and tutorials on
+     Sun's web site, you will understand the API. If you code to the
+     API, your programs will work with other implementations of the API,
+     such as those by Sun and BEA. Axis also provides extension
+     features, and many ways that extend the JAX-RPC API. You can use
+     these to write better programs, ones that only work with Axis. But
+     since Axis is free and you get the source, that should not matter. 
+     
+     <p>
+     
+     Axis is implemented in the JAR file <i>axis.jar</i>; implementing
+     the JAX-RPC API declared in the JAR files <i>jaxrpc.jar</i> and
+     <i>saaj.jar</i>. It needs various helper libraries, for logging,
+     WSDL processing and introspection. All these files can be packaged
+     into a web application, <i>axis.war</i>, that can be dropped into a
+     servlet container. Axis ships with some sample SOAP services. You
+     can add your own by adding new compiled classes to the Axis webapp
+     registering them.
      
      <p>
      Before you can do that, you have to install it and get it working.
@@ -148,6 +259,9 @@ Contents
       Axis will not work. <br><b>You must not proceed until all needed libraries
       can be found, and this validation page is happy.</b> <br>
       Optional components are optional; install them as your need arises.
+      If you see nothing but an internal server error and an exception
+      trace, then you probably have multiple XML parsers on the
+      classpath, and this is causing version confusion.
 
       <h3>Look for some services</h3>
       From the start page, select <i>View the list of deployed Web services</i>.
