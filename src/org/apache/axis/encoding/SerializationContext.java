@@ -37,6 +37,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
@@ -55,6 +56,7 @@ import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.MethodCache;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -88,7 +90,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     // in heavily used code.
     private final boolean debugEnabled = log.isDebugEnabled();
 
-    private NSStack nsStack = new NSStack();
+    private NSStack nsStack = null;
     private boolean writingStartTag = false;
     private boolean onlyXML = true;
     private int indent=0;
@@ -120,6 +122,12 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * Should I disable the pretty xml completely.
      */ 
     private boolean disablePrettyXML = false;
+
+
+    /**
+     * Should I disable the namespace prefix optimization.
+     */ 
+    private boolean enableNamespacePrefixOptimization = false;
 
     /**
      * current setting for pretty
@@ -222,6 +230,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                               Constants.NS_PREFIX_SCHEMA_XSI);
         preferredPrefixes.put(soapConstants.getEnvelopeURI(),
                               Constants.NS_PREFIX_SOAP_ENV);
+        nsStack = new NSStack(enableNamespacePrefixOptimization);
     }
 
 
@@ -256,6 +265,14 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
             if (shouldDisablePrettyXML != null)
                 disablePrettyXML = shouldDisablePrettyXML.booleanValue();
             
+            Boolean shouldDisableNamespacePrefixOptimization =
+                  (Boolean)msgContext.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION);
+            if (shouldDisableNamespacePrefixOptimization != null) {
+                enableNamespacePrefixOptimization = shouldDisableNamespacePrefixOptimization.booleanValue();
+            } else {
+                enableNamespacePrefixOptimization = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,
+                                "true"));
+            }
             boolean sendTypesDefault = sendXSIType;
 
             // A Literal use operation overrides the above settings. Don't
@@ -290,6 +307,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 //            if (opt != null) {
 //                sendXSIType = opt.booleanValue();
 //            }
+        } else {
+            enableNamespacePrefixOptimization = JavaUtils.isTrue(AxisProperties.getProperty(AxisEngine.PROP_ENABLE_NAMESPACE_PREFIX_OPTIMIZATION,
+                            "true"));
         }
 
         // Set up preferred prefixes based on current schema, soap ver, etc.
@@ -1557,7 +1577,6 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
     /**
      * set the encoding for the serialization
-     * @return
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;

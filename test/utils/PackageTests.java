@@ -23,6 +23,7 @@ public class PackageTests
         suite.addTest(TestMessages.suite());
         suite.addTest(TestSrcContent.suite());
         suite.addTest(TestStringUtils.suite());
+        suite.addTest(TestNSStack.suite());
         return suite;
     }
 }

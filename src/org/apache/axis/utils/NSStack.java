@@ -16,6 +16,8 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -49,10 +51,18 @@ public class NSStack {
     private int top = 0;
     private int iterator = 0;
     private int currentDefaultNS = -1;
+    private boolean optimizePrefixes = true;
+    
     // invariant member variable to track low-level logging requirements
     // we cache this once per instance lifecycle to avoid repeated lookups
     // in heavily used code.
     private final boolean traceEnabled = log.isTraceEnabled();
+
+    public NSStack(boolean optimizePrefixes) {
+        this.optimizePrefixes = optimizePrefixes;
+        stack = new Mapping[32];
+        stack[0] = null;
+    }
 
     public NSStack() {
         stack = new Mapping[32];
@@ -205,12 +215,13 @@ public class NSStack {
         if ((namespaceURI == null) || (namespaceURI.length()==0))
             return null;
         
-        // If defaults are OK, and the given NS is the current default,
-        // return "" as the prefix to favor defaults where possible.
-        if (!noDefault && currentDefaultNS > 0 && stack[currentDefaultNS] != null &&
-                namespaceURI == stack[currentDefaultNS].getNamespaceURI())
-            return "";
-            
+        if(optimizePrefixes) {
+            // If defaults are OK, and the given NS is the current default,
+            // return "" as the prefix to favor defaults where possible.
+            if (!noDefault && currentDefaultNS > 0 && stack[currentDefaultNS] != null &&
+                    namespaceURI == stack[currentDefaultNS].getNamespaceURI())
+                return "";
+        }
         namespaceURI = namespaceURI.intern();
 
         for (int cursor=top; cursor>0; cursor--) {
