@@ -81,6 +81,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -1367,22 +1368,29 @@ public class tcpmon extends JFrame {
                     ListSelectionModel lsm = connectionTable.getSelectionModel();
 
                     rc = lsm.getLeadSelectionIndex();
-                    if ( rc == 0 ) rc = connections.size();
-                    Connection conn = (Connection) connections.get( rc - 1 );
 
-                    rc = Integer.parseInt( portField.getText() );
-                    out.write( (new String(getMessage("listenPort01", "Listen Port:") + " " + rc + "\n" )).getBytes() );
-                    out.write( (new String(getMessage("targetHost01", "Target Host:") + " " + hostField.getText() +
-                                "\n" )).getBytes() );
-                    rc = Integer.parseInt( tPortField.getText() );
-                    out.write( (new String(getMessage("targetPort01", "Target Port:") + " " + rc + "\n" )).getBytes() );
-
-                    out.write( (new String("==== " + getMessage("request01", "Request") + " ====\n" )).getBytes() );
-                    out.write( conn.inputText.getText().getBytes() );
-
-                    out.write( (new String("==== " + getMessage("response00", "Response") + " ====\n" )).getBytes() );
-                    out.write( conn.outputText.getText().getBytes() );
-
+                    int n = 0;                    
+                    for (Iterator i = connections.iterator();i.hasNext();n++) {
+                      Connection conn = (Connection)i.next();
+                      if (lsm.isSelectedIndex(n + 1) ||
+                                   (!(i.hasNext()) && lsm.getLeadSelectionIndex() == 0)) {
+                        rc = Integer.parseInt( portField.getText() );
+                        out.write("\n==============\n".getBytes());
+                        out.write( (new String(getMessage("listenPort01", "Listen Port:") + " " + rc + "\n" )).getBytes() );
+                        out.write( (new String(getMessage("targetHost01", "Target Host:") + " " + hostField.getText() +
+                                    "\n" )).getBytes() );
+                        rc = Integer.parseInt( tPortField.getText() );
+                        out.write( (new String(getMessage("targetPort01", "Target Port:") + " " + rc + "\n" )).getBytes() );
+                    
+                        out.write( (new String("==== " + getMessage("request01", "Request") + " ====\n" )).getBytes() );
+                        out.write( conn.inputText.getText().getBytes() );
+                    
+                        out.write( (new String("==== " + getMessage("response00", "Response") + " ====\n" )).getBytes() );
+                        out.write( conn.outputText.getText().getBytes() );
+                        out.write("\n==============\n".getBytes());
+                      }
+                    }
+                    
                     out.close();
                 }
                 catch ( Exception e ) {
