@@ -104,6 +104,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
         super(name);
     }
 
+    public void testTypeTestWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getTypeTestAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.types.comprehensive_service.TypeTestServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void testTypeTest() {
         TypeTest binding;
         try {

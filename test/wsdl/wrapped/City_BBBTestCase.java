@@ -11,6 +11,14 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     public City_BBBTestCase(String name) {
         super(name);
     }
+
+    public void testCity_BBBPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.wrapped.City_BBBLocator().getCity_BBBPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapped.City_BBBLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1CityBBBPortGetAttraction() throws Exception {
         City_BBBPortType binding;
         binding = new City_BBBLocator().getCity_BBBPort();

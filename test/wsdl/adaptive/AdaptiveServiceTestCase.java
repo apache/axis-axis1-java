@@ -13,6 +13,14 @@ public class AdaptiveServiceTestCase extends junit.framework.TestCase {
     public AdaptiveServiceTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testAdaptiveWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.adaptive.AdaptiveServiceLocator().getAdaptiveAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.adaptive.AdaptiveServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1AdaptiveGetServiceDescription() throws Exception {
         test.wsdl.adaptive.AdaptiveInterfaceBindingStub binding;
         try {

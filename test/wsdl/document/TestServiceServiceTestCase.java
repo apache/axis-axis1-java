@@ -15,6 +15,14 @@ public class TestServiceServiceTestCase extends junit.framework.TestCase {
     public TestServiceServiceTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testDocumentTestWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.document.TestServiceServiceLocator().getDocumentTestAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.document.TestServiceServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1DocumentTestGetElement() throws Exception {
         test.wsdl.document.DocumentTestSoapBindingStub binding;
         try {

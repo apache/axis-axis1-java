@@ -24,6 +24,14 @@ public class DimeDOCInteropTestCase extends junit.framework.TestCase {
     public DimeDOCInteropTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testDimeDOCSoapPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.interop4.groupG.dime.doc.DimeDOCInteropLocator().getDimeDOCSoapPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.interop4.groupG.dime.doc.DimeDOCInteropLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     protected void setUp() throws Exception {
         if(url == null) {
             url = new URL(new test.wsdl.interop4.groupG.dime.doc.DimeDOCInteropLocator().getDimeDOCSoapPortAddress());

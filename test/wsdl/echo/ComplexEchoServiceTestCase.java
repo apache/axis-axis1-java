@@ -11,6 +11,14 @@ public class ComplexEchoServiceTestCase extends junit.framework.TestCase {
     public ComplexEchoServiceTestCase(String name) {
         super(name);
     }
+
+    public void testComplexEchoServiceWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.echo.ComplexEchoServiceLocator().getComplexEchoServiceAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.echo.ComplexEchoServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1ComplexEchoServiceEcho() {
         test.wsdl.echo.Echo binding;
         try {

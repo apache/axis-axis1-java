@@ -11,6 +11,14 @@ public class RamServiceTestCase extends junit.framework.TestCase {
     public RamServiceTestCase(String name) {
         super(name);
     }
+
+    public void testRamWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.ram.RamServiceLocator().getRamAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.ram.RamServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1RamValidate() {
         Ram binding;
         try {

@@ -41,6 +41,14 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public BaseTypesInteropTestsTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testInteropTestsPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1InteropTestsPortEchoDouble() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
