@@ -185,7 +185,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         throws SAXException
     {
         BeanPropertyDescriptor propDesc = null;
-        
+
+        String encodingStyle = context.getMessageContext().getEncodingStyle();
+        boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
+
         QName elemQName = new QName(namespace, localName);
         // The collectionIndex needs to be reset for Beans with multiple arrays
         if ((prevQName == null) || (!prevQName.equals(elemQName))) {
@@ -201,12 +204,12 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // name is not prefixed, lookup the name assuming an unqualified
             // name.
             String fieldName = typeDesc.getFieldNameForElement(elemQName, 
-                                                               false);
-            if (fieldName == null && (prefix == null || prefix.equals(""))) {
-                fieldName = 
-                    typeDesc.getFieldNameForElement(
-                      new QName("", elemQName.getLocalPart()), false);
-            }
+                                                               isEncoded);
+//            if (fieldName == null && (prefix == null || prefix.equals(""))) {
+//                fieldName =
+//                    typeDesc.getFieldNameForElement(
+//                      new QName("", elemQName.getLocalPart()), false);
+//            }
 
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
         }

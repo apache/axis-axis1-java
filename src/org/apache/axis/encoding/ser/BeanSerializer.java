@@ -145,6 +145,7 @@ public class BeanSerializer implements Serializer, Serializable {
 
         // Get the encoding style
         String encodingStyle = context.getMessageContext().getEncodingStyle();
+        boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 
         // check whether we have and xsd:any namespace="##any" type
         boolean suppressElement = !context.getMessageContext().isEncoded() &&
@@ -174,7 +175,15 @@ public class BeanSerializer implements Serializer, Serializable {
                         if (!field.isElement())
                             continue;
 
-                        qname = field.getXmlName();
+                        // If we're SOAP encoded, just use the local part,
+                        // not the namespace.  Otherwise use the whole
+                        // QName.
+                        if (isEncoded) {
+                            qname = new QName(
+                                          field.getXmlName().getLocalPart());
+                        } else {
+                            qname = field.getXmlName();
+                        }
                         isOmittable = field.isMinOccursIs0();
                     }
                 }
@@ -196,7 +205,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         // encoding.
                         if (propValue == null &&
                                 isOmittable &&
-                                !Constants.isSOAP_ENC(encodingStyle))
+                                !isEncoded)
                             continue;
 
                         context.serialize(qname,
