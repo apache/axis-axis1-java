@@ -483,7 +483,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_SOAPENVELOPE ) {
             StringWriter writer = new StringWriter();
-            SOAPEnvelope env = (SOAPEnvelope)currentMessage;
             try {
                 this.writeTo(writer);
             } catch (Exception e) {
