@@ -154,7 +154,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             }
         }
         
-        abstract Object makeValue(String source) throws Exception;
+        abstract public Object makeValue(String source) throws Exception;
     }
     
     /** A deserializer for any simple type with a (String) constructor.
