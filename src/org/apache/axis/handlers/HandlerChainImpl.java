@@ -68,18 +68,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of HandlerChain
+ */
 public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler.HandlerChain {
 
     private String[] _roles;
 
+    private int falseIndex = -1;
+
     public String[] getRoles() {
         return _roles;
     }
-    
+
     public void setRoles(String[] roles) {
         _roles = roles;
     }
-    
+
     public void init(Map map) {
         // DO SOMETHING WITH THIS
     }
@@ -92,15 +97,16 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
 
     public HandlerChainImpl(List handlerInfos) {
         this.handlerInfos = handlerInfos;
-        for (int i = 0; i < handlerInfos.size(); i++)
+        for (int i = 0; i < handlerInfos.size(); i++) {
             add(newHandler(getHandlerInfo(i)));
+        }
     }
 
     public void addNewHandler(String className, Map config) {
         try {
             HandlerInfo handlerInfo = new HandlerInfo(ClassUtils.forName(className),
-                                                      config,
-                                                      null);
+                    config,
+                    null);
             handlerInfos.add(handlerInfo);
             add(newHandler(handlerInfo));
         } catch (Exception ex) {
@@ -112,21 +118,23 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public boolean handleFault(MessageContext _context) {
         SOAPMessageContext context = (SOAPMessageContext) _context;
 
-        for (int i = size() - 1; i >= 0; i--)
-            if (getHandlerInstance(i).handleFault(context) == false)
+        for (int i = size() - 1; i >= 0; i--) {
+            if (getHandlerInstance(i).handleFault(context) == false) {
                 return false;
+            }
+        }
         return true;
     }
 
     public boolean handleRequest(MessageContext _context) {
         SOAPMessageContext context = (SOAPMessageContext) _context;
 
-        boolean processFault = false;
-
+        falseIndex = -1;
         for (int i = 0; i < size(); i++) {
             Handler currentHandler = getHandlerInstance(i);
             try {
                 if (currentHandler.handleRequest(context) == false) {
+                    falseIndex = i;
                     return false;
                 }
             } catch (SOAPFaultException sfe) {
@@ -137,15 +145,22 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     public boolean handleResponse(MessageContext context) {
-        for (int i = size() - 1; i >= 0; i--)
-            if (getHandlerInstance(i).handleResponse(context) == false)
+        int endIdx = size() - 1;
+        if (falseIndex != -1) {
+            endIdx = falseIndex;
+        }
+        for (int i = endIdx; i >= 0; i--) {
+            if (getHandlerInstance(i).handleResponse(context) == false) {
                 return false;
+            }
+        }
         return true;
     }
 
     public void destroy() {
-        for (int i = 0; i < size(); i++)
+        for (int i = 0; i < size(); i++) {
             getHandlerInstance(i).destroy();
+        }
         clear();
     }
 
