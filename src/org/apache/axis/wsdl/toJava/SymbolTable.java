@@ -1120,15 +1120,23 @@ public class SymbolTable {
             
             if (node == null)
                 continue;  // ??? Skip this part, something is wrong
-            
-            if (typeName != null) {
-                v.add(getType(typeName));
-                v.add(partName);
-            } else if (elementName != null) {
-                Element element = getElement(elementName);
-                element.setIsReferenced(true);
-                v.add(element);
-                v.add(partName);
+
+            // Get the nested type entries.
+            Vector vTypes =
+                    SchemaUtils.getComplexElementTypesAndNames(node, this);
+
+            if (vTypes != null) {
+                // add the elements in this list
+                v.addAll(vTypes);
+            } else {
+                // XXX - This should be a SOAPElement/SOAPBodyElement
+                if (typeName != null) {
+                    v.add(getType(typeName));
+                    v.add(partName);
+                } else if (elementName != null) {
+                    v.add(getElement(elementName));
+                    v.add(partName);
+                }
             }
         } // while
         
