@@ -96,7 +96,6 @@ public class ServiceClient {
                                                         
     // keep prop hashtable small
     private Hashtable properties = new Hashtable(10);
-    protected String encodingStyleURI = null ;
     
     // For testing
     private static Handler localServer = null ;
@@ -243,14 +242,6 @@ public class ServiceClient {
         return (String)msgContext.getProperty(name);
     }
     
-    public void setEncodingStyleURI( String uri ) {
-        encodingStyleURI = uri ;
-    }
-    
-    public String getEncodingStyleURI() {
-        return( encodingStyleURI );
-    }
-    
     public void setRequestMessage(Message msg) {
         msgContext.setRequestMessage(msg);
     }
@@ -310,8 +301,9 @@ public class ServiceClient {
         Vector               resArgs = null ;
         Object               result = null ;
         
-        if ( encodingStyleURI != null )
-            reqEnv.setEncodingStyleURI( encodingStyleURI );
+        String uri = null;
+        if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
+        if (uri != null) reqEnv.setEncodingStyleURI(uri);
         
         msgContext.setRequestMessage(reqMsg);
         

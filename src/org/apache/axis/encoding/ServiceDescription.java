@@ -56,6 +56,7 @@ package org.apache.axis.encoding;
  */
 
 import java.util.*;
+import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
 
 /** A very simple service description class, to demonstrate one way
@@ -73,9 +74,11 @@ public class ServiceDescription
 {
     public static final String REQUEST = "Request";
     public static final String RESPONSE = "Response";
+
     
     String name;
     boolean serviceIsRPC = true;
+    private String encodingStyleURI = null;
     
     class Param {
         public String name;
@@ -105,11 +108,24 @@ public class ServiceDescription
     {
         this.name = name;
         this.serviceIsRPC = isRPC;
+
+        // For RPC, default to section 5 encoding
+        if (isRPC) encodingStyleURI = Constants.URI_SOAP_ENC;
     }
     
     public boolean isRPC()
     {
         return this.serviceIsRPC;
+    }
+
+    public void setEncodingStyleURI(String uri) 
+    {
+        encodingStyleURI = uri ;
+    }
+
+    public String getEncodingStyleURI() 
+    {
+        return encodingStyleURI;
     }
     
     public void addInputParam(String name, QName type)
