@@ -94,9 +94,9 @@ import org.w3c.dom.Node;
 * file which contains the <bindingName>Impl class.
 */
 public class JavaImplWriter extends JavaWriter {
-    private Binding binding;
-    private SymbolTable symbolTable;
-    private BindingEntry bEntry;
+    protected Binding binding;
+    protected SymbolTable symbolTable;
+    protected BindingEntry bEntry;
 
     /**
      * Constructor.
@@ -119,8 +119,7 @@ public class JavaImplWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
 
-        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
-        pw.print("public class " + className + " implements " + portTypeName);
+        pw.print("public class " + className + getExtendsText() + getImplementsText());
         pw.println(" {");
 
         List operations = binding.getBindingOperations();
@@ -146,7 +145,26 @@ public class JavaImplWriter extends JavaWriter {
         pw.close();
     } // writeFileBody
 
-    private void writeOperation(Parameters parms) throws IOException {
+    /**
+     * Returns the appropriate extends text
+     * @return "" or " extends <class> "
+     */
+    protected String getExtendsText() {
+        // See if this class extends another class
+        return "";
+    }
+    
+    /**
+     * Returns the appropriate implements text
+     * @return " implements <classes>"
+     */
+    protected String getImplementsText() {
+        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
+        String implementsText = " implements " + portTypeName;
+        return implementsText;
+    }
+
+    protected void writeOperation(Parameters parms) throws IOException {
         pw.println(parms.signature + " {");
 
         // Fill in any out parameter holders
