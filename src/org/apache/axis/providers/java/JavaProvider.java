@@ -273,7 +273,7 @@ public abstract class JavaProvider extends BasicProvider
      */ 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("enter00", "JavaProvider::editWSDL (" + this + ")"));
+            log.debug(JavaUtils.getMessage("enter00", "JavaProvider::generateWSDL (" + this + ")"));
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -325,10 +325,14 @@ public abstract class JavaProvider extends BasicProvider
             Document  doc = emitter.emit(Emitter.MODE_ALL);
 
             msgContext.setProperty("WSDL", doc);
+        } catch (NoClassDefFoundError e) {
+            throw new AxisFault(e.toString(), e);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
-
+    
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("exit00", "JavaProvider::generateWSDL (" + this + ")"));
     }
 
     private String getAllowedMethods(Handler service)
