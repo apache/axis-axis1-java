@@ -1,10 +1,3 @@
-/**
- * MultithreadTestCase.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis Wsdl2java emitter.
- */
-
 package test.wsdl.multithread;
 
 import java.net.ConnectException;
