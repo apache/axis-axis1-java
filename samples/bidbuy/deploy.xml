@@ -25,24 +25,9 @@
 
   <chain   name="registry"  flow="RPCDispatcher" />
 
-  <service name="http://www.soapinterop.org/Register" pivot="registry" >
-    <option name="className" value="samples.bidbuy.RegistryService" />
-    <option name="methodName" value="Register" />
-  </service>
-
-  <service name="http://www.soapinterop.org/Unregister" pivot="registry" >
-    <option name="className" value="samples.bidbuy.RegistryService" />
-    <option name="methodName" value="Unregister" />
-  </service>
-
-  <service name="http://www.soapinterop.org/Lookup" pivot="registry" >
-    <option name="className" value="samples.bidbuy.RegistryService" />
-    <option name="methodName" value="Lookup" />
-  </service>
-
-  <service name="http://www.soapinterop.org/LookupAsString" pivot="registry" >
-    <option name="className" value="samples.bidbuy.RegistryService" />
-    <option name="methodName" value="LookupAsString" />
+  <service name="http://www.soapinterop.org/Registry" pivot="registry" >
+   <option name="className" value="samples.bidbuy.RegistryService" />
+   <option name="methodName" value="Register Unregister Lookup LookupAsString"/>
   </service>
 
   <beanMappings xmlns:reg="http://www.soapinterop.org/Registry">

@@ -55,17 +55,16 @@
 
 package samples.bidbuy ;
 
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
 import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
+import org.apache.axis.encoding.XMLType;
 import javax.xml.rpc.namespace.QName;
 
 import java.util.Date;
+import java.net.URL;
 
 
 /**
@@ -76,8 +75,8 @@ import java.util.Date;
  */
 public class TestClient {
 
-    private static ServiceClient call;
-    private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
+    private static Service service         = null ;
+    private static Call    call            = null;
 
     /**
      * Test an echo method.  Declares success if the response returns
@@ -99,8 +98,10 @@ public class TestClient {
     public static void main(String args[]) throws Exception {
         // set up the call object
         Options opts = new Options(args);
-        call = new ServiceClient(opts.getURL());
-        call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Bid");
+        service = new Service();
+        call = (Call) service.createCall();
+        call.setTargetEndpointAddress( new URL(opts.getURL()) );
+        call.setProperty(HTTPTransport.ACTION,"http://www.soapinterop.org/Bid");
 
         // register the PurchaseOrder class
         QName poqn = new QName("http://www.soapinterop.org/Bid",
@@ -123,10 +124,10 @@ public class TestClient {
 
         try {
             // Default return type based on what we expect
-            ServiceDescription sd = new ServiceDescription("Buy", true);
-            sd.addInputParam("PO", poqn);
-            sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_STRING);
-            call.setServiceDescription(sd);
+            call.setOperationName( "Buy" );
+            call.setProperty( Call.NAMESPACE, "http://www.soapinterop.org/Bid");
+            call.addParameter( "PO", new XMLType(poqn), Call.PARAM_MODE_IN );
+            call.setReturnType( XMLType.XSD_STRING );
 
             LineItem[] li = new LineItem[2];
             li[0] = new LineItem("Tricorder", 1, "2500.95");
@@ -141,9 +142,7 @@ public class TestClient {
             );
 
             // issue the request
-            String receipt = (String) call.invoke(
-                "http://www.soapinterop.org/Bid", "Buy",
-                new Object[] {new RPCParam("PO", po)} );
+            String receipt = (String) call.invoke( new Object[] {po} );
 
             System.out.println(receipt);
         } catch (Exception e) {
