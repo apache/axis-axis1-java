@@ -46,6 +46,8 @@ public class XMLEncoderFactory {
     static {
         encoderMap.put(ENCODING_UTF_8, new UTF8Encoder());
         encoderMap.put(ENCODING_UTF_16, new UTF16Encoder());
+        encoderMap.put(ENCODING_UTF_8.toLowerCase(), new UTF8Encoder());
+        encoderMap.put(ENCODING_UTF_16.toLowerCase(), new UTF16Encoder());
         try {
             loadPluggableEncoders();
         } catch (Throwable t){
@@ -74,13 +76,10 @@ public class XMLEncoderFactory {
      * @throws UnsupportedEncodingException
      */
     public static XMLEncoder getEncoder(String encoding) throws UnsupportedEncodingException {
-        XMLEncoder encoder = (XMLEncoder) encoderMap.get(encoding.toUpperCase());
+        XMLEncoder encoder = (XMLEncoder) encoderMap.get(encoding);
         if (encoder == null) {
             throw new UnsupportedEncodingException(Messages.getMessage("unsupportedEncoding00", encoding));
         }
-        // test local encoding so we can ensure that getBytes()
-        // will not fail later
-        "test".getBytes(encoder.getEncoding());
         return encoder;
     }
 
@@ -113,6 +112,7 @@ public class XMLEncoderFactory {
                 if (o instanceof XMLEncoder) {
                     XMLEncoder encoder = (XMLEncoder) o;
                     encoderMap.put(encoder.getEncoding(), encoder);
+                    encoderMap.put(encoder.getEncoding().toLowerCase(), encoder);
                 }
             } catch (Exception e) {
                 String msg = e + JavaUtils.LS + JavaUtils.stackToString(e);

@@ -451,7 +451,14 @@ public class Message extends javax.xml.soap.SOAPMessage
      *              this message
      */
     public String getContentType(SOAPConstants sc) throws AxisFault {
-
+        boolean soap12 = false;
+        // Support of SOAP 1.2 HTTP binding
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        if (envelope != null) {
+            if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+                soap12 = true;
+            }
+        }
         int sendType = Attachments.SEND_TYPE_NOTSET;
         if ((msgContext != null) && (msgContext.getService() != null)) {
             sendType = msgContext.getService().getSendType();
@@ -481,11 +488,8 @@ public class Message extends javax.xml.soap.SOAPMessage
         String ret = sc.getContentType() + "; charset=" + encoding;
         
         // Support of SOAP 1.2 HTTP binding
-        SOAPEnvelope envelope = getSOAPEnvelope();
-        if (envelope != null) {
-            if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
-                ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
-            }
+        if (soap12) {
+            ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
         }
 
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
