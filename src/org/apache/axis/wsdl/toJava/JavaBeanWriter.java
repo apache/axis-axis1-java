@@ -32,6 +32,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.TreeSet;
+import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -552,19 +555,28 @@ public class JavaBeanWriter extends JavaClassWriter {
             return;
         }
 
-        pw.println("    public " + className + "(");
+        // Sort by variable name.
+        TreeMap map = new TreeMap();
         for (int i = 0; i < names.size(); i += 2) {
-            String typeName = (String) names.get(i);
-            String variable = (String) names.get(i + 1);
+            map.put(names.get(i + 1),names.get(i));
+        }        
+        
+        Iterator iterator = map.entrySet().iterator();
+        pw.println("    public " + className + "(");
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String typeName = (String) entry.getValue();
+            String variable = (String) entry.getKey();
             pw.print("           " + typeName + " "
                     + variable);
-            if (i >= names.size() - 2) {
+            if (iterator.hasNext()) {
+                pw.println(",");
+            } else {
                 pw.println(") {");
                 break;
-            } else {
-                pw.println(",");
-            }
+            } 
         }
+        
         for (int i = 0; i < names.size(); i += 2) {
             String variable = (String) names.get(i + 1);
             pw.println("           this." + variable + " = " + variable + ";");
