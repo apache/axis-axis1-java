@@ -86,7 +86,6 @@ public abstract class Part
     protected static Log log =
         LogFactory.getLog(Part.class.getName());
 
-    private Message msg;
     private Hashtable headers = new Hashtable();
     private String contentId;
     private String contentLocation;
@@ -95,8 +94,7 @@ public abstract class Part
      * Fill in the Message field.  (Of course this can only be called by
      * subclass constructors since Part itself is abstract.)
      */
-    public Part (Message parent) {
-        msg = parent;
+    public Part () {
         addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , getNewContentIdValue());
 
     }
@@ -128,20 +126,6 @@ public abstract class Part
     }
     
     /**
-     * Get the Message for this Part.
-     */
-    public Message getMessage () {
-        return msg;
-    }
-
-    /**
-     * Set the Message for this Part.
-     */
-    public void setMessage (Message msg) {
-        this.msg= msg;
-    }
-    
-    /**
      * Total size in bytes (of all content and headers, as encoded).
     public abstract int getSize();
      */
@@ -159,6 +143,19 @@ public abstract class Part
     public void setContentLocation(String loc) {
         addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
+
+    /**
+         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+         *  already defined.
+         * @param newCid new Content-Id
+         * @returns void
+         */
+        public void setContentId(String newCid){
+                if(!newCid.toLowerCase().startsWith("cid:")){
+                        newCid="cid:"+newCid;
+                }
+                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+        }
 
     /**
      * Content ID.

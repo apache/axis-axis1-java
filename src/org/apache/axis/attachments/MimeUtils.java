@@ -230,10 +230,10 @@ public class MimeUtils
     /**
      * This routine will create a multipar object from the parts and the SOAP content.
      * @param the env should be the text for the main root part.
-     * @param the parts contain a collection of  mappings of cids to the message parts.
+     * @param the parts contain a collection of the message parts.
      */
 
-    public static javax.mail.internet.MimeMultipart createMP(String env, java.util.Map parts ) throws org.apache.axis.AxisFault {
+    public static javax.mail.internet.MimeMultipart createMP(String env, java.util.Collection parts ) throws org.apache.axis.AxisFault {
         javax.mail.internet.MimeMultipart multipart = null;
 
         try {
@@ -250,14 +250,12 @@ public class MimeUtils
             messageBodyPart.setHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, "binary");
 
             multipart.addBodyPart(messageBodyPart);
-            java.util.Set pe = parts.entrySet();
 
-            for (java.util.Iterator it = pe.iterator(); it.hasNext(); ) {
-                java.util.Map.Entry es = (java.util.Map.Entry) it.next();
-                org.apache.axis.Part part=  (org.apache.axis.Part) es.getValue();
+            for (java.util.Iterator it = parts.iterator(); it.hasNext(); ) {
+                org.apache.axis.Part part=  (org.apache.axis.Part) it.next();
                 javax.activation.DataHandler dh =
                     org.apache.axis.attachments.AttachmentUtils.getActiviationDataHandler(part);
-                String contentID = (String) es.getKey();
+                String contentID = part.getContentId();
 
                 if (contentID.startsWith("cid:")) contentID = contentID.substring(4);
 

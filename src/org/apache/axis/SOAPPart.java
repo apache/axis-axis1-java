@@ -116,6 +116,11 @@ public class SOAPPart extends Part
     private Object currentMessage ;
     
     /**
+     * Message object this part is tied to. Used for serialization settings.
+     */
+    private Message msgObject;
+
+    /**
      * The original message.  Again, may be String, byte[], InputStream,
      * or SOAPEnvelope.
      */
@@ -127,7 +132,8 @@ public class SOAPPart extends Part
      * "Just something to us working..."
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
-        super(parent);
+        super();
+        msgObject=parent;
         originalMessage = initialContents;
         int form = FORM_STRING;
         if (initialContents instanceof SOAPEnvelope) {
@@ -150,6 +156,22 @@ public class SOAPPart extends Part
         return originalMessage;
     }
     */
+
+
+    /**
+     * Get the Message for this Part.
+     */
+    public Message getMessage(){
+      return msgObject;
+    }
+
+    /**
+     * Set the Message for this Part.
+     * Do not call this Directly. Called by Message.
+     */
+    public void setMessage (Message msg) {
+        this.msgObject= msg;
+    }
 
     /**
      * Content type is always "text/xml" for SOAPParts.
@@ -236,7 +258,7 @@ public class SOAPPart extends Part
      * array.  This will force buffering of the message.
      */
     public byte[] getAsBytes() {
-        log.debug( "Enter: SOAPPart::getAsBytes" );
+    log.debug( "Enter: SOAPPart::getAsBytes" );
         if ( currentForm == FORM_BYTES ) {
             log.debug( "Exit: SOAPPart::getAsBytes" );
             return (byte[])currentMessage;
@@ -300,6 +322,7 @@ public class SOAPPart extends Part
 
         log.debug( "Exit: SOAPPart::getAsBytes" );
         return null;
+
     }
 
     /**

@@ -91,6 +91,12 @@ public class Message {
     // NOT SUPPORTED NOW
     public static final String MIME_APPLICATION_DIME = "application/dime";
     
+        /** Default Attachments Implementation class */
+        public static final String DEFAULT_ATTACHMNET_IMPL="org.apache.axis.attachments.AttachmentsImpl";
+
+        /** Current Attachment implementation */
+        private static String mAttachmentsImplClassName=DEFAULT_ATTACHMNET_IMPL;
+
     // look at the input stream to find the headers to decide.
     public static final String MIME_UNKNOWN = "  "; 
 
@@ -110,9 +116,15 @@ public class Message {
      */
     private Attachments mAttachments = null;
 
-    /**
-     * The MessageContext we are associated with.
-     */
+        /**
+         * Returns name of the class prividing Attachment Implementation
+         * @returns class Name
+         */
+        public static String getAttachmentImplClassName(){
+                return mAttachmentsImplClassName;
+        }
+
+
     private MessageContext msgContext;
 
     public String getMessageType() {
@@ -244,7 +256,7 @@ public class Message {
             Constructor attachImplConstr = attachImpl.getConstructors()[0];
             try {
                 mAttachments = (Attachments) attachImplConstr.newInstance(
-                        new Object[] { this, initialContents, 
+                        new Object[] { initialContents,
                                        contentType, contentLocation});
 
                 //If it can't support it, it wont have a root part.
@@ -264,11 +276,15 @@ public class Message {
             }
         }
 
-        // The stream was not determined by a more complex type so default to 
         // text/xml
         if (null == mSOAPPart) {  
             mSOAPPart = new SOAPPart(this, initialContents, bodyInStream);
         }
+        else
+          mSOAPPart.setMessage(this);
+
+        // The stream was not determined by a more complex type so default to 
+        if(mAttachments!=null) mAttachments.setRootPart(mSOAPPart);
     }
 
     /**
