@@ -163,6 +163,7 @@ public class ForeachTask extends Task {
         if (verbose) {
             callee2.createArg().setValue("-verbose");
         }
+        callee2.createArg().setValue(subTarget);
         if (callee2.executeJava() != 0) {
             throw new BuildException("Execution of ANT Task failed");
         }
