@@ -14,6 +14,9 @@ import org.apache.axis.server.AxisServer;
 
 import org.xml.sax.SAXException;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
 import java.util.Vector;
 
 /**
@@ -159,6 +162,24 @@ public class TestRPC extends TestCase {
         assertNull("The result was not null as expected.", rpc("echoInt", new Object[] {null}));
     }
     
+    /**
+     * Test faults
+     */
+    public void testSimpleFault() throws Exception {
+        // Register the reverseData service
+        SOAPService simpleFault = new SOAPService(RPCDispatcher);
+        simpleFault.setOption("className", "test.RPCDispatch.Service");
+        simpleFault.setOption("methodName", "simpleFault");
+        engine.deployService(SOAPAction, simpleFault);
+
+        Object result = rpc("simpleFault", new Object[] {"foobar"});
+        assertTrue("Did not get a fault as expected.", 
+           result instanceof AxisFault);
+        AxisFault fault = (AxisFault) result;
+        assertEquals("faultString was not set correctly.", 
+            "foobar", fault.getFaultString());
+    }
+
     public static void main(String args[])
     {
       try {
