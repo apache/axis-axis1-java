@@ -608,16 +608,19 @@ public class TypeMappingImpl implements TypeMapping
     /**
      * Gets the Class mapped to QName.
      * @param xmlType qname or null
-     * @return javaType class or type
+     * @return javaType class for type or null for no mapping
      */
     public Class getClassForQName(QName xmlType) {
-        if (xmlType == null)
+        if (xmlType == null) {
             return null;
-        
+        }
+
         //log.debug("getClassForQName xmlType =" + xmlType);
         Class javaType = null;
+        //look for it in our map
         Pair pair = (Pair) qName2Pair.get(xmlType);
         if (pair == null && delegate != null) {
+            //on no match, delegate
             javaType = delegate.getClassForQName(xmlType);
         } else if (pair != null) {
             javaType = pair.javaType;
