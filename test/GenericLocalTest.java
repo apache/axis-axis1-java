@@ -63,6 +63,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
+import org.apache.axis.Handler;
 
 /**
  * This is a framework class which handles all the basic stuff necessary
@@ -84,6 +85,7 @@ public class GenericLocalTest extends TestCase {
     protected AxisServer server;
     protected SimpleProvider config;
     protected LocalTransport transport;
+    protected SOAPService service = null;
 
     public GenericLocalTest(String s) {
         super(s);
@@ -136,6 +138,10 @@ public class GenericLocalTest extends TestCase {
     /**
      * Deploy a service to the local server we've set up, and point the
      * cached local transport object to the desired service name.
+     *
+     * After calling this method, the "service" field will contain the
+     * deployed service, on which you could set other options if
+     * desired.
      * 
      * @param serviceName the name under which to deploy the service.
      * @param target class of the service.
@@ -143,11 +149,25 @@ public class GenericLocalTest extends TestCase {
     public void deploy(String serviceName, Class target, Style style) {
         String className = target.getName();
 
-        SOAPService service = new SOAPService(new RPCProvider());
+        service = new SOAPService(new RPCProvider());
         service.setStyle(style);
 
         service.setOption("className", className);
         service.setOption("allowedMethods", "*");
+
+        config.deployService(serviceName, service);
+        transport.setRemoteService(serviceName);
+    }
+
+    /**
+     * Deploy a service to the local server we've set up, using a
+     * Handler we provide as the pivot.
+     * 
+     * @param serviceName
+     * @param handler
+     */
+    public void deploy(String serviceName, Handler handler) {
+        service = new SOAPService(handler);
 
         config.deployService(serviceName, service);
         transport.setRemoteService(serviceName);
