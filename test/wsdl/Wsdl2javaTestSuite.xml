@@ -71,7 +71,8 @@
     </wsdl2java>
 
     <!-- Import Test 1:  some namespace->package mappings from the -->
-    <!--                 command line, some generated.             -->
+    <!--                 command line, some generated, some from   -->
+    <!--                 NStoPkg.properties.                       -->
     <wsdl2java url="test/import_/Import.wsdl"
                output="build/work"
                deployscope="none"
@@ -84,7 +85,6 @@
         <mapping namespace="urn:importBinding1" package="test.import.binding1"/>
         <mapping namespace="urn:importBinding2" package="test.import.binding2"/>
     </wsdl2java>
-
     <!-- Import Test 2:  all namespace->package mappings from the -->
     <!--                 command line.                            -->
     <wsdl2java url="test/import_/Import.wsdl"

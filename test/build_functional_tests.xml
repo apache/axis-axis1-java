@@ -114,6 +114,11 @@ Copyright:
   <!-- Generate code using Wsdl2java utility                               -->
   <!-- =================================================================== -->
   <target name="wsdl-setup" if="junit.present">
+    <copy todir="${build.dir}/classes" overwrite="yes">
+      <fileset dir="${test.dir}/import_">
+        <include name="NStoPkg.properties"/>
+      </fileset>
+    </copy>
     <ant antfile="test/wsdl/Wsdl2javaTestSuite.xml">
     </ant>
     <copy todir="${build.dir}/work/test" overwrite="yes">
