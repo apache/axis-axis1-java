@@ -78,7 +78,9 @@ public class Main {
     static String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
     static String[] games  = new String[] { "Doom", "Axis & Allies" };
     static byte[]   nickName = new byte[] { 'g', 'e', 'e', 'k' };
-    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,foods,games,nickName);
+    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,
+                                              //foods,games,
+                                              nickName);
     
     private static void printPersonalInfo (PersonalInfo pi) {
         if (pi == null) {
@@ -103,6 +105,7 @@ public class Main {
             System.err.print(" \"" + (String) pets[i] + "\"");
         System.err.println("");
 
+        /*
         Object[] foods =pi.getFoods();
         System.err.print ("\tFavorite Foods=");
         for(int i=0; i<foods.length; i++)
@@ -114,6 +117,7 @@ public class Main {
         for(int i=0; i<games.length; i++)
             System.err.print(" \"" + (String) games[i] + "\"");
         System.err.println("");
+        */
 
         byte[] nb =pi.getNickName();
         System.err.print ("\tNickName=");

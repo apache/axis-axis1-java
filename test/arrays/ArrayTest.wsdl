@@ -32,7 +32,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-
+<!--
       <xsd:complexType name="foodArray">
             <xsd:sequence>
               <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
@@ -42,7 +42,7 @@
       <xsd:complexType name="gameArray">
               <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
       </xsd:complexType>
-
+-->
       <xsd:complexType name="personalInfo">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
@@ -53,9 +53,9 @@
             <!-- Style 3: Array defined using derivation of soapenc:Array -->
             <xsd:element name="pets" type="typens:petArray"/>
             <!-- Microsoft 1 (not JAX-RPC): Array defined using sequence of single unbounded element -->
-            <xsd:element name="foods" type="typens:foodArray"/>
+            <!-- <xsd:element name="foods" type="typens:foodArray"/> -->
             <!-- Microsoft 2 (not JAX-RPC): Array defined using single unbounded element -->
-            <xsd:element name="games" type="typens:gameArray"/>
+            <!-- <xsd:element name="games" type="typens:gameArray"/> -->
             <!-- Array of bytes -->                                           
             <xsd:element name="nickName" type="soapenc:base64"/>
 
