@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 
-<!-- ===================================================================
 
+
+<project default="compile" basedir=".">
+<!-- =================================================================== -->
+<description>
    Build file for Axis
 
 Notes:
@@ -22,17 +25,17 @@ Optional components:
 Build Instructions:
    To build, run
 
-     java org.apache.tools.ant.Main <target>
+     ant "target"
 
    on the directory where this file is located with the target you want.
 
 Most useful targets:
 
- - compile  -> creates the "axis.jar" package in "./build/lib"
- - javadocs -> creates the javadocs in "./build/javadocs"
- - dist     -> creates the complete binary distribution
- - srcdist  -> creates the complete src distribution
- - functional-tests -> attempts to build Ant task and then run client-server functional test
+ - compile  : creates the "axis.jar" package in "./build/lib"
+ - javadocs : creates the javadocs in "./build/javadocs"
+ - dist     : creates the complete binary distribution
+ - srcdist  : creates the complete src distribution
+ - functional-tests : attempts to build Ant task and then run client-server functional test
 
 Custom post-compilation work:
 
@@ -43,16 +46,14 @@ Custom post-compilation work:
    updating the jar file in a running server, for instance.
 
 Authors:
-  Sam Ruby <rubys@us.ibm.com>
-  Matthew J. Duftler <duftler@us.ibm.com>
-  Glen Daniels <gdaniels@macromedia.com>
+  Sam Ruby  rubys@us.ibm.com
+  Matthew J. Duftler duftler@us.ibm.com
+  Glen Daniels gdaniels@macromedia.com
 
 Copyright:
-  Copyright (c) 2001 Apache Software Foundation.
-
-==================================================================== -->
-
-<project default="compile" basedir=".">
+  Copyright (c) 2001-2002 Apache Software Foundation.
+</description>
+<!-- ==================================================================== -->
 
   <!-- Give user a chance to override without editing this file
        (and without typing -D each time it compiles it) -->
@@ -63,7 +64,7 @@ Copyright:
 
   <property name="name" value="axis"/>
   <property name="Name" value="Axis"/>
-  <property name="year" value="2001"/>
+  <property name="year" value="2002"/>
 
   <property name="jaxrpc" value="jaxrpc"/>
 
@@ -72,38 +73,41 @@ Copyright:
 
   <property name="deprecation" value="true"/>
 
-  <property name="src.dir" value="./src"/>
-  <property name="docs.dir" value="./docs"/>
-  <property name="samples.dir" value="./samples"/>
-  <property name="test.dir" value="./test"/>
-  <property name="lib.dir" value="./lib"/>
+  <property name="src.dir" location="./src"/>
+  <property name="docs.dir" location="./docs"/>
+  <property name="samples.dir" location="./samples"/>
+  <property name="test.dir" location="./test"/>
+  <property name="lib.dir" location="./lib"/>
 
-  <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
-  <property name="commons-logging.jar" value="lib/commons-logging.jar"/>
-  <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
-  <property name="tt-bytecode.jar" value="lib/tt-bytecode.jar"/>
+  <property name="wsdl4j.jar" location="lib/wsdl4j.jar"/>
+  <property name="commons-logging.jar" location="lib/commons-logging.jar"/>
+  <property name="log4j-core.jar" location="lib/log4j-core.jar"/>
+  <property name="tt-bytecode.jar" location="lib/tt-bytecode.jar"/>
 
-  <property name="regexp.jar" value="test/lib/jakarta-oro-2.0.5.jar"/>
+  <property name="regexp.jar" location="test/lib/jakarta-oro-2.0.5.jar"/>
 
-  <property name="junit.jar" value="lib/junit.jar"/>
+  <property name="junit.jar" location="lib/junit.jar"/>
 
   <property name="packages" value="org.*,javax.*"/>
 
-  <property name="build.file" value="build.xml"/>
+  <property name="build.file" location="build.xml"/>
 
-  <property name="build.dir" value="build"/>
-  <property name="build.dest" value="build/classes"/>
-  <property name="build.lib" value="build/lib"/>
-  <property name="build.samples" value="build/classes/samples"/>
-  <property name="build.javadocs" value="build/javadocs"/>
-  <property name="build.webapp" value="build/webapps/axis"/>
+  <property name="build.dir" location="build"/>
+  <property name="build.dest" location="build/classes"/>
+  <property name="build.lib" location="build/lib"/>
+  <property name="build.samples" location="build/classes/samples"/>
+  <property name="build.javadocs" location="build/javadocs"/>
+  <property name="build.webapp" location="build/webapps/axis"/>
 
-  <property name="webapp" value="webapps/axis"/>
+  <property name="webapp" location="webapps/axis"/>
 
-  <property name="dist.dir" value="axis-1_0"/>
+  <property name="dist.dir" location="axis-1_0"/>
 
   <property name="test.functional.usefile" value="true"/>
-
+  
+  <property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
+  <property name="axis.lib.dir" location="lib"/>
+  
   <!-- =================================================================== -->
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
@@ -113,8 +117,8 @@ Copyright:
     <pathelement location="${junit.jar}"/>
     <pathelement location="${excalibur.jar}"/>
     <pathelement location="${j2ee.jar}"/>
-    <pathelement location="${java.home}/../lib/tools.jar"/>
-    <fileset dir="lib">
+    <pathelement location="${tools.jar}"/>
+    <fileset dir="${axis.lib.dir}">
      <include name="*.jar"/>
     </fileset>
     <pathelement path="${java.class.path}"/>
@@ -305,7 +309,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
-  <target name="samples" depends="compile">
+  <target name="samples" depends="compile" 
+    description="build the samples">
 
   <!-- The interop echo sample depends on the wsdl2java task -->    
     <javac srcdir="." destdir="${build.dest}"
@@ -439,7 +444,9 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, no dependencies (for no-build testing)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-only" depends="setenv">
+  <target name="functional-tests-only" depends="setenv"
+    description="functional tests without a rebuild; the Axis Ant task must be in ANT_HOME/lib"
+    >
 
     <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
     <ant antfile="test/build_ant.xml" />
@@ -455,7 +462,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="buildTest, samples">
+  <target name="functional-tests-noserver" depends="buildTest, samples"
+    description="functional tests, no server">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
@@ -465,7 +473,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="buildTest, samples">
+  <target name="functional-tests" depends="buildTest, samples"
+    description="functional tests">
     <ant antfile="test/build_functional_tests.xml">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
@@ -478,7 +487,9 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
-  <target name="javadocs" depends="setenv" unless="javadoc.notrequired">
+  <target name="javadocs" depends="setenv" unless="javadoc.notrequired"
+      description="create javadocs">
+
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              sourcepath="${src.dir}"
@@ -496,7 +507,9 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Build/Test EVERYTHING from scratch!                                 -->
   <!-- =================================================================== -->
-  <target name="all" depends="dist, functional-tests"/>
+  <target name="all" depends="dist, functional-tests"
+      description="do everything: distribution build and functional tests"
+    />
 
   <!-- =================================================================== -->
   <!-- Creates a war file for testing                                      -->
@@ -536,7 +549,9 @@ Copyright:
       <fileset dir="${build.javadocs}"/>
     </copy>
   </target>
-  <target name="dist" depends="compile, javadocsdist, samples, junit" >
+  
+  <target name="dist" depends="compile, javadocsdist, samples, junit" 
+    description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
     <mkdir dir="${dist.dir}/samples"/>
@@ -577,7 +592,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the source distribution                                     -->
   <!-- =================================================================== -->
-  <target name="srcdist" depends="javadocs" >
+  <target name="srcdist" depends="javadocs" 
+      description="Create the source distribution">
     <copy todir="${dist.dir}">
       <fileset dir=".">
         <include name="build.xml"/>
@@ -601,7 +617,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Interop 3                                                           -->
   <!-- =================================================================== -->
-  <target name="interop3" depends="buildTest">
+  <target name="interop3" depends="buildTest"
+      description="run the round3 interop tests">
     <ant dir="test/wsdl/interop3/import1"/>
     <ant dir="test/wsdl/interop3/import2"/>
     <ant dir="test/wsdl/interop3/import3"/>
@@ -615,7 +632,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Cleans everything                                                   -->
   <!-- =================================================================== -->
-  <target name="clean">
+  <target name="clean"
+      description="clean up, build, dist and much of the axis servlet">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
     <delete file="client-config.wsdd"/>
