@@ -129,6 +129,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.generateSkeleton(skeleton);
             emitter.verbose(verbose);
             emitter.setTypeMappingVersion(tm);
+            emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
 
             Document doc;
 
