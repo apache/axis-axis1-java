@@ -75,8 +75,10 @@ public class Main {
     static String[] movies = new String[] { "Star Trek", "A.I." };
     static String[] hobbies= new String[] { "programming", "reading about programming" };
     static String[] pets   = new String[] { "Byte", "Nibbles" };
+    static String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
+    static String[] games  = new String[] { "Doom", "Axis & Allies" };
     static byte[]   nickName = new byte[] { 'g', 'e', 'e', 'k' };
-    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,nickName);
+    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,foods,games,nickName);
     
     private static void printPersonalInfo (PersonalInfo pi) {
         if (pi == null) {
@@ -84,19 +86,34 @@ public class Main {
             return;
         }
         Object[] fm =pi.getFavoriteMovies();
-        System.err.println ("\tFavorite Movies=");
+        System.err.print("\tFavorite Movies=");
         for(int i=0; i<fm.length; i++)
-            System.err.println("\t\t" + (String) fm[i]);
+            System.err.print(" \"" + (String) fm[i] + "\"");
+        System.err.println("");
 
         Object[] h =pi.getHobbies();
-        System.err.println ("\tHobbies=");
+        System.err.print ("\tHobbies=");
         for(int i=0; i<h.length; i++)
-            System.err.println("\t\t" + (String) h[i]);
+            System.err.print(" \"" + (String) h[i] + "\"");
+        System.err.println("");
 
         Object[] pets =pi.getPets();
-        System.err.println ("\tPets=");
+        System.err.print ("\tPets=");
         for(int i=0; i<pets.length; i++)
-            System.err.println("\t\t" + (String) pets[i]);
+            System.err.print(" \"" + (String) pets[i] + "\"");
+        System.err.println("");
+
+        Object[] foods =pi.getFoods();
+        System.err.print ("\tFavorite Foods=");
+        for(int i=0; i<foods.length; i++)
+            System.err.print(" \"" + (String) foods[i] + "\"");
+        System.err.println("");
+
+        Object[] games =pi.getGames();
+        System.err.print ("\tFavorite Games=");
+        for(int i=0; i<games.length; i++)
+            System.err.print(" \"" + (String) games[i] + "\"");
+        System.err.println("");
 
         byte[] nb =pi.getNickName();
         System.err.print ("\tNickName=");
@@ -112,6 +129,7 @@ public class Main {
         PersonalInfo resp = pib.getPersonalInfoFromName (name);
         System.err.println (">> Response is:");
         printPersonalInfo (resp);
+        pib.addEntry (name, pi);
         return resp;
     }
     

@@ -85,12 +85,12 @@ public class JavaTypeWriter implements Writer {
         Node node = type.getNode();
 
         // Generate the proper class for either "complex" or "enumeration" types
-        Vector v = Utils.getComplexElementTypesAndNames(node, symbolTable);
+        Vector v = SchemaUtils.getComplexElementTypesAndNames(node, symbolTable);
         if (v != null) {
             typeWriter = new JavaComplexTypeWriter(emitter, type, v);
         }
         else {
-            v = getEnumerationBaseAndValues(node);
+            v = SchemaUtils.getEnumerationBaseAndValues(node, symbolTable);
             if (v != null) {
                 typeWriter = new JavaEnumTypeWriter(emitter, type, v);
             }
@@ -117,91 +117,5 @@ public class JavaTypeWriter implements Writer {
         }
     } // write
 
-    /**
-     * If the specified node represents a supported JAX-RPC enumeration,
-     * a Vector is returned which contains the base type and the enumeration values.
-     * The first element in the vector is the base type (an Type).
-     * Subsequent elements are values (Strings).
-     * If this is not an enumeration, null is returned.
-     */
-    public Vector getEnumerationBaseAndValues(Node node) {
-        if (node == null) {
-            return null;
-        }
-
-        // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-            NodeList children = node.getChildNodes();
-            Node simpleNode = null;
-            for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
-                QName simpleKind = Utils.getNodeQName(children.item(j));
-                if (simpleKind != null &&
-                    simpleKind.getLocalPart().equals("simpleType") &&
-                    Utils.isSchemaNS(simpleKind.getNamespaceURI())) {
-                    simpleNode = children.item(j);
-                    node = simpleNode;
-                }
-            }
-        }
-        // Get the node kind, expecting a schema simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("simpleType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-
-            // Under the simpleType there should be a restriction.
-            // (There may be other #text nodes, which we will ignore).
-            NodeList children = node.getChildNodes();
-            Node restrictionNode = null;
-            for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
-                QName restrictionKind = Utils.getNodeQName(children.item(j));
-                if (restrictionKind != null &&
-                    restrictionKind.getLocalPart().equals("restriction") &&
-                    Utils.isSchemaNS(restrictionKind.getNamespaceURI()))
-                    restrictionNode = children.item(j);
-            }
-
-            // The restriction node indicates the type being restricted
-            // (the base attribute contains this type).
-            // The base type must be a built-in type...and we only think
-            // this makes sense for string.
-            Type baseEType = null;
-            if (restrictionNode != null) {
-                QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
-                baseEType = symbolTable.getTypeEntry(baseType);
-                if (baseEType != null && 
-                    !baseEType.getJavaName().equals("java.lang.String")) {
-                    baseEType = null;
-                }
-            }
-
-            // Process the enumeration elements underneath the restriction node
-            if (baseEType != null && restrictionNode != null) {
-
-                Vector v = new Vector();
-                v.add(baseEType);
-                NodeList enums = restrictionNode.getChildNodes();
-                for (int i=0; i < enums.getLength(); i++) {
-                    QName enumKind = Utils.getNodeQName(enums.item(i));
-                    if (enumKind != null &&
-                        enumKind.getLocalPart().equals("enumeration") &&
-                        Utils.isSchemaNS(enumKind.getNamespaceURI())) {
-
-                        // Put the enum value in the vector.
-                        Node enumNode = enums.item(i);
-                        String value = Utils.getAttribute(enumNode, "value");
-                        if (value != null) {
-                            v.add(value);
-                        }
-                    }
-                }
-                return v;
-            }
-        }
-        return null;
-    }
 
 } // class JavaTypeWriter
