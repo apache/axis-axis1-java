@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project name="Round4" default="compile">
+<property name="axis.home" location="../../../../../../" />
+<property name="componentName" value="test/wsdl/interop4/groupG/mime/rpc" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+  <property name="root.dir" value="../../../../../.."/>
+
+    <target name="clean">
+        <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+        <delete dir="${build.dir}/classes/${componentName}"/>
+        <delete dir="${build.dir}/work/${componentName}"/>
+    </target>
+
+  <target name="compile">
+    <property name="testname" value="basetype"/>
+
+    <!-- generate skeletons -->
+    <wsdl2java url="${axis.home}/test/wsdl/interop4/groupG/mime/rpc/mime-rpc.wsdl"
+               output="${root.dir}/build/work" 
+               skeletonDeploy="no"
+               testCase="yes"
+               serverSide="yes">
+        <mapping namespace="http://soapinterop.org/attachments/wsdl" package="test.wsdl.interop4.groupG.mime.rpc"/>
+        <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop4.groupG.mime.rpc"/>
+        <mapping namespace="http://soapinterop.org/attachments/xsd" package="test.wsdl.interop4.groupG.mime.rpc.xsd"/>
+        <mapping namespace="http://soapinterop.org/echoheader/" package="test.wsdl.interop4.groupG.mime.rpc.echo"/>
+        <mapping namespace="http://soapinterop.org" package="test.wsdl.interop4.groupG.mime.rpc"/>
+        <mapping namespace="http://schemas.xmlsoap.org/soap/encoding/" package="test.wsdl.interop4.groupG.mime.rpc.soap.encoding"/>
+        <mapping namespace="http://schemas.xmlsoap.org/wsdl/mime/" package="test.wsdl.interop4.groupG.mime.rpc.wsdl.mime"/>
+        <mapping namespace="http://schemas.xmlsoap.org/wsdl/http/" package="test.wsdl.interop4.groupG.mime.rpc.wsdl.http"/>
+        <mapping namespace="http://schemas.xmlsoap.org/wsdl/soap/" package="test.wsdl.interop4.groupG.mime.rpc.wsdl.soap"/>
+        <mapping namespace="services.wsdl" package="test.wsdl.interop4.groupG.mime.rpc"/>
+    </wsdl2java>
+
+    <mkdir dir="${build.dest}"/>
+    <!--
+    <copy file="BaseTypesInteropTestsTestCase.java"
+         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
+         overwrite="yes"/>
+    <copy file="InteropTestsBindingImpl.java"
+         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
+         overwrite="yes"/>
+    -->
+    <!-- compile the skeletons -->
+    <javac srcdir="${build.dir}/work"
+      destdir="${build.dest}" debug="on">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/interop4/groupG/mime/rpc/**/*.java" />
+    </javac>
+  </target>
+
+  <target name="run" >
+    <antcall target="execute-Component" />
+  </target>
+
+</project>
