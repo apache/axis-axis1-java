@@ -59,6 +59,9 @@ import org.xml.sax.*;
 import org.apache.axis.AxisFault;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QFault;
+import org.apache.axis.utils.QName;
+
+import java.util.HashMap;
 
 /** 
  * Build a Fault body element.
@@ -66,15 +69,25 @@ import org.apache.axis.utils.QFault;
  * @author Sam Ruby (rubys@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class SOAPFaultBuilder extends SOAPHandler
+public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
 {
-    String currentSubElement;
-    Deserializer currentDeser;
+    protected SOAPFaultElement element;
+    protected AxisFault fault;
+    protected DeserializationContext context;
+    static HashMap fields = new HashMap();
+
+    static {
+        fields.put("faultcode", SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put("faultstring", SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put("faultactor", SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put("details", null);
+    }
     
-    protected SOAPFaultElement element;    
-    
-    public SOAPFaultBuilder(SOAPFaultElement element) {
+    public SOAPFaultBuilder(SOAPFaultElement element,
+                            DeserializationContext context) {
         this.element = element;
+        this.context = context;
+        fault = element.getAxisFault();
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -83,29 +96,31 @@ public class SOAPFaultBuilder extends SOAPHandler
                                     DeserializationContext context)
         throws SAXException
     {
-        currentSubElement = name;
-        currentDeser = context.getTypeMappingRegistry().
-                          getDeserializer(SOAPTypeMappingRegistry.XSD_STRING);
-        return currentDeser;
-    }
-    
-    public void onEndChild(String namespace, String localName, 
-                           DeserializationContext context)
-        throws SAXException
-    {
-        AxisFault fault = element.getAxisFault();
-        String value = currentDeser.getValue().toString();
-
-        if (currentSubElement.equals("faultcode")) {
-            fault.setFaultCode(new QFault(context.getQNameFromString(value)));
-        } else if (currentSubElement.equals("faultstring")) {
-            fault.setFaultString(currentDeser.getValue().toString());
-        } else if (currentSubElement.equals("faultactor")) {
-            fault.setFaultActor(currentDeser.getValue().toString());
-        } else if (currentSubElement.equals("details")) {
-            // !!! Not supported yet
-            // fault.setFaultDetails(...);
+        Deserializer currentDeser = null;
+        
+        QName qName = (QName)fields.get(name);
+        
+        if (qName != null) {
+            currentDeser = context.getTypeMappingRegistry().
+                          getDeserializer(qName);
+            currentDeser.registerCallback(this, name);
         }
+        
+        return currentDeser;
+    } 
+    
+    public void valueReady(Object value, Object hint)
+    {
+        String name = (String)hint;
+        if (name.equals("faultcode")) {
+            fault.setFaultCode(
+                         new QFault(
+                               context.getQNameFromString((String)value)));
+        } else if (name.equals("faultstring")) {
+            fault.setFaultString((String)value);
+        } else if (name.equals("faultactor")) {
+            fault.setFaultActor((String)value);
+        }
+        
     }
-
 }
