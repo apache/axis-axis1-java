@@ -60,7 +60,6 @@ import org.xml.sax.SAXException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
