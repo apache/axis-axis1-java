@@ -424,7 +424,7 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public Object invoke(Object[] params) throws java.rmi.RemoteException {
         if ( operationName == null )
-            throw new java.rmi.RemoteException( "No operation name specified" );
+            throw new AxisFault( "No operation name specified" );
         try {
             String ns = (String) getProperty( Constants.NAMESPACE );
             if ( ns == null )
@@ -433,7 +433,7 @@ public class Call implements org.apache.axis.rpc.Call {
                 return( this.invoke(ns,operationName,getParamList(params)) );
         }
         catch( Exception exp ) {
-            throw new java.rmi.RemoteException( "Error invoking operation",
+            throw new AxisFault( "Error invoking operation",
                                                 exp );
         }
     }
@@ -835,7 +835,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        category.debug("Enter: Service::invoke()" );
+        category.debug("Enter: Call::invoke()" );
 
         msgContext.reset();
 
@@ -860,6 +860,7 @@ public class Call implements org.apache.axis.rpc.Call {
         else
             msgContext.setTransportName( transportName );
 
+        category.debug("TargetService:" + msgContext.getTargetService());
         try {
             engine.invoke( msgContext );
 
@@ -871,7 +872,7 @@ public class Call implements org.apache.axis.rpc.Call {
             throw fault ;
         }
 
-        category.debug("Exit: Service::invoke()" );
+        category.debug("Exit: Call::invoke()" );
     }
 
     /**
