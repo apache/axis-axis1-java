@@ -48,6 +48,7 @@ SOAP 1.2 SUPPORT
 
 PERFORMANCE
 -----------
+! <> Switch on streaming - only record SAX events where necessary
 
 DOCUMENTATION
 -------------
