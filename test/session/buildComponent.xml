@@ -4,49 +4,39 @@
         <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
-<!-- ===================================================================
-==================================================================== -->
+<!-- =================================================================== -->
 
 <project default="compile">
+
+        <property name="axis.home" location="../../" />
+	<property name="componentName" value="test/session"/>
 
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+	&targets;
 
-<property name="Name" value="session"/>
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compiling test.session"/>
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <echo message="Compiling test.${componentName}"/>
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
-    <include name="test/session/*.java"/>
+    <include name="$(componentName}/*.java"/>
   </javac>
 </target>
 
-<target name="deploy"/>
-
 <target name="run">
-   <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
-      <classpath refid="classpath" />
-      <formatter type="xml" usefile="${test.functional.usefile}"/>
-      <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}">
-           <include name="test/${Name}/*TestCase.class" />
-           <include name="test/${Name}/**/*TestCase.class" />
-	</fileset>
-      </batchtest>
-   </junit>
+	<antcall target="execute-Component" />
 </target>
-
-<target name="undeploy"/>
 
 </project>

@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.multibinding"/>
     <!-- Multiple-binding test with different literal usage -->
-    <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/multibinding/multibinding.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                skeletonDeploy="yes"
                testcase="yes">

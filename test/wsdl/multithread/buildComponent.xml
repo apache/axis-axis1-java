@@ -24,14 +24,14 @@
 
 <target name="clean"/>
 
-<target name="copy">
-  <ant antfile="samples/addr/buildComponent.xml"/>
+<target name="copy" depends="setenv">
+  <ant antfile="${axis.home}/samples/addr/buildComponent.xml"/>
 </target>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.multithread"/>
     <!-- Multithread Test -->
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

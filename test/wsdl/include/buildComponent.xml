@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.include"/>
     <!-- Include test -->
-    <wsdl2java url="test/wsdl/include/AddressBook.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/include/AddressBook.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                skeletonDeploy="yes"
                testcase="yes">
@@ -41,7 +41,7 @@
       <include name="test/wsdl/include/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/ram/*.java" />

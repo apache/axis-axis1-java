@@ -4,21 +4,24 @@
         <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
 ==================================================================== -->
 
 <project default="compile">
-
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/interop" />
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+	&targets;
 
   <target name="clean" />
   
-  <target name="copy" />
+  <target name="copy" depends="setenv"/>
 
   <target name="compile" depends="copy" >
     <!-- Use this to check the classpath if the ANT Task fails... -->
@@ -50,14 +53,14 @@
 -->
     <!-- WidgetPrice Java to WSDL Samples -->
 <!-- mseibert
-    <java2wsdl output="build/work/samples/userguide/example6/WidgetPrice.wsdl"
+    <java2wsdl output="${axis.home}/build/work/samples/userguide/example6/WidgetPrice.wsdl"
                className= "samples.userguide.example6.WidgetPrice"
                namespace="urn:Example6"
                location="http://localhost:8080/axis/services/WidgetPrice">
         <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
     </java2wsdl>
-   <wsdl2java url="build/work/samples/userguide/example6/WidgetPrice.wsdl"
-               output="build/work"
+   <wsdl2java url="${axis.home}/build/work/samples/userguide/example6/WidgetPrice.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -72,7 +75,7 @@
     <!-- SOAPBuilders Interoperability Lab "Round 1" -->
     <!--     http://www.xmethods.net/ilab/           -->
     <wsdl2java url="http://www.xmethods.net/tmodels/InteropTest.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
                noimports="no"
@@ -84,7 +87,7 @@
     <!-- SOAPBuilders Interoperability Lab "Round 2" -->
     <!--     http://www.whitemesa.com/interop.htm    -->
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
                noimports="no"
@@ -94,7 +97,7 @@
         <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
                noimports="no"
@@ -105,7 +108,7 @@
     </wsdl2java>
     <!-- More information at: http://www.whitemesa.net/  -->
 <!--    <wsdl2java url="http://www.whitemesa.com/wsdl/std/echoheadersvc.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -117,7 +120,7 @@
 -->
     <!-- http://www.mssoapinterop.org/stk/roundBC.htm -->
     <wsdl2java url="http://mssoapinterop.org/stk/InteropB.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -127,7 +130,7 @@
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopb"/>
     </wsdl2java>
     <wsdl2java url="http://mssoapinterop.org/stk/InteropBtyped.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -137,7 +140,7 @@
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopbtyped"/>
     </wsdl2java>
     <wsdl2java url="http://mssoapinterop.org/stk/InteropC.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -166,7 +169,7 @@
     <!--          pre-built server                      -->
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import1.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
@@ -178,7 +181,7 @@
     <!-- Step 3:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- Step 6:  -->
-    <java2wsdl output="build/work/test/wsdl/interop3/import1.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/import1.wsdl"
                className= "test.wsdl.interop3.import1.definitions.SoapInteropImport1PortType"
                namespace="http://soapinterop.org/definitions/"
                implClass="test.wsdl.interop3.import1.SoapInteropImport1BindingImpl"
@@ -186,8 +189,8 @@
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
     </java2wsdl>
-    <wsdl2java url="build/work/test/wsdl/interop3/import1.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/import1.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.step6.definitions"/>
@@ -198,7 +201,7 @@
     <!-- interoperability testing:  import2    -->
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.definitions"/>
@@ -211,7 +214,7 @@
     <!-- Step 3:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 6:  -->
-    <java2wsdl output="build/work/test/wsdl/interop3/import2.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/import2.wsdl"
                className= "test.wsdl.interop3.import2.definitions.SoapInteropImport2PortType"
                namespace="http://soapinterop.org/definitions/"
                implClass="test.wsdl.interop3.import2.SoapInteropImport2BindingImpl"
@@ -220,8 +223,8 @@
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import2.xsd"/>
     </java2wsdl>
-    <wsdl2java url="build/work/test/wsdl/interop3/import2.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/import2.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.step6.definitions"/>
@@ -233,7 +236,7 @@
     <!-- interoperability testing:  absolute import2 -->
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.dolphinharbor.org/services/R3Import2/service.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.absimport2"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.definitions"/>
@@ -247,7 +250,7 @@
     <!-- Step 5:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 6:  -->
  <!-- Commented out by scheu...not working
-    <java2wsdl output="build/work/test/wsdl/interop3/absimport2.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/absimport2.wsdl"
                className= "test.wsdl.interop3.absimport2.definitions.SoapInteropImport2PortType"
                namespace="http://soapinterop.org/definitions/"
            location="http://localhost:8080/axis/services/SoapInteropImport2Port">
@@ -255,8 +258,8 @@
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.absimport2.xsd"/>
     </java2wsdl>
-    <wsdl2java url="build/work/test/wsdl/interop3/absimport2.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/absimport2.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.absimport2.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.step6.definitions"/>
@@ -269,7 +272,7 @@
     <!-- interoperability testing:  import3    -->
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import3.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import3.definitions"/>
@@ -283,7 +286,7 @@
     <!-- Step 3:  see test/wsdl/interop3/Import3TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import3TestCase.java -->
     <!-- Step 6:  -->
-    <java2wsdl output="build/work/test/wsdl/interop3/import3.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/import3.wsdl"
                className= "test.wsdl.interop3.import3.SoapInteropImport3PortType"
                namespace="http://soapinterop.org/definitions/"
                implClass="test.wsdl.interop3.import3.SoapInteropImport3BindingImpl"
@@ -294,8 +297,8 @@
         <mapping namespace="http://soapinterop.org/xsd2" package="test.wsdl.interop3.import3.xsd2"/>
     </java2wsdl>
 
-    <wsdl2java url="build/work/test/wsdl/interop3/import3.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/import3.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import3.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import3.step6.definitions"/>
@@ -304,11 +307,11 @@
     </wsdl2java>
     <!-- Step 7:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import2TestCase.java -->
-    <ant antfile="test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
+    <ant antfile="${axis.home}/test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
     <!-- UDDI 1.0 WSDL's -->
 <!-- tomj: turn these off while attribute processing is in flux
     <wsdl2java url="http://www.uddi.org/wsdl/inquire_v1.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -318,7 +321,7 @@
         <mapping namespace="urn:uddi-org:inquiry" package="org.uddi.inquiry"/>
     </wsdl2java>
     <wsdl2java url="http://www.uddi.org/wsdl/publish_v1.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -330,7 +333,7 @@
 -->
     <!-- XMethods Delayed Quote Service from http://www.xmethods.net/detail.html?id=2 -->
     <wsdl2java url="http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -340,10 +343,10 @@
     <!-- This tests .NET document/literal WSDL.
          We get this WSDL file from the internet on purpose,
          file is only for reference.
-    <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
      -->
     <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
-               output="build/work"
+               output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
                testcase="no">
@@ -354,7 +357,7 @@
     <!-- Real-time Quote Server from http://www.xmltoday.com/examples/soap/realtime.psp -->
     <!--
     <wsdl2java url="http://services.xmltoday.com/vx_engine/wsdl.vep?realtime.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -363,7 +366,7 @@
         <mapping namespace="urn:vgx-realtime" package="com.velocigen.thor"/>
     </wsdl2java>
     <wsdl2java url="http://services.xmltoday.com/vx_engine/wsdl_publish.vep/realtime.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -373,7 +376,7 @@
     More information at: http://www.whitemesa.com/interop/proposalC.html
     this WSDL file is bad.  It refers to portType "InteropTestPortType" but that portType is not defined.
     <wsdl2java url="http://www.whitemesa.com/interop/echoHeaderBindings.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -389,7 +392,7 @@
     java.io.IOException: Emitter failure.  There is an undefined binding (IGetAreabinding) in the WSDL document.
     Hint: make sure <port binding=".."> is fully qualified.
     <wsdl2java url="http://www.taragroup.com/bin/AreaCode.exe/wsdl/iGetArea"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -400,7 +403,7 @@
     > WSDL2Java http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl
     java.io.IOException: Type http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl:ArrayOfString is referenced but not defined.
     <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
-               output="build/work"
+               output="${axis.home}/build/work"
                testcase="no"
                deployscope="none"
                serverSide="yes"
@@ -410,9 +413,8 @@
     -->
   </target>
 
-  <target name="deploy" />
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
 
-  <target name="run" />
-
-  <target name="undeploy" />
 </project>

@@ -22,15 +22,15 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.addrNoImplSEI"/>
 
     <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
     <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
-    <wsdl2java url="test/wsdl/addrNoImplSEI/AddressBook.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="no"
@@ -57,7 +57,7 @@
     </javac>
 
     <!-- Now run java to wsdl to make sure we don't have any strange artifacts -->
-    <java2wsdl output="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
                className= "test.wsdl.addrNoImplSEI.AddressBookNoImplSEISoapBindingImpl"
                useInheritedMethods="false"
                portTypeName="AddressBookNoImplSEI"
@@ -67,8 +67,8 @@
     </java2wsdl>
 
     <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
-    <wsdl2java url="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="no"
@@ -85,7 +85,7 @@
       </fileset>
     </copy>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/addrNoImplSEI/*.java" />
     </javac>

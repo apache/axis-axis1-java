@@ -22,21 +22,21 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.extensibility"/>
     <!-- Extensibility Sample Test -->
-    <wsdl2java url="test/wsdl/extensibility/QueryTypes.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/extensibility/QueryTypes.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="no"
                skeletonDeploy="no"
                testcase="no">
         <mapping namespace="urn:QueryTypes" package="test.wsdl.extensibility"/>
     </wsdl2java>
-    <wsdl2java url="test/wsdl/extensibility/ExtensibilityQuery.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/extensibility/ExtensibilityQuery.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -50,7 +50,7 @@
       <include name="test/wsdl/extensibility/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/extensibility/*.java" />
     </javac>

@@ -22,7 +22,7 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.roundtrip"/>
@@ -60,8 +60,8 @@
     <!-- The following invocation of java2wsdl simply tests whether the
          split wsdl function works.  The generated wsdl files are not used. -->
 
-    <java2wsdl output="build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl"
-               outputImpl="build/work/test/wsdl/roundtrip/RoundtripImpl.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl"
+               outputImpl="${axis.home}/build/work/test/wsdl/roundtrip/RoundtripImpl.wsdl"
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"
                namespace="http://roundtrip.wsdl.test"
@@ -73,7 +73,7 @@
 
     <!-- Now create the real WSDL file -->
     <!-- The className must be the RoundtripPortType to properly test multi-inherits -->
-    <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"
                namespace="http://roundtrip.wsdl.test"
@@ -81,8 +81,8 @@
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
     <!-- Test adding a second port (RoundtripTest2) to the wsdl file -->
-    <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
-               input="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               input="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                portTypeName="RoundtripPortType"
                servicePortName="RoundtripTest2"
                bindingName="RoundtripTestSoapBinding"
@@ -93,12 +93,11 @@
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
 
-
     <!-- Delete the intermediate files so we recreate over a clean slate -->
     <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
     <!-- Recreate Java files from the new WSDL -->
-    <wsdl2java url="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -115,7 +114,7 @@
       <include name="test/wsdl/roundtrip/**/*.java" />
     </javac>
 <!--
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}/" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/roundtrip/*.java" />

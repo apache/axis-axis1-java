@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.filegen"/>
     <!-- Verify files generated based on what is referenced in WSDL -->
-    <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/filegen/FileGen.wsdl"
+               output="${axis.home}/build/work"
                deployscope="none"
                serverSide="no"
                noimports="no"
@@ -38,8 +38,8 @@
     </wsdl2java>
 
     <!-- Same test as above but this time the -a flag is turned on -->
-    <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/filegen/FileGen.wsdl"
+               output="${axis.home}/build/work"
                serverSide="no"
                all="yes">
         <mapping namespace="http://test.com/reference" package="test.wsdl.filegenAll"/>
@@ -51,7 +51,7 @@
       <include name="test/wsdl/filegen/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/filegen/*.java" />
     </javac>
