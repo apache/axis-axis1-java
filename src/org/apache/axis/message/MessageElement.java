@@ -141,32 +141,39 @@ public class MessageElement implements SOAPElement
     {
     }
 
-    MessageElement(String namespace, String localPart)
+    public MessageElement(String namespace, String localPart)
     {
         namespaceURI = namespace;
         name = localPart;
     }
 
-    MessageElement(Name eltName)
+    public MessageElement(String localPart, String prefix, String namespace)
+    {
+        this.namespaceURI = namespace;
+        this.name = localPart;
+        this.prefix = prefix;
+    }
+
+    public MessageElement(Name eltName)
     {
         this(eltName.getURI(), eltName.getLocalName());
         prefix = eltName.getPrefix();
     }
 
-    MessageElement(String namespace, String localPart, Object value)
+    public MessageElement(String namespace, String localPart, Object value)
     {
         this(namespace, localPart);
         objectValue = value;
     }
 
-    MessageElement(Element elem)
+    public MessageElement(Element elem)
     {
         elementRep = elem;
         namespaceURI = elem.getNamespaceURI();
         name = elem.getLocalName();
     }
 
-    MessageElement(Text text)
+    public MessageElement(Text text)
     {
         textRep = text;
         namespaceURI = text.getNamespaceURI();

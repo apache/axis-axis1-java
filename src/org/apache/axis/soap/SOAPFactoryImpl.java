@@ -54,6 +54,10 @@
  */
 package org.apache.axis.soap;
 
+import org.apache.axis.message.Detail;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.PrefixedQName;
+
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
@@ -75,8 +79,7 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
      *     creating the <CODE>SOAPElement</CODE> object
      */
     public SOAPElement createElement(Name name) throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new MessageElement(name);
     }
 
     /**
@@ -90,8 +93,7 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
      *     creating the <CODE>SOAPElement</CODE> object
      */
     public SOAPElement createElement(String localName) throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new MessageElement("",localName);
     }
 
     /**
@@ -111,25 +113,21 @@ public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
      */
     public SOAPElement createElement(
             String localName, String prefix, String uri) throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new MessageElement(localName, prefix, uri);
     }
 
     public javax.xml.soap.Detail createDetail()
             throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new Detail();
     }
 
-    public Name createName(String s, String s1, String s2)
+    public Name createName(String localName, String prefix, String uri)
             throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new PrefixedQName(uri,localName,prefix);
     }
 
-    public Name createName(String s)
+    public Name createName(String localName)
             throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return new PrefixedQName("",localName,"");
     }
 }
