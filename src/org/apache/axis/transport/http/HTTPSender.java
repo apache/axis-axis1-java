@@ -455,9 +455,14 @@ public class HTTPSender extends BasicHandler {
             }
             /*All HTTP headers have been read.*/
 
+            String contentType = (String) headers.get(
+                       HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+            contentType= (null == contentType )? null:contentType.trim();
+
             if (returnCode > 199 && returnCode < 300) {
                 // SOAP return is OK - so fall through
-            } else if (returnCode > 499 && returnCode < 600) {
+            } else if (!contentType.equals("text/html") &&
+                       (returnCode > 499 && returnCode < 600) ) {
                 // SOAP Fault should be in here - so fall through
             } else {
                 // Unknown return code - so wrap up the content into a
@@ -477,9 +482,6 @@ public class HTTPSender extends BasicHandler {
             }
 
             if ( b != -1 ) { //more data than just headers.
-                String contentType = (String) headers.get(
-                         HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
-                contentType= (null == contentType )? null:contentType.trim();
 
                 String contentLocation = (String) headers.get(
                     HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
