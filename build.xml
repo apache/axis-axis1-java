@@ -265,6 +265,7 @@ Copyright:
       <exclude name="test/inout/*.java" />
       <exclude name="test/multiref/*.java" />
       <exclude name="test/arrays/*.java" />
+      <exclude name="test/sequence/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/MD5AttachTest.java" unless="attachments.present"/>
     </javac>

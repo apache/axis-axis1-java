@@ -126,6 +126,9 @@ Copyright:
       <fileset dir="${test.dir}">
         <include name="**/Main.java"/>
       </fileset>
+      <fileset dir="${test.dir}">
+        <include name="sequence/SequenceInfo.java"/>
+      </fileset>
     </copy>
     <copy todir="${build.dir}/work/samples" overwrite="yes">
       <fileset dir="${samples.dir}">

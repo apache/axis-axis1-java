@@ -69,6 +69,8 @@ import java.io.IOException;
 import java.io.ObjectStreamField;
 import java.io.Serializable;
 import java.util.Hashtable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
@@ -100,6 +102,7 @@ public class BeanSerializer extends Deserializer
         if (pd==null) {
             try {
                pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
+               pd = sortPropertyDescriptors(pd,cls);
             } catch (Exception e) {
                // this should never happen
                throw new NullPointerException(e.toString());
@@ -111,6 +114,61 @@ public class BeanSerializer extends Deserializer
         }
 
         return pd;
+    }
+
+    /** 
+     * This method attempts to sort the property descriptors to match the 
+     * order defined in the class.  This is necessary to support 
+     * xsd:sequence processing, which means that the serialized order of 
+     * properties must match the xml element order.  (This method assumes that the
+     * order of the set methods matches the xml element order...the emitter 
+     * will always order the set methods according to the xml order.)
+     */
+    protected static PropertyDescriptor[] sortPropertyDescriptors(PropertyDescriptor[] oldPd, Class cls) {
+        try {
+            // Create a new pd array and index into the array
+            PropertyDescriptor[] newPd = new PropertyDescriptor[oldPd.length];
+            int index = 0;
+            
+            // Get the methods of the class and build a new pd array
+            // defined by the order of the get methods.
+            Method[] methods = cls.getMethods();
+            for (int i=0; i < methods.length; i++) {
+                Method method = methods[i];
+                if (method.getName().startsWith("set")) {
+                    boolean found = false;
+                    for (int j=0; j < oldPd.length && !found; j++) {
+                        if (oldPd[j].getWriteMethod() != null &&
+                            oldPd[j].getWriteMethod().equals(method)) {
+                            found = true;
+                            newPd[index] = oldPd[j];
+                            index++;
+                        }
+                    }
+                }
+            }
+            // Now if there are any additional property descriptors, add them to the end.
+            if (index < oldPd.length) {
+                for (int m=0; m < oldPd.length && index < oldPd.length; m++) {
+                    boolean found = false;           
+                    for (int n=0; n < index && !found; n++) {
+                        found = (oldPd[m]==newPd[n]);
+                    }
+                    if (!found) {
+                        newPd[index] = oldPd[m];
+                        index++;
+                    }
+                }
+            }
+            // If newPd has same number of elements as oldPd, use newPd.
+            if (index == oldPd.length) {
+                oldPd = newPd;
+            }
+        } catch (Exception e) {
+            // Don't sort Property Descriptors if problems occur
+            return oldPd;
+        }
+        return oldPd;
     }
 
     protected PropertyDescriptor [] getPd(Object val)
@@ -182,11 +240,12 @@ public class BeanSerializer extends Deserializer
             PropertyDescriptor [] pd =
                   (PropertyDescriptor [])propertyDescriptors.get(cls);
             if (pd == null) {
-              try {
-                pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
-              } catch (IntrospectionException e) {
-                return null;
-              }
+                try {
+                    pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
+                    pd = sortPropertyDescriptors(pd, cls);
+                } catch (IntrospectionException e) {
+                    return null;
+                }
                 propertyDescriptors.put(cls, pd);
             }
 

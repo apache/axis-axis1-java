@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:SequenceTest"
+             targetNamespace="urn:SequenceTest2"
+             xmlns:tns="urn:SequenceTest2"
+             xmlns:typens="urn:SequenceTest2"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:SequenceTest2"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+
+
+      <xsd:complexType name="sequenceInfo">
+        <xsd:sequence>
+            <xsd:element name="zero"  type="xsd:int"/>
+            <xsd:element name="one"   type="xsd:int"/>
+            <xsd:element name="two"   type="xsd:int"/>
+            <xsd:element name="three" type="xsd:int"/>
+            <xsd:element name="four"  type="xsd:int"/>
+            <xsd:element name="five"  type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="testSequenceRequest">
+    <part name="info" type="typens:sequenceInfo"/>
+  </message>
+
+  <message name="testSequenceResponse">
+    <part name="rc" type="xsd:int"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="SequenceTest">
+    <operation name="testSequence">
+      <input message="tns:testSequenceRequest"/>
+      <output message="tns:testSequenceResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="SequenceTestSOAPBinding" type="tns:SequenceTest">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="testSequence">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:SequenceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:SequenceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="SequenceTestService">
+    <port name="SequenceTest" binding="tns:SequenceTestSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/SequenceTest"/>
+    </port>
+  </service>
+
+</definitions>
+
