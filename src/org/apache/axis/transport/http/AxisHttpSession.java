@@ -120,4 +120,20 @@ public class AxisHttpSession implements Session
     {
         rep.setMaxInactiveInterval(timeout);
     }
+
+    /**
+     * Return the sessions' time-to-live.
+     * 
+     * @return the timeout value for this session.
+     */
+    public int getTimeout() {
+        return rep.getMaxInactiveInterval();
+    }
+
+    /**
+     * "Touch" the session (mark it recently used)
+     */
+    public void touch() {
+        // ???
+    }
 }

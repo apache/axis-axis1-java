@@ -90,4 +90,16 @@ public interface Session
      * out and invalidate.  "inactivity" is implementation-specific.
      */
     public void setTimeout(int timeout);
+    
+    /**
+     * Return the sessions' time-to-live.
+     * 
+     * @return the timeout value for this session.
+     */ 
+    public int getTimeout();
+    
+    /**
+     * "Touch" the session (mark it recently used)
+     */ 
+    public void touch();
 }

@@ -71,6 +71,14 @@ public class SimpleSession implements Session
      */
     private int timeout = -1;
     private long lastTouched;
+    
+    /**
+     * Default constructor - set lastTouched to now
+     */ 
+    public SimpleSession()
+    {
+        lastTouched = System.currentTimeMillis();
+    }
                           
     /** Get a property from the session
      *
@@ -117,5 +125,22 @@ public class SimpleSession implements Session
     public void setTimeout(int timeout)
     {
         this.timeout = timeout;
+    }
+    
+    public int getTimeout()
+    {
+        return timeout;
+    }
+
+    /**
+     * "Touch" the session (mark it recently used)
+     */
+    public void touch() {
+        lastTouched = System.currentTimeMillis();
+    }
+
+    public long getLastAccessTime()
+    {
+        return lastTouched;
     }
 }
