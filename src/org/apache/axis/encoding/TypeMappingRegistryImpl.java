@@ -130,7 +130,15 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     private HashMap mapTM;          // Type Mappings keyed with Namespace URI
     private TypeMapping defaultDelTM;  // Delegate to default Type Mapping 
 
-
+    /**
+     * Construct TypeMappingRegistry
+     * @param tm
+     */ 
+    public TypeMappingRegistryImpl(TypeMapping tm) {
+        mapTM = new HashMap();
+        defaultDelTM = tm;
+        register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
+    }
 
     /**
      * Construct TypeMappingRegistry

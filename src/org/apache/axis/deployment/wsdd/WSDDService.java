@@ -27,6 +27,9 @@ import org.apache.axis.attachments.Attachments;
 import org.apache.axis.attachments.AttachmentsImpl;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
@@ -48,9 +51,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.List;
 
 /**
  * A service represented in WSDD.
@@ -240,7 +243,7 @@ public class WSDDService
         // If not created, construct a tmr
         // and populate it with the type mappings.
         if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
+            createTMR();
             for (int i=0; i<typeMappings.size(); i++) {
                 deployTypeMapping((WSDDTypeMapping)
                                   typeMappings.get(i));
@@ -248,6 +251,26 @@ public class WSDDService
         }
     }
 
+    private void createTMR() {
+        String version = getParameter("typeMappingVersion");
+        if(version != null) {
+            TypeMapping tm = null;
+            if (version.equals("1.0")) {
+                tm = DefaultSOAPEncodingTypeMappingImpl.create();
+            } else if (version.equals("1.1")) {
+                tm = DefaultTypeMappingImpl.getSingleton();
+            } else if (version.equals("1.2")) {
+                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else if (version.equals("1.3")) {
+                tm = DefaultJAXRPC11TypeMappingImpl.createWithDelegate();
+            } else {
+                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
+            }
+            tmr = new TypeMappingRegistryImpl(tm);
+        } else {
+            tmr = new TypeMappingRegistryImpl();
+        }
+    }
 
     /**
      * This method can be used for dynamic deployment using new WSDDService()
@@ -500,7 +523,7 @@ public class WSDDService
             typeMappings.add(mapping);
         }
         if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
+            createTMR();
         }
         try {
             // Get the encoding style from the mapping, if it isn't set

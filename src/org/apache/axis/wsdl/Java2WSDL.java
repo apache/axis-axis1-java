@@ -15,9 +15,6 @@
  */
 package org.apache.axis.wsdl;
 
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;

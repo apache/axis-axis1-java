@@ -120,19 +120,6 @@ public abstract class AxisEngine extends BasicHandler
      */
     private ArrayList actorURIs = new ArrayList();
 
-    /** Are we in JAX-RPC 1.1 compatibility mode? */
-    public static boolean jaxrpc11Compliance = false;
-    static {
-        try {
-            // We check a system property, but we can use use switches
-            // to control this in WSDL2Java and at runtime.
-            jaxrpc11Compliance =
-                    System.getProperty("axis.jaxrpc11Compliance", "false")
-                    .equalsIgnoreCase("true");
-        } catch (Throwable t) {
-        }
-    }
-
     /**
      * Thread local storage used for locating the active message context.
      * This information is only valid for the lifetime of this request.

@@ -27,8 +27,6 @@ import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import javax.xml.rpc.ServiceException;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -278,6 +276,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println();
         pw.println("    public " + Utils.getJavaLocalName(sEntry.getName())
                 + "Locator() {");
+        pw.println("        setTypeMappingVersion(\"" + emitter.getTypeMappingVersion() + "\");");
         pw.println("    }");
         pw.println();
     	
@@ -286,6 +285,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println("    public " + Utils.getJavaLocalName(sEntry.getName())
                 + "Locator(org.apache.axis.EngineConfiguration config) {");
         pw.println("        super(config);");
+        pw.println("        setTypeMappingVersion(\"" + emitter.getTypeMappingVersion() + "\");");
         pw.println("    }");
 
         //Write a constructor that accepts String wsdl location + Service QName
@@ -294,6 +294,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 + "Locator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) "
                 + "throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
         pw.println("        super(wsdlLoc, sName);");
+        pw.println("        setTypeMappingVersion(\"" + emitter.getTypeMappingVersion() + "\");");
         pw.println("    }");
     }
 

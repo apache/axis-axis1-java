@@ -47,11 +47,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.HashMap;
 
 /**
  * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
@@ -64,6 +64,9 @@ public class JavaDeployWriter extends JavaWriter {
     /** Field symbolTable */
     protected SymbolTable symbolTable;
 
+    /** Field emitter */
+    protected Emitter emitter;
+    
     /**
      * Constructor.
      *
@@ -75,7 +78,8 @@ public class JavaDeployWriter extends JavaWriter {
                             SymbolTable symbolTable) {
 
         super(emitter, "deploy");
-
+        
+        this.emitter = emitter;
         this.definition = definition;
         this.symbolTable = symbolTable;
     }    // ctor
@@ -400,6 +404,10 @@ public class JavaDeployWriter extends JavaWriter {
 
         pw.println("      <parameter name=\"className\" value=\"" + className
                 + "\"/>");
+
+        pw.println("      <parameter name=\"typeMappingVersion\" value=\"" 
+                   + emitter.getTypeMappingVersion() + "\"/>");
+        
         pw.println("      <parameter name=\"wsdlPortType\" value=\""
                 + binding.getPortType().getQName().getLocalPart() + "\"/>");
 

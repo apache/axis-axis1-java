@@ -17,7 +17,6 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import org.apache.axis.AxisEngine;
 import org.apache.axis.attachments.OctetStream;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -27,6 +26,8 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.DateDeserializerFactory;
 import org.apache.axis.encoding.ser.DateSerializerFactory;
+import org.apache.axis.encoding.ser.DocumentDeserializerFactory;
+import org.apache.axis.encoding.ser.DocumentSerializerFactory;
 import org.apache.axis.encoding.ser.ElementDeserializerFactory;
 import org.apache.axis.encoding.ser.ElementSerializerFactory;
 import org.apache.axis.encoding.ser.HexDeserializerFactory;
@@ -41,8 +42,6 @@ import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
-import org.apache.axis.encoding.ser.DocumentDeserializerFactory;
-import org.apache.axis.encoding.ser.DocumentSerializerFactory;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.JavaUtils;
@@ -82,11 +81,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      */
     public static synchronized TypeMapping getSingleton() {
         if (tm == null) {
-            if(AxisEngine.jaxrpc11Compliance) {
-                tm = new DefaultJAXRPC11TypeMappingImpl();
-            } else {
-                tm = new DefaultTypeMappingImpl();
-            }
+            tm = new DefaultTypeMappingImpl();
         }
         return tm;
     }
