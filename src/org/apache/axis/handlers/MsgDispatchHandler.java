@@ -120,4 +120,9 @@ public class MsgDispatchHandler extends BasicHandler {
 
     Debug.Print( 1, "Exit: MsgDispatcherHandler::invoke" );
   }
+
+  public void undo(MessageContext msgContext) {
+    Debug.Print( 1, "Enter: MsgDispatcherHandler::undo" );
+    Debug.Print( 1, "Exit: MsgDispatcherHandler::undo" );
+  }
 };

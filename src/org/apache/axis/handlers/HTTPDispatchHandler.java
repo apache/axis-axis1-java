@@ -195,4 +195,9 @@ public class HTTPDispatchHandler extends BasicHandler {
     } 
     Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
   }
+
+  public void undo(MessageContext msgContext) {
+    Debug.Print( 1, "Enter: HTTPDispatchHandler::undo" );
+    Debug.Print( 1, "Exit: HTTPDispatchHandler::undo" );
+  }
 };

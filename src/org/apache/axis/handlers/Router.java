@@ -64,6 +64,7 @@ import org.apache.axis.utils.Debug;
  * the MessageContext off to that Handler.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Doug Davis (dug@us.ibm.com)
  */
 public class Router extends BasicHandler
 {
@@ -87,6 +88,26 @@ public class Router extends BasicHandler
         msgContext.clearProperty(Constants.MC_TARGET);
         
         h.invoke(msgContext);
+
+        msgContext.setProperty(Constants.MC_TARGET, target);
         Debug.Print( 1, "Exit : Router::invoke" );
+    }
+
+    public void undo(MessageContext msgContext)
+    {
+        Debug.Print( 1, "Enter: Router::undo" );
+        SimpleServiceRegistry registry = (SimpleServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+        
+        String target = (String)msgContext.getProperty(Constants.MC_TARGET);
+        
+        Handler h = registry.find( target );
+
+        // Make sure next dispatch, if any, is clean so we don't loop back.
+        msgContext.clearProperty(Constants.MC_TARGET);
+        
+        h.undo(msgContext);
+
+        msgContext.setProperty(Constants.MC_TARGET, target);
+        Debug.Print( 1, "Exit: Router::undo" );
     }
 }

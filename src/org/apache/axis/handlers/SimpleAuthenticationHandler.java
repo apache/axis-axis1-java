@@ -123,4 +123,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
     }
     Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
   }
+  public void undo(MessageContext msgContext) {
+    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
+    Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
+  }
 };

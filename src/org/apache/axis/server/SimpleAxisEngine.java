@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -66,25 +66,25 @@ import org.apache.axis.registries.* ;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SimpleAxisEngine extends BasicHandler 
+public class SimpleAxisEngine extends BasicHandler
 {
-	public SimpleAxisEngine() {}
-	
-	/**
-	 * Allows the Listener to specify which handler/service registry
-	 * implementation they want to use.
-	 */
-	public SimpleAxisEngine(HandlerRegistry handlers, HandlerRegistry services) 
-	{
-		Debug.Print( 1, "Enter: SimpleAxisEngine::Constructor");
-		handlers.init();
-		services.init();
-		addOption(Constants.HANDLER_REGISTRY, handlers);
-		addOption(Constants.SERVICE_REGISTRY, services);
-		Debug.Print( 1, "Exit: SimpleAxisEngine::Constructor");
-	}
-	
-	/**
+        public SimpleAxisEngine() {}
+
+        /**
+         * Allows the Listener to specify which handler/service registry
+         * implementation they want to use.
+         */
+        public SimpleAxisEngine(HandlerRegistry handlers, HandlerRegistry services)
+        {
+                Debug.Print( 1, "Enter: SimpleAxisEngine::Constructor");
+                handlers.init();
+                services.init();
+                addOption(Constants.HANDLER_REGISTRY, handlers);
+                addOption(Constants.SERVICE_REGISTRY, services);
+                Debug.Print( 1, "Exit: SimpleAxisEngine::Constructor");
+        }
+
+        /**
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
      */
@@ -110,7 +110,7 @@ public class SimpleAxisEngine extends BasicHandler
         Debug.Print( 1, "Enter: SimpleAxisEngine::invoke" );
         HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
         HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
-        
+
         /** Make sure later Handlers can get this directly.
         */
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
@@ -148,6 +148,11 @@ public class SimpleAxisEngine extends BasicHandler
         }
         h.cleanup();   // ???
         Debug.Print( 1, "Exit: SimpleAxisEngine::invoke" );
+    };
+
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: SimpleAxisEngine::undo" );
+        Debug.Print( 1, "Exit: SimpleAxisEngine::undo" );
     };
 
 };
