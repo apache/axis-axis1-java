@@ -131,9 +131,39 @@ public class TestDeser extends TestCase {
                     new Double(3.14));
     }
 
+    public void testDoubleNaN() throws Exception {
+        deserialize("<result xsi:type=\"xsd:double\">NaN</result>",
+                    new Double(Double.NaN));
+    }
+
+    public void testDoubleINF() throws Exception {
+        deserialize("<result xsi:type=\"xsd:double\">INF</result>",
+                    new Double(Double.POSITIVE_INFINITY));
+    }
+
+    public void testDoubleNINF() throws Exception {
+        deserialize("<result xsi:type=\"xsd:double\">-INF</result>",
+                    new Double(Double.NEGATIVE_INFINITY));
+    }
+
     public void testFloat() throws Exception {
         deserialize("<result xsi:type=\"xsd:float\">3.14</result>",
                     new Float(3.14F));
+    }
+
+    public void testFloatNaN() throws Exception {
+        deserialize("<result xsi:type=\"xsd:float\">NaN</result>",
+                    new Float(Float.NaN));
+    }
+
+    public void testFloatINF() throws Exception {
+        deserialize("<result xsi:type=\"xsd:float\">INF</result>",
+                    new Float(Float.POSITIVE_INFINITY));
+    }
+
+    public void testFloatNINF() throws Exception {
+        deserialize("<result xsi:type=\"xsd:float\">-INF</result>",
+                    new Float(Float.NEGATIVE_INFINITY));
     }
 
     public void testInt() throws Exception {

@@ -246,8 +246,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
         addSerializer(java.lang.Boolean.class, XSD_BOOLEAN, se);
-        addSerializer(java.lang.Double.class, XSD_DOUBLE, se);
-        addSerializer(java.lang.Float.class, XSD_FLOAT, se);
+        addSerializer(java.lang.Double.class, XSD_DOUBLE, new FloatSerializer());
+        addSerializer(java.lang.Float.class, XSD_FLOAT, new FloatSerializer());
         addSerializer(java.lang.Integer.class, XSD_INT, se);
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
@@ -258,15 +258,18 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
-        addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, factory);
-        addDeserializersFor(XSD_FLOAT, java.lang.Float.class, factory);
         addDeserializersFor(XSD_INT, java.lang.Integer.class, factory);
         addDeserializersFor(XSD_LONG, java.lang.Long.class, factory);
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, factory);
         addDeserializersFor(XSD_BYTE, java.lang.Byte.class, factory);
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, factory);
         
-        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
+        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, 
+            new BooleanDeserializerFactory());
+        addDeserializersFor(XSD_FLOAT, java.lang.Float.class, 
+            new FloatSerializer.FloatDeserializerFactory());
+        addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, 
+            new FloatSerializer.FloatDeserializerFactory());
 
         // handle the various datetime QNames...
         addDeserializerFactory(
