@@ -517,6 +517,27 @@ public class Call implements javax.xml.rpc.Call {
             }
 
             String protocol = address.getProtocol();
+
+            // Handle the case where the protocol is the same but we
+            // just want to change the URL - if so just set the URL,
+            // creating a new Transport object will drop all session
+            // data - and we want that stuff to persist between invoke()s.
+            // Technically the session data should be in the message
+            // context so that it can be persistent across transports
+            // as well, but for now the data is in the Transport object.
+            ////////////////////////////////////////////////////////////////
+            if ( this.transport != null ) {
+                String oldAddr = this.transport.getUrl();
+                if ( oldAddr != null && !oldAddr.equals("") ) {
+                    URL     tmpURL   = new URL( oldAddr );
+                    String  oldProto = tmpURL.getProtocol();
+                    if ( protocol.equals(oldProto) ) {
+                        this.transport.setUrl( address.toString() );
+                        return ;
+                    }
+                }
+            }
+
             Transport transport = getTransportForProtocol(protocol);
             if (transport == null)
                 throw new AxisFault("Call.setTargetEndpointAddress",
@@ -525,7 +546,8 @@ public class Call implements javax.xml.rpc.Call {
             transport.setUrl(address.toString());
             setTransport(transport);
         }
-        catch( org.apache.axis.AxisFault exp ) {
+        catch( Exception exp ) {
+            exp.printStackTrace();
             // do what?
             // throw new AxisFault("Call.setTargetEndpointAddress",
                     //"Malformed URL Exception: " + e.getMessage(), null, null);
