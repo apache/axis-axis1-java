@@ -10,3 +10,4 @@ bin
 buildit.bat
 testit.bat
 GetQuote.wsdl
+axis_coverage*

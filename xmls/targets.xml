@@ -61,8 +61,9 @@
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
 
-  <target name="setenv" unless="setenv.already.executed">
+  <target name="setenv" unless="setenv.already.executed" depends="axis-clover-setup">
     <property name="setenv.already.executed" value="true"/>
+
     <condition property="ant.good">
       <and>
         <contains string="${ant.version}" substring="Apache Ant version"/>
@@ -339,6 +340,7 @@
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />
     <echo message="axis-ant.present=${axis-ant.present}" />
     <echo message="httpunit.present=${httpunit.present}" />
+    <echo message="clover.present=${clover.present}" />
     <echo message="jms.present=${jms.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
@@ -618,4 +620,28 @@
   <target name="transport-layer" depends="setenv" >
     <ant inheritAll="true" dir="${axis.home}/samples/transport" 
       antfile="build.xml" target="compile" />
+  </target>
+
+  <target name="clover-report" depends="setenv">
+     <clover-report>
+        <current outfile="${axis.home}/build/clover-report" title="Axis Clover Report">
+           <format type="html"/> 
+        </current>	 
+     </clover-report>
+  </target>
+
+  <target name="axis-clover-setup" depends="axis-clover-setenv" if="clover.present">
+     <echo message="Registering clover tasks" />
+     <taskdef resource="clovertasks"/>
+     <clover-setup initString="${axis.home}/axis_coverage.db">
+       <files>
+        <include name="**/org/apache/axis/**/*.java"/>
+       </files>
+     </clover-setup>
+  </target>
+
+  <target name="axis-clover-setenv">
+     <condition property="clover.present" >
+       <available classname="com.cortexeb.tools.clover.tasks.CloverTask" classpathref="classpath" />
+     </condition>
   </target>
