@@ -112,7 +112,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             else if (mimeType.startsWith("multipart/")) {
                 return "org.apache.axis.holders.MimeMultipartHolder" + mimeDimensions;
             }
-            else if (mimeType.startsWith("application/octetstream")) {
+            else if (mimeType.startsWith("application/octetstream")
+                    || mimeType.startsWith("application/octet-stream")) {
                 return "org.apache.axis.holders.OctetStreamHolder" + mimeDimensions;
             }
             else if (mimeType.equals("text/xml") ||
