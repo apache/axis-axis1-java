@@ -86,7 +86,7 @@ public class EngineConfigurationFactoryServlet
     protected static Log log =
         LogFactory.getLog(EngineConfigurationFactoryServlet.class.getName());
 
-    private EngineConfiguration config;
+    private ServletContext ctx;
     
     /**
      * Creates and returns a new EngineConfigurationFactory.
@@ -99,25 +99,30 @@ public class EngineConfigurationFactoryServlet
      * @see org.apache.axis.configuration.EngineConfigurationFactoryFinder
      */
     public static EngineConfigurationFactory newFactory(Object param) {
-        if (param instanceof ServletContext) {
-            ServletContext ctx = (ServletContext)param;
-            EngineConfiguration config = getServerEngineConfig(ctx);
-
-            if (config != null) {
-                return new EngineConfigurationFactoryServlet(config);
-            }
-        }
-        
-        return null;
+        /**
+         * Default, let this one go through if we find a ServletContext.
+         * 
+         * The REAL reason we are not trying to make any
+         * decision here is because it's impossible
+         * (without refactoring FileProvider) to determine
+         * if a *.wsdd file is present or not until the configuration
+         * is bound to an engine.
+         * 
+         * FileProvider/EngineConfiguration pretend to be independent,
+         * but they are tightly bound to an engine instance...
+         */
+        return (param instanceof ServletContext)
+               ? new EngineConfigurationFactoryServlet((ServletContext)param)
+               : null;
     }
 
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    protected EngineConfigurationFactoryServlet(EngineConfiguration config) {
+    protected EngineConfigurationFactoryServlet(ServletContext ctx) {
         super();
-        this.config = config;
+        this.ctx = ctx;
     }
 
     /**
@@ -126,7 +131,7 @@ public class EngineConfigurationFactoryServlet
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
-        return config;
+        return getServerEngineConfig(ctx);
     }
 
     /**
