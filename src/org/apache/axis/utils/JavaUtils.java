@@ -813,7 +813,8 @@ public class JavaUtils
             // If c is not a character, but is a legal Java
             // identifier character, capitalize the next character.
             // For example:  "22hi" becomes "22Hi"
-            wordStart = !Character.isLetter(c);
+            wordStart = !(Character.isLetter(c) || Character.isJavaIdentifierPart(c));
+            //wordStart = !Character.isJavaIdentifierPart(c)
         }
 
         // covert back to a String
