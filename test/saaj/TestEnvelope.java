@@ -15,6 +15,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
@@ -103,6 +105,29 @@ public class TestEnvelope extends junit.framework.TestCase {
         assertTrue(fc.equals("myFault"));
     }
 
+    public void testFaults2() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
+
+        assertTrue(body.getFault() != null);
+
+        Detail d1 = sf.addDetail();
+        Name name = envelope.createName("GetLastTradePrice", "WOMBAT",
+            "http://www.wombat.org/trader");
+        d1.addDetailEntry(name);
+        
+        Detail d2 = sf.getDetail();
+        assertTrue(d2 != null);
+        Iterator i = d2.getDetailEntries();
+        assertTrue(getIteratorCount(i) == 1);
+        i = d2.getDetailEntries();
+        while(i.hasNext()) {
+            DetailEntry de = (DetailEntry)i.next();
+            assertEquals(de.getElementName(),name);
+        }
+    }
+    
     public void testHeaderElements() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
@@ -175,6 +200,7 @@ public class TestEnvelope extends junit.framework.TestCase {
 
     public static void main(String[] args) throws Exception {
         test.saaj.TestEnvelope tester = new test.saaj.TestEnvelope("TestEnvelope");
+        tester.testFaults2();
         tester.testEnvelope();
         tester.testText3();
         tester.testText2();
