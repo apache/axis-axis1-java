@@ -17,7 +17,7 @@ public class TestMimeHeaders extends TestCase {
         super(s);
     }
 
-    public void testTransferingMimeHeadersToHttpHeaders() throws Exception {
+    public void testTransferMimeHeadersToHttpHeaders() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection con = scFactory.createConnection();
 
