@@ -78,7 +78,6 @@ import org.apache.axis.encoding.ServiceDescription;
 public class SerializationContext
 {
     private static final boolean DEBUG_LOG = false;
-    private static final boolean pretty = false;
     
     public NSStack nsStack = new NSStack();
                                         
@@ -94,6 +93,21 @@ public class SerializationContext
     
     private MessageContext msgContext;
     
+    /**
+     * Should the XML be "pretty" printed on serialization?  If false, the
+     * XML will be sent out verbatim.  If true, ignorable white space may be 
+     * inserted or removed.
+     */
+    private boolean pretty = false;
+
+    public boolean getPretty() {
+        return pretty;
+    }
+
+    public void setPretty(boolean pretty) {
+        this.pretty = pretty;
+    }
+
     /**
      * Should I write out objects as multi-refs?
      *
