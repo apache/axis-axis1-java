@@ -64,9 +64,9 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.SessionUtils;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -313,7 +313,7 @@ public class SimpleSessionHandler extends BasicHandler
      */
     private synchronized Long getNewSession()
     {
-        Long id = SessionGeneratorFactory.getFactory().generateSession();
+        Long id = SessionUtils.generateSession();
         SimpleSession session = new SimpleSession();
         session.setTimeout(defaultSessionTimeout);
         activeSessions.put(id, session);

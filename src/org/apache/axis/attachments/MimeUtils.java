@@ -62,9 +62,9 @@ package org.apache.axis.attachments;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.SessionUtils;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -272,7 +272,7 @@ public class MimeUtils {
         javax.mail.internet.MimeMultipart multipart = null;
 
         try {
-            String rootCID = SessionGeneratorFactory.getFactory().generateSessionId();
+            String rootCID = SessionUtils.generateSessionId();
 
             multipart = new javax.mail.internet.MimeMultipart(
                     "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
