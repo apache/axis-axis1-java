@@ -65,7 +65,7 @@ package test.wsdl.interop3.groupE.client;
 import junit.framework.AssertionFailedError;
 
 public class InteropTestDocLitServiceTestCase extends junit.framework.TestCase {
-    public static URL url;
+    public static java.net.URL url;
 
     public InteropTestDocLitServiceTestCase(String name) {
         super(name);
