@@ -509,14 +509,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                         try{
                         ret= attch.getAttachmentByReference(href);
                         }catch(AxisFault e){
-                            java.io.StringWriter sw= new java.io.StringWriter();
-                            java.io.PrintWriter pw= new java.io.PrintWriter(sw);
-                            e.printStackTrace(pw);
-                            pw.flush();
-                            RuntimeException rte=
-                              new RuntimeException(e.toString() + sw.toString());
-                            pw.close();
-                            throw rte; 
+                            throw new RuntimeException(e.toString() + JavaUtils.stackToString(e));
                         }
                     }
                 }

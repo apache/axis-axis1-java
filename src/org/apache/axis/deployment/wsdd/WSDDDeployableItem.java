@@ -63,6 +63,7 @@ import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -342,11 +343,11 @@ public abstract class WSDDDeployableItem
                 try{
                   h.init();
                 }catch(Exception e){
-                    String msg=e + NL +stackToString(e);
+                    String msg=e + NL + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(e);
                 }catch(Error e){
-                    String msg=e + NL +stackToString(e);
+                    String msg=e + NL + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(msg);
                 }
@@ -385,13 +386,5 @@ public abstract class WSDDDeployableItem
             return Class.forName(type.getLocalPart());
         }
         return null;
-    }
-
-    protected static String stackToString(Throwable e){
-      java.io.StringWriter sw= new java.io.StringWriter(1024); 
-      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
-      e.printStackTrace(pw);
-      pw.close();
-      return sw.toString();
     }
 }

@@ -81,6 +81,8 @@ import java.util.List;
  */
 public class JavaUtils
 {
+    public static final String LS = System.getProperty("line.separator");
+
     protected static Log log =
         LogFactory.getLog(JavaUtils.class.getName());
     
@@ -871,4 +873,12 @@ public class JavaUtils
         return false;
     }
 
+
+    public static String stackToString(Throwable e){
+      java.io.StringWriter sw= new java.io.StringWriter(1024); 
+      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
+      e.printStackTrace(pw);
+      pw.close();
+      return sw.toString();
+    }
 }

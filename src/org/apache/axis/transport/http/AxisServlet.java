@@ -464,7 +464,7 @@ public class AxisServlet extends HttpServlet
                                    JavaUtils.getMessage("somethingWrong00") +
                                    "</p>");
                     writer.println("<pre>Exception - " + e + "<br>");
-                    e.printStackTrace(res.getWriter());
+                    writer.println(JavaUtils.stackToString(e));
                     writer.println("</pre>");
                 }
             }
