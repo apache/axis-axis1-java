@@ -47,10 +47,10 @@ class UTF16Encoder extends AbstractXMLEncoder {
         if (xmlString == null) {
             return;
         }
-        char[] characters = xmlString.toCharArray();
+        int length = xmlString.length();
         char character;
-        for (int i = 0; i < characters.length; i++) {
-            character = characters[i];
+        for (int i = 0; i < length; i++) {
+            character = xmlString.charAt( i );
             switch (character) {
                 // we don't care about single quotes since axis will
                 // use double quotes anyway

@@ -48,10 +48,10 @@ class UTF8Encoder extends AbstractXMLEncoder {
         if (xmlString == null) {
             return;
         }
-        char[] characters = xmlString.toCharArray();
+        int length = xmlString.length();
         char character;
-        for (int i = 0; i < characters.length; i++) {
-            character = characters[i];
+        for (int i = 0; i < length; i++) {
+            character = xmlString.charAt( i );
             switch (character) {
                 // we don't care about single quotes since axis will
                 // use double quotes anyway
@@ -86,24 +86,6 @@ class UTF8Encoder extends AbstractXMLEncoder {
                         writer.write("&#x");
                         writer.write(Integer.toHexString(character).toUpperCase());
                         writer.write(";");
-                        /*
-			TODO: Try fixing this block instead of code above.
-                        if (character < 0x80) {
-                            writer.write(character);
-                        } else if (character < 0x800) {
-                            writer.write((0xC0 | character >> 6));
-                            writer.write((0x80 | character & 0x3F));
-                        } else if (character < 0x10000) {
-                            writer.write((0xE0 | character >> 12));
-                            writer.write((0x80 | character >> 6 & 0x3F));
-                            writer.write((0x80 | character & 0x3F));
-                        } else if (character < 0x200000) {
-                            writer.write((0xF0 | character >> 18));
-                            writer.write((0x80 | character >> 12 & 0x3F));
-                            writer.write((0x80 | character >> 6 & 0x3F));
-                            writer.write((0x80 | character & 0x3F));
-                        }
-                        */
                     } else {
                         writer.write(character);
                     }
