@@ -108,6 +108,10 @@ public class AxisServlet extends HttpServlet
     private AxisEngine engine = null;
     private ServletSecurityProvider securityProvider = null;
 
+    private static final String AXIS_ENGINE = "AxisEngine" ;
+
+    private static boolean isDebug = false;
+
     /**
      * Should we enable the "?list" functionality on GETs?  (off by
      * default because deployment information is a potential security
@@ -115,16 +119,18 @@ public class AxisServlet extends HttpServlet
      */
     private boolean enableList = false;
 
-    private static final String AXIS_ENGINE = "AxisEngine" ;
-
-    private static boolean isDebug = false;
-
     // Cached path to our WEB-INF directory
     private String webInfPath = null;
+    protected String getWebInfPath() { return webInfPath; }
+    
     // Cached path to JWS output directory
     private String jwsClassDir = null;
+    protected String getJWSClassDir() { return jwsClassDir; }
+    
     // Cached path to our "root" dir
     private String homeDir = null;
+    protected String getHomeDir() { return homeDir; }
+    
 
     public AxisServlet() {
     }
@@ -677,7 +683,7 @@ public class AxisServlet extends HttpServlet
      * by derived class.
      */
     protected String getDefaultJWSClassDir() {
-        return webInfPath + File.separator +  "jwsClasses";
+        return getWebInfPath() + File.separator +  "jwsClasses";
     }
 
     /**
