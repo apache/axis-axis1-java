@@ -1,0 +1,95 @@
+How to use the current version of the code....
+----------------------------------------------
+(these instructions assume tomcat)
+
+- Deploy the Admin service
+  - From the directory you run tomcat from, run:
+      java org.apache.axis.utils.Admin  samples\xml\init.xml
+
+- Deploy any additional services
+  - Two ways to deploy new services:
+    1 - From the tomcat directory, run:
+          java org.apche.axis.utils.Admin <whatever>.xml
+    2 - Once tomcat is running, run (from anywhere/any dir):
+          java org.apache.axis.client.AdminClient <whatever>.xml
+        
+  - Look in the samples\xml dir for deployment xml files (deploy.xml is
+    the one I've been using so far)
+
+
+There are couple of test client's available - right now they're in
+the axis\client directory - should be moved to the samples dir soon.
+
+AdminClient
+  - Used to deploy/undeploy handlers/chains/services
+
+EchoClient:
+  - Just send the server an xml file and get it back
+
+GetQuoteClient:
+  - Hardcoded client for stock quote sample
+
+TestClient:
+  - Allows you to run a service - actually it just allows you to
+    specify the SOAPAction header line on the command line.  It sends
+    a static SOAPEnvelope.
+
+
+
+Format of deployment xml files:
+-------------------------------
+(This is temporary until WSDD is ready)
+
+<deploy>
+  <handler name="log" class="org.apache.axis.handlers.LogHandler" />
+  <handler name="rpc-dispatch" class="org.apache.axis.handlers.RPCDispatchHandle
+r" />
+  <handler name="echo" class="org.apache.axis.handlers.EchoHandler" />
+  <handler name="admin" class="org.apache.axis.handlers.AdminHandler" />
+  <handler name="error" class="org.apache.axis.handlers.ErrorHandler" />
+
+  <chain name="pre" flow="log" />
+  <chain name="echoChain" input="log" pivot="echo" output="log" />
+  <chain name="errorChain" input="log,log" pivot="error" output="log,log" />
+
+  <service name="AdminService" handler="admin" />
+  <service name="EchoService" handler="echoChain" />
+  <service name="ErrorService" handler="errorChain" />
+  <service name="ErrorService1" handler="error" />
+
+  <chain name="JavaRPC" flow="log,rpc-dispatch,log" />
+
+  <service name="urn:GetQuote" handler="JavaRPC" >
+    <option name="className" value="samples.stockquote.StockQuoteService" />
+    <option name="methodName" value="getQuote" />
+  </service>
+</deploy>
+
+The outermost element can be either 'deploy' or 'undeploy'.
+The child elements of the root must be one of the following (and must have
+the specified attributes):
+  handler
+    - name
+    - class
+  chain
+    - name
+    - flow 
+        comma separated list of handlers
+        for defining a single chain
+    or
+    - input,pivot,output
+        3 different attributes
+        input/output are comma separated list of handlers, pivot is a
+        single handler
+  service
+    - name
+    - handler
+
+Any of these allow for 'option' sub-elements to allow for name/value pairs
+of options.
+
+
+Misc:
+-----
+GetQuoteClient actually works!!  It's very very hardcoded but it works.
+
