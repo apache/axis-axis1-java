@@ -406,29 +406,30 @@ public class ArrayDeserializer extends DeserializerImpl
                                                        localName,
                                                        attributes);
 
-        // If xsi:type is not set, use the default.
-        if (itemType == null) {
-            itemType = defaultItemType;
-        }
-
-        // If xsi:type is still not set, try using the arrayClass info
-        if (itemType == null &&
-            arrayClass != null &&
-            arrayClass.isArray()) {
-            itemType = context.getTypeMapping().
-                getTypeQName(arrayClass.getComponentType());
-        }
-
         // Get the deserializer for the type.  If no deserializer is 
-        // found, the deserializer is set to DeserializerImpl() which
-        // will properly issue any errors.
+        // found, the deserializer is set to DeserializerImpl().
+        // It is possible that the element has an href, thus we
+        // won't know the type until the definitition is encountered.
         Deserializer dSer = null;
         if (itemType != null) {
             dSer = context.getDeserializerForType(itemType);
         }
         if (dSer == null) {
             dSer = new DeserializerImpl();  
+            // Determine a default type for the deserializer
+            if (itemType == null) {
+                QName defaultType = defaultItemType;
+                // If defaultType is not known, try using the arrayClass info
+                if (defaultType == null &&
+                    arrayClass != null &&
+                    arrayClass.isArray()) {
+                    defaultType = context.getTypeMapping().
+                        getTypeQName(arrayClass.getComponentType());
+                }
+                dSer.setDefaultType(defaultType);
+            }
         }
+
 
         // Register the callback value target, and
         // keep track of this index so we know when it has been set.

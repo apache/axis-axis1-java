@@ -153,6 +153,6 @@ public class List {
      */
     public String toString() {
         return "{" + varInt + ", \"" + varString + "\", " + 
-            child.toString() + "}";
+            (child == null ? null :child.toString()) + "}";
     }
 }

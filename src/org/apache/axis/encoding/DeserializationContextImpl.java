@@ -532,10 +532,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         // There could already be a deserializer in the fixup list
         // for this href.  If so, the easiest way to get all of the
-        // targets updated is to copy the previous deserializers 
+        // targets updated is to move the previous deserializers 
         // targets to dser.
-        if (prev != null && prev != dser)
-            dser.copyValueTargets(prev);
+        if (prev != null && prev != dser) {
+            dser.moveValueTargets(prev);
+            if (dser.getDefaultType() == null) {
+                dser.setDefaultType(prev.getDefaultType());
+            }
+        }
     }
     
     /**
