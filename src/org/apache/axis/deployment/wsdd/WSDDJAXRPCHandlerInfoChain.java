@@ -91,14 +91,14 @@ public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
     public WSDDJAXRPCHandlerInfoChain(Element e) throws WSDDException {
         super(e);
 
-	ArrayList infoList = new ArrayList();
-	_hiList = new ArrayList();
+    ArrayList infoList = new ArrayList();
+    _hiList = new ArrayList();
         Element[] elements = getChildElements(e, ELEM_WSDD_JAXRPC_HANDLERINFO);
         if (elements.length != 0) {
             for (int i = 0; i < elements.length; i++) {
                 WSDDJAXRPCHandlerInfo handlerInfo =
                     new WSDDJAXRPCHandlerInfo(elements[i]);
-		_hiList.add(handlerInfo);
+        _hiList.add(handlerInfo);
 
                 String handlerClassName = handlerInfo.getHandlerClassName();
                 Class handlerClass = null;
@@ -151,26 +151,26 @@ public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
      */
     public void writeToContext(SerializationContext context)
             throws IOException {
-			context.startElement(QNAME_JAXRPC_HANDLERINFOCHAIN,null);
-			
-			List his = _hiList;
-			Iterator iter = his.iterator();
-			while (iter.hasNext()) {
-				WSDDJAXRPCHandlerInfo hi = (WSDDJAXRPCHandlerInfo) iter.next();
-				hi.writeToContext(context);
-			}
-			
-			if (_roles != null) {
-				for (int i=0; i < _roles.length ; i++) {
-		        	AttributesImpl attrs1 = new AttributesImpl();
-	            	attrs1.addAttribute("", ATTR_SOAPACTORNAME, ATTR_SOAPACTORNAME,
+            context.startElement(QNAME_JAXRPC_HANDLERINFOCHAIN,null);
+            
+            List his = _hiList;
+            Iterator iter = his.iterator();
+            while (iter.hasNext()) {
+                WSDDJAXRPCHandlerInfo hi = (WSDDJAXRPCHandlerInfo) iter.next();
+                hi.writeToContext(context);
+            }
+            
+            if (_roles != null) {
+                for (int i=0; i < _roles.length ; i++) {
+                    AttributesImpl attrs1 = new AttributesImpl();
+                    attrs1.addAttribute("", ATTR_SOAPACTORNAME, ATTR_SOAPACTORNAME,
                                "CDATA", _roles[i]);
-					context.startElement(QNAME_JAXRPC_ROLE,attrs1);
-					context.endElement();
-				}
-			}
-			
-			context.endElement();
+                    context.startElement(QNAME_JAXRPC_ROLE,attrs1);
+                    context.endElement();
+                }
+            }
+            
+            context.endElement();
     }
     
     public ArrayList getHandlerInfoList() {

@@ -111,7 +111,7 @@ public class WSDDJAXRPCHandlerInfo
                 Element param = elements[i];
                 String pname = param.getAttribute(ATTR_NAME);
                 String value = param.getAttribute(ATTR_VALUE);
-				_map.put(pname, value);
+                _map.put(pname, value);
             }           
         }
         
@@ -126,7 +126,7 @@ public class WSDDJAXRPCHandlerInfo
 
                 QName headerQName = XMLUtils.getQNameFromString(headerStr, qElem);
                 if (headerQName != null) 
-	                headerList.add(headerQName); 
+                    headerList.add(headerQName); 
             }
             QName[] headers = new QName[headerList.size()];
             _headers = (QName[]) headerList.toArray(headers);
@@ -165,37 +165,37 @@ public class WSDDJAXRPCHandlerInfo
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-	AttributesImpl attrs = new AttributesImpl();
-	attrs.addAttribute("", ATTR_CLASSNAME, ATTR_CLASSNAME,
-				   "CDATA", _classname);
-	context.startElement(WSDDConstants.QNAME_JAXRPC_HANDLERINFO, attrs);
+    AttributesImpl attrs = new AttributesImpl();
+    attrs.addAttribute("", ATTR_CLASSNAME, ATTR_CLASSNAME,
+                   "CDATA", _classname);
+    context.startElement(WSDDConstants.QNAME_JAXRPC_HANDLERINFO, attrs);
 
-	Map ht =  _map;
-	if (ht != null) {
-	    Set keys= ht.keySet();
-	    Iterator iter = keys.iterator();
-	    while (iter.hasNext()) {
-	    	String name = (String) iter.next();
-	    	String value = (String) ht.get(name);
-	    	attrs = new AttributesImpl();
-	    	attrs.addAttribute("",ATTR_NAME, ATTR_NAME, "CDATA", name);
-	    	attrs.addAttribute("",ATTR_VALUE, ATTR_VALUE, "CDATA", value);
-	    	context.startElement(WSDDConstants.QNAME_PARAM,attrs);
-	    	context.endElement();
-	    }
-	}
+    Map ht =  _map;
+    if (ht != null) {
+        Set keys= ht.keySet();
+        Iterator iter = keys.iterator();
+        while (iter.hasNext()) {
+            String name = (String) iter.next();
+            String value = (String) ht.get(name);
+            attrs = new AttributesImpl();
+            attrs.addAttribute("",ATTR_NAME, ATTR_NAME, "CDATA", name);
+            attrs.addAttribute("",ATTR_VALUE, ATTR_VALUE, "CDATA", value);
+            context.startElement(WSDDConstants.QNAME_PARAM,attrs);
+            context.endElement();
+        }
+    }
 
-	if (_headers != null) {
-	    for (int i=0 ; i < _headers.length ; i++) {
-		QName qname = _headers[i];
-		attrs = new AttributesImpl();
-		attrs.addAttribute("",ATTR_QNAME,ATTR_QNAME,"CDATA",context.qName2String(qname));
-		context.startElement(WSDDConstants.QNAME_JAXRPC_HEADER,attrs);
-		context.endElement();
-	    }
-	}
+    if (_headers != null) {
+        for (int i=0 ; i < _headers.length ; i++) {
+        QName qname = _headers[i];
+        attrs = new AttributesImpl();
+        attrs.addAttribute("",ATTR_QNAME,ATTR_QNAME,"CDATA",context.qName2String(qname));
+        context.startElement(WSDDConstants.QNAME_JAXRPC_HEADER,attrs);
+        context.endElement();
+        }
+    }
 
-	context.endElement();
+    context.endElement();
     }
 
 }
