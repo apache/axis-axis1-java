@@ -78,6 +78,13 @@ public class AttachmentsImpl implements Attachments {
      * The actual stream to manage the multi-related input stream.
      */
     protected org.apache.axis.attachments.MultiPartRelatedInputStream mpartStream= null;
+
+    /**
+     * This is the content location as specified in SOAP with Attachments.
+     * This maybe null if the message had no Content-Location specifed.
+     */
+
+    protected String contentLocation= null;
     
     /**
      * Construct one of these on a parent Message.
@@ -86,27 +93,35 @@ public class AttachmentsImpl implements Attachments {
      * @param initialContents should be anything but today only a stream is supported.
      * @param The mime content type of the stream for transports that provide it.
      */ 
-    public AttachmentsImpl(Message msg, Object intialContents, String contentType) throws org.apache.axis.AxisFault {
+    public AttachmentsImpl(Message msg, Object intialContents, String contentType,
+       String contentLocation) throws org.apache.axis.AxisFault {
+       this.contentLocation= contentLocation;
+
       this.msg= msg;
       if(contentType  != null) {
-        if(contentType.equals(org.apache.axis.Message.MIME_UNKNOWN)){
-        //Process the input stream for headers to determine the mime type.
-        //TODO
-        }
-        else{
-          java.util.StringTokenizer st = new java.util.StringTokenizer(contentType, " \t;");
-           if(st.hasMoreTokens()) {
-               String mimetype= st.nextToken();
-               if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_MULTIPART_RELATED)){
-                 mpartStream= new org.apache.axis.attachments.MultiPartRelatedInputStream(contentType, (java.io.InputStream)intialContents);
-
-                soapPart= new org.apache.axis.SOAPPart(msg, mpartStream, false); 
-               }
-               else if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)){ //do nothing today.
-                 //is= new DIMEInputStreamManager(is);
-               }
+          if(contentType.equals(org.apache.axis.Message.MIME_UNKNOWN)){
+          //Process the input stream for headers to determine the mime type.
+          //TODO
+          }
+          else{
+            java.util.StringTokenizer st = new java.util.StringTokenizer(contentType, " \t;");
+             if(st.hasMoreTokens()) {
+                 String mimetype= st.nextToken();
+                 if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_MULTIPART_RELATED)){
+                   mpartStream= new org.apache.axis.attachments.MultiPartRelatedInputStream(contentType,
+                     (java.io.InputStream)intialContents);
+                   if(null == contentLocation){ //If the content location is not specified as
+                                            //of the main message use the SOAP content location.
+                       contentLocation= mpartStream.getContentLocation();
+                   }
+          
+                  soapPart= new org.apache.axis.SOAPPart(msg, mpartStream, false); 
+                 }
+                 else if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)){ //do nothing today.
+                   //is= new DIMEInputStreamManager(is);
+                 }
+             }
            }
-         }
       }
     }
 

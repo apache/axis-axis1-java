@@ -82,7 +82,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
     static int streamCount= 0; //number of streams produced.
     protected synchronized static int newStreamNo(){
-        return ++ streamCount;
+        return ++streamCount;
     }
     protected int streamNo=-1; //Keeps track of stream
 
@@ -131,7 +131,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         readBufPos = prev.readBufPos + boundaryBufLen; 
         readBufEnd = prev.readBufEnd;
         //find the new boundary.
-        boundaryPos = boundaryPosition( readbuf, readBufPos, readBufEnd);
+        boundaryPos = boundaryPosition( readbuf, readBufPos, readBufEnd-1);
         prev.theEnd = theEnd; //The stream.
     }
 
@@ -211,14 +211,14 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                                       //just move the boundary by what we moved
                 if (BOUNDARY_NOT_FOUND != boundaryPos ) boundaryPos -= movecnt;
                 else boundaryPos = boundaryPosition( readbuf, readBufPos,
-                                 readBufEnd); //See if the boundary is now there.
+                                 readBufEnd-1); //See if the boundary is now there.
             }
 
         }
         //read till we get the amount or the stream is finished.
         while ( !eos && bwritten < len );
 
-        if (category.isDebugEnabled()) {
+        if ( category.isDebugEnabled()) {
             if (bwritten  > 0) {
                 byte tb[] = new byte[bwritten];
 
@@ -226,6 +226,10 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 category.debug("Read " + bwritten +
                 " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
                 new String(tb) + "\"");
+                
+//    System.err.println("Read " + bwritten +
+//                " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
+//                new String(tb) + "\"");
             }
         }
 
@@ -304,26 +308,36 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
    
 
    private int[] skip= null;
-   private int boundarySearch(byte[]text,int start, int end ) {
+   private int boundarySearch(final byte[]text,final int start, final int end ) {
+//System.err.println(">>>>" + start + "," + end);   
 
        int i, j, k;
-       int n= end-start;
       
        if(null == skip){
            skip= new int[256];
            java.util.Arrays.fill(skip, boundaryLen);   
-           for( k=start; k<boundaryLen-1; k++ ) skip[boundary[k]] = boundaryLen-k-1;
+           for( k=0; k<boundaryLen-1; k++ ) skip[boundary[k]] = boundaryLen-k-1;
        }
 
 
-       for( k=boundaryLen-1; k < n; k += skip[text[k] & (skip.length-1)] ) {
+       for( k=start + boundaryLen-1; k <=end; k += skip[text[k] & (0xff)] ) {
+// System.err.println(">>>>" + k);   
+//printarry(text, k-boundaryLen+1, end);
             for( j=boundaryLen-1, i=k; j>=0 && text[i] == boundary[j]; j-- ) i--;
-            if( j == (-1) ) return start+i+1;
+            if( j == (-1) ) return i+1;
        }
 
+// System.err.println(">>>> not found" );   
        return BOUNDARY_NOT_FOUND;
    }
 
+public static void printarry( byte[] b, int start , int end){
+                byte tb[] = new byte[end-start];
 
+                System.arraycopy(b, start, tb, 0, end-start);
+                
+    System.err.println("\"" + new String(tb) + "\"");
+    
+}
 
 }

@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -105,7 +106,6 @@ public class HTTPSender extends BasicHandler {
             String   host ;
             int      port   = 80 ;
             URL      tmpURL = new URL( targetURL );
-            byte[]   buf    = new byte[4097];
             int      returnCode     = 0 ;
             boolean  useFullURL = false;
 
@@ -240,8 +240,6 @@ public class HTTPSender extends BasicHandler {
             }
 
 
-            BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
-                       //Should help performance. Temporary fix only till its all stream oriented.
             OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
             StringBuffer  otherHeaders = new StringBuffer();
             String        userID = null ;
@@ -327,33 +325,56 @@ public class HTTPSender extends BasicHandler {
                 category.debug( header + reqEnv );
             }
 
-            byte       lastB=0, b ;
+            byte       b ;
             int        len = 0 ;
             int        colonIndex = -1 ;
             Hashtable  headers = new Hashtable();
             String     name, value ;
             String     statusMessage = "";
 
+            BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
+                       //Should help performance. Temporary fix only till its all stream oriented.
+
             // Need to add logic for getting the version # and the return code
             // but that's for tomorrow!
 
-            for ( ;; ) {
-                if ( (b = (byte) inp.read()) == -1 ) break ;
+            /*Logic to read HTTP response headers */
+            boolean readTooMuch= false;
+            b=0;
+            for(ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);;){
+                if(!readTooMuch)b = (byte) inp.read();
+                if(b == -1 ) break ;
+                readTooMuch=false;
                 if ( b != '\r' && b != '\n' ) {
                     if ( b == ':' && colonIndex == -1 ) colonIndex = len ;
-                    lastB = (buf[len++] = b);
+                    len++;
+                    buf.write(b);
                 }
                 else if ( b == '\r' )
                     continue ;
-                else {
+                else {  //b== '\n'
                     if ( len == 0 ) break ;
+
+                    b = (byte) inp.read();
+                    readTooMuch= true;
+                        //A space or tab at the begining of a line means the header continues.
+                    if( b == ' ' || b== '\t'){
+                        continue;  
+                    }
+
                     if ( colonIndex != -1 ) {
-                        name = new String( buf, 0, colonIndex );
-                        value = new String( buf, colonIndex+1, len-1-colonIndex );
+                        buf.close();
+                        byte[]hdata= buf.toByteArray();
+                        buf.reset();
+                        name = new String( hdata, 0, colonIndex );
+                        value = new String( hdata, colonIndex+1, len-1-colonIndex );
                         colonIndex = -1 ;
                     }
                     else {
-                        name = new String( buf, 0, len );
+                        buf.close();
+                        byte[]hdata= buf.toByteArray();
+                        buf.reset();
+                        name = new String( hdata, 0, len );
                         value = "" ;
                     }
 
@@ -379,6 +400,7 @@ public class HTTPSender extends BasicHandler {
                     len = 0 ;
                 }
             }
+            /*All HTTP headers have been read.*/
 
             if (returnCode > 199 && returnCode < 300) {
                 // SOAP return is OK - so fall through
@@ -387,65 +409,63 @@ public class HTTPSender extends BasicHandler {
             } else {
                 // Unknown return code - so wrap up the content into a
                 // SOAP Fault.
-
-                len = 0;
-                while ((b = (byte)inp.read()) != -1) {
-                    buf[len++] = b;
-                }
-                buf[len] = (byte)0;
+               ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);
+               while(-1 !=(b = (byte)inp.read())){
+                  buf.write(b); 
+               }
 
                 AxisFault fault = new AxisFault("HTTP",
                                                 statusMessage,
                                                 null,
                                                 null);
                 fault.setFaultDetailsString(JavaUtils.getMessage("return01",
-                        "" + returnCode, new String(buf, 0, len)));
+                        "" + returnCode, buf.toString()));
                 throw fault;
             }
 
-            if ( b != -1 ) {
-                if (category.isDebugEnabled()) {
-                    String contentLength = (String) headers.get("content-length");
-                    if ( contentLength != null ) {
-                        contentLength = contentLength.trim();
-                        byte[] data = new byte[Integer.parseInt(contentLength)];
-                        for (len=0; len<data.length; )
-                            len+= inp.read(data,len,data.length-len);
-                        String xml = new String(data);
+            if ( b != -1 ) { //more data than just headers.
+                String contentType = (String) headers.get(
+                         HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+                contentType= (null == contentType )? null:contentType.trim();
 
-                        outMsg = new Message( data );
+                String contentLocation = (String) headers.get(
+                    HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
+                contentLocation= (null == contentLocation )? null:contentLocation.trim();
 
-                        category.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
-                        category.debug( "-----------------------------------------------");
-                        category.debug( xml );
-                    }
-                    else {
-                        outMsg = new Message( inp );
-                        category.debug( "\n" + JavaUtils.getMessage("no00", "Content-Length") );
-                        category.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
-                        category.debug( "-----------------------------------------------");
-                        category.debug( (String) outMsg.getSOAPPart().getAsString() );
-                    }
-                } else {
-                    outMsg = new Message( inp );
-                }
+                String contentLength = (String) headers.get(
+                    HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
+                contentLength= (null == contentLength )? null:contentLength.trim();
+
+                outMsg = new Message( inp, false, contentType, contentLocation);
 
                 outMsg.setMessageType(org.apache.axis.Message.RESPONSE);
                 msgContext.setResponseMessage( outMsg );
 
-                // if we are maintaining session state,
-                // handle cookies (if any)
-                if (msgContext.getMaintainSession()) {
-                    handleCookie(HTTPConstants.HEADER_COOKIE,
-                                 HTTPConstants.HEADER_SET_COOKIE,
-                                 headers,
-                                 msgContext);
-                    handleCookie(HTTPConstants.HEADER_COOKIE2,
-                                 HTTPConstants.HEADER_SET_COOKIE2,
-                                 headers,
-                                 msgContext);
+                if (category.isDebugEnabled()) {
+                    if(null==contentLength )
+                        category.debug( "\n" + JavaUtils.getMessage("no00",
+                          "Content-Length") );
+                    category.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
+                    category.debug( "-----------------------------------------------");
+                    category.debug( (String) outMsg.getSOAPPart().getAsString() );
                 }
+
             }
+
+
+            // if we are maintaining session state,
+            // handle cookies (if any)
+            if (msgContext.getMaintainSession()) {
+                handleCookie(HTTPConstants.HEADER_COOKIE,
+                             HTTPConstants.HEADER_SET_COOKIE,
+                             headers,
+                             msgContext);
+                handleCookie(HTTPConstants.HEADER_COOKIE2,
+                             HTTPConstants.HEADER_SET_COOKIE2,
+                             headers,
+                             msgContext);
+            }
+            
         }
         catch( Exception e ) {
             category.debug( e );

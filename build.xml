@@ -190,6 +190,7 @@ Copyright:
       <exclude name="org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/encoding/JAFDataHandlerDeserializer.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
@@ -267,7 +268,7 @@ Copyright:
       <exclude name="test/arrays/*.java" />
       <exclude name="test/sequence/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
-      <exclude name="test/md5attach/MD5AttachTest.java" unless="attachments.present"/>
+      <exclude name="test/md5attach/*.java" unless="attachments.present"/>
     </javac>
     <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
   </target>

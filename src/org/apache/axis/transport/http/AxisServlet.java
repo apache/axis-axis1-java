@@ -330,8 +330,9 @@ public class AxisServlet extends HttpServlet {
         /* even need to be parsed.                                         */
         /*******************************************************************/
         MessageContext    msgContext = new MessageContext(engine);
-        String contentType= req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE);
-        Message           msg        = new Message( req.getInputStream(), false, contentType );
+        Message           msg        = new Message( req.getInputStream(), false,
+           req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE),
+            req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
 
         /* Set the request(incoming) message field in the context */
         /**********************************************************/

@@ -54,6 +54,9 @@
  */
 
 package org.apache.axis.attachments;
+import org.apache.axis.transport.http.HTTPConstants; 
+import org.apache.axis.attachments.ManagedMemoryDataSource;
+import javax.activation.DataHandler;
 
 
 /**
@@ -77,6 +80,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
     protected byte[] boundary = null;
     protected java.io.ByteArrayInputStream cachedSOAPEnvelope = null; //Caches the soap stream if it is
               //Still open and a reference to read data in a later attachment occurs.
+    protected String contentLocation= null;          
+    protected String contentId= null;
+
 
     /**
      * Multipart stream.
@@ -130,17 +136,15 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
 
             //create the boundary delmited stream.
             boundaryDelimitedStream = new org.apache.axis.attachments.BoundaryDelimitedStream( is, boundary, 1024);
-            String contentId = null;
 
             //Now read through all potential streams until we have found the root part.
             do {
                 contentId = null;
                 String contentTransferEncoding = null;
-                String contentLocation = null;
                 //Read this attachments headers from the stream.  
                 javax.mail.internet.InternetHeaders headers = new javax.mail.internet.InternetHeaders(boundaryDelimitedStream);
                 //Use java mail utility to read through the headers.
-                contentId = headers.getHeader("Content-ID", null);
+                contentId = headers.getHeader(HTTPConstants.HEADER_CONTENT_ID, null);
                 //Clean up the headers and remove any < >
                 if (contentId != null) {
                     contentId = contentId.trim();
@@ -148,10 +152,16 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     if (contentId.endsWith(">")) contentId = contentId.substring(0, contentId.length() - 1);
                     if (!contentId.startsWith("cid:")) contentId = "cid:" + contentId; //make sure its identified as cid
                 }
-                contentType = headers.getHeader("Content-Type", null);
+
+                contentLocation = headers.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION, null);
+                if (contentLocation != null) {
+                    contentLocation = contentLocation.trim();
+                    if (contentLocation.startsWith("<")) contentLocation = contentLocation.substring(1);
+                    if (contentLocation.endsWith(">")) contentLocation = contentLocation.substring(0, contentLocation.length() - 1);
+                }
+                contentType = headers.getHeader(HTTPConstants.HEADER_CONTENT_TYPE, null);
                 if (contentType != null) contentType = contentType.trim();
-                contentLocation = headers.getHeader("Content-Location", null);
-                if (contentLocation != null) contentLocation = contentLocation.trim();
+
                 contentTransferEncoding = headers.getHeader("Content-Transfer-Encoding", null);
                 if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
                 //TODO still need to add support for bas64 and quoted printable.
@@ -184,9 +194,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         }
     }
 
-    public javax.activation.DataHandler getAttachmentByReference( String id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
+    public DataHandler getAttachmentByReference( String id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
         //First see if we have read it in yet.
-        javax.activation.DataHandler ret = (javax.activation.DataHandler) parts.get(id);
+        DataHandler ret = (DataHandler) parts.get(id);
 
         if ( null == ret) {
             ret = readTillFound(id);
@@ -252,7 +262,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                 contentTransferEncoding = headers.getHeader("Content-Transfer-Encoding", null);
                 if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
 
-                javax.activation.DataHandler dh = new javax.activation.DataHandler(new org.apache.axis.attachments.ManagedMemoryDataSource(boundaryDelimitedStream, 1024, contentType, true));
+                DataHandler dh= new DataHandler(new ManagedMemoryDataSource(boundaryDelimitedStream, 1024, contentType, true));
 
                 addPart(contentId, contentLocation, dh);
 
@@ -269,6 +279,24 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         }
 
         return ret;
+    }
+
+    /**
+     * Return the content location. 
+     * @return the Content-Location of the stream.
+     *   Null if no content-location specified.
+     */
+    public String getContentLocation(){
+        return contentLocation;
+    }
+
+    /**
+     * Return the content id of the stream 
+     * @return the Content-Location of the stream.
+     *   Null if no content-location specified.
+     */
+    public String getContentId(){
+        return contentId;
     }
 
     /**

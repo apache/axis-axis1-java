@@ -61,6 +61,7 @@ import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.encoding.JAFDataHandlerSerializer;
+import org.apache.axis.encoding.JAFDataHandlerDeserializer;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 import javax.activation.DataHandler;
@@ -89,38 +90,130 @@ public class EchoAttachment {
     EchoAttachment( Options opts){
       this.opts= opts;
     }
-    public float echo(String filename) throws Exception {
+    public boolean echo(String filename) throws Exception {
+
+//javax.activation.MimetypesFileTypeMap map= (javax.activation.MimetypesFileTypeMap)javax.activation.MimetypesFileTypeMap.getDefaultFileTypeMap();
+//map.addMimeTypes("application/x-org-apache-axis-wsdd wsdd");
 
 
       //Create the data for the attached file.
-      DataHandler dh= new DataHandler( new FileDataSource( filename ));
+      DataHandler dhSource= new DataHandler( new FileDataSource( filename ));
 
       Service  service = new Service();
+
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
+
       call.setOperationName( "echo" ); //This is the target services method to invoke.
+
       call.setProperty( Call.NAMESPACE, "urn:EchoAttachmentsService" );
-      QName qnameAttachment= new QName("urn:EchoAttachmentsService", "SourceFile");
-      call.addSerializer(dh.getClass(),//Add serializer for attachment. 
+      
+      QName qnameAttachment= new QName("urn:EchoAttachmentsService", "echoSource");
+
+      call.addSerializer(dhSource.getClass(),//Add serializer for attachment. 
            qnameAttachment,
            new JAFDataHandlerSerializer());
+
+      call.addDeserializerFactory(qnameAttachment, dhSource.getClass(),
+           JAFDataHandlerDeserializer.getFactory());
+
       call.addParameter( "source", new XMLType(qnameAttachment),
            Call.PARAM_MODE_IN ); //Add the file.
-      call.setReturnType( XMLType.XSD_FLOAT ); //bogus for now
 
-      call.setProperty( Transport.USER, opts.getUser() );
+      call.setReturnType( new XMLType(qnameAttachment));
+
+      call.setProperty( Transport.USER, opts.getUser());
+
       call.setProperty( Transport.PASSWORD, opts.getPassword() );
 
 
-      Object ret = call.invoke( new Object[] {dh} ); //Add the attachment.
-      if (ret instanceof String) {
-              System.out.println("Received problem response from server: "+ret);
-              throw new AxisFault("", (String)ret, null, null);
-          }
-      
+      Object ret = call.invoke( new Object[] {dhSource} ); //Add the attachment.
 
-        return 1.0f;//make it happy. 
+      if (null == ret) {
+           System.out.println("Received null ");
+           throw new AxisFault("", "Received null", null, null);
+       }
+
+      if (ret instanceof String) {
+           System.out.println("Received problem response from server: "+ret);
+           throw new AxisFault("", (String)ret, null, null);
+       }
+
+       if(!(ret instanceof DataHandler)){
+           //The wrong type of object that what was expected.
+           System.out.println("Received problem response from server:"+
+                ret.getClass().getName());
+           throw new AxisFault("", "Received problem response from server:"+
+                ret.getClass().getName(), null, null);
+
+       }
+       //Still here, so far so good.
+       //Now lets brute force compare the source attachment
+       // to the one we received.
+       DataHandler rdh= (DataHandler)ret;
+
+       //From here we'll just treat the data resource as file.
+       String receivedfileName= rdh.getName();//Get the filename. 
+       if( receivedfileName== null){
+           System.err.println("Could not get the file name.");
+           throw new AxisFault("", "Could not get the file name.", null, null);
+       }
+       
+
+       System.out.println("Going to compare the files..");
+       boolean retv= compareFiles( filename,  receivedfileName); 
+
+       java.io.File receivedFile = new java.io.File(receivedfileName);
+       receivedFile.delete(); 
+
+       return retv;
+    }
+
+    protected boolean compareFiles( String one, String other )
+         throws java.io.FileNotFoundException,java.io.IOException {
+         
+        java.io.BufferedInputStream oneStream= null; 
+        java.io.BufferedInputStream otherStream= null; 
+
+        try{
+             oneStream= new java.io.BufferedInputStream(
+                new java.io.FileInputStream(one), 1024 *64); 
+             otherStream= new java.io.BufferedInputStream(
+               new java.io.FileInputStream(other), 1024 *64); 
+
+             byte[] bufOne= new byte[1024 * 64];
+             byte[] bufOther= new byte[1024 * 64];
+             int breadOne= -1;
+             int breadOther= -1;
+             int available= 0;
+             do{
+                 available= oneStream.available();
+                 available= Math.min( available, otherStream.available());
+                 available= Math.min( available,bufOther.length );
+
+                 if(0 != available){
+                     java.util.Arrays.fill( bufOne, (byte)0);
+                     java.util.Arrays.fill( bufOther,(byte) 0);
+                     
+                     breadOne= oneStream.read(bufOne, 0, available);
+                     breadOther= otherStream.read(bufOther, 0, available);
+                     if(breadOne != breadOther) throw new RuntimeException(
+                         "Sorry couldn't really read whats available!");
+                     if(!java.util.Arrays.equals( bufOne, bufOther)){
+                         return false;
+                     }
+                 }
+             
+             }while( available !=0 && breadOne != -1 && breadOther != -1);
+             if( available !=0 && (breadOne != -1 || breadOther != -1)){
+               return false;
+             }
+             return true;
+        }finally{
+            if(null != oneStream) oneStream.close();
+            if(null != otherStream) otherStream.close();
+        }
     }
 
   /**
@@ -133,7 +226,13 @@ public class EchoAttachment {
         EchoAttachment echoattachment= new EchoAttachment(opts);
         args = opts.getRemainingArgs();
 
-        float val = echoattachment.echo(args[0]);
+         if(echoattachment.echo(args[0])){
+            System.out.println("Attachment sent and received ok!");
+            System.exit(0);
+         }else{
+            System.err.println("Problem in matching attachments");
+            System.exit(8);
+         }
     }
     catch( Exception e ) {
         if ( e instanceof AxisFault ) {
@@ -141,6 +240,7 @@ public class EchoAttachment {
         } else
             e.printStackTrace();
     }
+    System.exit(18);
   }
   
 }

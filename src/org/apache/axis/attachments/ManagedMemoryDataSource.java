@@ -75,7 +75,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     protected java.io.File diskCacheFile = null; 
     
                              //Memory is allocated in these size chunks.
-    public static final int READ_CHUNK_SZ = 1024 ;
+    public static final int READ_CHUNK_SZ = 32 * 1024 ;
 
     //Should not be called; 
     protected ManagedMemoryDataSource () {
@@ -149,11 +149,20 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     }
 
     /**
+     * This will flush any memory source to disk and
+     * provide the name of the file if desired.
      * Return the name of the file of the stream.
-     *    Optional, This is not implemented.
      */
     public java.lang.String getName() {
-        return ""; //Don't really need this.
+        String ret= null;
+        try{
+            flushToDisk();
+            if(diskCacheFile != null)
+               ret= diskCacheFile.getAbsolutePath(); 
+        }catch( Exception e){
+                diskCacheFile= null;
+        }        
+        return ret;
     }
 
     /** 
@@ -169,7 +178,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     protected byte[] currentMemoryBuf = null; //Hold the last memory buffer.
     protected int currentMemoryBufSz = 0; //The number of bytes written to the above buffer.
     protected int totalsz = 0;  //The total size in bytes in this data source. 
-    protected java.io.FileOutputStream cachediskstream = null; //This is the cached disk stream.
+    protected java.io.BufferedOutputStream cachediskstream = null; //This is the cached disk stream.
                               //If true the source input stream is now closed. 
     protected boolean closed = false; 
 
@@ -180,6 +189,8 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     protected void write( byte[] data) throws java.io.IOException {
         write(data, data.length);
     }
+
+
 
     /**
      * This method is a low level write.
@@ -194,23 +205,9 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
         int byteswritten = 0;
 
         if ( null != memorybuflist && totalsz + writesz > maxCached ) { //Cache to disk.
-            if (null == cachediskstream) { //Need to create a disk cache
-                diskCacheFile = java.io.File.createTempFile("Axis", "axis"); //Create a temporary file. TODO allow location to be configurable.
-                diskCacheFile.deleteOnExit(); //Insurance it goes.
-                cachediskstream = new java.io.FileOutputStream(diskCacheFile);
-                int listsz = memorybuflist.size();
-              
-                //Write out the entire memory held store to disk.
-                for (java.util.Iterator it = memorybuflist.iterator();
-                       it.hasNext(); ) {
-                    byte[] rbuf = (byte[]) it.next();
-                    int bwrite = listsz-- == 0 ? currentMemoryBufSz :
-                       rbuf.length;
 
-                    cachediskstream.write(rbuf, 0, bwrite);
-                }
-            }
-            memorybuflist = null; //bye bye to memory store.
+            if (null == cachediskstream)   //Need to create a disk cache
+                flushToDisk();
         }
 
         if ( memorybuflist != null) { //Can write to memory.
@@ -271,6 +268,40 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
                  }
 
                 currentMemoryBuf = null; //No need for this anymore.
+            }
+        }
+    }
+
+    /**
+     * Routine to flush data to disk if is in memory. 
+     */
+
+    protected void flushToDisk() throws java.io.IOException, java.io.FileNotFoundException {
+       java.util.LinkedList ml=memorybuflist;
+       memorybuflist =null;
+
+       if( ml != null){
+           if (null == cachediskstream) { //Need to create a disk cache
+                diskCacheFile = java.io.File.createTempFile("Axis", "axis"); //Create a temporary file. TODO allow location to be configurable.
+            //    diskCacheFile.deleteOnExit(); //Insurance it goes.
+                cachediskstream = new java.io.BufferedOutputStream(
+                     new java.io.FileOutputStream(diskCacheFile));
+                int listsz = ml.size();
+              
+                //Write out the entire memory held store to disk.
+                for (java.util.Iterator it = ml.iterator();
+                       it.hasNext(); ) {
+                    byte[] rbuf = (byte[]) it.next();
+                    int bwrite = listsz-- == 0 ? currentMemoryBufSz :
+                       rbuf.length;
+
+                    cachediskstream.write(rbuf, 0, bwrite);
+                    if(closed){
+                        cachediskstream.close();
+                        cachediskstream= null;
+                    }
+                }
+                ml= null;
             }
         }
     }
@@ -364,7 +395,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
                      "Write beyond buffer");
             if (len == 0) return 0;
 
-            synchronized (ManagedMemoryDataSource.this){
+            synchronized(ManagedMemoryDataSource.this){
                 if (closed && bread == totalsz) return -1;
                 len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
                 java.util.List ml = memorybuflist;
@@ -399,6 +430,11 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
                         fin = new java.io.FileInputStream( diskCacheFile);
                         fin.skip(bread); //Skip what we've read so far.
                     }
+
+                    if(cachediskstream  != null){
+                     cachediskstream.flush();  
+                    }
+
                     bwritten = fin.read(b, len, off);
                 }
                 if ( bwritten > 0) bread += bwritten;
