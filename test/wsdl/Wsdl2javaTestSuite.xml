@@ -263,8 +263,7 @@
     <wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"
                output="build/work"
                deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
+               serverSide="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -273,37 +272,15 @@
     <!-- Copy modified files to work directory -->
     <copy todir="${build.dir}/work/test/wsdl/sequence" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/sequence">
-        <include name="SequenceInfo.java"/>
+        <include name="SequenceService.java"/>
+        <include name="deploy.wsdd"/>
       </fileset>
     </copy>
     <!-- Compile Java -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />
       <include name="test/wsdl/sequence/**.java" />
-      <exclude name="test/wsdl/sequence/*TestCase.java" />
-      <exclude name="test/wsdl/sequence/*Impl.java" />
     </javac>
-    <!-- Now create a WSDL file from the Java classes -->
-    <java2wsdl output="build/work/test/wsdl/sequence/SequenceTest.wsdl"
-               className= "test.wsdl.sequence.SequenceTestPortType"
-               implClass= "test.wsdl.sequence.SequenceTestSoapBindingSkeleton"
-               namespace="urn:SequenceTest2"
-               location="http://localhost:8080/axis/services/SequenceTest">
-        <mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/>
-    </java2wsdl>
-    <!-- Delete the intermediate files so we recreate over a clean slate -->
-    <delete dir="${build.dir}/classes/test/wsdl/sequence"/>
-    <!-- Recreate Java files from the new WSDL -->
-    <wsdl2java url="build/work/test/wsdl/sequence/SequenceTest.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
-               noimports="no"
-               verbose="no"
-               testcase="no">
-        <mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/>
-    </wsdl2java>
 
     <!-- ArrayTest Test -->
     <wsdl2java url="test/wsdl/arrays/ArrayTest.wsdl"

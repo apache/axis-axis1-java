@@ -55,139 +55,82 @@
 package org.apache.axis.utils;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.beans.PropertyDescriptor;
+import java.beans.IndexedPropertyDescriptor;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 
 
 /**
- * This class is essentially a copy of the PropertyDescriptor information, except
- * that the values in it can be modified.
- * Updated this to include fields that don't have getter/setters.
+ * This class represents a field/property in a value type (a class with either
+ * bean-style getters/setters or public fields).
+ *
+ * It is essentially a thin wrapper around the PropertyDescriptor from the
+ * JavaBean utilities.  We wrap it with this class so that we can create
+ * the subclass FieldPropertyDescriptor and access public fields (who
+ * wouldn't have PropertyDescriptors normally) via the same interface.
+ *
+ * There are also some interesting tricks where indexed properties are
+ * concerned, mostly involving the fact that we manage the arrays here
+ * rather than relying on the value type class to do it itself.
+ *
  * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Glen Daniels (gdaniels@apache.org)
  **/
 public class BeanPropertyDescriptor
 {
     protected static Log log =
         LogFactory.getLog(BeanPropertyDescriptor.class.getName());
 
-    private String name = null;
-    private Method getter = null;
-    private Method setter = null;
-    private Method getterIndexed = null;
-    private Method setterIndexed = null;
-    private Field field = null;
-    private static final Object[] noArgs = new Object[] {};    
+    protected PropertyDescriptor myPD = null;
 
-    /** 
-     * Construct a BPD with getter/setter methods
-     * Both must be set
-     * @param _name is the name of the property
-     * @param _getter is the accessor method
-     * @param _setter is the modifier method
+    protected static final Object[] noArgs = new Object[] {};
+
+    /**
+     * Constructor (takes a PropertyDescriptor)
+     *
+     * @param pd
      */
-    public BeanPropertyDescriptor(String _name,
-                                  Method _getter, 
-                                  Method _setter) {
-        name = _name;
-        getter = _getter;
-        setter = _setter;
-        if (_getter == null || _setter == null || _name == null) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage(_getter == null ?
-                                         "badGetter00" :
-                                         (_setter == null ?
-                                         "badSetter00" : "badProp03")));
-        }
+    public BeanPropertyDescriptor(PropertyDescriptor pd) {
+        myPD = pd;
     }
 
-    /** 
-     * Construct a BPD with getter/setter methods for
-     * an indexed property.  All params must be set.
-     * @param _name is the name of the property
-     * @param _getter is the accessor method
-     * @param _setter is the modifier method
-     * @param _getterIndexed is the accessor method
-     * @param _setterIndexed is the modifier method
+    /**
+     * Protected constructor for use by our children
      */
-    public BeanPropertyDescriptor(String _name,
-                                  Method _getter, 
-                                  Method _setter,
-                                  Method _getterIndexed,
-                                  Method _setterIndexed) {
-        this(_name, _getter, _setter);
-        getterIndexed = _getterIndexed;
-        setterIndexed = _setterIndexed;
-        if (_getterIndexed == null || _setterIndexed == null) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage(_getterIndexed == null ?
-                                         "badAccessor00" : "badModifier00"));
-        }
+    protected BeanPropertyDescriptor() {
     }
 
-    /** 
-     * Construct a BPD with only a getter method
-     * @param _name is the name of the property
-     * @param _getter is the accessor method
+    /**
+     * Get our property name.
      */
-    public BeanPropertyDescriptor(String _name,
-                                  Method _getter) {
-        name = _name;
-        getter = _getter;
-        setter = null;
-        if (_getter == null || _name == null) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage(getter == null ?
-                                         "badGetter00" :
-                                         "badProp03"));
-        }
+    public String getName(){
+        return myPD.getName();
     }
 
-    /** 
-     * Construct a BPD with a field
-     * Both must be set
-     * @param _name is the name of the property
-     * @param _field is the name of the public instance field
-     */
-    public BeanPropertyDescriptor(String _name,
-                                  Field _field) {
-        name = _name;
-        field = _field;
-        if (_field == null || _name == null) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage(_field == null ?
-                                         "badField00" : "badProp03"));
-        }
-    }
-    
-    /** 
+    /**
      * Query if property is readable
      * @return true if readable
      */
     public boolean isReadable() {
-        return (getter != null ||
-                field != null); 
+        return (myPD.getReadMethod() != null);
     }
-    /** 
+
+    /**
      * Query if property is writeable
      * @return true if writeable
      */
     public boolean isWriteable() {
-        return (setter != null ||
-                field != null);
+        return (myPD.getWriteMethod() != null);
     }
     /** 
      * Query if property is indexed.
-     * Indexed properties require valid setters/getters
      * @return true if indexed methods exist
      */
     public boolean isIndexed() {
-        return (getterIndexed != null && 
-                setterIndexed != null);
+        return (myPD instanceof IndexedPropertyDescriptor);
     }
 
     /**
@@ -197,10 +140,8 @@ public class BeanPropertyDescriptor
      */
     public Object get(Object obj) 
         throws InvocationTargetException, IllegalAccessException {
-        if (getter != null) {
-            return getter.invoke(obj, noArgs);
-        } else if (field != null) {
-            return field.get(obj);
+        if (myPD.getReadMethod() != null) {
+            return myPD.getReadMethod().invoke(obj, noArgs);
         }
         throw new IllegalAccessException(JavaUtils.getMessage("badGetter00"));
     }
@@ -211,10 +152,8 @@ public class BeanPropertyDescriptor
      */
     public void set(Object obj, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
-        if (setter != null) {
-            setter.invoke(obj, new Object[] {newValue});
-        } else if (field != null) {
-            field.set(obj, newValue);
+        if (myPD.getWriteMethod() != null) {
+            myPD.getWriteMethod().invoke(obj, new Object[] {newValue});
         } else {
             throw new IllegalAccessException(JavaUtils.getMessage("badSetter00"));
         }
@@ -230,9 +169,13 @@ public class BeanPropertyDescriptor
         if (!isIndexed()) {
             return Array.get(get(obj), i);
         } else {
-            return getterIndexed.invoke(obj, new Object[] { new Integer(i)});
+            IndexedPropertyDescriptor id = (IndexedPropertyDescriptor)myPD;
+            return id.getIndexedReadMethod().invoke(obj,
+                                                    new Object[] {
+                                                        new Integer(i)});
         }
     }
+
     /**
      * Set an indexed property value
      * @param obj is the object
@@ -241,22 +184,27 @@ public class BeanPropertyDescriptor
      */
     public void set(Object obj, int i, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
+        // Set the new value
+        if (isIndexed()) {
+            IndexedPropertyDescriptor id = (IndexedPropertyDescriptor)myPD;
+            growArrayToSize(obj, id.getIndexedPropertyType(), i);
+            id.getIndexedWriteMethod().invoke(obj,
+                                              new Object[] {
+                                                  new Integer(i), newValue});
+        } else {
+            Array.set(get(obj), i, newValue);
+        }
+    }
 
+    protected void growArrayToSize(Object obj, Class componentType, int i)
+            throws InvocationTargetException, IllegalAccessException {
         // Get the entire array and make sure it is large enough
         Object array = get(obj);
         if (array == null || Array.getLength(array) <= i) {
             // Construct a larger array of the same type
-            Class componentType = null;
-            if (getterIndexed != null) {
-                componentType = getterIndexed.getReturnType();
-            } else if (getter != null) {
-                componentType = getter.getReturnType().getComponentType();
-            } else {
-                componentType = field.getType().getComponentType();
-            }
-            Object newArray = 
-                Array.newInstance(componentType,i+1);
-            
+            Object newArray =
+                    Array.newInstance(componentType,i+1);
+
             // Set the object to use the larger array
             set(obj, newArray);
 
@@ -269,21 +217,6 @@ public class BeanPropertyDescriptor
                 set(obj, index, Array.get(array, index));
             }
         }
-        
-        // Set the new value
-        if (isIndexed()) {
-            setterIndexed.invoke(obj, new Object[] {new Integer(i), newValue});
-        } else {
-            Array.set(get(obj), i, newValue);
-        }
-    }    
-
-    /**
-     * Get the name of a property
-     * @return String name of the property
-     */     
-    public String getName() {
-        return name;
     }
 
     /**
@@ -292,30 +225,9 @@ public class BeanPropertyDescriptor
      */     
     public Class getType() {
         if (isIndexed()) {
-            return getterIndexed.getReturnType();
-        } else if (getter != null) {
-            return getter.getReturnType();
+            return ((IndexedPropertyDescriptor)myPD).getIndexedPropertyType();
         } else {
-            return field.getType();
+            return myPD.getPropertyType();
         }
-    }
-
-    /**
-     * Get the read Method.
-     * (This is package visibility so that Bean Utils
-     * can access this information.  The other methods
-     * should be used during serialization/deserialization.)
-     */     
-    Method getReadMethod() {
-        return getter;
-    }
-    /**
-     * Get the write Method.
-     * (This is package visibility so that Bean Utils
-     * can access this information.  The other methods
-     * should be used during serialization/deserialization.)
-     */   
-    Method getWriteMethod() {
-        return setter;
     }
 }
