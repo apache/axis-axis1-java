@@ -373,17 +373,9 @@ public abstract class JavaProvider extends BasicProvider
             String alias = (String)service.getOption("alias");
             if(alias != null) emitter.setServiceElementName(alias);
 
-            Style style = serviceDesc.getStyle();
-
-            // The emitter should be fixed to support all 
-            // the Style/Use flavors.
-            if (style == Style.RPC) {
-                emitter.setMode(Emitter.MODE_RPC);
-            } else if (style == Style.DOCUMENT) {
-                emitter.setMode(Emitter.MODE_DOCUMENT);
-            } else if (style == Style.WRAPPED) {
-                emitter.setMode(Emitter.MODE_DOC_WRAPPED);
-            }
+            // Set style/use
+            emitter.setStyle(serviceDesc.getStyle());
+            emitter.setUse(serviceDesc.getUse());
 
             emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
 

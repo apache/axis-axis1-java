@@ -99,6 +99,7 @@ public class Java2WSDL {
     protected static final int TYPEMAPPING_OPT = 'T';
     protected static final int SOAPACTION_OPT = 'A';
     protected static final int STYLE_OPT = 'y';
+    protected static final int USE_OPT = 'u';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -197,7 +198,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("style",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STYLE_OPT,
-                Messages.getMessage("j2woptStyle00"))
+                Messages.getMessage("j2woptStyle00")),
+        new CLOptionDescriptor("use",   
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                USE_OPT,
+                Messages.getMessage("j2woptUse00"))
         
     };
 
@@ -375,14 +380,20 @@ public class Java2WSDL {
 
         case STYLE_OPT:
                 value = option.getArgument();
-                if (value.equalsIgnoreCase("DOCUMENT")) {
-                    emitter.setMode(Emitter.MODE_DOCUMENT);
-                } else if (value.equalsIgnoreCase("RPC")) {
-                    emitter.setMode(Emitter.MODE_RPC);
-                } else if (value.equalsIgnoreCase("WRAPPED")) {
-                    emitter.setMode(Emitter.MODE_DOC_WRAPPED);
+                if (value.equalsIgnoreCase("DOCUMENT") ||
+                    value.equalsIgnoreCase("RPC") ||
+                    value.equalsIgnoreCase("WRAPPED")) {
+                    emitter.setStyle(value);
                 } else {
-                    System.out.println(Messages.getMessage("j2woptBadStyle00"));
+                    System.out.println(Messages.getMessage("j2woptBadStyle00"));                }
+            break;
+        case USE_OPT:
+                value = option.getArgument();
+                if (value.equalsIgnoreCase("LITERAL") ||
+                    value.equalsIgnoreCase("ENCODED")) {
+                    emitter.setUse(value);
+                } else {
+                    System.out.println(Messages.getMessage("j2woptBadUse00"));
                 }
             break;
 

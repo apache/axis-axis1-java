@@ -69,6 +69,8 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -130,10 +132,7 @@ public class Emitter {
     public static final int MODE_IMPLEMENTATION = 2;
 
     // Style Modes
-    public static final int MODE_RPC = 0;
-    public static final int MODE_DOCUMENT = 1;
-    public static final int MODE_DOC_WRAPPED = 2;
-
+  
     private Class cls;
     private Class implCls;                 // Optional implementation class
     private Vector allowedMethods = null;  // Names of methods to consider
@@ -149,7 +148,8 @@ public class Emitter {
     private String serviceElementName;
     private String targetService = null;
     private String description;
-    private int mode = MODE_RPC;
+    private Style  style = Style.RPC;
+    private Use    use = null;  // Default depends on style setting
     private TypeMapping tm = null;        // Registered type mapping
     private TypeMapping defaultTM = null; // Default TM
     private Namespaces namespaces;
@@ -396,6 +396,15 @@ public class Emitter {
      */
     private void init(int mode) {
 
+        // Default use depending on setting of style
+        if (use == null) {
+            if (style == Style.RPC) {
+                use = Use.ENCODED;
+            } else {
+                use = Use.LITERAL;
+            }
+        }
+
         // Get a default TM if not specified.
         if (defaultTM == null) {
             defaultTM = DefaultTypeMappingImpl.getSingleton();
@@ -622,8 +631,8 @@ public class Emitter {
         binding.setQName(bindingQName);
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
-        String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
-        soapBinding.setStyle(modeStr);
+        String styleStr = (style == Style.RPC) ? "rpc" : "document";
+        soapBinding.setStyle(styleStr);
         soapBinding.setTransportURI(Constants.URI_SOAP11_HTTP);
 
         binding.addExtensibilityElement(soapBinding);
@@ -834,7 +843,7 @@ public class Emitter {
         }
 
         if (names.size() > 0) {
-            if (mode == MODE_DOC_WRAPPED) {
+            if (style == Style.WRAPPED) {
                 names.clear();
             }
             oper.setParameterOrdering(names);
@@ -919,8 +928,8 @@ public class Emitter {
 
     private ExtensibilityElement writeSOAPBody(QName operQName) {
         SOAPBody soapBody = new SOAPBodyImpl();
-        // for now, if its document, it is literal use.
-        if (mode == MODE_RPC) {
+        // for now, if its document, it is literal use.        
+        if (use == Use.ENCODED) {
             soapBody.setUse("encoded");
             soapBody.setEncodingStyles(encodingList);
         } else {
@@ -939,7 +948,7 @@ public class Emitter {
 
     private SOAPFault writeSOAPFault(QName operQName, String faultName) {
         SOAPFault soapFault = new SOAPFaultImpl();
-        if (mode == MODE_RPC) {
+        if (use == Use.ENCODED) {
             soapFault.setUse("encoded");
             soapFault.setEncodingStyles(encodingList);
         } else {
@@ -1115,47 +1124,7 @@ public class Emitter {
             javaType = JavaUtils.getHolderValueType(javaType);
         }
 
-        switch(mode) {
-        case MODE_RPC: {
-            // Add the type representing the param
-            // For convenience, add an element for the param
-            // Write <part name=param_name type=param_type>
-            QName typeQName = 
-                types.writeTypeForPart(javaType,
-                                       param.getTypeQName());
-            types.writeElementForPart(javaType, param.getTypeQName());
-            if (typeQName != null) {
-                part.setName(param.getName());
-                part.setTypeName(typeQName);
-                msg.addPart(part);
-            }
-            break;
-        }
-        case MODE_DOCUMENT: {
-            // Write the type representing the param.
-            // Write the element representing the param
-            // If an element was written
-            //   Write <part name=param_name element=param_element>
-            // Else its a simple type, 
-            //   Write <part name=param_name type=param_type>
-            QName typeQName = 
-                types.writeTypeForPart(javaType,
-                                       param.getTypeQName());
-            QName elemQName = 
-                types.writeElementForPart(javaType,
-                                          param.getTypeQName());
-            if (elemQName != null) {
-                part.setName(param.getName());
-                part.setElementName(elemQName);
-                msg.addPart(part);
-            } else if (typeQName != null) {
-                part.setName(param.getName());
-                part.setTypeName(typeQName);
-                msg.addPart(part);
-            }
-            break;
-        }
-        case MODE_DOC_WRAPPED: {
+        if (style == Style.WRAPPED) {
             // Write type representing the param
             QName typeQName = 
                 types.writeTypeForPart(javaType,
@@ -1190,10 +1159,41 @@ public class Emitter {
                     msg.addPart(part);
                 }
             }
-            break;
-        }
-        default:
-            // ?? Throw an exception here?
+        } else if (use == Use.ENCODED) {
+            // Add the type representing the param
+            // For convenience, add an element for the param
+            // Write <part name=param_name type=param_type>
+            QName typeQName = 
+                types.writeTypeForPart(javaType,
+                                       param.getTypeQName());
+            types.writeElementForPart(javaType, param.getTypeQName());
+            if (typeQName != null) {
+                part.setName(param.getName());
+                part.setTypeName(typeQName);
+                msg.addPart(part);
+            }
+        } else if (use == Use.LITERAL) {
+            // Write the type representing the param.
+            // Write the element representing the param
+            // If an element was written
+            //   Write <part name=param_name element=param_element>
+            // Else its a simple type, 
+            //   Write <part name=param_name type=param_type>
+            QName typeQName = 
+                types.writeTypeForPart(javaType,
+                                       param.getTypeQName());
+            QName elemQName = 
+                types.writeElementForPart(javaType,
+                                          param.getTypeQName());
+            if (elemQName != null) {
+                part.setName(param.getName());
+                part.setElementName(elemQName);
+                msg.addPart(part);
+            } else if (typeQName != null) {
+                part.setName(param.getName());
+                part.setTypeName(typeQName);
+                msg.addPart(part);
+            }
         }
         return param.getName();
     }
@@ -1698,12 +1698,28 @@ public class Emitter {
         this.defaultTM = defaultTM;
     }
 
-    public int getMode() {
-        return mode;
+    public Style getStyle() {
+        return style;
     }
 
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setStyle(String value) {
+        style = Style.getStyle(value);
+    }
+
+    public void setStyle(Style value) {
+        style = value;
+    }
+
+    public Use getUse() {
+        return use;
+    }
+
+    public void setUse(String value) {
+        use = Use.getUse(value);
+    }
+
+    public void setUse(Use value) {
+        use = value;
     }
 
     public ServiceDesc getServiceDesc() {
