@@ -347,7 +347,11 @@ public class AdminClient
             else
                 System.exit(1);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e instanceof AxisFault) {
+                ((AxisFault)e).dump();
+            } else {
+                e.printStackTrace();
+            }
             System.exit(1);
         }
     }
