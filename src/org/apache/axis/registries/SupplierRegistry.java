@@ -62,6 +62,10 @@ import org.apache.axis.utils.Debug ;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 
+import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.*;
+
 /** A <code>SupplierRegistry</code> contains Suppliers, which are used
  * by the find() method to obtain actual Handler references.  This
  * allows creational dynamics to be configured on a per-handler basis.
@@ -72,21 +76,12 @@ import org.apache.axis.registries.* ;
 public class SupplierRegistry implements HandlerRegistry {
     private static final boolean DEBUG_LOG = false;
     
-    protected String     fileName;
     protected Hashtable  suppliers = null ;
     
-    public SupplierRegistry(String fileName)
+    public SupplierRegistry()
     {
-        this.fileName = fileName;
     }
     
-    /**
-     * Init (ie. load settings...)
-     */
-    public void init() {
-        load();
-    }
-
     /**
      * Add a new Handler to the registry.
      */
@@ -96,7 +91,6 @@ public class SupplierRegistry implements HandlerRegistry {
                                "' (" + handler + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, new SimpleSupplier(handler) );
-        save();
     }
     
     public void add(String key, Supplier supplier) {
@@ -105,7 +99,6 @@ public class SupplierRegistry implements HandlerRegistry {
                                "' (" + supplier + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, supplier );
-        save();
     }
     
     /**
@@ -115,7 +108,6 @@ public class SupplierRegistry implements HandlerRegistry {
     public Handler remove(String key) {
         if ( suppliers == null ) return( null );
         Object old = suppliers.remove( key );
-        save();
         
         // What should we do here?
         return null;
@@ -154,28 +146,4 @@ public class SupplierRegistry implements HandlerRegistry {
         return( result );
     }
 
-    protected void load() { 
-        try {
-            FileInputStream    fis = new FileInputStream( fileName );
-            ObjectInputStream  ois = new ObjectInputStream( fis );
-            suppliers = (Hashtable) ois.readObject();
-            fis.close();
-        }
-        catch( Exception e ) {
-            if ( !(e instanceof FileNotFoundException) )
-                e.printStackTrace( System.err );
-        }
-    }
-
-    protected void save() {
-        try {
-            FileOutputStream    fos = new FileOutputStream( fileName );
-            ObjectOutputStream  oos = new ObjectOutputStream( fos );
-            oos.writeObject( suppliers );
-            fos.close();
-        }
-        catch( Exception e ) {
-            e.printStackTrace( System.err );
-        }
-    }
 };

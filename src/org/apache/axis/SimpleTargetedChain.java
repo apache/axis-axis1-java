@@ -150,13 +150,27 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
     responseChain = null ;
   }
 
-  public Element getDeploymentData() {
+  public Element getDeploymentData(Document doc) {
     Debug.Print( 1, "Enter: SimpleTargetedChain::getDeploymentData" );
+
+    Element   root = doc.createElement( "chain" );
+    fillInDeploymentData(root);
+
+    Debug.Print( 1, "Exit: SimpleTargetedChain::getDeploymentData" );
+    return( root );
+  }
+  
+  /**
+   * Used by subclasses (i.e. SOAPService) to fill in deployment
+   * data into an Element which might not be named "chain".
+   * 
+   * @param root the Element to fill in with deployment data.
+   */
+  public void fillInDeploymentData(Element root)
+  {
+    Document doc = root.getOwnerDocument();
     StringBuffer str  = new StringBuffer();
     Handler      h ;
-
-    Document  doc  = XMLUtils.newDocument();
-    Element   root = doc.createElement( "chain" );
 
     if ( requestChain != null ) {
       Handler[]  handlers = requestChain.getHandlers();
@@ -164,12 +178,12 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
       for ( int i = 0 ; i < handlers.length ; i++ ) {
         h = (Handler) handlers[i];
         if ( i != 0 ) str.append(",");
-        str.append( h.getClass().getName() );
+        str.append( h.getName() );
       }
       root.setAttribute( "input", str.toString() );
     }
     if ( pivotHandler != null ) {
-      root.setAttribute( "pivot", pivotHandler.getClass().getName() );
+      root.setAttribute( "pivot", pivotHandler.getName() );
     }
     if ( responseChain != null ) {
       Handler[]  handlers = requestChain.getHandlers();
@@ -177,7 +191,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
       for ( int i = 0 ; i < handlers.length ; i++ ) {
         h = (Handler) handlers[i];
         if ( i != 0 ) str.append(",");
-        str.append( h.getClass().getName() );
+        str.append( h.getName() );
       }
       root.setAttribute( "input", str.toString() );
     }
@@ -194,9 +208,6 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain  
         root.appendChild( e1 );
       }
     }
-
-    Debug.Print( 1, "Exit: SimpleTargetedChain::getDeploymentData" );
-    return( root );
   }
 
 };

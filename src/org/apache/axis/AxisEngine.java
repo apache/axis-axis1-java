@@ -72,6 +72,8 @@ import org.apache.axis.encoding.*;
  */
 import org.apache.axis.client.http.HTTPTransport;
 
+import org.w3c.dom.*;
+
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
  * AxisServer.  Handles common functionality like dealing with the
@@ -83,9 +85,13 @@ public abstract class AxisEngine extends BasicHandler
 {
     /** The handler registry this Engine uses. */
     protected HandlerRegistry _handlerRegistry;
+    protected String _handlerRegFilename;
     
     /** The service registry this Engine uses. */
     protected HandlerRegistry _serviceRegistry;
+    protected String _serviceRegFilename;
+    
+    private boolean readRegistryFiles = true;
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
@@ -151,6 +157,8 @@ public abstract class AxisEngine extends BasicHandler
         setHandlerRegistry(handlers);
         setServiceRegistry(services);
         
+        readRegistryFiles = false;
+        
         init();
     }
 
@@ -163,26 +171,21 @@ public abstract class AxisEngine extends BasicHandler
     public AxisEngine(String handlerRegFilename, String serviceRegFilename)
     {
         this();
-        DefaultHandlerRegistry  hr =
-                                    new DefaultHandlerRegistry(handlerRegFilename);
-        hr.setOnServer( isOnServer() );
-        setHandlerRegistry( hr );
+        setHandlerRegistry(new SupplierRegistry());
+        setServiceRegistry(new SupplierRegistry());
         
-        // Load the simple deployed services registry and init it
-        DefaultServiceRegistry  sr =
-                                    new DefaultServiceRegistry(serviceRegFilename);
-        sr.setHandlerRegistry( getHandlerRegistry() ); // needs to know about 'hr'
-        sr.setOnServer( isOnServer() );
-        setServiceRegistry( sr );
+        _handlerRegFilename = handlerRegFilename;
+        _serviceRegFilename = serviceRegFilename;
         
         init();
     }
 
 
     /**
-     * Is this running on the server?
+     * Subclasses (client and server) must define the defaults.
      */
-    abstract public boolean isOnServer();
+    abstract protected void deployDefaultHandlers();
+    abstract protected void deployDefaultServices();
 
     /**
      * (re)initialize - What should really go in here???
@@ -193,9 +196,13 @@ public abstract class AxisEngine extends BasicHandler
         
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
-        
-        getHandlerRegistry().init();
-        getServiceRegistry().init();
+
+        initializeHandlers();
+        initializeServices();
+
+        // Later...
+        //initializeTransports();
+        //initializeTypeMappings();
 
         // Load the registry of deployed types
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
@@ -203,6 +210,93 @@ public abstract class AxisEngine extends BasicHandler
         _typeMappingRegistry = tmr;
         
         Debug.Print( 1, "Exit: AxisEngine::init" );
+    }
+    
+    /**
+     * Set up our handler registry, either by reading from the designated
+     * XML file or setting up the defaults if that doesn't work.
+     */
+    private void initializeHandlers()
+    {
+      if (!readRegistryFiles)
+        return;
+      
+      try {
+        FileInputStream    fis = new FileInputStream(_handlerRegFilename);
+        
+        Document doc = XMLUtils.newDocument(fis);
+        
+        Element root = doc.getDocumentElement();
+        Element elem;
+        
+        NodeList list = root.getElementsByTagName("handler");
+        for (int i = 0; i < list.getLength(); i++) {
+          elem = (Element)list.item(i);
+          Admin.registerHandler(elem, this);
+        }
+        
+        list = root.getElementsByTagName("chain");
+        for (int i = 0; i < list.getLength(); i++) {
+          elem = (Element)list.item(i);
+          Admin.registerChain(elem, this);
+        }
+        
+        fis.close();
+        return;
+      }
+      catch( Exception e ) {
+        System.err.println("No handler registry file!");
+        if ( !(e instanceof FileNotFoundException) ) {
+          e.printStackTrace( System.err );
+        }
+      }
+      
+      System.err.println("Deploying default handlers...");
+      deployDefaultHandlers();
+      saveHandlerRegistry();
+    }
+    
+    /**
+     * Set up our service registry, either by reading from the designated
+     * XML file or setting up the defaults if that doesn't work.
+     */
+    private void initializeServices()
+    {
+      if (!readRegistryFiles)
+        return;
+      
+      try {
+        FileInputStream    fis = new FileInputStream(_serviceRegFilename);
+        
+        Document doc = XMLUtils.newDocument(fis);
+        
+        Element root = doc.getDocumentElement();
+        
+        NodeList list = root.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++) {
+          if (!(list.item(i) instanceof Element))
+            continue;
+          Element elem = (Element)list.item(i);
+          if (!elem.getTagName().equals("service")) {
+            System.err.println("Found element '" + elem.getTagName() +
+                  " in service reg file, wanted <service>");
+          }
+          Admin.registerService(elem, this);
+        }
+        
+        fis.close();
+        return;
+      }
+      catch( Exception e ) {
+        System.err.println("No service registry file!");
+        if ( !(e instanceof FileNotFoundException) ) {
+          e.printStackTrace( System.err );
+        }
+      }
+      
+      System.err.println("Deploying default services...");
+      deployDefaultServices();
+      saveServiceRegistry();
     }
 
     public HandlerRegistry getHandlerRegistry()
@@ -245,6 +339,34 @@ public abstract class AxisEngine extends BasicHandler
         protocolSenders.put(protocol, transport);
     }
     
+    public void saveHandlerRegistry()
+    {
+      try {
+        FileOutputStream fos = new FileOutputStream(_handlerRegFilename);
+        Document doc = XMLUtils.newDocument();
+        Element el = Admin.list(doc, this, false);
+        doc.appendChild(el);
+        XMLUtils.DocumentToStream(doc, fos);
+        fos.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    
+    public void saveServiceRegistry()
+    {
+      try {
+        FileOutputStream fos = new FileOutputStream(_serviceRegFilename);
+        Document doc = XMLUtils.newDocument();
+        Element el = Admin.list(doc, this, true);
+        doc.appendChild(el);
+        XMLUtils.DocumentToStream(doc, fos);
+        fos.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    
     /*********************************************************************
      * Administration and management APIs
      *
@@ -282,7 +404,9 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployHandler(String key, Handler handler)
     {
+        handler.setName(key);
         getHandlerRegistry().add(key, handler);
+        saveHandlerRegistry();
     }
     
     /**
@@ -291,6 +415,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployHandler(String key)
     {
         getHandlerRegistry().remove(key);
+        saveHandlerRegistry();
     }
 
     /**
@@ -298,7 +423,12 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployService(String key, SOAPService service)
     {
-        getHandlerRegistry().add(key, service);
+      System.out.println("Deploying service '" + key + "'");
+      System.out.println("   pivot is " + service.getPivotHandler().getName());
+      
+        service.setName(key);
+        getServiceRegistry().add(key, service);
+        saveServiceRegistry();
     }
     
     /**
@@ -306,7 +436,8 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void undeployService(String key)
     {
-        getHandlerRegistry().remove(key);
+        getServiceRegistry().remove(key);
+        saveServiceRegistry();
     }
 
     /**

@@ -59,11 +59,14 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.http.*;
 import org.apache.axis.handlers.soap.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
 
+import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.providers.java.*;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -123,9 +126,52 @@ public class AxisServer extends AxisEngine
     }
 
     /**
-     * Is this running on the server?
+     * Deploy our default handlers
      */
-    public boolean isOnServer() { return true; }
+    protected void deployDefaultHandlers()
+    {
+      Chain c;
+      
+      deployHandler( "debug"        , new DebugHandler() );
+      deployHandler( "MsgDispatcher", new MsgProvider() );
+      deployHandler( "RPCDispatcher", new RPCProvider() );
+      deployHandler( "HTTPSender"   , new HTTPSender() );
+      deployHandler( "HTTPAction"   , new HTTPActionHandler() );
+      deployHandler( "HTTPAuth"     , new HTTPAuthHandler() );
+      deployHandler( "JWSHandler"   , new JWSHandler() );
+      deployHandler( "JWSProcessor" , new JWSProcessor() );
+      
+      // Want this around by default for testing?
+      deployHandler( "EchoHandler"  , new EchoHandler() );
+
+      c = new SimpleChain();
+      c.addHandler( _handlerRegistry.find( "JWSHandler" ) );
+      c.addHandler( _handlerRegistry.find( "debug" ) );
+      deployHandler( "global.request", c );
+      
+      c = new SimpleChain();
+      c.addHandler( _handlerRegistry.find( "HTTPAuth" ) );
+      c.addHandler( _handlerRegistry.find( "HTTPAction" ) );
+      deployHandler( "HTTP.request", c );
+    }
+
+    protected void deployDefaultServices()
+    {
+      Handler h = _handlerRegistry.find( "JWSProcessor" );
+      if (h != null)
+        deployService( "JWSProcessor",  new SOAPService(h, "JWSProcessor"));
+
+      SOAPService service = new SOAPService();
+      service.setPivotHandler( _handlerRegistry.find( "MsgDispatcher" ) );
+      service.addOption(SOAPService.OPTION_PIVOT, "MsgDispatcher");
+      service.addOption( "className", "org.apache.axis.utils.Admin" );
+      service.addOption( "methodName", "AdminService" );
+      deployService( "AdminService", service );
+      
+      h = _handlerRegistry.find( "EchoHandler" );
+      if (h != null)
+        deployService( "EchoService",  new SOAPService(h, "EchoHandler"));
+    }
 
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate

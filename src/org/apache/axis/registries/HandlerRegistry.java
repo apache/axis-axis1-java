@@ -63,12 +63,6 @@ import org.apache.axis.* ;
  */
 public interface HandlerRegistry {
   /**
-   * Init (ie. load settings...)
-   * TODO: pass in the config info so it can scan it for options
-   */
-  public void init();
-
-  /**
    * Add a new Handler to the registry.
    */
   public void add(String key, Handler handler);

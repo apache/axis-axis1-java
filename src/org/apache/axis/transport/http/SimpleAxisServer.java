@@ -102,7 +102,6 @@ public class SimpleAxisServer implements Runnable {
     private static synchronized AxisServer getAxisServer() {
         if (myAxisServer == null) {
             myAxisServer = new AxisServer();
-            myAxisServer.init();
         }
         return myAxisServer;
     }

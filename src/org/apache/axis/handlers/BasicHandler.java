@@ -73,6 +73,7 @@ import org.w3c.dom.* ;
  */
 public abstract class BasicHandler implements Handler {
     protected Hashtable  options ;
+    protected String name;
 
     /** Stubbed-out methods.  Override in your child class to implement
      * any real behavior.
@@ -124,6 +125,22 @@ public abstract class BasicHandler implements Handler {
 
     public void setOptions(Hashtable opts) {
         options = opts ;
+    }
+
+    /**
+     * Set the name (i.e. registry key) of this Handler
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    
+    /**
+     * Return the name (i.e. registry key) for this Handler
+     */
+    public String getName()
+    {
+        return name;
     }
 
     public Element getDeploymentData(Document doc) {

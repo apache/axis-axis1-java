@@ -286,7 +286,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         }
         // !!! Write out a generic null, or get type info from somewhere else?
     }
-
+    
     public void dump(PrintStream out, String header) {
         out.println(header);
         if (fileName != null) 
@@ -302,33 +302,4 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         if (parent != null)
             parent.dump(out, "Parent");
     }
-    //public MessageElement serialize(QName name, Object value, NSStack nsStack, Message message) {
-    //    if (value != null) {
-    //        Class _class = value.getClass();
-    //        Serializer ser = getSerializer(_class);
-    //        return ser.serialize(name, value, nsStack, this, message);
-    //    }
-    //    return null;
-    //}
-    
-    //public MessageElement[] serialize(QName[] name, Object[] value, NSStack nsStack, Message message) {
-    //    MessageElement[] me = new MessageElement[name.length];
-    //    for (int n = 0; n < name.length; n++) {
-    //        me[n] = serialize(name[n], value[n], nsStack, message);
-    //    }
-    //    return me;
-    //}
-    
-    //public Object deserialize(MessageElement element) {
-    //    Deserializer des = getDeserializer(element.getQName());
-    //    return des.deserialize(element, this);
-    //}
-    
-    //public Object[] deserialize(MessageElement[] element) {
-    //    Object[] o = new Object[element.length];
-    //    for (int n = 0; n < element.length; n++) {
-    //        o[n] = deserialize(element[n]);
-    //    }
-    //    return o;
-    //}
 }

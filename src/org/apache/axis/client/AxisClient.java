@@ -60,6 +60,8 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
+import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.transport.local.LocalSender;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -79,10 +81,22 @@ public class AxisClient extends AxisEngine
     }
 
     /**
-     * Is this running on the server?
+     * Deploy our default handlers
      */
-    public boolean isOnServer() { return false; }
-    
+    protected void deployDefaultHandlers()
+    {
+      deployHandler( "HTTPSender",  new HTTPSender() );
+      deployHandler( "LocalSender", new LocalSender() );
+    }
+
+    /**
+     * Deploy our default services
+     */
+    protected void deployDefaultServices()
+    {
+      // No default client services
+    }
+
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.

@@ -109,6 +109,16 @@ public interface Handler extends Serializable {
    * Returns the option corresponding to the 'name' given
    */
   public Object getOption(String name);
+  
+  /**
+   * Set the name (i.e. registry key) of this Handler
+   */
+  public void setName(String name);
+  
+  /**
+   * Return the name (i.e. registry key) for this Handler
+   */
+  public String getName();
 
   /**
    * Return the entire list of options

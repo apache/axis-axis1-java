@@ -117,7 +117,6 @@ public class ServiceClient {
      */
     public ServiceClient () {
         engine = new AxisClient();
-        engine.init();
         msgContext = new MessageContext(engine);
     }
     

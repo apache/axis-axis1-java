@@ -144,10 +144,9 @@ public class SimpleChain extends BasicHandler implements Chain {
     return( (Handler[]) handlers.toArray() );
   }
 
-  public Element getDeploymentData() {
+  public Element getDeploymentData(Document doc) {
     Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
 
-    Document doc  = XMLUtils.newDocument();
     Element  root = doc.createElement( "chain" );
 
     if (handlers != null ) {
@@ -156,7 +155,7 @@ public class SimpleChain extends BasicHandler implements Chain {
       for ( int i = 0 ; i < handlers.size() ; i++ ) {
         if ( i != 0 ) str.append(",");
         h = (Handler) handlers.elementAt(i);
-        str.append( h.getClass().getName() );
+        str.append( h.getName() );
       }
       root.setAttribute( "flow", str.toString() );
     }
