@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 /**
  * This TestCase verifies:
- *   - the contents of axisNLS.properties for well-formedness, and
+ *   - the contents of resource.properties for well-formedness, and
  *   - tests calls to Messages.getMessage.
  *   - tests Messages extension mechanism
  */
@@ -31,7 +31,7 @@ public class TestMessages extends TestCase {
     }
 
     /**
-     * Call getMessage for each key in axisNLS.properties
+     * Call getMessage for each key in resource.properties
      * to make sure they are all well formed.
      */
     private static final int expectedNumberKeysThreshold = 500;
@@ -135,8 +135,8 @@ public class TestMessages extends TestCase {
      * If this test is run from xml-axis/java, then walk through the source
      * tree looking for all calls to Messages.getMessage.  For each of these
      * calls:
-     * 1.  Make sure the message key exists in axisNLS.properties
-     * 2.  Make sure the actual number of parameters (in axisNLS.properties)
+     * 1.  Make sure the message key exists in resource.properties
+     * 2.  Make sure the actual number of parameters (in resource.properties)
      *     matches the excpected number of parameters (in the source code).
      */
     public void testForMissingMessages() {
@@ -170,9 +170,9 @@ public class TestMessages extends TestCase {
 
     /**
      * Check all calls to Messages.getMessages:
-     * 1.  Make sure the message key exists in axisNLS.properties
-     * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
-     *     excpected number of parameters (in the source code).
+     * 1.  Make sure the message key exists in resource.properties
+     * 2.  Make sure the actual number of parameters (in resource.properties)
+     *     matches the expected number of parameters (in the source code).
      */
     private void checkMessages(File file) {
         try {

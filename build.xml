@@ -122,15 +122,15 @@ Copyright:
           toDir="${build.dest}"/>
     <copy file="${src.dir}/simplelog.properties"
           toDir="${build.dest}"/>
-    <copy file="${src.dir}/org/apache/axis/utils/axisNLS.properties"
-          toDir="${build.dest}/org/apache/axis/utils"/>
+    <copy file="${src.dir}/org/apache/axis/i18n/resource.properties"
+          toDir="${build.dest}/org/apache/axis/i18n"/>
 
     <tstamp>
       <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)"/>
     </tstamp>
-    <replace file="${build.dest}/org/apache/axis/utils/axisNLS.properties"
+    <replace file="${build.dest}/org/apache/axis/i18n/resource.properties"
              token="#today#" value="${build.time}"/>
-    <replace file="${build.dest}/org/apache/axis/utils/axisNLS.properties"
+    <replace file="${build.dest}/org/apache/axis/i18n/resource.properties"
              token="#axisVersion#" value="${axis.version}"/>
 
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
