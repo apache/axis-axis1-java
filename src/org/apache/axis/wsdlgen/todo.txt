@@ -13,7 +13,6 @@ Group 1
 
 Group 2
 -------
-* Unit tests
 * samples
 * User documentation
 * Internationalization
@@ -21,7 +20,6 @@ Group 2
 
 Group 3
 -------
-* Support for IN / OUT parameters - aka Holders
 * Address roundtrip behaviour - with the exception of type promotion and param 
   naming differences
 * A mechanism to register types (class:serializer:deserializer)
