@@ -889,6 +889,7 @@ public class Call implements javax.xml.rpc.Call {
         ParameterDesc param = new ParameterDesc();
         param.setQName( paramName );
         param.setTypeQName( xmlType );
+        param.setJavaType( javaType );
         byte mode = ParameterDesc.IN;
         if (parameterMode == ParameterMode.INOUT) {
             mode = ParameterDesc.INOUT;
@@ -896,7 +897,6 @@ public class Call implements javax.xml.rpc.Call {
             mode = ParameterDesc.OUT;
         }
         param.setMode(mode);
-        param.setJavaType( javaType );
 
         operation.addParameter(param);
         parmAndRetReq = true;
