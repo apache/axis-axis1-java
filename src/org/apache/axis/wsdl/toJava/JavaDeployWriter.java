@@ -189,13 +189,13 @@ public class JavaDeployWriter extends JavaWriter {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
+        boolean isRPC = true;
         boolean hasLiteral = bEntry.hasLiteral();
 
         String prefix = Constants.NSPREFIX_WSDD_JAVA;
         pw.println("  <service name=\"" + serviceName
                 + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG")
-                + "\"" + (hasLiteral ? " style=\"literal\"" : "") +  ">");
+                + "\"" + (hasLiteral ? " style=\"document\"" : "") +  ">");
 
         writeDeployBinding(binding);
         writeDeployTypes(hasLiteral);
