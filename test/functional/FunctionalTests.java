@@ -37,10 +37,8 @@ public class FunctionalTests extends TestCase
         // bid-buy test
         suite.addTestSuite(TestBidBuySample.class);
 
-        /* Removed since it tests Sessions which SimpleAxisServer doesn't do
         // address book test
         suite.addTestSuite(TestAddressBookSample.class);
-        */
 
         // "Raw" echo service test.
         suite.addTestSuite(TestMiscSample.class);

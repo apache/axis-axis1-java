@@ -77,27 +77,6 @@ public class Transport {
      */
     public String url = null;
 
-    /**
-     * Set up any transport-specific derived properties in the message context.
-     * @param context the context to set up
-     * @param message the client service instance
-     * @param engine the engine containing the registries
-     * @throws AxisFault if service cannot be found
-     */
-    public final void setupMessageContext(MessageContext context,
-                                          ServiceClient message,
-                                          AxisEngine engine)
-        throws AxisFault
-    {
-        if (url != null)
-            context.setProperty(MessageContext.TRANS_URL, url);
-
-        if (transportName != null)
-            context.setTransportName(transportName);
-
-        setupMessageContextImpl(context, message, engine);
-    }
-
     public final void setupMessageContext(MessageContext context,
                                           Call message,
                                           AxisEngine engine)
@@ -110,21 +89,6 @@ public class Transport {
             context.setTransportName(transportName);
 
         setupMessageContextImpl(context, message, engine);
-    }
-
-    /**
-     * Set up any transport-specific derived properties in the message context.
-     * @param context the context to set up
-     * @param message the client service instance
-     * @param engine the engine containing the registries
-     * @throws AxisFault if service cannot be found
-     */
-    public void setupMessageContextImpl(MessageContext context,
-                                        ServiceClient message,
-                                        AxisEngine engine)
-        throws AxisFault
-    {
-        // Default impl does nothing
     }
 
     public void setupMessageContextImpl(MessageContext context,

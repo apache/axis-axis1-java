@@ -280,7 +280,7 @@ public class Options {
         URL     url = null ;
         
         // Just in case...
-        org.apache.axis.client.ServiceClient.initialize();
+        org.apache.axis.client.Call.initialize();
 
         if ( (tmp = isValueSet( 'l' )) != null ) {
             url = new URL( tmp );

@@ -757,7 +757,8 @@ public class ServiceClient {
 
         // set up message context if there is a transport
         if (transport != null) {
-            transport.setupMessageContext(msgContext, this, this.engine);
+// Temporary - this class will soon become a shell for Call
+            transport.setupMessageContext(msgContext, new Call(), this.engine);
         }
         else
             msgContext.setTransportName( transportName );

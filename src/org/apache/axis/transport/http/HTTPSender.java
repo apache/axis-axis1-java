@@ -95,10 +95,6 @@ public class HTTPSender extends BasicHandler {
 
         targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
 
-        // Clear any values from the previous run
-        msgContext.clearProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-        msgContext.clearProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
-
         try {
             String   host ;
             int      port   = 80 ;
@@ -358,7 +354,7 @@ public class HTTPSender extends BasicHandler {
                                                 statusMessage,
                                                 null,
                                                 null);
-                fault.setFaultDetailsString("rc:" + returnCode + "\n" + 
+                fault.setFaultDetailsString("return code:" + returnCode + "\n"+ 
                                             new String(buf, 0, len));
                 throw fault;
             }
