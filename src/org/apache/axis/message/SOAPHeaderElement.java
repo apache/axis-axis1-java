@@ -62,7 +62,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 import javax.xml.rpc.namespace.QName;
+import javax.xml.soap.Name;
 
 /** 
  * A simple header element abstraction.  Extends MessageElement with
@@ -87,6 +90,11 @@ public class SOAPHeaderElement extends MessageElement
         super(namespace, localPart);
     }
 
+    public SOAPHeaderElement(Name name)
+    {
+        super(name);
+    }
+
     public SOAPHeaderElement(String namespace, String localPart, Object value)
     {
         super(namespace, localPart, value);
@@ -101,6 +109,20 @@ public class SOAPHeaderElement extends MessageElement
 
         actor = elem.getAttributeNS(Constants.URI_SOAP_ENV,
                                     Constants.ATTR_ACTOR);
+    }
+
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        try {
+            // cast to force exception if wrong type
+            super.setParentElement((SOAPHeader)parent);
+        } catch (Throwable t) {
+            throw new SOAPException(t);
+        }
+    }
+
+    public void detachNode() {
+        ((SOAPHeader)parent).removeHeader(this);
+        super.detachNode();
     }
 
     public SOAPHeaderElement(String namespace, String localPart, String prefix,

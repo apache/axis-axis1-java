@@ -61,11 +61,19 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.soap.SOAPException;
+
 public class HeaderBuilder extends SOAPHandler
 {
+    protected static Log log =
+        LogFactory.getLog(HeaderBuilder.class.getName());
+
     private SOAPHeaderElement header;
     private SOAPEnvelope envelope;
     
@@ -74,6 +82,22 @@ public class HeaderBuilder extends SOAPHandler
         this.envelope = envelope;
     }
     
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        if (!context.isDoneParsing()) {
+            if (myElement == null) {
+                myElement = new SOAPHeader(namespace, localName, qName,
+                                           attributes, context,
+                                           envelope.getSOAPConstants());
+                envelope.setHeader((SOAPHeader)myElement);
+            }
+            context.pushNewElement(myElement);
+        }
+    }
+
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
                                     String prefix,

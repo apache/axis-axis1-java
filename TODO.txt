@@ -49,7 +49,7 @@ JAX-RPC COMPATIBILITY
 JAXM COMPATIBILITY
 ------------------
 * <Glyn> Implement javax.xml.soap interfaces in message subsystem.
-! <> Implement javax.xml.messaging.
+         (Not forgetting: SOAPBody.addFault/getFault/hasFault)
 
 SOAP 1.2 SUPPORT
 ----------------

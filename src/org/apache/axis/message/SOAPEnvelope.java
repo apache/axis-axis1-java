@@ -74,6 +74,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.soap.SOAPException;
 import javax.xml.rpc.namespace.QName;
 
 import java.io.InputStream;
@@ -83,13 +84,14 @@ import java.util.Iterator;
 import java.util.Vector;
 
 public class SOAPEnvelope extends MessageElement
+    implements javax.xml.soap.SOAPEnvelope
 {
     protected static Log log =
         LogFactory.getLog(SOAPEnvelope.class.getName());
 
     private SOAPHeader header;
+    private SOAPBody body;
     
-    public Vector bodyElements = new Vector();
     public Vector trailers = new Vector();
     private SOAPConstants soapConstants;
 
@@ -154,7 +156,11 @@ public class SOAPEnvelope extends MessageElement
     
     public Vector getBodyElements() throws AxisFault
     {
-        return bodyElements;
+        if (body != null) {
+            return body.getBodyElements();
+        } else {
+            return new Vector();
+        }
     }
     
     public Vector getTrailers()
@@ -164,10 +170,11 @@ public class SOAPEnvelope extends MessageElement
     
     public SOAPBodyElement getFirstBody() throws AxisFault
     {
-        if (bodyElements.isEmpty())
+        if (body == null) {
             return null;
-        
-        return (SOAPBodyElement)bodyElements.elementAt(0);
+        } else {
+            return body.getFirstBody();
+        }
     }
     
     public Vector getHeaders() throws AxisFault
@@ -203,10 +210,11 @@ public class SOAPEnvelope extends MessageElement
     
     public void addBodyElement(SOAPBodyElement element)
     {
-        if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("addBody00"));
+        if (body == null) {
+            body = new SOAPBody(this, soapConstants);
+        }
         element.setEnvelope(this);
-        bodyElements.addElement(element);
+        body.addBodyElement(element);
 
         _isDirty = true;
     }
@@ -214,7 +222,17 @@ public class SOAPEnvelope extends MessageElement
     public void removeHeaders() {
         header = null;
     }
-    
+
+    public void setHeader(SOAPHeader hdr) {
+        header = hdr;
+        try {
+            header.setParentElement(this);
+        } catch (SOAPException ex) {
+            // class cast should never fail when parent is a SOAPEnvelope
+            log.fatal(JavaUtils.getMessage("exception00"), ex);
+        }
+    }
+
     public void removeHeader(SOAPHeaderElement hdr)
     {
         if (header != null) {
@@ -223,12 +241,26 @@ public class SOAPEnvelope extends MessageElement
         }
     }
     
+    public void removeBody() {
+        body = null;
+    }
+
+    public void setBody(SOAPBody body) {
+        this.body = body;
+        try {
+            body.setParentElement(this);
+        } catch (SOAPException ex) {
+            // class cast should never fail when parent is a SOAPEnvelope
+            log.fatal(JavaUtils.getMessage("exception00"), ex);
+        }
+    }
+
     public void removeBodyElement(SOAPBodyElement element)
     {
-        if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeBody00"));
-        bodyElements.removeElement(element);
-        _isDirty = true;
+        if (body != null) {
+            body.removeBodyElement(element);
+            _isDirty = true;
+        }
     }
     
     public void removeTrailer(MessageElement element)
@@ -241,9 +273,10 @@ public class SOAPEnvelope extends MessageElement
     
     public void clearBody()
     {
-        if (!bodyElements.isEmpty())
-            bodyElements.removeAllElements();
-        _isDirty = true;
+        if (body != null) {
+            body.clearBody();
+            _isDirty = true;
+        }
     }
     
     public void addTrailer(MessageElement element)
@@ -287,27 +320,11 @@ public class SOAPEnvelope extends MessageElement
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
-        return (SOAPBodyElement)findElement(bodyElements,
-                                            namespace,
-                                            localPart);
-    }
-    
-    protected MessageElement findElement(Vector vec, String namespace,
-                                  String localPart)
-    {
-        if (vec.isEmpty())
+        if (body == null) {
             return null;
-        
-        Enumeration e = vec.elements();
-        MessageElement element;
-        while (e.hasMoreElements()) {
-            element = (MessageElement)e.nextElement();
-            if (element.getNamespaceURI().equals(namespace) &&
-                element.getName().equals(localPart))
-                return element;
+        } else {
+            return body.getBodyByName(namespace, localPart);
         }
-        
-        return null;
     }
     
     public Enumeration getHeadersByName(String namespace, String localPart)
@@ -361,34 +378,17 @@ public class SOAPEnvelope extends MessageElement
         // Output <SOAP-ENV:Envelope>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_ENVELOPE), attributes);
-        
+
+        // Output headers        
         if (header != null) {
             header.outputImpl(context);
         }
 
-        if (bodyElements.isEmpty()) {
-            // This is a problem.
-            // throw new Exception("No body elements!");
-            // If there are no body elements just return - it's ok that
-            // the body is empty
+        // Output body
+        if (body != null) {
+            body.outputImpl(context);
         }
 
-        // Output <SOAP-ENV:Body>
-        context.startElement(new QName(soapConstants.getEnvelopeURI(),
-                                       Constants.ELEM_BODY), null);
-        enum = bodyElements.elements();
-        while (enum.hasMoreElements()) {
-            SOAPBodyElement body = (SOAPBodyElement)enum.nextElement();
-            body.output(context);
-            // Output this body element.
-        }
-        
-        // Output multi-refs
-        context.outputMultiRefs();
-        
-        // Output </SOAP-ENV:Body>
-        context.endElement();
-        
         // Output trailers
         enum = trailers.elements();
         while (enum.hasMoreElements()) {
@@ -401,5 +401,50 @@ public class SOAPEnvelope extends MessageElement
         context.endElement();
 
         context.setPretty(oldPretty);
+    }
+
+    SOAPConstants getSOAPConstants() {
+        return soapConstants;
+    }
+
+    // JAXM methods
+
+    public javax.xml.soap.SOAPBody addBody() throws SOAPException {
+        if (body == null) {
+            body = new SOAPBody(this, soapConstants);
+            return body;
+        } else {
+            throw new SOAPException(JavaUtils.getMessage("bodyPresent"));
+        }
+    }
+
+    public javax.xml.soap.SOAPHeader addHeader() throws SOAPException {
+        if (header == null) {
+            header = new SOAPHeader(this, soapConstants);
+            return header;
+        } else {
+            throw new SOAPException(JavaUtils.getMessage("headerPresent"));
+        }
+    }
+
+    public javax.xml.soap.Name createName(String localName)
+        throws SOAPException {
+        // Ok to use the SOAP envelope's namespace URI and prefix?
+        return new PrefixedQName(namespaceURI, localName, prefix);
+    }
+    
+    public javax.xml.soap.Name createName(String localName,
+                                          String prefix,
+                                          String uri)
+        throws SOAPException {
+        return new PrefixedQName(uri, localName, prefix);
+    }
+    
+    public javax.xml.soap.SOAPBody getBody() throws SOAPException {
+        return body;
+    }
+
+    public javax.xml.soap.SOAPHeader getHeader() throws SOAPException {
+        return header;
     }
 }
