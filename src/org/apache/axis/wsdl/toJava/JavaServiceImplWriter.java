@@ -136,7 +136,11 @@ public class JavaServiceImplWriter extends JavaWriter {
 
             String portName = Utils.xmlNameToJavaClass(p.getName());
             String stubClass = bEntry.getName() + "Stub";
-            String bindingType = ptEntry.getName();
+
+            // If there is not literal use, the interface name is the portType name.
+            // Otherwise it is the binding name.
+            String bindingType = bEntry.hasLiteral() ?
+                    bEntry.getName() : ptEntry.getName();
 
             // Get endpoint address and validate it
             String address = getAddressFromPort(p);

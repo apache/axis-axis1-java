@@ -84,20 +84,23 @@ public class BindingEntry extends SymTabEntry {
     private Binding binding;
     private int     bindingType;
     private int     bindingStyle;
+    private boolean hasLiteral;
     private HashMap attributes;
     private HashMap  parameters = new HashMap ();
     
 
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
-     * binding type, binding style, and the attributes which contain the input/output/fault body
-     * type information.
+     * binding type, binding style, whether there is any literal binding, and the attributes which
+     * contain the input/output/fault body type information.
      */
-    public BindingEntry(Binding binding, int bindingType, int bindingStyle, HashMap attributes) {
+    public BindingEntry(Binding binding, int bindingType, int bindingStyle,
+            boolean hasLiteral, HashMap attributes) {
         super(binding.getQName());
         this.binding = binding;
         this.bindingType = bindingType;
         this.bindingStyle = bindingStyle;
+        this.hasLiteral = hasLiteral;
         this.attributes = attributes;
     } // ctor
 
@@ -143,6 +146,13 @@ public class BindingEntry extends SymTabEntry {
     public int getBindingStyle() {
         return bindingStyle;
     } // getBindingStyle
+
+    /**
+     * Do any of the message stanzas contain a soap:body which uses literal?
+     */
+    public boolean hasLiteral() {
+        return hasLiteral;
+    } // hasLiteral
 
     /**
      * Get the input body type for the given operation.  One of BindingEntry.USE_ENCODED,

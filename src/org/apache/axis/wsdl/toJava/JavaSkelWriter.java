@@ -104,7 +104,11 @@ public class JavaSkelWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(portType.getQName());
-        String portTypeName = ptEntry.getName();
+
+        // If there is not literal use, the interface name is the portType name.
+        // Otherwise it is the binding name.
+        String portTypeName = bEntry.hasLiteral() ?
+                bEntry.getName () : ptEntry.getName();
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;

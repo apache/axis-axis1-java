@@ -130,7 +130,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             String portName = Utils.xmlNameToJavaClass(p.getName());
 
             writeComment(pw, p.getDocumentationElement());
-            writeServiceTestCode(portName, binding);
+            writeServiceTestCode(portName, binding, bEntry);
         }
         finish();
     } // writeFileBody
@@ -142,12 +142,17 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.close();
     } // finish
 
-    public final void writeServiceTestCode(String portName, Binding binding) throws IOException {
+    public final void writeServiceTestCode(
+            String portName, Binding binding, BindingEntry bEntry)
+            throws IOException {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(portType.getQName());
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-        String bindingType = ptEntry.getName();
+
+        // If there is not literal use, the interface name is the portType name.
+        // Otherwise it is the binding name.
+        String bindingType = bEntry.hasLiteral() ?
+                bEntry.getName() : ptEntry.getName();
 
         pw.println();
         pw.println("    public void test" + portName + "() {");

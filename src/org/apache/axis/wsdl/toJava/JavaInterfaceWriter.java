@@ -86,6 +86,13 @@ public class JavaInterfaceWriter extends JavaWriter {
         this.portType = ptEntry.getPortType();
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;
+
+        // If there is literal use in this binding, then the interface name is
+        // derived from the binding name, not the portType name (the default).
+        if (bEntry.hasLiteral()) {
+            super.className = Utils.getJavaLocalName(bEntry.getName());
+            super.fileName = className + ".java";
+        }
     } // ctor
 
     /**
@@ -94,21 +101,11 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     public void write() throws IOException {
         String fqClass = packageName + "." + className;
-        
-        // Do not emit the same portType/interface twice
-        // Warn the user and skip writing this class.
-        // XXX This would be the wrong thing if the two bindings
-        // XXX refer to the same port type, but describe it in a different way.
-        // XXX For example, one has use=literal, the other use=encoded.
-         if (emitter.fileInfo.getClassNames().contains(fqClass)) {
-             System.err.println(
-                     JavaUtils.getMessage("multipleBindings00", 
-                                          portType.getQName().toString()));
-             return;
-         }
 
-        // proceed normally
-        super.write();
+        // Do not emit the same portType/interface twice
+        if (!emitter.fileInfo.getClassNames().contains(fqClass)) {
+             super.write();
+        }
     } // write
 
     /**
