@@ -85,35 +85,36 @@ public class GetQuote {
 
       symbol = args[0] ;
 
-      Service  service = new Service();
-      Call     call    = (Call) service.createCall();
-
-      call.setTargetEndpointAddress( new URL(opts.getURL()) );
-      call.setOperationName( "getQuote" );
-      call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
-      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
-      call.setReturnType( XMLType.XSD_FLOAT );
-
-      // TESTING HACK BY ROBJ
-      if (symbol.equals("XXX_noaction")) {
-          symbol = "XXX";
-          call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
-      }
-
-      call.setProperty( Transport.USER, opts.getUser() );
-      call.setProperty( Transport.PASSWORD, opts.getPassword() );
-
       // useful option for profiling - perhaps we should remove before
       // shipping?
       String countOption = opts.isValueSet('c');
       int count=1;
       if ( countOption != null) {
-        count=Integer.valueOf(countOption).intValue();
-        System.out.println("Iterating " + count + " times");
+          count=Integer.valueOf(countOption).intValue();
+          System.out.println("Iterating " + count + " times");
       }
+
+      Service  service = new Service();
 
       Float res = new Float(0.0F);
       for (int i=0; i<count; i++) {
+          Call     call    = (Call) service.createCall();
+
+          call.setTargetEndpointAddress( new URL(opts.getURL()) );
+          call.setOperationName( "getQuote" );
+          call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+          call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+          call.setReturnType( XMLType.XSD_FLOAT );
+
+          // TESTING HACK BY ROBJ
+          if (symbol.equals("XXX_noaction")) {
+              symbol = "XXX";
+              call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
+          }
+
+          call.setProperty( Transport.USER, opts.getUser() );
+          call.setProperty( Transport.PASSWORD, opts.getPassword() );
+
           Object ret = call.invoke( new Object[] {symbol} );
           if (ret instanceof String) {
               System.out.println("Received problem response from server: "+ret);
