@@ -65,8 +65,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Scope;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
@@ -149,16 +147,8 @@ public abstract class JavaProvider extends BasicProvider
             // look in incoming session
             Session session = msgContext.getSession();
             if (session != null) {
-                // This part isn't thread safe...
-                synchronized (session) {
-                    // store service objects in session, indexed by class name
-                    Object obj = session.get(serviceName);
-                    if (obj == null) {
-                        obj = getNewServiceObject(msgContext, clsName);
-                        session.set(serviceName, obj);
-                    }
-                    return obj;
-                }
+                return getSessionServiceObject(session, serviceName,
+                                               msgContext, clsName);
             } else {
                 // was no incoming session, sigh, treat as request scope
                 scopeHolder.value = Scope.DEFAULT.getValue();
@@ -169,16 +159,8 @@ public abstract class JavaProvider extends BasicProvider
             AxisEngine engine = msgContext.getAxisEngine();
             Session appSession = engine.getApplicationSession();
             if (appSession != null) {
-                // This part isn't thread safe
-                synchronized (appSession) {
-                    // store service objects in session, indexed by class name
-                    Object obj = appSession.get(serviceName);
-                    if (obj == null) {
-                        obj = getNewServiceObject(msgContext, clsName);
-                        appSession.set(serviceName, obj);
-                    }
-                    return obj;
-                }
+                return getSessionServiceObject(appSession, serviceName, 
+                                               msgContext, clsName);
             } else {
                 // was no application session, sigh, treat as request scope
                 // FIXME : Should we bomb in this case?
@@ -189,6 +171,80 @@ public abstract class JavaProvider extends BasicProvider
             // NOTREACHED
             return null;
         }
+    }
+    
+    /**
+     * Simple utility class for dealing with synchronization issues.
+     */ 
+    class LockObject {
+        private boolean completed = false;
+        
+        synchronized void waitUntilComplete() throws InterruptedException {
+            while (!completed) {
+                wait();
+            }
+        }
+        
+        synchronized void complete() {
+            completed = true;
+            notifyAll();
+        }
+    }
+
+    /**
+     * Get a service object from a session.  Handles threading / locking
+     * issues when multiple threads might be accessing the same session
+     * object, and ensures only one thread gets to create the service
+     * object if there isn't one already.
+     */ 
+    private Object getSessionServiceObject(Session session,
+                                           String serviceName,
+                                           MessageContext msgContext,
+                                           String clsName) throws Exception {
+        Object obj = null;
+        boolean makeNewObject = false;
+                
+        // This is a little tricky.  
+        synchronized (session.getLockObject()) {
+            // store service objects in session, indexed by class name
+            obj = session.get(serviceName);
+            
+            // If nothing there, put in a placeholder object so
+            // other threads wait for us to create the real
+            // service object.
+            if (obj == null) {
+                obj = new LockObject();
+                makeNewObject = true;
+                session.set(serviceName, obj);
+            }            
+        }
+        
+        // OK, we DEFINITELY have something in obj at this point.  Either
+        // it's the service object or it's a LockObject (ours or someone
+        // else's).
+        
+        if (LockObject.class == obj.getClass()) {
+            LockObject lock = (LockObject)obj;
+            
+            // If we were the lucky thread who got to install the
+            // placeholder, create a new service object and install it
+            // instead, then notify anyone waiting on the LockObject.
+            if (makeNewObject) {
+                obj = getNewServiceObject(msgContext, clsName);
+                session.set(serviceName, obj);
+                lock.complete();
+            } else {
+                // It's someone else's LockObject, so wait around until
+                // it's completed.
+                lock.waitUntilComplete();
+                
+                // Now we are guaranteed there is a service object in the
+                // session, so this next part doesn't need syncing
+                obj = session.get(serviceName);
+            }
+        }
+        
+        return obj;
     }
 
     /**
