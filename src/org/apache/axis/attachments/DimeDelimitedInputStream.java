@@ -103,7 +103,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         LogFactory.getLog(DimeDelimitedInputStream.class.getName());
 
     java.io.InputStream is = null; //The source input stream.
-    boolean closed = true; //The stream has been closed.
+    volatile boolean closed = true; //The stream has been closed.
     boolean theEnd = false; //There are no more streams left.
     boolean moreChunks = false; //More chunks are a coming!
     boolean MB = false;  //First part of the stream. MUST be SOAP.
@@ -260,12 +260,16 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
         if(recordLength == 0 && bytesRead == 0 &&  !moreChunks){
           ++bytesRead; //odd case no data to read -- give back 0 next time -1;
-          if(ME) theEnd = true;
+          if(ME){
+              finalClose();
+          }    
           return 0;
         }
         if (bytesRead >= recordLength && !moreChunks) {
             dataPadLength -= readPad(dataPadLength);
-            if(ME) theEnd = true;
+            if(ME){
+              finalClose();
+            }    
             return -1;
         }
 
@@ -332,7 +336,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         }
 
         if (bytesRead >= recordLength && ME) {
-            theEnd = true;
+              finalClose();
         }
 
         return totalbytesread >= 0 ? totalbytesread : -1;
@@ -494,9 +498,11 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     /**
      * Closes the stream.
      */
-    public synchronized void close() throws IOException {
+    public void close() throws IOException {
+        synchronized(this){
         if (closed) return;
         closed = true; //mark it closed.
+        }
         log.debug(JavaUtils.getMessage("bStreamClosed", "" + streamNo));
         if (bytesRead < recordLength || moreChunks) {
             //We need get this off the stream.
@@ -505,7 +511,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             int bread = 0;
 
             do {
-                bread = _read(readrest, 0, readrest.length);
+                bread = _read(readrest, 0, readrest.length);//should also close the orginal stream.
             }
             while (bread > -1);
         }
@@ -549,7 +555,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         } catch (IOException e) {
             streamInError = e;
             throw e;
-        };
+        }
 
         if (chunkAvail == 0 && moreChunks && (12 + dataPadLength)
           <= streamAvail) {
@@ -558,5 +564,14 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             return available();
         }
         return  Math.min(streamAvail, chunkAvail); 
+    }
+
+    protected void finalClose() throws IOException {
+       try{
+         theEnd = true;
+         if(null != is) is.close();
+       }finally{
+         is= null;
+       }
     }
 }

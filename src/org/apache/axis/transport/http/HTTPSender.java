@@ -656,7 +656,7 @@ public class HTTPSender extends BasicHandler {
             }
 
 
-            outMsg = new Message(inp, false, contentType,
+            outMsg = new Message( new SocketInputStream(inp, sock), false, contentType,
                     contentLocation);
             outMsg.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(outMsg);
