@@ -200,6 +200,24 @@ public class AdminClientTask extends Task {
         failOnError = fail;
     }
 
+    /**
+     * trace out parameters
+     * @param logLevel to log at
+     * @see org.apache.tools.ant.Project#log
+     */
+    public void traceParams(int logLevel) {
+        log("Running axis-admin with parameters:", logLevel);
+        log("  action:" + action, logLevel);
+        log("  url:"+ url, logLevel);
+        log("  hostname:" + hostname, logLevel);
+        log("  port:" + port, logLevel);
+        log("  servletPath:" + servletPath, logLevel);
+        log("  fileProtocol:" + fileProtocol, logLevel);
+        log("  username:" + username, logLevel);
+        log("  password:" + password, logLevel);
+        log("  transportChain:" + transportChain, logLevel);
+        log("  debug:" + debug, logLevel);
+    }
 
     /**
      * <p>Processes a set of administration commands.</p>
@@ -227,12 +245,13 @@ public class AdminClientTask extends Task {
      * AdminClient will invoke
      * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.</p>
      *
-     * @return XML result or null in case of failure. In the case of multiple
+     * outputs XML result or null in case of failure. In the case of multiple
      * commands, the XML results will be concatenated, separated by \n
      * @exception BuildException something went wrong
      */
 
     public void execute() throws BuildException {
+        traceParams(Project.MSG_VERBOSE);
         argslist = new LinkedList();
 
         //build an array of args
@@ -292,11 +311,13 @@ public class AdminClientTask extends Task {
             }
         } catch (AxisFault fault) {
             log(fault.dumpToString(), Project.MSG_ERR);
+            traceParams(Project.MSG_ERR);
             logOrThrow(getTaskName()
                     +" failed with  "
                     + fault.getFaultCode().toString()
                     + " "+ fault.getFaultString());
         } catch(BuildException e) {
+            //rethrow these
             throw e;
         } catch (Exception e) {
             throw new BuildException("Exception in "+getTaskName(),e);
