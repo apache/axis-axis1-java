@@ -203,7 +203,13 @@ public class TestCaseEmitter {
                 }
 
                 Emitter.Parameter param = (Emitter.Parameter) iparam.next();
-                if ( this.emitter.isPrimitiveType(param.type) ) {
+                String paramType = param.type;
+                if ( this.emitter.isPrimitiveType(paramType) ) {
+                    if ( "boolean".equals(paramType) ) {
+                        writer.print("false");
+                    } else {
+                        writer.print("0");
+                    }
                 } else {
                     writer.print("new ");
                     writer.print(param.type);
