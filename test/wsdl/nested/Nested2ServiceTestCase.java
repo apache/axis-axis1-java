@@ -6,6 +6,8 @@
  */
 
 package test.wsdl.nested;
+import test.wsdl.nested.holders.PEADDRESSHolder;
+import test.wsdl.nested.holders.RETURNHolder;
 
 public class Nested2ServiceTestCase extends junit.framework.TestCase {
     public Nested2ServiceTestCase(String name) {

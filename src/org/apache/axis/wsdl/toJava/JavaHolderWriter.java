@@ -95,7 +95,7 @@ public class JavaHolderWriter extends JavaClassWriter {
      * Generate the holder for the given complex type.
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
-        String holderType = Utils.getJavaLocalName(type.getName());
+        String holderType = type.getName();
         pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");
@@ -105,7 +105,6 @@ public class JavaHolderWriter extends JavaClassWriter {
         pw.println("        this.value = value;");
         pw.println("    }");
         pw.println();
-        pw.println("    // ?++?");
     } // writeOperation
 
 } // class JavaHolderWriter

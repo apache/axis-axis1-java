@@ -60,7 +60,7 @@ package test.wsdl.multiref;
 import org.apache.axis.utils.Options;
 
 import java.net.URL;
-
+import test.wsdl.multiref.holders.NodeHolder;
 
 
 /**

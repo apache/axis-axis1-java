@@ -99,6 +99,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             // This could be a special QName for a indexed property.
             // If so, change the [] to Array.
             name = JavaUtils.replace(name, "[]", "Array");
+            name = addPackageName(name, "holders");
             return name + "Holder";
         }
         // String also has a reserved holder
@@ -153,10 +154,29 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         else if (typeValue.equals("javax.xml.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
         }
-        // For everything else simply append Holder
-        else
-            return typeValue + "Holder";
+        // For everything else add "holders" package and append
+        // holder to the class name.
+        else {
+            return addPackageName(typeValue, "holders") + "Holder";
+        }
     } // holder
+
+    /**
+     * Add package to name
+     * @param String full name of the class.
+     * @param String name of the package to append
+     * @return String name with package name added
+     */
+    public static String addPackageName(String className, String newPkg) {
+        int index = className.lastIndexOf(".");
+        if (index >= 0) {
+            return className.substring(0, index)
+                + "." + newPkg
+                + className.substring(index);
+        } else {
+            return newPkg + "." + className;
+        }
+    }
 
     /**
      * Given a fault, return the fully qualified Java class name
