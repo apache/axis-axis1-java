@@ -273,7 +273,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             String variable = (String) names.get(i + 1);
 
             // Declare the bean element
-            pw.print("    private " + typeName + " " + Utils.addUnderscore(variable) + ";");
+            pw.print("    private " + typeName + " " + variable + ";");
 
             // label the attribute fields.
             if (elements == null || i >= (elements.size()*2))
@@ -498,14 +498,14 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableGetters) {
                 pw.println("    public " + typeName + " " +
                            get + capName + "() {");
-                pw.println("        return " + Utils.addUnderscore(name) + ";");
+                pw.println("        return " + name + ";");
                 pw.println("    }");
                 pw.println();
             }
             if (enableSetters) {
                 pw.println("    public void set" + capName + "(" +
-                           typeName + " " + Utils.addUnderscore(name) + ") {");
-                pw.println("        this." + Utils.addUnderscore(name) + " = " + Utils.addUnderscore(name) + ";");
+                           typeName + " " + name + ") {");
+                pw.println("        this." + name + " = " + name + ";");
                 pw.println("    }");
                 pw.println();
             }
@@ -525,7 +525,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                     if (enableGetters) {
                         pw.println("    public " + compName + " " + get + capName +
                                    "(int i) {");
-                        pw.println("        return " + Utils.addUnderscore(name) + "[i];");
+                        pw.println("        return " + name + "[i];");
                         pw.println("    }");
                         pw.println();
                     }
@@ -553,7 +553,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                         pw.println("            this." + name + " = a;");
                         pw.println("        }");
                         */
-                        pw.println("        this." + Utils.addUnderscore(name) + "[i] = value;");
+                        pw.println("        this." + name + "[i] = value;");
                         pw.println("    }");
                         pw.println();
                     }
@@ -609,24 +609,24 @@ public class JavaBeanWriter extends JavaClassWriter {
                         variableType.equals("double") ||
                         variableType.equals("boolean") ||
                         variableType.equals("byte")) {
-                    pw.print("            " + Utils.addUnderscore(variable) + " == other." + get +
+                    pw.print("            " + variable + " == other." + get +
                             Utils.capitalizeFirstChar(variable) + "()");
                 } else if (variableType.indexOf("[") >=0) {
                     // Use java.util.Arrays.equals to compare arrays.
-                    pw.println("            ((" + Utils.addUnderscore(variable) +
+                    pw.println("            ((" + variable +
                                "==null && other." + get +
                                Utils.capitalizeFirstChar(variable) + "()==null) || ");
-                    pw.println("             (" + Utils.addUnderscore(variable) + "!=null &&");
-                    pw.print("              java.util.Arrays.equals(" + Utils.addUnderscore(variable) +
+                    pw.println("             (" + variable + "!=null &&");
+                    pw.print("              java.util.Arrays.equals(" + variable +
                              ", other." + get +
                              Utils.capitalizeFirstChar(variable) + "())))");
 
                 } else {
-                    pw.println("            ((" + Utils.addUnderscore(variable) +
+                    pw.println("            ((" + variable +
                                "==null && other." + get +
                                Utils.capitalizeFirstChar(variable) + "()==null) || ");
-                    pw.println("             (" + Utils.addUnderscore(variable) + "!=null &&");
-                    pw.print("              " + Utils.addUnderscore(variable) +
+                    pw.println("             (" + variable + "!=null &&");
+                    pw.print("              " + variable +
                              ".equals(other." + get +
                              Utils.capitalizeFirstChar(variable) + "())))");
                 }
