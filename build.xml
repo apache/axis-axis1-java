@@ -150,7 +150,8 @@ Copyright:
 
     <uptodate property="addr.uptodate" 
               targetfile="${samples.dir}/addr/AddressBookService.java">
-      <srcfiles dir="${samples.dir}/addr" includes="AddressBook.wsdl" />
+      <srcfiles dir="${samples.dir}/addr" includes="AddressBook.wsdl"/>
+      <srcfiles dir="${src.dir}/org/apache/axis/wsdl" includes="**/*.java"/>
     </uptodate>
 
   </target>
