@@ -43,6 +43,7 @@ them.
 <property name="commons-logging.jar" location="${lib.dir}/commons-logging.jar"/>
 <property name="commons-discovery.jar" location="${lib.dir}/commons-discovery.jar"/>
 <property name="commons-httpclient.jar" location="${lib.dir}/commons-httpclient.jar"/>
+<property name="commons-net.jar" location="${lib.dir}/commons-net-1.0.0-dev.jar"/>
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.4.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
 <property name="jimi.jar" location="${lib.dir}/JimiProClasses.zip"/>

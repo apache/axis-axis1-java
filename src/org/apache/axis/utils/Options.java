@@ -308,6 +308,16 @@ public class Options {
         return( tmp );
     }
     
+    public String getHost() {
+        try {
+            URL url = new URL(getURL());
+            return( url.getHost() );
+        }
+        catch( Exception exp ) {
+            return( "localhost" );
+        }
+    }
+
     public int getPort() {
         try {
             URL url = new URL(getURL());

@@ -95,6 +95,10 @@
       classname="org.apache.commons.httpclient.HttpConnection"
       classpathref="classpath"/>
 
+    <available property="commons-net.present"
+      classname="org.apache.commons.net.smtp.SMTPClient"
+      classpathref="classpath"/>
+
     <available property="log4j.present"
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
