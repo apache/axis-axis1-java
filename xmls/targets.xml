@@ -119,6 +119,18 @@
       </and>
     </condition>
 
+    <condition property="jimi.present" >
+      <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
+    </condition>
+
+    <condition property="jimiAndAttachments.present">
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+        <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
+      </and>
+    </condition>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <property environment="env"/>
@@ -161,6 +173,7 @@
     <echo message="junit.present=${junit.present}" />
     <echo message="mailapi.present=${mailapi.present}" />
     <echo message="attachments.present=${attachments.present}" />
+    <echo message="jimi.present=${jimi.present}" />
     <echo message="security.present=${security.present}" />
     <echo message="jsse.present=${jsse.present}" />
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />

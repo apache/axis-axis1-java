@@ -20,8 +20,9 @@ Prerequisites:
 
 Optional components:
    SOAP Attachment support enablement:
-     activation.jar from http://java.sun.com/products/javabeans/glasgow/jaf.html
-     mailapi.jar    from http://java.sun.com/products/javamail/
+     activation.jar     from http://java.sun.com/products/javabeans/glasgow/jaf.html
+     mailapi.jar        from http://java.sun.com/products/javamail/
+     JimiProClasses.zip from http://java.sun.com/products/jimi/
    Security support enablement:
      xmlsec.jar from fresh build of CVS from http://xml.apache.org/security/
      Other support jars from http://cvs.apache.org/viewcvs.cgi/xml-security/libs/
@@ -87,6 +88,9 @@ Copyright:
       <exclude name="**/org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/BoundaryDelimitedStream.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/ImageDataSource.java" unless="jimiAndAttachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/MimeMultipartDataSource.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/attachments/PlainTextDataSource.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/configuration/ServletEngineConfigurationFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializer.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializerFactory.java" unless="attachments.present"/>
@@ -278,6 +282,7 @@ Copyright:
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
       <exclude name="test/functional/TestAttachmentsSample.java" unless="attachments.present"/>
+      <exclude name="test/wsdl/attachments/*.java" unless="jimiAndAttachments.present" />
       <exclude name="test/httpunit/**/*.java"/>
     </javac>
     <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>

@@ -77,7 +77,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
-import javax.mail.internet.MimeMultipart;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 
@@ -232,10 +231,12 @@ public class RPCProvider extends JavaProvider
                 value = JavaUtils.convert(value,
                                           sigType);
 
+/* Is this needed?  I think JavaUtils.convert does the work.
                 if (value != null && value.getClass().getName().equals(
                         "javax.activation.DataHandler")) {
                     value = getDataFromDataHandler(value, paramDesc);
                 }
+*/
 
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
@@ -365,11 +366,15 @@ public class RPCProvider extends JavaProvider
      * If it is not a MIME type, the input object is simply returned.
      */
     private Object convertMIMEType(Object object, QName qname) {
-        if (qname != null &&
+        if (object != null && qname != null &&
                 qname.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
             // We have a potential attachment, put the return
             // into a DataHandler.
             if (qname.equals(Constants.MIME_IMAGE)) {
+                object = instantiateDataHandler(
+                        "org.apache.axis.attachments.ImageDataSource",
+                        "java.awt.Image",
+                        object);
             }
             else if (qname.equals(Constants.MIME_PLAINTEXT)) {
                 object = instantiateDataHandler(

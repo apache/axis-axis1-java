@@ -37,6 +37,7 @@
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/attachments/*.java" />
+      <exclude name="test/wsdl/attachments/*.java" unless="jimiAndAttachments.present"/>
     </javac>
 
 </target>
