@@ -25,6 +25,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
@@ -274,13 +275,8 @@ public class AxisServer extends AxisEngine
                 if( tlog.isDebugEnabled() ) {
                     t3=System.currentTimeMillis();
                 }
-
-                // Ensure that if we get SOAP1.2, then reply using SOAP1.2 
-                if(msgContext.getRequestMessage().getSOAPEnvelope().getSOAPConstants() != null) {
-                    SOAPConstants soapConstants = msgContext.getRequestMessage().getSOAPEnvelope().getSOAPConstants();
-                    msgContext.setSOAPConstants(soapConstants);
-                }
-                    
+                
+                initSOAPConstants(msgContext);
                 try {
                     h.invoke(msgContext);
                 } catch (AxisFault ae) {
@@ -335,6 +331,25 @@ public class AxisServer extends AxisEngine
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisServer::invoke");
         }
+    }
+
+    /**
+     * Extract ans store soap constants info from the envelope
+     * @param msgContext
+     * @throws AxisFault
+     */ 
+    private void initSOAPConstants(MessageContext msgContext) throws AxisFault {
+        Message msg = msgContext.getRequestMessage();
+        if (msg == null)
+            return;
+        SOAPEnvelope env = msg.getSOAPEnvelope();
+        if (env == null)
+            return;
+        SOAPConstants constants = env.getSOAPConstants();
+        if (constants == null)
+            return;
+        // Ensure that if we get SOAP1.2, then reply using SOAP1.2
+        msgContext.setSOAPConstants(constants);
     }
 
     /**
