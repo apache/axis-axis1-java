@@ -202,8 +202,20 @@ public class Message {
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("SOAPEnvelope") ||
-         currentForm.equals("AxisFault") ) {
+    if ( currentForm.equals("AxisFault") ) {
+        StringWriter writer = new StringWriter();
+        AxisFault env = (AxisFault)currentMessage;
+        try {
+            env.output(new SerializationContext(writer));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        currentMessage = writer.getBuffer().toString();
+        return (String)currentMessage;
+    }
+
+    if ( currentForm.equals("SOAPEnvelope") ) {
         StringWriter writer = new StringWriter();
         SOAPEnvelope env = (SOAPEnvelope)currentMessage;
         try {
