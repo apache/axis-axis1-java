@@ -94,6 +94,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -126,6 +127,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     static private HashMap      cachedWSDL  = new HashMap();
     static private boolean      cachingWSDL = true ;
 
+    /**
+     * A Hashtable mapping addresses (URLs) to Transports (objects)
+     */
+    private Hashtable transportImpls = new Hashtable();
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -749,5 +754,19 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         public void setHandlerChain(QName portName, List chain) {
             map.put(portName, chain);
         }
+    }
+
+    /**
+     * Register a Transport for a particular URL.
+     */
+    void registerTransportForURL(URL url, Transport transport) {
+        transportImpls.put(url, transport);
+    }
+
+    /**
+     * Get any registered Transport object for a given URL.
+     */
+    Transport getTransportForURL(URL url) {
+        return (Transport)transportImpls.get(url);
     }
 }

@@ -235,11 +235,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     private static Hashtable transports  = new Hashtable();
 
-    /**
-     * A Hashtable mapping addresses (URLs) to Transports (objects)
-     */
-    private Hashtable transportImpls = new Hashtable();
-
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -657,7 +652,7 @@ public class Call implements javax.xml.rpc.Call {
             }
 
             // Do we already have a transport for this address?
-            Transport transport = (Transport) transportImpls.get(address);
+            Transport transport = service.getTransportForURL(address);
             if (transport != null) {
                 setTransport(transport);
             }
@@ -670,7 +665,7 @@ public class Call implements javax.xml.rpc.Call {
                                  protocol), null, null);
                 transport.setUrl(address.toString());
                 setTransport(transport);
-                transportImpls.put(address, transport);
+                service.registerTransportForURL(address, transport);
             }
         }
         catch( Exception exp ) {
