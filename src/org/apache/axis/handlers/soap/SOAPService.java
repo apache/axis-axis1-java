@@ -235,7 +235,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService()
     {
-        initHashtable(true);
+        setOptionsLockable(true);
+        initHashtable();
 
         // For now, always assume we're the ultimate destination.
         // TODO : Handle SOAP 1.2 ultimateDestination actor as well
