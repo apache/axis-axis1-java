@@ -85,9 +85,6 @@ import javax.wsdl.QName;
 
 import com.ibm.wsdl.util.xml.DOMUtils;
 
-import org.apache.xerces.dom.DocumentImpl;
-
-
 /**
  *
  * <p>Description: </p> This class is used to recursively serializes a Java Class into
@@ -468,7 +465,7 @@ public class Types {
     Document docHolder;
 
     private void createDocumentFragment () {
-        this.docHolder = new DocumentImpl();
+        this.docHolder = XMLUtils.newDocument();
         docFragment = docHolder.createDocumentFragment();
     }
     /**
