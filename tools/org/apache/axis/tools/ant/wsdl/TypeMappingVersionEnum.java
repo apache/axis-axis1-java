@@ -24,7 +24,7 @@ import org.apache.tools.ant.types.EnumeratedAttribute;
  */
 public class TypeMappingVersionEnum extends EnumeratedAttribute {
     public String[] getValues() {
-        return new String[]{"1.1", "1.2"};
+        return new String[]{"1.0", "1.1", "1.2"};
     }
 
     /**

@@ -283,8 +283,10 @@ public class WSDL2Java extends WSDL2 {
             case TYPEMAPPING_OPT:
                 String tmValue = option.getArgument();
 
-                if (tmValue.equals("1.1")) {
-                    emitter.setTypeMappingVersion("1.1");
+                if (tmValue.equals("1.0")) {
+                    emitter.setTypeMappingVersion("1.0");
+                } else if (tmValue.equals("1.1")) {
+                        emitter.setTypeMappingVersion("1.1");
                 } else if (tmValue.equals("1.2")) {
                     emitter.setTypeMappingVersion("1.2");
                 } else {

@@ -17,7 +17,9 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Scope;
+import org.apache.axis.enum.Use;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -61,7 +63,7 @@ public class Emitter extends Parser {
     protected HashMap namespaceMap = new HashMap();
 
     /** Field typeMappingVersion */
-    protected String typeMappingVersion = "1.1";
+    protected String typeMappingVersion = "1.2";
 
     /** Field baseTypeMapping */
     protected BaseTypeMapping baseTypeMapping = null;
@@ -138,6 +140,9 @@ public class Emitter extends Parser {
      */
 	private String implementationClassName = null;
 	
+    /** Field defaultTM */
+    private TypeMapping defaultTM = null;       // Default TM
+    
     /**
      * Default constructor.
      */
@@ -398,6 +403,28 @@ public class Emitter extends Parser {
         return this.properties;
     }
 
+    /**
+     * Returns the default <code>TypeMapping</code> used by the service
+     * 
+     * @return the default <code>TypeMapping</code> used by the service
+     */
+    public TypeMapping getDefaultTypeMapping() {
+        if (defaultTM == null) {
+            defaultTM =
+                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+        }
+        return defaultTM;
+    }
+
+    /**
+     * Sets the default <code>TypeMapping</code> used by the service
+     * 
+     * @param defaultTM the default <code>TypeMapping</code> used by the service
+     */
+    public void setDefaultTypeMapping(TypeMapping defaultTM) {
+        this.defaultTM = defaultTM;
+    }
+    
     /**
      * <B>WARNING: NOT IMPLEMENTED</B>
      * <p>
@@ -756,10 +783,21 @@ public class Emitter extends Parser {
      * @param typeMappingVersion 
      */
     public void setTypeMappingVersion(String typeMappingVersion) {
+        if(defaultTM == null) {
+            if (typeMappingVersion.equals("1.0")) {
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
+            } else if (typeMappingVersion.equals("1.1")) {
+                defaultTM=DefaultTypeMappingImpl.getSingleton();
+            } else if (typeMappingVersion.equals("1.2")) {
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else {
+                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
+            }
+            setDefaultTypeMapping(defaultTM);
+        }
         baseTypeMapping = new BaseTypeMapping() {
 
-            final TypeMapping defaultTM =
-                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            final TypeMapping defaultTM = getDefaultTypeMapping();
 
             public String getBaseName(QName qNameIn) {
 

@@ -20,12 +20,14 @@ import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -141,24 +143,22 @@ public class Java2WsdlAntTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        if (classpath != null) {
-            AntClassLoader cl = new AntClassLoader(
-                    getClass().getClassLoader(),
-                    getProject(),
-                    classpath,
-                    false);
-            log("Using CLASSPATH: " + cl.getClasspath(),
-                    Project.MSG_VERBOSE);
-            ClassUtils.setDefaultClassLoader(cl);
-            //add extra classes to the classpath when the classpath attr is not null
-            if(extraClasses!=null) {
-                StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
-                while (tokenizer.hasMoreTokens()) {
-                    String clsName = tokenizer.nextToken();
-                    ClassUtils.setClassLoader(clsName, cl);
-                }
+        Path p = createClasspath();
+        AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
+                getProject(),
+                p,
+                false);
+
+        ClassUtils.setDefaultClassLoader(cl);
+        //add extra classes to the classpath when the classpath attr is not null
+        if (extraClasses != null) {
+            StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
+            while (tokenizer.hasMoreTokens()) {
+                String clsName = tokenizer.nextToken();
+                ClassUtils.setClassLoader(clsName, cl);
             }
         }
+
         try {
             traceParams(Project.MSG_VERBOSE);
             validate();
@@ -193,10 +193,14 @@ public class Java2WsdlAntTask extends Task
                 emitter.setExtraClasses(extraClasses);
             }
 
-            if (typeMappingVersion.equals("1.1")) {
-                defaultTM=DefaultTypeMappingImpl.getSingleton();
-            } else {
+            if (typeMappingVersion.equals("1.0")) {
                 defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
+            } else if (typeMappingVersion.equals("1.1")) {
+                defaultTM=DefaultTypeMappingImpl.getSingleton();
+            } else if (typeMappingVersion.equals("1.2")) {
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else {
+                throw new BuildException(Messages.getMessage("j2wBadTypeMapping00"));
             }
             emitter.setDefaultTypeMapping(defaultTM);
             // Create TypeMapping and register complex types
@@ -254,17 +258,6 @@ public class Java2WsdlAntTask extends Task
             log(writer.getBuffer().toString(), Project.MSG_ERR);
             throw new BuildException("Error while running " + getClass().getName(), t);
         }
-    }
-
-    /**
-     * add a classpath containing the java classes.
-     * @return
-     */
-    public Path createClasspath() {
-      if (classpath == null) {
-        classpath = new Path(getProject());
-      }
-      return classpath.createPath();
     }
 
     /**
@@ -501,5 +494,36 @@ public class Java2WsdlAntTask extends Task
      */
      public void addComplexType(ComplexType ct) {
         complexTypes.add(ct);
+    }
+
+    /**
+     * Set the optional classpath 
+     *
+     * @param classpath the classpath to use when loading class
+     */
+    public void setClasspath(Path classpath) {
+        createClasspath().append(classpath);
+    }
+
+    /**
+     * Set the optional classpath 
+     *
+     * @return a path instance to be configured by the Ant core.
+     */
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(getProject());
+            classpath = classpath.concatSystemClasspath();
+        }
+        return classpath.createPath();
+    }
+
+    /**
+     * Set the reference to an optional classpath 
+     *
+     * @param r the id of the Ant path instance to act as the classpath
+     */
+    public void setClasspathRef(Reference r) {
+        createClasspath().setRefid(r);
     }
 }

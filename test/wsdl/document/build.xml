@@ -73,7 +73,6 @@ Copyright:
                className= "test.wsdl.document.TestService"
                useInheritedMethods="false"
                namespace="http://document.wsdl.test"
-               typeMappingVersion="1.2"
                location="http://localhost:8080/axis/services/DocumentTest">
         <mapping namespace="http://document.wsdl.test" package="test.wsdl.document"/>
     </java2wsdl>

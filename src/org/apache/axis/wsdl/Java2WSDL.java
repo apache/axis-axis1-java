@@ -24,7 +24,6 @@ import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Emitter;
-import org.apache.axis.constants.Use;
 
 import java.util.HashMap;
 import java.util.List;
@@ -411,11 +410,12 @@ public class Java2WSDL {
             case TYPEMAPPING_OPT:
                 value = option.getArgument();
 
-                // This switch is totally bogus, ignore it
-                if (value.equals("1.1") || value.equals("1.2")) {
-                    // This is just wrong see validate options for the real stuff
-//                    emitter.setDefaultTypeMapping(
-//                            DefaultTypeMappingImpl.getSingleton());
+                if (value.equals("1.0")) {
+                    emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.create());
+                } else if (value.equals("1.1")) {
+                    emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
+                } else if (value.equals("1.2")) {
+                    emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.createWithDelegate());
                 } else {
                     System.out.println(
                             Messages.getMessage("j2wBadTypeMapping00"));

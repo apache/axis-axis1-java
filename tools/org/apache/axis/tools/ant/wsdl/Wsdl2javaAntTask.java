@@ -94,7 +94,7 @@ public class Wsdl2javaAntTask extends Task
     private String protocolHandlerPkgs = "";
     private String deployScope = "";
     private String url = "";
-    private String typeMappingVersion = TypeMappingVersionEnum.DEFAULT_VERSION;
+    private String typeMappingVersion = "1.2";
     private long timeout = 45000;
     private File namespaceMappingFile = null;
     private MappingSet mappings = new MappingSet();
