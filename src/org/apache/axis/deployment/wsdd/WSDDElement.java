@@ -55,20 +55,14 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.Serializable;
-import java.io.*; // for temporary resident 'serializeXmlString'
-
-
 import java.util.Hashtable;
 import java.util.Vector;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
 
 /**

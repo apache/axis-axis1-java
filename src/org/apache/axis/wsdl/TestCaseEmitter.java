@@ -55,9 +55,9 @@
 package org.apache.axis.wsdl;
 
 import javax.wsdl.Binding;
+import javax.wsdl.Fault;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.wsdl.Fault;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;

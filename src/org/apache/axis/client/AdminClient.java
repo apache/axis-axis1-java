@@ -55,24 +55,19 @@
 
 package org.apache.axis.client ;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
-import java.util.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
+import java.util.Vector;
 
 /**
  * An admin client object that can be used both from the command line

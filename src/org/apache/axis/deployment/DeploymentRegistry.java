@@ -54,22 +54,19 @@
  */
 package org.apache.axis.deployment;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.FileInputStream;
-import java.io.Serializable;
-
 import org.apache.axis.Handler;
-import org.apache.axis.Chain;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
-import org.apache.axis.deployment.wsdd.WSDDDeployableItem;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.QName;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 
 
 /**

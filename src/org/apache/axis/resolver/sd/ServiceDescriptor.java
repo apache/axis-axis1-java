@@ -1,23 +1,24 @@
 package org.apache.axis.resolver.sd;
 
-import java.io.InputStream;
-import java.util.Stack;
-import java.util.ArrayList;
-import javax.xml.parsers.SAXParser;
 import org.apache.axis.Handler;
 import org.apache.axis.resolver.Resolver;
 import org.apache.axis.resolver.ResolverContext;
-import org.apache.axis.resolver.sd.schema.Service; 
 import org.apache.axis.resolver.sd.schema.Fault;
-import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.HandlerList;
-import org.apache.axis.resolver.sd.schema.SDElement;
+import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.SDConstants;
-import org.apache.axis.utils.QName;
-import org.apache.axis.utils.NSStack;
+import org.apache.axis.resolver.sd.schema.SDElement;
+import org.apache.axis.resolver.sd.schema.Service;
 import org.apache.axis.utils.Mapping;
-import org.xml.sax.helpers.DefaultHandler;
+import org.apache.axis.utils.NSStack;
+import org.apache.axis.utils.QName;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * A simplified deployment descriptor format.  It uses SAX to read

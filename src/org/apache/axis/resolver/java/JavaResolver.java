@@ -1,12 +1,11 @@
 package org.apache.axis.resolver.java;
 
 import org.apache.axis.Handler;
+import org.apache.axis.providers.java.MsgProvider;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.resolver.Resolver;
 import org.apache.axis.resolver.ResolverContext;
 import org.apache.axis.resolver.ResolverException;
-import org.apache.axis.utils.AxisClassLoader;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.providers.java.MsgProvider;
 
 /**
  * Resolves a Java class as either a RPCProvider or MSGProvider.

@@ -54,11 +54,11 @@
  */
 package org.apache.axis.deployment.v2dd;
 
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.apache.axis.deployment.DeploymentDocument;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeploymentException;
 
 /**
  * Apache SOAP v2.x Deployment Descriptor Support classes

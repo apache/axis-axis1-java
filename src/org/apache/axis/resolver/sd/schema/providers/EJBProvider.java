@@ -1,13 +1,13 @@
 package org.apache.axis.resolver.sd.schema.providers;
 
-import org.apache.axis.utils.QName;
-import org.apache.axis.resolver.ResolverContext;
-import org.apache.axis.resolver.sd.schema.SDConstants;
-import org.apache.axis.resolver.sd.schema.Provider;
-import org.apache.axis.resolver.ejb.EJBResolver;
 import org.apache.axis.Handler;
-import org.xml.sax.helpers.DefaultHandler;
+import org.apache.axis.resolver.ResolverContext;
+import org.apache.axis.resolver.ejb.EJBResolver;
+import org.apache.axis.resolver.sd.schema.Provider;
+import org.apache.axis.resolver.sd.schema.SDConstants;
+import org.apache.axis.utils.QName;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * EJB provider extension.
