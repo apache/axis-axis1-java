@@ -449,6 +449,13 @@ public class tcpmon extends JFrame {
 
                 if ( inSocket  != null ) inSocket.setSoTimeout( 10 );
                 if ( outSocket != null ) outSocket.setSoTimeout( 10 );
+
+                if ( tmodel != null ) {
+                  String tmpStr = (String) tmodel.getValueAt(tableIndex,
+                                                             REQ_COLUMN);
+                  if ( !"".equals(tmpStr) )
+                    reqSaved = tmpStr.length();
+                }
                 
                 for ( ;; ) {
                     if( done ) break;
@@ -739,6 +746,56 @@ public class tcpmon extends JFrame {
                             targetPort = HTTPProxyPort ;
                         }
 
+                    }
+                } else {
+                    //
+                    // Change Host: header to point to correct host
+                    //
+                    byte[] b1 = new byte[1];
+                    buf = new StringBuffer();
+                    String s1;
+                    String lastLine = null ;
+
+                    for ( ;; ) {
+                        int len ;
+                        len = tmpIn1.read(b1, 0, 1);
+                        if ( len == -1 )
+                                break ;
+                        s1 = new String( b1 );
+                        buf.append( s1 );
+                        if ( b1[0] != '\n' )
+                                continue ;
+                        // we have a complete line
+                        String line = buf.toString();
+                        buf.setLength(0);
+                        // check to see if we have found Host: header
+                        if (line.startsWith("Host: ")) {
+                            // we need to update the hostname to target host
+                            String newHost = "Host: " + targetHost + "\r\n";
+                            bufferedData = bufferedData.concat(newHost);
+                            break ;
+                        }
+                        // add it to our headers so far
+                        if (bufferedData == null)
+                            bufferedData = line;
+                        else
+                            bufferedData = bufferedData.concat(line);
+
+                        // failsafe
+                        if (line.equals("\r\n")) break;
+                        if ("\n".equals(lastLine) && line.equals("\n")) break ;
+                        lastLine = line ;
+                    }
+                    if ( bufferedData != null ) {
+                        inputText.append( bufferedData );
+                        s1 = bufferedData.substring( 0, 50 );
+                        int i = s1.indexOf('\n');
+                        if ( i > 0 ) s1 = s1.substring(0,i-1);
+                        s1 = s1 + "                           " + 
+                                  "                       ";
+                        s1 = s1.substring(0,51);
+                        listener.tableModel.setValueAt( s1, index+1,
+                                                        REQ_COLUMN );
                     }
                 }
 
