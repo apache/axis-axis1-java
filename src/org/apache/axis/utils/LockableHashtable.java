@@ -74,6 +74,9 @@ public class LockableHashtable extends Hashtable {
      * Stores the keys of the locked entries
      */
     Vector lockedEntries = new Vector();
+    
+    /** Place to look for properties which we don't find locally. */
+    private Hashtable parent = null;
 
     public LockableHashtable() {
         super();
@@ -90,7 +93,26 @@ public class LockableHashtable extends Hashtable {
     public LockableHashtable(int p1) {
         super(p1);
     }
+    
+    /**
+     * Set the parent Hashtable for this object
+     */ 
+    public synchronized void setParent(Hashtable parent)
+    {
+        this.parent = parent;
+    }
 
+    /**
+     * Get an entry from this hashtable, and if we don't find anything,
+     * defer to our parent, if any.
+     */ 
+    public synchronized Object get(Object key) {
+        Object ret = super.get(key);
+        if ((ret == null) && (parent != null)) {
+            ret = parent.get(key);
+        }
+        return ret;
+    }
     /**
      * New version of the put() method that allows for explicitly marking
      * items added to the hashtable as locked.

@@ -61,9 +61,12 @@ import java.lang.reflect.Field;
 import java.util.Vector;
 import java.util.HashMap;
 
-import org.apache.axis.utils.JavapUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.Skeleton;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.LocalVariableTable;
+import org.apache.bcel.classfile.LocalVariable;
+import org.apache.bcel.Repository;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
@@ -427,7 +430,7 @@ public class ClassRep {
             return paramNames;
         }
         
-        paramNames = JavapUtils.getParameterNames(method); 
+        paramNames = getParameterNames(method); 
         
         // If failed, try getting a method of the impl class
         // It is possible that the impl class is a skeleton, thus the
@@ -458,7 +461,7 @@ public class ClassRep {
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = JavapUtils.getParameterNames(m); 
+                paramNames = getParameterNames(m); 
             }
         }            
 
@@ -582,6 +585,44 @@ public class ClassRep {
             return false;
         }
         return true;
+    }
+    
+    public String[] getParameterNames(java.lang.reflect.Method method) {
+        Class c = method.getDeclaringClass();
+        int numParams = method.getParameterTypes().length;
+        
+        if (numParams == 0)
+            return null;
+        
+        JavaClass jc = Repository.lookupClass(c.getName());
+        if (jc == null)
+            return null;
+        org.apache.bcel.classfile.Method [] methods = jc.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            org.apache.bcel.classfile.Method meth = methods[i];
+            if (!meth.getName().equals(method.getName()))
+                continue;
+            
+            LocalVariableTable lt = meth.getLocalVariableTable();
+            if (lt == null)
+                continue;
+            LocalVariable [] vars = lt.getLocalVariableTable();
+            if (vars.length == numParams + 1) {
+                String [] argNames = new String[numParams + 1];
+                argNames[0] = null; // don't know return name
+                int idx = 1;
+                // This is it?  Check types?
+                for (int j = 0; j < vars.length; j++) {
+                    LocalVariable var = vars[j];
+                    if (var.getName().equals("this"))
+                        continue;
+                    argNames[var.getIndex()] = var.getName();
+                }
+                return argNames;
+            }
+        }
+        
+        return null;
     }
 
 };
