@@ -252,6 +252,17 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                                faultActor,
                                faultNode,
                                faultDetails);
+
+            try {
+                Vector headers = element.getEnvelope().getHeaders();
+                for (int i = 0; i < headers.size(); i++) {
+                    SOAPHeaderElement header =
+                            (SOAPHeaderElement) headers.elementAt(i);
+                    f.addHeader(header);                    
+                }
+            } catch (AxisFault axisFault) {
+                // What to do here?
+            }
         }
 
         element.setFault(f);

@@ -720,6 +720,15 @@ public class AxisFault extends java.rmi.RemoteException {
         }
         faultHeaders.add(header);
     }
+    
+    /**
+     * Get the SOAP headers associated with this fault.
+     * 
+     * @return an ArrayList containing any headers associated with this fault
+     */
+    public ArrayList getHeaders() {
+        return faultHeaders;
+    }
 
     /**
      * clear all fault headers
