@@ -624,10 +624,10 @@ public class Emitter {
                                      equals(thisOper.getParameter(k).getJavaType()))) {
                                     parmsMatch = false;
                                 }
-                                if (parmsMatch) {
-                                    messageOper = tryOper;
-                                    found = true;
-                                }
+                            }
+                            if (parmsMatch) {
+                                messageOper = tryOper;
+                                found = true;
                             }
                         }
                     }
