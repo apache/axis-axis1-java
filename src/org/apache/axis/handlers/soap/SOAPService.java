@@ -57,6 +57,7 @@ package org.apache.axis.handlers.soap;
 import org.apache.axis.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
+import org.apache.axis.utils.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
 
@@ -143,5 +144,49 @@ public class SOAPService extends SimpleTargetedChain
     {
         Debug.Print( 1, "Enter: SOAPService::undo" );
         Debug.Print( 1, "Exit: SOAPService::undo" );
+    }
+
+    /*********************************************************************
+     * Administration and management APIs
+     * 
+     * These can get called by various admin adapters, such as JMX MBeans,
+     * our own Admin client, web applications, etc...
+     * 
+     *********************************************************************
+     */
+    
+    /** Placeholder for "enable this service" method
+     */
+    public void start()
+    {
+    }
+    
+    /** Placeholder for "disable this service" method
+     */
+    public void stop()
+    {
+    }
+    
+    /**
+     * Register a new service type mapping
+     */
+    public void registerTypeMapping(QName qName,
+                                    Class cls,
+                                    DeserializerFactory deserFactory,
+                                    Serializer serializer)
+    {
+        if (deserFactory != null)
+            typeMap.addDeserializerFactory(qName, cls, deserFactory);
+        if (serializer != null)
+            typeMap.addSerializer(cls, qName, serializer);
+    }
+        
+    /**
+     * Unregister a service type mapping
+     */
+    public void unregisterTypeMapping(QName qName, Class cls)
+    {
+        typeMap.removeDeserializer(qName);
+        typeMap.removeSerializer(cls);
     }
 }
