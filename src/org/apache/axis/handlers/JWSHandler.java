@@ -72,6 +72,10 @@ public class JWSHandler extends BasicHandler
     static Category category =
             Category.getInstance(JWSHandler.class.getName());
 
+    // Keep the processor Handler around so we can make it the service
+    // Handler for this request if appropriate.
+    static JWSProcessor processor = new JWSProcessor();
+
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         if (category.isDebugEnabled()) {
@@ -83,7 +87,7 @@ public class JWSHandler extends BasicHandler
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
 
         if ((realpath!=null) && (realpath.endsWith(".jws"))) {
-            msgContext.setTargetService(Constants.JWSPROCESSOR_TARGET) ;
+            msgContext.setServiceHandler(processor);
         }
 
         if (category.isDebugEnabled()) {
