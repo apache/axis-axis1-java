@@ -122,12 +122,45 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         try {
             value=javaType.newInstance();
         } catch (Exception e) {
-/*
-            throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
-                                                        javaType.getName(), 
-                                                        e.toString()));
-*/
+            // Don't process the exception at this point.
+            // This is defered until the call to startElement
+            // which will throw the exception.
         }
+    }
+
+    /**
+     * startElement
+     * 
+     * The ONLY reason that this method is overridden is so that
+     * the object value can be set or a reasonable exception is thrown
+     * indicating that the object cannot be created.  This is done
+     * at this point so that it occurs BEFORE href/id processing.
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qName of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
+     */
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        // Create the bean object if it was not already
+        // created in the constructor.
+        if (value == null) {
+            try {
+                value=javaType.newInstance();
+            } catch (Exception e) {
+                // Failed to create an object.
+                throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
+                                                            javaType.getName(), 
+                                                            e.toString()));
+            }
+        }
+        // Invoke super.startElement to do the href/id processing.
+        super.startElement(namespace, localName, 
+                           qName, attributes, context);
     }
 
     /**
@@ -307,6 +340,8 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                DeserializationContext context)
             throws SAXException {
 
+        // The value should have been created or assigned already.
+        // This code may no longer be needed.
         if (value == null) {
             // create a value
             try {
@@ -331,8 +366,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             String fieldName = typeDesc.getFieldNameForAttribute(attrQName);
             if (fieldName == null)
                 continue;
-
-//            String attrName = attributes.getLocalName(i);
 
             // look for the attribute property
             BeanPropertyDescriptor bpd =
