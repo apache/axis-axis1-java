@@ -68,7 +68,7 @@ import java.net.*;
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class LocalDispatchHandler extends BasicHandler {
+public class LocalSender extends BasicHandler {
 
   private volatile AxisServer server;
 
@@ -82,7 +82,7 @@ public class LocalDispatchHandler extends BasicHandler {
   }
 
   public void invoke(MessageContext clientContext) throws AxisFault {
-    Debug.Print( 1, "Enter: LocalDispatchHandler::invoke" );
+    Debug.Print( 1, "Enter: LocalSender::invoke" );
 
     // This should have already been done, but it doesn't appear to be
     // something that can be relied on.  Oh, well...
@@ -99,7 +99,7 @@ public class LocalDispatchHandler extends BasicHandler {
     // copy soap action if it is present
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
     if (action != null) {
-       serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action); 
+       serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
        serverContext.setProperty(MessageContext.TRANS_REQUEST , "HTTPAction");
     }
 
@@ -125,11 +125,11 @@ public class LocalDispatchHandler extends BasicHandler {
     clientContext.setResponseMessage(serverContext.getResponseMessage());
     clientContext.getResponseMessage().getAsString();
 
-    Debug.Print( 1, "Exit: LocalDispatchHandler::invoke" );
+    Debug.Print( 1, "Exit: LocalSender::invoke" );
   }
 
   public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: LocalDispatchHandler::undo" );
-    Debug.Print( 1, "Exit: LocalDispatchHandler::undo" );
+    Debug.Print( 1, "Enter: LocalSender::undo" );
+    Debug.Print( 1, "Exit: LocalSender::undo" );
   }
 };

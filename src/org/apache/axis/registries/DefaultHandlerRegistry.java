@@ -140,7 +140,7 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
     }
     else {
       this.add( "HTTPSender",  new HTTPSender() );
-      this.add( "LocalSender", new LocalDispatchHandler() );
+      this.add( "LocalSender", new LocalSender() );
     }
 
     dontSave = false ;

@@ -69,7 +69,6 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.message.DebugHeader;
-import org.apache.axis.transport.local.LocalDispatchHandler;
 
 import org.w3c.dom.* ;
 
@@ -130,7 +129,7 @@ public class ServiceClient {
         this();
         
         try {
-            URL url = new URL(endpointURL);          
+            URL url = new URL(endpointURL);
             String protocol = url.getProtocol();
             setTransport(engine.getTransportForProtocol(protocol));
             set(MessageContext.TRANS_URL, endpointURL);
@@ -393,3 +392,4 @@ public class ServiceClient {
     }
     
 }
+
