@@ -364,7 +364,7 @@ public class SerializationContext
 
         if (writingStartTag) {
             writer.write("/>");
-            if (pretty) writer.write("/>");
+            if (pretty) writer.write("\n");
             writingStartTag = false;
             return;
         }
