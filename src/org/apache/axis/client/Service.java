@@ -66,6 +66,7 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -83,6 +84,7 @@ import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -103,7 +105,9 @@ import java.util.Set;
  */
 
 public class Service implements javax.xml.rpc.Service {
-    private AxisEngine          engine         = null ;
+    private AxisEngine          engine         = 
+            new AxisClient(configProvider);
+    
     private URL                 wsdlLocation   = null ;
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
@@ -127,9 +131,6 @@ public class Service implements javax.xml.rpc.Service {
      * @exception JAXRPCException If there's an error
      */
     public Service() throws JAXRPCException { 
-        this.wsdlLocation   = null ;
-        this.wsdlDefinition = null ;
-        setEngine( new AxisClient(configProvider) );
     }
 
     /**
@@ -141,30 +142,8 @@ public class Service implements javax.xml.rpc.Service {
      * @throws JAXRPCExceptionIif there's an error finding or parsing the WSDL
      */
     public Service(URL wsdlDoc, QName serviceName) throws JAXRPCException {
-        this();
-        try {
-            // Start by reading in the WSDL using WSDL4J
-            org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlDoc.toString());
-            WSDLReader           reader = new WSDLReader();
-            Definition           def    = reader.readWSDL( null, doc );
-
-            this.wsdlLocation   = wsdlDoc ;
-            this.wsdlDefinition = def ;
-
-            // grrr!  Too many flavors of QName
-            String           ns = serviceName.getNamespaceURI();
-            String           lp = serviceName.getLocalPart();
-            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
- 
-            this.wsdlService    = def.getService( qn );
-            if ( this.wsdlService == null )
-                throw new JAXRPCException(
-                        JavaUtils.getMessage("noService00", "" + serviceName) );
-        }
-        catch( Exception exp ) {
-            throw new JAXRPCException(
-                    JavaUtils.getMessage("wsdlError00", "" + wsdlDoc, "\n" + exp) );
-        }
+        Document doc = XMLUtils.newDocument(wsdlDoc.toString());
+        initService(doc, serviceName);
     }
 
     /**
@@ -180,28 +159,13 @@ public class Service implements javax.xml.rpc.Service {
      */
     public Service(String wsdlLocation, QName serviceName) 
                            throws JAXRPCException {
-        this();
         try {
             // Start by reading in the WSDL using WSDL4J
             FileInputStream      fis = new FileInputStream(wsdlLocation);
-            org.w3c.dom.Document doc = XMLUtils.newDocument(fis);
-            WSDLReader           reader = new WSDLReader();
-            Definition           def    = reader.readWSDL( null, doc );
-
-            this.wsdlLocation   = null ;
-            this.wsdlDefinition = def ;
-
-            // grrr!  Too many flavors of QName
-            String           ns = serviceName.getNamespaceURI();
-            String           lp = serviceName.getLocalPart();
-            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
- 
-            this.wsdlService    = def.getService( qn );
-            if ( this.wsdlService == null )
-                throw new JAXRPCException(
-                        JavaUtils.getMessage("noService00", "" + serviceName) );
+            Document doc = XMLUtils.newDocument(fis);
+            initService(doc, serviceName);
         }
-        catch( Exception exp ) {
+        catch( FileNotFoundException exp ) {
             throw new JAXRPCException(
                     JavaUtils.getMessage("wsdlError00", "" + wsdlLocation, "\n" + exp) );
         }
@@ -219,10 +183,21 @@ public class Service implements javax.xml.rpc.Service {
      */
     public Service(InputStream wsdlInputStream, QName serviceName) 
                            throws JAXRPCException {
-        this();
+        Document doc = XMLUtils.newDocument(wsdlInputStream);
+        initService(doc, serviceName);
+    }
+
+    /**
+     * Common code for building up the Service from a WSDL document
+     * 
+     * @param doc               A DOM document containing WSDL
+     * @param serviceName       Qualified name of the desired service
+     * @throws JAXRPCException  If there's an error finding or parsing the WSDL
+     */ 
+    private void initService(Document doc, QName serviceName) 
+            throws JAXRPCException {
         try {
             // Start by reading in the WSDL using WSDL4J
-            org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlInputStream);
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
 
@@ -237,7 +212,7 @@ public class Service implements javax.xml.rpc.Service {
             this.wsdlService    = def.getService( qn );
             if ( this.wsdlService == null )
                 throw new JAXRPCException(
-                        JavaUtils.getMessage("noService00", "" + serviceName) );
+                        JavaUtils.getMessage("noService00", "" + serviceName));
         }
         catch( Exception exp ) {
             throw new JAXRPCException(
