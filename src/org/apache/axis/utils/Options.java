@@ -240,6 +240,8 @@ public class Options {
     if ( host == null ) host = "localhost" ;
     if ( port == null ) port = "8080" ;
     if ( servlet == null ) servlet = "/axis/servlet/AxisServlet" ;
+    else
+      if ( servlet.charAt(0) != '/' ) servlet = "/" + servlet ;
 
     tmp = "http://" + host ;
     if ( port != null ) tmp += ":" + port ;
