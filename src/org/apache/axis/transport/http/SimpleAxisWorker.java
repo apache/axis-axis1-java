@@ -268,7 +268,15 @@ public class SimpleAxisWorker implements Runnable {
                 msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                         "jwsClasses");
 
-                String hostname = socket.getInetAddress().getHostName();
+                // FIXME
+                // This doesn't return anything but 0.0.0.0
+                //  String hostname = serverSocket.getInetAddress().getHostAddress();
+                // And this returns the hostname of the host on the other
+                // end of the socket:
+                //  String hostname = socket.getInetAddress().getHostName();
+                // This works for 99% of the uses of SimpleAxisServer,
+                // but is very stupid
+                String hostname = "localhost";
                 // !!! Fix string concatenation
                 String url = "http://" + hostname + ":" +
                         server.getServerSocket().getLocalPort() + "/" +
