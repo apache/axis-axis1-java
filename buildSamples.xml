@@ -103,6 +103,10 @@ Copyright:
     <ant inheritAll="true" antfile="samples/security/buildComponent.xml"/>
   </target>
 
+  <target name="jaxrpc" depends="setenv">
+    <ant inheritAll="true" antfile="samples/jaxrpc/buildComponent.xml"/>
+  </target>
+
 <!-- =========================================================================== -->
   <target name="copy"/>
 
