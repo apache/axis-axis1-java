@@ -841,7 +841,15 @@ public class XMLUtils {
         return elements;
     }
 
-    public static String getEncoding(Message message, MessageContext msgContext){
+    public static String getEncoding(Message message,
+                                     MessageContext msgContext) {
+        return getEncoding(message, msgContext,
+                XMLEncoderFactory.getDefaultEncoder());
+    }
+
+    public static String getEncoding(Message message,
+                                     MessageContext msgContext,
+                                     XMLEncoder defaultEncoder) {
         String encoding = null;
         try {
             if(message != null) {
@@ -858,8 +866,8 @@ public class XMLUtils {
         if (msgContext != null && encoding == null) {
             encoding = (String) msgContext.getAxisEngine().getOption(AxisEngine.PROP_XML_ENCODING);
         }
-        if (encoding == null) {
-            encoding = XMLEncoderFactory.getDefaultEncoder().getEncoding();
+        if (encoding == null && defaultEncoder != null) {
+            encoding = defaultEncoder.getEncoding();
         }
         return encoding;
     }

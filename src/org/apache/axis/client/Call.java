@@ -24,6 +24,7 @@ import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.SOAPPart;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FaultDesc;
@@ -2629,8 +2630,10 @@ public class Call implements javax.xml.rpc.Call {
             } else {
                 // No direct config, so try the namespace of the first body.
                 reqMsg = msgContext.getRequestMessage();
-
-                if (reqMsg != null) {
+                
+                boolean isStream = ((SOAPPart)reqMsg.getSOAPPart()).isBodyStream();
+                
+                if (reqMsg != null && !isStream) {
                     reqEnv = reqMsg.getSOAPEnvelope();
 
                     SOAPBodyElement body = reqEnv.getFirstBody();
@@ -2658,11 +2661,14 @@ public class Call implements javax.xml.rpc.Call {
                 msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
             } catch (SOAPException e) {
             }
-            reqEnv = requestMessage.getSOAPEnvelope();
-
-            // If we have headers to insert, do so now.
-            for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
-                reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+            
+            if(myHeaders != null) {
+                reqEnv = requestMessage.getSOAPEnvelope();
+    
+                // If we have headers to insert, do so now.
+                for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
+                    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+                }
             }
         }
 
@@ -2687,7 +2693,7 @@ public class Call implements javax.xml.rpc.Call {
             try {
                 SerializationContext ctx = new SerializationContextImpl(writer,
                                                                    msgContext);
-                reqEnv.output(ctx);
+                requestMessage.getSOAPEnvelope().output(ctx);
                 writer.close();
             } catch (Exception e) {
                 log.debug(Messages.getMessage("exceptionPrinting"), e);
