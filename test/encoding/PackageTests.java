@@ -26,6 +26,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestSer.class);
         suite.addTestSuite(TestString.class);
         suite.addTestSuite(TestHrefs.class);
+        suite.addTestSuite(TestBody.class);
 
         return suite;
     }
