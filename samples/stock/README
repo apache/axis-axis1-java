@@ -23,7 +23,7 @@ To run the stock samples, you must do the following:
     Run the GetInfo sample:
         java samples.stock.GetInfo <symbol> <datatype>
 
-	where <symbol> is one of "IBM", "ALLR" (Allaire), or "CSCO" (Cisco)
+  where <symbol> is one of "IBM", "ALLR" (Allaire), or "CSCO" (Cisco)
           (these are the only symbols this sample supports)
         and <datatype> is one of "symbol", "name", or "address".
 
@@ -52,9 +52,10 @@ To run the stock samples, you must do the following:
     users.lst
      - list of users and passwords
 
-    perms.lst
-     - list of users and allowable actions per user
-
+    The access control list for the authorization handler is located in the 
+    deploy.wsdd file.  the 'allowedRoles' parameter is used to specify the users
+    who have the karma required to access the service.
+    
     If you are running the SimpleAxisServer, this means that these files must
     be in the directory from which that program is run.  The easiest thing to
     do is to cd to samples/stock and run SimpleAxisServer from there.
