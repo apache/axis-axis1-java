@@ -503,25 +503,30 @@ public class SymbolTable {
      * a file.
      */
     private static URL getURL(URL contextURL, String spec) throws IOException {
+        // First, fix the slashes as windows filenames may have backslashes
+        // in them, but the URL class wont do the right thing when we later
+        // process this URL as the contextURL.
+        String path = spec.replace('\\', '/');
+        
         // See if we have a good URL.
         URL url = null;
         try {
-            url = new URL(contextURL, spec);
+            url = new URL(contextURL, path);
         }
         catch (MalformedURLException me)
         {
+            // try treating is as a file pathname
             if (contextURL == null) {
-                url = new URL("file", "", spec);
+                url = new URL("file", "", path);
             } else {
                 // get the parent directory of the contextURL, and append
                 // the spec string to the end.
                 String contextFileName = contextURL.getFile();
                 String parentName = new File(contextFileName).getParent();
                 if (parentName != null) {
-                    url = new URL(new URL("file", "", parentName + '/'), spec);
-                }
-                else {
-                    throw new FileNotFoundException(url.toString());
+                    url = new URL(new URL("file", "", parentName + '/'), path);
+                } else {
+                    url = new URL("file", "", path);
                 }
             }
         }
