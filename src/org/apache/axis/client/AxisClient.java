@@ -27,6 +27,7 @@ import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.handlers.soap.MustUnderstandChecker;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
@@ -44,6 +45,8 @@ import javax.xml.namespace.QName;
 public class AxisClient extends AxisEngine {
     protected static Log log =
             LogFactory.getLog(AxisClient.class.getName());
+    
+    MustUnderstandChecker checker = new MustUnderstandChecker(null);
 
     public AxisClient(EngineConfiguration config) {
         super(config);
@@ -148,6 +151,8 @@ public class AxisClient extends AxisEngine {
                             Messages.getMessage("noTransport00", hName));
                 }
 
+                checker.invoke(msgContext);
+                
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
 
@@ -166,6 +171,7 @@ public class AxisClient extends AxisEngine {
 
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
+                checker.invoke(msgContext);
             }
 
         } catch ( Exception e ) {
