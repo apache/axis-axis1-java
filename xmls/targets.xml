@@ -301,7 +301,6 @@
     <copy file="${axis.home}/test/functional/AltStockQuoteService.jws" todir="${axis.home}/build/jws" />
     <copy file="${axis.home}/test/functional/GlobalTypeTest.jws" todir="${axis.home}/build/jws"/>
 
-          <mkdir dir="${test.functional.reportdir}" />
           <path id="deploy.xml.files">
                 <fileset dir="${build.dir}">
                   <include name="work/${componentName}/**/deploy.wsdd"/>
@@ -321,6 +320,7 @@
   </target>
   
 <target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
+	<echo message="Execing ${componentName} Test"/>
 	<antcall target="component-junit-functional"/>
 </target>
 
@@ -337,6 +337,8 @@
         <fileset dir="${build.dest}">
            <include name="${componentName}/*TestCase.class" />
            <include name="${componentName}/**/*TestCase.class" />
+           <include name="${componentName}/**/PackageTests.class" />
+           <!-- <include name="${componentName}/**/test/*TestSuite.class"/> -->
         </fileset>
       </batchtest>
    </junit>
@@ -358,5 +360,6 @@
 </target>
 
 <target name="transport-layer" depends="setenv" >
+  <mkdir dir="${test.functional.reportdir}" />
   <ant antfile="${axis.home}/samples/transport/buildComponent.xml" target="compile" />
 </target>
