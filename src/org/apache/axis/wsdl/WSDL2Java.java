@@ -194,6 +194,7 @@ public class WSDL2Java extends WSDL2 {
                     emitter.setSkeletonWanted(true);
                 else
                     emitter.setSkeletonWanted(false);
+                // --skeletonDeploy assumes --server-side, so fall thru
 
             case SERVER_OPT:
                 emitter.setServerSide(true);
