@@ -95,6 +95,7 @@ public class Java2WSDL {
     protected static final int METHODS_NOTALLOWED_OPT = 'x';
     protected static final int STOP_CLASSES_OPT = 'c';
     protected static final int TYPEMAPPING_OPT = 'T';
+    protected static final int SOAPACTION_OPT = 'A';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -177,7 +178,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
-                JavaUtils.getMessage("j2wopttypeMapping00"))
+                JavaUtils.getMessage("j2wopttypeMapping00")),
+        new CLOptionDescriptor("soapAction",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SOAPACTION_OPT,
+                JavaUtils.getMessage("j2woptsoapAction00"))
     };
 
     protected Emitter emitter;
@@ -327,6 +332,21 @@ public class Java2WSDL {
             }
             break;
             
+        case SOAPACTION_OPT:
+            value = option.getArgument();
+            if (value.equalsIgnoreCase("DEFAULT")) {
+                emitter.setSoapAction("DEFAULT");
+            } else if (value.equalsIgnoreCase("OPERATION")) {
+                emitter.setSoapAction("OPERATION");
+            } else if (value.equalsIgnoreCase("NONE")) {
+                emitter.setSoapAction("NONE");
+            } else {
+                System.out.println(JavaUtils.getMessage("j2wBadSoapAction00"));
+            }
+            break;
+
+        default: 
+            break;
         }
     }        
 

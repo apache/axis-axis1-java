@@ -1,4 +1,3 @@
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -143,6 +142,7 @@ public class Emitter {
 
     private ServiceDesc serviceDesc;
     private ServiceDesc serviceDesc2;
+    private String soapAction = "DEFAULT";
 
     /**
      * Construct Emitter.
@@ -732,9 +732,22 @@ public class Emitter {
         bindingOper.setOperation(oper);
 
         SOAPOperation soapOper = new SOAPOperationImpl();
-        String soapAction = desc.getSoapAction();
-        if (soapAction == null) {
+
+        
+        // If the soapAction option is OPERATION, force
+        // soapAction to the name of the operation. If NONE,
+        // force soapAction to "".
+        // Otherwise use the information in the operationDesc.
+        String soapAction = "";
+        if (getSoapAction().equals("OPERATION")) {
+            soapAction = oper.getName();
+        } else if (getSoapAction().equals("NONE")) {
             soapAction = "";
+        } else {
+            soapAction = desc.getSoapAction();
+            if (soapAction == null) {
+                soapAction = "";
+            }
         }
         soapOper.setSoapActionURI(soapAction);
 
@@ -1363,6 +1376,22 @@ public class Emitter {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Returns the soapAction option value
+     * @return the String DEFAULT, NONE or OPERATION
+     */
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    /**
+     * Sets the soapAction option value
+     * @param must be DEFAULT, NONE, or OPERATION
+     */
+    public void setSoapAction(String value) {
+        soapAction = value;
     }
 
     /**
