@@ -256,8 +256,10 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i += 2) {
+                    String attrName = (String) attributes.get(i + 1);
                     String fieldName =
-                            Utils.xmlNameToJava((String) attributes.get(i + 1));
+                            Utils.capitalizeFirstChar(
+                                    Utils.xmlNameToJava(attrName));
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -265,6 +267,11 @@ public class JavaComplexTypeWriter extends JavaWriter {
                     }
                     pw.println("field = new org.apache.axis.description.AttributeDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
+                    if (!fieldName.equals(attrName)) {
+                        pw.print("        field.setXmlName(");
+                        pw.print("new javax.xml.rpc.namespace.QName(null, \"");
+                        pw.println(attrName + "\"));");
+                    }
                     pw.println("        typeDesc.addFieldDesc(field);");
                 }
             }
