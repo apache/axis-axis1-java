@@ -51,9 +51,9 @@ Copyright:
 
 <target name="copy" depends="setenv">
   <echo message="Compiling test.utils"/>
-  <ant inheritAll="true" antfile="${axis.home}/test/utils/build.xml" target="compile"/>
+  <ant dir="${axis.home}" antfile="${axis.home}/test/utils/build.xml" target="compile"/>
   <echo message="Compiling test.RPCDispatch"/>
-  <ant inheritAll="true" antfile="${axis.home}/test/RPCDispatch/build.xml" target="compile"/>
+  <ant dir="${axis.home}" antfile="${axis.home}/test/RPCDispatch/build.xml" target="compile"/>
 </target>
 
 <target name="compile" depends="copy">
