@@ -76,6 +76,7 @@ public class DeserializerBase extends DefaultHandler
     
     protected Object value = null;
     protected DeserializationContext context = null;
+    protected boolean isComplete = false;
     
     public Object getValue()
     {
@@ -86,6 +87,27 @@ public class DeserializerBase extends DefaultHandler
         this.value = value;
     }
 
+    class CallbackTarget {
+        public ValueReceiver target;
+        public Object hint;
+        CallbackTarget(ValueReceiver target, Object hint)
+        {
+            this.target = target;
+            this.hint = hint;
+        }
+    }
+    protected Vector callbacks = null;
+
+    public void registerCallback(ValueReceiver target, Object hint)
+    {
+        if (target == null)
+            return;
+        
+        if (callbacks == null)
+            callbacks = new Vector();
+        callbacks.addElement(new CallbackTarget(target, hint));
+    }
+    
     /////////////////////////////////////////////////////////////
     //  Reflection-based insertion of values into target objects
     //  once deserialization is complete.
@@ -106,6 +128,9 @@ public class DeserializerBase extends DefaultHandler
     protected Vector targets = null;
     public void registerValueTarget(Object target, Field field)
     {
+        if ((target == null) || (field == null))
+            return;
+        
         if (targets == null)
             targets = new Vector();
         
@@ -143,23 +168,32 @@ public class DeserializerBase extends DefaultHandler
      */
     public void valueComplete() throws SAXException
     {
-        if (targets == null)
-            return;
+        isComplete = true;
         
-        Enumeration e = targets.elements();
-        while (e.hasMoreElements()) {
-            FieldTarget target = (FieldTarget)e.nextElement();
-            Field field = target.targetField;
-            Object object = target.targetObject;
-            
-            try {
-                field.set(object, value);
-            } catch (IllegalAccessException accEx) {
-                accEx.printStackTrace();
-                throw new SAXException(accEx);
-            } catch (IllegalArgumentException argEx) {
-                argEx.printStackTrace();
-                throw new SAXException(argEx);
+        if (callbacks != null) {
+            Enumeration e = callbacks.elements();
+            while (e.hasMoreElements()) {
+                CallbackTarget target = (CallbackTarget)e.nextElement();
+                target.target.valueReady(value, target.hint);
+            }
+        }
+        
+        if (targets != null) {
+            Enumeration e = targets.elements();
+            while (e.hasMoreElements()) {
+                FieldTarget target = (FieldTarget)e.nextElement();
+                Field field = target.targetField;
+                Object object = target.targetObject;
+                
+                try {
+                    field.set(object, value);
+                } catch (IllegalAccessException accEx) {
+                    accEx.printStackTrace();
+                    throw new SAXException(accEx);
+                } catch (IllegalArgumentException argEx) {
+                      argEx.printStackTrace();
+                      throw new SAXException(argEx);
+                }
             }
         }
     }

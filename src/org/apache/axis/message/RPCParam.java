@@ -83,36 +83,8 @@ public class RPCParam extends MessageElement
     {
         super(namespace, localName, attrs, context);
         name = localName;
-
-        // Check for type
-        String type = null;
-        for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && type==null; i++)
-            type = attrs.getValue(Constants.URIS_SCHEMA_XSI[i], "type");
         
-        if (DEBUG_LOG)
-            System.out.println("Got param.  Name ='" + name + "' Type is '" + type + "'");
-        
-        if (type == null)
-          return;
-        
-        // OK, this is a QName, so look up the prefix in our current mappings.
-        
-        int i = type.indexOf(":");
-        
-        // !!! Can we have types that are in the default namespace?
-        String nsURI = context.getNamespaceURI(type.substring(0, i));
-        
-        //System.out.println("namespace = " + nsURI);
-        
-        if (nsURI == null) {
-            // !!! Should we just fault here (invalid NS prefix)?
-            //     This of course implies that all the MessageElement
-            //     constructors would be able to throw exceptions...
-            type = null;
-            return;
-        }
-        
-        typeQName = new QName(nsURI, type.substring(i + 1));
+        typeQName = context.getTypeFromAttributes(attrs);
     }
     
     /** Constructor for building up messages.

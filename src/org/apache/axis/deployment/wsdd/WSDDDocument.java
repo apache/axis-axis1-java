@@ -139,7 +139,9 @@ public class WSDDDocument extends DeploymentDocument {
                                     mapping.getQName(), ser);
             
                 if (deser != null)
-                    tmr.addDeserializerFactory(mapping.getQName(), deser);
+                    tmr.addDeserializerFactory(mapping.getQName(),
+                                               mapping.getLanguageSpecificType(),
+                                               deser);
             } catch (Exception e) {
                 throw new DeploymentException(e.getMessage());
             }
