@@ -135,7 +135,7 @@ public interface Call {
      * <p>Type: <code>java.lang.Boolean</code>
      */
     public static final String SESSION_MAINTAIN_PROPERTY =
-        "javax.xml.rpc.http.session.maintain";
+        "javax.xml.rpc.session.maintain";
 
     /**
      * Indicates whether <code>addParameter</code> and
