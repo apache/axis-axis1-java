@@ -90,7 +90,7 @@ public class SOAPService extends SimpleTargetedChain
     {
         Debug.Print( 1, "Enter: SOAPService::invoke" );
         
-        msgContext.setProperty( MessageContext.SVC_HANDLER, this );
+        msgContext.setServiceHandler( this );
         
         Handler h = getInputChain() ;
         if ( h != null ) {

@@ -197,14 +197,26 @@ public class MessageContext {
       targetService = tServ ;
     }
 
+    /** ServiceHandler is the handler that is the "service".  This handler
+     * can (and probably will actually be a chain that contains the
+     * service specific input/output/pivot point handlers
+     */
+    private Handler          serviceHandler ;
+
+    public Handler getServiceHandler() {
+      return( serviceHandler );
+    }
+
+    public void setServiceHandler(Handler h) {
+      serviceHandler = h ;
+    }
+
     /** Contains an instance of Handler, which is the
      *  ServiceContext and the entrypoint of this service.
      *
      *  (if it has been so configured - will our deployment
      *   tool do this by default?  - todo by Jacek)
      */
-    public static String SVC_HANDLER         = "service.handler";
-
     public static String ENGINE_HANDLER      = "engine.handler";
 
     /** This String is the URL that the message came to
