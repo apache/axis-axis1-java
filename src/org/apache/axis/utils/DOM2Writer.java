@@ -83,11 +83,14 @@ public class DOM2Writer
      */
     private static String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
 
+    private static final char NL = '\n';
+    private static final char CR = '\r';
+    
     /**
      * The prefered line separator
      */
-    private static final String lineSeparator =
-                                               System.getProperty("line.separator", "\n");
+    private static final String LS = System.getProperty("line.separator",
+                                                        (new Character(NL)).toString());
 
     /**
      * Return a string containing this node serialized as XML.
@@ -245,7 +248,7 @@ public class DOM2Writer
                     {
                         out.print('>');
                         if (pretty)
-                            out.print(lineSeparator);
+                            out.print(LS);
                     }
 
                     for (int i = 0; i < numChildren; i++)
@@ -263,7 +266,7 @@ public class DOM2Writer
                 {
                     out.print("/>");
                     if (pretty)
-                        out.print(lineSeparator);
+                        out.print(LS);
                 }
                 break;
             }
@@ -296,7 +299,7 @@ public class DOM2Writer
                 out.print(node.getNodeValue());
                 out.print("-->");
                 if (pretty)
-                    out.print(lineSeparator);
+                    out.print(LS);
                 break;
             }
 
@@ -315,7 +318,7 @@ public class DOM2Writer
 
                 out.println("?>");
                 if (pretty)
-                    out.print(lineSeparator);
+                    out.print(LS);
                 break;
             }
         }
@@ -330,7 +333,7 @@ public class DOM2Writer
             out.print(node.getNodeName());
             out.print('>');
             if (pretty)
-                out.print(lineSeparator);
+                out.print(LS);
             hasChildren = false;
         }
     }
@@ -410,24 +413,24 @@ public class DOM2Writer
                     str.append("&quot;");
                     break;
                 }
-            case '\n' :
+            case NL :
                 {
                     if (i > 0)
                     {
                         char lastChar = str.charAt(str.length() - 1);
 
-                        if (lastChar != '\r')
+                        if (lastChar != CR)
                         {
-                            str.append(lineSeparator);
+                            str.append(LS);
                         }
                         else
                         {
-                            str.append('\n');
+                            str.append(NL);
                         }
                     }
                     else
                     {
-                        str.append(lineSeparator);
+                        str.append(LS);
                     }
                     break;
                 }

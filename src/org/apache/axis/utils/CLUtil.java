@@ -18,6 +18,8 @@ package org.apache.axis.utils;
 public final class CLUtil
 {
     private final static int        MAX_DESCRIPTION_COLUMN_LENGTH = 60;
+    
+    private static final String     LS = System.getProperty( "line.separator" );
 
     /**
      * Format options into StringBuffer and return. This is typically used to
@@ -28,7 +30,6 @@ public final class CLUtil
      */
     public final static StringBuffer describeOptions( final CLOptionDescriptor[] options )
     {
-        final String lSep = System.getProperty( "line.separator" );
         final StringBuffer sb = new StringBuffer();
 
         for( int i = 0; i < options.length; i++ )
@@ -73,7 +74,7 @@ public final class CLUtil
                 {
                     sb.append("=<value>");
                 }
-                sb.append( lSep );
+                sb.append( LS );
             }
 
             if( null != description )
@@ -86,12 +87,12 @@ public final class CLUtil
                         description.substring( MAX_DESCRIPTION_COLUMN_LENGTH );
                     sb.append( "\t\t" );
                     sb.append( descriptionPart );
-                    sb.append( lSep );
+                    sb.append( LS );
                 }
 
                 sb.append( "\t\t" );
                 sb.append( description );
-                sb.append( lSep );
+                sb.append( LS );
             }
         }
         return sb;
