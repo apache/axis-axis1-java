@@ -243,7 +243,7 @@ public class Admin {
           SimpleTargetedChain  cc = null ;
           Chain                c  = null ;
 
-          if ( pivot == null )
+          if ( pivot == null && input == null && output == null )
             Error( "Services must be use targetted chains" );
 
           cc = (SimpleTargetedChain) hr.find( name );
