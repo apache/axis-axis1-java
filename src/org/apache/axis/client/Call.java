@@ -1515,48 +1515,59 @@ public class Call implements javax.xml.rpc.Call {
 
         resMsg = msgContext.getResponseMessage();
         resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
-        try {
-            body = (RPCElement)resEnv.getFirstBody();
-            resArgs = body.getParams();
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            throw AxisFault.makeFault(e);
-        }
-
-        if (resArgs != null && resArgs.size() > 0) {
-
-            // If there is no return, then we start at index 0 to create the outParams Map.
-            // If there IS a return, then we start with 1.
-            int outParamStart = 0;
-
-            // If we have resArgs and the returnType is specified, then the first
-            // resArgs is the return.  If we have resArgs and neither returnType
-            // nor paramTypes are specified, then we assume that the caller is
-            // following the non-JAX-RPC AXIS shortcut of not having to specify
-            // the return, in which case we again assume the first resArgs is
-            // the return.
-            // NOTE 1:  the non-JAX-RPC AXIS shortcut allows a potential error
-            // to escape notice.  If the caller IS NOT following the non-JAX-RPC
-            // shortcut but instead intentionally leaves returnType and params
-            // null (ie., a method that takes no parameters and returns nothing)
-            // then, if we DO receive something it should be an error, but this
-            // code passes it through.  The ideal solution here is to require
-            // this caller to set the returnType to void, but there's no void
-            // type in XML.
-            // NOTE 2:  we should probably verify that the resArgs element
-            // types match the expected returnType and paramTypes, but I'm not
-            // sure how to do that since the resArgs value is a Java Object
-            // and the returnType and paramTypes are QNames.
-            if (returnType != null || paramTypes == null) {
-                RPCParam param = (RPCParam)resArgs.get(0);
-                result = param.getValue();
-                outParamStart = 1;
+        SOAPBodyElement bodyEl = resEnv.getFirstBody();
+        if (bodyEl instanceof RPCElement) {
+            try {
+                resArgs = ((RPCElement) bodyEl).getParams();
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                throw AxisFault.makeFault(e);
+            }
+            
+            if (resArgs != null && resArgs.size() > 0) {
+                
+                // If there is no return, then we start at index 0 to create the outParams Map.
+                // If there IS a return, then we start with 1.
+                int outParamStart = 0;
+                
+                // If we have resArgs and the returnType is specified, then the first
+                // resArgs is the return.  If we have resArgs and neither returnType
+                // nor paramTypes are specified, then we assume that the caller is
+                // following the non-JAX-RPC AXIS shortcut of not having to specify
+                // the return, in which case we again assume the first resArgs is
+                // the return.
+                // NOTE 1:  the non-JAX-RPC AXIS shortcut allows a potential error
+                // to escape notice.  If the caller IS NOT following the non-JAX-RPC
+                // shortcut but instead intentionally leaves returnType and params
+                // null (ie., a method that takes no parameters and returns nothing)
+                // then, if we DO receive something it should be an error, but this
+                // code passes it through.  The ideal solution here is to require
+                // this caller to set the returnType to void, but there's no void
+                // type in XML.
+                // NOTE 2:  we should probably verify that the resArgs element
+                // types match the expected returnType and paramTypes, but I'm not
+                // sure how to do that since the resArgs value is a Java Object
+                // and the returnType and paramTypes are QNames.
+                if (returnType != null || paramTypes == null) {
+                    RPCParam param = (RPCParam)resArgs.get(0);
+                    result = param.getValue();
+                    outParamStart = 1;
+                }
+                
+                for (int i = outParamStart; i < resArgs.size(); i++) {
+                    RPCParam param = (RPCParam) resArgs.get(i);
+                    outParams.put(param.getName(), param.getValue());
+                }
+            }
+        } else {
+            // This is a SOAPBodyElement, try to treat it like a return value
+            try {
+                result = bodyEl.getValueAsType(returnType);
+            } catch (Exception e) {
+                // just return the SOAPElement
+                result = bodyEl;
             }
 
-            for (int i = outParamStart; i < resArgs.size(); i++) {
-                RPCParam param = (RPCParam) resArgs.get(i);
-                outParams.put(param.getName(), param.getValue());
-            }
         }
 
         if (log.isDebugEnabled()) {

@@ -148,7 +148,7 @@ public class BodyBuilder extends SOAPHandler
                                            context);
         } else if (!gotRPCElement &&
             isRoot && 
-            msgContext.isPropertyTrue(MessageContext.ISRPC, true) ) {
+            msgContext.isEncoded() ) {
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
                                          attributes, context);
