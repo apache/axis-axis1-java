@@ -539,6 +539,7 @@ public class WSDDService
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
         } catch (ClassNotFoundException e) {
             log.info(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
+            throw new WSDDException(e);
         } catch (Exception e) {
             throw new WSDDException(e);
         }
