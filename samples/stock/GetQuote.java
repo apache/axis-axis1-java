@@ -138,7 +138,7 @@ public class GetQuote {
     }
     catch( Exception e ) {
         if ( e instanceof AxisFault ) {
-            ((AxisFault)e).dump();
+            System.err.println( ((AxisFault)e).dumpToString() );
         } else
             e.printStackTrace();
     }
