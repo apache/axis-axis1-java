@@ -59,6 +59,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 
+import org.apache.axis.utils.JavaUtils;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.lang.reflect.Method;
@@ -111,7 +113,8 @@ public class EJBProvider extends RPCProvider
             }
             if (null == username)
             {
-                throw new IllegalArgumentException("Null user in EJBProvider");
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("nullEJBUser00"));
             }
 
             if (password == null)
@@ -137,13 +140,13 @@ public class EJBProvider extends RPCProvider
             Context context = new InitialContext(properties);
             if (null == context)
             {
-                throw new AxisFault("EJBProvider can't get Context");
+                throw new AxisFault(JavaUtils.getMessage("noContext01"));
             }
 
             home =  context.lookup(clsName);
             if (null == home)
             {
-                throw new AxisFault("EJBProvider can't get Bean Home");
+                throw new AxisFault(JavaUtils.getMessage("noBeanHome00"));
             }
         }
         catch (Exception exception)

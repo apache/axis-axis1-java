@@ -59,6 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -167,7 +168,7 @@ public class MsgProvider extends JavaProvider {
     
     
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: MsgDispatcherHandler::undo" );
-        category.debug("Exit: MsgDispatcherHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "MsgDispatcherHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "MsgDispatcherHandler::undo") );
     }
 };
