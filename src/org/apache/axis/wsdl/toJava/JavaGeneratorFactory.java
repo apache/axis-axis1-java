@@ -60,7 +60,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -424,8 +423,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 baseWriter.generate();
             }
 
-            Class[] formalArgs = null;
-            Object[] actualArgs = null;
+            Class[] formalArgs;
+            Object[] actualArgs;
 
             if (entry != null) {
                 formalArgs = new Class[]{Emitter.class, entry.getClass(),
@@ -439,7 +438,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             for (int i = 0; i < writers.size(); ++i) {
                 Class wClass = (Class) writers.get(i);
-                Generator gen = null;
+                Generator gen;
 
                 try {
                     Constructor ctor = wClass.getConstructor(formalArgs);
@@ -620,7 +619,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 // into name collisions with similarly named
                 // non-anonymous types
                 StringBuffer sb = new StringBuffer(localName);
-                int aidx = -1;
+                int aidx;
 
                 while ((aidx = sb.toString().indexOf(SymbolTable.ANON_TOKEN)) > -1) {
                     sb.replace(aidx, aidx + SymbolTable.ANON_TOKEN.length(), "");
@@ -879,11 +878,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // The SEI (Service Endpoint Interface) name
                     // is always the portType name.
                     BindingEntry bEntry = (BindingEntry) entry;
-                    String seiName = null;
                     PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                             bEntry.getBinding().getPortType().getQName());
 
-                    seiName = getServiceEndpointInterfaceJavaNameHook(ptEntry, bEntry);
+                    String seiName = getServiceEndpointInterfaceJavaNameHook(ptEntry, bEntry);
                     if (seiName == null) {
                         seiName = ptEntry.getName();
                     }
@@ -1007,8 +1005,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                       v.elementAt(1) instanceof Type) ||
                      (v.elementAt(1) instanceof Element &&
                       v.elementAt(0) instanceof Type))) {
-                    Element e = null;
-
+                    Element e;
                     if (v.elementAt(0) instanceof Element) {
                         e = (Element) v.elementAt(0);
                     } else {
