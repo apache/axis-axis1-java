@@ -15,7 +15,7 @@
     <responseFlow>
       <handler type="log"/>
     </responseFlow>
-  <globalConfiguration>
+  </globalConfiguration>
 
 <!--
   <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
