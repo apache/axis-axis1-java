@@ -246,8 +246,6 @@ public class Emitter {
     {
         try {
             Properties mappings = new Properties();
-System.out.println("NStoPkgFile = " + NStoPkgFile);
-System.out.println("NStoPkgFilename = " + NStoPkgFilename);
             if (NStoPkgFile != null) {
                 mappings.load(new FileInputStream(NStoPkgFile));
             }
@@ -265,7 +263,6 @@ System.out.println("NStoPkgFilename = " + NStoPkgFilename);
             }
         }
         catch (Throwable t) {
-t.printStackTrace();
         }
     } // getNStoPkgFromPropsFile
 
