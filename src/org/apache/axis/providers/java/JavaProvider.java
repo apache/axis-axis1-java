@@ -227,9 +227,12 @@ public abstract class JavaProvider extends BasicProvider
             // placeholder, create a new service object and install it
             // instead, then notify anyone waiting on the LockObject.
             if (makeNewObject) {
-                obj = getNewServiceObject(msgContext, clsName);
-                session.set(serviceName, obj);
-                lock.complete();
+                try {
+                  obj = getNewServiceObject(msgContext, clsName);
+                  session.set(serviceName, obj);
+                } finally {
+                  lock.complete();
+                }
             } else {
                 // It's someone else's LockObject, so wait around until
                 // it's completed.
