@@ -79,7 +79,6 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 /**
@@ -145,13 +144,22 @@ public class JavaSkelWriter extends JavaClassWriter {
         pw.println("        org.apache.axis.description.ParameterDesc [] _params;");
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
-            BindingOperation operation = (BindingOperation) operations.get(i);
+            BindingOperation bindingOper = (BindingOperation) operations.get(i);
+            Operation operation = bindingOper.getOperation();
+            OperationType type = operation.getStyle();
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                continue;
+            }
+            
             Parameters parameters =
-                    bEntry.getParameters(operation.getOperation());
+                    bEntry.getParameters(bindingOper.getOperation());
 
             if (parameters != null) {
-                // The invoked java name of the operation is stored.
-                String opName = operation.getOperation().getName();
+                // The invoked java name of the bindingOper is stored.
+                String opName = bindingOper.getOperation().getName();
                 String javaOpName = Utils.xmlNameToJava(opName);
                 pw.println("        _params = new org.apache.axis.description.ParameterDesc [] {");
 
@@ -212,14 +220,14 @@ public class JavaSkelWriter extends JavaClassWriter {
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc
-                QName elementQName = Utils.getOperationQName(operation);
+                QName elementQName = Utils.getOperationQName(bindingOper);
                 if (elementQName != null) {
                     pw.println("        _oper.setElementQName(" +
                             Utils.getNewQName(elementQName) + ");");
                 }
 
                 // Find the SOAPAction.
-                List elems = operation.getExtensibilityElements();
+                List elems = bindingOper.getExtensibilityElements();
                 Iterator it = elems.iterator();
                 boolean found = false;
                 while (!found && it.hasNext()) {
@@ -326,7 +334,7 @@ public class JavaSkelWriter extends JavaClassWriter {
             Parameters parms,
             String soapAction,
             String namespace
-            ) throws IOException {
+            ) {
         writeComment(pw, operation.getDocumentationElement());
 
         // The skeleton used to have specialized operation signatures.
