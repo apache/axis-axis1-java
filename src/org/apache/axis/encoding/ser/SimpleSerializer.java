@@ -141,36 +141,37 @@ public class SimpleSerializer implements Serializer {
         
         context.startElement(name, attributes);
         if (value != null) {
-            // We could have separate serializers/deserializers to take
-            // care of Float/Double cases, but it makes more sence to
-            // put them here with the rest of the java lang primitives.
-            if (value instanceof Float ||
-                value instanceof Double) {
-                double data = 0.0;
-                if (value instanceof Float) {
-                    data = ((Float) value).doubleValue();
-                } else {
-                    data = ((Double) value).doubleValue();
-                }
-                if (Double.isNaN(data)) {
-                    context.writeString("NaN");
-                } else if (data == Double.POSITIVE_INFINITY) {
-                    context.writeString("INF");
-                } else if (data == Double.NEGATIVE_INFINITY) {
-                    context.writeString("-INF");
-                } else {
-                    context.writeString(value.toString());
-                }
-            } else if (value instanceof String) {
-                context.writeString(
-                                    XMLUtils.xmlEncodeString(value.toString()));
-            } else if (value instanceof SimpleType) {
-                context.writeString(value.toString());
-            } else {
-                context.writeString(value.toString());
-            }
+            context.writeString(valueToString(value));
         }
         context.endElement();
+    }
+
+    public static String valueToString(Object value) {
+        // We could have separate serializers/deserializers to take
+        // care of Float/Double cases, but it makes more sence to
+        // put them here with the rest of the java lang primitives.
+        if (value instanceof Float ||
+            value instanceof Double) {
+            double data = 0.0;
+            if (value instanceof Float) {
+                data = ((Float) value).doubleValue();
+            } else {
+                data = ((Double) value).doubleValue();
+            }
+            if (Double.isNaN(data)) {
+                return "NaN";
+            } else if (data == Double.POSITIVE_INFINITY) {
+                return "INF";
+            } else if (data == Double.NEGATIVE_INFINITY) {
+                return "-INF";
+            } else {
+                return value.toString();
+            }
+        } else if (value instanceof String) {
+            return XMLUtils.xmlEncodeString(value.toString());
+        } else {
+            return value.toString();
+        }
     }
 
     private Attributes getObjectAttributes(Object value,
@@ -212,7 +213,7 @@ public class SimpleSerializer implements Serializer {
                     // the attribute may be more sophisticated.  For example, don't 
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        String propString = propValue.toString();
+                        String propString = valueToString(propValue);
                         
                         String namespace = qname.getNamespaceURI();
                         String localName = qname.getLocalPart();
