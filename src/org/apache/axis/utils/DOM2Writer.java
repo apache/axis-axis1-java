@@ -203,7 +203,9 @@ public class DOM2Writer
                     String attrPrefix = attr.getPrefix();
                     String attrNamespaceURI = attr.getNamespaceURI();
 
-                    if (attrPrefix != null && attrNamespaceURI != null)
+                    if (attrPrefix != null && 
+                            attrNamespaceURI != null && 
+                            attrPrefix.length() > 0)
                     {
                         boolean prefixIsDeclared = false;
 
