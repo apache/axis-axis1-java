@@ -529,7 +529,7 @@ public class Emitter extends Parser {
      * @param xmlName QName for element
      * @return
      */
-    protected String getJavaVariableName(QName typeQName, QName xmlName, boolean isElement) {
+    public String getJavaVariableName(QName typeQName, QName xmlName, boolean isElement) {
         String javaName = null;
         
         
