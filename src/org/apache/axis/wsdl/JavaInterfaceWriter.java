@@ -99,7 +99,7 @@ public class JavaInterfaceWriter extends JavaWriter {
         Iterator operations = (new HashSet(portType.getOperations())).iterator();
         while(operations.hasNext()) {
             Operation operation = (Operation) operations.next();
-            writeOperation(portType, operation, qname.getNamespaceURI());
+            writeOperation(operation);
         }
 
         pw.println("}");
@@ -109,7 +109,7 @@ public class JavaInterfaceWriter extends JavaWriter {
     /**
      * This method generates the interface signatures for the given operation.
      */
-    private void writeOperation(PortType portType, Operation operation, String namespace) throws IOException {
+    private void writeOperation(Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
         Parameters parms = ptEntry.getParameters(operation.getName());
         pw.println(parms.signature + ";");

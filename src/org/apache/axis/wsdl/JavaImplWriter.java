@@ -111,58 +111,24 @@ public class JavaImplWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
         String portTypeName = ptEntry.getName();
-        boolean isRPC = true;
-        if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
-            isRPC = false;
-        }
         pw.print("public class " + className + " implements " + portTypeName);
         if (emitter.bMessageContext) {
             pw.print("Axis");
         }
         pw.println(" {");
 
-
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
                     ptEntry.getParameters(operation.getOperation().getName());
-
-            // Get the soapAction from the <soap:operation>
-            String soapAction = "";
-            Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
-            for (; operationExtensibilityIterator.hasNext();) {
-                Object obj = operationExtensibilityIterator.next();
-                if (obj instanceof SOAPOperation) {
-                    soapAction = ((SOAPOperation) obj).getSoapActionURI();
-                    break;
-                }
-            }
-            // Get the namespace for the operation from the <soap:body>
-            String namespace = "";
-            Iterator bindingInputIterator
-                    = operation.getBindingInput().getExtensibilityElements().iterator();
-            for (; bindingInputIterator.hasNext();) {
-                Object obj = bindingInputIterator.next();
-                if (obj instanceof SOAPBody) {
-                    namespace = ((SOAPBody) obj).getNamespaceURI();
-                    if (namespace == null)
-                        namespace = "";
-                    break;
-                }
-            }
-            writeOperation(operation, parameters, soapAction, namespace, isRPC);
+            writeOperation(parameters);
         }
         pw.println("}");
         pw.close();
     } // writeFileBody
 
-    private void writeOperation(
-            BindingOperation operation,
-            Parameters parms,
-            String soapAction,
-            String namespace,
-            boolean isRPC) throws IOException {
+    private void writeOperation(Parameters parms) throws IOException {
         if (emitter.bMessageContext) {
             pw.println(parms.axisSignature + " {");
         }
