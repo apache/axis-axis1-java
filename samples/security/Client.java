@@ -65,7 +65,7 @@ import org.apache.axis.utils.Options;
 import org.apache.axis.utils.XMLUtils;
 
 public class Client {
-    static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         try {
             Options opts = new Options(args);
 
