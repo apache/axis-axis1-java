@@ -61,7 +61,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
@@ -69,7 +68,6 @@ import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -107,6 +105,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * exploited the serializability of the DOM tree to migrate to Axis.
  */
 public class MessageElement implements SOAPElement, Serializable
+    ,org.w3c.dom.NodeList  // ADD Nodelist Interfaces for SAAJ 1.2
+    ,Cloneable
 {
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
@@ -327,31 +327,160 @@ public class MessageElement implements SOAPElement, Serializable
     public Attributes getAttributesEx() { return attributes; }
 
     public Node getFirstChild() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(children != null && !children.isEmpty()){
+            return (Node)children.get(0);
+        }else{
+            return null;
+        }
     }
 
     public Node getLastChild() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        ArrayList children = getChildren();
+        if(children != null)
+            return (Node)children.get(children.size()-1);
+        else
+            return null;
     }
 
     public Node getNextSibling() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        SOAPElement parent = getParentElement();
+        if(parent == null){
+            return null;
+        }
+        Iterator iter = parent.getChildElements();
+        Node nextSibling = null;
+        while(iter.hasNext()) {
+            if(iter.next().equals(this)){
+                if(iter.hasNext()){
+                    return (Node)iter.next();
+                }else{
+                    return null;
+                }
+            }
+        }
+        return nextSibling; // should be null.
     }
 
     public Node getParentNode() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return parent;
     }
 
     public Node getPreviousSibling() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        SOAPElement parent = getParentElement();
+        Iterator iter = parent.getChildElements();
+        Node previousSibling = null;
+        while(iter.hasNext()) {
+            if(iter.next().equals(this)){
+                return  previousSibling;
+            }
+        }
+        return previousSibling; // should be null.
     }
 
     public Node cloneNode(boolean deep) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        try{
+            MessageElement clonedSelf = (MessageElement) this.clonning();
+
+            if(deep == true){
+                if(children != null){
+                    for(int i =0; i < children.size(); i++){
+                        MessageElement child = (MessageElement)children.get(i);
+                        if(child != null) {  // why child can be null?
+                            MessageElement clonedChild = (MessageElement)child.cloneNode(deep); // deep == true
+                            clonedChild.setParent(clonedSelf);
+                            clonedChild.setOwnerDocument(soapPart);
+                        }
+                    }
+                }
+            }
+            return (Node)clonedSelf;
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
+    /**
+     *  protected clone method (not public)
+     *
+     *  copied status
+     *  -------------------
+     *  protected String    name ;             Y
+     *  protected String    prefix ;           Y
+     *  protected String    namespaceURI ;     Y
+     *  protected transient Attributes attributes  Y
+     *  protected String    id;               Y?
+     *  protected String    href;             Y?
+     *  protected boolean   _isRoot = true;   Y?
+     *  protected SOAPEnvelope message = null; N?
+     *  protected boolean   _isDirty = false;  Y?
+     *  protected transient DeserializationContext context;  Y?
+     *  protected transient QName typeQName = null;          Y?
+     *  protected Vector qNameAttrs = null;                  Y?
+     *  protected transient SAX2EventRecorder recorder = null; N?
+     *  protected int startEventIndex = 0;                   N?
+     *  protected int startContentsIndex = 0;                N?
+     *  protected int endEventIndex = -1;                    N?
+     *  protected Element elementRep = null;                N?
+     *  protected Text textRep = null;                      Y?
+     *  protected MessageElement parent = null;             N
+     *  public ArrayList namespaces = null;                 Y
+     *  protected String encodingStyle = null;              N?
+     *   private Object objectValue = null;                 N?
+     *
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    protected Object clonning() throws CloneNotSupportedException
+    {
+        try{
+            MessageElement clonedME = null;
+            clonedME = (MessageElement)this.clone();
+
+            clonedME.setName(name);
+            clonedME.setNamespaceURI(namespaceURI);
+            clonedME.setPrefix(prefix);
+
+            // new AttributesImpl will copy all data not set referencing only
+            clonedME.setAllAttributes(new AttributesImpl(attributes));
+            //       clonedME.addNamespaceDeclaration((namespaces.clone()); // cannot do this. since we cannot access the namepace arraylist
+
+            clonedME.namespaces = new ArrayList();
+            if(namespaces != null){
+                for(int i = 0; i < namespaces.size(); i++){
+                    //     jeus.util.Logger.directLog( " Debug :  namspace.size() = " + namespaces.size());
+                    Mapping namespace = (Mapping)namespaces.get(i);
+                    clonedME.addNamespaceDeclaration(namespace.getPrefix(), namespace.getNamespaceURI()); // why exception here!!
+                }
+            }
+            // clear reference to old children
+            clonedME.detachAllChildren();
+
+            // clear parents relationship to old parent
+            clonedME.setParent(null);
+            // clonedME.setObjectValue(objectValue); // how to copy this???
+            clonedME.setDirty(this._isDirty);
+            if(encodingStyle != null){
+                clonedME.setEncodingStyle(new String(encodingStyle));
+            }
+            clonedME.setRecorder(recorder);
+            return clonedME;
+        }catch(Exception ex){
+            return null;
+        }
+    }
+
+    // called in MESerialaizationContext
+    public void setAllAttributes(Attributes attrs){
+        attributes = attrs;
+    }
+
+    public void detachAllChildren(){
+        children =  new ArrayList();
+    }
+    
     public NodeList getChildNodes() {
-        return new NodeListImpl( children); 
+        return this; 
     }
 
     public boolean isSupported(String feature, String version) {
@@ -359,19 +488,36 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public Node appendChild(Node newChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(children == null) children = new ArrayList();
+        children.add(newChild);
+        return newChild;
     }
 
     public Node removeChild(Node oldChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(children == null) children = new ArrayList();
+        int position = children.indexOf(oldChild);
+        if(position < 0)
+            throw new  DOMException(DOMException.NOT_FOUND_ERR,"MessageElement Not found");;
+            children.remove(position);
+            return oldChild;
     }
 
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(children == null) children = new ArrayList();
+        int position = children.indexOf(refChild);
+        if(position < 0)  position = 0;
+        children.add(position,newChild);
+        return newChild;
     }
 
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(children == null) children = new ArrayList();
+        int position = children.indexOf(oldChild);
+        if(position < 0)
+            throw new  DOMException(DOMException.NOT_FOUND_ERR,"MessageElement Not found");;
+            children.remove(position);
+            children.add(position, newChild);
+            return oldChild;
     }
 
     /**
@@ -412,21 +558,81 @@ public class MessageElement implements SOAPElement, Serializable
     public String getPrefix() { return( prefix ); }
 
     public void setNodeValue(String nodeValue) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
+                "Cannot use TextNode.set in " + this);
     }
 
     public void setPrefix(String prefix) { this.prefix = prefix; }
 
     public Document getOwnerDocument() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return (Document)soapPart;
     }
 
     public NamedNodeMap getAttributes() {
-        return new NamedNodeMapImpl(attributes);
+        // make first it is editable.
+        makeAttributesEditable();
+        return convertAttrSAXtoDOM(attributes);
     }
 
+    /**
+     * @todo  In order to be compatible SAAJ Spec(ver 1.2),
+     * The internal representation of Attributes cannot help being changed
+     * It is because Attribute is not immutible Type, so if we keep out value and
+     * just return it in another form, the application may chnae it, which we cannot
+     * detect without some kind back track method (call back notifying the chnage.)
+     * I am not sure which approach is better.
+     *
+     */
+
+    private NamedNodeMap convertAttrSAXtoDOM(Attributes saxAttr)
+    {
+        try{
+            org.w3c.dom.Document doc = org.apache.axis.utils.XMLUtils.newDocument();
+
+            AttributesImpl saxAttrs =  (AttributesImpl)saxAttr;
+            NamedNodeMap domAttributes = new NamedNodeMapImpl();
+            for(int i = 0; i < saxAttrs.getLength(); i++){
+                String uri = saxAttrs.getURI(i);
+                String local = saxAttrs.getLocalName(i);
+                String qname = saxAttrs.getQName(i);
+                String type = saxAttrs.getType(i);
+                String value = saxAttrs.getValue(i);
+
+                if(uri != null && uri.trim().length() > 0){
+                    // filterring out the tricky method to differentiate the null namespace
+                    // -ware case
+                    if(uri.equals("intentionalNullURI")){
+                        uri = null;
+                    }
+                    Attr attr = doc.createAttributeNS(uri,qname);
+                    attr.setValue(value);
+                    domAttributes.setNamedItemNS(attr);
+                }else{
+
+                    Attr attr = doc.createAttribute(qname);
+                    attr.setValue(value);
+                    domAttributes.setNamedItem(attr);
+                }
+            }
+            return domAttributes;
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+
+    }
+    
     public short getNodeType() {
-        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(this.textRep != null) {
+            return TEXT_NODE;
+        }else if(false){
+            return DOCUMENT_FRAGMENT_NODE;
+        }else if(false){
+            return Node.ELEMENT_NODE;
+        }else{ // most often but we cannot give prioeity now
+            return Node.ELEMENT_NODE;
+        }
     }
 
     public void normalize() {
@@ -434,11 +640,11 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public boolean hasAttributes() {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return attributes.getLength() > 0;
     }
 
     public boolean hasChildNodes() {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return children.size() > 0;
     }
 
     public String getLocalName() {
@@ -448,11 +654,12 @@ public class MessageElement implements SOAPElement, Serializable
     public String getNamespaceURI() { return( namespaceURI ); }
 
     public String getNodeName() {
-        return name;  
+        return (prefix != null)? prefix + ":" + name : name;
     }
 
     public String getNodeValue() throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        throw new DOMException(DOMException.NO_DATA_ALLOWED_ERR,
+                "Cannot use TextNode.get in " + this);
     }
 
     public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
@@ -491,11 +698,38 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public void removeContents() {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        // unlink
+        if(children != null){
+            for(int i = 0; i < children.size(); i++){
+                try{
+                    ((MessageElement)children.get(i)).setParent(null);
+                }catch(Exception e){
+                }
+            }
+            // empty the collection
+            children.clear();
+        }
     }
 
     public Iterator getVisibleNamespacePrefixes() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        Vector prefixes = new Vector();
+
+        // Add all parents namespace definitions
+        if(parent !=null){
+            Iterator parentsPrefixes = parent.getVisibleNamespacePrefixes();
+            if(parentsPrefixes != null){
+                while(parentsPrefixes.hasNext()){
+                    prefixes.add(parentsPrefixes.next());
+                }
+            }
+        }
+        Iterator mine = getNamespacePrefixes();
+        if(mine != null){
+            while(mine.hasNext()){
+                prefixes.add(mine.next());
+            }
+        }
+        return prefixes.iterator();
     }
 
     /**
@@ -1032,8 +1266,20 @@ public class MessageElement implements SOAPElement, Serializable
      */
     public void recycleNode() {}
 
-    public void setValue(String s) {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public void setValue(String value) {
+        if(this instanceof org.apache.axis.message.Text){
+            ((org.apache.axis.message.Text)this).setNodeValue(value);
+            return;
+        }
+        if(children != null)
+            for(int i = 0; i < children.size(); i++){
+                MessageElement child = (MessageElement)children.get(i);
+                if(child instanceof org.apache.axis.message.Text){
+                    child.setValue(value);
+                    return;
+                }
+            }
+        throw new IllegalStateException("Cannot call set for Non Text Node");
     }
 
     // JAXM SOAPElement methods...
@@ -1214,31 +1460,77 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public String getTagName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return prefix == null ? name : prefix + ":" + name;
     }
 
     public void removeAttribute(String name) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        AttributesImpl impl =  (AttributesImpl)attributes;
+        int index = impl.getIndex(name);
+        if(index >= 0){
+            AttributesImpl newAttrs = new AttributesImpl();
+            // copy except the removed attribute
+            for(int i = 0; i < impl.getLength(); i++){ // shift after removal
+                if(i != index){
+                    String uri = impl.getURI(i);
+                    String local = impl.getLocalName(i);
+                    String qname = impl.getQName(i);
+                    String type = impl.getType(i);
+                    String value = impl.getValue(i);
+                    newAttrs.addAttribute(uri,local,qname,type,value);
+                }
+            }
+            // replace it
+            attributes = newAttrs;
+        }
     }
 
     public boolean hasAttribute(String name) {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(name == null)  // Do I have to send an exception?
+            name = "";
+
+        for(int i = 0; i < attributes.getLength(); i++){
+            if(name.equals(attributes.getQName(i)))
+                return true;
+        }
+        return false;
     }
 
     public String getAttribute(String name) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return  attributes.getValue(name);
     }
 
     public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        AttributesImpl attributes = makeAttributesEditable();
+        Name name =  new PrefixedQName(namespaceURI, localName, (String)null);
+        removeAttribute(name);
     }
 
     public void setAttribute(String name, String value) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        AttributesImpl impl =  makeAttributesEditable();
+        int index = impl.getIndex(name);
+        if(index < 0){ // not found
+            String uri = "";
+            String localname  = name;
+            String qname = name;     
+            String type = "CDDATA";  
+            impl.addAttribute(uri,localname,qname,type,value);
+        }else{         // found
+            impl.setLocalName(index, value);
+        }
     }
 
     public boolean hasAttributeNS(String namespaceURI, String localName) {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+        if(namespaceURI == null)
+            namespaceURI ="";
+        if(localName == null)  // Do I have to send an exception? or just return false
+            localName = "";
+
+        for(int i = 0; i < attributes.getLength(); i++){
+            if( namespaceURI.equals(attributes.getURI(i))
+                    && localName.equals(attributes.getLocalName(i)))
+                return true;
+        }
+        return false;
     }
 
     public Attr getAttributeNode(String name) {
@@ -1246,27 +1538,75 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        AttributesImpl attributes = makeAttributesEditable();
+        Name name =  new PrefixedQName(oldAttr.getNamespaceURI(), oldAttr.getLocalName(), oldAttr.getPrefix());
+        removeAttribute(name);
+        return oldAttr;
     }
 
     public Attr setAttributeNode(Attr newAttr) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return newAttr;
     }
 
     public Attr setAttributeNodeNS(Attr newAttr) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        //attributes.
+        AttributesImpl attributes = makeAttributesEditable();
+        // how to convert to DOM ATTR
+        attributes.addAttribute(newAttr.getNamespaceURI(),
+                newAttr.getLocalName(),
+                newAttr.getLocalName(),
+                "CDATA",
+                newAttr.getValue());
+        return null;
     }
 
     public NodeList getElementsByTagName(String name) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        //use this MessageElement class for Nodelist store
+        MessageElement nodelist = new MessageElement();
+
+        try{
+            if(children != null){
+                // add 2nd Generation
+                for(int i =0; i < children.size(); i++){
+                    nodelist.addChild((MessageElement)children.get(i));
+                }
+                // add 3rd Generation
+                for(int i =0; i < children.size(); i++){
+                    MessageElement child = (MessageElement)children.get(i);
+                    NodeList grandsons = child.getElementsByTagName(name);
+                    for(int j =0; j < children.size(); j++){
+                        nodelist.addChild((MessageElement)grandsons.item(j));
+                    }
+                }
+            }
+        }catch(SOAPException se){
+            // Shame on me
+        }
+        return nodelist;
     }
 
     public String getAttributeNS(String namespaceURI, String localName) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        for (int i = 0; i < attributes.getLength(); i++) {
+            if (attributes.getURI(i).equals(namespaceURI) &&
+                    attributes.getLocalName(i).equals(localName)) {
+                return  attributes.getValue(i);
+            }
+        }
+        return null;
     }
 
     public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        AttributesImpl attributes = makeAttributesEditable();
+        String localName =  qualifiedName.substring(qualifiedName.indexOf(":")+1, qualifiedName.length());
+
+        if(namespaceURI == null){
+            namespaceURI = "intentionalNullURI";
+        }
+        attributes.addAttribute(namespaceURI,
+                localName,
+                qualifiedName,
+                "CDATA",
+                value);
     }
 
     public Attr getAttributeNodeNS(String namespaceURI, String localName) {
@@ -1274,104 +1614,65 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return getElementsNS(this,namespaceURI,localName);
+    }
+
+    /**
+     * helper method for recusively getting the element that has namespace URI and localname
+     * @param name
+     * @return
+     */
+    protected NodeList getElementsNS(org.w3c.dom.Element parent,
+                                     String namespaceURI, String localName)
+    {
+        NodeList children = parent.getChildNodes();
+        NodeListImpl matches = new NodeListImpl();
+        // Add fisrt the imeediate child
+        for(int i =0; i < children.getLength();  i++){
+            Element child = (Element)children.item(i);
+            if(! (child instanceof Text)){
+                if(namespaceURI.equals(child.getNamespaceURI()) &&
+                        localName.equals(child.getLocalName())){
+                    matches.addNode(child);
+                }
+                // search the grand-children.
+                matches.addNodeList(
+                        child.getElementsByTagNameNS(namespaceURI, localName));
+            }
+        }
+        return matches;
+    }
+    
+    protected org.apache.axis.SOAPPart soapPart = null;
+
+    public void setOwnerDocument(org.apache.axis.SOAPPart sp){
+        soapPart = sp;
+    }
+
+    public Node item(int index) {
+        if(children !=null && children.size() > index){
+            return (Node)children.get(index);
+        }else{
+            return null;
+        }
+    }
+    
+    /**
+     * The number of nodes in the list. The range of valid child node indices
+     * is 0 to <code>length-1</code> inclusive.
+     *
+     * @since SAAJ 1.2 : Nodelist Interface
+     */
+    public int getLength(){
+        if(children  == null){
+            children = new ArrayList();
+            return 0;
+        }
+        return children.size();
     }
 
     // setEncodingStyle implemented above
 
     // getEncodingStyle() implemented above
     
-    /**
-     * Implementation of org.w3c.dom.NodeList for SAAJ 1.2
-     * This inner class can be replaced or moved if there is an
-     * Implementation for the whole Axis project
-     */
-    class NodeListImpl implements NodeList {        
-
-        private ArrayList items = new ArrayList();
-    
-        NodeListImpl( List list) {
-        
-            if ( null == list)
-                return;
-        
-            Iterator iter = list.iterator();
-            while (iter.hasNext()) {
-                Node node = (Node) iter.next();
-                items.add( node);            
-            }
-        }
-
-        public int getLength() {
-            return items.size();
-        }
-
-        public Node item(int index) {
-            return (Node)items.get(index);
-        }
-    }
-    
-    /**
-     * Implementation of org.w3c.dom.NamedNodeMap for SAAJ 1.2
-     * This inner class can be replaced or moved if there is an
-     * Implementation for the whole Axis project 
-     */
-    class NamedNodeMapImpl implements NamedNodeMap {
-
-        private String[] name, namespaceURI;
-           
-        NamedNodeMapImpl(Attributes attributes) {
-        
-            name = new String[attributes.getLength()];
-            namespaceURI = new String[attributes.getLength()];
-        
-            for( int i = 0; i < attributes.getLength(); i++) {
-                name[i] = attributes.getLocalName(i);
-                namespaceURI[i] = attributes.getURI(i);
-            }
-        }
-    
-        public Node getNamedItem(String name) {
-            try {
-                for(int i = 0; i < name.length(); i++) {
-                    if (this.name[i].equals(name))
-                        return SOAPFactory.newInstance().createElement( this.name[i], null, namespaceURI[i]);
-                }
-            } catch (SOAPException e) {}
-            return null;
-        }
-    
-        public Node item(int i) {
-            try {
-                return SOAPFactory.newInstance().createElement( name[i], null, namespaceURI[i]);
-            } catch (SOAPException e) {
-                return null;
-            }        
-        }
-    
-        public int getLength() {
-            return name.length;
-        }
-    
-        public Node getNamedItemNS(String namespaceURI, String localName) {
-            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
-        }
-    
-        public Node setNamedItemNS(Node arg) throws DOMException {
-            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
-        }
-    
-        public Node setNamedItem(Node arg) throws DOMException {
-            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
-        }
-    
-        public Node removeNamedItem(String name) throws DOMException {
-            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
-        }
-
-        public Node removeNamedItemNS(String namespaceURI, String localName) throws DOMException {
-            throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Method not supported");
-        }
-
-    }
 }

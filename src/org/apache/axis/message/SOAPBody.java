@@ -260,15 +260,21 @@ public class SOAPBody extends MessageElement
     }
 
     public javax.xml.soap.SOAPFault addFault(Name name, String s, Locale locale) throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        AxisFault af = new AxisFault(new QName(name.getURI(), name.getLocalName()), s, "", new Element[0]);
+        SOAPFault fault = new SOAPFault(af);
+        addBodyElement(fault);
+        return fault;
     }
 
     public javax.xml.soap.SOAPFault addFault(Name name, String s) throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        AxisFault af = new AxisFault(new QName(name.getURI(), name.getLocalName()), s, "", new Element[0]);
+        SOAPFault fault = new SOAPFault(af);
+        addBodyElement(fault);
+        return fault;
     }
 
     public javax.xml.soap.SOAPBodyElement addDocument(Document document) throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return importBodyElement(this, document.getDocumentElement());
     }
 
     public javax.xml.soap.SOAPFault addFault() throws SOAPException {
@@ -352,5 +358,67 @@ public class SOAPBody extends MessageElement
 
     public void setSAAJEncodingCompliance(boolean comply) {
         this.doSAAJEncodingCompliance = true;
+    }
+
+    /**
+     * Recursive function
+     * @todo: handle Attributes not yet finished
+     * @param parent
+     * @param element
+     */
+
+    private static SOAPBodyElement importBodyElement(MessageElement parent, org.w3c.dom.Node element)
+    {
+        try{
+            PrefixedQName name  = new PrefixedQName(element.getNamespaceURI(),
+                    element.getLocalName(),
+                    element.getPrefix());
+            SOAPBodyElement bodyElement = null;
+            bodyElement = new SOAPBodyElement(name);
+            if(element instanceof org.w3c.dom.Element){
+                org.w3c.dom.NamedNodeMap attrs = ((Element)element).getAttributes();
+                for(int i = 0; i < attrs.getLength(); i++){
+                    org.w3c.dom.Node att = attrs.item(i);
+                    bodyElement.setAttribute(att.getNamespaceURI(), att.getLocalName(), att.getPrefix());
+                }
+            }
+            parent.appendChild(bodyElement);
+
+            org.w3c.dom.NodeList children = element.getChildNodes();
+            for(int i = 0; i < children.getLength(); i++){
+                org.w3c.dom.Node child = children.item(i);
+                importMessageElement((MessageElement)element, child);
+            }
+            return bodyElement;
+        }
+        catch(Exception e)
+        {
+            return null;
+        }
+    }
+
+    private static void importMessageElement(org.w3c.dom.Node parent, org.w3c.dom.Node element)
+    {
+
+        PrefixedQName name  = new PrefixedQName(element.getNamespaceURI(),
+                element.getLocalName(),
+                element.getPrefix());
+        MessageElement bodyElement = new MessageElement(name);
+        org.w3c.dom.NamedNodeMap attrs = element.getAttributes();
+        for(int i = 0; i < attrs.getLength(); i++){
+            org.w3c.dom.Node att = attrs.item(i);
+            bodyElement.setAttribute(att.getNamespaceURI(),
+                    att.getLocalName(),
+                    att.getPrefix());
+        }
+        // do we have to set some more for importing.....?
+        parent.appendChild(bodyElement);
+
+        org.w3c.dom.NodeList children = element.getChildNodes();
+        for(int i = 0; i < children.getLength(); i++){
+            org.w3c.dom.Node child = children.item(i);
+            importMessageElement(element, child);
+        }
+
     }
 }

@@ -162,16 +162,37 @@ public class SOAPHeader extends MessageElement
         return results.iterator();
     }
 
-    public Iterator examineMustUnderstandHeaderElements(String s) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Iterator examineMustUnderstandHeaderElements(String actor) {
+        if (actor == null) return null;
+
+        Vector result = new Vector();
+
+        ArrayList headers = super.getChildren();
+
+        for(int i = 0; i < headers.size(); i++) {
+            SOAPHeaderElement she = (SOAPHeaderElement)headers.get(i);
+            if (she.getMustUnderstand()) {
+                String candidate = she.getActor();
+                if (actor.equals(candidate)) {
+                    result.add(headers.get(i));
+                }
+            }
+        }
+        return result.iterator();
     }
 
     public Iterator examineAllHeaderElements() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return super.getChildElements();
     }
 
     public Iterator extractAllHeaderElements() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        Vector result = new Vector();
+        ArrayList headers = super.getChildren();
+        for(int i = 0; i < headers.size(); i++) {
+            result.add(headers.get(i));
+        }
+        headers.clear();
+        return result.iterator();
     }
 
     Vector getHeaders() {

@@ -91,6 +91,7 @@ import java.util.Collections;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Rick Rineholt
+ * @author Heejune Ahn (cityboy@tmax.co.kr)
  */
 public class Message extends javax.xml.soap.SOAPMessage
     implements java.io.Serializable {
@@ -480,7 +481,10 @@ public class Message extends javax.xml.soap.SOAPMessage
         if (sendType != Attachments.SEND_TYPE_NONE) {
             //Force serialization if it hasn't happend it.
             //Rick Rineholt fix this later.
-            mSOAPPart.getAsBytes();
+            //Heejune added null check.
+            if (mSOAPPart != null){
+                mSOAPPart.getAsBytes();
+            }
         }
 
         String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
@@ -526,8 +530,21 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                Writer writer = new OutputStreamWriter(os,XMLUtils.getEncoding());
+                String charEncoding = (String)getProperty(CHARACTER_SET_ENCODING);
+                if(charEncoding == null){
+                    charEncoding = "UTF-8";
+                }
+                Writer writer = new OutputStreamWriter(os,charEncoding);
                 writer = new BufferedWriter(writer);
+
+                // write the xml declaration header
+                String incXMLDecl = (String)getProperty(super.WRITE_XML_DECLARATION);
+                if(incXMLDecl == null){
+                    incXMLDecl = "false";
+                }
+                if(incXMLDecl.equalsIgnoreCase("true")){
+                    writer.write("<?xml version=\"1.0\" encoding=\"" + charEncoding +"\"?>");
+                }
                 mSOAPPart.writeTo(writer);
                 writer.flush();
             } catch (java.io.IOException e) {
@@ -542,20 +559,22 @@ public class Message extends javax.xml.soap.SOAPMessage
         }
     }
 
+    private java.util.Hashtable mProps = new java.util.Hashtable();
+    
     public SOAPBody getSOAPBody() throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return mSOAPPart.getEnvelope().getBody();
     }
 
     public SOAPHeader getSOAPHeader() throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return mSOAPPart.getEnvelope().getHeader();
     }
 
-    public void setProperty(String s, Object obj) throws SOAPException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public void setProperty(String property, Object value) throws SOAPException {
+        mProps.put(property, value);
     }
 
-    public Object getProperty(String s) throws SOAPException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Object getProperty(String property) throws SOAPException {
+        return mProps.get(property);
     }
 
     /**
@@ -677,8 +696,8 @@ public class Message extends javax.xml.soap.SOAPMessage
     public Iterator getAttachments(){
         try {
             if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
-           		return mAttachments.getAttachments().iterator();
-			}
+                return mAttachments.getAttachments().iterator();
+            }
         } catch (AxisFault af){
             log.error(Messages.getMessage("exception00"), af);
         }
