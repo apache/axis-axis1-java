@@ -54,6 +54,20 @@
  */
 package org.apache.axis.description;
 
+import org.apache.axis.AxisServiceConfig;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.enum.Style;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.bytecode.ParamNameExtractor;
+import org.apache.axis.wsdl.Skeleton;
+import org.apache.commons.logging.Log;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -63,22 +77,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.Holder;
-
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.enum.Style;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.components.bytecode.ExtractorFactory;
-import org.apache.axis.wsdl.Skeleton;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.AxisServiceConfig;
-import org.apache.commons.logging.Log;
 
 
 /**
@@ -917,7 +915,7 @@ public class ServiceDesc {
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
         String [] paramNames =
-                ExtractorFactory.getExtractor().getParameterNamesFromDebugInfo(method);
+                ParamNameExtractor.getParameterNamesFromDebugInfo(method);
 
         for (int k = 0; k < paramTypes.length; k++) {
             Class type = paramTypes[k];

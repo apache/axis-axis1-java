@@ -52,27 +52,27 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.components.bytecode;
+package org.apache.axis.utils.bytecode;
 
-import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
 
-import java.lang.reflect.Method;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
- *  This class implements an Extractor using the interal ParamReader class
+ *  This class retieves function parameter names from bytecode built with
+ * debugging symbols.  Used as a last resort when creating WSDL.
  *
  * @author <a href="mailto:tomj@macromedia.com">Tom Jordahl</a>
- *
- */ 
-public class Builtin implements Extractor {
-    
+ */
+public class ParamNameExtractor {
+
     protected static Log log =
-        LogFactory.getLog(Builtin.class.getName());
-    
+            LogFactory.getLog(ParamNameExtractor.class.getName());
+
     /**
      * Cache of ParamReader objects which correspond to particular
      * Java classes.
@@ -80,8 +80,13 @@ public class Builtin implements Extractor {
      * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
      */
     private static Hashtable paramCache = new Hashtable();
-    
-    public String[] getParameterNamesFromDebugInfo(Method method) {
+
+    /**
+     * Retrieve a list of function parameter names from a method
+     * Returns null if unable to read parameter names (i.e. bytecode not
+     * built with debug).
+     */
+    public static String[] getParameterNamesFromDebugInfo(Method method) {
         // Don't worry about it if there are no params.
         int numParams = method.getParameterTypes().length;
         if (numParams == 0)
@@ -91,7 +96,7 @@ public class Builtin implements Extractor {
         Class c = method.getDeclaringClass();
         
         // Try to obtain a ParamReader class object from cache
-        ParamReader pr = (ParamReader)paramCache.get(c);
+        ParamReader pr = (ParamReader) paramCache.get(c);
 
         if (pr == null) {
             try {
