@@ -97,72 +97,72 @@
         <handler type="java:samples.echo.echoHeaderStructHandler"/>
     </responseFlow>
 
-    <operation returnQName="return" name="echoString">
-      <parameter name="input"/>
-    </operation>
-    <operation returnQName="return" name="echoStringArray">
-      <parameter name="inputStringArray"/>
-    </operation>
-    <operation returnQName="return" name="echoInteger">
-      <parameter name="inputInteger"/>
-    </operation>
-    <operation returnQName="return" name="echoIntegerArray">
-      <parameter name="inputIntegerArray"/>
-    </operation>
-    <operation returnQName="return" name="echoFloat">
-      <parameter name="inputFloat"/>
-    </operation>
-    <operation returnQName="return" name="echoFloatArray">
-      <parameter name="inputFloatArray"/>
-    </operation>
-    <operation returnQName="return" name="echoStruct">
-      <parameter name="inputStruct"/>
-    </operation>
-    <operation returnQName="return" name="echoStructArray">
-      <parameter name="inputStructArray"/>
-    </operation>
-    <operation returnQName="return" name="echoVoid"/>
-    <operation returnQName="return" name="echoBase64">
-      <parameter name="inputBase64"/>
-    </operation>
-    <operation returnQName="return" name="echoHexBinary">
-      <parameter name="inputHexBinary"/>
-    </operation>
-    <operation returnQName="return" name="echoDate">
-      <parameter name="inputDate"/>
-    </operation>
-    <operation returnQName="return" name="echoDecimal">
-      <parameter name="inputDecimal"/>
-    </operation>
-    <operation returnQName="return" name="echoBoolean">
-      <parameter name="inputBoolean"/>
-    </operation>
-    <operation returnQName="return" name="echoMap">
-      <parameter name="inputMap"/>
-    </operation>
-    <operation returnQName="return" name="echoMapArray">
-      <parameter name="inputMapArray"/>
-    </operation>
-    <operation returnQName="return" name="echoSimpleTypesAsStruct">
-      <parameter name="inputString"/>
-      <parameter name="inputInteger"/>
-      <parameter name="inputFloat"/>
-    </operation>
-    <operation returnQName="return" name="echoStructAsSimpleTypes">
-      <parameter name="inputStruct" xmlns:ns="http://soapinterop.org/xsd"
-                 type="ns:SOAPStruct"/>
-      <parameter name="outputString" type="xsd:string" mode="OUT"/>
-      <parameter name="outputInteger" type="xsd:int" mode="OUT"/>
-      <parameter name="outputFloat" type="xsd:float" mode="OUT"/>
-    </operation>
-    <operation returnQName="return" name="echo2DStringArray">
-      <parameter name="input2DStringArray"/>
-    </operation>
-    <operation returnQName="return" name="echoNestedStruct">
-      <parameter name="inputNestedStruct"/>
-    </operation>
-    <operation returnQName="return" name="echoNestedArray">
-      <parameter name="inputNestedArray"/>
-    </operation>
+      <operation name="echoString" returnQName="return" returnType="RTypeNS:string" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoStringArray" returnQName="return" returnType="RTypeNS:ArrayOfstring" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStringArray" type="tns:ArrayOfstring" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoInteger" returnQName="return" returnType="RTypeNS:int" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoIntegerArray" returnQName="return" returnType="RTypeNS:ArrayOfint" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputIntegerArray" type="tns:ArrayOfint" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoFloat" returnQName="return" returnType="RTypeNS:float" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoFloatArray" returnQName="return" returnType="RTypeNS:ArrayOffloat" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputFloatArray" type="tns:ArrayOffloat" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoStruct" returnQName="return" returnType="RTypeNS:SOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoStructArray" returnQName="return" returnType="RTypeNS:ArrayOfSOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStructArray" type="tns:ArrayOfSOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoVoid" >
+      </operation>
+      <operation name="echoBase64" returnQName="return" returnType="RTypeNS:base64Binary" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputBase64" type="tns:base64Binary" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDate" returnQName="return" returnType="RTypeNS:dateTime" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputDate" type="tns:dateTime" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoHexBinary" returnQName="return" returnType="RTypeNS:hexBinary" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputHexBinary" type="tns:hexBinary" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDecimal" returnQName="return" returnType="RTypeNS:decimal" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputDecimal" type="tns:decimal" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoBoolean" returnQName="return" returnType="RTypeNS:boolean" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputBoolean" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoStructAsSimpleTypes" >
+        <parameter name="inputStruct" type="tns:SOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+        <parameter name="outputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+        <parameter name="outputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+        <parameter name="outputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+      </operation>
+      <operation name="echoSimpleTypesAsStruct" returnQName="return" returnType="RTypeNS:SOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter name="inputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter name="inputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echo2DStringArray" returnQName="return" returnType="RTypeNS:ArrayOfString2D" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="input2DStringArray" type="tns:ArrayOfString2D" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoNestedStruct" returnQName="return" returnType="RTypeNS:SOAPStructStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPStructStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoNestedArray" returnQName="return" returnType="RTypeNS:SOAPArrayStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPArrayStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoMap" returnQName="return" returnType="RTypeNS:Map" xmlns:RTypeNS="http://xml.apache.org/xml-soap" >
+        <parameter name="input" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
+      </operation>
+      <operation name="echoMapArray" returnQName="return" returnType="RTypeNS:ArrayOfMap" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="input" type="tns:ArrayOfMap" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
   </service>
 </deployment>
