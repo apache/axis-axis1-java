@@ -243,7 +243,7 @@ Copyright:
       <fileset dir="${webapps}"/>
     </copy>
 
-    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
     <copy file="ReleaseNotes.html" tofile="${dist.dir}/ReleaseNotes.html"/>
   </target>
