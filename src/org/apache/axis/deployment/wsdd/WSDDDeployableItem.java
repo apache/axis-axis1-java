@@ -169,8 +169,9 @@ public abstract class WSDDDeployableItem
      */ 
     public void setParameter(String name, String value)
     {
-        if (parameters == null)
+        if (parameters == null) {
             parameters = new LockableHashtable();
+        }
         parameters.put(name, value);
     }
     
@@ -179,8 +180,9 @@ public abstract class WSDDDeployableItem
      */ 
     public String getParameter(String name)
     {
-        if (name == null)
+        if (name == null || parameters == null) {
             return null;
+        }
         
         return (String)parameters.get(name);
     }
@@ -238,7 +240,9 @@ public abstract class WSDDDeployableItem
      */
     public void removeParameter(String name)
     {
-        parameters.remove(name);
+        if (parameters != null) {
+            parameters.remove(name);
+        }
     }
 
     /**
