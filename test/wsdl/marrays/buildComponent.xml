@@ -27,6 +27,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
@@ -36,9 +37,21 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/marrays/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/marrays/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>

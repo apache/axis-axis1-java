@@ -27,8 +27,20 @@
     <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
                output="build/work"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/opStyles/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/opStyles/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>

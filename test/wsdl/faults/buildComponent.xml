@@ -32,6 +32,17 @@
                noimports="no">
         <mapping namespace="http://test.com/wsdl/faults" package="test.wsdl.faults"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/faults/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/faults/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>

@@ -22,13 +22,22 @@
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.multibinding"/>
-  <!-- Multiple-binding test with different literal usage -->
-  <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
+    <!-- Multiple-binding test with different literal usage -->
+    <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
                output="build/work"
-               skeletonDeploy="yes"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
-  </wsdl2java>
+    </wsdl2java>
+
+    <copy file="${test.dir}/wsdl/multibinding/VerifyFilesTestCase.java" tofile="${build.dir}/build/work/test/wsdl/multibinding/VerifyFilesTestCase.java"/>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/multibinding/*.java" />
+    </javac>
+
 </target>
 
 <target name="deploy"/>

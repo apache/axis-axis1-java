@@ -27,12 +27,24 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
         <mapping namespace="urn:MultiRefTest2" package="test.wsdl.multiref"/>
     </wsdl2java>
 
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/multiref/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/multiref/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>

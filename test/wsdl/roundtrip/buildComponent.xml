@@ -104,7 +104,20 @@
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </wsdl2java>
 
-
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/roundtrip/*.java" />
+      <include name="test/wsdl/roundtrip/**/*.java" />
+    </javac>
+<!--
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/roundtrip/*.java" />
+      <include name="test/wsdl/roundtrip/**/*.java" />
+    </javac>
+-->
 </target>
 
 <target name="deploy"/>

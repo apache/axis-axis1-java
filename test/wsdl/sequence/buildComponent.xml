@@ -27,13 +27,19 @@
     <wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"
                output="build/work"
                deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
+               serverSide="no"
                noimports="no"
                verbose="no"
                testcase="no">
         <mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/>
     </wsdl2java>
+    <!-- Copy modified files to work directory -->
+    <copy todir="${build.dir}/work/test/wsdl/sequence" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/sequence">
+        <include name="SequenceService.java"/>
+        <include name="deploy.wsdd"/>
+      </fileset>
+    </copy>
     <!-- Compile Java -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="classpath" />

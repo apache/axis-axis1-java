@@ -18,7 +18,9 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy">
+    <ant inheritAll="true" antfile="buildTest.xml" target="filegen"/>
+</target>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.clash"/>
@@ -28,6 +30,14 @@
                testcase="yes"
                serverSide="yes">
     </wsdl2java>
+
+    <copy file="${test.dir}/wsdl/clash/VerifyFilesTestCase.java" tofile="${build.dir}/work/test/wsdl/clash/VerifyFilesTestCase.java" />
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/clash/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>

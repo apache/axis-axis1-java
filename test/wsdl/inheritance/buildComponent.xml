@@ -28,6 +28,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -62,6 +63,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -71,6 +73,7 @@
     <!-- inheritance test (cont): Test the stopClass and exclude switches -->
     <!-- Compile class files -->
     <javac srcdir="${test.dir}/wsdl/inheritance" destdir="${build.dest}" debug="${debug}">
+        <classpath refid="classpath" />
         <include name="Baby*.java"/>
         <include name="Child*.java"/>
         <include name="Parent*.java"/>
@@ -87,6 +90,17 @@
         <mapping namespace="urn:InheritanceTest3" package="test.wsdl.inheritance"/>
     </java2wsdl>
 
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/inheritance/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/inheritance/*.java" />
+    </javac>
 </target>
 
 <target name="deploy"/>
