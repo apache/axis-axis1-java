@@ -78,6 +78,12 @@ Copyright:
       </fileset>
     </copy>
 
+    <copy todir="${build.dir}/classes/test/wsdl/extensibility" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/extensibility">
+        <include name="server-deploy.wsdd"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
