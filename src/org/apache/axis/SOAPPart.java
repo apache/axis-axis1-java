@@ -106,7 +106,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     private static final String[] formNames =
     { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
-      "FORM_BYTES", "FORM_BODYINSTREAM", "FORM_FAULT" };
+      "FORM_BYTES", "FORM_BODYINSTREAM", "FORM_FAULT", "FORM_OPTIMIZED" };
 
     /**
      * The current representation of the SOAP contents of this part.
