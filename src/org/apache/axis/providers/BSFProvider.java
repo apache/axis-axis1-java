@@ -70,7 +70,7 @@ public class BSFProvider extends BasicProvider {
         System.out.println(getOption("Script"));
     }
 
-    public void initServiceDesc(SOAPService service)
+    public void initServiceDesc(SOAPService service, MessageContext msgContext)
             throws AxisFault {
     }
 }

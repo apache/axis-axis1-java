@@ -68,7 +68,7 @@ public class ComProvider extends BasicProvider {
     public void invoke(MessageContext msgContext) {
     }
 
-    public void initServiceDesc(SOAPService service)
+    public void initServiceDesc(SOAPService service, MessageContext msgContext)
             throws AxisFault {
     }
 }
