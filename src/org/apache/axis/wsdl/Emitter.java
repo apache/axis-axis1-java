@@ -66,6 +66,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -108,7 +110,7 @@ public class Emitter {
      * Call this method if you have a uri for the WSDL document
      */
     public void emit(String uri) throws IOException {
-        System.out.println ("Parsing XML File: " + uri + "\n\n");
+        System.out.println ("Parsing XML File: " + uri);
 
         try {
             doc = XMLUtils.newDocument(uri);
@@ -134,6 +136,7 @@ public class Emitter {
             writeTypes ();
             HashMap portTypesInfo = writePortTypes ();
             writeBindings (portTypesInfo);
+            writeServices ();
             if(bEmitSkeleton)
                 writeDeploymentXML();
         }
@@ -696,44 +699,19 @@ public class Emitter {
         PrintWriter stubPW = new PrintWriter (new FileWriter (stubName + ".java"));
         System.out.println("Generating client-side stub: " + stubName + ".java");
 
-        // get the soap:address
-        // This is a temporary hack till the service class is coded to
-        // initialize the Stub with the default endpoint.  tomj@macromedia.com
-        String address = null;
-        boolean foundAddress = false;
-        Map serviceMap = def.getServices();
-        for ( Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext() && !foundAddress; ) {
-            Service myService = (Service)mapIterator.next();
-            for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext() && !foundAddress; ) {
-                Port myPort = (Port)portIterator.next();
-                List extensibilityList = myPort.getExtensibilityElements();
-                for (ListIterator li = extensibilityList.listIterator(); li.hasNext(); ) {
-                    Object obj = li.next();
-                    if (obj instanceof SOAPAddress) {
-                        address = ((SOAPAddress)obj).getLocationURI();
-                        foundAddress = true;
-                        break;
-                    }
-                }
-            }
-        }
-
         stubPW.println ("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
         stubPW.println ("{");
         stubPW.println ("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient (new org.apache.axis.transport.http.HTTPTransport ());");
-        if (address != null) {
-            stubPW.println ("    private String endpointURL = \"" + address + "\";");
-        }
-        else {
-            stubPW.println ("    private String endpointURL = null;");
-        }
         stubPW.println ("    private java.util.Hashtable properties = new java.util.Hashtable ();");
         stubPW.println ();
+        stubPW.println ("    public " + stubName + " (java.net.URL endpointURL) throws org.apache.axis.SerializationException");
+        stubPW.println ("    {");
+        stubPW.println ("         this();");
+        stubPW.println ("         call.set (org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
+        stubPW.println ("    }");
+
         stubPW.println ("    public " + stubName + " () throws org.apache.axis.SerializationException");
         stubPW.println ("    {");
-        stubPW.println ("        if (endpointURL != null) {");
-        stubPW.println ("          call.set (org.apache.axis.transport.http.HTTPTransport.URL, endpointURL);");
-        stubPW.println ("        }");
 
         HashSet types = complexTypesInClass (portType);
         Iterator it = types.iterator ();
@@ -1050,6 +1028,130 @@ public class Emitter {
     } // writeSkeletonOperation
 
     /**
+     * Create the service class or classes
+     */
+    private void writeServices() throws IOException {
+        Map services = def.getServices();
+        Iterator i = services.values ().iterator ();
+
+         while (i.hasNext ()) {
+             Service s = (Service) i.next ();
+             writeService (s);
+         }
+    }
+
+    /**
+     * Write out a single service class
+     */
+    private void writeService(Service service) throws IOException {
+        String serviceName = service.getQName().getLocalPart();
+        PrintWriter servicePW = new PrintWriter (
+                new FileWriter (serviceName + ".java"));
+
+        // imports (none right now)
+
+        // declare class
+        servicePW.println ("public class " + serviceName);
+        servicePW.println ("{");
+
+        // get ports
+        Map portMap = service.getPorts();
+        Iterator portIterator = portMap.values().iterator();
+
+        // write a get method for each of the ports with a Soap RPC binding
+        while (portIterator.hasNext() ) {
+            Port p = (Port)portIterator.next();
+            String portName = p.getName();
+            Binding binding = p.getBinding();
+
+            // If this isn't an RPC binding, skip it
+            if (! isRpcBinding(binding) )
+                continue;
+
+            String stubClass = binding.getQName().getLocalPart() + "Stub";
+            String bindingType = binding.getPortType().getQName().getLocalPart();
+
+            // Get enpoint address and validate it
+            String address = getAddressFromPort(p);
+            if (address == null) {
+                // now what?
+                throw new IOException ("Emitter failure.  Can't find endpoint address in port " + portName + " in service " + serviceName );
+            }
+            try {
+                URL ep = new URL(address);
+            }
+            catch(MalformedURLException e) {
+                throw new IOException ("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + serviceName + ": " + address );
+            }
+
+            servicePW.println();
+            servicePW.println("    // Use to get a proxy class for " + portName);
+            servicePW.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
+            servicePW.println("    public " + bindingType + " get" + portName + "() {");
+            servicePW.println("       java.net.URL endpoint;");
+            servicePW.println("        try {");
+            servicePW.println("            endpoint = new java.net.URL(" + portName + "_address);");
+            servicePW.println("        }");
+            servicePW.println("        catch (java.net.MalformedURLException e) {");
+            servicePW.println("            return null; // unlikely as URL was validated in wsdl2java");
+            servicePW.println("        }");
+            servicePW.println("        return get" + portName + "(endpoint);");
+            servicePW.println("    }");
+            servicePW.println();
+            servicePW.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) {");
+            servicePW.println("        try {");
+            servicePW.println("            return new " + stubClass + "(portAddress);");
+            servicePW.println("        }");
+            servicePW.println("        catch (org.apache.axis.SerializationException e) {");
+            servicePW.println("            return null; // ???");
+            servicePW.println("        }");
+            servicePW.println("    }");
+        }
+
+        // write out standard service methods (available in all services)
+
+        // all done
+        servicePW.println ("}");
+        servicePW.close();
+    }
+
+    /**
+     * Return true if this binding has a <soap:binding style="rpc> attribute
+     */
+    private boolean isRpcBinding(Binding binding) {
+        Iterator i = binding.getExtensibilityElements().iterator();
+        while (i.hasNext()) {
+            Object obj = i.next();
+            if (obj instanceof SOAPBinding) {
+                SOAPBinding sb = (SOAPBinding)obj;
+                String style = sb.getStyle();
+                if (style.equalsIgnoreCase("rpc"))
+                    return true;
+                else
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return the endpoint address from a <soap:address location="..."> tag
+     */
+    private String getAddressFromPort(Port p)
+    {
+        // Get the endpoint for a port
+        List extensibilityList = p.getExtensibilityElements();
+        for (ListIterator li = extensibilityList.listIterator(); li.hasNext(); ) {
+            Object obj = li.next();
+            if (obj instanceof SOAPAddress) {
+                return ((SOAPAddress)obj).getLocationURI();
+            }
+        }
+        // didn't find it
+        return null;
+    }
+
+    /**
      * Generate the deployment descriptor and undeployment descriptor
      * for the current WSDL file
      */
@@ -1209,8 +1311,7 @@ public class Emitter {
         deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
     } //writeDeployBinding
 
-
-    //////////////////////////////
+    //////////////////////////////
     //
     // Methods using types (non WSDL)
     //
