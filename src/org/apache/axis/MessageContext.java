@@ -166,7 +166,7 @@ public class MessageContext implements SOAPMessageContext {
     /**
      * Maximum amount of time to wait on a request, in milliseconds.
      */
-    private int          timeout = 60 * 1000;   // 60 seconds
+    private int          timeout = Constants.DEFAULT_MESSAGE_TIMEOUT;
 
     /**
      * An indication of whether we require "high fidelity" recording of
