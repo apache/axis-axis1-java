@@ -211,7 +211,20 @@ public class RPCProvider extends JavaProvider {
               
               if (argValues == null || argValues.length != params.length) {
                 // Sorry, you are on your own...
-                throw e;
+                   StringBuffer msg= new StringBuffer( e.getMessage());
+                   msg.append( "On object \"" + (obj == null? 
+                      "null" : obj.getClass().getName()) + "\" ");
+                   msg.append( "method name \"" + method.getName() + "\"");
+                   msg.append(" tried argument types: "); 
+                   String sep= "";
+                   for(int i=0; i< argValues.length; ++i){
+                     msg.append( sep);
+                     sep=", ";
+                     msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
+                   }
+                   msg.append("\n");
+                   throw new IllegalArgumentException(msg.toString());
+                
               } else {
                 // Hm - maybe we can help this with a conversion or two...
                 for (int i = 0; i < params.length; i++) {
@@ -225,7 +238,23 @@ public class RPCProvider extends JavaProvider {
                 }
                 
                 // OK, now try again...
-                objRes = method.invoke( obj, argValues );
+                try {
+                    objRes = method.invoke( obj, argValues );
+                } catch (IllegalArgumentException exp) {
+                   StringBuffer msg= new StringBuffer( exp.getMessage());
+                   msg.append( "On object \"" + (obj == null? 
+                      "null" : obj.getClass().getName()) + "\" ");
+                   msg.append( "method name \"" + method.getName() + "\"");
+                   msg.append(" tried argument types: "); 
+                   String sep= "";
+                   for(int i=0; i< argValues.length; ++i){
+                     msg.append( sep);
+                     sep=", ";
+                     msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
+                   }
+                   msg.append("\n");
+                   throw new IllegalArgumentException(msg.toString());
+                }
               }
             }
 
