@@ -66,7 +66,7 @@ Copyright:
 
   <target name="compileJunit" depends="printEnv,copy">
     <!-- Compile the code -->
-    <foreach target="component-compile" fork="${foreach.fork}">
+    <foreach target="component-compile" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
@@ -81,7 +81,7 @@ Copyright:
 
   <target name="compileFunctional" depends="printEnv,copy">
     <!-- Compile the code -->
-    <foreach target="component-compile" fork="${foreach.fork}">
+    <foreach target="component-compile" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
@@ -121,23 +121,9 @@ Copyright:
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
   <target name="functional-tests-noserver">
-    <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Interop 3                                                           -->
-  <!-- =================================================================== -->
-  <target name="interop3" depends="compile">
-    <ant dir="test/wsdl/interop3/import1"/>
-    <ant dir="test/wsdl/interop3/import2"/>
-    <ant dir="test/wsdl/interop3/import3"/>
-    <ant dir="test/wsdl/interop3/compound1"/>
-    <ant dir="test/wsdl/interop3/compound2"/>
-    <ant dir="test/wsdl/interop3/docLit"/>
-    <ant dir="test/wsdl/interop3/docLitParam"/>
-    <ant dir="test/wsdl/interop3/rpcEnc"/>
   </target>
 
   <!-- =================================================================== -->
@@ -266,7 +252,7 @@ Copyright:
   <!--   This simply echos the component files, for sanity checks -->
   <!-- =================================================================== -->
   <target name="echoTest" >
-    <foreach target="echo-file" fork="${foreach.fork}">
+    <foreach target="echo-file" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
@@ -282,7 +268,7 @@ Copyright:
   <!--    This runs each test component, instantiating the server each time -->
   <!-- =================================================================== -->
   <target name="componentTest" >
-    <foreach target="batch-component-run" fork="${foreach.fork}">
+    <foreach target="batch-component-run" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
@@ -305,11 +291,11 @@ Copyright:
       testTarget="batch-junit-functional"
       stopTarget="stop-functional-test-http-server" />
 
-    <ant antfile="${axis.home}/test/functional/build.xml" target="run"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test/functional" antfile="build.xml" target="run"/>
    </target>
 
    <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
-    <foreach target="batch-component-test" fork="${foreach.fork}">
+    <foreach target="batch-component-test" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>

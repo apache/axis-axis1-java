@@ -99,3 +99,5 @@ them.
 
 <property name="javac.fork" value="no"/>
 <property name="foreach.fork" value="no"/>
+<property name="ant.inheritAll" value="false"/>
+<property name="ant.inheritRefs" value="false"/>

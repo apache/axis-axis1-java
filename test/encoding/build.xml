@@ -49,7 +49,7 @@ Copyright:
 
 <target name="copy" depends="setenv">
   <echo message="Compiling samples.echo"/>
-  <ant antfile="${axis.home}/samples/echo/build.xml"/>
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/echo" antfile="build.xml"/>
 </target>
 
 <target name="compile" depends="copy">

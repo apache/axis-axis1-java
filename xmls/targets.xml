@@ -187,6 +187,8 @@
     <echo message="           then the component is not present)" />
     <echo message=""/>
 
+    <echo message="basedir = ${basedir}"/>
+    <echo message="axis.home = ${axis.home}"/>
     <echo message="build.dir = ${build.dir}"/>
     <echo message="build.dest = ${build.dest}"/>
     <echo message=""/>

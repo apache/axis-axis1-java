@@ -224,7 +224,7 @@ Copyright:
         <include name="**/userguide/example6/"/>
       </fileset>
     </copy>
-    <ant antfile="test/wsdl/Wsdl2javaTestSuite.xml">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test/wsdl" antfile="Wsdl2javaTestSuite.xml">
     </ant>
     <copy todir="${build.dir}/work/test" overwrite="yes">
       <fileset dir="${test.dir}">
