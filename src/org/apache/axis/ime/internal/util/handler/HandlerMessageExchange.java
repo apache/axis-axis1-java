@@ -97,7 +97,9 @@ public class HandlerMessageExchange
     }
 
     protected ReceivedMessageDispatchPolicy getReceivedMessageDispatchPolicy() {
-        return new FirstComeFirstServeDispatchPolicy(RECEIVE, RECEIVE_REQUESTS);
+        return new FirstComeFirstServeDispatchPolicy(
+            RECEIVE, 
+            RECEIVE_REQUESTS);
     }
 
     public Handler getSendHandler() {

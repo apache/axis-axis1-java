@@ -66,6 +66,9 @@ import org.apache.axis.ime.MessageExchangeCorrelator;
 public class SimpleMessageExchangeCorrelator
         implements MessageExchangeCorrelator {
 
+    public static final MessageExchangeCorrelator NULL_CORRELATOR = 
+      new SimpleMessageExchangeCorrelator(null);
+
     private String identifier;
 
     private SimpleMessageExchangeCorrelator() {
