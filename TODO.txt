@@ -8,43 +8,15 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
+When you've completed a given item, please update the "changelog.html"
+file if appropriate.
+
 
 ! <team> Update the TO DO list to be current!
 
 
-1.0 MUST-DO
+1.1 MUST-DO
 -----------
-! <> see bugzilla scrub below
-! <> fix javadocs
-! <> revamped documentation -- users shouldn't need to read the source code
-
-
-1.0 BUGZILLA SCRUB
-------------------
-Here is our initial scrub of bugzilla bugs for 1.0.  We've come up with 6 categories:
-A - showstopper - don't release 1.0 without it
-B - planning for 1.0
-C - nice to have in 1.0
-D - post 1.0
-E - evaluation
-NR - not rated
-
-(note from Glen : Dims and I edited this down to JUST the "should do for 1.0" ones.
- This way bugzilla is the master source of info, and this list just tells us what's
- "todo" for 1.0 - although really a bugzilla search on things targeted for 1.0 should
- work too)
-
-7407 - B
-10355 - A
-10365 - B
-10479 - B
-10512 - B
-10944 - B - Glen
-11766 - If this is real, it looks like an "A".  need to confirm.
-12167 - Glen will confirm
-12246 - Someone should confirm and fix for 1.0 if it's real
-12367 - Confirm, fix if real
-12572 - Glen will take a look (w/Rich)
 
 MESSAGE PARSING / ENCODING
 --------------------------
@@ -63,27 +35,6 @@ SCHEMA SUPPORT
 ! <Chris> Support <xsd:PositiveInteger> <xsd:NegativeInteger> <xsd:NonPositiveInteger> <xsd:NonNegativeInteger>
 ! <> Support <xsd:language> <xsd:ID>: <xsd:IDREF> <xsd:IDREFS> <xsd:ENTITY> <xsd:ENTITIES> <xsd:NOTATION>
 ! <> Support <xsd:restriction> facets correctly (do validation!)
-
-
-
-JAX-RPC COMPATIBILITY
----------------------
-! <Russell> NEVER name the SEI after the binding.  Spec no longer allows it.  Remember to change the user's guide, too.
-! <> Implement Service.getCalls() method. (maybe)
-! <> Implement generated Services' getCalls() method.
-! <> Implement Service.getHandlerRegistry() method.
-! <> Implement ServiceFactory.createService methods.
-! <> Implement TypeMapping and TypeMappingRegistry ala JAX-RPC 0.8
-! <> Implement Handler code ala JAX-RPC 0.8
-! <> Once we get word that javax.xml.rpc.namespace.NamespaceConstants is a real class (it's in the JAX-RPC javadocs but not in the spec) then use it.
-! <> Implement javax.xml.rpc.server interfaces.
-! <> Add some JAX-RPC compliance samples/tests.
-
-SAAJ COMPATIBILITY
-------------------
-! <> Implement javax.xml.soap interfaces (in message subsystem).
-         (Not forgetting: SOAPBody.addFault/getFault/hasFault)
-! <> Obtain and pass a SAAJ TCK (Technology Compatibility Kit).
 
 SOAP 1.2 SUPPORT
 ----------------
@@ -165,15 +116,6 @@ Java2WSDL
 ! <> Support generation of deploy.wsdd from Java2WSDL
 
 ! <> Support wildcards in stop object classes (i.e. "javax.*")
-
-X <Rich> Generate correct input/output elements for overloading.
-
-
-METHOD DISPATCH / SERVICE METADATA
-----------------------------------
-X <Glen> Use QName lookup when processing doc/lit style stuff with
-         RPCProvider
-
 
 GENERAL / UNCATEGORIZED
 -----------------------
