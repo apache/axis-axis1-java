@@ -145,6 +145,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 }
             }
 
+            name = JavaUtils.replace(name, "java.lang.", "");
+            
             // This could be a special QName for a indexed property.
             // If so, change the [] to Array.
             name = JavaUtils.replace(name, "[]", "Array");
