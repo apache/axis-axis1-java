@@ -71,6 +71,41 @@ import org.apache.axis.message.* ;
 public class RPCProvider extends JavaProvider {
     private static final boolean DEBUG_LOG = false;
     
+    /** Utility function to convert an Object to some desired Class.
+     * 
+     * Right now this only works for arrays -> Lists, but it might be
+     * expanded into a more general form (or pulled out into another
+     * class) later.
+     * 
+     * @param arg the array to convert
+     * @param destClass the actual class we want (must implement List)
+     */
+    private Object convert(Object arg, Class destClass)
+    {
+      // Right now only converts arrays -> Lists...
+      if (!arg.getClass().isArray())
+        return arg;
+      
+      Object [] argArray = (Object [])arg;
+      
+      if (List.class.isAssignableFrom(destClass)) {
+        List list = null;
+        try {
+          list = (List)destClass.newInstance();
+        } catch (Exception e) {
+          // Couldn't build one for some reason... so forget it.
+          return arg;
+        }
+        
+        for (int j = 0; j < argArray.length; j++) {
+          list.add(argArray[j]);
+        }
+        return list;
+      }
+      
+      return arg;
+    }
+    
     public void processMessage (MessageContext msgContext,
                                 String clsName,
                                 String methodName,
@@ -91,24 +126,6 @@ public class RPCProvider extends JavaProvider {
             
             RPCElement   body  = (RPCElement) bodies.get( bNum );
 
-            /* This breaks JWS.  With JWS, the service name is JWSProcessor,
-               but the URN is the actual service name.  hmmmmm.
-            
-            // validate that the incoming targetService is the same as the
-            // namespace URI of the body... if not, someone spoofed the
-            // SOAPAction header (or equivalent)
-            if (body.getNamespaceURI() != null
-                && !body.getNamespaceURI().equals(msgContext.getTargetService()))
-            {
-                throw new AxisFault( "AxisServer.error",
-                                    "Incoming target service name doesn't match body namespace URI\n" +
-                                        "Target service name=" + msgContext.getTargetService() + "\n" +
-                                        "Body URI=" + body.getNamespaceURI(),
-                                    null, null );  // should they??
-            }
-             */
-            
-            
             String       mName      = body.getMethodName();
             Vector       args       = body.getParams();
             Object[]     argValues  =  null ;
@@ -196,7 +213,28 @@ public class RPCProvider extends JavaProvider {
             }
             */
 
-            Object objRes = method.invoke( obj, argValues );
+            Object objRes;
+            try {
+              objRes = method.invoke( obj, argValues );
+            } catch (IllegalArgumentException e) {
+              
+              // Hm - maybe we can help this with a conversion or two...
+              for (int i = 0; i < params.length; i++) {
+                Object thisArg = argValues[i];
+                if (!params[i].isAssignableFrom(thisArg.getClass())) {
+                  // Attempt conversion for each non-assignable argument
+                  Debug.Print(3, "Trying to convert " +
+                                 thisArg.getClass().getName() +
+                                 " to " + params[i].getName());
+                  Object newArg = convert(thisArg, params[i]);
+                  if (newArg != thisArg)
+                    argValues[i] = newArg;
+                }
+              }
+              
+              // OK, now try again...
+              objRes = method.invoke( obj, argValues );
+            }
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/

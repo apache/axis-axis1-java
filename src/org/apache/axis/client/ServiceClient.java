@@ -207,7 +207,6 @@ public class ServiceClient {
      */
     public static synchronized void addTransportPackage(String packageName)
     {
-      System.out.println("Adding package " + packageName);
         String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
         if (currentPackages == null) {
           currentPackages = "";

@@ -84,17 +84,28 @@ public class LocalSender extends BasicHandler {
   public void invoke(MessageContext clientContext) throws AxisFault {
     Debug.Print( 1, "Enter: LocalSender::invoke" );
 
-    // This should have already been done, but it doesn't appear to be
-    // something that can be relied on.  Oh, well...
-    if (server == null) init();
+    AxisServer targetServer = (AxisServer)clientContext.
+                                     getProperty(LocalTransport.LOCAL_SERVER);
+    Debug.Print(3, "LocalSender using server " + targetServer);
+    
+    if (targetServer == null) {
+      // This should have already been done, but it doesn't appear to be
+      // something that can be relied on.  Oh, well...
+      if (server == null) init();
+      targetServer = server;
+    }
     
     // Define a new messageContext per request
-    MessageContext serverContext = new MessageContext(server);
+    MessageContext serverContext = new MessageContext(targetServer);
 
     // copy the request, and force its format to String in order to
     // exercise the serializers.
-    serverContext.setRequestMessage(clientContext.getRequestMessage());
-    serverContext.getRequestMessage().getAsString();
+    String msgStr = clientContext.getRequestMessage().getAsString();
+    
+    Debug.Print(3, "LocalSender sending XML:");
+    Debug.Print(3, msgStr);
+
+    serverContext.setRequestMessage(new Message(msgStr));
 
     // copy soap action if it is present
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
@@ -118,7 +129,7 @@ public class LocalSender extends BasicHandler {
     }
 
     // invoke the request
-    server.invoke(serverContext);
+    targetServer.invoke(serverContext);
 
     // copy back the response, and force its format to String in order to
     // exercise the deserializers.
