@@ -60,60 +60,32 @@
  * 
  */
 
-package org.apache.axis.ime.internal.util.uuid;
+package org.apache.axis.components.uuid;
 
-import org.apache.axis.i18n.Messages;
+public class TestUUID {
 
-/**
- * A Universally Unique Identifier (UUID) is a 128 bit number generated
- * according to an algorithm that is garanteed to be unique in time and space
- * from all other UUIDs. It consists of an IEEE 802 Internet Address and
- * various time stamps to ensure uniqueness. For a complete specification,
- * see ftp://ietf.org/internet-drafts/draft-leach-uuids-guids-01.txt [leach].
- *
- * @author  Steve Viens
- * @version 1.0 11/7/2000
- * @since   JDK1.2.2
- */
-public abstract class UUIDGenFactory {
-    private static final String defaultUUIDGenClassName = "org.apache.axis.ime.internal.util.uuid.SimpleUUIDGen";
 
-    /**
-     * getInstance
-     *
-     * Returns the singleton instance of UUIDGen
-     */
-    public static UUIDGen getUUIDGen(String uuidgenClassName) {
+    /***************************************************************************/
+    /***************************** TEST DRIVER *********************************/
+    /***************************************************************************/
+
+
+    // test driver
+    public static void main(String argc[]) {
+        long startTime = 0;
+        long endTime = 0;
         UUIDGen uuidgen = null;
 
-        if ((uuidgenClassName == null) || (uuidgenClassName.length() == 0)) {
-            // use the default UUIDGen implementation
-            uuidgenClassName = defaultUUIDGenClassName;
+        uuidgen = UUIDGenFactory.getUUIDGen(null);
+//    uuidgen = UUIDGenFactory.getUUIDGen("org.juddi.uuidgen.SimpleUUIDGen");
+        startTime = System.currentTimeMillis();
+        for (int i = 1; i <= 50; ++i) {
+            String u = uuidgen.nextUUID();
+            System.out.println(i + ":  " + u);
         }
+        endTime = System.currentTimeMillis();
+        System.out.println("SimpleJavaUUIDGen took " + (endTime - startTime) + " milliseconds");
 
-        Class uuidgenClass = null;
-        try {
-            // instruct the class loader to load the UUIDGen implementation
-            uuidgenClass = java.lang.Class.forName(uuidgenClassName);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(Messages.getMessage("uuidGenFactoryCNFE00", uuidgenClassName));
-        }
-
-        try {
-            // try to instantiate the UUIDGen subclass
-            uuidgen = (UUIDGen) uuidgenClass.newInstance();
-        } catch (java.lang.Exception e) {
-            throw new RuntimeException(Messages.getMessage("uuidGenFactoryException02", uuidgenClass.getName(), e.getMessage()));
-        }
-
-        return uuidgen;
-    }
-
-    /**
-     * Release any aquired external resources and stop any background threads.
-     */
-    public static void destroyUUIDGen(UUIDGen uuidgen) {
-        if (uuidgen != null)
-            uuidgen.destroy();
+        UUIDGenFactory.destroyUUIDGen(uuidgen);
     }
 }

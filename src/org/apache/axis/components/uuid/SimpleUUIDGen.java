@@ -60,7 +60,7 @@
  * 
  */
 
-package org.apache.axis.ime.internal.util.uuid;
+package org.apache.axis.components.uuid;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
