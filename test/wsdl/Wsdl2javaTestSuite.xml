@@ -731,6 +731,15 @@
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
 
     </wsdl2java>
+
+    <!-- This tests element qualification.  -->
+    <wsdl2java url="test/wsdl/qualify/qualifytest.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:qualifyTest" package="test.wsdl.qualify"/>
+    </wsdl2java>
+
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 

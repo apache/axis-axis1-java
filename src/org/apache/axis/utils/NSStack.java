@@ -174,6 +174,21 @@ public class NSStack {
     }
     */
     
+    /**
+     * Return an active prefix for the given namespaceURI.  NOTE : This
+     * may return null even if the namespaceURI was actually mapped further
+     * up the stack IF the prefix which was used has been repeated further
+     * down the stack.  I.e.:
+     * 
+     * <pre:outer xmlns:pre="namespace">
+     *   <pre:inner xmlns:pre="otherNamespace">
+     *      *here's where we're looking*
+     *   </pre:inner>
+     * </pre:outer>
+     * 
+     * If we look for a prefix for "namespace" at the indicated spot, we won't
+     * find one because "pre" is actually mapped to "otherNamespace"
+     */ 
     public String getPrefix(String namespaceURI) {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
@@ -184,8 +199,11 @@ public class NSStack {
                 
                 for (int i = 0; i < t.size(); i++) {
                     Mapping map = (Mapping)t.get(i);
-                    if (map.getNamespaceURI().equals(namespaceURI))
-                        return map.getPrefix();
+                    if (map.getNamespaceURI().equals(namespaceURI)) {
+                        String possiblePrefix = map.getPrefix();
+                        if (getNamespaceURI(possiblePrefix).equals(namespaceURI))
+                            return possiblePrefix;
+                    }
                 }
             }
         }

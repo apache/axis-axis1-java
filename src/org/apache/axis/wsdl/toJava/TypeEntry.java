@@ -293,6 +293,10 @@ public abstract class TypeEntry extends SymTabEntry {
         return refType;
     } // getRefType
 
+    public void setRefType(TypeEntry refType) {
+        this.refType = refType;
+    }
+
     /**
      * Return the dimensions of this type, which can be 0 or more "[]".
      */

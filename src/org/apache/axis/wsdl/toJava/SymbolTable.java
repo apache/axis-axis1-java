@@ -709,6 +709,19 @@ public class SymbolTable {
                         TypeEntry te = null;
                         if (!isElement) {
                             te = new DefinedType(qName, node);
+                            
+                            // check if we are an anonymous type underneath
+                            // an element.  If so, we point the refType of the
+                            // element to us (the real type).
+                            if (qName.getLocalPart().indexOf(ANON_TOKEN) >= 0 ) {
+                                Node parent = node.getParentNode();
+                                QName parentQName = Utils.getNodeNameQName(parent);
+                                TypeEntry parentType = getElement(parentQName);
+                                if (parentType != null) {
+                                    parentType.setRefType(te);
+                                }
+                            }
+                            
                         } else {
                             if (!belowSchemaLevel) {
                                 te = new DefinedElement(qName, node);

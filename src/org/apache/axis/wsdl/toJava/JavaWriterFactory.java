@@ -180,9 +180,11 @@ public class JavaWriterFactory implements WriterFactory {
                         dims += tEntry.getDimensions();
                         refType = tEntry.getRefType();
                     }
+                    
                     // Get the QName to javify
                     QName typeQName = tEntry.getQName();
-                    if (typeQName.getLocalPart().lastIndexOf(SymbolTable.ANON_TOKEN) >= 0) {
+                    if ((typeQName.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0) &&
+                            (tEntry.getName() == null)) {
                         // This is an anonymous type name.
                         // Axis uses '>' as a nesting token to generate
                         // unique qnames for anonymous types.
@@ -196,12 +198,15 @@ public class JavaWriterFactory implements WriterFactory {
                         // If there is already an existing type, there will be a 
                         // collision.  If there is an existing anon type, there will be a 
                         // collision.  In both cases, the java type name should be mangled.
-                        if (symbolTable.getType(typeQName) != null ||
-                            anonQNames.get(typeQName) != null) {
+                        TypeEntry existing = symbolTable.getType(typeQName);
+                        if (anonQNames.get(typeQName) != null ||
+                                (existing != null && 
+                                !(existing instanceof DefinedElement))) {
                             localName += "Type" + uniqueNum++;
                             typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         } 
                         anonQNames.put(typeQName, typeQName);
+                        tEntry.setName(symbolTable.getJavaName(typeQName) + dims);
                     }
                     entry.setName(symbolTable.getJavaName(typeQName) + dims);
                 }

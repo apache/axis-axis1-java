@@ -298,18 +298,14 @@ public class ServiceDesc {
     }
 
     /**
-     * Map an XML QName to an operation.
+     * Map an XML QName to an operation.  Returns the first one it finds
+     * in the case of mulitple matches.
      */
     public OperationDesc getOperationByElementQName(QName qname)
     {
-        // If we're a wrapped service (i.e. RPC or WRAPPED style), we expect
-        // this qname to match one of our operation names directly.
-
-        // FIXME : Should this really ignore namespaces?  Perhaps we should
-        //         just check by QName... (I think that's right, actually,
-        //         and the only time we should ignore namespaces is when
-        //         deserializing SOAP-encoded structures?)
-        if (isWrapped()) {
+        // If we're an RPC service, we ignore the namespace... should fix
+        // this later!
+        if (style == STYLE_RPC) {
             return getOperationByName(qname.getLocalPart());
         }
 
@@ -322,16 +318,70 @@ public class ServiceDesc {
         // If we're DOCUMENT style, we look in our mapping of QNames ->
         // operations instead.  But first, let's make sure we've initialized
         // said mapping....
+        initQNameMap();
+        
+        ArrayList overloads = (ArrayList)qname2OperationMap.get(qname);
+        if (overloads == null)
+            return null;
+        
+        OperationDesc oper = (OperationDesc)overloads.get(0);
+        getSyncedOperationsForName(implClass, oper.getName());
+
+        // Return the first one....
+        return oper;
+    }
+    
+    /**
+     * Return all operations which match this QName (i.e. get all the
+     * overloads)
+     */ 
+    public OperationDesc [] getOperationsByQName(QName qname)
+    {
+        // If we're an RPC service, we ignore the namespace... should fix
+        // this later!
+        if (style == STYLE_RPC) {
+            return getOperationsByName(qname.getLocalPart());
+        }
+
+        // If we're MESSAGE style, we should only have a single operation,
+        // to which we'll pass any XML we receive.
+        if (style == STYLE_MESSAGE) {
+            return new OperationDesc [] { (OperationDesc)operations.get(0) };
+        }
+
+        // If we're DOCUMENT style, we look in our mapping of QNames ->
+        // operations instead.  But first, let's make sure we've initialized
+        // said mapping....
+        initQNameMap();
+
+        ArrayList overloads = (ArrayList)qname2OperationMap.get(qname);
+
+        if (overloads == null)
+            return null;
+        
+        getSyncedOperationsForName(implClass,
+                                   ((OperationDesc)overloads.get(0)).getName());
+        
+        OperationDesc [] array = new OperationDesc [overloads.size()];
+        return (OperationDesc[])overloads.toArray(array);
+    }
+
+    private synchronized void initQNameMap() {
         if (qname2OperationMap == null) {
             qname2OperationMap = new HashMap();
             for (Iterator i = operations.iterator(); i.hasNext();) {
                 OperationDesc operationDesc = (OperationDesc) i.next();
-                qname2OperationMap.put(operationDesc.getElementQName(),
-                                       operationDesc);
+                ArrayList list = 
+                        (ArrayList)qname2OperationMap.get(operationDesc.
+                                                          getElementQName());
+                if (list == null) {
+                    list = new ArrayList();
+                    qname2OperationMap.put(operationDesc.getElementQName(),
+                                           list);
+                }
+                list.add(operationDesc);
             }
         }
-
-        return (OperationDesc)qname2OperationMap.get(qname);
     }
 
     /**

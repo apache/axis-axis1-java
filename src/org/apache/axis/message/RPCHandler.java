@@ -106,6 +106,7 @@ public class RPCHandler extends SOAPHandler
     private RPCElement rpcElem;
     private RPCParam currentParam;
     private boolean isResponse;
+    private OperationDesc operation;
 
     public RPCHandler(RPCElement rpcElem, boolean isResponse)
         throws SAXException
@@ -114,6 +115,9 @@ public class RPCHandler extends SOAPHandler
         this.isResponse = isResponse;
     }
 
+    public void setOperation(OperationDesc myOperation) {
+        this.operation = myOperation;
+    }
 
     /**
      * Register the start of a parameter (child element of the method call
@@ -146,8 +150,6 @@ public class RPCHandler extends SOAPHandler
         QName type = null;
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
-
-        OperationDesc operation = rpcElem.getOperation();
 
         // Grab xsi:type attribute if present, on either this element or
         // the referent (if it's an href).

@@ -186,7 +186,8 @@ public class WSDDService
                 Class cls = cl.loadClass(className);
                 desc.setImplClass(cls);
                 initTMR();
-                String encStyle = Constants.URI_SOAP_ENC;
+                String encStyle = (desc.getStyle() == ServiceDesc.STYLE_RPC) ?
+                    Constants.URI_CURRENT_SOAP_ENC : "";
                 desc.setTypeMapping((TypeMapping)tmr.getTypeMapping(encStyle));
             } catch (Exception ex) {
             }

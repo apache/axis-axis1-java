@@ -432,15 +432,7 @@ public class JavaStubWriter extends JavaWriter {
         }
         firstSer = false ;
 
-        // If a root Element named Foo has an anon type, the 
-        // anon type is named ">Foo".  The following hack
-        // uses the name "Foo" so that the right qname gets 
-        // registered.
-        String localPart = type.getQName().getLocalPart();
-        if (localPart.startsWith(SymbolTable.ANON_TOKEN)) {
-            localPart = localPart.substring(1);
-        }
-        QName qname = new QName(type.getQName().getNamespaceURI(), localPart);
+        QName qname = type.getQName();
 
         pw.println("            qName = new javax.xml.rpc.namespace.QName(\""
                    + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
@@ -500,18 +492,13 @@ public class JavaStubWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             // We need to use the Qname of the actual type, not the QName of the element
-            QName qn = p.getType().getQName();
-            String javaType = p.getType().getName();
-            if (p.getType() instanceof DefinedElement) {
-                Node node = 
-                    symbolTable.getTypeEntry(p.getType().getQName(), true).getNode();
-                QName qn2 = Utils.getNodeTypeRefQName(node, "type");
-                if (qn2 != null) {
-                    qn = qn2;
-                    javaType = symbolTable.getType(qn).getName();
-
-                }
+            TypeEntry type = p.getType();
+            if (type instanceof DefinedElement) {
+                type = type.getRefType();
             }
+            QName qn = type.getQName();
+            String javaType = type.getName();
+
             if (javaType != null) {
                 javaType += ".class, ";
             } else {
