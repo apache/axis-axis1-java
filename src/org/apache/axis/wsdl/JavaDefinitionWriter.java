@@ -116,6 +116,12 @@ public class JavaDefinitionWriter implements Writer {
         // collect referenced faults in a list
         while (pti.hasNext()) {
             PortType portType = (PortType) pti.next();
+            
+            // Don't emit faults that are not referenced.
+            if (!(symbolTable.getPortTypeEntry(portType.getQName())).isReferenced()) {
+                continue;
+            }
+            
             List operations = portType.getOperations();
             for (int i = 0; i < operations.size(); ++i) {
                 Operation operation = (Operation) operations.get(i);
