@@ -75,6 +75,10 @@ public class AttachmentUtils {
      */
 
     public static DataHandler getActiviationDataHandler(Part part) throws AxisFault{
+       if( null == part) {
+        throw new AxisFault("getActiviationDataHandler received a null parameter as a part.");
+       }
+
        if(!( part instanceof AttachmentPart)){
         throw new AxisFault( "Unsupported attachment type \"" +
           part.getClass().getName()

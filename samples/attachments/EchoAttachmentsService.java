@@ -54,8 +54,8 @@
  */
 
 package samples.attachments;
-
 import javax.activation.DataHandler;
+
 
 /**
  * @author Rick Rineholt 
@@ -75,13 +75,24 @@ public class EchoAttachmentsService {
      * This method implements a web service that sends back
      * any attachment it receives.
      */
-    public DataHandler echo( DataHandler dh){
-System.err.println("HEY I'M ECHOING TO YOU, BUD!");    
-  if(dh == null ) System.err.println("dh is null");
-  else            System.err.println(dh.getClass().getName());
-      return dh;
+    public DataHandler echo( DataHandler dh) {
+        System.err.println("In echo");
+        if (dh == null ) System.err.println("dh is null");
+        else System.err.println("Received \""+dh.getClass().getName()+"\".");
+        return dh;
     }
 
-  
+    /**
+     * This method implements a web service that sends back
+     * an array of attachment it receives.
+     */
+    public DataHandler[] echoDir( DataHandler[] attachments) {
+        System.err.println("In echoDir");
+        if (attachments == null ) System.err.println("attachments is null!");
+        else System.err.println("Got " + attachments.length + " attachments!");
+        return attachments;
+    }
+
+
 }
 
