@@ -34,6 +34,9 @@ import org.apache.axis.utils.JavaUtils;
  * - Verify that System.out.println is not used except
  *   in wsdl to/from java tooling.
  *
+ * - Verify that log.info(), log.warn(), log.error(), and log.fatal()
+ *   use JavaUtils.getMessage() (i18n).
+ *
  * To add new patterns, search for and append to the
  * private attribute 'avoidPatterns'.
  *
@@ -132,20 +135,22 @@ public class TestSrcContent extends TestCase {
      */
     private static final FileNameContentPattern avoidPatterns[] =
         {
-            // For escape ('\'), remember that Java gets first dibs..
-            // so double-escape for pattern-matcher to see it.
+            //**
+            //** For escape ('\'), remember that Java gets first dibs..
+            //** so double-escape for pattern-matcher to see it.
+            //**
 
             // Verify that java files do not use Log4j
+            //
             new FileNameContentPattern(".+\\.java",
                                        "org\\.apache\\.log4j", false),
 
             // Verify that axis java files do not use System.out.println
             // or System.err.println, expect:
-            //   - AxisFault.java,
-            //   - Version.java
+            //   - utils/tcpmon.java
             //   - client/AdminClient.java
             //   - providers/BSFProvider.java
-            //   - utils/tcpmon.java
+            //   - Version.java
             //   - tooling in 'org/apache/axis/wsdl'
             //
             new FileNameContentPattern(".+([\\\\/])"
@@ -159,18 +164,27 @@ public class TestSrcContent extends TestCase {
                                        + "[^\\\\/]+\\.java",
                                        "System\\.(out|err)\\.println", false),
 
-            // Verify that internationalization is being used properly..
+            // Verify that internationalization is being used properly
+            // with logger.  Exceptions:
+            //   - all log.debug calls
+            //   - utils/tcpmon.java
+            //   - utils/Admin.java
+            //   - handlers/LogMessage.java
+            //   - tooling in 'org/apache/axis/wsdl'
+            //
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
-                                       + "|handlers\\1LogMessage\\.java"
                                        + "|utils\\1Admin\\.java"
+                                       + "|handlers\\1LogMessage\\.java"
                                        + "|wsdl\\1)"
                                        + "([a-zA-Z0-9_]+\\1)*"
                                        + "[^\\\\/]+\\.java",
-                                       "log\\.(info|warn|error|fatal)[ \\t]*\\((?![ \\t]*JavaUtils\\.getMessage)",
+                                       "log\\.(info|warn|error|fatal)"
+                                       + "[ \\t]*\\("
+                                       + "(?![ \\t]*JavaUtils\\.getMessage)",
                                        false),
-                                       
+
         };
 
     private void checkFile(File file) {
