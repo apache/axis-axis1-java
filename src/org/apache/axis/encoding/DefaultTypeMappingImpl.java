@@ -230,7 +230,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new Base64DeserializerFactory(byte[].class,
                                            Constants.XSD_BASE64),true);
         */
-
+        // anySimpleType is mapped to java.lang.String according to JAX-RPC 1.1 spec.
+        myRegisterSimple(Constants.XSD_ANYSIMPLETYPE, java.lang.String.class);
+        
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);
         myRegisterSimple(Constants.XSD_BOOLEAN, java.lang.Boolean.class);
@@ -267,9 +269,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,
                    null, null);
 
-        // anySimpleType is mapped to java.lang.String according to JAX-RPC 1.1 spec.
-        myRegisterSimple(Constants.XSD_ANYSIMPLETYPE, java.lang.String.class);
-        
         // See the SchemaVersion classes for where the registration of
         // dateTime (for 2001) and timeInstant (for 1999 & 2000) happen.
         myRegister(Constants.XSD_DATE,       java.sql.Date.class,
