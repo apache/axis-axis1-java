@@ -330,7 +330,16 @@ public class SOAPService extends SimpleTargetedChain
             if(file.exists()) {
                 //if this resolves to a file, load it
                 instream = new FileInputStream(filename);
-            } else {
+            } else if(msgContext.getStrProp(Constants.MC_HOME_DIR)!=null){
+                String path = msgContext.getStrProp(Constants.MC_HOME_DIR) +'/' + filename;
+                file = new File(path);
+                if(file.exists()) {
+                    //if this resolves to a file, load it
+                    instream = new FileInputStream(path);
+                }
+            }
+            
+            if(instream == null) {
                 //else load a named resource in our classloader. 
                 instream = ClassUtils.getResourceAsStream(this.getClass(),filename);
                 if (instream == null) {
