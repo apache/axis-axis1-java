@@ -10,23 +10,23 @@ owner (if any) in "<>" brackets.  Example:
 
 MESSAGE PARSING / ENCODING
 --------------------------
-! <Glen> Finish support for different encodingStyles
+* <Glen/Rich> Support different encodingStyles
 ! <> Support literalxml encodingStyle
-! <> Multi-dimensional array support
+X <Rich> Multi-dimensional array support
 
 CLIENT API
 ----------
 
 JAX-RPC COMPATIBILITY
 ---------------------
-! <Doug?> Implement serializer/deserializer framework compliance
+* <Rich> Implement serializer/deserializer framework compliance
 
 PERFORMANCE
 -----------
 
 DOCUMENTATION
 -------------
-* <Glen> Architecture doc
+* <Glyn/Glen> Architecture doc
 
 SOAP SPEC COMPLIANCE
 --------------------
@@ -77,7 +77,8 @@ WSDL2Java
 
 Java2WSDL
 ---------
-! <> Plug new framework into autogen mechanism
+X <> Plug new framework into autogen mechanism
+
 ! <Russell?/Rich?> Java2WSDL "void op(boolean b1, Boolean b2)" maps to
    <wsdl:message name="op1Request">
       <wsdl:part name="in0" type="xsd:boolean"/>
@@ -89,7 +90,11 @@ Java2WSDL
       <wsdl:part name="in1" type="SOAP-ENC:boolean"/>
    </wsdl:message>
 
+! <> Support generating schema for custom serializers
 
 
 GENERAL / UNCATEGORIZED
 -----------------------
+! <> Reorganize resources.properties into packages
+! <> Remove search-for-first-MessageContext-arg code
+! <> Remove ServiceClient
