@@ -655,6 +655,14 @@ public class SymbolTable {
                     }
                 }
             }
+            else if (isXSD && localPart.equals("any")) {
+                // Map xsd:any element to any xsd:any so that
+                // it gets serialized using the ElementSerializer.
+                QName anyQName = Utils.getWSDLQName(Constants.XSD_ANY);
+                if (getType(anyQName) == null) {
+                    symbolTablePut(new BaseType(anyQName));
+                }
+            }
             else if (localPart.equals("part") &&
                      Constants.isWSDL(nodeKind.getNamespaceURI())) {
                 

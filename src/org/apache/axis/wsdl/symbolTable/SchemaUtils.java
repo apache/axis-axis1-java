@@ -258,9 +258,16 @@ public class SchemaUtils {
                 } else if (subNodeKind.getLocalPart().equals("group")) {
                     v.addAll(processGroupNode(children.item(j), symbolTable));
                 } else if (subNodeKind.getLocalPart().equals("any")) {
-                    TypeEntry type = new DefinedType(Utils.getWSDLQName(Constants.XSD_ANYTYPE), sequenceNode);
-                    type.setName("java.lang.Object");
-                    ElementDecl elem = new ElementDecl(type, Utils.getAxisQName(new QName("","any")));
+                    // Represent this as an element named any of type any type.
+                    // This will cause it to be serialized with the element 
+                    // serializer.
+                    TypeEntry type = 
+                        symbolTable.getType(
+                            Utils.getWSDLQName(Constants.XSD_ANY));
+                    ElementDecl elem = 
+                        new ElementDecl(type, 
+                                    Utils.getAxisQName(new QName("","any")));
+                    elem.setAnyElement(true);
                     v.add(elem);
                 } else if (subNodeKind.getLocalPart().equals("element")) {
                     ElementDecl elem = 

@@ -255,7 +255,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                   dSer = context.getDeserializerForType(elemQName);
                 }
                 if (dSer == null)  {
-                    qn = Constants.XSD_ANYTYPE;
+                    qn = Constants.XSD_ANY;
                     // make sure that the Element Deserializer deserializes the current element and not the child
                     messageContext.setProperty(ElementDeserializer.DESERIALIZE_CURRENT_ELEMENT, Boolean.TRUE);
                 } else {
