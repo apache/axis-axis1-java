@@ -24,7 +24,9 @@
        =================================================================== -->
   <target name="component-compile">
         <echo message="${file}"/>
-        <ant antfile="${file}" target="compile"/>
+        <basename property="fileName" file="${file}"/>
+        <dirname property="dirName" file="${file}"/>
+        <ant dir="${dirName}" antfile="${fileName}" target="compile"/>
   </target>
 
   <!-- ===================================================================
