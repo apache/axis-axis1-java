@@ -73,6 +73,7 @@ import org.apache.axis.server.AxisServer ;
 public class FileReader extends Thread {
   static int      nextNum = 1 ;
   boolean  pleaseStop = false ;
+  boolean  halted     = false ;
 
   public void run() {
     String tmp = "" ;
@@ -120,10 +121,19 @@ public class FileReader extends Thread {
           e.printStackTrace();
       }
     }
-      System.out.println("FileReader halted.");
+
+    halted = true;
+    System.out.println("FileReader halted.");
   }
 
   public void halt() {
     pleaseStop = true ;
+    while (!halted) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException ie) {
+        break;
+      }
+    }
   }
 }
