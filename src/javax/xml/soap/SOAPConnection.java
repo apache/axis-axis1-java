@@ -79,7 +79,7 @@ public abstract class SOAPConnection {
      * blocks until it has returned the response.
      * @param request the <CODE>SOAPMessage</CODE>
      *     object to be sent
-     * @param an <code>Object</code> that identifies
+     * @param endpoint an <code>Object</code> that identifies
      *            where the message should be sent. It is required to
      *            support Objects of type
      *            <code>java.lang.String</code>,
