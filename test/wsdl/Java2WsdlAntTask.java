@@ -79,6 +79,8 @@ public class Java2WsdlAntTask extends Task
     private String implClass = null;
     private String factory   = null;
     private boolean useInheritedMethods = false;
+    private String exclude = null;
+    private String stopClasses = null;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -92,6 +94,8 @@ public class Java2WsdlAntTask extends Task
             log("\timplClass:" + implClass, Project.MSG_VERBOSE);
             log("\tfactory:"   + factory,   Project.MSG_VERBOSE);
             log("\tinheritance:" + useInheritedMethods, Project.MSG_VERBOSE);
+            log("\texcluded:" + exclude, Project.MSG_VERBOSE);
+            log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -107,6 +111,10 @@ public class Java2WsdlAntTask extends Task
                 emitter.setImplCls(implClass);
             if (factory != null)
                 emitter.setFactory(factory);
+            if (exclude != null)
+                emitter.setDisallowedMethods(exclude);
+            if (stopClasses != null)
+                emitter.setStopClasses(stopClasses);
             emitter.setIntfNamespace(namespace);
             emitter.setLocationUrl(location);
             emitter.setUseInheritedMethods(useInheritedMethods);
@@ -157,6 +165,16 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "useInheritedMethods" attribute
     public void setUseInheritedMethods(boolean parameter) {
         this.useInheritedMethods = parameter;
+    }
+
+    // The setter for the "exclude" attribute
+    public void setExclude(String exclude) {
+        this.exclude = exclude;
+    }
+
+    // The setter for the "stopClasses" attribute
+    public void setStopClasses(String stopClasses) {
+        this.stopClasses = stopClasses;
     }
 
     /** the command arguments */
