@@ -178,6 +178,18 @@ public class WSDDService
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
 
+        // call to validate standard descriptors for this service
+        validateDescriptors();
+    }
+    
+    /**
+     * This method should b used for dynamic deployment using new WSDDService()
+     * etc. It validates some standard parameters for some standard providers
+     * (if any). This is part of Axis. Do this before deployment.desployService().
+     *
+     **/
+    public void validateDescriptors()
+    {
         String className = this.getParameter("className");
         if (className != null) {
             try {
