@@ -756,7 +756,23 @@ public class Emitter {
 
         return types;
     }
+    
+    /**
+     * Create a documentation element
+     *  
+     * @param documentation
+     * @return
+     */
+    protected Element createDocumentationElement(String documentation) {
+        Element element = docHolder.createElementNS(Constants.NS_URI_WSDL11, "documentation");
+        element.setPrefix(Constants.NS_PREFIX_WSDL);
+        Text textNode =
+                docHolder.createTextNode(documentation);
 
+        element.appendChild(textNode);
+        return element;
+    }
+    
     /**
      * Create the definition header information.
      * 
@@ -889,12 +905,9 @@ public class Emitter {
         }
 
         if (serviceDesc.getDocumentation() != null) {
-            Element element = docHolder.createElement("documentation");
-            Text textNode =
-                    docHolder.createTextNode(serviceDesc.getDocumentation());
-
-            element.appendChild(textNode);
-            service.setDocumentationElement(element);
+            service.setDocumentationElement(
+                    createDocumentationElement(
+                            serviceDesc.getDocumentation()));
         }
 
         // Add the port
@@ -955,12 +968,9 @@ public class Emitter {
 
             // add the documentation to oper
             if (messageOper.getDocumentation() != null) {
-                Element element = docHolder.createElement("documentation");
-                Text textNode =
-                        docHolder.createTextNode(messageOper.getDocumentation());
-
-                element.appendChild(textNode);
-                oper.setDocumentationElement(element);
+                oper.setDocumentationElement(
+                        createDocumentationElement(
+                                messageOper.getDocumentation()));
             }
 
             if (serviceDesc2 != null) {
@@ -1769,12 +1779,9 @@ public class Emitter {
         Part part = def.createPart();
 
         if (param.getDocumentation() != null) {
-            Element element = docHolder.createElement("documentation");
-            Text textNode =
-                    docHolder.createTextNode(param.getDocumentation());
-
-            element.appendChild(textNode);
-            part.setDocumentationElement(element);
+            part.setDocumentationElement(
+                    createDocumentationElement(
+                            param.getDocumentation()));
         }
 
         // Get the java type to represent in the wsdl
