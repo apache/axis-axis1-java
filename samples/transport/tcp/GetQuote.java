@@ -99,7 +99,7 @@ public class GetQuote {
       call.setTransport(new TCPTransport());
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addInputParam("symbol", SOAPTypeMappingRegistry.XSD_STRING);
-      sd.setOutputParam(SOAPTypeMappingRegistry.XSD_FLOAT);
+      sd.setOutputType(SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
       
       // TESTING HACK BY ROBJ

@@ -102,6 +102,9 @@ public class AxisServer extends AxisEngine
     {
         basePath = path;
     }
+    public static String getBasePath()
+    { return basePath; };
+    
     public static synchronized AxisServer getSingleton()
     {
         if (singleton == null) {

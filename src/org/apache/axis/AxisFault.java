@@ -97,13 +97,19 @@ public class AxisFault extends Exception {
         String  str ;
 
         setFaultCode( Constants.FAULT_SERVER_GENERAL );
-        // setFaultString( e.toString() );
+        setFaultString( e.toString() );
+        
         // need to set details if we were in the body at the time!!
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         PrintStream           ps = new PrintStream( stream );
         e.printStackTrace(ps);
         ps.close();
-        setFaultString( stream.toString() );
+        
+        Element elem = XMLUtils.newDocument().createElement("details");
+        elem.setNodeValue(ps.toString());
+        
+        Element [] details = new Element [] { elem };
+        setFaultDetails( details );
     }
     
     public AxisFault(String message)
