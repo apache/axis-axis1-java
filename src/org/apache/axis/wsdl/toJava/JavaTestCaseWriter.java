@@ -261,7 +261,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                     } else if (paramType.equals("java.util.Calendar")) {
                         pw.print("java.util.Calendar.getInstance()");
                     } else if (paramType.equals("javax.xml.rpc.namespace.QName")) {
-                        pw.print("new javax.xml.rpc.namespace.QName(\"double, double\", \"toil and trouble\")");
+                        pw.print("new javax.xml.rpc.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
                     } else if (paramType.endsWith("[]")) {
                         pw.print("new "
                                  + JavaUtils.replace(paramType, "[]", "[0]"));
