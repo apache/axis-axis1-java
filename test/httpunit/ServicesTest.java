@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,10 +53,10 @@
  */
 
 
-package test;
+package test.httpunit;
 
-import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebResponse;
 
 /**
@@ -106,7 +106,7 @@ public class ServicesTest extends HttpUnitTestBase {
      */
     public void testServices() throws Exception {
         WebRequest request = new GetMethodWebRequest(services);
-        expectErrorCode(request,404);
+        expectErrorCode(request,404, null);
     }
 
     /**
@@ -116,19 +116,17 @@ public class ServicesTest extends HttpUnitTestBase {
      */
     public void testInvalidServiceRaisesError() throws Exception {
         WebRequest request = new GetMethodWebRequest(invalid_service);
-        expectErrorCode(request,404);
+        expectErrorCode(request,404, null);
     }
 
     /**
-     * A missing wsdl page should be a 404 error; though it is
-     * returning 500 as of 2002-08-13
+     * A missing wsdl page should be a 404 error;
      * @throws Exception
      */
     public void testInvalidServiceWsdlRaisesError() throws Exception {
         WebRequest request = new GetMethodWebRequest(invalid_service+"?wsdl");
         // "The AXIS engine could not find a target service to invoke!");
-        expectErrorCode(request,404);
-
+        expectErrorCode(request,404, null);
     }
 
     /**
@@ -154,6 +152,15 @@ public class ServicesTest extends HttpUnitTestBase {
         assertTrue(body.indexOf("<getVersionReturn")>0);
     }
 
+    /**
+     * test a get without any method
+     * @throws Exception
+     */
+    public void testVersionNoMethod() throws Exception {
+        WebRequest request = new GetMethodWebRequest(services
+                + "Version?arg1=foo&arg2=bar");
+        expectErrorCode(request, 400, null);
+    }
 
 
 }
