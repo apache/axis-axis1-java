@@ -10,6 +10,7 @@
 <property name="Name" value="Axis" />
 <property name="year" value="2002" />
 <property name="jaxrpc" value="jaxrpc" />
+<property name="saaj" value="saaj" />
 
 <!-- debug flag for ant javac, values are "on" and "off" -->
 <!-- 
@@ -75,4 +76,11 @@ them.
 <property name="test.functional.reportdir" value="test-reports" />
 <property name="test.functional.SimpleAxisPort" value="8080" />
 <property name="test.functional.fail" value="yes" />
+
+<!-- Place Holder for proxy settings -->
+<property name="http.proxyHost" value=""/>
+<property name="http.proxyPort" value=""/>
+<property name="http.nonProxyHosts" value=""/>
+<property name="http.proxyUser" value=""/>
+<property name="http.proxyPassword" value=""/>
 
