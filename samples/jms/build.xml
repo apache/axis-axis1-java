@@ -46,7 +46,7 @@ Copyright:
   <target name="clean"/>
   <target name="copy" depends="setenv"/>
 
-  <target name="compile" depends="copy">
+  <target name="compile" depends="copy" if="jms.present">
     <!-- Create java files for the jms stub sample -->
     <wsdl2java url="${axis.home}/samples/jms/stub/GetQuote.wsdl"
                  output="${axis.home}/build/work"
