@@ -535,21 +535,19 @@ public class TestDeser extends TestCase {
                     s, true);
     }
 
-    /*
     // Struct within Struct
     public void testStructStruct() throws Exception {
         samples.echo.SOAPStruct s = new samples.echo.SOAPStruct(1, "one",   1.1F);
         samples.echo.SOAPStructStruct ss = new samples.echo.SOAPStructStruct("hello", 2, 2.2F, s);
-        deserialize("<me:SOAPStructStruct>" +
+        deserialize("<me:SOAPStructStruct xsi:type=\"me:SOAPStructStruct\">" +
                     "<varString xsi:type=\"xsd:string\">hello</varString>" +
                     "<varInt xsi:type=\"xsd:int\">2</varInt>" +
                     "<varFloat xsi:type=\"xsd:float\">2.2</varFloat>" +
-                    "<me:SOAPStruct>" +
+                    "<varStruct>" +
                     "<varString xsi:type=\"xsd:string\">one</varString>" +
                     "<varInt xsi:type=\"xsd:int\">1</varInt>" +
                     "<varFloat xsi:type=\"xsd:float\">1.1</varFloat>" +
-                    "</me:SOAPStruct>" +
-                    "</me:SOAPStructStruct>", s, true);
+                    "</varStruct>" +
+                    "</me:SOAPStructStruct>", ss, true);
     }
-    */
 }
