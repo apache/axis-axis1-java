@@ -3,13 +3,14 @@
 <definitions name="urn:GetQuote" 
              targetNamespace="urn:xmltoday-delayed-quotes"
              xmlns:tns="urn:xmltoday-delayed-quotes"
-             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- message declns -->
-  <message name="testRequest">
-    <part name="string" type="xsd:string"/>
+  <message name="testRequest"/>
+  <message name="testResponse">
+    <part name="testResult" type="xsd:string"/>
   </message>
 
   <message name="GetQuoteRequest">
@@ -27,7 +28,8 @@
       <output message="tns:GetQuoteResponse"/>
     </operation>
     <operation name="test" >
-      <output message="tns:GetQuoteResponse"/>
+      <input message="tns:testRequest"/>
+      <output message="tns:testResponse"/>
     </operation>
   </portType>
 
