@@ -162,7 +162,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
      */
     public org.w3c.dom.Text createTextNode(String data) {
         org.apache.axis.message.Text me =
-            new org.apache.axis.message.Text(data);
+            new org.apache.axis.message.Text(delegate.createTextNode(data));
         me.setOwnerDocument(soapPart);
         return me;
 

@@ -1020,9 +1020,17 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * Text nodes are not supported.
      */
     public SOAPElement addTextNode(String s) throws SOAPException {
-        org.apache.axis.message.Text text = new org.apache.axis.message.Text(s);
+        Text text = null;
+        if (context != null && context.getEnvelope() != null &&
+                context.getEnvelope().getOwnerDocument() != null) {
+            Document doc = context.getEnvelope().getOwnerDocument();
+            text = doc.createTextNode(s);
+        }
+        if (text == null) {
+            text = new org.apache.axis.message.Text(s);
+        }
         try {
-            appendChild(text);
+             appendChild(text);
             return this;
         } catch (ClassCastException e) {
             throw new SOAPException(e);

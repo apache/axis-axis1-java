@@ -29,6 +29,10 @@ import org.w3c.dom.DOMException;
  */
 public class Text extends NodeImpl implements javax.xml.soap.Text {
 
+    public Text(org.w3c.dom.CharacterData data) {
+        textRep = data;
+    }
+
     public Text(String s) {
         try {
             org.w3c.dom.Document doc = org.apache.axis.utils.XMLUtils.newDocument();

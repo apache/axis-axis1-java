@@ -640,7 +640,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         DeserializationContext dser = new DeserializationContextImpl(is,
                                            getMessage().getMessageContext(),
                                            getMessage().getMessageType());
-
+        dser.getEnvelope().setOwnerDocument(this);
         // This may throw a SAXException
         try {
             dser.parse();
