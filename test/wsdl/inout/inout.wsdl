@@ -831,6 +831,7 @@
               encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
               use="encoded"
               namespace="http://www.apache.org/inout"/>
+      </fault>
     </operation>
   </binding>
 
