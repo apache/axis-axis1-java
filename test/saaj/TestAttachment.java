@@ -19,6 +19,7 @@ public class TestAttachment extends junit.framework.TestCase {
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message = factory.createMessage();
         AttachmentPart attachment = message.createAttachmentPart();
+        attachment.setContentId(org.apache.axis.utils.SOAPUtils.getNewContentIdValue());
         String stringContent = "Update address for Sunny Skies " +
                 "Inc., to 10 Upbeat Street, Pleasant Grove, CA 95439";
 

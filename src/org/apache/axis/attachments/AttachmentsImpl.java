@@ -223,7 +223,8 @@ public class AttachmentsImpl implements Attachments {
         Part removedPart = getAttachmentByReference(reference);
 
         if (removedPart != null) {
-            attachments.remove(removedPart.getContentId());
+            if(removedPart.getContentId()!=null)
+                attachments.remove(removedPart.getContentId());
             attachments.remove(removedPart.getContentLocation());
             orderedAttachments.remove(removedPart);
         }
@@ -250,7 +251,9 @@ public class AttachmentsImpl implements Attachments {
 
         mergeinAttachments();
 
-        Part oldPart = (Part) attachments.put(newPart.getContentId(), newPart);
+        Part oldPart = null;
+        if(newPart.getContentId()!=null)
+            oldPart = (Part) attachments.put(newPart.getContentId(), newPart);
 
         if (oldPart != null) {
             orderedAttachments.remove(oldPart);
@@ -475,6 +478,8 @@ public class AttachmentsImpl implements Attachments {
                 AttachmentPart part= (AttachmentPart)i.next();
                     DataHandler dh= AttachmentUtils.
                       getActivationDataHandler(part);
+                    if(part.getContentId() == null)
+                        part.setContentId(org.apache.axis.utils.SOAPUtils.getNewContentIdValue());
                     dimemultipart.addBodyPart(new 
                       DimeBodyPart(dh,part.getContentId()));
               }
@@ -586,15 +591,10 @@ public class AttachmentsImpl implements Attachments {
             log.warn(JavaUtils.getMessage("exception00"));
         }
 
-        java.util.Iterator iterator = attachments.values().iterator();
-        while(iterator.hasNext()){
-            Part removedPart = (Part) iterator.next();
-            if (removedPart != null) {
-                attachments.remove(removedPart.getContentId());
-                attachments.remove(removedPart.getContentLocation());
-                orderedAttachments.remove(removedPart);
-            }
-        }
+        multipart = null;
+        dimemultipart = null;
+        attachments.clear();
+        orderedAttachments.clear();
     }
 
     /**

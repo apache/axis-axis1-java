@@ -96,7 +96,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * Constructor AttachmentPart
      */
     public AttachmentPart() {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SOAPUtils.getNewContentIdValue());
     }
 
     /**
@@ -105,11 +104,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @param dh
      */
     public AttachmentPart(javax.activation.DataHandler dh) {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
-                SOAPUtils.getNewContentIdValue());
         datahandler = dh;
         if(dh != null)
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
+            setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
     }
 
     /**
@@ -137,7 +134,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @param value
      */
     public void addMimeHeader(String header, String value) {
-        mimeHeaders.setHeader(header, value);
+        mimeHeaders.addHeader(header, value);
     }
 
     /**
@@ -191,7 +188,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @param loc
      */
     public void setContentLocation(String loc) {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
 
     /**
@@ -201,10 +198,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     @returns void
      */
     public void setContentId(String newCid) {
-        if (newCid!=null && !newCid.toLowerCase().startsWith("cid:")) {
-            newCid = "cid:" + newCid;
-        }
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
     /**
@@ -213,20 +207,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @return
      */
     public String getContentId() {
-        String ret = getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-        // Do not let the contentID ever be empty.
-        if (ret == null) {
-            ret = SOAPUtils.getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
-        }
-
-        ret = ret.trim();
-        if (ret.length() == 0) {
-            ret = SOAPUtils.getNewContentIdValue();
-            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
-        }
-
-        return ret;
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
     }
 
     /**
