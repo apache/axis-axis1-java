@@ -52,56 +52,43 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.event;
 
-import org.apache.axis.MessageContext;
+import org.apache.axis.ime.MessageExchangeEvent;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeEventListener;
-
+import org.apache.axis.MessageContext;
 import java.io.Serializable;
 
 /**
- * Note: the only challenge with making this class serializable
- * is that org.apache.axis.MessageContext is currently NOT
- * serializable.  MessageContext needs to change in order to 
- * take advantage of persistent Channels and CorrelatorServices
- * 
- * For thread safety, instances of this class are immutable
- * 
- * @author James M Snell (jasnell@us.ibm.com)
+ * MessageCorrelatedEvent is the base abstract class for all 
+ * events which are associated with a particular message.  
+ * It contains a reference to the message via the MessageContext.
+ *
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public final class MessageExchangeSendContext
-        implements Serializable {
-
-    public static MessageExchangeSendContext newInstance(
-            MessageExchangeCorrelator correlator,
-            MessageContext context,
-            MessageExchangeEventListener eventListener) {
-        MessageExchangeSendContext mectx =
-                new MessageExchangeSendContext();
-        mectx.correlator = correlator;
-        mectx.context = context;
-        mectx.eventListener = eventListener;
-        return mectx;
-    }
-
+public abstract class MessageCorrelatedEvent
+        implements MessageExchangeEvent, Serializable {
+   
     protected MessageExchangeCorrelator correlator;
-    protected MessageExchangeEventListener eventListener;
     protected MessageContext context;
 
-    protected MessageExchangeSendContext() {
+    public MessageCorrelatedEvent(
+            MessageExchangeCorrelator correlator) {
+        this.correlator = correlator;
     }
 
+    public MessageCorrelatedEvent(
+            MessageExchangeCorrelator correlator,
+            MessageContext context) {
+        this.correlator = correlator;
+        this.context = context;
+    }
+    
     public MessageExchangeCorrelator getMessageExchangeCorrelator() {
-        return this.correlator;
+        return correlator;
     }
-
+    
     public MessageContext getMessageContext() {
-        return this.context;
+        return context;
     }
-
-    public MessageExchangeEventListener getMessageExchangeEventListener() {
-        return this.eventListener;
-    }    
 }

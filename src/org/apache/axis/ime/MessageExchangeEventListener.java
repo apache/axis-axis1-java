@@ -55,16 +55,16 @@
 package org.apache.axis.ime;
 
 import java.io.Serializable;
-import org.apache.axis.MessageContext;
 
 /**
- * @author James M Snell (jasnell@us.ibm.com)
+ * The base interface to be extended by all MessageExchangeEvent listeners.
+ *
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public abstract class MessageContextListener
-        implements Serializable {
+public interface MessageExchangeEventListener
+        extends Serializable {
 
-    public void onReceive(
-            MessageExchangeCorrelator correlator,
-            MessageContext context) {}
+    public void onEvent(
+            MessageExchangeEvent event);
 
 }

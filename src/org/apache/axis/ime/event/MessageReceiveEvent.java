@@ -52,56 +52,33 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.event;
 
-import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeEventListener;
-
-import java.io.Serializable;
+import org.apache.axis.ime.internal.MessageExchangeReceiveContext;
+import org.apache.axis.MessageContext;
 
 /**
- * Note: the only challenge with making this class serializable
- * is that org.apache.axis.MessageContext is currently NOT
- * serializable.  MessageContext needs to change in order to 
- * take advantage of persistent Channels and CorrelatorServices
- * 
- * For thread safety, instances of this class are immutable
- * 
- * @author James M Snell (jasnell@us.ibm.com)
+ * The MessageReceiveEvent is used to notify listeners that a message
+ * has been received.
+ *
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public final class MessageExchangeSendContext
-        implements Serializable {
+public class MessageReceiveEvent
+        extends MessageCorrelatedEvent {
 
-    public static MessageExchangeSendContext newInstance(
-            MessageExchangeCorrelator correlator,
-            MessageContext context,
-            MessageExchangeEventListener eventListener) {
-        MessageExchangeSendContext mectx =
-                new MessageExchangeSendContext();
-        mectx.correlator = correlator;
-        mectx.context = context;
-        mectx.eventListener = eventListener;
-        return mectx;
+    protected MessageExchangeReceiveContext receiveContext;
+    
+    public MessageReceiveEvent(
+            MessageExchangeCorrelator correlator, 
+            MessageExchangeReceiveContext receiveContext,
+            MessageContext context) {
+        super(correlator, context);
+        this.receiveContext = receiveContext;
     }
-
-    protected MessageExchangeCorrelator correlator;
-    protected MessageExchangeEventListener eventListener;
-    protected MessageContext context;
-
-    protected MessageExchangeSendContext() {
+    
+    public MessageExchangeReceiveContext getMessageExchangeReceiveContext()
+    {
+        return receiveContext;
     }
-
-    public MessageExchangeCorrelator getMessageExchangeCorrelator() {
-        return this.correlator;
-    }
-
-    public MessageContext getMessageContext() {
-        return this.context;
-    }
-
-    public MessageExchangeEventListener getMessageExchangeEventListener() {
-        return this.eventListener;
-    }    
 }

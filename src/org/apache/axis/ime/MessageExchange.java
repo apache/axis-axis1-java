@@ -65,6 +65,7 @@ import java.util.Map;
  * models for receiving inbound messages.
  * 
  * @author James M Snell (jasnell@us.ibm.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public interface MessageExchange {
 
@@ -93,7 +94,7 @@ public interface MessageExchange {
      */
     public MessageExchangeCorrelator send(
             MessageContext context,
-            MessageContextListener listener)
+            MessageExchangeEventListener listener)
             throws AxisFault;
 
     /**
@@ -150,7 +151,7 @@ public interface MessageExchange {
      * @throws AxisFault
      */
     public void receive(
-            MessageContextListener listener)
+            MessageExchangeEventListener listener)
             throws AxisFault;
 
     /**
@@ -162,7 +163,7 @@ public interface MessageExchange {
      */            
     public void receive(
             MessageExchangeCorrelator correlator,
-            MessageContextListener listener)
+            MessageExchangeEventListener listener)
             throws AxisFault;
 
     /**
@@ -187,17 +188,10 @@ public interface MessageExchange {
             long timeout)
             throws AxisFault;
 
-    public void setMessageExchangeFaultListener(
-            MessageExchangeFaultListener listener);
-            
-    public MessageExchangeFaultListener getMessageExchangeFaultListener();
-    
-    public void setMessageExchangeStatusListener(
-            MessageExchangeStatusListener listener);
-            
-    public MessageExchangeStatusListener getMessageExchangeStatusListener();
+    public void setMessageExchangeEventListener(
+            MessageExchangeEventListener listener);
         
-        
+    public MessageExchangeEventListener getMessageExchangeEventListener();
 
     /**
      * @param String The id of the feature to enable

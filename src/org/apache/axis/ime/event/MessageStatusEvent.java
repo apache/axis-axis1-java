@@ -52,17 +52,32 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.event;
 
-import java.io.Serializable;
+import org.apache.axis.ime.MessageExchangeCorrelator;
+import org.apache.axis.ime.MessageExchangeStatus;
 
 /**
- * @author James M Snell (jasnell@us.ibm.com)
+ * The MessageExchangeStatus event is used to provide status 
+ * notifications to registered listeners.
+ *
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public interface MessageExchangeSendListener
-        extends Serializable {
+public class MessageStatusEvent
+        extends MessageCorrelatedEvent {
 
-    public void onSend(
-            MessageExchangeSendContext context);
+    protected MessageExchangeStatus status;
+    
+    public MessageStatusEvent(
+            MessageExchangeCorrelator correlator,
+            MessageExchangeStatus status) {
+        super(correlator);
+        this.status = status;
+    }
+    
+    public MessageExchangeStatus getMessageExchangeStatus()
+    {
+        return status;
+    }
 
 }

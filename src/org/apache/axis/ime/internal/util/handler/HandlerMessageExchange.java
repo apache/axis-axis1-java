@@ -59,11 +59,12 @@ import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageContextListener;
-import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.MessageExchangeEventListener;
+import org.apache.axis.ime.MessageExchangeEvent;
+import org.apache.axis.ime.event.MessageFaultEvent;
+import org.apache.axis.ime.event.MessageSendEvent;
 import org.apache.axis.ime.internal.MessageExchangeProvider;
 import org.apache.axis.ime.internal.MessageExchangeSendContext;
-import org.apache.axis.ime.internal.MessageExchangeSendListener;
 import org.apache.axis.ime.internal.ReceivedMessageDispatchPolicy;
 import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
 import org.apache.axis.components.logger.LogFactory;
@@ -89,7 +90,7 @@ public class HandlerMessageExchange
     /**
      * @see org.apache.axis.ime.internal.MessageExchangeProvider1#createSendMessageContextListener()
      */
-    protected MessageExchangeSendListener getMessageExchangeSendListener() {
+    protected MessageExchangeEventListener getMessageExchangeEventListener() {
         return new Listener(handler);
     }
 
@@ -114,7 +115,7 @@ public class HandlerMessageExchange
     }
 
     public class Listener
-            implements MessageExchangeSendListener {
+            implements MessageExchangeEventListener {
 
         private Handler handler;
 
@@ -125,13 +126,19 @@ public class HandlerMessageExchange
         /**
          * @see org.apache.axis.ime.MessageExchangeContextListener#onMessageExchangeContext(MessageExchangeContext)
          */
-        public void onSend(
-                MessageExchangeSendContext context) {
+        public void onEvent(
+                MessageExchangeEvent event) {
+            if (!(event instanceof MessageSendEvent))
+                return;
+            
+            MessageSendEvent sendEvent = (MessageSendEvent)event;
+            MessageExchangeSendContext context = sendEvent.getMessageExchangeSendContext();
+            
             if (log.isDebugEnabled()) {
                 log.debug("Enter: HandlerMessageExchange.Listener::onSend");
             }
-            MessageExchangeFaultListener listener = 
-                context.getMessageExchangeFaultListener();
+            MessageExchangeEventListener listener = 
+                context.getMessageExchangeEventListener();
             try {
                 MessageContext msgContext =
                         context.getMessageContext();
@@ -147,10 +154,12 @@ public class HandlerMessageExchange
 
                 RECEIVE.put(correlator, context);
             } catch (Exception exception) {
-                if (listener != null)
-                    listener.onFault(
+                if (listener != null) {
+                    MessageFaultEvent faultEvent = new MessageFaultEvent(
                             context.getMessageExchangeCorrelator(),
                             exception);
+                    listener.onEvent(faultEvent);
+                }
             } finally {
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: HandlerMessageExchange.Listener::onSend");
