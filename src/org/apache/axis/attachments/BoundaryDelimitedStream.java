@@ -157,8 +157,10 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream
         streamNo= newStreamNo();
         closed = false;
         this.is = is;
-        this.boundary = boundary;
-        this.boundaryLen = boundary.length;
+        //Copy the boundary array to make certain it is never altered.
+        this.boundary= new byte[boundary.length];
+        System.arraycopy(boundary,0,this.boundary,0, boundary.length);
+        this.boundaryLen = this.boundary.length;
         this.boundaryBufLen = boundaryLen + 2;
           //allways leave room for at least a 2x boundary
           //Most mime boundaries are 40 bytes or so.
