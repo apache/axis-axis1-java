@@ -68,8 +68,8 @@ import org.apache.axis.utils.* ;
  */
 public class AxisServlet extends HttpServlet {
   // These have default values.
-  private String transportInName = "HTTP.Input";
-  private String transportOutName = "HTTP.Output";
+  private String transportInName = "HTTP.input";
+  private String transportOutName = "HTTP.output";
 
   private static final String AXIS_ENGINE = "AxisEngine" ;
 
