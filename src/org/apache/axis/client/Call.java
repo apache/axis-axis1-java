@@ -1994,6 +1994,7 @@ public class Call implements javax.xml.rpc.Call {
                 // GD 03/15/02 : We're now checking for invalid metadata
                 // config at the top of this method, so don't need to do it
                 // here.  Check for void return, though.
+
                 boolean findReturnParam = false;
                 QName returnParamQName = operation.getReturnQName();
                 
@@ -2010,6 +2011,13 @@ public class Call implements javax.xml.rpc.Call {
                     }
                 }
 
+                // The following loop looks at the resargs and
+                // converts the value to the appropriate return/out parameter
+                // value.  If the return value is found, is value is 
+                // placed in result.  The remaining resargs are 
+                // placed in the outParams list (note that if a resArg
+                // is found that does not match a operation parameter qname,
+                // it is still placed in the outParms list).
                 for (int i = outParamStart; i < resArgs.size(); i++) {
                     RPCParam param = (RPCParam) resArgs.get(i);
 
@@ -2034,8 +2042,30 @@ public class Call implements javax.xml.rpc.Call {
                         outParamsList.add(value);
                     }
                 }
+                
+                // added by scheu:
+                // If the return param is still not found, that means
+                // the returned value did not have the expected qname.
+                // The soap specification indicates that this should be 
+                // accepted (and we also fail interop tests if we are strict here).
+                // Look through the outParms and find one that
+                // does not match one of the operation parameters.
+                if (findReturnParam) {
+                    Iterator it = outParams.keySet().iterator();
+                    while (it.hasNext() && findReturnParam) {
+                        QName qname = (QName) it.next();
+                        ParameterDesc paramDesc = 
+                            operation.getOutputParamByQName(qname);
+                        if (paramDesc == null) {
+                            // Doesn't match a paramter, so use this for the return
+                            findReturnParam = false;
+                            result = outParams.remove(qname);
+                        }                            
+                    }
+                }
+
                 // If we were looking for a particular QName for the return and
-                // didn't find it, throw an exception
+                // still didn't find it, throw an exception
                 if (findReturnParam) {
                     String returnParamName = returnParamQName.toString(); 
                     throw new AxisFault(Messages.getMessage("noReturnParam", returnParamName));
