@@ -77,10 +77,14 @@ public class JavaPortTypeWriter implements Writer {
             Emitter emitter,
             PortType portType, SymbolTable symbolTable) {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
-        interfaceWriter =
-                new JavaInterfaceWriter(emitter, ptEntry, symbolTable);
-        if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, ptEntry, symbolTable);
+
+        // Only write the portType files if the portType is referenced.
+        if (ptEntry.isReferenced()) {
+            interfaceWriter =
+              new JavaInterfaceWriter(emitter, ptEntry, symbolTable);
+            if (emitter.bEmitSkeleton && emitter.bMessageContext) {
+                serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, ptEntry, symbolTable);
+            }
         }
     } // ctor
 
@@ -88,7 +92,9 @@ public class JavaPortTypeWriter implements Writer {
      * Write all the portType bindings:  <portTypeName>.java, <portTypeName>AXIS.java.
      */
     public void write() throws IOException {
-        interfaceWriter.write();
+        if (interfaceWriter != null) {
+            interfaceWriter.write();
+        }
         if (serviceInterfaceWriter != null) {
             serviceInterfaceWriter.write();
         }

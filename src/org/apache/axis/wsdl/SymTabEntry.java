@@ -121,7 +121,7 @@ public abstract class SymTabEntry {
     /**
      * Set the isReferenced variable, default value is true.
      */
-    protected void setIsReferenced(boolean isReferenced) {
+    public void setIsReferenced(boolean isReferenced) {
         this.isReferenced = isReferenced;
     } // setIsReferenced
 
