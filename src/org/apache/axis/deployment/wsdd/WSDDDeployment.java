@@ -292,16 +292,16 @@ public class WSDDDeployment
             throws WSDDException
     {
         try {
-            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
+            String encodingStyle = mapping.getEncodingStyle();
+            if (encodingStyle == null) {
+                encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+            }
+            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
             if (tm == null || tm == df) {
                 tm = (TypeMapping) tmr.createTypeMapping();
-                String namespace = mapping.getEncodingStyle();
-                if (mapping.getEncodingStyle() == null) {
-                    namespace = Constants.URI_CURRENT_SOAP_ENC;
-                }
-                tm.setSupportedNamespaces(new String[] {namespace});
-                tmr.register(namespace, tm);
+                tm.setSupportedNamespaces(new String[] {encodingStyle});
+                tmr.register(encodingStyle, tm);
             }
 
             SerializerFactory   ser   = null;
