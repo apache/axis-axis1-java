@@ -293,7 +293,13 @@ public class RPCElement extends SOAPBodyElement
              msgContext.getOperationStyle() == Style.RPC  ||
              msgContext.getOperationStyle() == Style.WRAPPED);
 
-        if (isRPC) {
+        // I don't quite understand why this is necessary, but when
+        // I have MIME and a no-param document WSDL, if I don't check
+        // for no params here, the server chokes with "can't find Body".
+        // Tom, maybe you have some insight?
+        boolean noParams = params.size() == 0;
+
+        if (isRPC || noParams) {
             // Set default namespace if appropriate (to avoid prefix mappings
             // in literal style).  Do this only if there is no encodingStyle.
             if (encodingStyle.equals("")) {
@@ -310,7 +316,7 @@ public class RPCElement extends SOAPBodyElement
             param.serialize(context);
         }
 
-        if (isRPC) {
+        if (isRPC || noParams) {
             context.endElement();
         }
     }
