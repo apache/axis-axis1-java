@@ -54,7 +54,6 @@
  */
 package org.apache.axis.utils.bytecode;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import java.io.IOException;
@@ -141,6 +140,24 @@ public class ParamReader
 
     }
 
+	public void readCode() throws IOException
+	{
+		readShort(); // max stack
+		int maxLocals = readShort(); // max locals
+
+		MethodInfo info = new MethodInfo(maxLocals);
+		if (methods != null && methodName != null)
+		{
+			methods.put(methodName, info);
+		}
+
+		skipFully(readInt()); // code
+		skipFully(8 * readShort()); // exception table
+		// read the code attributes (recursive).  This is where
+		// we will find the LocalVariableTable attribute.
+		readAttributes();
+	}
+
     /**
      * return the names of the declared parameters for the given method.
      * If we cannot determine the names, return null.  The returned array will
@@ -153,17 +170,17 @@ public class ParamReader
         paramTypes = method.getParameterTypes();
 
         // look up the names for this method
-        String[] localNames = (String[]) methods.get(getSignature(method, paramTypes));
+        MethodInfo info = (MethodInfo) methods.get(getSignature(method, paramTypes));
 
         // we know all the local variable names, but we only need to return
         // the names of the parameters.
 
-        if (localNames != null) {
+        if (info != null) {
             String[] paramNames = new String[paramTypes.length];
             int j = Modifier.isStatic(method.getModifiers()) ? 0 : 1;
 
             for (int i = 0; i < paramNames.length; i++) {
-                paramNames[i] = localNames[j++];
+                paramNames[i] = info.names[j++];
                 if (paramTypes[i] == double.class || paramTypes[i] == long.class) {
                     // skip a slot for 64bit params
                     j++;
@@ -176,29 +193,44 @@ public class ParamReader
         }
     }
 
+	private static class MethodInfo
+	{
+		String[] names;
+		int maxLocals;
+
+		public MethodInfo(int maxLocals)
+		{
+			this.maxLocals = maxLocals;
+			names = new String[maxLocals];
+		}
+	}
+
+	private MethodInfo getMethodInfo()
+	{
+		MethodInfo info = null;
+		if (methods != null && methodName != null)
+		{
+			info = (MethodInfo) methods.get(methodName);
+		}
+		return info;
+	}
+
     /**
      * this is invoked when a LocalVariableTable attribute is encountered.
      * @throws IOException
      */
     public void readLocalVariableTable() throws IOException {
         int len = readShort(); // table length
-        String[] names = null;
-        if (methods != null && methodName != null) {
-            // need enough room in the table to handle double-wide parameters
-            names = new String[2 * len];
-            methods.put(methodName, names);
-        }
+        MethodInfo info = getMethodInfo();
         for (int j = 0; j < len; j++) {
             readShort(); // start pc
             readShort(); // length
-            int n = readShort(); // name_index
+            int nameIndex = readShort(); // name_index
             readShort(); // descriptor_index
-            int index = readShort(); // index
-
-            if (names != null && index < 2 * len) {
-                names[index] = resolveUtf8(n);
-            }
+            int index = readShort(); // local index
+			if (info != null) {
+				info.names[index] = resolveUtf8(nameIndex);
+			}
         }
     }
-
 }
