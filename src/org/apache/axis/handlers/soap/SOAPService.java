@@ -73,8 +73,6 @@ import org.w3c.dom.*;
  */
 public class SOAPService extends SimpleTargetedChain
 {
-    public static final String OPTION_PIVOT = "pivot";
-    
     /** Valid transports for this service
      * (server side only!)
      * 
@@ -112,7 +110,6 @@ public class SOAPService extends SimpleTargetedChain
     {
         this();
         setPivotHandler(serviceHandler);
-        addOption(OPTION_PIVOT, pivotName);
     }
     
     /** Tell this service which engine it's deployed to.

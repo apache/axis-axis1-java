@@ -22,7 +22,6 @@
 
   <!-- The admin service -->
   <service name="AdminService" pivot="MsgDispatcher">
-   <option name="pivot" value="MsgDispatcher"/>
    <option name="className" value="org.apache.axis.utils.Admin"/>
    <option name="methodName" value="AdminService"/>
   </service>
