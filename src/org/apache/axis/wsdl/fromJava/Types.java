@@ -256,7 +256,7 @@ public class Types {
              "Array".equals(qname.getLocalPart()))) {
             qname = getTypeQName(type);
             if (qname == null) {
-                throw new AxisFault("Clss:" + type.getName()); 
+                throw new AxisFault("Class:" + type.getName()); 
             }
         }
 
