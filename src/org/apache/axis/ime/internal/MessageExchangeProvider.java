@@ -60,10 +60,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchange;
-import org.apache.axis.ime.MessageContextListener;
+import org.apache.axis.ime.MessageExchangeEventListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeFactory;
-import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.event.MessageSendEvent;
 import org.apache.axis.ime.internal.util.WorkerPool;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
 import org.apache.axis.ime.internal.util.NonPersistentKeyedBuffer;
@@ -74,6 +74,7 @@ import java.util.Map;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public abstract class MessageExchangeProvider
         implements MessageExchangeFactory {
@@ -99,7 +100,7 @@ public abstract class MessageExchangeProvider
       return null;
     }
 
-    protected abstract MessageExchangeSendListener getMessageExchangeSendListener();
+    protected abstract MessageExchangeEventListener getMessageExchangeEventListener();
 
     protected abstract ReceivedMessageDispatchPolicy getReceivedMessageDispatchPolicy();
 
@@ -142,7 +143,7 @@ public abstract class MessageExchangeProvider
         if (initialized)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
         for (int n = 0; n < THREAD_COUNT; n++) {
-            WORKERS.addWorker(new MessageSender(WORKERS, SEND, getMessageExchangeSendListener(), getSendHandler()));
+            WORKERS.addWorker(new MessageSender(WORKERS, SEND, getMessageExchangeEventListener(), getSendHandler()));
             WORKERS.addWorker(new MessageReceiver(WORKERS, RECEIVE, getReceivedMessageDispatchPolicy(), getReceiveHandler()));
         }
         initialized = true;
@@ -280,13 +281,13 @@ public abstract class MessageExchangeProvider
     
         protected WorkerPool pool;
         protected KeyedBuffer channel;
-        protected MessageExchangeSendListener listener;
+        protected MessageExchangeEventListener listener;
         protected Handler handler;
     
         protected MessageSender(
                 WorkerPool pool,
                 KeyedBuffer channel,
-                MessageExchangeSendListener listener,
+                MessageExchangeEventListener listener,
                 Handler handler) {
             this.pool = pool;
             this.channel = channel;
@@ -307,7 +308,12 @@ public abstract class MessageExchangeProvider
                     if (context != null) {
                       if (handler != null)
                         handler.invoke(context.getMessageContext());
-                      listener.onSend(context);
+                      
+                      MessageSendEvent sendEvent = new MessageSendEvent(
+                            context.getMessageExchangeCorrelator(), 
+                            context,
+                            context.getMessageContext());
+                      listener.onEvent(sendEvent);
                     }
                 }
             } catch (Throwable t) {

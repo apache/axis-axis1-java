@@ -52,18 +52,31 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime;
+package org.apache.axis.ime.event;
 
-import java.io.Serializable;
+import org.apache.axis.ime.MessageExchangeCorrelator;
+import org.apache.axis.ime.internal.MessageExchangeSendContext;
+import org.apache.axis.MessageContext;
 
 /**
- * @author James M Snell (jasnell@us.ibm.com)
+ * The MessageSendEvent is used to indicate that a message has been dispatched.
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public interface MessageExchangeFaultListener
-        extends Serializable {
+public class MessageSendEvent
+        extends MessageCorrelatedEvent {
 
-    public void onFault(
+    protected MessageExchangeSendContext sendContext;
+    
+    public MessageSendEvent(
             MessageExchangeCorrelator correlator,
-            Throwable exception);
-
+            MessageExchangeSendContext sendContext,
+            MessageContext context) {
+        super(correlator, context);
+        this.sendContext = sendContext;
+    }
+    
+    public MessageExchangeSendContext getMessageExchangeSendContext()
+    {
+        return sendContext;
+    }
 }

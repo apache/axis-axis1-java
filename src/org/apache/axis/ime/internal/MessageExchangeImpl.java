@@ -60,11 +60,12 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.ime.MessageExchange;
 import org.apache.axis.ime.MessageExchangeConstants;
-import org.apache.axis.ime.MessageExchangeFaultListener;
-import org.apache.axis.ime.MessageExchangeStatusListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeLifecycle;
+import org.apache.axis.ime.MessageExchangeEventListener;
+import org.apache.axis.ime.MessageExchangeEvent;
+import org.apache.axis.ime.event.MessageReceiveEvent;
+import org.apache.axis.ime.event.MessageFaultEvent;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -73,6 +74,7 @@ import java.util.Map;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public class MessageExchangeImpl
         implements MessageExchange, MessageExchangeLifecycle {
@@ -83,8 +85,7 @@ public class MessageExchangeImpl
     public static final long NO_TIMEOUT = -1;
     public static final long DEFAULT_TIMEOUT = 1000 * 30;
 
-    private MessageExchangeFaultListener faultListener;
-    private MessageExchangeStatusListener statusListener;
+    private MessageExchangeEventListener eventListener;
     private MessageExchangeProvider provider;
     protected Holder holder;
 
@@ -106,7 +107,7 @@ public class MessageExchangeImpl
      */
     public MessageExchangeCorrelator send(
             MessageContext context,
-            MessageContextListener listener)
+            MessageExchangeEventListener listener)
             throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("Enter: MessageExchangeImpl::send");
@@ -125,16 +126,13 @@ public class MessageExchangeImpl
             provider.processReceive(
                 MessageExchangeReceiveContext.newInstance(
                     correlator,
-                    listener,
-                    faultListener,
-                    statusListener));
+                    listener));
         }
         provider.processSend(
             MessageExchangeSendContext.newInstance(
                 correlator,
                 context,
-                faultListener,
-                statusListener));
+                listener));
         if (log.isDebugEnabled()) {
             log.debug("Exit: MessageExchangeImpl::send");
         }
@@ -179,7 +177,7 @@ public class MessageExchangeImpl
         }
         holder = new Holder();
         Listener listener = new Listener(holder);
-        setMessageExchangeFaultListener(listener);
+        setMessageExchangeEventListener(listener);
         try {
             this.receive(correlator,listener);
             if (timeout != NO_TIMEOUT) 
@@ -205,7 +203,7 @@ public class MessageExchangeImpl
      * @see org.apache.axis.ime.MessageExchange#receive(MessageContextListener)
      */
     public void receive(
-            MessageContextListener listener) 
+            MessageExchangeEventListener listener) 
             throws AxisFault {
         receive(null,listener);
     }
@@ -215,7 +213,7 @@ public class MessageExchangeImpl
      */
     public void receive(
             MessageExchangeCorrelator correlator,
-            MessageContextListener listener) 
+            MessageExchangeEventListener listener) 
             throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("Enter: MessageExchangeImpl::receive");
@@ -223,9 +221,7 @@ public class MessageExchangeImpl
         provider.processReceive(
             MessageExchangeReceiveContext.newInstance(
                 correlator,
-                listener,
-                faultListener,
-                statusListener));
+                listener));
         if (log.isDebugEnabled()) {
             log.debug("Exit: MessageExchangeImpl::receive");
         }
@@ -253,7 +249,7 @@ public class MessageExchangeImpl
         }
         holder = new Holder();
         Listener listener = new Listener(holder);
-        setMessageExchangeFaultListener(listener);
+        setMessageExchangeEventListener(listener);
         try {
             this.send(context,listener);
             if (timeout != NO_TIMEOUT) 
@@ -278,31 +274,16 @@ public class MessageExchangeImpl
     /**
      * see org.apache.axis.ime.MessageExchange#setMessageExchangeFaultListener(MessageExchangeFaultListener)
      */
-    public synchronized void setMessageExchangeFaultListener(
-            MessageExchangeFaultListener listener) {
-        this.faultListener = listener;
-    }
-
-    /**
-     * see org.apache.axis.ime.MessageExchange#getMessageExchangeFaultListener()
-     */    
-    public synchronized MessageExchangeFaultListener getMessageExchangeFaultListener() {
-        return this.faultListener;
-    }
-
-    /**
-     * see org.apache.axis.ime.MessageExchange#setMessageExchangeStatusListener(MessageExchangeStatusListener)
-     */    
-    public synchronized void setMessageExchangeStatusListener(
-            MessageExchangeStatusListener listener) {
-        this.statusListener = listener;
+    public synchronized void setMessageExchangeEventListener(
+            MessageExchangeEventListener listener) {
+        this.eventListener = listener;
     }
 
     /**
      * see org.apache.axis.ime.MessageExchange#getMessageExchangeStatusListener()
      */        
-    public synchronized MessageExchangeStatusListener getMessageExchangeStatusListener() {
-        return this.statusListener;
+    public synchronized MessageExchangeEventListener getMessageExchangeEventListener() {
+        return this.eventListener;
     }
 
     /**
@@ -428,8 +409,7 @@ public class MessageExchangeImpl
     }
 
     public class Listener 
-            extends MessageContextListener
-            implements MessageExchangeFaultListener {
+            implements MessageExchangeEventListener {
 
         protected Holder holder;
 
@@ -440,21 +420,19 @@ public class MessageExchangeImpl
         /**
          * @see org.apache.axis.ime.MessageExchangeReceiveListener#onReceive(MessageExchangeCorrelator, MessageContext)
          */
-        public void onReceive(
-                MessageExchangeCorrelator correlator,
-                MessageContext context) {
-            holder.set(correlator, context);
+        public void onEvent(
+                MessageExchangeEvent event) {
+            if (event instanceof MessageReceiveEvent) {
+                MessageReceiveEvent receiveEvent = (MessageReceiveEvent)event;
+                holder.set(
+                        receiveEvent.getMessageExchangeCorrelator(), 
+                        receiveEvent.getMessageContext());
+            }
+            else if (event instanceof MessageFaultEvent) {
+                MessageFaultEvent faultEvent = (MessageFaultEvent)event;
+                holder.set(faultEvent.getMessageExchangeCorrelator(), faultEvent.getException());
         }
-
-        /**
-         * @see org.apache.axis.ime.MessageExchangeFaultListener#onFault(MessageExchangeCorrelator, Throwable)
-         */
-        public void onFault(
-                MessageExchangeCorrelator correlator,
-                Throwable exception) {
-            holder.set(correlator, exception);
         }
-
     }
 
 

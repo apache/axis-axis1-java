@@ -52,18 +52,30 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime;
+package org.apache.axis.ime.event;
 
-import java.io.Serializable;
+import org.apache.axis.ime.MessageExchangeCorrelator;
 
 /**
- * @author James M Snell (jasnell@us.ibm.com)
+ * The MessageFaultEvent is used to indicate an exception in the 
+ * processing of a message.
+ *
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public interface MessageExchangeStatusListener
-        extends Serializable {
+public class MessageFaultEvent
+        extends MessageCorrelatedEvent {
 
-    public void onStatus(
+    protected Throwable exception;
+    
+    public MessageFaultEvent(
             MessageExchangeCorrelator correlator,
-            MessageExchangeStatus status);
-
+            Throwable exception) {
+        super(correlator);
+        this.exception = exception;
+    }
+    
+    public Throwable getException()
+    {
+        return exception;
+    }
 }

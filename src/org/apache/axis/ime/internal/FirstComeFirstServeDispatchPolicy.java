@@ -56,14 +56,16 @@ package org.apache.axis.ime.internal;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageContextListener;
-import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.MessageExchangeEventListener;
+import org.apache.axis.ime.event.MessageFaultEvent;
+import org.apache.axis.ime.event.MessageReceiveEvent;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public class FirstComeFirstServeDispatchPolicy
         implements ReceivedMessageDispatchPolicy {
@@ -104,19 +106,24 @@ public class FirstComeFirstServeDispatchPolicy
         if (receiveContext == null) 
             RECEIVE.put(correlator,context);
         else {
-            MessageExchangeFaultListener faultListener = 
-              receiveContext.getMessageExchangeFaultListener();
-            MessageContextListener contextListener = 
-              receiveContext.getMessageContextListener();
+            MessageExchangeEventListener eventListener = 
+              receiveContext.getMessageExchangeEventListener();
             MessageContext msgContext = 
               context.getMessageContext();
             try {
-                contextListener.onReceive(
-                    correlator, msgContext);       
+                MessageReceiveEvent receiveEvent = 
+                    new org.apache.axis.ime.event.MessageReceiveEvent(
+                            correlator, 
+                            receiveContext, 
+                            context.getMessageContext());
+                eventListener.onEvent(receiveEvent);
             } catch (Exception exception) {
-              if (faultListener != null)
-                  faultListener.onFault(
-                      correlator, exception);
+              if (eventListener != null) {
+                  MessageFaultEvent faultEvent = new MessageFaultEvent(
+                        correlator,
+                        exception);
+                  eventListener.onEvent(faultEvent);
+              }
             }
         }
         if (log.isDebugEnabled()) {

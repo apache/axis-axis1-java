@@ -52,56 +52,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime.internal;
-
-import org.apache.axis.MessageContext;
-import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeEventListener;
+package org.apache.axis.ime;
 
 import java.io.Serializable;
 
 /**
- * Note: the only challenge with making this class serializable
- * is that org.apache.axis.MessageContext is currently NOT
- * serializable.  MessageContext needs to change in order to 
- * take advantage of persistent Channels and CorrelatorServices
- * 
- * For thread safety, instances of this class are immutable
- * 
- * @author James M Snell (jasnell@us.ibm.com)
+ * The base interface for all MessageExchange events, such as message receipt 
+ * notification, delivery acknowledgement, exception notification, and status. 
+ *
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public final class MessageExchangeSendContext
-        implements Serializable {
-
-    public static MessageExchangeSendContext newInstance(
-            MessageExchangeCorrelator correlator,
-            MessageContext context,
-            MessageExchangeEventListener eventListener) {
-        MessageExchangeSendContext mectx =
-                new MessageExchangeSendContext();
-        mectx.correlator = correlator;
-        mectx.context = context;
-        mectx.eventListener = eventListener;
-        return mectx;
-    }
-
-    protected MessageExchangeCorrelator correlator;
-    protected MessageExchangeEventListener eventListener;
-    protected MessageContext context;
-
-    protected MessageExchangeSendContext() {
-    }
-
-    public MessageExchangeCorrelator getMessageExchangeCorrelator() {
-        return this.correlator;
-    }
-
-    public MessageContext getMessageContext() {
-        return this.context;
-    }
-
-    public MessageExchangeEventListener getMessageExchangeEventListener() {
-        return this.eventListener;
-    }    
+public interface MessageExchangeEvent
+        extends Serializable {
+            
 }
