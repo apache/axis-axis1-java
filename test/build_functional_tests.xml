@@ -120,7 +120,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="wsdl-setup" if="junit.present" >
     <copy todir="${build.dir}/classes" overwrite="yes">
-      <fileset dir="${test.dir}/import_">
+      <fileset dir="${test.dir}/wsdl/_import">
         <include name="NStoPkg.properties"/>
       </fileset>
     </copy>
