@@ -570,7 +570,7 @@ public class Admin {
                                        WSDDDeployment deployment)
         throws Exception
     {
-        ClassLoader   cl     = AxisClassLoader.getClassLoader();
+        ClassLoader   cl = Thread.currentThread().getContextClassLoader();
         String   name    = elem.getAttribute( "name" );
 
         WSDDHandler handler;
