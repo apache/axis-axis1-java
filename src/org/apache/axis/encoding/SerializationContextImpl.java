@@ -969,17 +969,21 @@ public class SerializationContextImpl implements SerializationContext
             nsStack.push();
         } else {
             for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
-                StringBuffer sb = new StringBuffer("xmlns");
-                if (map.getPrefix().length() > 0) {
-                    sb.append(':');
-                    sb.append(map.getPrefix());
-                }
-                if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
-                    writer.write(' ');
-                    sb.append("=\"");
-                    sb.append(map.getNamespaceURI());
-                    sb.append('"');
-                    writer.write(sb.toString());
+                if (!(map.getNamespaceURI().equals(Constants.NS_URI_XMLNS) && map.getPrefix().equals("xmlns")) &&
+                    !(map.getNamespaceURI().equals(Constants.NS_URI_XML) && map.getPrefix().equals("xml")))
+                {                
+                    StringBuffer sb = new StringBuffer("xmlns");
+                    if (map.getPrefix().length() > 0) {
+                        sb.append(':');
+                        sb.append(map.getPrefix());
+                    }
+                    if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
+                        writer.write(' ');
+                        sb.append("=\"");
+                        sb.append(map.getNamespaceURI());
+                        sb.append('"');
+                        writer.write(sb.toString());
+                    }
                 }
             }
 
