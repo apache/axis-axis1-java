@@ -60,7 +60,6 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;

@@ -65,7 +65,6 @@ import java.util.StringTokenizer;
 
 import javax.activation.*;
 
-//import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;

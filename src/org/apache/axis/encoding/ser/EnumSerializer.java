@@ -62,7 +62,6 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
