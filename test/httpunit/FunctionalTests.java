@@ -55,7 +55,7 @@
 package test.httpunit;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis.test.AxisTestBase;
+import test.AxisTestBase;
 
 /**
  * test httpunit

@@ -4,7 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
-import org.apache.axis.test.AxisTestBase;
+import test.AxisTestBase;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.message.MessageElement;
@@ -83,7 +83,7 @@ public class TestXMLUtils extends AxisTestBase
 
         String xmlString = (String)this.getTestXml("string");
         String result = XMLUtils.DocumentToString(doc);
-        assertEquals("xmlString is not the same as result", xmlString, result);
+        assertXMLEqual("xmlString is not the same as result", xmlString, result);
     }
 
     /**
@@ -149,7 +149,7 @@ public class TestXMLUtils extends AxisTestBase
         out.close();
 
         String expected = (String)this.getTestXml("string");
-        assertEquals("Did not get the expected result", expected, result);
+        assertXMLEqual("Did not get the expected result", expected, result);
     }
 
     public void testElementToString() throws Exception

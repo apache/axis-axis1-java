@@ -536,7 +536,7 @@ public class AxisServlet extends AxisServletBase {
         Message responseMsg=null;
         try {
             ByteArrayInputStream istream =
-                new ByteArrayInputStream(msgtxt.getBytes(XMLUtils.charEncoding));
+                new ByteArrayInputStream(msgtxt.getBytes(XMLUtils.httpAuthCharEncoding));
 
             AxisEngine engine = getEngine();
             Message msg = new Message(istream, false);

@@ -109,8 +109,11 @@ public class DOM2Writer
                                       boolean pretty)
     {
         PrintWriter out = new PrintWriter(writer);
-        if (!omitXMLDecl)
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        if (!omitXMLDecl) {
+            out.print("<?xml version=\"1.0\" encoding=\"");
+            out.print(XMLUtils.getEncoding());
+            out.println("\"?>");
+        }
         NSStack namespaceStack = new NSStack();
         print(node, namespaceStack, out, pretty, 0);
         out.flush();
@@ -374,63 +377,6 @@ public class DOM2Writer
 
     public static String normalize(String s)
     {
-        StringBuffer str = new StringBuffer();
-        int len = (s != null) ? s.length() : 0;
-
-        for (int i = 0; i < len; i++)
-        {
-            char ch = s.charAt(i);
-
-            switch (ch)
-            {
-            case '<' :
-                {
-                    str.append("&lt;");
-                    break;
-                }
-            case '>' :
-                {
-                    str.append("&gt;");
-                    break;
-                }
-            case '&' :
-                {
-                    str.append("&amp;");
-                    break;
-                }
-            case '"' :
-                {
-                    str.append("&quot;");
-                    break;
-                }
-            case JavaUtils.NL :
-                {
-                    if (i > 0)
-                    {
-                        char lastChar = str.charAt(str.length() - 1);
-
-                        if (lastChar != JavaUtils.CR)
-                        {
-                            str.append(JavaUtils.LS);
-                        }
-                        else
-                        {
-                            str.append(JavaUtils.NL);
-                        }
-                    }
-                    else
-                    {
-                        str.append(JavaUtils.LS);
-                    }
-                    break;
-                }
-            default :
-                {
-                    str.append(ch);
-                }
-            }
-        }
-
-        return (str.toString());
+        return XMLUtils.xmlEncodeString(s);
     }
 }

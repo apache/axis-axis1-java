@@ -1,6 +1,7 @@
   <path id="classpath">
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${regexp.jar}"/>
+    <pathelement location="${xmlunit.jar}"/>
     <pathelement location="${jsse.jar}"/>
     <pathelement location="${jimi.jar}"/>
     <pathelement location="${activation.jar}"/>

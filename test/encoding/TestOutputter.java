@@ -5,11 +5,12 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.server.AxisServer;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 /**
  * Test deserialization of SOAP responses
  */
-public class TestOutputter extends TestCase {
+public class TestOutputter extends XMLTestCase {
 
     private String header;
     private String footer;
@@ -50,7 +51,7 @@ public class TestOutputter extends TestCase {
 
        message.getSOAPEnvelope();
 
-       assertEquals(header+data+footer, message.getSOAPPartAsString());
+       assertXMLEqual(header+data+footer, message.getSOAPPartAsString());
     }
 
     public void testString() throws Exception {

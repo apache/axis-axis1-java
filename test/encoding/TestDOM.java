@@ -10,6 +10,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.XMLUtils;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 /**
 
@@ -19,7 +20,7 @@ import org.apache.axis.utils.XMLUtils;
 
  */
 
-public class TestDOM extends TestCase {
+public class TestDOM extends XMLTestCase {
 
     public TestDOM(String name) {
         super(name);
@@ -69,7 +70,7 @@ public class TestDOM extends TestCase {
        // Element dom = message.getAsDOM();
        String result = message.getSOAPPartAsString();
 
-       assertEquals("Request is not the same as the result.", request, result);
+       assertXMLEqual("Request is not the same as the result.", request, result);
     }
 
     public void testHeaders() throws Exception {

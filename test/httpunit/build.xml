@@ -124,6 +124,7 @@ Copyright:
            srcdir="${axis.home}">
       <classpath refid="test.compile.classpath"/>
       <include name="${componentName}/*.java"/>
+      <include name="test/AxisTestBase.java"/>
     </javac>
   </target>
   
