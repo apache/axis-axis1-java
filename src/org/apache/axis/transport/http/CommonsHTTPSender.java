@@ -57,6 +57,7 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
@@ -164,6 +165,10 @@ public class CommonsHTTPSender extends BasicHandler {
             if ((returnCode > 199) && (returnCode < 300)) {
 
                 // SOAP return is OK - so fall through
+            } else if (msgContext.getSOAPConstants() ==
+                    SOAPConstants.SOAP12_CONSTANTS) {
+                // For now, if we're SOAP 1.2, fall through, since the range of
+                // valid result codes is much greater
             } else if ((contentType != null) && !contentType.equals("text/html")
                        && ((returnCode > 499) && (returnCode < 600))) {
 
