@@ -310,7 +310,20 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     was a data transformation error
      */
     public Object getContent() throws SOAPException {
-        //TODO: Implement this.
+        javax.activation.DataSource ds = datahandler.getDataSource();
+        if(ds instanceof ManagedMemoryDataSource){
+            ManagedMemoryDataSource mds = (ManagedMemoryDataSource)ds;
+            if(ds.getContentType().equals("text/plain")){
+                try {
+                    java.io.InputStream is = ds.getInputStream();
+                    byte[] bytes = new byte[is.available()];
+                    is.read(bytes);
+                    return new String(bytes);
+                } catch (java.io.IOException io){
+                    log.error(JavaUtils.getMessage("javaIOException00"), io);
+                }
+            }
+        }
         return null;
     }
 
@@ -333,7 +346,19 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * @see #getContent() getContent()
      */
     public void setContent(Object object, String contentType) {
-        //TODO: Implement this.
+        if(object instanceof String) {
+            try {
+                String s = (String)object;
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream(s.getBytes());
+                datahandler = new DataHandler(new ManagedMemoryDataSource(bais, 1024, contentType, true));
+                return;
+            } catch (java.io.IOException io){
+                log.error(JavaUtils.getMessage("javaIOException00"), io);
+                throw new java.lang.IllegalArgumentException(JavaUtils.getMessage("illegalAccessException00"));
+            }
+        } else {
+            throw new java.lang.IllegalArgumentException(JavaUtils.getMessage("illegalAccessException00"));
+        }
     }
 
     /**

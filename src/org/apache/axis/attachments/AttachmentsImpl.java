@@ -393,7 +393,6 @@ public class AttachmentsImpl implements Attachments {
      * Will actually, and always, return an AttachmentPart.
      */
     public Part createAttachmentPart() throws org.apache.axis.AxisFault {
-        //TODO: Flesh it out.
-        return null;
+        return new AttachmentPart();
     }
 }
