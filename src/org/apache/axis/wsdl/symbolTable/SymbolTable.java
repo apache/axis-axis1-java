@@ -1150,12 +1150,21 @@ public class SymbolTable {
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
                 // it's not really an inout....
-                throw new IOException(JavaUtils.getMessage("differentTypes00", 
-                     new String[] { p.getName(), 
-                                    p.getType().getQName().toString(), 
-                                    outParam.getType().getQName().toString()
-                                   }
-                ));
+                // 
+                //throw new IOException(JavaUtils.getMessage("differentTypes00", 
+                //     new String[] { p.getName(), 
+                //                    p.getType().getQName().toString(), 
+                //                   outParam.getType().getQName().toString()
+                //                  }
+                //));
+                
+                // There is some controversy about this, and the specs are
+                // a bit vague about what should happen if the types don't
+                // agree.  Throwing an error is not correct with document/lit
+                // operations, as part names get resused (i.e. "body").
+                // See WSDL 1.1 section 2.4.6, 
+                //     WSDL 1.2 working draft 9 July 2002 section 2.3.1 
+                ++parameters.inputs;
             }
         } else {
             ++parameters.inputs;
