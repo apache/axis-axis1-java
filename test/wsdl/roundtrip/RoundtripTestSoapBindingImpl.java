@@ -678,7 +678,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     public void throwInvalidTickerException() 
         throws InvalidTickerSymbol, RemoteException {
 
-        throw new InvalidTickerSymbol("Invalid Ticker Symbol Received");
+        throw new InvalidTickerSymbol("ABC");
 
     } // throwInvalidTickerSymbol
 
@@ -688,7 +688,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
                  InvalidCompanyId,
                  RemoteException {
 
-        throw new InvalidTradeExchange("Invalid Trade Exchange Received");
+        throw new InvalidTradeExchange("XYZ");
 
     } // throwInvalidTradeExchange
 

@@ -1249,6 +1249,9 @@ public class RoundtripTestServiceTestCase extends TestCase {
             fail("Should have received an InvalidTickerSymbol exception.");
         } catch (InvalidTickerSymbol its) {
             // Test was successful
+            //assertEquals("The expected and actual values did not match.",
+            //             its.getTickerSymbol(),
+            //             "ABC");
         } catch(RemoteException re) {
             fail("Remote Exception caught: " + re);
         }
@@ -1266,6 +1269,9 @@ public class RoundtripTestServiceTestCase extends TestCase {
             fail("TRY: Should have received an InvalidTradeExchange exception.");
         } catch (InvalidTradeExchange ite) {
             // Test was successful
+            //assertEquals("The expected and actual values did not match.",
+            //             ite.getTradeExchange(),
+            //             "XYZ");
         } catch (InvalidTickerSymbol its) {
             fail("ITS: Should have received an InvalidTradeExchange exception.");
         } catch (InvalidCompanyId ici) {
