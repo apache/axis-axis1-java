@@ -3,6 +3,7 @@ package test.wsdd;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import junit.framework.TestResult;
 
 /**
  * Session tests
@@ -23,5 +24,11 @@ public class PackageTests extends TestCase {
         suite.addTestSuite(TestStructure.class);
 
         return suite;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        PackageTests tester = new PackageTests("test");
+        TestResult testResult = new TestResult();
+        tester.suite().run(testResult);
     }
 }
