@@ -55,6 +55,8 @@
 package javax.xml.namespace;
 
 import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * <code>QName</code> class represents the value of a qualified name
@@ -73,10 +75,10 @@ public class QName implements Serializable {
     private static final String emptyString = "".intern();
 
     /** Field namespaceURI */
-    private final String namespaceURI;
+    private String namespaceURI;
 
     /** Field localPart */
-    private final String localPart;
+    private String localPart;
 
     /**
      * Constructor for the QName.
@@ -223,5 +225,18 @@ public class QName implements Serializable {
      */
     public final int hashCode() {
         return namespaceURI.hashCode() ^ localPart.hashCode();
+    }
+
+    /**
+     * Ensure that deserialization properly interns the results.
+     * @param in the ObjectInputStream to be read
+     */
+    private void readObject(ObjectInputStream in) throws 
+        IOException, ClassNotFoundException
+    {
+        in.defaultReadObject();
+
+        namespaceURI = namespaceURI.intern();
+        localPart = localPart.intern();
     }
 }

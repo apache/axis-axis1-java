@@ -6,6 +6,12 @@ import junit.framework.TestSuite;
 
 import javax.xml.namespace.QName;
 
+import java.io.Serializable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.Constants;
 import org.w3c.dom.Document;
@@ -70,5 +76,24 @@ public class TestQName extends TestCase
         QName contrast = new QName("xso", "text");
         assertEquals("control hashcode does not equal compare.hashcode", control.hashCode(), compare.hashCode());
         assertTrue("control hashcode is not equivalent to compare.hashcode", !(control.hashCode() == contrast.hashCode()));
+    }
+
+    public void testSerializable() throws Exception
+    {
+        QName q1 = new QName("Matthew", "Duftler");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        oos.writeObject(q1);
+        oos.flush();
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        QName q2 = (QName)ois.readObject();
+
+        assertEquals("q1 is not the same as q2", q1, q2);
+        assertEquals("q2 is not the same as q1", q2, q1);
     }
 }
