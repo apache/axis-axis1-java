@@ -925,7 +925,7 @@ public class tcpmon extends JFrame {
 
                     //  Thread.sleep( 10 );
                     synchronized ( this) {
-                        wait(1000); //Safety just incase we're not told to wake up.
+                        this.wait(1000); //Safety just incase we're not told to wake up.
                     }
                 }
 
@@ -966,7 +966,7 @@ public class tcpmon extends JFrame {
         }
 
         synchronized void wakeUp() {
-            notifyAll();
+            this.notifyAll();
         }
 
         public void halt() {
