@@ -11,7 +11,7 @@
   <handler name="authen"  />
   <handler name="author"  />
   <chain   name="checks"  />
-  <chain   name="rpc"  />
-  <service name="urn:xmltoday-delayed-quotes" handler="rpc" />
-  <service name="urn:cominfo" handler="rpc" />
+  <chain   name="stock"  />
+  <service name="urn:xmltoday-delayed-quotes" handler="stock" />
+  <service name="urn:cominfo" handler="stock" />
 </m:undeploy>
