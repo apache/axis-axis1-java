@@ -25,6 +25,9 @@ public class TestAttachment extends junit.framework.TestCase {
         attachment.setContent(stringContent, "text/plain");
         attachment.setContentId("update_address");
         message.addAttachmentPart(attachment);
+
+        assertTrue(message.countAttachments()==1);
+
         java.util.Iterator it = message.getAttachments();
         while (it.hasNext()) {
             attachment = (AttachmentPart) it.next();
@@ -35,6 +38,9 @@ public class TestAttachment extends junit.framework.TestCase {
         }
         System.out.println("Here is what the XML message looks like:");
         message.writeTo(System.out);
+
+        message.removeAllAttachments();
+        assertTrue(message.countAttachments()==0);
     }
 
     public static void main(String[] args) throws Exception {
