@@ -540,8 +540,8 @@ public class SymbolTable {
             else if (isXSD && localPart.equals("element")) {
                 // If the element has a type/ref attribute, create
                 // a Type representing the referenced type.
-                if (Utils.getAttribute(node, "type") != null ||
-                    Utils.getAttribute(node, "ref") != null) {
+                if (Utils.getNodeTypeRefQName(node, "type") != null ||
+                    Utils.getNodeTypeRefQName(node, "ref") != null) {
                     createTypeFromRef(node);
                 }
 
@@ -561,7 +561,7 @@ public class SymbolTable {
             else if (isXSD && localPart.equals("attribute")) {
                 // If the attribute has a type/ref attribute, create
                 // a Type representing the referenced type.
-                if (Utils.getAttribute(node, "type") != null) {
+                if (Utils.getNodeTypeRefQName(node, "type") != null) {
                     createTypeFromRef(node);
                 }
 
@@ -1340,6 +1340,9 @@ public class SymbolTable {
     /**
      * Set each SymTabEntry's isReferenced flag.  The default is false.  If no other symbol
      * references this symbol, then leave it false, otherwise set it to true.
+     * (An exception to the rule is that derived types are set as referenced if 
+     * their base type is referenced.  This is necessary to support generation and
+     * registration of derived types.)
      */
     private void setReferences(Definition def, Document doc) {
         Map stuff = def.getServices();
@@ -1401,6 +1404,12 @@ public class SymbolTable {
     private void setTypeReferences(TypeEntry entry, Document doc,
             boolean literal) {
 
+        // Check to see if already processed.
+        if ((entry.isReferenced() && !literal) ||
+            (entry.isOnlyLiteralReferenced() && literal)) {
+            return;
+        }
+
         if (wrapped) {
             // If this type is ONLY referenced from a literal usage in a binding,
             // then isOnlyLiteralReferenced should return true.
@@ -1443,7 +1452,7 @@ public class SymbolTable {
             }
         }
 
-        HashSet nestedTypes = Utils.getNestedTypes(node, this);
+        HashSet nestedTypes = Utils.getNestedTypes(entry, this, true);
         Iterator it = nestedTypes.iterator();
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();

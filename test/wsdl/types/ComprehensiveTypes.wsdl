@@ -157,6 +157,26 @@
       </xsd:complexType>
       <xsd:element name="Cat" nillable="true" type="typens:Cat"/>
 
+      <!-- Even though PersionCat is not directly referenced, it should
+      be generated and registered because its base class (Cat) is referenced -->
+      <xsd:complexType name="PersionCat">
+        <xsd:complexContent>
+          <xsd:extension base="typens:Cat">
+            <xsd:all>
+              <xsd:element name="Color" type="xsd:string"/>
+              <xsd:element name="Toy" /> <!-- Defaults to xsd:anyType -->
+            </xsd:all>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <!-- Even though Yarn is not directly referenced, it should
+      be generated and registered because the Toy above is an anyType -->
+      <xsd:complexType name="Yarn">
+         <xsd:all>
+           <xsd:element name="Color" type="xsd:string"/>
+         </xsd:all>
+      </xsd:complexType>
 
       <!-- The following test all of the valid enum basic types -->
       <xsd:simpleType name="enumString">

@@ -37,6 +37,8 @@ import test.wsdl.types.comprehensive_types.ArrayHolder;
 import test.wsdl.types.comprehensive_types.ArrayMHolder;
 import test.wsdl.types.comprehensive_types.Cat;
 import test.wsdl.types.comprehensive_types.CatHolder;
+import test.wsdl.types.comprehensive_types.PersionCat;
+import test.wsdl.types.comprehensive_types.Yarn;
 import test.wsdl.types.comprehensive_types.ComplexAll;
 import test.wsdl.types.comprehensive_types.ComplexAllHolder;
 import test.wsdl.types.comprehensive_types.ComplexSequence;
@@ -312,6 +314,12 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         Cat cat = new Cat();
         cat.setPurr("meow");
+        PersionCat persion = new PersionCat();
+        Yarn yarn = new Yarn();
+        yarn.setColor("green");
+        persion.setPurr("meow meow");
+        persion.setColor("blue");
+        persion.setToy(yarn); 
         try {
             binding.animalIn(cat);
         } catch (java.rmi.RemoteException re) {
@@ -344,6 +352,17 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        try {
+            binding.catIn(persion);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            binding.catInout(new CatHolder(persion));
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+
         try {
             BooleanHolder bh = new BooleanHolder(true);
             boolean actual = binding.methodBoolean(true, bh);

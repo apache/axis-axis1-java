@@ -68,6 +68,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Iterator;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;      
@@ -361,6 +362,26 @@ public class Utils {
             return null;
         }
         String prefixedName = getAttribute(node, typeAttrName);
+
+        // The type attribute defaults to xsd:anyType if there
+        // are no other conflicting attributes and no anonymous type.
+        if (prefixedName == null &&
+            typeAttrName.equals("type")) {
+            if (getAttribute(node, "ref") == null &&
+                getAttribute(node, "base") == null && 
+                getAttribute(node, "element") == null &&
+                SchemaUtils.getElementAnonQName(node) == null) {
+                QName nodeName = getNodeQName(node);
+                if (nodeName != null &&
+                    Constants.isSchemaXSD(nodeName.getNamespaceURI()) &&
+                    (nodeName.getLocalPart().equals("element") ||
+                     nodeName.getLocalPart().equals("attribute"))) {
+                    return getWSDLQName(Constants.XSD_ANYTYPE);
+                }
+            }              
+        }
+         
+        // Return null if not found
         if (prefixedName == null) {
             return null;
         }
@@ -602,46 +623,123 @@ public class Utils {
 
 
     /**
+     * This method returns a set of all types that are derived
+     * from this type via an extension of a complexType
+     */
+    public static HashSet getDerivedTypes(TypeEntry type, SymbolTable symbolTable) {
+        HashSet types = new HashSet();
+        if (type != null && type.getNode() != null) {
+            getDerivedTypes(type, types, symbolTable);
+        } else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI()) &&
+                   type.getQName().getLocalPart().equals("anyType")) {
+            // All types are derived from anyType
+            types.addAll(symbolTable.getTypes());
+        }
+        return types;
+    } // getNestedTypes
+
+    private static void getDerivedTypes(
+            TypeEntry type, HashSet types, SymbolTable symbolTable) {
+
+        // If all types are in the set, return
+        if (types.size() == symbolTable.getTypes().size()) {
+            return;
+        }
+
+        // Search the dictionary for derived types of type
+        Vector allTypes = symbolTable.getTypes();
+        Iterator it = allTypes.iterator();
+        while(it.hasNext()) {
+            TypeEntry derivedType = (TypeEntry) it.next();
+            if (derivedType instanceof DefinedType &&
+                derivedType.getNode() != null &&
+                !types.contains(derivedType) &&
+                SchemaUtils.getComplexElementExtensionBase(
+                   derivedType.getNode(),
+                   symbolTable) == type) {
+                types.add(derivedType);
+                getDerivedTypes(derivedType, types, symbolTable);
+            }
+        }
+    } // getDerivedTypes
+
+    /**
      * This method returns a set of all the nested types.
      * Nested types are types declared within this TypeEntry (or descendents)
      * plus any extended types and the extended type nested types
      * The elements of the returned HashSet are Types.
+     * @param type is the type entry to consider
+     * @param symbolTable is the symbolTable
+     * @param derivedFlag should be set if all dependendent derived types should also be 
+     * returned.
      */
-    public static HashSet getNestedTypes(Node type, SymbolTable symbolTable) {
+    public static HashSet getNestedTypes(TypeEntry type, SymbolTable symbolTable, 
+                                         boolean derivedFlag) {
         HashSet types = new HashSet();
-        getNestedTypes(type, types, symbolTable);
+        getNestedTypes(type, types, symbolTable, derivedFlag);
         return types;
     } // getNestedTypes
 
     private static void getNestedTypes(
-            Node type, HashSet types, SymbolTable symbolTable) {
+            TypeEntry type, HashSet types, SymbolTable symbolTable, 
+            boolean derivedFlag) {
+
+        if (type == null) {
+            return;
+        }
+        
+        // If all types are in the set, return
+        if (types.size() == symbolTable.getTypes().size()) {
+            return;
+        }
+        
+        // Process types derived from this type
+        if (derivedFlag) {
+            HashSet derivedTypes = getDerivedTypes(type, symbolTable);
+            Iterator it = derivedTypes.iterator();
+            while(it.hasNext()) {
+                TypeEntry derivedType = (TypeEntry) it.next();
+                if (!types.contains(derivedType)) {
+                    types.add(derivedType);
+                    getNestedTypes(derivedType, types, symbolTable, derivedFlag);
+                }
+            }
+        }
+        
+        // Continue only if the node exists
+        if(type.getNode() == null) {
+            return;
+        }
+        Node node = type.getNode();
+
         // Process types declared in this type
-        Vector v = SchemaUtils.getContainedElementDeclarations(type, symbolTable);
+        Vector v = SchemaUtils.getContainedElementDeclarations(node, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i++) {
                 ElementDecl elem = (ElementDecl)v.get(i);
                 if (!types.contains(elem.getType())) {
                     types.add(elem.getType());
-                    getNestedTypes(elem.getType().getNode(), 
+                    getNestedTypes(elem.getType(), 
                                    types, 
-                                   symbolTable);
+                                   symbolTable, derivedFlag);
                 }
             }
         }
+
         // Process attributes declared in this type
-        v = SchemaUtils.getContainedAttributeTypes(type, symbolTable);
+        v = SchemaUtils.getContainedAttributeTypes(node, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i+=2) {
                 if (!types.contains(v.get(i))) {
                     types.add(v.get(i));
                     getNestedTypes(
-                            ((TypeEntry) v.get(i)).getNode(), types, symbolTable);
+                            ((TypeEntry) v.get(i)), types, symbolTable, derivedFlag);
                 }
             }
         }
         
         // Get the anonymous type of the element
-        QName anonQName = SchemaUtils.getElementAnonQName(type);
+        QName anonQName = SchemaUtils.getElementAnonQName(node);
         if (anonQName != null) {
             TypeEntry anonType = symbolTable.getType(anonQName);
             if (anonType != null && !types.contains(anonType)) {
@@ -650,26 +748,23 @@ public class Utils {
         }
 
         // Process extended types
-        TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
+        TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(node, symbolTable);
         if (extendType != null) {
             if (!types.contains(extendType)) {
                 types.add(extendType);
-                getNestedTypes(extendType.getNode(), types, symbolTable);
+                getNestedTypes(extendType, types, symbolTable, derivedFlag);
             }
         }
 
         // Process array element types
-        QName elementQName = SchemaUtils.getArrayElementQName(type, new IntHolder(0));
+        QName elementQName = SchemaUtils.getArrayElementQName(node, new IntHolder(0));
         TypeEntry elementType = symbolTable.getType(elementQName);
         if (elementType != null) {
             if (!types.contains(elementType)) {
                 types.add(elementType);
-                getNestedTypes(elementType.getNode(), types, symbolTable);
+                getNestedTypes(elementType, types, symbolTable, derivedFlag);
             }
         }
-        
-        
-
     } // getNestedTypes
 
     /**
