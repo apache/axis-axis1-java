@@ -541,10 +541,14 @@ public abstract class JavaProvider extends BasicProvider
         Class serviceClass = null;
         AxisEngine engine = service.getEngine();
 
-        // If we have a message context, use that to get classloader and engine
+        // If we have a message context, use that to get classloader
         // otherwise get the current threads classloader
-        cl = Thread.currentThread().getContextClassLoader();
-
+        if (msgContext != null) {
+            cl = msgContext.getClassLoader();
+        } else {
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        
         // If we have an engine, use its class cache
         if (engine != null) {
             ClassCache cache     = engine.getClassCache();
