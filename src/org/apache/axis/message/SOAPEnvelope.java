@@ -184,6 +184,11 @@ public class SOAPEnvelope extends MessageElement
             category.debug(JavaUtils.getMessage("addBody00"));
         element.setEnvelope(this);
         bodyElements.addElement(element);
+
+        // Set envelope encoding style if we have an RPC body
+        if (element instanceof RPCElement)
+            setEncodingStyleURI(Constants.URI_SOAP_ENC);
+
         _isDirty = true;
     }
     
