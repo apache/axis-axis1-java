@@ -79,20 +79,22 @@ public class EchoHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: EchoHandler::invoke" );
     try {
-      System.err.println("In: EchoHandler");
       Message  msg = msgContext.getIncomingMessage();
       SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
       msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
     }
     catch( Exception e ) {
-      e.printStackTrace();
+      Debug.Print( 1, e );
       throw new AxisFault( e );
     }
+    Debug.Print( 1, "Exit: EchoHandler::invoke" );
   }
 
   public void undo(MessageContext msgContext) {
-    System.err.println( "In EchoHandler::undo" );
+    Debug.Print( 1, "Enter: EchoHandler::undo" );
+    Debug.Print( 1, "Exit: EchoHandler::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {

@@ -86,10 +86,12 @@ public class FaultableHandler implements Handler {
    * and already processed it's undo logic - as needed.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: FaultableHandler::invoke" );
     try {
       workHandler.invoke( msgContext );
     }
     catch( Exception e ) {
+      Debug.Print( 1, e );
       // Is this a Java Exception? a SOAPException? an AxisException?
       if ( !(e instanceof AxisFault) ) 
         e = new AxisFault( e );
@@ -100,14 +102,16 @@ public class FaultableHandler implements Handler {
         faultHandler.invoke( msgContext );
       throw (AxisFault) e ;
     }
+    Debug.Print( 1, "Exit: FaultableHandler::invoke" );
   }
 
   /**
    * Some handler later on has faulted so we need to undo our work.
    */
   public void undo(MessageContext msgContext) {
-    System.err.println( "In FaultableHandler:undo" );
+    Debug.Print( 1, "Enter: FaultableHandler::undo" );
     workHandler.undo( msgContext );
+    Debug.Print( 1, "Exit: FaultableHandler::undo" );
   };
 
   public boolean canHandleBlock(QName qname) {

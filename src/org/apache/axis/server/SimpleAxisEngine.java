@@ -79,6 +79,7 @@ public class SimpleAxisEngine implements Handler {
    */
   public void init() {
     // Load the simple handler registry and init it
+    Debug.Print( 1, "Enter: SimpleAxisEngine::init" );
     HandlerRegistry  hr = new SimpleHandlerRegistry();
     hr.init();
     addOption( Constants.HANDLER_REGISTRY, hr );
@@ -87,6 +88,7 @@ public class SimpleAxisEngine implements Handler {
     HandlerRegistry  sr = new SimpleServiceRegistry();
     sr.init();
     addOption( Constants.SERVICE_REGISTRY, sr );
+    Debug.Print( 1, "Exit: SimpleAxisEngine::init" );
   }
 
   public void cleanup() {
@@ -97,6 +99,7 @@ public class SimpleAxisEngine implements Handler {
    * handler for the desired service and invoke() it.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: SimpleAxisEngine::invoke" );
     HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
     HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
 
@@ -110,6 +113,7 @@ public class SimpleAxisEngine implements Handler {
     Handler h = sr.find( action );
 
     if ( h == null ) {
+      Debug.Print( 1, "No service found by name: " + action );
       throw new AxisFault( "Server.NoSuchService",
                            "Service '" + action + "' was not found",
                            null, null );
@@ -130,6 +134,7 @@ public class SimpleAxisEngine implements Handler {
       throw (AxisFault) e ;
     }
     h.cleanup();   // ???
+    Debug.Print( 1, "Exit: SimpleAxisEngine::invoke" );
   };
 
   public void undo(MessageContext msgContext) {

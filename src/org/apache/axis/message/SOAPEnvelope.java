@@ -83,6 +83,10 @@ public class SOAPEnvelope {
     setEnvelope( doc.getDocumentElement() );
   }
 
+  public SOAPEnvelope(SOAPBody bod) {
+    addBody( bod );
+  }
+
   public void setEnvelope(Element elem) {
     NodeList  list ;
     int       i ;
@@ -193,6 +197,7 @@ public class SOAPEnvelope {
       elem.appendChild( root );
       for ( i = 0 ; i < body.size() ; i++ )
         root.appendChild( ((SOAPBody)body.get(i)).getAsXML(doc) );
+        // root.appendChild(doc.importNode( (Node) body.get(i), true ));
     }
     return( doc );
   }

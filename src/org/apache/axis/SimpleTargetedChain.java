@@ -89,11 +89,13 @@ public class SimpleTargetedChain implements Handler {
    * that has been successfully invoked and then rethrow the fault.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: SimpleTargetedChain::invoke" );
     if ( inputChain != null ) inputChain.invoke( msgContext );
     try {
       if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
     }
     catch( Exception e ) {
+      Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
       if ( inputChain != null ) inputChain.undo( msgContext );
@@ -103,22 +105,25 @@ public class SimpleTargetedChain implements Handler {
       if ( outputChain != null )  outputChain.invoke( msgContext );
     }
     catch( Exception e ) {
+      Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
       if ( pivotHandler != null ) pivotHandler.undo( msgContext );
       if ( inputChain   != null )   inputChain.undo( msgContext );
       throw (AxisFault) e ;
     }
+    Debug.Print( 1, "Exit: SimpleTargetedChain::invoke" );
   }
 
   /**
    * Undo all of the work - in reverse order.
    */
   public void undo(MessageContext msgContext) {
-    System.err.println( "In SimpleTargetedChain:undo" );
+    Debug.Print( 1, "Enter: SimpleTargetedChain::undo" );
     if ( outputChain   != null )   outputChain.undo( msgContext );
     if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
     if ( inputChain    != null )    inputChain.undo( msgContext );
+    Debug.Print( 1, "Exit: SimpleTargetedChain::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {

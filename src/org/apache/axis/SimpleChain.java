@@ -85,6 +85,7 @@ public class SimpleChain implements Chain {
    * rethrow the exception.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: SimpleChain::invoke" );
     int i = 0 ;
     try {
       for ( i = 0 ; i < handlers.size() ; i++ )
@@ -92,12 +93,14 @@ public class SimpleChain implements Chain {
     }
     catch( Exception e ) {
       // undo in reverse order - rethrow
+      Debug.Print( 1, e );
       if( !(e instanceof AxisFault ) )
         e = new AxisFault( e );
       while( --i >= 0 )
         ((Handler) handlers.elementAt( i )).undo( msgContext );
       throw (AxisFault) e ;
     }
+    Debug.Print( 1, "Exit: SimpleChain::invoke" );
   }
 
   /**
@@ -105,10 +108,10 @@ public class SimpleChain implements Chain {
    * later on has faulted - in reverse order.
    */
   public void undo(MessageContext msgContext) {
-    System.err.println( "In SimpleChain::undo" );
+    Debug.Print( 1, "Enter: SimpleChain::undo" );
     for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
       ((Handler) handlers.elementAt( i )).undo( msgContext );
-      
+    Debug.Print( 1, "Exit: SimpleChain::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {

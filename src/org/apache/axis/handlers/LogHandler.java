@@ -77,7 +77,7 @@ public class LogHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println( "In LogHandler" );
+    Debug.Print( 1, "Enter: LogHandler::invoke" );
     try {
       FileWriter  fw   = new FileWriter( "axis.log", true );
       PrintWriter pw   = new PrintWriter( fw );
@@ -96,14 +96,15 @@ public class LogHandler implements Handler {
       pw.close();
     }
     catch( Exception e ) {
-      e.printStackTrace( System.err );
+      Debug.Print( 1, e );
       throw new AxisFault( e );
     }
+    Debug.Print( 1, "Exit: LogHandler::invoke" );
   }
 
   public void undo(MessageContext msgContext) {
+    Debug.Print( 1, "Exit: LogHandler::undo" );
     try {
-      System.err.println( "In LogHandler:undo" );
       FileWriter  fw   = new FileWriter( "axis.log", true );
       PrintWriter pw   = new PrintWriter( fw );
       pw.println( "=====================" );
@@ -111,8 +112,9 @@ public class LogHandler implements Handler {
       pw.println( "=====================" );
       pw.close();
     } catch( Exception e ) {
-      e.printStackTrace( System.err );
+      Debug.Print( 1, e );
     }
+    Debug.Print( 1, "Exit: LogHandler::undo" );
   }
 
   public boolean canHandleBlock(QName qname) {

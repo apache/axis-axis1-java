@@ -100,6 +100,10 @@ public class AxisServlet extends HttpServlet {
       }
     }
 
+    /* For debugging - set the debug level */
+    /***************************************/
+    Debug.setDebugLevel( 1 );  // 0 = off, higher # => more detail
+
     /* Place the incoming message in the MessagContext object - notice */
     /* that we just leave it as a 'ServletRequest' object and let the  */
     /* Message processing routine convert it - we don't do it since we */

@@ -60,10 +60,12 @@ package org.apache.axis.utils ;
 import java.io.* ;
 import java.util.* ;
 import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.apache.xerces.parsers.DOMParser ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.utils.* ;
 
 import org.apache.axis.* ;
 
@@ -99,12 +101,26 @@ public class Admin {
     }
   }
 
+  public Document AdminService(MessageContext msgContext, Document xml) {
+    Debug.Print( 1, "Enter: Admin:AdminService" );
+    process( xml );
+    Document doc = new DocumentImpl();
+    Element  root = doc.createElement( "Admin" );
+    doc.appendChild( root );
+    root.appendChild( doc.createTextNode( "Done processing" ) );
+    Debug.Print( 1, "Exit: Admin:AdminService" );
+    return( doc );
+  }
+
   public void process(Document doc) {
+    process( doc.getDocumentElement() );
+  }
+
+  public void process(Element root) {
     try {
       init();
-      Element root = doc.getDocumentElement();
       String  action = root.getTagName();
-  
+
       if ( !action.equals("deploy") && !action.equals("undeploy") ) 
         Error( "Root element must be 'deploy' or 'undeploy'" );
   
