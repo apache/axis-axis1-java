@@ -76,7 +76,9 @@ public class Text extends MessageElement implements javax.xml.soap.Text {
      *     a comment; <CODE>false</CODE> otherwise
      */
     public boolean isComment() {
-        //TODO: Flesh this out.
+        String temp = textRep.getNodeValue().trim();
+        if(temp.startsWith("<!--") && temp.endsWith("-->"))
+            return true;
         return false;
     }
 }
