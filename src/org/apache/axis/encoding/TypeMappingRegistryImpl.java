@@ -136,7 +136,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */ 
     public TypeMappingRegistryImpl(TypeMapping tm) {
         mapTM = new HashMap();
-        defaultDelTM = tm;
+        defaultDelTM = new TypeMappingDelegate(tm);
         register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
     }
 
