@@ -67,6 +67,7 @@ public class FieldRep {
     
     private String   _name       = "";
     private Class    _type       = void.class;                                   
+    private boolean  _indexed    = false;                                        
 
     /**
      * Constructor
@@ -83,6 +84,7 @@ public class FieldRep {
     public FieldRep(Field field) {
         _name = field.getName();
         _type = field.getType();
+        _indexed = false;
     }
        
     /**
@@ -92,4 +94,6 @@ public class FieldRep {
     public void     setName(String name)     { _name = name; }
     public Class    getType()                { return _type; }
     public void     setType(Class cls)       { _type = cls; }
+    public boolean  getIndexed()             { return _indexed; }
+    public void     setIndexed(boolean b)    { _indexed = b;}
 };

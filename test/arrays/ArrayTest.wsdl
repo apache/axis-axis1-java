@@ -42,17 +42,7 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
-<!--
-      <xsd:complexType name="foodArray">
-            <xsd:sequence>
-              <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-            </xsd:sequence>
-      </xsd:complexType>
 
-      <xsd:complexType name="gameArray">
-              <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-      </xsd:complexType>
--->
       <xsd:complexType name="personalInfo">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
@@ -64,10 +54,9 @@
             <xsd:element name="pets" type="typens:petArray"/>
             <xsd:element name="id"   type="typens:intArray"/>
             <xsd:element name="id2"  type="xsd:int"/>
-            <!-- Microsoft 1 (not JAX-RPC): Array defined using sequence of single unbounded element -->
-            <!-- <xsd:element name="foods" type="typens:foodArray"/> -->
-            <!-- Microsoft 2 (not JAX-RPC): Array defined using single unbounded element -->
-            <!-- <xsd:element name="games" type="typens:gameArray"/> -->
+
+            <!-- Collection defined using sequence of single unbounded element --> 
+            <xsd:element name="foods" type="xsd:string" maxOccurs="unbounded"/> 
             <!-- Array of Bytes (nillable=true causes byte[] to become Byte[])-->                 
             <xsd:element name="nickName" type="xsd:hexBinary" nillable="true" />
 

@@ -103,46 +103,50 @@ public class JavaComplexTypeWriter extends JavaWriter {
             extendsText = " extends " + extendType.getName() + " ";
         }
 
-        // We are only interested in the java names of the types, so replace the
-        // TypeEntry in the list with their java names.  
-        // Also filter element names for Java 
+        // We are only interested in the java names of the types, so create a names list
+        Vector names = new Vector();
         for (int i=0; i < elements.size(); i+=2) {
-            elements.setElementAt(((TypeEntry) elements.get(i)).getName(), i);
-            elements.setElementAt( Utils.xmlNameToJava((String) elements.get(i + 1)), i + 1);
+            names.add(((TypeEntry) elements.get(i)).getName());
+            names.add( Utils.xmlNameToJava((String) elements.get(i + 1)));
         }
 
         pw.println("public class " + className + extendsText + " implements java.io.Serializable {");
 
-        for (int i = 0; i < elements.size(); i += 2) {
-            String variable = (String) elements.get(i + 1);
-            pw.println("    private " + elements.get(i) + " " + variable + ";");
+        for (int i = 0; i < names.size(); i += 2) {
+            String variable = (String) names.get(i + 1);
+            pw.println("    private " + names.get(i) + " " + variable + ";");
         }
 
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
         pw.println();
-        if (elements.size() > 0) {
+        if (names.size() > 0) {
             pw.print("    public " + className + "(");
-            for (int i = 0; i < elements.size(); i += 2) {
+            for (int i = 0; i < names.size(); i += 2) {
                 if (i != 0) pw.print(", ");
-                String variable = (String) elements.get(i + 1);
-                pw.print((String) elements.get(i) + " " + variable);
+                String variable = (String) names.get(i + 1);
+                pw.print((String) names.get(i) + " " + variable);
             }
             pw.println(") {");
-            for (int i = 1; i < elements.size(); i += 2) {
-                String variable = (String) elements.get(i);
+            for (int i = 1; i < names.size(); i += 2) {
+                String variable = (String) names.get(i);
                 pw.println("        this." + variable + " = " + variable + ";");
             }
             pw.println("    }");
         }
         pw.println();
-        for (int i = 0; i < elements.size(); i += 2) {
-            String typeName = (String) elements.get(i);
-            String name = (String) elements.get(i + 1);
+        for (int i = 0; i < names.size(); i += 2) {
+            String typeName = (String) names.get(i);
+            String name = (String) names.get(i + 1);
             String capName = Utils.capitalizeFirstChar(name);
 
-            pw.println("    public " + typeName + " get" + capName + "() {");
+            String get = "get";
+            //if (typeName.equals("boolean") ||
+            //    typeName.startsWith("boolean["))
+            //    get = "is"
+
+            pw.println("    public " + typeName + " " + get + capName + "() {");
             pw.println("        return " + name + ";");
             pw.println("    }");
             pw.println();
@@ -150,6 +154,37 @@ public class JavaComplexTypeWriter extends JavaWriter {
             pw.println("        this." + name + " = " + name + ";");
             pw.println("    }");
             pw.println();
+            
+            // If this is a special collection type, insert extra 
+            // java code so that the serializer/deserializer can recognize
+            // the class.  This is not JAX-RPC, and will be replaced with 
+            // compliant code when JAX-RPC determines how to deal with this case.
+            // These signatures comply with Bean Indexed Properties which seems
+            // like the reasonable approach to take for collection types.
+            // (It may be more efficient to handle this with an ArrayList...but
+            // for the initial support it was easier to use an actual array.) 
+            if (((TypeEntry)elements.elementAt(i)).getQName().getLocalPart().indexOf("[")>0) {
+
+                String compName = typeName.substring(0, typeName.lastIndexOf("["));
+                                           
+                pw.println("    public " + compName + " " + get + capName + "(int i) {");
+                pw.println("        return " + name + "[i];");
+                pw.println("    }");
+                pw.println();
+                pw.println("    public void set"+capName+"(int i, "+compName+" value) {");
+                pw.println("        if (" + name + " == null ||");
+                pw.println("            " + name + ".length <= i) {");
+                pw.println("            " + typeName + " a = new " + compName + "[i+1];");
+                pw.println("            if (" + name + " != null) {");
+                pw.println("                for(int j=0; j<"+name+".length; j++)");
+                pw.println("                    a[j] = "+name+"[j];");
+                pw.println("            }");
+                pw.println("            " + name + " = a;");
+                pw.println("        }");
+                pw.println("        " + name + "[i] = value;");
+                pw.println("    }");
+                pw.println();
+            }
         }
         pw.println("}");
         pw.close();

@@ -78,11 +78,10 @@ public class Main {
     static int[]    id     = new int[]    { 0, 0, 7 };
     static int id2         = 123;
     static String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
-    static String[] games  = new String[] { "Doom", "Axis & Allies" };
     static Byte[]   nickName = new Byte[] { new Byte((byte)'g'), new Byte((byte)'e'),
                                             new Byte((byte)'e'), new Byte((byte)'k') };
     static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets, id, id2,
-                                              //foods,games,
+                                              foods,
                                               nickName);
     
     private static void printPersonalInfo (PersonalInfo pi) {
@@ -115,20 +114,11 @@ public class Main {
         System.err.print ("\tId2="+id2);
         System.err.println("");
 
-
-        /*
         Object[] foods =pi.getFoods();
         System.err.print ("\tFavorite Foods=");
         for(int i=0; i<foods.length; i++)
             System.err.print(" \"" + (String) foods[i] + "\"");
         System.err.println("");
-
-        Object[] games =pi.getGames();
-        System.err.print ("\tFavorite Games=");
-        for(int i=0; i<games.length; i++)
-            System.err.print(" \"" + (String) games[i] + "\"");
-        System.err.println("");
-        */
 
         Byte[] nb =pi.getNickName();
         System.err.print ("\tNickName=");
