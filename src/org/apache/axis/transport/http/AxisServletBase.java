@@ -209,7 +209,7 @@ public class AxisServletBase extends HttpServlet {
             AxisServer server = (AxisServer) context.getAttribute(ATTR_AXIS_ENGINE);
 
             // no other AxisEngine in ServletContext
-            if (servlet.getServletName().equals(server.getName())) {
+            if (server != null && servlet.getServletName().equals(server.getName())) {
                 context.removeAttribute(ATTR_AXIS_ENGINE);
             }
         } else {
@@ -241,7 +241,7 @@ public class AxisServletBase extends HttpServlet {
         if (contextObject instanceof AxisServer) {
             AxisServer server = (AxisServer) contextObject;
             // if this is "our" Engine
-            if (servlet.getServletName().equals(server.getName())) {
+            if (server != null && servlet.getServletName().equals(server.getName())) {
                 return server;
             }
             return null;
