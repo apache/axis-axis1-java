@@ -92,6 +92,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
 
     public static final QName TYPE_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
+    public static final QName TYPE_VECTOR = new QName("http://xml.apache.org/xml-soap", "Vector");
 
     public static       QName XSD_DATE;
     
@@ -293,6 +294,10 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
                       new MapSerializer());
         addDeserializerFactory(TYPE_MAP, java.util.HashMap.class,
                                MapSerializer.factory);
+
+        // only deserializer
+        addDeserializerFactory(TYPE_VECTOR, java.util.Vector.class,
+                               VectorDeserializer.factory);
     }
     
     private static SOAPTypeMappingRegistry singleton = null;
