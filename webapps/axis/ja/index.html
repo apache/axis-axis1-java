@@ -1,0 +1,53 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=shift_jis">
+<title>Apache-Axis</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h1 align="center">Apache-AXIS</h1>
+
+<p>こんにちは！ Apache-Axisへ<em>ようこそ</em> </p>
+
+<p>今日は何をしたいですか？</p>
+
+<ul>
+    <li>ローカルインストールの設定の<a href="happyaxis.jsp">検証する</a>
+        <br>
+        <i>うまく機能しない場合は「Axisの検証」を参照</i></li>
+    <li>配備済のWebサービスのリストを<a href="servlet/AxisServlet">見る</a>
+        </li>
+    <li><a href="EchoHeaders.jws?method=list">
+        ローカルのエンドポイントを呼び出す</a> - そのリストは呼び出し元のhttpヘッダです
+        (もしくは
+        <a href="EchoHeaders.jws?wsdl">WSDL</a>を参照して下さい). 
+    <li>Apache-Axisホームページを<a href="http://xml.apache.org/axis">訪問する</a>
+        </li>
+    <li><a href="servlet/AdminServlet">Axisを管理する</a> <br>
+        [安全性の理由からデフォルトでは利用不可]</li>
+    <li><a href="SOAPMonitor">SOAPモニタ</a> <br>
+        [安全性の理由からデフォルトでは利用不可]</li>
+</ul>
+上記のデフォルトで利用できない機能を有効にするには、webアプリケーション内の
+WEB-INF/web.xmlファイルの該当する宣言のコメントを外し、アプリケーションを再起動して下さい。
+<br />
+
+<h3>Axisの検証</h3>
+
+
+"happyaxis"検証ページが状態表示のページではなく例外を表示する場合、
+原因としてはクラスパス内に複数のXMLパーサを指定していることが考えられます。
+関係のないパーサをクラスパスから取り除いてみて下さい。
+
+
+<p>
+Axisを動作させる上で問題を抱えている場合は、
+Axis <a
+href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">Wiki</a>
+に意見を聞き、その後Axisユーザメーリングリストに投稿してみて下さい。
+
+</body>
+</html>
