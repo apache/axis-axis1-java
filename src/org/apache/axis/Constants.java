@@ -533,6 +533,8 @@ public class Constants {
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_ROLE_SOAP12);
     public static final QName QNAME_FAULTDETAIL_SOAP12 =
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_DETAIL_SOAP12);
+    public static final QName QNAME_NOTUNDERSTOOD =
+                                         new QName(URI_SOAP12_ENV, ELEM_NOTUNDERSTOOD);    
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
