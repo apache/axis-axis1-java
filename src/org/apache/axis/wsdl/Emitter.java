@@ -99,6 +99,7 @@ public class Emitter {
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
     protected String outputDir = null;
+    protected String packageName = null;
     protected byte scope = NO_EXPLICIT_SCOPE;
     protected ArrayList classList = new ArrayList();
     protected ArrayList fileList = new ArrayList();
@@ -150,12 +151,16 @@ public class Emitter {
         this.doc = doc;
         namespaces = new Namespaces(outputDir);
 
-        // First, read the namespace mapping file - NStoPkg.properties - if it
-        // exists, and load the namespaceMap HashMap with its data.
-        getNStoPkgFromPropsFile(namespaces);
-
-        if (delaySetMap != null) {
-            namespaces.putAll(delaySetMap);
+        if (packageName != null) {
+             namespaces.setDefaultPackage(packageName);
+        } else {
+            // First, read the namespace mapping file - NStoPkg.properties - if it
+            // exists, and load the namespaceMap HashMap with its data.
+            getNStoPkgFromPropsFile(namespaces);
+            
+            if (delaySetMap != null) {
+                namespaces.putAll(delaySetMap);
+            }
         }
 
         symbolTable = new SymbolTable(namespaces, bGenerateImports);
@@ -286,7 +291,7 @@ public class Emitter {
     }
 
     /**
-     * Turn on/off server Message Context parm creation in skel
+     * Turn on/off server Message Context parameter in skeleton
      * @param boolean value
      */
     public void generateMessageContext(boolean value) {
@@ -301,6 +306,9 @@ public class Emitter {
         return this.bMessageContext;
     }
 
+    /**
+     * Return the current definition
+     */ 
     public Definition getCurrentDefinition() {
         return this.def;
     }
@@ -321,10 +329,16 @@ public class Emitter {
         this.bVerbose = value;
     }
 
+    /**
+     * Return the status of the verbose switch
+     */ 
     public boolean getVerbose() {
         return this.bVerbose;
     }
 
+    /**
+     * Set a map of namespace -> Java package names
+     */ 
     public void setNamespaceMap(HashMap map) {
         delaySetMap = map;
     }
@@ -337,6 +351,20 @@ public class Emitter {
         this.outputDir = outputDir;
     }
 
+    /**
+     * Get global package name to use instead of mapping namespaces
+     */ 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    /**
+     * Set a global package name to use instead of mapping namespaces
+     */ 
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+    
     /**
      * Get the output directory to use for emitted source files
      */

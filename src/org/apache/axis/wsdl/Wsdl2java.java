@@ -80,6 +80,7 @@ public class Wsdl2java {
     protected static final int SCOPE_OPT = 'd';
     protected static final int TEST_OPT = 't';
     protected static final int NOIMPORTS_OPT = 'n';
+    protected static final int PACKAGE_OPT = 'p';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -111,6 +112,10 @@ public class Wsdl2java {
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
                 JavaUtils.getMessage("optionNStoPkg00")),
+        new CLOptionDescriptor("package",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                PACKAGE_OPT,
+                JavaUtils.getMessage("optionPackage00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
@@ -138,6 +143,7 @@ public class Wsdl2java {
         boolean bTestClass = false;
         String wsdlURI = null;
         HashMap namespaceMap = new HashMap();
+        boolean bPackageOpt = false;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -196,6 +202,11 @@ public class Wsdl2java {
                         namespaceMap.put(namespace, packageName);
                         break;
 
+                    case PACKAGE_OPT:
+                        bPackageOpt = true;
+                        emitter.setPackageName(option.getArgument());
+                        break;
+
                     case OUTPUT_OPT:
                         emitter.setOutputDir(option.getArgument());
                         break;
@@ -235,6 +246,10 @@ public class Wsdl2java {
                 printUsage();
             }
             if (wsdlURI == null) {
+                printUsage();
+            }
+            if (!namespaceMap.isEmpty() && bPackageOpt) {
+                System.out.println(JavaUtils.getMessage("badpackage00"));
                 printUsage();
             }
 
