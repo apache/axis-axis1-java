@@ -150,11 +150,18 @@ public class JavaBeanWriter extends JavaWriter {
         pw.println("public " + abstractText + "class " + className + extendsText +
                    " implements java.io.Serializable" + implementsText + " {");
 
+        // Define the member element of the bean
         for (int i = 0; i < names.size(); i += 2) {
+            String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
-            if (variable.equals("value"))
-                valueType = (String) names.get(i);
-            pw.print("    private " + names.get(i) + " " + variable + ";");
+            
+            if (type.isSimpleType() && variable.equals("value")) {
+                valueType = typeName;
+            }
+             
+            // Declare the bean element
+            pw.print("    private " + typeName + " " + variable + ";");
+            
             // label the attribute fields.
             if (elements == null || i >= (elements.size()*2))
                 pw.println("  // attribute");
@@ -162,12 +169,15 @@ public class JavaBeanWriter extends JavaWriter {
                 pw.println();
         }
 
+        // Define the default constructor
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
 
         pw.println();
         int j = 0; 
+
+        // Define getters and setters for the bean elements
         for (int i = 0; i < names.size(); i += 2, j++) {
             String typeName = (String) names.get(i);
             String name = (String) names.get(i + 1);
@@ -226,21 +236,35 @@ public class JavaBeanWriter extends JavaWriter {
         }
        
         // if this is a simple type, we need to emit a toString and a string
-        // constructor
+        // constructor and throw in a value construtor too.
         if (type.isSimpleType() && valueType != null) {
             // emit contructors and toString().
+            pw.println("    public " + className + "(" + valueType + " value) {");
+            pw.println("        this.value = value;");
+            pw.println("    }");
+            pw.println();            
+            
             pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
             pw.println("    public " + className + "(java.lang.String value) {");
-            pw.println("        this.value = new " + valueType + "(value);");
+            // Make sure we wrap base types with its Object type
+            String wrapper = JavaUtils.getWrapper(valueType);
+            if (wrapper != null) {
+                pw.println("        this.value = new " + wrapper + "(value)." + valueType + "Value();");
+            } else {
+                pw.println("        this.value = new " + valueType + "(value);");
+            }
             pw.println("    }");
             pw.println();            
             pw.println("    // " + JavaUtils.getMessage("needToString"));
             pw.println("    public String toString() {");
-            pw.println("        return value.toString();");
+            if (wrapper != null) {
+                pw.println("        return new " + wrapper + "(value).toString();");
+            } else {
+                pw.println("        return value.toString();");
+            }
             pw.println("    }");
             pw.println();
         }
-
         writeEqualsMethod();
         writeHashCodeMethod();
 
