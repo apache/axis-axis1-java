@@ -486,4 +486,8 @@ public class Constants {
     public static final String MC_CONFIGPATH = "configPath";
     // MessageContext param for the IP of the calling client
     public static final String MC_REMOTE_ADDR = "remoteaddr";
+    // When invoked from a servlet, per JAX-RPC, we need  a 
+    // ServletEndpointContext object.  This is where it lives.
+    public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
+    
 }
