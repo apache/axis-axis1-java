@@ -118,7 +118,7 @@ public class tcpmon extends JFrame {
             JPanel     buttons   = null ;
             JButton    addButton = null ;
 
-            setLayout( new BorderLayout() );
+            this.setLayout( new BorderLayout() );
             noteb = notebook ;
 
             GridBagLayout       layout        = new GridBagLayout();
@@ -162,7 +162,7 @@ public class tcpmon extends JFrame {
             c.gridwidth = 1 ;
             mainPane.add( proxyBox = new JCheckBox( "Act As A Proxy" ), c );
             
-            add( new JScrollPane( mainPane ), BorderLayout.CENTER );
+            this.add( new JScrollPane( mainPane ), BorderLayout.CENTER );
 
             // addButton.setEnabled( false );
             addButton.addActionListener( new ActionListener() {
@@ -605,7 +605,7 @@ public class tcpmon extends JFrame {
             notebook = _notebook ;
             if ( name == null ) name = "Port " + listenPort ;
 
-            setLayout( new BorderLayout() );
+            this.setLayout( new BorderLayout() );
 
             // 1st component is just a row of labels and 1-line entry fields
             /////////////////////////////////////////////////////////////////////
@@ -647,7 +647,7 @@ public class tcpmon extends JFrame {
                 };
                 });
 
-            add( top, BorderLayout.NORTH );
+            this.add( top, BorderLayout.NORTH );
 
             // 2nd component is a split pane with a table on the top
             // and the request/response text areas on the bottom
@@ -816,7 +816,7 @@ public class tcpmon extends JFrame {
             pane1.setTopComponent( tablePane );
             pane1.setBottomComponent( pane2 );
             pane1.setDividerLocation( 150 );
-            add( pane1, BorderLayout.CENTER );
+            this.add( pane1, BorderLayout.CENTER );
 
             // 
             /////////////////////////////////////////////////////////////////////
