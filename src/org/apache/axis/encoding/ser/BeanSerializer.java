@@ -103,11 +103,11 @@ public class BeanSerializer implements Serializer, Serializable {
         Attributes beanAttrs = getObjectAttributes(value, attributes, context);
 
         // Get the encoding style
-        String encodingStyle = context.getMessageContext().getEncodingStyle();
+        String encodingStyle = context.getEncodingStyle();
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 
         // check whether we have and xsd:any namespace="##any" type
-        boolean suppressElement = !context.getMessageContext().isEncoded() &&
+        boolean suppressElement = !context.isEncoded() &&
                                   name.getNamespaceURI().equals("") &&
                                   name.getLocalPart().equals("any");
 

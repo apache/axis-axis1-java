@@ -18,6 +18,9 @@ package org.apache.axis.encoding;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.IllegalAccessException;
+import java.lang.NoSuchMethodException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -457,6 +460,26 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     }
 
     /**
+     * Returns this context's encoding style.  If we've got a message
+     * context then we'll get the style from that; otherwise we'll
+     * return a default.
+     *
+     * @return a <code>String</code> value
+     */
+    public String getEncodingStyle() {
+        return msgContext == null ? Use.ENCODED.getEncoding() : msgContext.getEncodingStyle();
+    }
+
+    /**
+     * Returns whether this context should be encoded or not.
+     *
+     * @return a <code>boolean</code> value
+     */
+    public boolean isEncoded() {
+        return msgContext == null ? true : msgContext.isEncoded();
+    }
+
+    /**
      * Convert QName to a string of the form <prefix>:<localpart>
      * @param qName
      * @return prefixed qname representation for serialization.
@@ -698,7 +721,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         // hashCode() and equals() methods have been overloaded to make two
         // Objects appear equal.
 
-        if (doMultiRefs && (msgContext == null || msgContext.isEncoded()) &&
+        if (doMultiRefs && isEncoded() &&
                 (value != forceSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
@@ -1277,9 +1300,11 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     SERIALIZER_METHOD, SERIALIZER_CLASSES);
             if (method != null) {
                 serializer = (Serializer) method.invoke(null,
-                     new Object[] {msgContext.getEncodingStyle(), javaType, qname});
+                    new Object[] {getEncodingStyle(), javaType, qname});
             }
-       } catch (Exception e) {
+       } catch (NoSuchMethodException e) {
+       } catch (IllegalAccessException e) {
+       } catch (InvocationTargetException e) {
        }
        return serializer;
     }
@@ -1363,7 +1388,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     actualXMLType.value =
                         ((BaseSerializerFactory) serFactory).getXMLType();
                 }
-                boolean encoded = (msgContext == null || msgContext.isEncoded());
+                boolean encoded = isEncoded();
                 if (actualXMLType.value == null ||
                         (!encoded && actualXMLType.value.equals(soapConstants.getArrayType()))) {
                     actualXMLType.value = tm.getXMLType(javaType,
