@@ -60,17 +60,13 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Vector;
 
