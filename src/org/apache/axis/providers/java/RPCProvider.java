@@ -188,6 +188,9 @@ public class RPCProvider extends JavaProvider
         }
 
         String methodName = body.getMethodName();
+        // Combine the arguments for the same parameter and 
+        // get the vector containing the arguments
+        body.combineParams();
         Vector args = body.getParams();
         int numArgs = args.size();
 

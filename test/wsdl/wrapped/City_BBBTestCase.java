@@ -30,5 +30,51 @@ public class City_BBBTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
+
+    public void test2CityBBBPortGetAttractions() {
+        City_BBBBinding binding;
+        try {
+            binding = new City_BBBLocator().getCity_BBBPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            // Invoke getAttractions with two inputs
+            String[] attName = new String[] {"Christmas", "Xmas"};
+            Attraction[] value = binding.getAttractions(attName);
+            assertEquals("OID value was wrong for first attraction", value[0].get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
+            assertEquals("OID value was wrong for second attaction", value[1].get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+
+    public void test3CityBBBPortGetAttractions() {
+        City_BBBBinding binding;
+        try {
+            binding = new City_BBBLocator().getCity_BBBPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            // Invoke getAttractions with one input
+            String[] attName = new String[] {"Christmas"};
+            Attraction[] value = binding.getAttractions(attName);
+            assertEquals("OID value was wrong for first attraction", value[0].get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
 }
 

@@ -518,19 +518,28 @@ public class JavaStubWriter extends JavaClassWriter {
         // set output type
         if (parms.returnType != null) {
             // We need to use the Qname of the actual type, not the QName of the element
+            // Also get the corresponding javaType
             QName qn = parms.returnType.getQName();
+            String javaType = parms.returnType.getName();
+
             if (parms.returnType instanceof DefinedElement) {
                 TypeEntry type = ((DefinedElement) parms.returnType).getRefType();
                 if (type != null && type.getQName() != null) {
                     qn = type.getQName();
+                    javaType = type.getName();
                 }
             }
  
             String outputType = "new javax.xml.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
                 qn.getLocalPart() + "\")";
-            pw.println("        call.setReturnType(" + 
-                       outputType + ");");
+            if (javaType == null) {
+                pw.println("        call.setReturnType(" + 
+                           outputType + ");");
+            } else {
+                pw.println("        call.setReturnType(" + 
+                           outputType + "," + javaType + ".class);");
+            }
         }
         else {
             pw.println("        call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");

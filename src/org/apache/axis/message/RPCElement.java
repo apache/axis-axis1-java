@@ -61,6 +61,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
@@ -73,6 +74,9 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import java.util.Vector;
+import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -185,7 +189,20 @@ public class RPCElement extends SOAPBodyElement
 
             for (int i = 0; i < operations.length; i++) {
                 OperationDesc operation = operations[i];
-                if (operation.getNumInParams() >= numParams || elementIsFirstParam ) {
+                if (operation.getNumInParams() >= numParams || 
+                    elementIsFirstParam ||
+                    operation.getStyle() == Style.WRAPPED) {
+                    // If the Style is WRAPPED, the numParams may be inflated 
+                    // as in the following case:
+                    //  <getAttractions xmlns="urn:CityBBB">
+                    //      <attname>Christmas</attname>
+                    //      <attname>Xmas</attname>
+                    //   </getAttractions>
+                    //
+                    //  for getAttractions(String[] attName)
+                    //
+                    // numParams will be 2 and and operation.getNumInParams=1
+
                     // Set the operation so the RPCHandler can get at it
                     rpcHandler.setOperation(operation);
                     try {
@@ -266,6 +283,80 @@ public class RPCElement extends SOAPBodyElement
     {
         param.setRPCCall(this);
         params.addElement(param);
+    }
+
+
+    /**
+     * Combines arguments associated with the same parameter
+     * are combined into a single RPCParam.
+     * Here is a specific example:
+     *  <getAttractions xmlns="urn:CityBBB">
+     *      <attname>Christmas</attname>
+     *      <attname>Xmas</attname>
+     *   </getAttractions>
+     *
+     *     for getAttractions(String[] attName)
+     *
+     * In the example, there will be two String for attName which
+     * will be combined into one String[] argument
+     */
+    public void combineParams() throws Exception {
+        getParams();  // ensure params are deserialized
+
+        for (int i=0; i<params.size(); i++) {
+            RPCParam param = (RPCParam) params.elementAt(i);
+            ParameterDesc parmDesc = param.getParamDesc();
+            // See if the expected Type QName is 
+            // a special collection QName like
+            // "xsd:string[unbounded]"
+            if (parmDesc != null &&
+                parmDesc.getTypeQName() != null &&
+                parmDesc.getTypeQName().
+                getLocalPart().indexOf("[") > 0) {
+
+                // Count the number of params for the
+                // same parameter
+                int len = 1;
+                for(int j=i+1; j<params.size(); j++) {
+                    if (param.getQName().equals(
+                     ((RPCParam)params.elementAt(j)).getQName())) {
+                        len++;
+                    } else {
+                        break;
+                    }
+                }
+
+                // Create a container representing the 
+                // expected parameter type and add the param's value
+                Object container;
+                Class containerClass = parmDesc.getJavaType();
+
+                if (containerClass.isArray()) {
+                    container = 
+                        Array.newInstance(containerClass.getComponentType(),
+                                          len);
+                    Array.set(container, 0, param.getValue());
+                } else {
+                    container = containerClass.newInstance();
+                    ((Collection) container).add(param.getValue());
+                }
+
+                // Replace the param value with the container
+                param.setValue(container);
+                
+                // Add successive params to the container, and
+                // remove the params from the original params vector.
+                for (int j=1; j<len; j++) {
+                    RPCParam nextParam = (RPCParam) params.elementAt(i+1);
+                    if (containerClass.isArray()) {
+                        Array.set(container, j, nextParam.getValue());
+                    } else {
+                        ((Collection) container).add(nextParam.getValue());
+                    }
+                    params.removeElementAt(i+1);
+                }
+            }
+        }
     }
 
     protected void outputImpl(SerializationContext context) throws Exception

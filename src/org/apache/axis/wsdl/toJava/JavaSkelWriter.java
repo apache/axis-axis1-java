@@ -207,7 +207,16 @@ public class JavaSkelWriter extends JavaClassWriter {
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
                             javaOpName + "\", _params, " + returnStr + ");");
 
-
+                if (isRPC) {
+                    pw.println("        _oper.setStyle(org.apache.axis.enum.Style.RPC);");
+                } else {
+                    if (symbolTable.isWrapped()) { 
+                        pw.println("        _oper.setStyle(org.apache.axis.enum.Style.WRAPPED);");
+                    } else {
+                        pw.println("        _oper.setStyle(org.apache.axis.enum.Style.DOCUMENT);");
+                    }
+                }
+                
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc

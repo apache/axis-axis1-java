@@ -15,10 +15,28 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:element name="getAttractions">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="attname"
+            type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
       <xsd:element name="getAttractionResponse">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element maxOccurs="1" minOccurs="0" name="_return"
+            type="tns:Attraction" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="getAttractionsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" name="_return"
             type="tns:Attraction" />
           </xsd:sequence>
         </xsd:complexType>
@@ -125,11 +143,24 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <part element="tns:getAttractionResponse" name="parameters" />
   </message>
 
+  <message name="getAttractionsIn">
+    <part element="tns:getAttractions" name="parameters" />
+  </message>
+
+  <message name="getAttractionsOut">
+    <part element="tns:getAttractionsResponse" name="parameters" />
+  </message>
+
   <portType name="City_BBBPortType">
     <operation name="getAttraction">
       <input message="tns:getAttractionIn" />
 
       <output message="tns:getAttractionOut" />
+    </operation>
+    <operation name="getAttractions">
+      <input message="tns:getAttractionsIn" />
+
+      <output message="tns:getAttractionsOut" />
     </operation>
   </portType>
 
@@ -139,6 +170,17 @@ xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
     <operation name="getAttraction">
       <soap:operation soapAction="getAttraction" />
+
+      <input>
+        <soap:body use="literal" />
+      </input>
+
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="getAttractions">
+      <soap:operation soapAction="getAttractions" />
 
       <input>
         <soap:body use="literal" />

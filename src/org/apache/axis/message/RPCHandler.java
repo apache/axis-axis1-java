@@ -145,6 +145,7 @@ public class RPCHandler extends SOAPHandler
         QName type = null;
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
+        boolean isCollection = false;
 
         Vector params = rpcElem.getParams();
         
@@ -201,17 +202,52 @@ public class RPCHandler extends SOAPHandler
                 // (see RPCProvider.processMessage())
                 currentParam.setParamDesc(paramDesc);
 
+                // It is possible that the type qname is "xsd:string"
+                // and the paramDesc type is a collection of 
+                // strings using a special axis qname ("xsd:string[unbounded]").
+                // Here is a specific example:
+                //  <getAttractions xmlns="urn:CityBBB">
+                //      <attname>Christmas</attname>
+                //      <attname>Xmas</attname>
+                //   </getAttractions>
+                //
+                //  for getAttractions(String[] attName)
+                //
+                //  In the example, we are processing one of the <attname>
+                //  children, so the type variable is set to the component
+                //  type, and isCollection is turned on to 
+                //  indicate collection processing.
+                boolean haveXSIType = (type != null);
+                if (paramDesc.getTypeQName() != null &&
+                    paramDesc.getTypeQName().getLocalPart().indexOf("[") > 0) {
+                    if (type==null) {
+                        type = new QName(paramDesc.getTypeQName().
+                                           getNamespaceURI(),
+                                         paramDesc.getTypeQName().
+                                           getLocalPart().
+                                           substring(0,
+                                                     paramDesc.getTypeQName().
+                                                     getLocalPart().indexOf("[")));
+                    }
+                    isCollection = true;
+                }
+                
                 if (type == null) {
                     type = paramDesc.getTypeQName();
-                } else if (paramDesc.getJavaType() != null) {
+                } 
+
+                if (haveXSIType && paramDesc.getJavaType() != null) {
                     // If we have an xsi:type, make sure it makes sense
                     // with the current paramDesc type
                     Class xsiClass = 
                             context.getTypeMapping().getClassForQName(type);
-                    if (!JavaUtils.isConvertable(xsiClass,
-                                                 paramDesc.getJavaType())) {
+                    Class destClass = paramDesc.getJavaType();
+                    if (isCollection) {
+                        destClass = destClass.getComponentType();
+                    }
+                    if (!JavaUtils.isConvertable(xsiClass, destClass)) {
                         throw new SAXException("Bad types (" +
-                            xsiClass + " -> " + paramDesc.getJavaType() + ")"); // FIXME!
+                            xsiClass + " -> " + destClass + ")"); // FIXME!
                     }
                 }
             }
