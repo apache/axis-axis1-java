@@ -67,6 +67,7 @@ import java.io.Serializable;
  * it just supplies common namespaces + QNames.
  *
  * @author Glen Daniels (gdaniels@apache.org)
+ * @author Andras Avar (andras.avar@nokia.com)
  */
 public interface SOAPConstants extends Serializable {
     /** SOAP 1.1 constants - thread-safe and shared */
@@ -124,7 +125,9 @@ public interface SOAPConstants extends Serializable {
      */
     public String getAttrItemType();
 
-
-
+    /**
+     * Obtain the Qname of VersionMismatch fault code
+     */
+    public QName getVerMismatchFaultCodeQName();
 
 }
