@@ -83,16 +83,32 @@ cleans up some of the more confusing areas of the 1.1 spec.
 cross-language distributed computing applications, termed Web Services.
 <h3>
 What is Axis?</h3>
-Apache SOAP began at IBM as "SOAP4J" and then became Apache SOAP version
-2. The committers on the v2 project began some conversations in late 2000
-about making the engine much more flexible, configurable, and able to handle
+Axis is essentially a <i>SOAP engine</i> -- a framework for
+constructing SOAP processors such as
+clients, servers, gateways, etc.
+The current version of Axis is written in Java, but
+a C++ implementation of the client side of Axis is being developed.
+<p>
+But Axis isn't just a SOAP engine -- it also includes:
+<ul>
+  <li> a simple stand-alone server,
+  <li> a server which plugs into servlet engines such as Tomcat,
+  <li> extensive support for the <i>Web Service Description Language</i>,
+  <li> some sample programs, and
+  <li> a tool for monitoring TCP/IP packets.
+</ul>
+<p>
+Axis is the third generation of Apache SOAP (which began at IBM as "SOAP4J").
+In late 2000, the committers of Apache SOAP v2 began discussing
+how to make the engine much more flexible, configurable, and able to handle
 both SOAP and the upcoming XML Protocol specification from the W3C.
 <p>After a little while, it became clear that a ground-up rearchitecture
-was the way to go. Several of the v2 committers proposed very similar designs,
+was required. Several of the v2 committers proposed very similar designs,
 all based around configurable "chains" of message "handlers" which would
 implement small bits of functionality in a very flexible and composable
-manner. Axis is the result of months of continued discussion and coding
-effort in this direction. Some of the key Axis features include the following:
+manner.
+<p>After months of continued discussion and coding
+effort in this direction, Axis now delivers the following key features:
 <ul>
   <li> <b>Speed.</b> Axis uses SAX (event-based) parsing to acheive significantly 
     greater speed than earlier versions of Apache SOAP.</li>
@@ -113,13 +129,14 @@ effort in this direction. Some of the key Axis features include the following:
     build stubs to access remote services, and also to automatically export machine-readable 
     descriptions of your deployed services from Axis.</li>
 </ul>
+<p>
 We hope you enjoy using Axis. Please note that this is an open-source effort
 - if you feel the code could use some new features or fixes, please get
 involved and lend a hand! The Axis developer community welcomes your participation.
 <h4>
 <b>Let us know what you think!</b></h4>
 Please send feedback about the package to "<a href="mailto:axis-user@xml.apache.org">axis-user@xml.apache.org</a>".
-Also, Axis is regsitered in <a href="http://nagoya.apache.org/bugzilla">bugzilla</a>,
+Also, Axis is registered in <a href="http://nagoya.apache.org/bugzilla">bugzilla</a>,
 the Apache bug tracking and feature-request database.
 <h3>
 What's in this release?</h3>
