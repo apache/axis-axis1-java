@@ -18,6 +18,7 @@ import javax.xml.soap.Text;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
 public class TestEnvelope extends junit.framework.TestCase {
@@ -55,6 +56,19 @@ public class TestEnvelope extends junit.framework.TestCase {
         assertTrue(se != null);
     }
 
+    // Test JAXM methods...
+    public void testEnvelope2() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage smsg =
+                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
+        SOAPPart sp = smsg.getSOAPPart();
+        SOAPEnvelope se = (SOAPEnvelope)sp.getEnvelope();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        smsg.writeTo(baos);
+        SOAPBody body = smsg.getSOAPPart().getEnvelope().getBody();
+        assertTrue(body != null);
+    }
+    
     private SOAPEnvelope getSOAPEnvelope() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection con = scFactory.createConnection();
