@@ -117,6 +117,79 @@ public class TestRPC extends TestCase {
     }
 
     /**
+     * Test a simple method that reverses a string (but fails)
+     */
+    public void testReverseStringThatShouldFail() throws Exception {
+        try {
+            // Register the reverseString service
+            SOAPService reverse = new SOAPService(new RPCProvider());
+            reverse.setOption("className", "test.RPCDispatch.Service");
+            reverse.setOption("allowedMethods", "reverseString2");
+            provider.deployService(new QName(null,SOAPAction), reverse);
+            ServiceDesc serviceDesc = reverse.getServiceDescription();
+            serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
+                                                       (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
+            // invoke the service and verify the result
+            rpc("reverseString", new Object[] {"abc"});
+            throw new junit.framework.AssertionFailedError("Should not reach here");
+        } catch (AxisFault af){
+            //This test should cause an exception.
+            return;
+        }
+    }
+    
+    /**
+     * Test a simple method that reverses a string (with a comma delimiter
+     */
+    public void testReverseStringWithCommaDelimiter() throws Exception {
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(new RPCProvider());
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("allowedMethods", "reverseString2,reverseString");
+        provider.deployService(new QName(null,SOAPAction), reverse);
+        ServiceDesc serviceDesc = reverse.getServiceDescription();
+        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
+                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
+
+        // invoke the service and verify the result
+        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
+    }
+
+    /**
+     * Test a simple method that reverses a string (with a space delimiter
+     */
+    public void testReverseStringWithSpaceDelimiter() throws Exception {
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(new RPCProvider());
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("allowedMethods", "reverseString2 reverseString");
+        provider.deployService(new QName(null,SOAPAction), reverse);
+        ServiceDesc serviceDesc = reverse.getServiceDescription();
+        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
+                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
+
+        // invoke the service and verify the result
+        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
+    }
+
+    /**
+     * Test a simple method that reverses a string (with a '*'
+     */
+    public void testReverseStringWithStar() throws Exception {
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(new RPCProvider());
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("allowedMethods", "*");
+        provider.deployService(new QName(null,SOAPAction), reverse);
+        ServiceDesc serviceDesc = reverse.getServiceDescription();
+        serviceDesc.loadServiceDescByIntrospection(test.RPCDispatch.Service.class,
+                                                   (TypeMapping)reverse.getTypeMappingRegistry().getDefaultTypeMapping());
+
+        // invoke the service and verify the result
+        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
+    }
+    
+    /**
      * Test a method that reverses a data structure
      */
     public void testReverseData() throws Exception {
@@ -201,7 +274,11 @@ public class TestRPC extends TestCase {
         TestRPC tester = new TestRPC("RPC test");
         tester.testReverseString();
         tester.testReverseData();
-          tester.testSimpleFault();
+        tester.testSimpleFault();
+        tester.testReverseStringThatShouldFail();
+        tester.testReverseStringWithCommaDelimiter();
+        tester.testReverseStringWithSpaceDelimiter();
+        tester.testReverseStringWithStar();
       } catch (Exception e) {
         e.printStackTrace();
       }
