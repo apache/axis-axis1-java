@@ -672,7 +672,7 @@ public class HTTPSender extends BasicHandler {
             }
             log.debug("\n" + Messages.getMessage("xmlRecd00"));
             log.debug("-----------------------------------------------");
-            log.debug(outMsg.getSOAPPartAsString());
+            log.debug(outMsg.getSOAPEnvelope().toString());
         }
 
         // if we are maintaining session state,
