@@ -18,6 +18,7 @@ package org.apache.axis.components.image;
 
 import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.commons.logging.Log;
 
 /**
@@ -59,7 +60,12 @@ public class ImageIOFactory {
          * This shouldn't be needed, but seems to be a common feel-good:
          */
         if (imageIO == null) {
-            imageIO = new JDK13IO();
+            try {
+                Class cls = ClassUtils.forName("org.apache.axis.components.image.JDK13IO");
+                imageIO = (ImageIO)cls.newInstance();
+            } catch (Exception e) {
+                log.debug("ImageIOFactory: No matching ImageIO found",e);
+            }
         }
 
         log.debug("axis.ImageIO: " + imageIO.getClass().getName());
