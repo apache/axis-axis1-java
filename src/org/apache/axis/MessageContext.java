@@ -227,8 +227,7 @@ public class MessageContext {
         Debug.Print(2, "MessageContext: setTargetService(" + tServ+")");
         targetService = tServ ;
 
-        HandlerRegistry sr = (HandlerRegistry)
-                              getProperty(Constants.SERVICE_REGISTRY);
+        HandlerRegistry sr = axisEngine.getServiceRegistry();
 
         if (sr == null || targetService == null)
             setServiceHandler(null);

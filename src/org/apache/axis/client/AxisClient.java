@@ -77,6 +77,11 @@ public class AxisClient extends AxisEngine
         super(Constants.CLIENT_HANDLER_REGISTRY,
               Constants.CLIENT_SERVICE_REGISTRY);
     }
+
+    /**
+     * Is this running on the server?
+     */
+    public boolean isOnServer() { return false; }
     
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate

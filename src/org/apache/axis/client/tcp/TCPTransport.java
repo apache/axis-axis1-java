@@ -97,13 +97,13 @@ public class TCPTransport extends Transport
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
      */
-    public void init(Handler engine) {
+    public void init(AxisEngine engine) {
         this.engine = engine;
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: TCPTransport::init" );
         
         // add the TCPDispatchHandler
-        HandlerRegistry hr = (DefaultHandlerRegistry)engine.getOption(Constants.HANDLER_REGISTRY);
+        HandlerRegistry hr = engine.getHandlerRegistry();
         hr.add("TCPSender", new TCPDispatchHandler());
         hr.add("TCPAction", new TCPActionHandler());
         
@@ -121,9 +121,9 @@ public class TCPTransport extends Transport
     /**
      * Initialize the given MessageContext with the correct handlers and registries.
      */
-    public void initMessageContext (MessageContext mc, ServiceClient serv, Handler engine, boolean doLocal)
+    public void initMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine, boolean doLocal)
     {
-        DefaultServiceRegistry sr = (DefaultServiceRegistry)engine.getOption(Constants.SERVICE_REGISTRY);
+        HandlerRegistry sr = engine.getServiceRegistry();
         if ( sr == null || sr.find("TCP.input") == null )
             mc.setProperty( MessageContext.TRANS_INPUT, "TCPSender" );
         else
@@ -139,7 +139,7 @@ public class TCPTransport extends Transport
      * @param engine the engine containing the registries
      * @param doLocal if true, we are setting up for local testing
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serv, Handler engine, boolean doLocal)
+    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine, boolean doLocal)
     {
         // kind of ugly... fake up a "http://host:port/" url to send down the chain
         // ROBJ TODO: clean this up so we use TCP transport properties all the way down

@@ -134,6 +134,12 @@ public abstract class AxisEngine extends BasicHandler
         this.serviceRegFilename = serviceRegFilename;
     }
 
+
+    /**
+     * Is this running on the server?
+     */
+    abstract public boolean isOnServer();
+
     /**
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
@@ -144,24 +150,21 @@ public abstract class AxisEngine extends BasicHandler
         
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
-        System.out.println("Debug level is " + Debug.getDebugLevel());
         
         if (getHandlerRegistry() == null) {
-            System.out.println("Using " + handlerRegFilename);
             DefaultHandlerRegistry  hr =
                          new DefaultHandlerRegistry(handlerRegFilename);
-            hr.setOnServer( true );
+            hr.setOnServer( isOnServer() );
             hr.init();
             setHandlerRegistry( hr );
         }
         
         if (getServiceRegistry() == null) {
-            System.out.println("Using " + serviceRegFilename);
             // Load the simple deployed services registry and init it
             DefaultServiceRegistry  sr =
                          new DefaultServiceRegistry(serviceRegFilename);
             sr.setHandlerRegistry( getHandlerRegistry() ); // needs to know about 'hr'
-            sr.setOnServer( true );
+            sr.setOnServer( isOnServer() );
             sr.init();
             setServiceRegistry( sr );
         }

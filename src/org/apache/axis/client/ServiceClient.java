@@ -99,7 +99,7 @@ public class ServiceClient {
     private static final boolean DEBUG_LOG = false;
     
     // Our engine; either AxisClient (usually) or AxisServer (doLocal)
-    private Handler engine;
+    private AxisEngine engine;
     
     // The description of our service
     private ServiceDescription serviceDesc;
@@ -128,6 +128,7 @@ public class ServiceClient {
         this.transport = transport;
         
         this.setupEngine();
+        msgContext.setAxisEngine(engine);
         
         // set up the message context with the transport
         try {
@@ -136,15 +137,8 @@ public class ServiceClient {
             /* Do some prep-work.  Get the registries and put them in the */
             /* msgContext so they can be used by later handlers.          */
             /**************************************************************/
-            HandlerRegistry hr =
-                (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
-            HandlerRegistry sr =
-                (HandlerRegistry) engine.getOption(Constants.SERVICE_REGISTRY);
-            
-            if ( hr != null )
-                msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
-            if ( sr != null )
-                msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
+            HandlerRegistry hr = engine.getHandlerRegistry();
+            HandlerRegistry sr = engine.getServiceRegistry();
             
             transport.initMessageContext(msgContext, this, engine, doLocal);
         } catch (AxisFault f) {

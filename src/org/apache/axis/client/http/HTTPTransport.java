@@ -100,10 +100,10 @@ public class HTTPTransport extends Transport
     /**
      * Initialize the given MessageContext with the correct handlers and registries.
      */
-    public void initMessageContext (MessageContext mc, ServiceClient serviceClient, Handler engine, boolean doLocal)
+    public void initMessageContext (MessageContext mc, ServiceClient serviceClient, AxisEngine engine, boolean doLocal)
         throws AxisFault
     {
-        DefaultServiceRegistry sr = (DefaultServiceRegistry)engine.getOption(Constants.SERVICE_REGISTRY);
+        HandlerRegistry sr = engine.getServiceRegistry();
         if ( sr == null || sr.find("HTTP.input") == null )
             mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
         else
@@ -131,11 +131,12 @@ public class HTTPTransport extends Transport
      * @param doLocal if true, we are setting up for local testing
      * @throws AxisFault if service cannot be found
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serviceClient, Handler engine, boolean doLocal)
+    public void setupMessageContext (MessageContext mc, ServiceClient serviceClient, AxisEngine engine, boolean doLocal)
         throws AxisFault
     {
         if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
+        mc.setAxisEngine(engine);
         mc.setTargetService( (String)mc.getProperty(ACTION) );
         
         if ( doLocal && ((String)mc.getProperty(URL)).endsWith( ".jws") ) {
