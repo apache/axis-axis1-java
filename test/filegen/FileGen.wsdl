@@ -3,6 +3,8 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:serviceNS="http://test.com/reference" 
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
  
   <!-- type defs -->
