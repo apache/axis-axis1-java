@@ -57,6 +57,7 @@ package org.apache.axis.utils.cache;
 import org.apache.axis.utils.ClassUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -64,11 +65,11 @@ import java.util.HashMap;
 import java.lang.reflect.Method;
 
 /**
- * A cache for methods. 
+ * A cache for methods.
  * Used to get methods by their signature and stores them in a local
  * cache for performance reasons.
  * This class is a singleton - so use getInstance to get an instance of it.
- * 
+ *
  * @author Davanum Srinivas <dims@yahoo.com>
  * @author Sebastian Dietrich <sebastian.dietrich@anecon.com>
  */
@@ -77,7 +78,7 @@ public class MethodCache {
 	 * The only instance of this class
 	 */
 	transient private static MethodCache instance;
-	
+
     /**
      * Cache for Methods
      * In fact this is a map (with classes as keys) of a map (with method-names as keys)
@@ -91,7 +92,7 @@ public class MethodCache {
 	private MethodCache() {
 		cache = new ThreadLocal();
 	}
-	
+
 	/**
 	 * Gets the only instance of this class
 	 * @return the only instance of this class
@@ -100,11 +101,11 @@ public class MethodCache {
 		if (instance == null) {
 			instance = new MethodCache();
 		}
-		return instance;				
+		return instance;
 	}
-	
+
     /**
-     * Returns the per thread hashmap (for method caching)  
+     * Returns the per thread hashmap (for method caching)
      */
     private Map getMethodCache() {
         Map map = (Map) cache.get();
@@ -115,54 +116,138 @@ public class MethodCache {
         return map;
     }
 
+    /**
+     * Class used as the key for the method cache table.
+     *
+     */
+    static class MethodKey {
+        /** the name of the method in the cache */
+        private final String methodName;
+        /** the list of types accepted by the method as arguments */
+        private final Class[] parameterTypes;
+
+        /**
+         * Creates a new <code>MethodKey</code> instance.
+         *
+         * @param methodName a <code>String</code> value
+         * @param parameterTypes a <code>Class[]</code> value
+         */
+        MethodKey(String methodName, Class[] parameterTypes) {
+            this.methodName = methodName;
+            this.parameterTypes = parameterTypes;
+        }
+
+        public boolean equals(Object other) {
+            MethodKey that = (MethodKey) other;
+            return this.methodName.equals(that.methodName)
+                && Arrays.equals(this.parameterTypes,
+                                 that.parameterTypes);
+        }
+
+        public int hashCode() {
+            // allow overloaded methods to collide; we'll sort it out
+            // in equals().  Note that String's implementation of
+            // hashCode already caches its value, so there's no point
+            // in doing so here.
+            return methodName.hashCode();
+        }
+    }
+
+    /** used to track methods we've sought but not found in the past */
+    private static final Object NULL_OBJECT = new Object();
+
 	/**
 	 * Returns the specified method - if any.
-	 * 
+	 *
 	 * @param clazz the class to get the method from
 	 * @param methodName the name of the method
 	 * @param parameterTypes the parameters of the method
 	 * @return the found method
-	 * 
+	 *
 	 * @throws NoSuchMethodException if the method can't be found
 	 */
-    public Method getMethod(Class clazz, String methodName, Class[] parameterTypes) throws NoSuchMethodException {
+    public Method getMethod(Class clazz,
+                            String methodName,
+                            Class[] parameterTypes)
+        throws NoSuchMethodException {
         String className = clazz.getName();
         Map cache = getMethodCache();
         Method method = null;
-		Collection methods = null;
+        Map methods = null;
+
+        // Strategy is as follows:
+        // construct a MethodKey to represent the name/arguments
+        // of a method's signature.
+        //
+        // use the name of the class to retrieve a map of that
+        // class' methods
+        //
+        // if a map exists, use the MethodKey to find the
+        // associated value object.  if that object is a Method
+        // instance, return it.  if that object is anything
+        // else, then it's a reference to our NULL_OBJECT
+        // instance, indicating that we've previously tried
+        // and failed to find a method meeting our requirements,
+        // so return null
+        //
+        // if the map of methods for the class doesn't exist,
+        // or if no value is associated with our key in that map,
+        // then we perform a reflection-based search for the method.
+        //
+        // if we find a method in that search, we store it in the
+        // map using the key; otherwise, we store a reference
+        // to NULL_OBJECT using the key.
         
         // Check the cache first.
+        MethodKey key = new MethodKey(methodName, parameterTypes);
         if (cache.containsKey(className)) {
-            methods = (Collection) cache.get(clazz);
+            methods = (Map) cache.get(className);
             if (methods != null) {
-                Iterator it = methods.iterator();
-                while (it.hasNext()) {
-                    method = (Method) it.next();
-                    if (method.getName().equals(methodName) && method.getParameterTypes().equals(parameterTypes)) {
-                        return method;
+                Object o = methods.get(key);
+                if (o != null) {  // cache hit
+                    if (o instanceof Method) { // good cache hit
+                        return (Method) o;
+                    } else {                   // bad cache hit
+                        // we hit the NULL_OBJECT, so this is a search
+                        // that previously failed; no point in doing
+                        // it again as it is a worst case search
+                        // through the entire classpath.
+                        return null;
                     }
+                } else {
+                    // cache miss: fall through to reflective search
                 }
+            } else {
+                // cache miss: fall through to reflective search
             }
-        } 
-        
+        }
+
         try {
             method = clazz.getMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e1) {
             try {
-                Class helper = ClassUtils.forName(clazz.getName() + "_Helper");
+                Class helper = ClassUtils.forName(className + "_Helper");
                 method = helper.getMethod(methodName, parameterTypes);
             } catch (ClassNotFoundException e2) {
-            	// should never happen --> assert false;
+                method = null;
             }
         }
 
-		if (methods == null) {
-			methods = new ArrayList();
-			cache.put(className, methods);
-		}
-		
-        methods.add(method);
+        // first time we've seen this class: set up its method cache
+        if (methods == null) {
+            methods = new HashMap();
+            cache.put(className, methods);
+        }
+
+        // when no method is found, cache the NULL_OBJECT
+        // so that we don't have to repeat worst-case searches
+        // every time.
+
+        if (null == method) {
+            methods.put(key, NULL_OBJECT);
+        } else {
+            methods.put(key, method);
+        }
         return method;
     }
-
 }
