@@ -9,21 +9,18 @@ import org.apache.axis.utils.QName;
 
 public class RPCElement extends SOAPBodyElement
 {
-    protected String methodName;    
     protected Vector params = new Vector();
     
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
         super(namespace, localName, prefix, attributes, context);
-        methodName = localName;
     }
     
     public RPCElement(String namespace, String methodName,
                       Object [] args, ServiceDescription serviceDesc)
     {
         this.setNamespaceURI(namespace);
-        this.methodName = methodName;
         this.name = methodName;
         
         for (int i = 0; args != null && i < args.length; i++) {
@@ -47,12 +44,12 @@ public class RPCElement extends SOAPBodyElement
     
     public RPCElement(String methodName)
     {
-        this.methodName = methodName;
+        this.name = methodName;
     }
     
     public String getMethodName()
     {
-        return methodName;
+        return name;
     }
     
     /** This gets the FIRST param whose name matches.
