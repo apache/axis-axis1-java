@@ -1710,7 +1710,10 @@ public class Call implements javax.xml.rpc.Call {
          * if things don't look right.
          */
         if (!invokeOneWay && operation.getNumParams() > 0 && returnType == null) {
-            throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
+            // TCK:
+            // Issue an error if the return type was not set, but continue processing.
+            //throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
+            log.error(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
