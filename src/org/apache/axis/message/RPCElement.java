@@ -146,7 +146,7 @@ public class RPCElement extends SOAPBodyElement
         params.addElement(param);
         if (param.getType() == null) {
             // No type inline, so check service description.
-            ServiceDescription serviceDesc = getEnvelope().getServiceDescription();
+            ServiceDescription serviceDesc = context.getServiceDescription();
             if (serviceDesc != null) {
                 param.setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
                                                              param.getName()));

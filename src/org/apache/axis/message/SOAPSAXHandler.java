@@ -120,7 +120,6 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     private int recordingDepth = 0;
 
     protected DeserializationContext context;
-    protected ServiceDescription serviceDesc = null;
     
     class BodyFactory implements ElementFactory {
         public MessageElement createElement(String namespace,
@@ -128,6 +127,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                                             Attributes attributes,
                                             DeserializationContext context)
         {
+            ServiceDescription serviceDesc = context.getServiceDescription();
             if ((serviceDesc != null) && (!serviceDesc.isRPC())) {
                 return new SOAPBodyElement(namespace, localName, attributes, context);
             }
@@ -159,12 +159,6 @@ public abstract class SOAPSAXHandler extends DefaultHandler
 
         // just testing...
         headerRegistry.registerFactory("urn:myNS", "Debug", DebugHeader.getFactory());
-    }
-    
-    public void setServiceDescription(ServiceDescription serviceDesc)
-    {
-        this.serviceDesc = serviceDesc;
-        envelope.setServiceDescription(serviceDesc);
     }
     
     public int getState()

@@ -114,7 +114,7 @@ public class MsgDispatchHandler extends BasicHandler {
        */
       if (clsName.equals("org.apache.axis.utils.Admin")) {
           ServiceDescription sd = new ServiceDescription("Admin", false);
-          reqMsg.setServiceDescription(sd);
+          msgContext.setServiceDescription(sd);
       }
 
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");

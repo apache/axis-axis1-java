@@ -114,13 +114,14 @@ public class AdminClient {
         hMsg.invoke( msgContext );
 
         outMsg = msgContext.getResponseMessage();
-        outMsg.setServiceDescription(new ServiceDescription("Admin", false));
+        msgContext.setServiceDescription(new ServiceDescription("Admin", false));
         input.close();
         SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
         SOAPBodyElement body = envelope.getFirstBody();
-        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out), msgContext);
+        StringWriter writer = new StringWriter();
+        SerializationContext ctx = new SerializationContext(writer, msgContext);
         body.output(ctx);
-        // System.out.println( outMsg.getAs( "String" ) );
+        System.out.println(writer.toString());
       }
     }
     catch( Exception e ) {

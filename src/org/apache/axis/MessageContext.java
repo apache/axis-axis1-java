@@ -60,6 +60,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.ServiceDescription;
 
 /**
  * Some more general docs will go here.
@@ -113,13 +114,9 @@ public class MessageContext {
      */
     private Hashtable bag ;
 
-    public MessageContext() {}
+    public MessageContext() { }
 
     
-    public MessageContext( Message inMsg ) {
-        setRequestMessage( inMsg );
-    }
-
     /**
      * Mappings of QNames to serializers/deserializers (and therfore
      * to Java types).
@@ -137,6 +134,19 @@ public class MessageContext {
     }
 
     /**
+     * A description of the service
+     */
+    private ServiceDescription serviceDesc = null;
+
+    public ServiceDescription getServiceDescription() {
+        return serviceDesc;
+    }
+
+    public void setServiceDescription(ServiceDescription serviceDesc) {
+        this.serviceDesc = serviceDesc;
+    }
+
+    /**
      * Placeholder.
      */
     public Message getRequestMessage() { 
@@ -148,6 +158,7 @@ public class MessageContext {
      */
     public void setRequestMessage(Message inMsg) { 
         inMessage = inMsg ; 
+        inMessage.setMessageContext(this);
     };
 
     /**
@@ -158,8 +169,9 @@ public class MessageContext {
     /**
      * Placeholder.
      */
-    public void setResponseMessage(Message inMsg) { 
-        outMessage = inMsg ;
+    public void setResponseMessage(Message outMsg) { 
+        outMessage = outMsg ;
+        outMessage.setMessageContext(this);
     };
 
     public AxisClassLoader getClassLoader() {

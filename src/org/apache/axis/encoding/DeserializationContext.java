@@ -62,6 +62,7 @@ import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.QName;
 import org.apache.axis.MessageContext;
+import org.apache.axis.encoding.ServiceDescription;
 
 /** Keeps track of the active typeMappings, element IDs, parser, and
  * SOAPSAXHandler in an ongoing parse.  Might want to move the
@@ -174,6 +175,11 @@ public class DeserializationContext
           return null;
         
         return getQNameFromString(type);
+    }
+    
+    public ServiceDescription getServiceDescription()
+    {
+        return msgContext.getServiceDescription();
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()

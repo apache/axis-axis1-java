@@ -198,7 +198,7 @@ public class MessageElement extends DeserializerBase
                 // Writing a message from memory out to XML...
                 // !!! How do we set other attributes when serializing??
                 
-                ServiceDescription desc = getEnvelope().getServiceDescription();
+                ServiceDescription desc = context.getServiceDescription();
                 if ((desc == null) || desc.getSendTypeAttr()) {
                     if (typeQName != null) {
                         attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",

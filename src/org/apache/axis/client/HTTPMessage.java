@@ -166,16 +166,15 @@ public class HTTPMessage {
 
     Handler              client = null ;
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
-    MessageContext       msgContext = new MessageContext( reqMsg );
 
     // For testing - skip HTTP layer
     if ( doLocal ) {
-      msgContext.setTargetService( action );
+      mc.setTargetService( action );
       if ( localServer == null ) {
         localServer = new org.apache.axis.server.AxisServer();
         if ( url.endsWith( ".jws") ) {
-          msgContext.setProperty( "JWSFileName", url.substring(11) );
-          msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET );
+          mc.setProperty( "JWSFileName", url.substring(11) );
+          mc.setTargetService( Constants.JWSPROCESSOR_TARGET );
         }
         localServer.init();
       }
@@ -197,14 +196,14 @@ public class HTTPMessage {
       /*********************************************************************/
       client = new AxisClient();
       client.init();
-      msgContext.setTargetService( action );
+      mc.setTargetService( action );
       HandlerRegistry sr = (HandlerRegistry) client.getOption( 
                                                  Constants.SERVICE_REGISTRY );
       if ( sr == null || sr.find("HTTP.input") == null )
-        msgContext.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
+        mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
       else
-        msgContext.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
-      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
+        mc.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
+      mc.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
     }
 
     if ( Debug.getDebugLevel() > 0  ) {
@@ -214,16 +213,16 @@ public class HTTPMessage {
       reqEnv.addHeader( header );
     }
 
-    msgContext.setProperty( MessageContext.TRANS_URL, url );
-    msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
+    mc.setProperty( MessageContext.TRANS_URL, url );
+    mc.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
     if ( userID != null ) {
-      msgContext.setProperty( MessageContext.USERID, userID );
+      mc.setProperty( MessageContext.USERID, userID );
       if ( passwd != null )
-        msgContext.setProperty( MessageContext.PASSWORD, passwd );
+        mc.setProperty( MessageContext.PASSWORD, passwd );
     }
 
     try {
-      client.invoke( msgContext );
+      client.invoke( mc );
       client.cleanup();
     }
     catch( AxisFault fault ) {
@@ -231,7 +230,7 @@ public class HTTPMessage {
       throw fault ;
     }
 
-    Message       resMsg = msgContext.getResponseMessage();
+    Message       resMsg = mc.getResponseMessage();
     //SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     mc.setResponseMessage(resMsg);
     /*
