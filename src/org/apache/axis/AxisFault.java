@@ -60,9 +60,6 @@ package org.apache.axis ;
 import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.* ;
-import org.apache.xerces.framework.* ;
-import org.apache.xml.serialize.* ;
 
 // PLACEHOLDER until we figure out what we really want to put here
 // Just something to keep us moving forward

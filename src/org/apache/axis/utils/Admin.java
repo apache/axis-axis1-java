@@ -60,10 +60,9 @@ package org.apache.axis.utils ;
 import java.io.* ;
 import java.util.* ;
 import org.w3c.dom.* ;
-import org.apache.xerces.parsers.* ;
+import org.apache.xerces.parsers.DOMParser ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.registries.* ;
-import org.apache.xerces.framework.* ;
 
 import org.apache.axis.* ;
 
