@@ -92,8 +92,7 @@ Copyright:
      <fileset dir="${tools.dir}/${componentName}/foreach" excludes="**/*.java"/>
   </copy>
 
-  <jar jarfile="${build.lib}/axis-ant.jar" 
-    basedir="${build.dir}/tools">
+  <jar jarfile="${build.lib}/axis-ant.jar" >
     <fileset dir="${tools.build.dir}">
       <include name="${componentName}/**"/>
     </fileset>
