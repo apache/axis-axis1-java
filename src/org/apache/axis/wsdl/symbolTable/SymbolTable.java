@@ -2307,15 +2307,12 @@ public class SymbolTable {
                     for (Iterator l = parts.iterator(); l.hasNext();) {
                         Object o = l.next();
 
-                        if (o instanceof Part) {
-                            Part part = (Part) o;
-
-                            if (parameterPartName.equals(part.getName())) {
+                        if(o instanceof String) {
+                            if (parameterPartName.equals((String)o)) {
                                 paramName =
                                         new QName(bodyElement.getNamespaceURI(),
                                                 parameterPartName);
                                 found = true;
-
                                 break;
                             }
                         }
@@ -2332,7 +2329,6 @@ public class SymbolTable {
                 if (parameterPartName.equals(part)) {
                     paramName = new QName(headerElement.getNamespaceURI(),
                             parameterPartName);
-
                     break;
                 }
             }
