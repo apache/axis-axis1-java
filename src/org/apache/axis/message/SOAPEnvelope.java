@@ -251,16 +251,48 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
 
+    /**
+     * Get a header by name (always respecting the currently in-scope
+     * actors list)
+     */ 
     public SOAPHeader getHeaderByName(String namespace, String localPart)
+        throws AxisFault
+    {
+        return getHeaderByName(namespace, localPart, false);
+    }
+    
+    /**
+     * Get a header by name, filtering for headers targeted at this
+     * engine depending on the accessAllHeaders parameter.
+     */ 
+    public SOAPHeader getHeaderByName(String namespace, String localPart,
+                                      boolean accessAllHeaders)
         throws AxisFault
     {
         SOAPHeader header = (SOAPHeader)findElement(headers,
                                                     namespace,
                                                     localPart);
+
+        // If we're operating within an AxisEngine, respect its actor list
+        // unless told otherwise
+        if (!accessAllHeaders) {
+            MessageContext mc = MessageContext.getCurrentContext();
+            if (mc != null) {
+                if (header != null) {
+                    String actor = header.getActor();
+                    ArrayList actors = mc.getAxisEngine().getActorURIs();
+                    if ((actor != null) &&
+                            !Constants.ACTOR_NEXT.equals(actor) &&
+                            (actors == null || !actors.contains(actor))) {
+                        header = null;
+                    }
+                }
+            }
+        }
         
         return header;
     }
-
+    
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
@@ -290,6 +322,26 @@ public class SOAPEnvelope extends MessageElement
     public Enumeration getHeadersByName(String namespace, String localPart)
         throws AxisFault
     {
+        return getHeadersByName(namespace, localPart, false);
+    }
+
+    /**
+     * Return an Enumeration of headers which match the given namespace
+     * and localPart.  Depending on the value of the accessAllHeaders
+     * parameter, we will attempt to filter on the current engine's list
+     * of actors.
+     * 
+     * !!! NOTE THAT RIGHT NOW WE ALWAYS ASSUME WE'RE THE "ULTIMATE
+     * DESTINATION" (i.e. we match on null actor).  IF WE WANT TO FULLY SUPPORT
+     * INTERMEDIARIES WE'LL NEED TO FIX THIS.
+     */ 
+    public Enumeration getHeadersByName(String namespace, String localPart,
+                                        boolean accessAllHeaders)
+        throws AxisFault
+    {
+        ArrayList actors;
+        boolean firstTime = false;
+        
         /** This might be optimizable by creating a custom Enumeration
          * which moves through the headers list (parsing on demand, again),
          * returning only the next one each time.... this is Q&D for now.
@@ -300,8 +352,28 @@ public class SOAPEnvelope extends MessageElement
         while (e.hasMoreElements()) {
             header = (SOAPHeader)e.nextElement();
             if (header.getNamespaceURI().equals(namespace) &&
-                header.getName().equals(localPart))
+                header.getName().equals(localPart)) {
+
+                if (!accessAllHeaders) {
+                    if (firstTime) {
+                        // Do one-time setup
+                        MessageContext mc = MessageContext.getCurrentContext();
+                        if (mc != null)
+                            actors = mc.getAxisEngine().getActorURIs();
+                            
+                        firstTime = false;
+                    }
+
+                    String actor = header.getActor();
+                    if ((actor != null) &&
+                            !Constants.ACTOR_NEXT.equals(actor) &&
+                            (actors == null || !actors.contains(actor))) {
+                        continue;
+                    }
+                }
+
                 v.addElement(header);
+            }
         }
         
         return v.elements();
