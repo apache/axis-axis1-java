@@ -139,7 +139,9 @@ public class HTTPSender extends BasicHandler {
                 writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
                         useFullURL);
            }finally{
-             if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
+             // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
+             // for a direct (non-proxy) connection if this is enabled.
+             //if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
            }
 
             // Read the response back from the server
