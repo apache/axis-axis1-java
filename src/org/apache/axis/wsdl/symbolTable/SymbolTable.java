@@ -1923,7 +1923,8 @@ public class SymbolTable {
             TypeEntry nestedType = (TypeEntry) it.next();
             if (!nestedType.isReferenced()) {
                 //setTypeReferences(nestedType, doc, literal);
-                setTypeReferences(nestedType, doc, false);
+                if(nestedType != entry)
+                    setTypeReferences(nestedType, doc, false);
             }
         }
     } // setTypeReferences
