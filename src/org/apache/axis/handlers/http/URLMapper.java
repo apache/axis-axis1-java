@@ -60,8 +60,6 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
 
-import javax.servlet.http.HttpServletRequest;
-
 /** An <code>URLMapper</code> attempts to use the extra path info
  * of this request as the service name.
  *
@@ -79,17 +77,12 @@ public class URLMapper extends BasicHandler
         /** If there's already a targetService then just return.
          */
         if ( msgContext.getServiceHandler() == null ) {
-            HttpServletRequest req = (HttpServletRequest) msgContext.getProperty(
-                                              HTTPConstants.MC_HTTP_SERVLETREQUEST);
+            // Assumes "/" + servicename
+            String path = (String)msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO);
+            if ((path != null) && (path.length() > 1)) {
+                path = path.substring(1);
 
-            if (req != null) {
-                // Assumes "/" + servicename
-                String path = req.getPathInfo();
-                if ((path != null) && (path.length() > 1)) {
-                    path = path.substring(1);
-
-                    msgContext.setTargetService( path );
-                }
+                msgContext.setTargetService( path );
             }
         }
 
