@@ -109,15 +109,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -1153,6 +1145,12 @@ public class Call implements javax.xml.rpc.Call {
         setTransportForProtocol("https", HTTPTransport.class);
     }
 
+    /**
+     * Cache of transport packages we've already added to the system
+     * property.
+     */ 
+    private static ArrayList transportPackages = null;
+    
     /** Add a package to the system protocol handler search path.  This
      * enables users to create their own URLStreamHandler classes, and thus
      * allow custom protocols to be used in Axis (typically on the client
@@ -1167,13 +1165,28 @@ public class Call implements javax.xml.rpc.Call {
      * @param packageName the package in which to search for protocol names.
      */
     public static synchronized void addTransportPackage(String packageName) {
-        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
-        if (currentPackages == null) {
-            currentPackages = "";
-        } else {
-            currentPackages += "|";
+        if (transportPackages == null) {
+            transportPackages = new ArrayList();
+            String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
+            if (currentPackages != null) {
+                StringTokenizer tok = new StringTokenizer(currentPackages,
+                                                          "|");
+                while (tok.hasMoreTokens()) {
+                    transportPackages.add(tok.nextToken());
+                }
+            }
         }
-        currentPackages += packageName;
+        
+        if (transportPackages.contains(packageName))
+            return;
+        
+        transportPackages.add(packageName);
+        
+        String currentPackages = "";
+        for (Iterator i = transportPackages.iterator(); i.hasNext();) {
+            String thisPackage = (String) i.next();
+            currentPackages += thisPackage;            
+        }
 
         System.setProperty(TRANSPORT_PROPERTY, currentPackages);
     }
