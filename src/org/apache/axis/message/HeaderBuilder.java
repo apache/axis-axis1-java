@@ -82,13 +82,13 @@ public class HeaderBuilder extends SOAPHandler
     }
 
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = new SOAPHeader(namespace, localName, qName,
+                myElement = new SOAPHeader(namespace, localName, prefix,
                                            attributes, context,
                                            envelope.getSOAPConstants());
                 envelope.setHeader((SOAPHeader)myElement);

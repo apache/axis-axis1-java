@@ -111,12 +111,12 @@ public class ArrayDeserializer extends DeserializerImpl
      * involves obtaining a correct Deserializer and plugging its handler.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qname of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attrs on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {

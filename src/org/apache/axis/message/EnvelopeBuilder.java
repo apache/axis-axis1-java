@@ -98,7 +98,7 @@ public class EnvelopeBuilder extends SOAPHandler
     }
 
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
@@ -120,11 +120,6 @@ public class EnvelopeBuilder extends SOAPHandler
         // Indicate what version of SOAP we're using to anyone else involved
         // in processing this message.
         context.getMessageContext().setSOAPConstants(soapConstants);
-
-        String prefix = "";
-        int idx = qName.indexOf(":");
-        if (idx > 0)
-            prefix = qName.substring(0, idx);
 
         envelope.setPrefix(prefix);
         envelope.setNamespaceURI(namespace);

@@ -145,13 +145,13 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
      * at this point so that it occurs BEFORE href/id processing.
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the
      *                   type
      * @param context is the DeserializationContext
      */
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
@@ -169,7 +169,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }
         // Invoke super.startElement to do the href/id processing.
         super.startElement(namespace, localName, 
-                           qName, attributes, context);
+                           prefix, attributes, context);
     }
 
     /**
@@ -328,13 +328,13 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
      * nil.)
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the
      *                   type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
-                               String qName, Attributes attributes,
+                               String prefix, Attributes attributes,
                                DeserializationContext context)
             throws SAXException {
 
@@ -394,7 +394,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 // Success!  Create an object from the string and set
                 // it in the bean
                 try {
-                    dSer.onStartElement(namespace, localName, qName,
+                    dSer.onStartElement(namespace, localName, prefix,
                                         attributes, context);
                     Object val = ((SimpleDeserializer)dSer).
                         makeValue(attributes.getValue(i));

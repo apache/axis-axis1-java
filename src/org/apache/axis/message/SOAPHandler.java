@@ -69,25 +69,26 @@ public class SOAPHandler extends DefaultHandler
     public MessageElement myElement = null;
     
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
         // By default, make a new element
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = makeNewElement(namespace, localName, qName, attributes, context);
+                myElement = makeNewElement(namespace, localName, prefix,
+                                           attributes, context);
             }
             context.pushNewElement(myElement);
         }
     }
 
     public MessageElement makeNewElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
     {
         return new MessageElement(namespace, localName,
-                                               qName, attributes, context);
+                                               prefix, attributes, context);
     }
 
     public void endElement(String namespace, String localName,

@@ -122,16 +122,16 @@ public class RPCHandler extends SOAPHandler
      * (this allows re-use of RPCHandlers)
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qName of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
-        super.startElement(namespace, localName, qName, attributes, context);
+        super.startElement(namespace, localName, prefix, attributes, context);
         currentParam = null;
     }
 
@@ -156,8 +156,9 @@ public class RPCHandler extends SOAPHandler
         }
 
         if (!context.isDoneParsing()) {
-            context.pushNewElement(new MessageElement(namespace,
-            localName, prefix+":"+localName,attributes,context));
+            context.pushNewElement(new MessageElement(namespace, localName,
+                                                      prefix, attributes,
+                                                      context));
         }
         
         MessageElement curEl = context.getCurElement();

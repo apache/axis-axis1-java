@@ -59,8 +59,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
 
-import org.apache.axis.AxisProperties;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 

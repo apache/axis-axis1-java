@@ -99,10 +99,10 @@ public class SOAPBody extends MessageElement
         }
     }
 
-    public SOAPBody(String namespace, String localPart, String qName,
+    public SOAPBody(String namespace, String localPart, String prefix,
                     Attributes attributes, DeserializationContext context,
                     SOAPConstants soapConsts) {
-        super(namespace, localPart, qName, attributes, context);
+        super(namespace, localPart, prefix, attributes, context);
         soapConstants = soapConsts;
     }
 

@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
@@ -94,12 +93,12 @@ public class VectorDeserializer extends DeserializerImpl
      * Simply creates 
      * @param namespace is the namespace of the element
      * @param localName is the name of the element
-     * @param qName is the prefixed qname of the element
+     * @param prefix is the prefix of the element
      * @param attributes are the attributes on the element...used to get the type
      * @param context is the DeserializationContext
      */
     public void onStartElement(String namespace, String localName,
-                               String qName, Attributes attributes,
+                               String prefix, Attributes attributes,
                                DeserializationContext context)
         throws SAXException {
         if (log.isDebugEnabled()) {

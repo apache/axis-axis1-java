@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.attachments.AttachmentUtils;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -80,13 +79,13 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
             LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
     public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes,
+                             String prefix, Attributes attributes,
                              DeserializationContext context)
         throws SAXException {
 
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = makeNewElement(namespace, localName, qName, attributes, context);
+                myElement = makeNewElement(namespace, localName, prefix, attributes, context);
                 context.pushNewElement(myElement);
             }
         }
