@@ -57,6 +57,7 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
@@ -91,8 +92,6 @@ public class Message extends javax.xml.soap.SOAPMessage {
 
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
-
-    public static final String CONTENT_DESCRIPTION = "Content-Description";
 
     // MIME parts defined for messages.
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
@@ -419,7 +418,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      * @see #setContentDescription(java.lang.String) setContentDescription(java.lang.String)
      */
     public String getContentDescription() {
-        String values[] = headers.getHeader(CONTENT_DESCRIPTION);
+        String values[] = headers.getHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION);
         if(values.length > 0)
             return values[0];
         return null;
@@ -433,7 +432,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      * @see #getContentDescription() getContentDescription()
      */
     public void setContentDescription(String description) {
-        headers.setHeader(CONTENT_DESCRIPTION, description);
+        headers.setHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION, description);
     }
 
     /**
