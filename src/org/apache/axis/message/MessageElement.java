@@ -102,7 +102,7 @@ public class MessageElement implements SOAPElement
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
-    protected AttributesImpl attributes;
+    protected AttributesImpl attributes = new AttributesImpl();
     protected String    id;
     protected String    href;
     protected boolean   _isRoot = true;

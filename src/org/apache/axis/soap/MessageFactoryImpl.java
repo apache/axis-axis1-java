@@ -113,6 +113,6 @@ public class MessageFactoryImpl extends javax.xml.soap.MessageFactory {
             throws IOException, SOAPException {
         Message message = new Message(inputstream,mimeheaders);
         message.setMessageType(Message.REQUEST);
-        return null;
+        return message;
     }
 }
