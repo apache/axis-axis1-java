@@ -58,6 +58,7 @@ import java.lang.reflect.Constructor;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -87,6 +88,7 @@ import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
@@ -441,24 +443,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 // Inspect each BindingEntry in the Symbol Table
                 if (entry instanceof BindingEntry) {
                     BindingEntry bEntry = (BindingEntry) entry;
-                    Binding binding = bEntry.getBinding();
-                    // Get the associated PortType
-                    PortTypeEntry ptEntry = 
-                        symbolTable.getPortTypeEntry(
-                            binding.getPortType().getQName());
-                    PortType portType = ptEntry.getPortType();
-                    Iterator operations = portType.getOperations().iterator();
-                    // Inspect the Operations of the PortType
-                    while(operations.hasNext()) {
-                        Operation operation = (Operation) operations.next();
-                        // Get the associated parameters of the operation.
-                        Parameters parameters = bEntry.getParameters(operation);
-
-                        // Inspect the faults of the operation
-                        Iterator iFault = parameters.faults.values().iterator();
-                        while(iFault.hasNext()) {
-                            Fault fault = (Fault) iFault.next();
-                            setFaultContext(fault, symbolTable);
+                    HashMap allOpFaults = bEntry.getFaults();
+                    Iterator ops = allOpFaults.values().iterator();
+                    // set the context for all faults for this binding.
+                    while (ops.hasNext()) {
+                        ArrayList faults = (ArrayList) ops.next();
+                        for (int j = 0; j < faults.size(); ++j) {
+                            FaultInfo info = (FaultInfo) faults.get(j);
+                            setFaultContext(info, symbolTable);
                         }
                     }
                 }
@@ -471,10 +463,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * Helper routine for the setFaultContext method above.
      * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
      * EXCEPTION_DATA_TYPE and EXCEPTION_CLASS_NAME as appropriate.
-     * @param fault Fault to analyze
+     * @param fault FaultInfo to analyze
      * @param symbolTable SymbolTable
      */
-    private void setFaultContext(Fault fault,
+    private void setFaultContext(FaultInfo fault,
                                  SymbolTable symbolTable) {
         QName faultXmlType = null;
         

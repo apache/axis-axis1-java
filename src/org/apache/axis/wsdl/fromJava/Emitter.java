@@ -58,6 +58,7 @@ package org.apache.axis.wsdl.fromJava;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.AxisFault;
@@ -74,6 +75,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
@@ -95,6 +97,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
 
 import javax.wsdl.factory.WSDLFactory;
@@ -801,10 +804,22 @@ public class Emitter {
         for (int i = 0; exceptions != null && i < exceptions.size(); i++) {
             FaultDesc faultDesc = (FaultDesc) exceptions.get(i);
             msg = writeFaultMessage(def, faultDesc);
+
+            // Add the fault to the portType
             Fault fault = def.createFault();
             fault.setMessage(msg);
-            fault.setName((faultDesc).getName());
+            fault.setName(faultDesc.getName());
             oper.addFault(fault);
+
+            // Add the fault to the binding
+            BindingFault bFault = def.createBindingFault();
+            bFault.setName(faultDesc.getName());
+            SOAPFault soapFault = writeSOAPFault(desc.getElementQName(),
+                    faultDesc.getName());
+            bFault.addExtensibilityElement(soapFault);
+            bindingOper.addBindingFault(bFault);
+            
+            // Add the fault message
             if (def.getMessage(msg.getQName()) == null) {
                 def.addMessage(msg);
             }
@@ -921,6 +936,26 @@ public class Emitter {
         }
         return soapBody;
     } // writeSOAPBody
+
+    private SOAPFault writeSOAPFault(QName operQName, String faultName) {
+        SOAPFault soapFault = new SOAPFaultImpl();
+        if (mode == MODE_RPC) {
+            soapFault.setUse("encoded");
+            soapFault.setEncodingStyles(encodingList);
+        } else {
+            soapFault.setUse("literal");
+        }
+        if (targetService == null)
+            soapFault.setNamespaceURI(intfNS);
+        else
+            soapFault.setNamespaceURI(targetService);
+        if (operQName != null &&
+            !operQName.getNamespaceURI().equals("")) {
+            soapFault.setNamespaceURI(operQName.getNamespaceURI());
+        }
+        soapFault.setName(faultName);
+        return soapFault;
+    } // writeSOAPFault
 
     /** Create a Request Message
      *
