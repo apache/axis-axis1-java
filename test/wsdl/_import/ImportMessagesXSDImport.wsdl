@@ -22,8 +22,15 @@
                 schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
                 
     <!-- Test that we can handle importing a URL schema from a file -->
-    <xsd:import namespace="http://tempuri.org/fileToHttp/" 
+
+    <!-- commented out Oct 20, 2002 by Glen - the schema has disappeared and
+         the test was breaking.  If we want to test this functionality, we
+         should a) actually use types from the imported schema, and b) import
+         from a schema URL which we control.
+
+         <xsd:import namespace="http://tempuri.org/fileToHttp/"
                 schemaLocation="http://www.xml.org/xml/schema/9bffaafc/p2rLib.xsd"/>
+     -->
     
     <complexType name="Address">
       <all>
