@@ -213,7 +213,7 @@ public class WSDLUtils {
         msg.setUndefined(false);
         
         Class type = method.getReturnType();
-        addPartToMessage(def, msg, "result", type, reg);
+        addPartToMessage(def, msg, method.getName().concat("Result"), type, reg);
         
         return msg;
     }
