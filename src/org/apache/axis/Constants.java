@@ -180,6 +180,8 @@ public class Constants {
 
     // MessageContext param for the engine's path
     public static final String MC_REALPATH = "realpath";
+    // MessageContext param for the location of config files
+    public static final String MC_CONFIGPATH = "configPath";
     // MessageContext param for the IP of the calling client
     public static final String MC_REMOTE_ADDR = "remoteaddr";
 

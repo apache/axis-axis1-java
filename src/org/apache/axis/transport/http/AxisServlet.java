@@ -126,8 +126,10 @@ public class AxisServlet extends HttpServlet {
         HandlerRegistry hr = engine.getHandlerRegistry();
 
         String realpath = context.getRealPath(req.getServletPath());
+        String configPath = context.getRealPath("/WEB-INF");
         if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
+            msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
 
             /* Set the Transport */
             /*********************/
@@ -222,6 +224,7 @@ public class AxisServlet extends HttpServlet {
                     res.setContentType("text/html");
                     res.getWriter().println("<h1>" + req.getRequestURI() +
                             "</h1>");
+                    res.getWriter().println(configPath);
                     res.getWriter().println(
                             "<p>Hi there, this is an Axis service!</p>");
                     res.getWriter().println(
@@ -332,6 +335,8 @@ public class AxisServlet extends HttpServlet {
             String realpath = context.getRealPath(req.getServletPath());
             if (realpath != null)
                 msgContext.setProperty(Constants.MC_REALPATH, realpath);
+            String configPath = context.getRealPath("/WEB-INF");
+            msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
 
             /* Invoke the Axis engine... */
             /*****************************/
