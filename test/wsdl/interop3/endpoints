@@ -13,9 +13,14 @@ DocLit=http://www.whitemesa.net/interop/r3/doclit
 DocLitParam=http://www.whitemesa.net/interop/r3/doclitparam
 RpcEnc=http://www.whitemesa.net/interop/r3/rpcEnc
 
-#
+# No client for this one yet
 EmptySA=http://www.whitemesa.net/interop/r3/emptySA
 
-#Group E
-TestList=
+# Group E
+
+#
+# NOTE: this test takes the WSDL URL
+TestList=http://mssoapinterop.org/stkv3/wsdl/interopTestList.wsdl
+
+# we don't have this one yet
 TestHeaders=http://www.whitemesa.net/interop/r3/testheaders
