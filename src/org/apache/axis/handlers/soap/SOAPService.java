@@ -55,6 +55,7 @@
 package org.apache.axis.handlers.soap;
 
 import org.apache.axis.*;
+import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
@@ -70,10 +71,29 @@ public class SOAPService extends SimpleTargetedChain
 {
     public static final String OPTION_PIVOT = "pivot";
     
+    /** Service-specific type mappings
+     * 
+     * !!! This is just a test for now, these do not get serialized (and thus
+     * restored) with the registered services.  This should come out of our
+     * XML storage eventually.
+     * 
+     */
+    private transient TypeMappingRegistry typeMap = new TypeMappingRegistry();
+    
     /** Standard, no-arg constructor.
      */
     public SOAPService()
     {
+    }
+    
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        return typeMap;
+    }
+    
+    public void setTypeMappingRegistry(TypeMappingRegistry map)
+    {
+        typeMap = map;
     }
     
     /** Convenience constructor for wrapping SOAP semantics around
@@ -90,7 +110,7 @@ public class SOAPService extends SimpleTargetedChain
     {
         Debug.Print( 1, "Enter: SOAPService::invoke" );
         
-        msgContext.setServiceHandler( this );
+        //msgContext.setServiceHandler( this );
         
         Handler h = getInputChain() ;
         if ( h != null ) {

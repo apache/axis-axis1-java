@@ -147,6 +147,7 @@ public class MessageElement extends DeserializerBase
     public String getID() { return id; }
     
     public String getName() { return( name ); }
+    public void setName(String name) { this.name = name; }
     
     public String getPrefix() { return( prefix ); }
     public void setPrefix(String prefix) { this.prefix = prefix; }

@@ -87,6 +87,12 @@ public class SOAPHeader extends MessageElement {
 
     public SOAPHeader() {
     }
+    
+    public SOAPHeader(String namespace, String localPart)
+    {
+        setNamespaceURI(namespace);
+        setName(localPart);
+    }
 
     public SOAPHeader(String namespace, String localPart,
                       Attributes attributes, DeserializationContext context) {

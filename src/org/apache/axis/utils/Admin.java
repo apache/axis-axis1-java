@@ -79,19 +79,14 @@ public class Admin {
 
   private void init() {
     if ( hr == null ) {
-      if ( onServer )
-        hr = new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
-      else
-        hr = new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
+      // hr = new SimpleRegistry("handlers.reg");
+      hr = new DefaultHandlerRegistry("handlers-supp.reg");
       hr.setOnServer( onServer );
       hr.init();
     }
     if ( sr == null ) {
       // sr = new SimpleRegistry("services.reg");
-      if ( onServer )
-        sr = new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
-      else
-        sr = new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
+      sr = new DefaultServiceRegistry("services-supp.reg");
       hr.setOnServer( onServer );
       sr.init();
     }
@@ -109,6 +104,17 @@ public class Admin {
 
       if ( name != null && value != null )
         handler.addOption( name, value );
+    }
+  }
+  
+  private void registerTypeMappings(Element root, SOAPService service)
+    throws Exception
+  {
+    NodeList list = root.getElementsByTagName("bean");
+    Debug.Print(1, "Registering " + list.getLength() + " service-specific types.");
+    for (int i = 0; list != null && i < list.getLength(); i++) {
+      Element el = (Element)list.item(i);
+      registerTypeMapping(el, service.getTypeMappingRegistry());
     }
   }
 
@@ -349,7 +355,7 @@ public class Admin {
 
           if ( service == null ) service = new SOAPService();
           else              service.clear();
-  
+          
           if ( input != null && !"".equals(input) ) {
             st = new StringTokenizer( input, " \t\n\r\f," );
             c  = null ;
@@ -388,6 +394,8 @@ public class Admin {
             }
           }
           getOptions( elem, service );
+          registerTypeMappings(elem, service);
+  
           hr.add( name, service ); // ???
           sr.add( name, service );
         }
@@ -396,47 +404,8 @@ public class Admin {
         // for a bean at the same time.
         else if ( type.equals( "bean" ) ) {
           Debug.Print( 2, "Deploying bean: " + name );
-
-          // Resolve class name
-
-          Class cls;
-          try {
-            cls = Class.forName(name);
-          } catch (Exception e) {
-            throw new AxisFault( "Admin.error", e.toString(), null, null);
-          }
-
-          // Resolve qname based on prefix and localpart
-
-          String qname = elem.getAttribute( "qname" );
-          if (qname == null)
-            throw new AxisFault( "Admin.error", 
-                                 "Missing qname in bean " + name, null, null);
-
-          int pos = qname.indexOf(':'); 
-          if (pos < 0)
-            throw new AxisFault( "Admin.error", 
-                                 "Missing namespace in qname " + qname, 
-                                 null, null);
-
-          String prefix = qname.substring(0, pos);
-          String localPart = qname.substring(pos+1);
-          String namespace = XMLUtils.getNamespace(prefix, elem); 
-          if (namespace == null)
-            throw new AxisFault( "Admin.error", 
-                                 "Unknown namespace in qname " + qname, 
-                                 null, null);
-
-          QName qn = new QName(namespace, localPart);
-
-          // register both serializers and deserializers for this bean
-
-          TypeMappingRegistry map = tmr.getParent();
-          map.addSerializer(cls, qn, new BeanSerializer(cls));
-          map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
-          }
-
-        else 
+          registerTypeMapping(elem, tmr.getParent());
+        } else 
           throw new AxisFault( "Admin.error", 
                                "Unknown type to " + action + ": " + type,
                                null, null );
@@ -453,6 +422,53 @@ public class Admin {
     return( doc );
   }
 
+  private void registerTypeMapping(Element elem, TypeMappingRegistry map)
+    throws Exception
+  {
+    String name = elem.getAttribute("name");
+    if ((name == null) || name.equals(""))
+      throw new AxisFault("Server.Admin.error",
+                          "No name attribute in type mapping",
+                          null, null);
+    
+    // Resolve class name
+
+    Class cls;
+    try {
+      cls = Class.forName(name);
+    } catch (Exception e) {
+      throw new AxisFault( "Admin.error", e.toString(), null, null);
+    }
+
+    // Resolve qname based on prefix and localpart
+
+    String qname = elem.getAttribute( "qname" );
+    if (qname == null)
+      throw new AxisFault( "Admin.error", 
+        "Missing qname in bean " + name, null, null);
+
+    int pos = qname.indexOf(':'); 
+    if (pos < 0)
+      throw new AxisFault( "Admin.error", 
+        "Missing namespace in qname " + qname, 
+        null, null);
+
+    String prefix = qname.substring(0, pos);
+    String localPart = qname.substring(pos+1);
+    String namespace = XMLUtils.getNamespace(prefix, elem); 
+    if (namespace == null)
+      throw new AxisFault( "Admin.error", 
+        "Unknown namespace in qname " + qname, 
+        null, null);
+
+    QName qn = new QName(namespace, localPart);
+
+    // register both serializers and deserializers for this bean
+
+    map.addSerializer(cls, qn, new BeanSerializer(cls));
+    map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
+  }
+  
   public static void main(String args[]) {
     int  i = 0 ;
 
