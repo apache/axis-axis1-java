@@ -50,7 +50,7 @@ them.
 <property name="build.file" value="build.xml" />
 <!-- directories for output -->
 
-<property name="build.dir" location="build"/>
+<property name="build.dir" location="${axis.home}/build"/>
 <property name="build.dest" location="${build.dir}/classes"/>
 <property name="build.lib" location="${build.dir}/lib"/>
 <property name="build.samples" location="${build.dir}/classes/samples"/>
@@ -58,9 +58,15 @@ them.
 <property name="build.webapp" location="${build.dir}/webapps/axis"/>
 
 <property name="webapp" location="${axis.home}/webapps/axis" />
-<property name="dist.dir" value="${axis.home}/axis-1_0" />
+<property name="dist.dir" location="${axis.home}/axis-1_0" />
 
-<property name="test.setup.dir" value="${test.dir}/setup" />
+<property name="test.setup.dir" location="${test.dir}/setup" />
+<property name="test.build.dir" location="${build.dir}/test/" />
+<property name="test.reports.dir" location="${test.build.dir}/reports" />
+<!-- axis convention is to build into the same hierarchy as the main source -->
+<property name="test.classes.dir" location="${build.dest}"/>
+<property name="test.data.dir" location="${test.build.dir}/data"/>
+
 <property name="test.functional.remote" value="no" />
 <property name="test.functional.local" value="yes" />
 <property name="test.functional.both" value="no" />
