@@ -264,13 +264,13 @@
  -->    
     <echo level="verbose" message="-- Applying Network Settings ---"/>
     <!-- we cannot set proxyuser and proxypassword as these are only ant1.6 -->
-    <setproxy 
+<!--     <setproxy 
       proxyhost="${http.proxyHost}"
       proxyport="${http.proxyPort}"
       socksProxyHost="${socks.proxyHost}"
       socksProxyPort="${socks.proxyPort}"
       />              
-
+ -->
      <!-- these are conditions used for patternset
           configuration of which sets of tests to run.
           Ignore them until the functional tests use patternsets -->
