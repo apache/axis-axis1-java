@@ -98,6 +98,8 @@ Copyright:
       <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
       <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
+      <!-- Pass the port for SimpleAxisServer -->
+      <jvmarg value="-Dtest.functional.SimpleAxisPort=${test.functional.SimpleAxisPort}"/>
       <classpath refid="test-classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">

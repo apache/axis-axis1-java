@@ -20,7 +20,7 @@ public class TestElem {
     public static String doit(String[] args,String xml) throws Exception {
         ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
 
-        String  sURL = "http://localhost:8080/axis/services/ElementService" ;
+        String  sURL = "http://" + args[0] + ":" + args[1] + "/axis/services/ElementService" ;
         QName   sqn  = new QName(sURL, "ElementServiceService" );
         QName   pqn  = new QName(sURL, "ElementService" );
 
