@@ -83,7 +83,7 @@ public class TestTCPTransportSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "-ltcp://localhost:8088", "samples/stock/deploy.xml" };
+        String[] args = { "-ltcp://localhost:8088", "samples/transport/deploy.xml" };
         AdminClient.main(args);
     }
     
