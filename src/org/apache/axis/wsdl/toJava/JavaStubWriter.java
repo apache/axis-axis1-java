@@ -110,7 +110,7 @@ public class JavaStubWriter extends JavaClassWriter {
      * @param bEntry      
      * @param symbolTable 
      */
-    protected JavaStubWriter(Emitter emitter, BindingEntry bEntry,
+    public JavaStubWriter(Emitter emitter, BindingEntry bEntry,
                              SymbolTable symbolTable) {
 
         super(emitter, bEntry.getName() + "Stub", "stub");
@@ -1099,6 +1099,7 @@ public class JavaStubWriter extends JavaClassWriter {
         if (oneway) {
             pw.print("        _call.invokeOneWay(");
         } else {
+            pw.print(" try {");
             pw.print("        java.lang.Object _resp = _call.invoke(");
         }
 
@@ -1227,6 +1228,35 @@ public class JavaStubWriter extends JavaClassWriter {
         } else {
             pw.println("        extractAttachments(_call);");
         }
+        // End catch
+        // Get faults
+        Map faults = parms.faults;
+        // Get fauls of signature
+        String[] throwsSig = parms.signature.split("throws");
+        List exceptionsThrowsList = new ArrayList();
+        if (throwsSig != null && throwsSig.length > 1) {
+            String[] thrExcep = throwsSig[1].split(",");
+            for (int i = 0; i < thrExcep.length; i++) {
+                exceptionsThrowsList.add(thrExcep[i]);
+            }
+        }
+        pw
+                .println("  } catch (org.apache.axis.AxisFault axisFaultException) {");
+        if (faults != null && faults.size() > 0) {
+            pw.println("    if (axisFaultException.detail != null) {");
+            for (Iterator faultIt = exceptionsThrowsList.iterator(); faultIt
+                    .hasNext();) {
+                String exceptionFullName = (String) faultIt.next();
+                pw.println("        if (axisFaultException.detail instanceof "
+                        + exceptionFullName + ") {");
+                pw.println("              throw (" + exceptionFullName
+                        + ") axisFaultException.detail;");
+                pw.println("         }");
+            }
+            pw.println("   }");
+        }
+        pw.println("  throw axisFaultException;");
+        pw.println("}");
     }    // writeResponseHandling
 
     /**
