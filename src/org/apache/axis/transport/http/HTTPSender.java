@@ -175,6 +175,9 @@ public class HTTPSender extends BasicHandler {
             options.put(DefaultSocketFactory.CONNECT_TIMEOUT,Integer.toString(timeout));
         }
         SocketFactory factory = SocketFactoryFactory.getFactory(protocol, options);
+        if (factory == null) {
+            throw new IOException(Messages.getMessage("noSocketFactory", protocol));
+        }
         Socket sock = factory.create(host, port, otherHeaders, useFullURL);
         if(timeout > 0) {
             sock.setSoTimeout(timeout);
