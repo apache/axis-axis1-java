@@ -112,6 +112,10 @@ public class AxisFault extends Exception {
     faultCode = code ;
   }
 
+  public void setFaultCode(String code) {
+    faultCode = new QFault(Constants.AXIS_NS, code);
+  }
+
   public QFault getFaultCode() { 
     return( faultCode );
   }
