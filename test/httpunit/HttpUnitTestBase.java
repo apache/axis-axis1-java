@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,14 +52,15 @@
  * <http://www.apache.org/>.
  */
 
-package test;
+package test.httpunit;
 
-import com.meterware.httpunit.*;
 import junit.framework.TestCase;
-import org.xml.sax.SAXException;
+import com.meterware.httpunit.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
+
+import org.xml.sax.SAXException;
 
 /**
  * class to make it that much easier to validate httpunit requests
@@ -75,13 +76,14 @@ public class HttpUnitTestBase extends TestCase {
         super(s);
     }
 
+    private static String URL_PROPERTY="test.functional.webapp.url";
     /**
      *  The JUnit setup method
      *
      */
     public void setUp() throws Exception {
-        url=System.getProperty("server.url");
-        assertNotNull("server.url not set",url);
+        url=System.getProperty(URL_PROPERTY);
+        assertNotNull(URL_PROPERTY+" not set",url);
         HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
         HttpUnitOptions.setMatchesIgnoreCase(true);
         HttpUnitOptions.setParserWarningsEnabled(true);
@@ -100,7 +102,7 @@ public class HttpUnitTestBase extends TestCase {
         boolean found=body.indexOf(searchfor)>=0;
         if(!found) {
             String message;
-            message="failed to find "+searchfor+" at "+url;
+            message="failed to find ["+searchfor+"] at "+url;
             fail(message);
         }
     }
@@ -173,23 +175,33 @@ public class HttpUnitTestBase extends TestCase {
 
     /**
      * here we expect an errorCode other than 200, and look for it
+     * checking for text is omitted as it doesnt work. It would never work on
+     * java1.3, but one may have expected java1.4+ to have access to the
+     * error stream in responses. clearly not
      * @param request
      * @param errorCode
+     * @param errorText optional text string to search for
      * @throws MalformedURLException
      * @throws IOException
      * @throws SAXException
      */
     protected void expectErrorCode(WebRequest request,
-                                   int errorCode)
+                                   int errorCode, String errorText)
                         throws MalformedURLException, IOException, SAXException {
         WebConversation session = new WebConversation();
-        String errorText="Expected error "+errorCode+" from "+request.getURL();
+        String failureText="Expected error "+errorCode+" from "+request.getURL();
         try {
             session.getResponse(request);
             fail(errorText+" -got success instead");
         } catch (HttpException e) {
-            assertEquals(errorText,
-                        errorCode,e.getResponseCode());
+            assertEquals(failureText,errorCode,e.getResponseCode());
+            /* checking for text omitted as it doesnt work.
+            if(errorText!=null) {
+                assertTrue(
+                        "Failed to find "+errorText+" in "+ e.getResponseMessage(),
+                        e.getMessage().indexOf(errorText)>=0);
+            }
+            */
         }
     }
 }

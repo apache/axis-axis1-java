@@ -53,11 +53,11 @@ Copyright:
   <property file="build.properties"/>
   
   
-        &properties;
-        &paths;
-        &targets;
-        <!-- &taskdefs; -->
-        <!-- &taskdefs_post_compile; -->
+    &properties;
+    &paths;
+    &taskdefs;
+    &taskdefs_post_compile;
+    &targets;
   
       
   <!-- ========================================================== -->
@@ -65,20 +65,17 @@ Copyright:
   <!-- ========================================================== -->
 
 
-  <property name="axis.url" value="http://localhost:8080/axis"/>
-  
-  
   <target name="copy"/>
   
   <target name="deploy"/>
   
-  <target name="run" depends="test"/>
+  <target name="run" />
   
   <target name="undeploy"/>
   
   
   <path id="test.compile.classpath">
-    <fileset dir="${component.home}/lib" includes="**/*.jar" />
+    <path refid="classpath"/>
   </path>
     
   <path id="test.classpath">
@@ -102,21 +99,31 @@ Copyright:
   
   <!-- init configures things -->
   <target name="init" depends="setenv">
-    <echo> Axis home=${axis.home}</echo>
+    <condition property="execute.httpunit">
+      <and>
+        <isset property="httpunit.present"/>
+        <istrue value="${httpunit.enabled}"/>
+      </and>
+    </condition>
+    <echo>
+    httpunit.present=${httpunit.present}
+    httpunit.enabled = ${httpunit.enabled}
+    execute.httpunit=${execute.httpunit}
+    </echo>
     <mkdir dir="${test.classes.dir}" />
     <mkdir dir="${test.data.dir}" />
-    <mkdir dir="${test.reports.dir}" />
   </target>
   
     <!-- compile the java sources using the compilation classpath -->
-  <target name="compile" depends="init">
-    <property name="build.debuglevel" value="lines,vars,source"/> 
+  <target name="compile" depends="init" if="execute.httpunit">
     <javac destdir="${test.classes.dir}"
            debug="${build.debug}"
+           debuglevel="${debuglevel}"
            includeAntRuntime="false"
            fork="${javac.fork}"
-           srcdir="${component.home}/src">
+           srcdir="${axis.home}">
       <classpath refid="test.compile.classpath"/>
+      <include name="${componentName}/*.java"/>
     </javac>
   </target>
   
@@ -124,6 +131,7 @@ Copyright:
 
   <target name="run-test"
       depends="compile" 
+      if="execute.httpunit"
       description="test axis on a server" >
     <junit printsummary="false"
            errorProperty="test.failed"
@@ -132,30 +140,22 @@ Copyright:
            fork="true">
       <classpath 
         refid="test.classpath"/>
-      <sysproperty key="server.url" 
-        value="${axis.url}"/>
+      <sysproperty key="test.functional.webapp.url" 
+        value="${test.functional.webapp.url}"/>
       <formatter type="xml"/>
       <formatter type="brief" usefile="false"/>
       <test name="${testcase}" if="testcase"/>
-      <batchtest todir="${test.data.dir}" unless="testcase">
-        <fileset dir="${component.home}/src" includes="**/*Test.java"/>
+      <batchtest todir="${test.reports.dir}" unless="testcase">
+        <fileset dir="${build.dir}/classes"
+          includes="test/httpunit/*Tests.class"/>
       </batchtest>
     </junit>
   </target>
     
   <!-- generate any test reports and fail, if needed -->
-  <target name="test" depends="run-test" if="test.failed">    
-    <junitreport todir="${test.data.dir}">
-      <fileset dir="${test.data.dir}">
-        <include name="TEST-*.xml"/>
-      </fileset>
-      <report format="frames" todir="${test.reports.dir}"/>
-    </junitreport>
-    
-    <!-- bail out -->
-    <fail message="Functional tests failed - see ${test.reports.dir}"  />
-  </target>
-
+  <target name="test" depends="run-test" >
+    <fail if="test.failed">Tests Failed</fail>
+  </target>    
     
 </project>
 

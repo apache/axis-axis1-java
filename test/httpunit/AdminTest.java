@@ -53,7 +53,7 @@
 */
 
 
-package test;
+package test.httpunit;
 
 import com.meterware.httpunit.*;
 

@@ -52,87 +52,49 @@
  * <http://www.apache.org/>.
  */
 
+package test.httpunit;
 
-package test;
+import com.meterware.httpunit.*;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
 
 /**
- * test for JWS pages being processed
- * @author Steve Loughran
- * @created Jul 10, 2002 12:09:20 AM
+ *  test the basic system is there
+ *
+ *@author     steve loughran
  */
 
-public class JwsTest extends HttpUnitTestBase {
+public class JspTest extends HttpUnitTestBase {
 
-    public JwsTest(String name) {
+
+    public JspTest(String name) {
         super(name);
     }
 
-    public void testStockQuote() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url+"/StockQuoteService.jws?wsdl");
-        assertStringInBody(request,"<wsdl:definitions");
-    }
-
-    public void testEchoHeadersWsdl() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url + "/EchoHeaders.jws?wsdl");
-        assertStringInBody(request, "<wsdl:definitions");
-    }
-
-
-    public void testEchoHeaders() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url + "/EchoHeaders.jws");
-        assertStringInBody(request, "Some Services");
+    /**
+     * base page
+     */
+    public void testIndex() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url+"/");
+        assertStringInBody(request,"Apache-Axis");
     }
 
     /**
-     * see that we get a hello back
-     * @throws Exception
+     * happiness test
      */
-    public void testEchoHeadersWhoami() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method", "whoami");
-        assertStringInBody(request, "Hello");
+    public void testAxisHappy() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url+"/happyaxis.jsp");
+        assertStringInBody(request,"The core axis libraries are present");
     }
 
-    /**
-     * do we get a list of headers back?
-     * @throws Exception
-     */
-    public void testEchoHeadersList() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setHeaderField("x-header","echo-header-test");
-        request.setParameter("method", "list");
-        assertStringInBody(request, "echo-header-test");
-    }
 
     /**
-     * send an echo with a space down
-     * @throws Exception
+     * fingerprint
      */
-    public void testEchoHeadersEcho() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method","echo");
-        request.setParameter("param", "foo bar");
-        assertStringInBody(request, "foo bar");
+    public void testFingerprint() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url+"/fingerprint.jsp");
+        assertStringInBody(request,"System Fingerprint");
     }
-
-    /**
-     * send a complex unicode round the loop and see what happens
-     * @throws Exception
-     */
-    /* this is failing but it may be in the test code
-    public void testEchoHeadersEchoUnicode() throws Exception {
-        WebRequest request = new GetMethodWebRequest(url
-                + "/EchoHeaders.jws");
-        request.setParameter("method", "echo");
-        request.setParameter("param", "\u221a");
-        assertStringInBody(request, "\u221a");
-    }
-    */
+    
 
 }
+
