@@ -195,32 +195,21 @@ public class XMLUtils {
 
     public static Document newDocument(InputSource inp) {
         try {
-            return( dbf.newDocumentBuilder().parse( inp ) );
+            Document doc = dbf.newDocumentBuilder().parse( inp );
+            return( doc );
         }
         catch( Exception e ) {
             e.printStackTrace();
-            return( null );
         }
+        return( null );
     }
 
     public static Document newDocument(InputStream inp) {
-        try {
-            return( dbf.newDocumentBuilder().parse( inp ) );
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            return( null );
-        }
+        return XMLUtils.newDocument(new InputSource(inp));
     }
 
     public static Document newDocument(String uri) {
-        try {
-            return( dbf.newDocumentBuilder().parse( uri ) );
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            return( null );
-        }
+        return XMLUtils.newDocument(new InputSource(uri));
     }
 
     private static String privateElementToString(Element element,
