@@ -80,8 +80,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.server.ServiceLifecycle;
 import org.xml.sax.SAXException;
 
 /**
