@@ -66,7 +66,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -86,7 +85,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Hashtable;
 import java.util.Stack;
 
 public class XMLUtils {
@@ -208,7 +206,7 @@ public class XMLUtils {
 
 
     /** Return a SAX parser for reuse.
-     * @param SAXParser A SAX parser that is available for reuse
+     * @param parser A SAX parser that is available for reuse
      */
     public static void releaseSAXParser(SAXParser parser) {
         if(!tryReset) return;
@@ -409,72 +407,14 @@ public class XMLUtils {
         return prefix + ":" + qname.getLocalPart();
     }
 
-    /**
-     * Gather all existing prefixes in use in this document
-     *
-     */
-    private static Hashtable getPrefixes(Document d)
-    {
-        Hashtable result = new Hashtable();
-
-        NodeList list = d.getElementsByTagName("*");
-
-        for (int i=0; i<list.getLength(); i++)
-        {
-            Element e = (Element)list.item(i);
-            NamedNodeMap attrs = e.getAttributes();
-            for (int n = 0; n < attrs.getLength(); n++)
-            {
-                Attr a = (Attr)attrs.item(n);
-                String name;
-                if ((name = a.getName()).startsWith("xmlns:"))
-                    {
-                    // do *not* store nsUri for lookup, as a prefix might be
-                    //   one-many in the document as a whole
-                    result.put(name.substring(6), "");
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Take note of all existing prefixes in use in this document, and
-     *  create a new one
-     *
-     */
-    public static String getNewPrefix(Document d, String nsUri)
-    {
-        Hashtable extantPrefixes = getPrefixes(d);
-
-        // Now try to pick one that isn't extant
-        String winner = null;
-        for (int j=0; winner == null; j++)
-        {
-                String candidate = "ns" + j;
-                if (! extantPrefixes.containsKey(candidate))
-                {
-                        winner = candidate;
-                }
-        }
-
-        // Install the winner at the top of the document
-        d.getDocumentElement().setAttributeNS(
-                        Constants.NS_URI_XMLNS,
-                        "xmlns:" + winner,
-                        nsUri);
-
-        return winner;
-    }
-
   /**
    * Concat all the text and cdata node children of this elem and return
    * the resulting text.
+   * (by Matt Duftler)
    *
    * @param parentEl the element whose cdata/text node values are to
    *                 be combined.
    * @return the concatanated string.
-   * @author Matt Duftler
    */
   static public String getChildCharacterData (Element parentEl) {
     if (parentEl == null) {
