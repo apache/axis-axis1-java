@@ -98,9 +98,9 @@ public class MethodRep extends BaseRep {
         if (pmodes != null) {
             modes = new short[pmodes.length];
             for (int i=0; i < modes.length; i++) {
-                if (pmodes[i] != null && pmodes[i].equals(ParameterMode.PARAM_MODE_IN)) {
+                if (pmodes[i] != null && pmodes[i].equals(ParameterMode.IN)) {
                     modes[i] = ParamRep.IN;
-                } else if (pmodes[i] != null && pmodes[i].equals(ParameterMode.PARAM_MODE_INOUT)) { 
+                } else if (pmodes[i] != null && pmodes[i].equals(ParameterMode.INOUT)) { 
                     modes[i] = ParamRep.INOUT;
                 } else {
                     modes[i] = ParamRep.OUT;

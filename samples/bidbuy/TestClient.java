@@ -125,7 +125,7 @@ public class TestClient {
         try {
             // Default return type based on what we expect
             call.setOperationName( new QName("http://www.soapinterop.org/Bid", "Buy" ));
-            call.addParameter( "PO", poqn, ParameterMode.PARAM_MODE_IN );
+            call.addParameter( "PO", poqn, ParameterMode.IN );
             call.setReturnType( XMLType.XSD_STRING );
 
             LineItem[] li = new LineItem[2];

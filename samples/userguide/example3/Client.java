@@ -85,7 +85,7 @@ public class Client
 
             call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
             call.setOperationName( new QName("MyService", "serviceMethod") );
-            call.addParameter( "arg1", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+            call.addParameter( "arg1", XMLType.XSD_STRING, ParameterMode.IN);
             call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING );
 
             String ret = (String) call.invoke( new Object[] { textToSend } );

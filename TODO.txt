@@ -20,7 +20,8 @@ JAX-RPC COMPATIBILITY
 ! <> Implement Service.getCalls() method. (maybe)
 ! <> Implement generated Services' getCalls() method.
 ! <> Implement Service.getHandlerRegistry() method.
-! <> Remove standard property constants from org.apache.axis.client.Call after a reasonable period of time has gone by for folks to see the deprecation tags on them.
+! <> Remove standard property constants from org.apache.axis.client.Call after beta2.
+! <> Remove ParameterMode.PARAM_MODE_* constants after beta2.
 
 SOAP 1.2 SUPPORT
 ----------------

@@ -49,7 +49,7 @@ public class FileTest {
         Call     call    = (Call) service.createCall();
 
         call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
-        call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+        call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
         call.setReturnType( XMLType.XSD_FLOAT );
         call.setTransport( new FileTransport() );
         call.setUsername(opts.getUser() );

@@ -591,13 +591,13 @@ public class ClassRep extends BaseRep {
      */ 
     protected ParameterMode[] getParameterModes(Method method) {
         ParameterMode[] modes = new ParameterMode[method.getParameterTypes().length+1];
-        modes[0] = ParameterMode.PARAM_MODE_OUT;
+        modes[0] = ParameterMode.OUT;
         for (int i=0; i < method.getParameterTypes().length; i++) {
             Class type = method.getParameterTypes()[i];
             if (JavaUtils.getHolderValueType(type) != null) {
-                modes[i+1] = ParameterMode.PARAM_MODE_INOUT;
+                modes[i+1] = ParameterMode.INOUT;
             } else {
-                modes[i+1] = ParameterMode.PARAM_MODE_IN;
+                modes[i+1] = ParameterMode.IN;
             }
         }
         return modes;

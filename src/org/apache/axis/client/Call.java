@@ -694,8 +694,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param paramName      Name that will be used for the parameter in the XML
      * @param xmlType      XMLType of the parameter
-     * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
-     *                       or PARAM_MODE_INOUT
+     * @param parameterMode  one of IN, OUT or INOUT
      */
     public void addParameter(QName paramName, QName xmlType,
             ParameterMode parameterMode) {
@@ -712,8 +711,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param paramName      Name that will be used for the parameter in the XML
      * @param xmlType      XMLType of the parameter
      * @param javaType - The Java class of the parameter
-     * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
-     *                       or PARAM_MODE_INOUT
+     * @param parameterMode  one of IN, OUT or INOUT
      */
     public void addParameter(QName paramName, QName xmlType,
             Class javaType, ParameterMode parameterMode) {
@@ -727,9 +725,9 @@ public class Call implements javax.xml.rpc.Call {
             param.setTypeQName( xmlType );
             param.setJavaType( javaType );
             byte mode = ParameterDesc.IN;
-            if (parameterMode == ParameterMode.PARAM_MODE_INOUT) {
+            if (parameterMode == ParameterMode.INOUT) {
                 mode = ParameterDesc.INOUT;
-            } else if (parameterMode == ParameterMode.PARAM_MODE_OUT) {
+            } else if (parameterMode == ParameterMode.OUT) {
                 mode = ParameterDesc.OUT;
             }
             param.setMode(mode);
@@ -747,8 +745,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param paramName      Name that will be used for the parameter in the XML
      * @param xmlType      XMLType of the parameter
-     * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
-     *                       or PARAM_MODE_INOUT
+     * @param parameterMode  one of IN, OUT or INOUT
      */
     public void addParameter(String paramName, QName xmlType,
             ParameterMode parameterMode) {
@@ -765,8 +762,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param paramName - Name of the parameter
      * @param xmlType - XML datatype of the parameter
      * @param javaType - The Java class of the parameter
-     * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
-     *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
      *                              false, then addParameter will throw
      *                              JAXRPCException.
@@ -1056,7 +1052,7 @@ public class Call implements javax.xml.rpc.Call {
 
                 QName qname = new QName(type.getNamespaceURI(),
                         type.getLocalPart());
-                ParameterMode mode = ParameterMode.PARAM_MODE_IN;
+                ParameterMode mode = ParameterMode.IN;
                 this.addParameter( name, qname, mode );
             }
         }

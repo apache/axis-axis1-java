@@ -161,7 +161,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoString" : "";
@@ -186,7 +186,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStringArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputStringArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStringArray" : "";
@@ -212,7 +212,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoInteger" : "";
@@ -236,7 +236,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputIntegerArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfint"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputIntegerArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfint"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfint"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoIntegerArray" : "";
@@ -261,7 +261,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoFloat" : "";
@@ -285,7 +285,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputFloatArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOffloat"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputFloatArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOffloat"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOffloat"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoFloatArray" : "";
@@ -310,7 +310,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStruct" : "";
@@ -334,7 +334,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStructArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputStructArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStructArray" : "";
@@ -379,7 +379,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputBase64", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "base64Binary"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputBase64", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "base64Binary"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoBase64" : "";
@@ -404,7 +404,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputHexBinary", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "hexBinary"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputHexBinary", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "hexBinary"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "hexBinary"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoHexBinary" : "";
@@ -429,7 +429,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputDate", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputDate", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoDate" : "";
@@ -453,7 +453,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputDecimal", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "decimal"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputDecimal", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "decimal"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "decimal"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoDecimal" : "";
@@ -477,7 +477,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputBoolean", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputBoolean", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoBoolean" : "";
@@ -501,7 +501,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputMap", new javax.xml.rpc.namespace.QName("http://xml.apache.org/xml-soap", "Map"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputMap", new javax.xml.rpc.namespace.QName("http://xml.apache.org/xml-soap", "Map"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://xml.apache.org/xml-soap", "Map"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoMap" : "";
@@ -525,7 +525,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputMapArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/", "ArrayOf_tns2_Map"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputMapArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/", "ArrayOf_tns2_Map"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/", "ArrayOf_tns2_Map"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoMapArray" : "";
@@ -550,10 +550,10 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
-        call.addParameter("outputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
-        call.addParameter("outputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
-        call.addParameter("outputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
+        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"), javax.xml.rpc.ParameterMode.IN);
+        call.addParameter("outputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.OUT);
+        call.addParameter("outputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.OUT);
+        call.addParameter("outputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.OUT);
         call.setReturnType(XMLType.AXIS_VOID);
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStructAsSimpleTypes" : "";
@@ -585,9 +585,9 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
-        call.addParameter("inputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
-        call.addParameter("inputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.IN);
+        call.addParameter("inputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.IN);
+        call.addParameter("inputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoSimpleTypesAsStruct" : "";
@@ -612,7 +612,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("input2DStringArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("input2DStringArray", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "ArrayOfstring"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echo2DStringArray" : "";
@@ -638,7 +638,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStructStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStructStruct"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStructStruct"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoNestedStruct" : "";
@@ -663,7 +663,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPArrayStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+        call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPArrayStruct"), javax.xml.rpc.ParameterMode.IN);
         call.setReturnType(new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPArrayStruct"));
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoNestedArray" : "";

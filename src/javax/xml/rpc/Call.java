@@ -121,8 +121,7 @@ public interface Call {
      *
      * @param paramName - Name of the parameter
      * @param xmlType - XML datatype of the parameter
-     * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
-     *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
      *                              false, then addParameter will throw
      *                              JAXRPCException.
@@ -140,8 +139,7 @@ public interface Call {
      * @param paramName - Name of the parameter
      * @param xmlType - XML datatype of the parameter
      * @param javaType - The Java class of the parameter
-     * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
-     *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
      *                              false, then addParameter will throw
      *                              JAXRPCException.

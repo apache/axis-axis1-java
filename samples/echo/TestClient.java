@@ -56,21 +56,10 @@
 package samples.echo ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Hex;
-import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Date;

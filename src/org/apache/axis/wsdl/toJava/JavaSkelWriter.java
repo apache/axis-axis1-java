@@ -202,18 +202,18 @@ public class JavaSkelWriter extends JavaWriter {
                 pw.println("                 },"); 
                 pw.println("                 new javax.xml.rpc.ParameterMode[] {");
                 if (parameters.returnType != null) {
-                    pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");
+                    pw.println("                   javax.xml.rpc.ParameterMode.OUT,");
                 } else {
                     pw.println("                   null,");
                 }
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
                     if (p.getMode() == Parameter.IN)
-                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_IN,");
+                        pw.println("                   javax.xml.rpc.ParameterMode.IN,");
                     else if (p.getMode() == Parameter.OUT) 
-                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT,");
+                        pw.println("                   javax.xml.rpc.ParameterMode.INOUT,");
                     else
-                        pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");
+                        pw.println("                   javax.xml.rpc.ParameterMode.OUT,");
 
                 }
                 pw.println("                 },");

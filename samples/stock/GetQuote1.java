@@ -156,7 +156,7 @@ public class GetQuote1 {
       call.setSOAPActionURI( "getQuote" );
       call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
       call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
-      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
       call.setReturnType( XMLType.XSD_FLOAT );
 
       /* Define some service specific properties */

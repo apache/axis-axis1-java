@@ -77,7 +77,7 @@ public class TestOutParams extends TestCase {
         client.addParameter(
                 new QName("", "string"),
                 XMLType.XSD_STRING,
-                javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
+                javax.xml.rpc.ParameterMode.IN);
         client.setReturnType(XMLType.XSD_INT);
         // Invoke the Axis server
         Object ret = client.invoke(serviceURN, "method",
