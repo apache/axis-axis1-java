@@ -56,9 +56,10 @@
 package javax.xml.rpc.namespace;
 
 /**
- * QName class represents a qualified name based on "Namespaces in XML" specification. 
- * A QName is represented as: 
- * QName ::= (Prefix ':') ? LocalPart 
+ * QName class represents a qualified name based on "Namespaces in XML"
+ * specification.  A QName is represented as: 
+ *
+ *     QName ::= (Prefix ':') ? LocalPart 
  *
  * Upgraded the implementation so that the namespaceURI and localPart are
  * always non-null.  This simplifies the implementation, increases performance,
@@ -67,9 +68,15 @@ package javax.xml.rpc.namespace;
  * Upgraded the implemenation to make QName a final class, changed the 
  * namespaceURI and localPart to final (and interned) Strings, changed equals()
  * to use == comparison on interned Strings.
+ *
+ * Updated to optimize use of empty string, and remove erroneous
+ * (or at least (possibly?) optimizer-dependent) equivalence checks.
+ *
  * @version 0.1
  */
 public final class QName {
+    /** comment/shared empty string     */
+    private static final String emptyString = "".intern();
 
     /** Field namespaceURI           */
     private final String namespaceURI;
@@ -83,26 +90,22 @@ public final class QName {
      * @param localPart - Local part of the QName
      */
     public QName(String localPart) {
-        this("", localPart);
+        this.namespaceURI = emptyString;
+        this.localPart= (localPart == null) ? emptyString : localPart.intern();
     }
     
     /**
      * Constructor for the QName.
      *
      * @param namespaceURI - Namespace URI for the QName
-     * @param localPart - Local part of the QName
+     * @param localPart - Local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
-        if (namespaceURI == null) {
-            this.namespaceURI = ""; 
-        } else {
-            this.namespaceURI = namespaceURI.intern();
-        }
-        if (localPart == null) {
-            this.localPart = ""; // This should really be an IllegalArgumentException
-        } else {
-            this.localPart = localPart.intern();
-        }
+        this.namespaceURI =
+            (namespaceURI == null) ? emptyString : namespaceURI.intern();
+
+        this.localPart =
+            (localPart == null) ? emptyString : localPart.intern();
     }
 
     /**
@@ -129,12 +132,9 @@ public final class QName {
      * @return  a string representation of the QName
      */
     public String toString() {
-
-        if (namespaceURI.equals("")) {
-            return localPart;
-        } else {
-            return (namespaceURI + ":" + localPart);
-        }
+        return ((namespaceURI == emptyString)
+                ? localPart
+                : namespaceURI + ":" + localPart);
     }
 
     /**
