@@ -109,14 +109,22 @@ public class BeanSerializer implements Serializer, Serializable {
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
-        this.typeDesc = typeDesc;
+        this(javaType, xmlType, typeDesc, null);
+
         if (typeDesc != null) {
             propertyDescriptor = typeDesc.getPropertyDescriptors();
         } else {
             propertyDescriptor = BeanUtils.getPd(javaType, null);
         }
+    }
+
+    // Construct BeanSerializer for the indicated class/qname/propertyDesc
+    public BeanSerializer(Class javaType, QName xmlType, TypeDesc typeDesc,
+                          BeanPropertyDescriptor[] propertyDescriptor) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+        this.typeDesc = typeDesc;
+        this.propertyDescriptor = propertyDescriptor;
     }
 
     /**

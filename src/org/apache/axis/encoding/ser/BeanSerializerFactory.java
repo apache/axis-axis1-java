@@ -62,6 +62,7 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 
+import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -69,13 +70,20 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+
 /**
  * SerializerFactory for Bean
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class BeanSerializerFactory extends BaseSerializerFactory {
+
+    protected TypeDesc typeDesc = null;
+    protected BeanPropertyDescriptor[] propertyDescriptor = null;
+
     public BeanSerializerFactory(Class javaType, QName xmlType) {
         super(BeanSerializer.class, false, xmlType, javaType);  
         // Sometimes an Enumeration class is registered as a Bean.
@@ -88,5 +96,32 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
     public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType)
         throws JAXRPCException {
         return (Serializer) super.getSerializerAs(mechanismType);
+    }
+
+    /**
+     * Optimize construction of a BeanSerializer by caching the
+     * type and property descriptors.
+     */
+    protected Serializer getGeneralPurpose(String mechanismType) {
+        if (javaType == null || xmlType == null) {
+           return super.getGeneralPurpose(mechanismType);
+        }
+
+        if (serClass == EnumSerializer.class) {
+           return super.getGeneralPurpose(mechanismType);
+        }
+
+        if (propertyDescriptor == null && firstCall) {
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
+
+            if (typeDesc != null) {
+                propertyDescriptor = typeDesc.getPropertyDescriptors();
+            } else {
+                propertyDescriptor = BeanUtils.getPd(javaType, null);
+            }
+        }
+
+        return new BeanSerializer(javaType, xmlType, typeDesc, 
+                                  propertyDescriptor);
     }
 }
