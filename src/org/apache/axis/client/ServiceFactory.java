@@ -55,12 +55,10 @@
 
 package org.apache.axis.client;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -68,7 +66,6 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
-import javax.naming.StringRefAddr;
 
 import javax.naming.spi.ObjectFactory;
 
@@ -115,10 +112,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      * end up creating one and do have JNDI access, bind it to the passed
      * name so we find it next time.
      *
-     * @param name the JNDI name we're interested in
-     * @param engineConfig a EngineConfiguration which should be used
-     *                     to configure any engine we end up creating, or
-     *                     null to use the default configuration pattern.
+     * @param environment
      */
     static public Service getService(Map environment)
     {
