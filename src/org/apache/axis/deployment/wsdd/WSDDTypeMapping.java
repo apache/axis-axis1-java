@@ -101,7 +101,7 @@ public class WSDDTypeMapping
         serializer = e.getAttribute("serializer");
         deserializer = e.getAttribute("deserializer");
         encodingStyle = e.getAttribute("encodingStyle");
-        if (encodingStyle == null || encodingStyle.equals("")) {
+        if (encodingStyle == null) {
             encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
         }
 

@@ -140,7 +140,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      */
-    protected void writeDeployTypes() throws IOException {
+    protected void writeDeployTypes(boolean hasLiteral) throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
@@ -148,7 +148,8 @@ public class JavaDeployWriter extends JavaWriter {
             TypeEntry type = (TypeEntry) types.elementAt(i);
             if (type.getBaseType() == null && type.isReferenced()
                 && !type.isOnlyLiteralReferenced()
-                && !(type instanceof CollectionType)) {
+                && !(type instanceof CollectionType)
+                && !(type instanceof DefinedElement)) {
                 pw.println("      <typeMapping");
                 pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
@@ -161,11 +162,18 @@ public class JavaDeployWriter extends JavaWriter {
                      type.getNode(), emitter.getSymbolTable()) != null) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
                     pw.println("        deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
+                } else if (type.isSimpleType()) {
+                    pw.println("        serializer=\"org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory\"");
+                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.SimpleDeserializerFactory\"");
                 } else {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
                     pw.println("        deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
                 }
-                pw.println("        encodingStyle=\""+ Constants.URI_CURRENT_SOAP_ENC+"\"");
+                if (hasLiteral)
+                    pw.println("        encodingStyle=\"\"");
+                else
+                    pw.println("        encodingStyle=\"" + Constants.URI_CURRENT_SOAP_ENC + "\"");
+                
                 pw.println("      />");
             }
         }
@@ -180,13 +188,15 @@ public class JavaDeployWriter extends JavaWriter {
         String serviceName = port.getName();
 
         boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
+        boolean hasLiteral = bEntry.hasLiteral();
 
         String prefix = Constants.NSPREFIX_WSDD_JAVA;
         pw.println("  <service name=\"" + serviceName
-                + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG") + "\">");
+                + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG")
+                + "\"" + (hasLiteral ? " style=\"literal\"" : "") +  ">");
 
         writeDeployBinding(binding);
-        writeDeployTypes();
+        writeDeployTypes(hasLiteral);
 
 
         pw.println("  </service>");

@@ -679,7 +679,13 @@ public class Emitter {
 
         // Input SOAP Body
         SOAPBody soapBodyIn = new SOAPBodyImpl();
-        soapBodyIn.setUse("encoded");
+        // for now, if its document, it literal use.
+        if (mode == MODE_RPC) {
+            soapBodyIn.setUse("encoded");
+            soapBodyIn.setEncodingStyles(encodingList);
+        } else {
+            soapBodyIn.setUse("literal");
+        }
         if (targetService == null)
             soapBodyIn.setNamespaceURI(intfNS);
         else
@@ -693,7 +699,13 @@ public class Emitter {
         
         // Output SOAP Body
         SOAPBody soapBodyOut = new SOAPBodyImpl();
-        soapBodyOut.setUse("encoded");
+        // for now, if its document, it literal use.
+        if (mode == MODE_RPC) {
+            soapBodyOut.setUse("encoded");
+            soapBodyOut.setEncodingStyles(encodingList);
+        } else {
+            soapBodyOut.setUse("literal");
+        }
         if (targetService == null)
             soapBodyOut.setNamespaceURI(intfNS);
         else
@@ -702,7 +714,6 @@ public class Emitter {
         if (namespace != null) {
             soapBodyOut.setNamespaceURI(namespace);
         }
-        soapBodyOut.setEncodingStyles(encodingList);
         bindingOutput.addExtensibilityElement(soapBodyOut);
 
         bindingOper.setBindingInput(bindingInput);

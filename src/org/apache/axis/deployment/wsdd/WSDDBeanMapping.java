@@ -96,7 +96,7 @@ public class WSDDBeanMapping
         
         serializer = "org.apache.axis.encoding.ser.BeanSerializerFactory";
         deserializer = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
-        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        encodingStyle = null;
     }
 
     protected QName getElementName() {
