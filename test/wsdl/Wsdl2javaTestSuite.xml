@@ -565,6 +565,7 @@
     </wsdl2java>
 
     <!-- UDDI 1.0 WSDL's -->
+<!-- tomj: turn these off while attribute processing is in flux
     <wsdl2java url="http://www.uddi.org/wsdl/inquire_v1.wsdl"
                output="build/work"
                testcase="no"
@@ -585,6 +586,7 @@
         <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
         <mapping namespace="urn:uddi-org:publication" package="org.uddi.publication"/>
     </wsdl2java>
+-->
 
     <!-- XMethods Delayed Quote Service from http://www.xmethods.net/detail.html?id=2 -->
     <wsdl2java url="http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl"

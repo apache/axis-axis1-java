@@ -70,6 +70,7 @@ import org.w3c.dom.Node;
 public class JavaComplexTypeWriter extends JavaWriter {
     private TypeEntry type;
     private Vector elements;
+    private Vector attributes;
     private TypeEntry extendType;  
 
     /**
@@ -81,11 +82,16 @@ public class JavaComplexTypeWriter extends JavaWriter {
      */
     protected JavaComplexTypeWriter(
             Emitter emitter,
-            TypeEntry type, Vector elements, TypeEntry extendType) {
+            TypeEntry type, 
+            Vector elements, 
+            TypeEntry extendType,
+            Vector attributes)
+    {
         super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"), "complexType");
         this.type = type;
         this.elements = elements;
+        this.attributes = attributes;
         this.extendType = extendType;
     } // ctor
 
@@ -109,12 +115,25 @@ public class JavaComplexTypeWriter extends JavaWriter {
             names.add(((TypeEntry) elements.get(i)).getName());
             names.add( Utils.xmlNameToJava((String) elements.get(i + 1)));
         }
+       // add the attributes to the names list (which will be bean elements too)
+       if (attributes != null) {
+           for (int i=0; i < attributes.size(); i+=2) {
+               names.add(((TypeEntry) attributes.get(i)).getName());
+               names.add( Utils.xmlNameToJava((String) attributes.get(i + 1)));
+           }
+       }
+       
 
         pw.println("public class " + className + extendsText + " implements java.io.Serializable {");
 
         for (int i = 0; i < names.size(); i += 2) {
             String variable = (String) names.get(i + 1);
-            pw.println("    private " + names.get(i) + " " + variable + ";");
+            pw.print("    private " + names.get(i) + " " + variable + ";");
+            // label the attribute fields.
+            if (i >= elements.size())
+                pw.println("  // attribute");
+            else
+                pw.println();
         }
 
         pw.println();
@@ -163,7 +182,8 @@ public class JavaComplexTypeWriter extends JavaWriter {
             // like the reasonable approach to take for collection types.
             // (It may be more efficient to handle this with an ArrayList...but
             // for the initial support it was easier to use an actual array.) 
-            if (((TypeEntry)elements.elementAt(i)).getQName().getLocalPart().indexOf("[")>0) {
+            if (i < elements.size() &&
+                ((TypeEntry)elements.elementAt(i)).getQName().getLocalPart().indexOf("[")>0) {
 
                 String compName = typeName.substring(0, typeName.lastIndexOf("["));
 
@@ -191,6 +211,20 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 pw.println();
             }
         }
+       
+       // if we have attributes, create metadata function which returns the
+       // list of properties that are attributes instead of elements
+       if (attributes != null) {
+           pw.println("    public static java.util.Vector getAttributeElements() {");
+           pw.println("        java.util.Vector v = new java.util.Vector();");
+           for (int i=0; i < attributes.size(); i+=2) {
+               pw.println("        v.add(\"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\");");
+           }
+           pw.println("        return v;");
+           pw.println("    }");
+           pw.println();
+       }
+       
         pw.println("}");
         pw.close();
     } // writeOperation

@@ -71,6 +71,8 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.InternalException;
+import org.apache.axis.AxisFault;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
@@ -289,8 +291,110 @@ public class BeanSerializer implements Serializer, Serializable {
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public boolean writeSchema(Types types) throws Exception {
-        types.writeBeanClassType(types.getWsdlQName(xmlType), javaType);
+
+        javax.wsdl.QName qName = types.getWsdlQName(xmlType);
+
+        // ComplexType representation of bean class
+        Element complexType = types.createElement("complexType");
+        types.writeSchemaElement(qName, complexType);
+        complexType.setAttribute("name", qName.getLocalPart());
+
+        // See if there is a super class, stop if we hit a stop class
+        Element e = null;
+        Class superClass = javaType.getSuperclass();
+        Vector stopClasses = types.getStopClasses();
+        if (superClass != null &&
+                superClass != java.lang.Object.class &&
+                (stopClasses == null || 
+                !(stopClasses.contains(superClass.getName()))) ) {
+            // Write out the super class
+            String base = types.writeType(superClass);
+            Element complexContent = types.createElement("complexContent");
+            complexType.appendChild(complexContent);
+            Element extension = types.createElement("extension");
+            complexContent.appendChild(extension);
+            extension.setAttribute("base", base);
+            e = extension;
+        } else {
+            e = complexType;
+        }
+
+        // Add fields under all element
+        Element all = types.createElement("all");
+        e.appendChild(all);
+
+        // Build a ClassRep that represents the bean class.  This
+        // allows users to provide their own field mapping.
+        ClassRep clsRep = types.getBeanBuilder().build(javaType);
+
+        // Write out fields
+        Vector fields = clsRep.getFields();
+        for (int i=0; i < fields.size(); i++) {
+            FieldRep field = (FieldRep) fields.elementAt(i);
+
+            // if bean fields are attributes, write attribute element
+            if (beanAttributeNames.contains(field.getName()))
+                writeAttribute(types, field.getName(),
+                               field.getType(), 
+                               complexType);
+            else            
+                writeField(types, field.getName(), 
+                           field.getType(), 
+                           field.getIndexed(), 
+                           all);
+        }
+        // done
         return true;
+    }
+
+    /**
+     * write a schema representation of the given Class field and append it to    
+     * the where Node, recurse on complex types
+     * @param fieldName name of the field
+     * @param fieldType type of the field
+     * @param isUnbounded causes maxOccurs="unbounded" if set
+     * @param where location for the generated schema node
+     * @throws Exception
+     */
+    private void writeField(Types types, String fieldName,
+                            Class fieldType,
+                            boolean isUnbounded,
+                            Element where) throws Exception {
+        String elementType = types.writeType(fieldType);
+        Element elem = types.createElement(fieldName,
+                                           elementType,
+                                           types.isNullable(fieldType),
+                                           where.getOwnerDocument());
+        if (isUnbounded) {
+            elem.setAttribute("maxOccurs", "unbounded");
+        }
+        where.appendChild(elem);
+    }
+    
+    /**
+     * write aa attribute element and append it to the 'where' Node
+     * @param fieldName name of the field
+     * @param fieldType type of the field
+     * @param where location for the generated schema node
+     * @throws Exception
+     */
+    private void writeAttribute(Types types, 
+                                String fieldName,
+                                Class fieldType,
+                                Element where) throws Exception {
+        
+        // Attribute must be a simple type.
+        if (!types.isSimpleSchemaType(fieldType))
+            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00", 
+                                                     fieldName,
+                                                     fieldType.getName()));
+        
+        String elementType = types.writeType(fieldType);
+        Element elem = types.createElement(fieldName,
+                                           elementType,
+                                           false,
+                                           where.getOwnerDocument());
+        where.appendChild(elem);
     }
 
     /**
