@@ -99,7 +99,7 @@ public abstract class AdminClient {
             InputStream input = null ;
             
             if ( args[i].equals("list") ) {
-                System.out.println( "Doing a list" );
+                System.err.println( "Doing a list" );
                 String str = "<m:list xmlns:m=\"AdminService\"/>" ;
                 input = new ByteArrayInputStream( str.getBytes() );
             } else if (args[i].equals("quit")) {

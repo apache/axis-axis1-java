@@ -76,45 +76,9 @@ public class AxisClient extends AxisEngine
 {
     public AxisClient()
     {
-        super(Constants.CLIENT_HANDLER_REGISTRY,
-              Constants.CLIENT_SERVICE_REGISTRY,
-              Constants.CLIENT_TRANSPORT_REGISTRY);
-    }
-
-    /**
-     * Deploy our default handlers
-     */
-    protected void deployDefaultHandlers()
-    {
-      deployHandler( "HTTPSender",  new HTTPSender() );
-      deployHandler( "LocalSender", new LocalSender() );
-    }
-
-    /**
-     * Deploy our default services
-     */
-    protected void deployDefaultServices()
-    {
-      // No default client services
+        super();
     }
     
-    /**
-     * Deploy the default transports.
-     */
-    protected void deployDefaultTransports()
-    {
-      /** If a transport has no req/resp chains, can we just deploy
-       * the sender directly???
-       */
-      SimpleTargetedChain transport = new SimpleTargetedChain();
-      transport.setPivotHandler(_handlerRegistry.find("HTTPSender"));
-      deployTransport("http", transport);
-      
-      transport = new SimpleTargetedChain();
-      transport.setPivotHandler(_handlerRegistry.find("LocalSender"));
-      deployTransport("local", transport);
-    }
-
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
