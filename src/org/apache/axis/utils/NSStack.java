@@ -56,14 +56,16 @@ package org.apache.axis.utils;
 
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.Enumeration;
 
 /**
  * @author: James Snell
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class NSStack { 
+    private static final boolean DEBUG_LOG = false;
     
-    private Stack stack;
-    private Hashtable table;
+    private Stack stack = new Stack();
     
     public NSStack() {}
     
@@ -73,57 +75,129 @@ public class NSStack {
     
     public void push() {
         if (stack == null) stack = new Stack();
-        table = new Hashtable();
-        stack.push(table);
+        if (DEBUG_LOG)
+            System.out.println("NSPush (" + stack.size() + ")");
+        stack.push(new Hashtable());
     }
     
     public void push(Hashtable table) {
         if (stack == null) stack = new Stack();
+        if (DEBUG_LOG)
+            System.out.println("NSPush (" + stack.size() + ")");
         stack.push(table);
     }
     
     public Hashtable peek() {
-        return table;
+        if (stack.isEmpty())
+            return null;
+        
+        return (Hashtable)stack.peek();
     }
     
     public Hashtable pop() {
-        if (stack != null) {
-            Hashtable t = (Hashtable)stack.pop();
-            table = (Hashtable)stack.peek();
-            return t;
+        if (stack.isEmpty()) {
+            if (DEBUG_LOG)
+                System.out.println("NSPop (empty)");
+            return null;
         }
-        return null;
+        
+        if (DEBUG_LOG) {
+            Hashtable t = (Hashtable)stack.pop();
+            System.out.println("NSPop (" + stack.size() + ")");
+            return t;
+        } else {
+            return (Hashtable)stack.pop();
+        }
     }
     
     public void add(String namespaceURI, String prefix) {
-        if (stack == null) push();
+        if (stack.isEmpty()) push();
+        Hashtable table = peek();
         table.put(namespaceURI, prefix);
     }
     
     public void remove(String namespaceURI) {
-        if (stack != null) 
-            table.remove(namespaceURI);
+        if (stack.isEmpty()) return;
+        peek().remove(namespaceURI);
     }
     
     public String getPrefix(String namespaceURI) {
-        if (stack != null) {
+        if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
                 Hashtable t = (Hashtable)stack.elementAt(n);
-                if (t.containsKey(namespaceURI)) 
+                
+                if ((t != null) && t.containsKey(namespaceURI)) 
                     return (String)t.get(namespaceURI);
             }
         }
+        
+        return null;
+    }
+    
+    /** This is expensive.  Use with caution.
+     */
+    public String getNamespaceURI(String prefix) {
+        if (prefix != null) {
+            String uri = null;
+
+            if (!stack.isEmpty()) {
+                for (int i = stack.size() - 1; i >= 0; i--) {
+                    Hashtable t = (Hashtable)stack.elementAt(i);
+                    uri = searchTable(t, prefix);
+                    if (uri != null)
+                        return uri;
+                }
+            }
+        }
+        
+        dump();
+        System.out.println("didn't find prefix '" + prefix + "'");
+        new Exception().printStackTrace();
+        return null;
+    }
+
+    private String searchTable(Hashtable t, String prefix)
+    {
+        if ((t != null) && (t.contains(prefix))) {
+            Enumeration e = t.keys();
+            while (e.hasMoreElements()) {
+                String uri = (String)e.nextElement();
+                String p = (String)t.get(uri);
+                if (p.equals(prefix))
+                    return uri;
+            }
+        }
+        
         return null;
     }
     
     public boolean isDeclared(String namespaceURI) {
-        if (stack != null) {
+        if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
                 Hashtable t = (Hashtable)stack.elementAt(n);
-                if (t.containsKey(namespaceURI))
+                if ((t != null) && t.containsKey(namespaceURI))
                     return true;
             }
         }
         return false;
+    }
+    
+    public void dump()
+    {
+        Enumeration e = stack.elements();
+        while (e.hasMoreElements()) {
+            Hashtable map = (Hashtable)e.nextElement();
+            System.out.println("----");
+            if (map == null) {
+                System.out.println("null table");
+                continue;
+            }
+            Enumeration sub = map.keys();
+            while (sub.hasMoreElements()) {
+                String key = (String)sub.nextElement();
+                System.out.println(key + " -> " + map.get(key));
+            }
+        }
+        System.out.println("----end");
     }
 }
