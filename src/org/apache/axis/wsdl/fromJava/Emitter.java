@@ -1215,6 +1215,9 @@ public class Emitter {
         bindingOper.setBindingOutput(bindingOutput);
 
         // Faults clause
+        // Comment out the following part 
+        // because it actually does the same thing as in writeMessages.
+        /*
         ArrayList faultList = desc.getFaults();
 
         if (faultList != null) {
@@ -1232,6 +1235,7 @@ public class Emitter {
                 bindingOper.addBindingFault(bindingFault);
             }
         }
+        */
 
         binding.addBindingOperation(bindingOper);
 
