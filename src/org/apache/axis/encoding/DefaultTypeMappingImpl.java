@@ -61,7 +61,7 @@ import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import java.util.List;
+import javax.xml.rpc.encoding.DeserializerFactory;
 
 /**
  * This is the implementation of the axis Default TypeMapping (which extends
@@ -434,24 +434,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             // This is the prefered mapping and the last registed one wins
             super.register(javaType, xmlType, sf, df);
         } catch (Exception e) {}
-    }
-
-    /**
-     * Gets the QName for the type mapped to Class.
-     * @param javaType class or type
-     * @return xmlType qname or null
-     */
-    public QName getTypeQName(Class javaType) {
-        QName xmlType = super.getTypeQName(javaType);
-
-        // Can only detect arrays via code
-        if (xmlType == null &&
-            (javaType.isArray() ||
-             javaType == List.class ||
-             List.class.isAssignableFrom(javaType))) {
-            xmlType = Constants.SOAP_ARRAY;
-        }
-        return xmlType;
     }
 
     // Don't allow anyone to muck with the default type mapping because
