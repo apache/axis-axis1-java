@@ -141,7 +141,7 @@ public class ForeachTask extends Task {
     }
 
     /**
-     * If true, forks the javac compiler.
+     * If true, forks the ant invocation.
      *
      * @param f "true|false|on|off|yes|no"
      */
