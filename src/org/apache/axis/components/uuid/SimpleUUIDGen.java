@@ -78,6 +78,31 @@ import java.util.Random;
 public class SimpleUUIDGen implements UUIDGen {
     private static final BigInteger countStart = new BigInteger("-12219292800000");  // 15 October 1582
     private static final int clock_sequence = (new Random()).nextInt(16384);
+    private static final byte ZERO = (byte) 48; // "0"
+    private static final byte ONE  = (byte) 49; // "1"
+
+
+    /**
+     * utility method which returns a bitString with left zero padding
+     * for as many places as necessary to reach <tt>len</tt>; otherwise
+     * returns bitString unaltered.
+     *
+     * @return a left zero padded string of at least <tt>len</tt> chars
+     * @param bitString a String to pad
+     * @param the length under which bitString needs padding
+     */
+    private static final String leftZeroPadString(String bitString, int len) {
+        if (bitString.length() < len) {
+            int nbExtraZeros = len - bitString.length();
+            StringBuffer extraZeros = new StringBuffer();
+            for (int i = 0; i < nbExtraZeros; i++) {
+                extraZeros.append("0");
+            }
+            extraZeros.append(bitString);
+            bitString = extraZeros.toString();
+        }
+        return bitString;
+    }
 
     /**
      * Creates a new UUID. The algorithm used is described by The Open Group.
@@ -103,19 +128,7 @@ public class SimpleUUIDGen implements UUIDGen {
 
         // the result
         count = countMillis.multiply(BigInteger.valueOf(10000));
-
-        String bitString = count.toString(2);
-        if (bitString.length() < 60) {
-            int nbExtraZeros = 60 - bitString.length();
-            StringBuffer extraZeros = new StringBuffer();
-            for (int i = 0; i < nbExtraZeros; i++) {
-                extraZeros.append("0");
-            }
-            extraZeros.append(bitString);
-            bitString = extraZeros.toString();
-        }
-
-        byte[] bits = bitString.getBytes();
+        byte[] bits = leftZeroPadString(count.toString(2), 60).getBytes();
 
         // the time_low field
         byte[] time_low = new byte[32];
@@ -132,84 +145,41 @@ public class SimpleUUIDGen implements UUIDGen {
         for (int i = 0; i < 12; i++)
             time_hi_and_version[i] = bits[bits.length - 48 - i - 1];
 
-        time_hi_and_version[12] = ((new String("1")).getBytes())[0];
-        time_hi_and_version[13] = ((new String("0")).getBytes())[0];
-        time_hi_and_version[14] = ((new String("0")).getBytes())[0];
-        time_hi_and_version[15] = ((new String("0")).getBytes())[0];
+        time_hi_and_version[12] = ONE;
+        time_hi_and_version[13] = ZERO;
+        time_hi_and_version[14] = ZERO;
+        time_hi_and_version[15] = ZERO;
 
         // the clock_seq_low field
         BigInteger clockSequence = BigInteger.valueOf(clock_sequence);
-        String clockString = clockSequence.toString(2);
-        if (clockString.length() < 14) {
-            int nbExtraZeros = 14 - bitString.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            clockString = extraZeros.concat(bitString);
-        }
-
-        byte[] clock_bits = clockString.getBytes();
+        byte[] clock_bits = leftZeroPadString(clockSequence.toString(2), 14).getBytes();
         byte[] clock_seq_low = new byte[8];
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++) {
             clock_seq_low[i] = clock_bits[clock_bits.length - i - 1];
+        }
 
         // the clock_seq_hi_and_reserved
         byte[] clock_seq_hi_and_reserved = new byte[8];
         for (int i = 0; i < 6; i++)
             clock_seq_hi_and_reserved[i] = clock_bits[clock_bits.length - 8 - i - 1];
 
-        clock_seq_hi_and_reserved[6] = ((new String("0")).getBytes())[0];
-        clock_seq_hi_and_reserved[7] = ((new String("1")).getBytes())[0];
+        clock_seq_hi_and_reserved[6] = ZERO;
+        clock_seq_hi_and_reserved[7] = ONE;
 
         String timeLow = Long.toHexString((new BigInteger(new String(reverseArray(time_low)), 2)).longValue());
-        if (timeLow.length() < 8) {
-            int nbExtraZeros = 8 - timeLow.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            timeLow = extraZeros.concat(timeLow);
-        }
+        timeLow = leftZeroPadString(timeLow, 8);
 
         String timeMid = Long.toHexString((new BigInteger(new String(reverseArray(time_mid)), 2)).longValue());
-        if (timeMid.length() < 4) {
-            int nbExtraZeros = 4 - timeMid.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-            timeMid = extraZeros.concat(timeMid);
-        }
+        timeMid = leftZeroPadString(timeMid, 4);
 
         String timeHiAndVersion = Long.toHexString((new BigInteger(new String(reverseArray(time_hi_and_version)), 2)).longValue());
-        if (timeHiAndVersion.length() < 4) {
-            int nbExtraZeros = 4 - timeHiAndVersion.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            timeHiAndVersion = extraZeros.concat(timeHiAndVersion);
-        }
+        timeHiAndVersion = leftZeroPadString(timeHiAndVersion, 4);
 
         String clockSeqHiAndReserved = Long.toHexString((new BigInteger(new String(reverseArray(clock_seq_hi_and_reserved)), 2)).longValue());
-        if (clockSeqHiAndReserved.length() < 2) {
-            int nbExtraZeros = 2 - clockSeqHiAndReserved.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            clockSeqHiAndReserved = extraZeros.concat(clockSeqHiAndReserved);
-        }
+        clockSeqHiAndReserved = leftZeroPadString(clockSeqHiAndReserved, 2);
 
         String clockSeqLow = Long.toHexString((new BigInteger(new String(reverseArray(clock_seq_low)), 2)).longValue());
-        if (clockSeqLow.length() < 2) {
-            int nbExtraZeros = 2 - clockSeqLow.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            clockSeqLow = extraZeros.concat(clockSeqLow);
-        }
+        clockSeqLow = leftZeroPadString(clockSeqLow, 2);
 
         // problem: the node should be the IEEE 802 ethernet address, but can not
         // be retrieved in Java yet.
@@ -240,34 +210,27 @@ public class SimpleUUIDGen implements UUIDGen {
         }
 
         BigInteger nodeInt = BigInteger.valueOf(nodeValue);
-        String nodeString = nodeInt.toString(2);
-        if (nodeString.length() < 47) {
-            int nbExtraZeros = 47 - nodeString.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
 
-            nodeString = extraZeros.concat(nodeString);
-        }
-
-        byte[] node_bits = nodeString.getBytes();
+        byte[] node_bits = leftZeroPadString(nodeInt.toString(2), 47).getBytes();
         byte[] node = new byte[48];
         for (int i = 0; i < 47; i++)
             node[i] = node_bits[node_bits.length - i - 1];
 
-        node[47] = ((new String("1")).getBytes())[0];
+        node[47] = ONE;
         String theNode = Long.toHexString((new BigInteger(new String(reverseArray(node)), 2)).longValue());
-        if (theNode.length() < 12) {
-            int nbExtraZeros = 12 - theNode.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-            theNode = extraZeros.concat(theNode);
-        }
+        theNode = leftZeroPadString(theNode, 12);
 
-        String result = timeLow + "-" + timeMid + "-" + timeHiAndVersion + "-" + clockSeqHiAndReserved + clockSeqLow + "-" + theNode;
-
-        return result.toUpperCase();
+        StringBuffer result = new StringBuffer(timeLow);
+        result.append("-");
+        result.append(timeMid);
+        result.append("-");
+        result.append(timeHiAndVersion);
+        result.append("-");
+        result.append(clockSeqHiAndReserved);
+        result.append(clockSeqLow);
+        result.append("-");
+        result.append(theNode);
+        return result.toString().toUpperCase();
     }
 
     private static byte[] reverseArray(byte[] bits) {
