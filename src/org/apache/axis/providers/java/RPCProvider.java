@@ -174,63 +174,69 @@ public class RPCProvider extends JavaProvider {
             // wsdl.  Thus the following code only works if there is no 
             // overloading.  
             int	numberOfBodyArgs = args.size();
-            Method method = getMethod(jc, mName, args);
+            Method[] method = getMethod(jc, mName);
 
             // If the method wasn't found, maybe it needs some Java mangling (ie., it's a Java
             // keyword or it's capitalized and the java mapping requires lowercase).
             if (method == null) {
                 mName = JavaUtils.xmlNameToJava(mName);
-                method = getMethod(jc, mName, args);
+                method = getMethod(jc, mName);
             }
 
             if ( method == null )
                 throw new AxisFault( "AxisServer.error",
                         JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
                         null, null );
-            
-            Class params[] = method.getParameterTypes();
-			
 
-            // The number of method parameters must match the 
-            // arguments taking into consideration a MessageContext argument
-            // and output parameters.
-            Object[] newArgValues = new Object[params.length];
-            int old = 0;
-            boolean problem = false;
-            for (int n = 0; n < newArgValues.length; n++) {
-                Class heldType = JavaUtils.getHolderValueType(params[n]);
-                if (params[n] == MessageContext.class) {
-                    newArgValues[n] = msgContext;
-                } else if (argValues != null && old < argValues.length) {
-                    newArgValues[n] = argValues[old++];
-                } else if (heldType == null) {
-                    // The parameters that don't match the argValues must
-                    // be Holders.  Indicate problem occurred.
-                    problem = true;
-                } else {
-                    newArgValues[n] = null;
-                }
-                // Create holders for each argument that is null that should be a holder
-                if (newArgValues[n] == null && heldType != null) {
-                    newArgValues[n] = JavaUtils.convert(newArgValues[n], params[n]);
-                }
-            }
-            if (!problem) {
-                argValues = newArgValues;  // Use newArgValues array if no problems
-            }
+            Object objRes = null;
+            Class[] params = null;
+            Exception ex = null;
 
-            // Invoke the method and capture the returned object.
-            // Note that if the method returns a primitive, invoke(...) automatically
-            // wraps it in a java.lang class representing the primitive.
-            Object objRes;
-            try {
-                objRes = method.invoke(obj, argValues);
-            } catch (IllegalArgumentException e) {
-                
-                {
+            // There might be more than one method with this name, try them all.
+            int m = 0;
+            for (m = 0; m < method.length; ++m) {
+                ex = null;
+                params = method[m].getParameterTypes();
+
+
+                // The number of method parameters must match the 
+                // arguments taking into consideration a MessageContext argument
+                // and output parameters.
+                Object[] newArgValues = new Object[params.length];
+                int old = 0;
+                boolean problem = false;
+                for (int n = 0; n < newArgValues.length; n++) {
+                    Class heldType = JavaUtils.getHolderValueType(params[n]);
+                    if (params[n] == MessageContext.class) {
+                        newArgValues[n] = msgContext;
+                    } else if (argValues != null && old < argValues.length) {
+                        newArgValues[n] = argValues[old++];
+                    } else if (heldType == null) {
+                        // The parameters that don't match the argValues must
+                        // be Holders.  Indicate problem occurred.
+                        problem = true;
+                    } else {
+                        newArgValues[n] = null;
+                    }
+                    // Create holders for each argument that is null that should be a holder
+                    if (newArgValues[n] == null && heldType != null) {
+                        newArgValues[n] = JavaUtils.convert(newArgValues[n], params[n]);
+                    }
+                }
+                if (!problem) {
+                    argValues = newArgValues;  // Use newArgValues array if no problems
+                }
+
+                // Invoke the method and capture the returned object.
+                // Note that if the method returns a primitive, invoke(...) automatically
+                // wraps it in a java.lang class representing the primitive.
+                try {
+                    objRes = method[m].invoke(obj, argValues);
+                    break;
+                } catch (IllegalArgumentException e) {
                     // Hm - maybe we can help this with a conversion or two...
                     for (int i = 0; argValues != null && i < argValues.length &&
-                                    i < params.length; i++) {
+                      i < params.length; i++) {
                         Object thisArg = argValues[i];
                         if (!params[i].isAssignableFrom(thisArg.getClass())) {
                             // Attempt conversion for each non-assignable argument
@@ -239,30 +245,37 @@ public class RPCProvider extends JavaProvider {
                                 argValues[i] = newArg;
                         }
                     }
-                    
+
                     // OK, now try again...
                     try {
-                        objRes = method.invoke( obj, argValues );
+                        objRes = method[m].invoke( obj, argValues );
+                        break;
                     } catch (IllegalArgumentException exp) {
                         StringBuffer argbuf = new StringBuffer();
                         String sep= "";
                         for(int i = 0; argValues != null &&
-                                     i < argValues.length; ++i) {
+                          i < argValues.length; ++i) {
                             argbuf.append(sep);
                             sep = ", ";
                             argbuf.append(argValues[i] == null ? "null" : argValues[i].getClass().getName());
                         }
                         String objName = obj == null ? "null" :
-                                obj.getClass().getName();
+                          obj.getClass().getName();
                         String msg = JavaUtils.getMessage("triedArgs00",
                                 new String[] {
-                                        exp.getMessage(),
-                                        objName,
-                                        method.getName(),
-                                        argbuf.toString()});
-                        throw new IllegalArgumentException(msg);
+                                exp.getMessage(),
+                                objName,
+                                method[m].getName(),
+                                argbuf.toString()});
+                        ex = new IllegalArgumentException(msg);
+                        continue;
                     }
                 }
+            }
+            // If we've gone through all methods with the given name and there's
+            // an exception left over, throw that exception.
+            if (ex != null) {
+                throw ex;
             }
 
             if (category.isDebugEnabled())
@@ -283,17 +296,17 @@ public class RPCProvider extends JavaProvider {
                             resBody.addParam ((RPCParam) list.get (i));
                         }
                         else {
-                            resBody.addParam (new RPCParam (getParameterName(obj, method,i, mName),
+                            resBody.addParam (new RPCParam (getParameterName(obj, method[m],i, mName),
                                                             list.get (i)));
                         }
                     }
                 }
                 else {
-                    RPCParam param = new RPCParam(getParameterName(obj, method,-1, mName), objRes);
+                    RPCParam param = new RPCParam(getParameterName(obj, method[m],-1, mName), objRes);
                     resBody.addParam(param);
                 }
-            } else if (method.getReturnType() != Void.TYPE) {
-                RPCParam param = new RPCParam(getParameterName(obj, method,-1, mName), objRes);
+            } else if (method[m].getReturnType() != Void.TYPE) {
+                RPCParam param = new RPCParam(getParameterName(obj, method[m],-1, mName), objRes);
                 resBody.addParam(param);
             }
 
@@ -305,7 +318,7 @@ public class RPCProvider extends JavaProvider {
                     // Create an RPCParam by converting the Holder back into 
                     // the held type.
                     resBody.addParam (new RPCParam (getParameterName(obj,
-                                                                     method,
+                                                                     method[m],
                                                                      i, 
                                                                      mName,
                                                                      args),
@@ -320,9 +333,9 @@ public class RPCProvider extends JavaProvider {
         }
     }
     
-    protected Method getMethod(JavaClass jc, String mName, Vector args)
+    protected Method[] getMethod(JavaClass jc, String mName)
     {
-        return jc.getMethod(mName, args.size());
+        return jc.getMethod(mName);
     }
 
     /**

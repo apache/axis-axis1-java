@@ -19,11 +19,18 @@
           <xsd:element name="sharedName" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
-      <xsd:element name="myElement">
+      <xsd:element name="sharedName">
         <xsd:complexType>
-          <all>
-            <element name="sharedName" type="xsd:int"/>
-          </all>
+          <xsd:all>
+            <xsd:element name="sharedName" type="xsd:int"/>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="another">
+        <xsd:complexType>
+          <xsd:all>
+            <xsd:element name="sharedName" type="xsd:boolean"/>
+          </xsd:all>
         </xsd:complexType>
       </xsd:element>
     </xsd:schema>
@@ -35,8 +42,14 @@
   <message name="sharedName">
     <part name="sharedName" type="tns:sharedName"/>
   </message>
+  <message name="anotherMessage">
+    <part name="sharedName" type="xsd:int"/>
+  </message>
   <message name="literalMessage">
-    <part name="literalPart" element="tns:myElement"/>
+    <part name="literalPart" element="tns:sharedName"/>
+  </message>
+  <message name="anotherLitMessage">
+    <part name="sharedName" element="tns:another"/>
   </message>
 
   <!-- port type declns -->
@@ -45,32 +58,29 @@
       <input name="sharedName" message="tns:empty"/>
       <output name="sharedName" message="tns:sharedName"/>
     </operation>
-<!-- a bug in WSDL4J doesn't allow overloaded operations 
     <operation name="sharedName">
       <input name="sharedName" message="tns:sharedName"/>
       <output name="empty" message="tns:empty"/>
     </operation>
     <operation name="sharedName">
-      <input name="empty" message="tns:empty"/>
-      <output name="sharedName" message="tns:sharedName"/>
+      <input name="another" message="tns:anotherMessage"/>
+      <output name="empty" message="tns:empty"/>
     </operation>
--->
   </portType>
+
   <portType name="literalPort">
     <operation name="sharedName">
       <input name="sharedName" message="tns:empty"/>
       <output name="sharedName" message="tns:literalMessage"/>
     </operation>
-<!-- a bug in WSDL4J doesn't allow overloaded operations 
     <operation name="sharedName">
       <input name="sharedName" message="tns:literalMessage"/>
       <output name="empty" message="tns:empty"/>
     </operation>
     <operation name="sharedName">
-      <input name="empty" message="tns:empty"/>
-      <output name="sharedName" message="tns:literalMessage"/>
+      <input name="another" message="tns:anotherLitMessage"/>
+      <output name="empty" message="tns:empty"/>
     </operation>
--->
   </portType>
 
   <!-- binding declns -->
@@ -86,7 +96,6 @@
         <soap:body use="encoded"/>
       </output>
     </operation>
-<!-- a bug in WSDL4J doesn't allow overloaded operations 
     <operation name="sharedName">
       <input name="sharedName">
         <soap:body use="encoded"/>
@@ -96,14 +105,13 @@
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="empty">
+      <input name="another">
         <soap:body use="encoded"/>
       </input>
-      <output name="sharedName">
+      <output name="empty">
         <soap:body use="encoded"/>
       </output>
     </operation>
--->
   </binding>
 
   <binding name="sharedName" type="tns:literalPort">
@@ -118,7 +126,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-<!-- a bug in WSDL4J doesn't allow overloaded operations 
     <operation name="sharedName">
       <input name="sharedName">
         <soap:body use="literal"/>
@@ -128,14 +135,13 @@
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="empty">
+      <input name="another">
         <soap:body use="literal"/>
       </input>
-      <output name="sharedName">
+      <output name="empty">
         <soap:body use="literal"/>
       </output>
     </operation>
--->
   </binding>
 
   <binding name="anotherNonSharedName" type="tns:sharedName">
@@ -150,7 +156,6 @@
         <soap:body use="encoded"/>
       </output>
     </operation>
-<!-- a bug in WSDL4J doesn't allow overloaded operations 
     <operation name="sharedName">
       <input name="sharedName">
         <soap:body use="encoded"/>
@@ -160,14 +165,13 @@
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="empty">
+      <input name="another">
         <soap:body use="encoded"/>
       </input>
-      <output name="sharedName">
+      <output name="empty">
         <soap:body use="encoded"/>
       </output>
     </operation>
--->
   </binding>
 
   <!-- service decln -->

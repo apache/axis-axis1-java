@@ -96,7 +96,7 @@ public class RPCHandler extends SOAPHandler
     {
         this.call = call;
     }
-    
+
     private void determineDefaultParams(String methodName,
                                         DeserializationContext context) {
         MessageContext msgContext = context.getMessageContext();
@@ -116,11 +116,13 @@ public class RPCHandler extends SOAPHandler
                         "lookup00", methodName, clsName));
             }
 
-            // try to find the method without knowing the number of
-            // parameters.  If we are successful, we can make better
-            // decisions about what deserializers to use for parameters
-            Method method = jc.getMethod(methodName, -1);
-            if (method != null) defaultParamTypes = method.getParameterTypes();
+            // If we find only one method of this name, we can use it
+            // to make better decisions about what deserializers to use
+            // for parameters.
+            Method[] method = jc.getMethod(methodName);
+            if (method != null && method.length == 1) {
+                defaultParamTypes = method[0].getParameterTypes();
+            }
             
             // !!! This should be smart enough to deal with overloaded
             // methods - we should really be keeping a list of all of
