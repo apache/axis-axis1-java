@@ -185,12 +185,14 @@ public class JavaImplWriter extends JavaClassWriter {
         }
 
         // Print the return statement
-        if (parms.returnParam != null) {
-            TypeEntry returnType = parms.returnParam.getType();
+        Parameter returnParam = parms.returnParam;
+        if (returnParam != null) {
+            TypeEntry returnType = returnParam.getType();
 
             pw.print("        return ");
 
-            if (Utils.isPrimitiveType(returnType)) {
+            if (!returnParam.isOmittable() &&
+                    Utils.isPrimitiveType(returnType)) {
                 String returnString = returnType.getName();
 
                 if ("boolean".equals(returnString)) {

@@ -1850,9 +1850,9 @@ public class SymbolTable {
 
             TypeEntry paramEntry = p.getType();
             TypeEntry outParamEntry = outParam.getType();
-            String paramLastLocalPart = Utils.getLastLocalPart(paramEntry.getQName().getLocalPart());
-            String outParamLastLocalPart = Utils.getLastLocalPart(outParamEntry.getQName().getLocalPart());
-            if (p.getType().equals(outParam.getType())) {
+//            String paramLastLocalPart = Utils.getLastLocalPart(paramEntry.getQName().getLocalPart());
+//            String outParamLastLocalPart = Utils.getLastLocalPart(outParamEntry.getQName().getLocalPart());
+            if (paramEntry.equals(outParamEntry)) {
                 outputs.remove(outdex);
                 p.setMode(Parameter.INOUT);
 
@@ -1962,13 +1962,17 @@ public class SymbolTable {
      * @param bindingEntry 
      * @throws IOException 
      */
-    public void getParametersFromParts(
-            Vector v, Collection parts, boolean literal, String opName, BindingEntry bindingEntry)
+    public void getParametersFromParts(Vector v,
+                                       Collection parts,
+                                       boolean literal,
+                                       String opName,
+                                       BindingEntry bindingEntry)
             throws IOException {
 
         // HACK ALERT!  This whole method is waaaay too complex.
         // It needs rewriting (for instance, we sometimes new up
         // a Parameter, then ignore it in favor of another we new up.)
+        
         // Determine if there's only one element.  For wrapped
         // style, we normally only have 1 part which is an
         // element.  But with MIME we could have any number of
@@ -2132,6 +2136,7 @@ public class SymbolTable {
 
                     p.setQName(elem.getName());
                     p.setType(elem.getType());
+                    p.setOmittable(elem.getMinOccursIs0());
                     fillParamInfo(p, bindingEntry, opName, partName);
                     v.add(p);
                 }

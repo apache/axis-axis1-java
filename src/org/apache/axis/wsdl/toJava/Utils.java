@@ -702,14 +702,17 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Return the Object variable 'var' cast to the appropriate type
      * doing the right thing for the primitive types.
      * 
-     * @param type     
-     * @param mimeInfo 
      * @param var      
      * @return 
      */
-    public static String getResponseString(TypeEntry type, MimeInfo mimeInfo,
+    public static String getResponseString(Parameter param,
                                            String var) {
-
+        if (param.getType() == null) {
+            return ";";
+        }
+        String typeName = param.getType().getName();
+        MimeInfo mimeInfo = param.getMIMEInfo();
+        
         String mimeType = (mimeInfo == null)
                 ? null
                 : mimeInfo.getType();
@@ -717,9 +720,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 ? ""
                 : mimeInfo.getDimensions();
 
-        if (type == null) {
-            return ";";
-        } else if (mimeType != null) {
+        if (mimeType != null) {
             if (mimeType.equals("image/jpeg")) {
                 return "(java.awt.Image" + mimeDimensions + ") " + var + ";";
             } else if (mimeType.equals("text/plain")) {
@@ -738,16 +739,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 return "(javax.activation.DataHandler" + mimeDimensions + ") "
                         + var + ";";
             }
-        } else {
-            String objType = (String) TYPES.get(type.getName());
+        }
 
-            if (objType != null) {
-                return "((" + objType + ") " + var + ")." + type.getName()
-                        + "Value();";
+        String objType = (String) TYPES.get(typeName);
+        
+        if (objType != null) {
+            if (param.isOmittable()) {
+                typeName = objType;
             } else {
-                return "(" + type.getName() + ") " + var + ";";
+                return "((" + objType + ") " + var + ")." + typeName +
+                        "Value();";
             }
         }
+        
+        return "(" + typeName + ") " + var + ";";
     }    // getResponseString
 
     /**
@@ -759,6 +764,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static boolean isPrimitiveType(TypeEntry type) {
         return TYPES.get(type.getName()) != null;
     }    // isPrimitiveType
+    
+    /**
+     * Return a "wrapper" type for the given type name.  In other words,
+     * if it's a primitive type ("int") return the java wrapper class
+     * ("java.lang.Integer").  Otherwise return the type name itself.
+     * 
+     * @param type
+     * @return the name of a java wrapper class for the type, or the type's
+     *         name if it's not primitive.
+     */ 
+    public static String getWrapperType(String type) {
+        String ret = (String)TYPES.get(type);
+        return (ret == null) ? type : ret;
+    }
 
     /**
      * Return the operation QName.  The namespace is determined from
@@ -914,6 +933,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
         if (parm.getMIMEInfo() == null) {
             ret = parm.getType().getName();
+            if (parm.isOmittable()) {
+                String wrapped = (String)TYPES.get(ret);
+                if (wrapped != null)
+                    ret = wrapped;
+            }
         } else {
             String mime = parm.getMIMEInfo().getType();
 
@@ -1153,6 +1177,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                                                 BooleanHolder bThrow) {
 
         String paramType = param.getType().getName();
+        if (param.isOmittable()) {
+            paramType = Utils.getWrapperType(paramType);
+        }
         String mimeType = (param.getMIMEInfo() == null)
                 ? null
                 : param.getMIMEInfo().getType();

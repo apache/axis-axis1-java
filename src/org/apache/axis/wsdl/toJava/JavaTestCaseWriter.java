@@ -223,15 +223,17 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 indent = "    ";
             }
 
-            if (params.returnParam != null) {
-                TypeEntry returnType = params.returnParam.getType();
+            Parameter returnParam = params.returnParam;
+            if (returnParam != null) {
+                TypeEntry returnType = returnParam.getType();
 
                 pw.print("        " + indent);
-                pw.print(Utils.getParameterTypeName(params.returnParam));
+                pw.print(Utils.getParameterTypeName(returnParam));
                 pw.print(" value = ");
 
-                if ((params.returnParam.getMIMEInfo() == null)
-                        && Utils.isPrimitiveType(returnType)) {
+                if ((returnParam.getMIMEInfo() == null) &&
+                        !returnParam.isOmittable() &&
+                        Utils.isPrimitiveType(returnType)) {
                     if ("boolean".equals(returnType.getName())) {
                         pw.println("false;");
                     } else {
@@ -244,7 +246,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             pw.print("        " + indent);
 
-            if (params.returnParam != null) {
+            if (returnParam != null) {
                 pw.print("value = ");
             }
 
