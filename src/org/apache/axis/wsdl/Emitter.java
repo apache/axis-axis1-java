@@ -2103,7 +2103,7 @@ public class Emitter {
     /**
      * Given a type name, return the Java mapping of that type's holder.
      */
-    private String holder(String typeValue) {
+    protected String holder(String typeValue) {
         if (typeValue.equals("java.lang.String")) {
             return "org.apache.axis.rpc.holders.StringHolder";
         }
