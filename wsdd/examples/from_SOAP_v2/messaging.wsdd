@@ -1,20 +1,17 @@
 <?xml version="1.0"?>
-<deployment 	name="MessagingExample" 
-				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
-				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
-	<documentation>
+<deployment name="MessagingExample" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/" xmlns="http://xml.apache.org/axis/wsdd/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd/
+http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-axis/java/wsdd/WSDD.xsd?rev=HEAD">
+    <documentation>
     		Describes a Purchase Order Messaging Example
     	</documentation>
-	<service name="PO_Messaging_Example">
-		<provider type="java:org.apache.axis.handlers.providers.MessagingProvider">
-			<operation name="purchaseOrder" />
-			<operation name="bustedRequest" />
-			<java:provider className="samples.messaging.POProcessor" isStatic="false"/>
-		</provider>
-		<faultFlow flowType="fault">
-			<handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
-		</faultFlow>
-	</service>
+    <service name="PO_Messaging_Example">
+        <provider type="java:org.apache.axis.handlers.providers.MessagingProvider">
+            <operation name="purchaseOrder"/>
+            <operation name="bustedRequest"/>
+            <java:provider className="samples.messaging.POProcessor" isStatic="false"/>
+        </provider>
+        <faultFlow flowType="fault">
+            <handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
+        </faultFlow>
+    </service>
 </deployment>

@@ -1,19 +1,16 @@
 <?xml version="1.0"?>
-<deployment 	name="StockQuotes" 
-				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
-				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
-	<documentation>
+<deployment name="StockQuotes" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/" xmlns="http://xml.apache.org/axis/wsdd/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd/
+http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-axis/java/wsdd/WSDD.xsd?rev=HEAD">
+    <documentation>
     		Stock Quotes Service
     	</documentation>
-	<service name="StockQuotes_Service">
-		<provider type="java:org.apache.axis.handlers.providers.JavaProvider">
-			<operation name="getQuote"/>
-			<java:provider className="samples.stockquote.StockQuoteService" isStatic="false" />
-		</provider>
-		<faultFlow flowType="fault">
-			<handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
-		</faultFlow>
-	</service>
+    <service name="StockQuotes_Service">
+        <provider type="java:org.apache.axis.handlers.providers.JavaProvider">
+            <operation name="getQuote"/>
+            <java:provider className="samples.stockquote.StockQuoteService" isStatic="false"/>
+        </provider>
+        <faultFlow flowType="fault">
+            <handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
+        </faultFlow>
+    </service>
 </deployment>

@@ -1,18 +1,15 @@
 <?xml version="1.0"?>
-<deployment 	name="SampleProvider" 
-				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
-				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
-	<documentation>
+<deployment name="SampleProvider" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/" xmlns="http://xml.apache.org/axis/wsdd/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd/
+http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-axis/java/wsdd/WSDD.xsd?rev=HEAD">
+    <documentation>
     		Demonstrates the use of a custom Provider with a defined classpath
     	</documentation>
-	<service name="SampleProvider_Service">
-		<provider type="java:samples.provider.SampleProvider">
-			<java:classPath>D:\Services</java:classPath>
-		</provider>
-		<faultFlow flowType="fault">
-			<handler type="org.apache.axis.handlers.SimpleFaultHandler" />
-		</faultFlow>
-	</service>
+    <service name="SampleProvider_Service">
+        <provider type="java:samples.provider.SampleProvider">
+            <java:classPath>D:\Services</java:classPath>
+        </provider>
+        <faultFlow flowType="fault">
+            <handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
+        </faultFlow>
+    </service>
 </deployment>

@@ -1,25 +1,21 @@
 <?xml version="1.0"?>
-<deployment 	name="AddressBook" 
-				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
-				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-				xmlns:samp="urn:xml-soap-address-demo"
-				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
-	<documentation>
+<deployment name="AddressBook" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/" xmlns:samp="urn:xml-soap-address-demo" xmlns="http://xml.apache.org/axis/wsdd/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd/
+http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-axis/java/wsdd/WSDD.xsd?rev=HEAD">
+    <documentation>
     		Address Book Sample
-    	</documentation>		
-	<service name="AddressBook_Service">
-		<typeMapping name="address" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qName="samp:address" languageSpecificType="java:samples.addressbook.Address" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
-		<typeMapping name="phone" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qName="samp:phone" languageSpecificType="java:samples.addressbook.PhoneNumber" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
-		<provider>
-			<operation name="getAddressFromName"/>
-			<operation name="addEntry"/>
-			<operation name="getAllListings"/>
-			<operation name="putListings"/>
-			<java:provider className="samples.addressbook.AddressBook" isStatic="false"/>
-		</provider>	
-		<faultFlow flowType="fault">
-			<handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
-		</faultFlow>	
-	</service>
+    	</documentation>
+    <service name="AddressBook_Service">
+        <typeMapping name="address" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="samp:address" languageSpecificType="java:samples.addressbook.Address" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
+        <typeMapping name="phone" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="samp:phone" languageSpecificType="java:samples.addressbook.PhoneNumber" serializer="java:org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="java:org.apache.soap.encoding.soapenc.BeanSerializer"/>
+        <provider>
+            <operation name="getAddressFromName"/>
+            <operation name="addEntry"/>
+            <operation name="getAllListings"/>
+            <operation name="putListings"/>
+            <java:provider className="samples.addressbook.AddressBook" isStatic="false"/>
+        </provider>
+        <faultFlow flowType="fault">
+            <handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
+        </faultFlow>
+    </service>
 </deployment>
