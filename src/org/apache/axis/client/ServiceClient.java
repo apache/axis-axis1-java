@@ -324,9 +324,11 @@ public class ServiceClient {
      * Directly get the response message in our MessageContext.
      * 
      * Shortcut for having to go thru the msgContext
+     *
+     * @return the response Message object in the msgContext
      */
-    public void getResponseMessage() {
-        msgContext.getResponseMessage();
+    public Message getResponseMessage() {
+        return msgContext.getResponseMessage();
     }
     
     /**
