@@ -372,7 +372,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         if (read < 0) {
             return -1;
         } else {
-            return b[0];
+            return b[0]&0xff;
         }
     }
 
