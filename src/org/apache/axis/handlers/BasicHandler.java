@@ -78,7 +78,7 @@ import java.util.List;
  * @author Doug Davis (dug@us.ibm.com
  */
 public abstract class BasicHandler implements Handler {
-    protected static Log log =
+    private static Log log =
         LogFactory.getLog(BasicHandler.class.getName());
 
     protected boolean makeLockable = false;
