@@ -189,7 +189,7 @@ public class NSStack {
      * If we look for a prefix for "namespace" at the indicated spot, we won't
      * find one because "pre" is actually mapped to "otherNamespace"
      */ 
-    public String getPrefix(String namespaceURI) {
+    public String getPrefix(String namespaceURI, boolean noDefault) {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
         
@@ -201,7 +201,8 @@ public class NSStack {
                     Mapping map = (Mapping)t.get(i);
                     if (map.getNamespaceURI().equals(namespaceURI)) {
                         String possiblePrefix = map.getPrefix();
-                        if (getNamespaceURI(possiblePrefix).equals(namespaceURI))
+                        if (getNamespaceURI(possiblePrefix).equals(namespaceURI) &&
+                            (!noDefault || !"".equals(possiblePrefix)))
                             return possiblePrefix;
                     }
                 }
@@ -211,6 +212,10 @@ public class NSStack {
         if (parent != null)
             return parent.getPrefix(namespaceURI);
         return null;
+    }
+
+    public String getPrefix(String namespaceURI) {
+        return getPrefix(namespaceURI, false);
     }
     
     public String getNamespaceURI(String prefix) {

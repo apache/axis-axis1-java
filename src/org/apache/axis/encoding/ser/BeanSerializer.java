@@ -488,7 +488,7 @@ public class BeanSerializer implements Serializer, Serializable {
 
         attrs.addAttribute(namespace,
                            localName,
-                           context.qName2String(qname),
+                           context.attributeQName2String(qname),
                            "CDATA",
                            propString);
     } 

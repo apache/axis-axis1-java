@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:s0="urn:attributeQualify"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+             targetNamespace="urn:attributeQualify"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <documentation>
+  This test tests the use and overriding of the "attributeFormDefault" attribute.
+  </documentation>
+  <types>
+    <xsd:schema attributeFormDefault="qualified" targetNamespace="urn:attributeQualify">
+
+      <xsd:complexType name="phone">
+        <xsd:all>
+            <xsd:element name="areaCode" type="xsd:int"/>
+            <xsd:element name="exchange" type="xsd:string"/>
+            <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
+        <!-- These attributes should be qualified -->
+        <attribute name="color" type="xsd:string"/>
+        <attribute name="hair" type="xsd:string" form="qualified"/>
+        <!-- This attribute should not -->
+        <attribute name="age" type="xsd:int" form="unqualified"/>
+      </xsd:complexType>
+
+      <xsd:element name="phone" type="s0:phone"/>
+    </xsd:schema>
+  </types>
+
+  <message name="echoPhoneIn">
+    <part name="in" element="s0:phone" />
+  </message>
+  <message name="echoPhoneOut">
+    <part name="out" element="s0:phone" />
+  </message>
+
+  <portType name="AttributeQualify">
+    <operation name="echoPhone">
+      <input message="s0:echoPhoneIn" />
+      <output message="s0:echoPhoneOut" />
+    </operation>
+
+  </portType>
+
+
+  <binding name="AttributeQualify" type="s0:AttributeQualify">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="echoPhone">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="AttributeQualify">
+    <port name="AttributeQualify" binding="s0:AttributeQualify">
+      <soap:address location="http://localhost:8080/axis/services/AttributeQualify" />
+    </port>
+  </service>
+</definitions>

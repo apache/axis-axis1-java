@@ -1049,28 +1049,53 @@ public class SchemaUtils {
                 // we have an attribute node
                 if (v == null)
                     v = new Vector();
-                
-                // type
-                QName typeAttr = Utils.getNodeTypeRefQName(child, "type");
-                if (typeAttr == null) {
-                    // Could be defined as an anonymous type
-                    typeAttr = getAttributeAnonQName(child);
+
+                // Get the name and type qnames.
+                // The type qname is used to locate the TypeEntry, which is then
+                // used to retrieve the proper java name of the type.
+                QName attributeName = Utils.getNodeNameQName(child);
+                BooleanHolder forElement = new BooleanHolder();
+                QName attributeType = Utils.getNodeTypeRefQName(child, forElement);
+
+                // An attribute is either qualified or unqualified.
+                // If the ref= attribute is used, the name of the ref'd element is used
+                // (which must be a root element).  If the ref= attribute is not
+                // used, the name of the attribute is unqualified.
+                if (!forElement.value) {
+                    // check the Form (or attributeFormDefault) attribute of 
+                    // this node to determine if it should be namespace 
+                    // quailfied or not.
+                    String form = Utils.getAttribute(child, "form");
+                    if (form != null && form.equals("unqualified")) {
+                        // Unqualified nodeName
+                        attributeName = new QName("", attributeName.getLocalPart());            
+                    } else if (form == null) {
+                        // check attributeFormDefault on schema element
+                        String def = Utils.getScopedAttribute(child, 
+                                                              "attributeFormDefault");
+                        if (def == null || def.equals("unqualified")) {
+                            // Unqualified nodeName
+                            attributeName = new QName("", attributeName.getLocalPart());            
+                        }
+                    }
+                } else {
+                    attributeName = attributeType;
                 }
-
-                // Get the corresponding TypeEntry
-                TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
-
-                // Need to add code here to get the qualified or unqualified
-                // name.  Similar to the code around line 350 for elements.
-                // Rich Scheuerle
-
-                // Now get the name.
-                QName name = Utils.getNodeNameQName(child);
+                if (attributeType == null) {
+                    attributeType = getAttributeAnonQName(child);            
+                    forElement.value = false;
+                }
+                
+                // Get the corresponding TypeEntry from the symbol table
+                TypeEntry type = 
+                        (TypeEntry)symbolTable.getTypeEntry(attributeType, 
+                                                            forElement.value);
+                
                 // add type and name to vector, skip it if we couldn't parse it
                 // XXX - this may need to be revisited.
-                if (type != null && name != null) {
+                if (type != null && attributeName != null) {
                     v.add(type);
-                    v.add(name.getLocalPart());
+                    v.add(attributeName);
                 }
             }
         }            

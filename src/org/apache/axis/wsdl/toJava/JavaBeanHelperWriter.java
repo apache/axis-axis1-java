@@ -134,6 +134,18 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     } // registerFile
 
     /**
+     * Return the string:  "Generating <file>". 
+     * only if we are going to generate a new file.
+     */
+    protected String verboseMessage(String file) {
+        if (wrapperPW == null) {
+            return super.verboseMessage(file);
+        } else {
+            return null;
+        }
+    } // verboseMessage
+
+    /**
      * Only write the file header if the bean helper is not wrapped
      * within a bean.
      */
@@ -230,8 +242,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i += 2) {
-                    String attrName = (String) attributes.get(i + 1);
-                    String fieldName = Utils.xmlNameToJava(attrName);
+                    QName attrName = (QName) attributes.get(i + 1);
+                    String attrLocalName = attrName.getLocalPart();
+                    String fieldName = Utils.xmlNameToJava(attrLocalName);
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -239,11 +252,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     pw.println("field = new org.apache.axis.description.AttributeDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    if (!fieldName.equals(attrName)) {
-                        pw.print("        field.setXmlName(");
-                        pw.print("new javax.xml.namespace.QName(null, \"");
-                        pw.println(attrName + "\"));");
-                    }
+                    pw.print("        field.setXmlName(");
+                    pw.print("new javax.xml.namespace.QName(\""); 
+                    pw.print(attrName.getNamespaceURI() +  "\", \"");
+                    pw.println(attrName.getLocalPart() + "\"));");
                     pw.println("        typeDesc.addFieldDesc(field);");
                 }
             }
