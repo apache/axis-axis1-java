@@ -525,7 +525,7 @@ public class Java2WSDL {
         msg.append("Java2WSDL " 
                    + Messages.getMessage("j2wemitter00")).append(lSep);
         msg.append(Messages.getMessage("j2wusage00", 
-                   "java " + Java2WSDL.class.getName() + " [options] class-of-portType")).append(lSep);
+                   "java " + getClass().getName() + " [options] class-of-portType")).append(lSep);
         msg.append(Messages.getMessage("j2woptions00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
         msg.append(Messages.getMessage("j2wdetails00")).append(lSep);
