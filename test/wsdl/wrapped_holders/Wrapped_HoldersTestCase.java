@@ -17,10 +17,10 @@ public class Wrapped_HoldersTestCase extends junit.framework.TestCase {
     public Wrapped_HoldersTestCase(java.lang.String name) {
         super(name);
     }
-    public void test1ThingFind_AThing() throws Exception {
+    public void test1ThingFind_aThing() throws Exception {
         test.wsdl.wrapped_holders.Thing binding;
         try {
-            binding = new test.wsdl.wrapped_holders.Wrapped_HoldersLocator().getThing();
+            binding = new test.wsdl.wrapped_holders.Wrapped_holdersLocator().getThing();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -43,7 +43,7 @@ public class Wrapped_HoldersTestCase extends junit.framework.TestCase {
         test.wsdl.wrapped_holders.holders.OtherDataArrayHolder OtherDataOut = new test.wsdl.wrapped_holders.holders.OtherDataArrayHolder();
 
         // call the operation
-        binding.find_AThing(AthingInput, AThingsOut, OtherDataOut);
+        binding.find_aThing(AthingInput, AThingsOut, OtherDataOut);
         
         // verify results
         assertEquals("Output argument (Things) does not match expected", things[0], AThingsOut.value[0]);

@@ -16,7 +16,7 @@ package test.wsdl.wrapped_holders;
  * @author Tom Jordahl
  */ 
 public class ThingImpl implements test.wsdl.wrapped_holders.Thing{
-    public void find_AThing(test.wsdl.wrapped_holders.AThing aThing, 
+    public void find_aThing(test.wsdl.wrapped_holders.AThing aThing, 
                             test.wsdl.wrapped_holders.holders.AThingArrayHolder aThingUnbounded, 
                             test.wsdl.wrapped_holders.holders.OtherDataArrayHolder otherDataUnbounded) 
             throws java.rmi.RemoteException {
