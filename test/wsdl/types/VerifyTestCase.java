@@ -36,6 +36,8 @@ import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.Year;
 import org.apache.axis.types.YearMonth;
+import org.apache.axis.types.URI.MalformedURIException;
+
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
 import test.wsdl.types.comprehensive_types.Animal;
@@ -53,8 +55,6 @@ import test.wsdl.types.comprehensive_types.EnumLong;
 import test.wsdl.types.comprehensive_types.EnumShort;
 import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.PersionCat;
-import test.wsdl.types.comprehensive_types.Simple;
-import test.wsdl.types.comprehensive_types.SimpleFwd;
 import test.wsdl.types.comprehensive_types._complexWComplex_stock_quote;
 import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types.Time;
@@ -70,8 +70,6 @@ import test.wsdl.types.comprehensive_types.holders.EmptyComplexTypeHolder;
 import test.wsdl.types.comprehensive_types.holders.EnumHolder;
 import test.wsdl.types.comprehensive_types2.A;
 import test.wsdl.types.comprehensive_types2.B;
-import test.wsdl.types.comprehensive_types2.SimpleAnyURIType;
-import test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
@@ -414,7 +412,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         Time time = new Time();
         time.setDST(false);
         stockQuote.setTime(time);
-        stockQuote.setChange(new SimpleFwd("5"));
+        stockQuote.setChange("5");
         stockQuote.setPctchange("100%");
         stockQuote.setBid("9");
         stockQuote.setAsk("11");
@@ -742,11 +740,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         
         try {
-            SimpleAnyURIType sendValue = new SimpleAnyURIType("urn:this-is-a-simple-test");
-            SimpleAnyURITypeHolder ch = new SimpleAnyURITypeHolder(sendValue);
-            SimpleAnyURIType actual = binding.methodSimpleAnyURI(sendValue, ch);
+            org.apache.axis.types.URI sendValue = new org.apache.axis.types.URI("urn:this-is-a-simple-test");
+            org.apache.axis.holders.URIHolder ch = new org.apache.axis.holders.URIHolder(sendValue);
+            org.apache.axis.types.URI actual = binding.methodSimpleAnyURI(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + re );
+        } catch (MalformedURIException mue) {
+            throw new junit.framework.AssertionFailedError("methodAnyURI Exception caught: " + mue );
         }
         
         try {

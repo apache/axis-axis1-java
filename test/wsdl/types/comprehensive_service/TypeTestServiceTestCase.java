@@ -1540,8 +1540,8 @@ public class TypeTestServiceTestCase extends junit.framework.TestCase {
         binding.setTimeout(60000);
 
         // Test operation
-        test.wsdl.types.comprehensive_types2.SimpleAnyURIType value = null;
-        value = binding.methodSimpleAnyURI(new test.wsdl.types.comprehensive_types2.SimpleAnyURIType(), new test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder(new test.wsdl.types.comprehensive_types2.SimpleAnyURIType()));
+        org.apache.axis.types.URI value = null;
+        value = binding.methodSimpleAnyURI(new org.apache.axis.types.URI(), new org.apache.axis.holders.URIHolder(new org.apache.axis.types.URI()));
         // TBD - validate results
     }
 
