@@ -61,7 +61,6 @@ import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
@@ -240,6 +239,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     QName attrName = (QName) attributes.get(i + 1);
                     String attrLocalName = attrName.getLocalPart();
                     String fieldName = Utils.xmlNameToJava(attrLocalName);
+                    fieldName = getAsFieldName(fieldName);
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -265,6 +265,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
                     String elemLocalName = elem.getName().getLocalPart();
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
+                    fieldName = getAsFieldName(fieldName);
                     QName xmlName = elem.getName();
                     pw.print("        ");
                     if (!wroteFieldType) {
@@ -294,6 +295,28 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             pw.println("    }");
             pw.println();
         }
+    }
+
+    /**
+     * Utility function to get the bean property name (as will be returned
+     * by the Introspector) for a given field name.  This just means
+     * we capitalize the first character if the second character is
+     * capitalized.  Example: a field named "fOO" will turn into
+     * getter/setter methods "getFOO()/setFOO()".  So when the Introspector
+     * looks at that bean, the property name will be "FOO", not "fOO" due
+     * to the rules in the JavaBeans spec.  So this makes sure the
+     * metadata will match.
+     */
+    private String getAsFieldName(String fieldName) {
+        // If there's a second character, and it is uppercase, then the
+        // bean property name will have a capitalized first character
+        // (because setURL() maps to a property named "URL", not "uRL")
+        if (fieldName.length() > 1 &&
+                Character.isUpperCase(fieldName.charAt(1))) {
+            return Utils.capitalizeFirstChar(fieldName);
+        }
+
+        return fieldName;
     }
 
     /**
