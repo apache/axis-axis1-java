@@ -55,26 +55,26 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class IntegerClassHolder
+ * Class DoubleWrapperHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class IntegerClassHolder implements java.io.Serializable {
+public final class DoubleWrapperHolder implements Holder {
 
     /** Field _value           */
-    public Integer value;
+    public Double value;
 
     /**
-     * Constructor IntegerClassHolder
+     * Constructor DoubleWrapperHolder
      */
-    public IntegerClassHolder() {}
+    public DoubleWrapperHolder() {}
 
     /**
-     * Constructor IntegerClassHolder
+     * Constructor DoubleWrapperHolder
      *
      * @param value
      */
-    public IntegerClassHolder(Integer value) {
+    public DoubleWrapperHolder(Double value) {
         this.value = value;
     }
 }
