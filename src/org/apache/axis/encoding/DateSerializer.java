@@ -62,20 +62,24 @@ import org.xml.sax.Attributes;
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/2001/PR-xmlschema-2-20010330/#dateTime">XML Schema 3.2.7</a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.7</a>
  */
 public class DateSerializer implements Serializer {
 
     private static SimpleDateFormat zulu = 
-                                          new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    //  0123456789 0 123456789
+       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                         //  0123456789 0 123456789
+
+    private static Calendar calendar = new GregorianCalendar();
 
     static {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -84,9 +88,18 @@ public class DateSerializer implements Serializer {
     static class DateDeser extends SOAPTypeMappingRegistry.BasicDeser {
         public Object makeValue(String source) { 
             Date result;
+            boolean bc = false;
 
             // validate fixed portion of format
             if ( source != null ) {
+                if (source.charAt(0) == '+')
+                    source = source.substring(1);
+
+                if (source.charAt(0) == '-') {
+                    source = source.substring(1);
+                    bc = true;
+                }
+
                 if (source.length() < 19) 
                     throw new NumberFormatException(
                             JavaUtils.getMessage("badDateTime00"));
@@ -166,6 +179,15 @@ public class DateSerializer implements Serializer {
                             JavaUtils.getMessage("badChars00"));
             }
 
+            // support dates before the Christian era
+            if (bc) {
+                synchronized (calendar) {
+                    calendar.setTime(result);
+                    calendar.set(Calendar.ERA, GregorianCalendar.BC);
+                    result = calendar.getTime();
+                }
+            }
+
             return result;
         }
     }
@@ -183,9 +205,18 @@ public class DateSerializer implements Serializer {
     {
         context.startElement(name, attributes);
         String fdate;
-        synchronized (zulu) {
+
+        synchronized (calendar) {
+            calendar.setTime((Date)value);
+            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
+                context.writeString("-");
+                calendar.setTime((Date)value);
+                calendar.set(Calendar.ERA, GregorianCalendar.AD);
+                value = calendar.getTime();
+            }
             fdate = zulu.format((Date)value);
         }
+
         context.writeString(fdate);
         context.endElement();
     }
