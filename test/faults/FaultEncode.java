@@ -52,30 +52,56 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package test.faults;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.Test;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.utils.QFault;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.server.AxisServer;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
- *  Test package for faults
+ * This class tests Fault deserialization.
  *
- * @author Mark Roder <mroder@wamnet.com>
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
-public class PackageTests extends TestCase {
 
-    public PackageTests(String name) {
+public class FaultEncode extends TestCase {
+    
+    public FaultEncode(String name) {
         super(name);
-    }
+    } // ctor
+    
+    public void testFault() throws Exception {
+        AxisFault fault = new AxisFault();
+        fault.setFaultCode("<code>");
+        fault.setFaultString("<string>");
+        fault.setFaultActor("<actor>");
+        fault.setFaultDetailString("<detail>");
 
-    public static Test suite() throws Exception {
-        TestSuite suite = new TestSuite();
+        AxisServer server = new AxisServer();
+        Message message = new Message(fault);
+        message.setMessageContext(new MessageContext(server));
 
-        suite.addTestSuite(FaultDecode.class);
-        suite.addTestSuite(FaultEncode.class);
-
-        return suite;
-    }
+        String data = message.getSOAPPart().getAsString();
+        assertTrue("Fault code not encoded correctly",
+            data.indexOf("&lt;code&gt;")>=0);
+        assertTrue("Fault string not encoded correctly",
+            data.indexOf("&lt;string&gt;")>=0);
+        assertTrue("Fault actor not encoded correctly",
+            data.indexOf("&lt;actor&gt;")>=0);
+        assertTrue("Fault detail not encoded correctly",
+            data.indexOf("&lt;detail&gt;")>=0);
+        
+    } // testFault
 }

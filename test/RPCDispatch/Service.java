@@ -65,4 +65,24 @@ public class Service {
     public Integer echoInt(Integer value) throws Exception {
        return value;
     }
+
+    /**
+     * Simple exception to be used in generating faults
+     */
+    class TestFault extends Exception {
+        TestFault(String msg) throws Exception {
+            super(msg);
+            if (msg == null) throw new Exception("default value");
+        }
+    }
+
+    /**
+     * Simple fault.
+     */
+    public String simpleFault(String value) throws Exception {
+       TestFault fault = new TestFault(value);
+       throw fault;
+    }
+
+
 }

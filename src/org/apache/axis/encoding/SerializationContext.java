@@ -630,7 +630,7 @@ public class SerializationContext
             if (child instanceof Element) {
                 writeDOMElement((Element)child);
             } else if (child instanceof Text) {
-                writeString(((Text)child).getData());
+                writeSafeString(((Text)child).getData());
             }
         }
 
