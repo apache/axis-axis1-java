@@ -22,6 +22,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.io.File;
+import java.io.BufferedInputStream;
 
 /**
  * This class allows small attachments to be cached in memory, while large ones are
@@ -116,7 +117,11 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             java.io.InputStream ss, int maxCached, String contentType, boolean readall)
             throws java.io.IOException {
 
-        this.ss = ss;
+        if(ss instanceof BufferedInputStream) {
+            this.ss = ss;
+        } else {
+            this.ss = new BufferedInputStream(ss);
+        }
         this.maxCached = maxCached;
 
         if ((null != contentType) && (contentType.length() != 0)) {
