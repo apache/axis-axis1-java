@@ -362,12 +362,12 @@ public class Emitter {
 
         // Add Axis version info as comment to beginnning of generated WSDL
         if (versionMessage == null) {
-            String versionMessage = Messages.getMessage(
+            versionMessage = Messages.getMessage(
                     "wsdlCreated00",
                     XMLUtils.xmlEncodeString(Version.getVersion()));
         }
         // If version is empty string, don't emit one
-        if (versionMessage.length() > 0) {
+        if (versionMessage != null && versionMessage.length() > 0) {
             Comment wsdlVersion = doc.createComment(versionMessage);
             doc.getDocumentElement().insertBefore(
                     wsdlVersion, doc.getDocumentElement().getFirstChild());
