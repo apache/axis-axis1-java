@@ -143,4 +143,11 @@ public class SOAPStruct {
 
         return true;
     };
+
+    /**
+     * Printable representation
+     */
+    public String toString() {
+        return "{" + varInt + ", \"" + varString + "\", " + varFloat + "}";
+    }
 }
