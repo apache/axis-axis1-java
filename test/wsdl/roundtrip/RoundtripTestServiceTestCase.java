@@ -69,6 +69,8 @@ import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
 
+import javax.xml.rpc.holders.StringHolder;
+
 import test.wsdl.roundtrip.Investment;
 import test.wsdl.roundtrip.BondInvestment;
 import test.wsdl.roundtrip.StockInvestment;
@@ -79,6 +81,8 @@ import test.wsdl.roundtrip.CallOptions;
 import test.wsdl.roundtrip.InvalidTickerSymbol;
 import test.wsdl.roundtrip.InvalidTradeExchange;
 import test.wsdl.roundtrip.InvalidCompanyId;
+
+import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 
 /**
  * This class contains the test methods to verify that Java mapping
@@ -1217,6 +1221,21 @@ public class RoundtripTestServiceTestCase extends TestCase {
         }
 
     } // testInvalidTradeExchange
+
+    /**
+     * Make sure holder inout parameters can be round tripped.
+     */
+    public void testHolderTest() {
+        try {
+            StringHolder sh = new StringHolder("hi there");
+            BondInvestment bi = new BondInvestment();
+            BondInvestmentHolder bih = new BondInvestmentHolder(bi);
+            binding.holderTest(sh, bih);
+        }
+        catch (RemoteException re) {
+            fail("Remote Exception caught:  " + re);
+        }
+    } // testHolderTest
 
 } // End class RoundtripTestServiceTestCase
 

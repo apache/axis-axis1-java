@@ -64,6 +64,10 @@ import test.wsdl.roundtrip.InvalidTickerSymbol;
 import test.wsdl.roundtrip.InvalidTradeExchange;
 import test.wsdl.roundtrip.InvalidCompanyId;
 
+import test.wsdl.roundtrip.holders.BondInvestmentHolder;
+
+import javax.xml.rpc.holders.StringHolder;
+
 /**
  * The RoundtripPortType interface defines the methods necessary when
  * when implementing this interface.  
@@ -170,5 +174,6 @@ public interface RoundtripPortType {
     public int getId(BondInvestment investment) throws java.rmi.RemoteException;
     public int getId(Investment investment) throws java.rmi.RemoteException;
 
+    public void holderTest(StringHolder sh, BondInvestmentHolder bih);
 } // RoundtripPortType
 
