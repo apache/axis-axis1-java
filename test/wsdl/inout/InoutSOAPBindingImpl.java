@@ -1,4 +1,4 @@
-package test.inout;
+package test.wsdl.inout;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;

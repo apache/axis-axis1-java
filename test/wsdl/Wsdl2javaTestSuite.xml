@@ -162,20 +162,20 @@
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
     <!--                 NStoPkg.properties.                       -->
-    <wsdl2java url="test/import_/Import.wsdl"
+    <wsdl2java url="test/wsdl/_import/Import.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
-        <mapping namespace="urn:import" package="test.import"/>
-        <mapping namespace="urn:importBinding1" package="test.import.binding1"/>
-        <mapping namespace="urn:importBinding2" package="test.import.binding2"/>
+        <mapping namespace="urn:import" package="test.wsdl.import"/>
+        <mapping namespace="urn:importBinding1" package="test.wsdl.import.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.wsdl.import.binding2"/>
     </wsdl2java>
     <!-- Import Test 2:  all namespace->package mappings from the -->
     <!--                 command line.                            -->
-    <wsdl2java url="test/import_/Import.wsdl"
+    <wsdl2java url="test/wsdl/_import/Import.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
@@ -191,14 +191,14 @@
     </wsdl2java>
 
     <!-- InOut Sample -->
-    <wsdl2java url="test/inout/inout.wsdl"
+    <wsdl2java url="test/wsdl/inout/inout.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
                noimports="no"
                verbose="no"
                testcase="no">
-        <mapping namespace="http://www.apache.org/inout" package="test.inout"/>
+        <mapping namespace="http://www.apache.org/inout" package="test.wsdl.inout"/>
     </wsdl2java>
 
     <!-- SOAPBuilders Interoperability Lab "Round 1" -->

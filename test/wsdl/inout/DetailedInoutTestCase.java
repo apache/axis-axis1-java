@@ -1,4 +1,4 @@
-package test.inout;
+package test.wsdl.inout;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
