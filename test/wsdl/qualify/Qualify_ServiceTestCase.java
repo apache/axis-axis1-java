@@ -89,7 +89,8 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
 
             Node nameNode = body.getFirstChild();
             String nameNS = nameNode.getNamespaceURI();
-            assertNull("Namespace of name element incorrect", nameNS);
+            assertEquals("Namespace of <name> element incorrect", 
+                         nameNS, namespace);
             
             // Check the response
             assertEquals(value, "Hello there: " + name);
