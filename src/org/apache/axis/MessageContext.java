@@ -617,6 +617,17 @@ public class MessageContext implements SOAPMessageContext {
     /** The directory where in coming attachments are created. */
     public static String ATTACHMENTS_DIR   = "attachments.directory" ;
 
+    /** The value of the property is used by service WSDL generation (aka ?WSDL)
+     * For the service's interface namespace if not set TRANS_URL property is used.
+     */
+    public static String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
+
+    /** The value of the property is used by service WSDL generation (aka ?WSDL)
+     * For the service's location if not set TRANS_URL property is used.
+     *  (helps provide support through proxies.
+     */
+    public static String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
+
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
