@@ -56,6 +56,13 @@
             <xsd:element name="one" type="xsd:string"/>
             <xsd:element name="two" type="typens2:fwd"/> <!-- Forward type use to dif namespace -->
             <xsd:element ref="typens2:three"/>           <!-- Forward ref use to a dif namespace -->
+            <xsd:element name="enum1" type="typens:enumString"/>
+            <xsd:element name="enum2" type="typens:enumInt"/>
+            <xsd:element name="enum3" type="typens:enumLong"/>
+            <xsd:element name="enum4" type="typens:enumFloat"/>
+            <xsd:element name="enum5" type="typens:enumDouble"/>
+            <xsd:element name="enum6" type="typens:enumShort"/>
+            <xsd:element name="enum7" type="typens:enumByte"/>
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
@@ -103,7 +110,58 @@
         </xsd:complexContent>
       </xsd:complexType>
 
+      <!-- The following test all of the valid enum basic types -->
+      <xsd:simpleType name="enumString">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="Ho Ho Ho"/> <!-- Blanks should force value<1..n> names -->        
+          <xsd:enumeration value="He He He"/>                    
+          <xsd:enumeration value="Ha Ha Ha"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumInt">
+        <xsd:restriction base="xsd:int">
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>                    
+          <xsd:enumeration value="3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumLong">
+        <xsd:restriction base="xsd:long">
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>                    
+          <xsd:enumeration value="3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumShort">
+        <xsd:restriction base="xsd:short">
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>                    
+          <xsd:enumeration value="3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumFloat">
+        <xsd:restriction base="xsd:float">
+          <xsd:enumeration value="1.1"/>
+          <xsd:enumeration value="2.2"/>                    
+          <xsd:enumeration value="3.3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumDouble">
+        <xsd:restriction base="xsd:double">
+          <xsd:enumeration value="1.1"/>
+          <xsd:enumeration value="2.2"/>                    
+          <xsd:enumeration value="3.3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="enumByte">
+        <xsd:restriction base="xsd:byte">
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>                    
+          <xsd:enumeration value="3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
     </xsd:schema>
+
 
     <xsd:schema 
         targetNamespace="comprehensive.types.test2"

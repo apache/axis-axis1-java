@@ -61,6 +61,7 @@ import org.w3c.dom.NamedNodeMap;
 import javax.wsdl.QName;
 import javax.wsdl.Fault;
 import javax.wsdl.Message;
+import javax.xml.rpc.holders.BooleanHolder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -301,17 +302,21 @@ public class Utils {
      * If you want the QName for just the "type" without analyzing 
      * minOccurs/maxOccurs then use:
      *    getNodeTypeRefQName(node, "type")
+     * @param node of the reference
+     * @param forElement output parameter is set to true if QName is for an element
+     *                   (i.e. ref= or element= attribute was used).
+     * @param QName of type or element (depending on forElement setting)
      */
-    public static QName getNodeTypeRefQName(Node node) {
+    public static QName getNodeTypeRefQName(Node node, BooleanHolder forElement) {
         if (node == null) return null;
-
-        QName qName= getNodeTypeRefQName(node, "type");
+        forElement.value = false; // Assume QName returned is for a type
 
         // If the node has "type" and "maxOccurs" then the type is really
         // a collection.  There is no qname in the wsdl which we can use to represent
         // the collection, so we need to invent one.
         // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
         // The namespace uri is changed to the targetNamespace of this node
+        QName qName= getNodeTypeRefQName(node, "type");
         if (qName != null) {
             String maxOccursValue = getAttribute(node, "maxOccurs");
             String minOccursValue = getAttribute(node, "minOccurs");
@@ -331,12 +336,21 @@ public class Utils {
             }
         }
 
+        // Both "ref" and "element" reference elements
         if (qName == null) {
+            forElement.value = true;
             qName = getNodeTypeRefQName(node, "ref");
         }
         // A WSDL Part uses the element attribute instead of the ref attribute
         if (qName == null) {
+            forElement.value = true;
             qName = getNodeTypeRefQName(node, "element");
+        }
+
+        // "base" references a "type"
+        if (qName == null) {
+            forElement.value = false;
+            qName = getNodeTypeRefQName(node, "base");
         }
         return qName;
     }

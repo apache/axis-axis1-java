@@ -248,8 +248,9 @@ public class Deserializer extends SOAPHandler
     
     private int startIdx = 0;
     private int endIdx = -1;
-    private boolean isHref = false;
-    private String id = null;  // Set to the id of the element
+    protected boolean isHref = false;
+    protected boolean isNil  = false;  // xsd:nil attribute is set to true
+    protected String id = null;  // Set to the id of the element
     
     /** Subclasses override this
      */
@@ -308,6 +309,7 @@ public class Deserializer extends SOAPHandler
             nil = attributes.getValue(Constants.URIS_SCHEMA_XSI[i], "nil");
         if (nil != null && nil.equals("true")) {
           value = null;
+          isNil = true;
           return;
         }
 

@@ -68,7 +68,7 @@ import java.io.Serializable;
 public class EnumSerializer implements Serializer, Serializable {
 
     private Class cls;
-    private java.lang.reflect.Method getValueMethod = null;
+    private java.lang.reflect.Method toStringMethod = null;
     public EnumSerializer(Class cls) {
         super();
         this.cls = cls;
@@ -83,14 +83,14 @@ public class EnumSerializer implements Serializer, Serializable {
     {
         context.startElement(name, attributes);
 
-        // Invoke the getValue method on the enumeration class and
+        // Invoke the toString method on the enumeration class and
         // write out the result as a string.
         try {
-            if (getValueMethod == null) {
-                getValueMethod = cls.getMethod("getValue", null);
+            if (toStringMethod == null) {
+                toStringMethod = cls.getMethod("toString", null);
             }
-            Object propValue = getValueMethod.invoke(value, null);
-            context.writeString(propValue.toString());
+            String propValue = (String) toStringMethod.invoke(value, null);
+            context.writeString(propValue);
         } catch (Exception e) {
             e.printStackTrace();
             throw new IOException(e.toString());
@@ -105,12 +105,12 @@ public class EnumSerializer implements Serializer, Serializable {
     }
 
     public static class EnumDeserializer extends SOAPTypeMappingRegistry.BasicDeser {
-        java.lang.reflect.Method fromValueMethod;
+        java.lang.reflect.Method fromStringMethod;
         public EnumDeserializer(Class cls)
         {
             try {
-                java.lang.reflect.Method m = cls.getMethod("getValue", null);
-                fromValueMethod = cls.getMethod("fromValue", new Class[] {m.getReturnType()});
+                fromStringMethod = cls.getMethod("fromString", 
+                                                 new Class[] {java.lang.String.class});
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new NullPointerException(e.toString());
@@ -119,8 +119,10 @@ public class EnumSerializer implements Serializer, Serializable {
         
         public Object makeValue(String source) throws Exception
         {
-            // Invoke the fromValue static method to get the Enumeration value
-            return fromValueMethod.invoke(null,new Object [] { source });
+            // Invoke the fromString static method to get the Enumeration value
+            if (isNil)
+                return null;
+            return fromStringMethod.invoke(null,new Object [] { source });
         }
     }
 

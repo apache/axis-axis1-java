@@ -90,6 +90,8 @@ import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 
+import javax.xml.rpc.holders.BooleanHolder;
+
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
@@ -500,6 +502,16 @@ public class SymbolTable {
                 // Create a Type.
                 createTypeFromDef(node, false, false);
             }
+            if (nodeKind.getLocalPart().equals("restriction") ||
+                nodeKind.getLocalPart().equals("extension") &&
+                Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+
+                // The restriction or extension could be used for a number of different
+                // constructs (enumeration, inheritance, arrays, etc.)
+                if (Utils.getAttribute(node, "base") != null) {
+                    createTypeFromRef(node);
+                }
+            }
             else if (nodeKind.getLocalPart().equals("element") &&
                    Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
                 // If the element has a type/ref attribute, create
@@ -561,15 +573,12 @@ public class SymbolTable {
             
             // If the node has a type or ref attribute, get the 
             // qname representing the type
-            QName refQName = Utils.getNodeTypeRefQName(node);
+            BooleanHolder forElement = new BooleanHolder();
+            QName refQName = Utils.getNodeTypeRefQName(node, forElement);
             if (refQName != null) {
-                // Discover whether type is from a type= or ref=/element=
-                boolean typeAttr = false;
-                if (Utils.getNodeTypeRefQName(node, "type") != null)
-                    typeAttr = true;
 
                 // Now get the TypeEntry
-                TypeEntry refType = getTypeEntry(refQName, !typeAttr);
+                TypeEntry refType = getTypeEntry(refQName, forElement.value);
 
                 // Create a type from the referenced TypeEntry
                 if (!belowSchemaLevel) {
@@ -629,20 +638,19 @@ public class SymbolTable {
      */
     private void createTypeFromRef(Node node) throws IOException {
         // Get the QName of the node's type attribute value
-        QName qName = Utils.getNodeTypeRefQName(node);
+        BooleanHolder forElement = new BooleanHolder();
+        QName qName = Utils.getNodeTypeRefQName(node, forElement);
         if (qName != null) {
-
-            // Discover whether type is from a type= or ref=/element=
-            QName typeAttr = Utils.getNodeTypeRefQName(node, "type");
             
             // Get Type or Element depending on whether type attr was used.
-            TypeEntry type = getTypeEntry(qName, (typeAttr==null));
+            TypeEntry type = getTypeEntry(qName, forElement.value);
             
             // A symbol table entry is created if the TypeEntry is not found    
             if (type == null) {
                 // See if this is a special QName for collections
                 if (qName.getLocalPart().indexOf("[") > 0) {
                     // Get the TypeEntry for the collection element
+                    QName typeAttr = Utils.getNodeTypeRefQName(node, "type");
                     TypeEntry collEl = getTypeEntry(typeAttr, false);
                     if (collEl == null) {
                         // Collection Element Type not defined yet, add one.
@@ -669,7 +677,7 @@ public class SymbolTable {
                     String baseJavaName = Utils.getBaseJavaName(qName);
                     if (baseJavaName != null)
                         symbolTablePut(new BaseJavaType(qName));
-                    else if (typeAttr != null)
+                    else if (forElement.value == false)
                         symbolTablePut(new UndefinedType(qName));
                     else
                         symbolTablePut(new UndefinedElement(qName));
@@ -1126,14 +1134,10 @@ public class SymbolTable {
         if (addImports || node == null || node.getOwnerDocument() == doc) {
             entry.setIsReferenced(true);
             if (entry instanceof DefinedElement) {
-                QName referentName = Utils.getNodeTypeRefQName(node);
+                BooleanHolder forElement = new BooleanHolder();
+                QName referentName = Utils.getNodeTypeRefQName(node, forElement);
                 if (referentName != null) {
-                    // Discover whether type is from a type= or ref=/element=
-                    boolean typeAttr = false;
-                    if (Utils.getNodeTypeRefQName(entry.getNode(), "type") != null)
-                        typeAttr = true;
-
-                    TypeEntry referent = getTypeEntry(referentName, !typeAttr);
+                    TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
                         setTypeReferences(referent, doc);
                     }

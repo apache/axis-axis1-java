@@ -89,18 +89,62 @@ public class JavaEnumTypeWriter extends JavaWriter {
     protected void writeFileBody() throws IOException {
         Node node = type.getNode();
 
-        // The first index is the base type.  Get its java name.
-        String baseType = ((TypeEntry) elements.get(0)).getName();
+        // Get the java name of the type
         String javaName = Utils.getJavaLocalName(type.getName());
 
+        // The first index is the base type.
+        // The base type could be a non-object, if so get the corresponding Class.
+        String baseType = ((TypeEntry) elements.get(0)).getName();
+        String baseClass = "Object";
+        if (baseType.indexOf("String") >=0)
+            baseClass = "String";
+        else if (baseType.indexOf("int") == 0)
+            baseClass = "Integer";
+        else if (baseType.indexOf("char") == 0)
+            baseClass = "Character";
+        else if (baseType.indexOf("short") == 0)
+            baseClass = "Short";
+        else if (baseType.indexOf("long") == 0)
+            baseClass = "Long";
+        else if (baseType.indexOf("double") == 0)
+            baseClass = "Double";
+        else if (baseType.indexOf("float") == 0)
+            baseClass = "Float";
+        else if (baseType.indexOf("byte") == 0)
+            baseClass = "Byte";
+        
+        // Create a list of the literal values.
+        Vector values = new Vector();
+        boolean validJava = true;  // Assume all enum values are valid java identifiers
+        for (int i=1; i < elements.size(); i++) {
+            String value = (String) elements.get(i);
+            if (!JavaUtils.isJavaId(value))
+                validJava = false;
+            if (baseClass.equals("String"))
+                value = "\"" + value + "\"";  // Surround literal with double quotes
+            else if (baseClass.equals("Character"))
+                value = "'" + value + "'";
+            else if (baseClass.equals("Float")) {
+                if (!value.endsWith("F") &&   // Indicate float literal so javac
+                    !value.endsWith("f"))     // doesn't complain about precision.
+                    value += "F";
+            }
+            values.add(value);
+        }
+        
+        // Create a list of ids
+        Vector ids = new Vector();
+        for (int i=1; i < elements.size(); i++) {
+            // If any enum values are not valid java, then
+            // all of the ids are of the form value<1..N>.
+            if (!validJava) 
+                ids.add("value" + i);
+            else
+                ids.add(elements.get(i));
+        }
+
         // Note:
-        // The current JAX-RPC spec indicates that enumeration is supported for all simple types.
-        // However, the mapping in JAX-RPC will only work for Strings :-)
-        // I am sure that the JAX-RPC mapping will change -or- the JAX-RPC spec will be changed to 
-        // support only the enumeration of Strings.
-        // The current state of the AXIS code only supports enumerations of Strings.  If JAX-RPC
-        // does introduce new bindings, changes will be required in this method, in EnumSerialization,
-        // and in JavaTypeWriter.getEnumerationBaseAndValues.
+        // This class conforms to the JSR 101 Version 0.6 Public Draft
         pw.println("public class " + javaName + " implements java.io.Serializable {");
 
         // Each object has a private _value_ variable to store the base value
@@ -114,45 +158,77 @@ public class JavaEnumTypeWriter extends JavaWriter {
         pw.println("    // " + JavaUtils.getMessage("ctor00"));
         pw.println("    protected " + javaName + "(" + baseType + " value) {");
         pw.println("        _value_ = value;");
-        pw.println("        _table_.put(_value_,this);");
+        if (baseClass.equals("String"))
+            pw.println("        _table_.put(_value_,this);");
+        else
+            pw.println("        _table_.put(new " + baseClass + "(_value_),this);");
         pw.println("    };");
         pw.println("");
 
         // A public static variable of the base type is generated for each enumeration value.
         // Each variable is preceded by an _.
-        for (int i=1; i < elements.size(); i++) {
-            pw.println("    public static final " + baseType + " _" + elements.get(i)
-                           + " = \"" + elements.get(i) + "\";");
+        for (int i=0; i < ids.size(); i++) {
+            pw.println("    public static final " + baseType + " _" + ids.get(i)
+                           + " = " + values.get(i) + ";");
         }
 
         // A public static variable is generated for each enumeration value.
-        for (int i=1; i < elements.size(); i++) {
-            String variable = (String) elements.get(i);
-            if (JavaUtils.isJavaKeyword(variable)) {
-                variable = JavaUtils.makeNonJavaKeyword(variable);
-            }
-            pw.println("    public static final " + javaName + " " + variable
-                           + " = new " + javaName + "(_" + elements.get(i) + ");");
+        for (int i=0; i < ids.size(); i++) {
+            pw.println("    public static final " + javaName + " " + ids.get(i)
+                           + " = new " + javaName + "(_" + ids.get(i) + ");");
         }
+
         // Getter that returns the base value of the enumeration value
         pw.println("    public " + baseType+ " getValue() { return _value_;}");
 
         // FromValue returns the unique enumeration value object from the table
         pw.println("    public static " + javaName+ " fromValue(" + baseType +" value)");
         pw.println("          throws java.lang.IllegalStateException {");
-        pw.println("        "+javaName+" enum = ("+javaName+")_table_.get(value);");
+        pw.println("        "+javaName+" enum = ("+javaName+")");
+        if (baseClass.equals("String"))
+            pw.println("            _table_.get(value);");
+        else
+            pw.println("            _table_.get(new " + baseClass + "(value));");
         pw.println("        if (enum==null) throw new java.lang.IllegalStateException();");
         pw.println("        return enum;");
         pw.println("    }");
 
-        // Equals == to determine equality  value
+        // FromString returns the unique enumeration value object from a string representation
+        pw.println("    public static " + javaName+ " fromString(String value)");
+        pw.println("          throws java.lang.IllegalStateException {");
+        if (baseClass.equals("String")) {
+            pw.println("        return fromValue(value);");                                     
+        } else if (baseClass.equals("Character")) {
+            pw.println("        if (value != null && value.length() == 1);");  
+            pw.println("            return fromValue(value.charAt(0));");                     
+            pw.println("        throw new java.lang.IllegalStateException();"); 
+        } else if (baseClass.equals("Integer")) {
+            pw.println("        try {");
+            pw.println("            return fromValue(Integer.parseInt(value));");
+            pw.println("        } catch (Exception e) {");
+            pw.println("            throw new java.lang.IllegalStateException();"); 
+            pw.println("        }");
+        } else {
+            pw.println("        try {");
+            pw.println("            return fromValue("+baseClass+".parse"+baseClass+"(value));");
+            pw.println("        } catch (Exception e) {");
+            pw.println("            throw new java.lang.IllegalStateException();"); 
+            pw.println("        }");
+        }
+        pw.println("    }");
+
+        // Equals == to determine equality value.
+        // Since enumeration values are singletons, == is appropriate for equals()
         pw.println("    public boolean equals(Object obj) {return (obj == this);}");
+        
+        // Provide a reasonable hashCode method (hashCode of the string value of the enumeration)
+        pw.println("    public int hashCode() { return toString().hashCode();}");
 
-        // Provide a reasonable hashCode method             
-        pw.println("    public int hashCode() { return _value_.hashCode();}");
-
-        // Provide a reasonable toString method.
-        pw.println("    public String toString() { return _value_;}");
+        // toString returns a string representation of the enumerated value
+        if (baseClass.equals("String"))
+            pw.println("    public String toString() { return _value_;}");
+        else                            
+            pw.println("    public String toString() { return String.valueOf(_value_);}");
         pw.println("}");
 
         pw.close();
