@@ -58,6 +58,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Vector;
 
+import javax.xml.rpc.ParameterMode;
+
 /**
  * MethodRep is the representation of a class used inside the Java2WSDL
  * emitter.  The information in the MethodRep can be changed by 
@@ -82,18 +84,37 @@ public class MethodRep {
      * Create a default representation of MethodRep
      * @param method Method to use to create default MethodRep
      * @param types  This is an array of parameter types                       
-     * @param modes  This is an array of parameter modes (IN, OUT, INOUT)      
+     * @param modes  This is an array of retrurn/parameter modes (IN, OUT, INOUT) or ParameterMode    
      * @param paramNames This is an array of names to be used for the
      *                   return/parameter names.  If null, default names
      *                   are constructed.                                          
      */ 
+    public MethodRep(Method method, Class[] types, ParameterMode[] pmodes, String[] paramNames) {
+        short[] modes = null;
+        if (pmodes != null) {
+            modes = new short[pmodes.length];
+            for (int i=0; i < modes.length; i++) {
+                if (pmodes[i] != null && pmodes[i].equals(ParameterMode.PARAM_MODE_IN)) {
+                    modes[i] = ParamRep.IN;
+                } else if (pmodes[i] != null && pmodes[i].equals(ParameterMode.PARAM_MODE_INOUT)) { 
+                    modes[i] = ParamRep.INOUT;
+                } else {
+                    modes[i] = ParamRep.OUT;
+                }
+           }
+        }
+        init(method, types, modes, paramNames);
+    }
     public MethodRep(Method method, Class[] types, short[] modes, String[] paramNames) {
+        init(method, types, modes, paramNames);
+    }
+    protected void init(Method method, Class[] types, short[] modes, String[] paramNames) {
         _name = method.getName();
         String retName = "return";
         if ((paramNames != null) && (paramNames[0] != null) && !paramNames.equals("")) {
             retName = paramNames[0];
         }
-        _returns = new ParamRep(retName, method.getReturnType(), ParamRep.OUT);
+        _returns = new ParamRep(retName, method.getReturnType(), modes[0]);
 
         // Create a ParamRep for each parameter.  The holderClass() method
         // returns the name of the held type if this is a holder class.
@@ -103,15 +124,15 @@ public class MethodRep {
                 name = (String) paramNames[i+1];
             }
             if (name == null || name.equals("") ) {
-                if (modes[i] == ParamRep.IN) {
+                if (modes[i+1] == ParamRep.IN) {
                     name = "in" + i;
-                } else if (modes[i] == ParamRep.OUT) {
+                } else if (modes[i+1] == ParamRep.OUT) {
                     name = "out" + i;
                 } else {
                     name = "inOut" + i;
                 }
             }
-            _parameters.add(new ParamRep(name, types[i], modes[i]));
+            _parameters.add(new ParamRep(name, types[i], modes[i+1]));
         }
     }
        

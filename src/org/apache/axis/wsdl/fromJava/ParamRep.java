@@ -54,6 +54,8 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
+import javax.xml.rpc.ParameterMode;
+
 /**
  * ParamRep is the representation of a class used inside the Java2WSDL
  * emitter.  The information in the ParamRep can be changed by 

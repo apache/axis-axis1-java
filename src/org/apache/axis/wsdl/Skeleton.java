@@ -53,6 +53,9 @@
  * <http://www.apache.org/>.
  */
 package org.apache.axis.wsdl;
+
+import javax.xml.rpc.ParameterMode;
+
 /**
  * Interface for WSDL2Java generated skeletons    
  */
@@ -66,6 +69,19 @@ public interface Skeleton {
 
     /**
      * Note: The implementor should also provide a static version of the
-     * above class named getParameterNameStatic
+     * above method named getParameterNameStatic
      */
+
+    /**
+     * Used to return the mode of the n-th parameter of the specified
+     * operation.  Use -1 to get the return mode.
+     * Returns null if problems occur or the parameter is not known.
+     */
+    public ParameterMode getParameterMode(String operationName, int n);
+
+    /**
+     * Note: The implementor should also provide a static version of the
+     * above method named getParameterModeStatic
+     */
+
 }
