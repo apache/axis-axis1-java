@@ -194,15 +194,29 @@ public class SerializationContext
         return getTypeMappingRegistry().getTypeQName(cls);
     }
     
+    /**
+     * Classes which are known to not require multi-ref.  Doing multiref
+     * for these would not only tend to increase the size of the payload,
+     * they decrease interopability by utilizing an advanced function of
+     * the protocol unnecessarily.
+     */
+    public boolean isPrimitive(Object value)
+    {
+        if (value instanceof String) return true;
+        if (value instanceof Number) return true;
+        if (value instanceof Boolean) return true;
+        if (value instanceof Date) return true;
+        if (value instanceof byte[]) return true;
+        return false;
+    }
+    
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
         if (value == null)
             return;
         
-        if (doMultiRefs && (value != currentSer) &&
-            !(value.getClass().equals(String.class)) &&
-            !(value instanceof Number)) {
+        if (doMultiRefs && (value != currentSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
             
