@@ -22,7 +22,7 @@
          docLit test, which means Axis gets two services with the same name -->
     <!-- url="http://www.whitemesa.com/r3/InteropTestDocLitParameters.wsdl" -->
     <wsdl2java url="test/wsdl/interop3/docLitParam/interoptestdoclitparameters.wsdl"
-               output="${root.dir}/build/work" skeletonDeploy="yes"
+               output="${root.dir}/build/work" skeletonDeploy="no"
                serverSide="yes"/>
 
     <mkdir dir="${build.dest}"/>
