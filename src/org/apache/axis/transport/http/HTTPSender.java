@@ -326,8 +326,11 @@ public class HTTPSender extends BasicHandler {
                 }
                 buf[len] = (byte)0;
 
-                throw new AxisFault("HTTP", statusMessage, null,
-                                    new String(buf, 0, len));
+                AxisFault fault = new AxisFault("HTTP",
+                                                statusMessage,
+                                                null,
+                                                null);
+                fault.setFaultDetailsString(new String(buf, 0, len));
             }
 
             if ( b != -1 ) {
