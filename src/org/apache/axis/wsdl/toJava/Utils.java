@@ -616,7 +616,7 @@ public class Utils {
     private static void getNestedTypes(
             Node type, HashSet types, SymbolTable symbolTable) {
         // Process types declared in this type
-        Vector v = SchemaUtils.getComplexElementDeclarations(type, symbolTable);
+        Vector v = SchemaUtils.getContainedElementDeclarations(type, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i++) {
                 ElementDecl elem = (ElementDecl)v.get(i);
@@ -629,7 +629,7 @@ public class Utils {
             }
         }
         // Process attributes declared in this type
-        v = SchemaUtils.getComplexElementAttributes(type, symbolTable);
+        v = SchemaUtils.getContainedAttributeTypes(type, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i+=2) {
                 if (!types.contains(v.get(i))) {

@@ -55,6 +55,8 @@ import test.wsdl.types.comprehensive_types.EnumLong;
 import test.wsdl.types.comprehensive_types.EnumShort;
 import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.StockQuote;
+import test.wsdl.types.comprehensive_types.Simple;
+import test.wsdl.types.comprehensive_types.SimpleFwd;
 import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types2.A;
@@ -233,7 +235,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         StringParameter sp = new StringParameter("sweet!");
         sp.setDescription("Pass this as an element and an attribute...wow!");
 
-        elemWComplex.setOne( "one");
+        elemWComplex.setOne( new Simple("one"));
         elemWComplex.setTwo( new QName[] {new QName("two")});
         elemWComplex.setThree( new Enum[] {Enum.three});
         elemWComplex.setEnum1( EnumString.value1);
@@ -268,7 +270,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         StockQuote stockQuote = new StockQuote();
         stockQuote.setTime(new Time());
-        stockQuote.setChange("5");
+        stockQuote.setChange(new SimpleFwd("5"));
         stockQuote.setPctchange("100%");
         stockQuote.setBid("9");
         stockQuote.setAsk("11");

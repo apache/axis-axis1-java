@@ -82,14 +82,19 @@ import org.apache.axis.Constants;
 public class SchemaUtils {
 
     /**
-     * If the specified node represents a supported JAX-RPC complexType/element,
-     * a Vector is returned which contains ElementDecls for the child
-     * elements.
-     * 
-     * If the specified node is not a supported JAX-RPC complexType/element
-     * null is returned.
+     * If the specified node represents a supported JAX-RPC complexType or 
+     * simpleType, a Vector is returned which contains ElementDecls for the 
+     * child element names. 
+     * If the element is a simpleType, an ElementDecls is built representing
+     * the restricted type with the special name "value".
+     * If the element is a complexType which has simpleContent, an ElementDecl
+     * is built representing the extended type with the special name "value".
+     * This method does not return attribute names and types
+     * (use the getContainedAttributeTypes)
+     * If the specified node is not a supported 
+     * JAX-RPC complexType/simpleType/element null is returned.
      */
-    public static Vector getComplexElementDeclarations(Node node, SymbolTable symbolTable) {
+    public static Vector getContainedElementDeclarations(Node node, SymbolTable symbolTable) {
         if (node == null) {
             return null;
         }
@@ -112,7 +117,7 @@ public class SchemaUtils {
             }
         }
 
-        // Expecting a schema complexType
+        // Expecting a schema complexType or simpleType
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
@@ -158,8 +163,7 @@ public class SchemaUtils {
                                                           "base");
                         
                         // Return an element declaration with a fixed name
-                        // ("value") and the correct type.
-                        
+                        // ("value") and the correct type.                        
                         Vector v = new Vector();
                         ElementDecl elem = new ElementDecl();
                         elem.setType(symbolTable.getTypeEntry(extendsType, false));
@@ -215,12 +219,26 @@ public class SchemaUtils {
                 }
                 return v;
             }
+        } else {
+            // This may be a simpleType, return the type with the name "value"
+            QName simpleQName = getSimpleTypeBase(node, symbolTable);
+            if (simpleQName != null) {
+                TypeEntry simpleType = symbolTable.getType(simpleQName);
+                if (simpleType != null) {
+                    Vector v = new Vector();
+                    ElementDecl elem = new ElementDecl();
+                    elem.setType(simpleType);
+                    elem.setName(new javax.xml.rpc.namespace.QName("", "value"));
+                    v.add(elem);
+                    return v;
+                }
+            }
         }
         return null;
     }
 
     /**
-     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Choice Node
      */
     private static Vector processChoiceNode(Node choiceNode, 
@@ -250,7 +268,7 @@ public class SchemaUtils {
     }
 
     /**
-     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Sequence Node
      */
     private static Vector processSequenceNode(Node sequenceNode, 
@@ -280,7 +298,7 @@ public class SchemaUtils {
     }
 
     /**
-     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a group node.
      * (Currently the code only supports a defined group it does not
      * support a group that references a previously defined group)
@@ -305,7 +323,7 @@ public class SchemaUtils {
     }
 
     /**
-     * Invoked by getComplexElementTypesAndNames to get the child element types
+     * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath an all node.
      */
     private static Vector processAllNode(Node allNode, SymbolTable symbolTable) {
@@ -329,7 +347,7 @@ public class SchemaUtils {
 
 
     /**
-     * Invoked by getComplexElementTypesAndNames to get the child element type
+     * Invoked by getContainedElementDeclarations to get the child element type
      * and child element name for a child element node.
      *
      * If the specified node represents a supported JAX-RPC child element,
@@ -1019,8 +1037,8 @@ public class SchemaUtils {
      * </complexType>
      * 
      */ 
-    public static Vector getComplexElementAttributes(Node node, 
-                                                     SymbolTable symbolTable) 
+    public static Vector getContainedAttributeTypes(Node node, 
+                                                    SymbolTable symbolTable) 
     {
         Vector v = null;    // return value
         

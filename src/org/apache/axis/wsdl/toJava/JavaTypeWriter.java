@@ -51,7 +51,7 @@
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
- */
+ */ 
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
@@ -84,32 +84,41 @@ public class JavaTypeWriter implements Writer {
             SymbolTable symbolTable) {
         if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
 
-            // Determine what sort of type this is and instantiate the appropriate Writer.
+            // Determine what sort of type this is and instantiate 
+            // the appropriate Writer.
             Node node = type.getNode();
 
             // If it's an array, don't emit a class
             if (!type.getName().endsWith("[]")) {
 
                 // Generate the proper class for either "complex" or "enumeration" types
-                Vector v = SchemaUtils.getComplexElementDeclarations(
+                Vector v = SchemaUtils.getEnumerationBaseAndValues(
                         node, symbolTable);
                 if (v != null) {
-                    typeWriter = new 
-                            JavaComplexTypeWriter(emitter, 
-                                                  type, 
-                                                  v,
-                                                  SchemaUtils.getComplexElementExtensionBase(
-                                                          node, symbolTable), 
-                                                  SchemaUtils.getComplexElementAttributes(
-                                                          node, 
-                                                          symbolTable));
+                    typeWriter = new JavaEnumTypeWriter(emitter, type, v);
                 }
                 else {
-                    v = SchemaUtils.getEnumerationBaseAndValues(
-                            node, symbolTable);
-                    if (v != null) {
-                        typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
+                       node, symbolTable);
+                    if (base == null) {
+                        QName baseQName = SchemaUtils.getSimpleTypeBase(
+                           node, symbolTable);
+                        if (baseQName != null) {
+                            base = symbolTable.getType(baseQName);
+                        }
                     }
+
+                    typeWriter = new 
+                        JavaComplexTypeWriter(
+                            emitter, 
+                            type, 
+                            SchemaUtils.getContainedElementDeclarations(
+                                node, 
+                                symbolTable),
+                            base,
+                            SchemaUtils.getContainedAttributeTypes(
+                                 node, 
+                                 symbolTable));
                 }
             }
 

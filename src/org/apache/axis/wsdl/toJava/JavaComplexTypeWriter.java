@@ -1,4 +1,4 @@
-/*
+ /*
  * The Apache Software License, Version 1.1
  *
  *
@@ -111,21 +111,23 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
         // We are only interested in the java names of the types, so create a names list
         Vector names = new Vector();
-        for (int i = 0; i < elements.size(); i++) {
-            ElementDecl elem = (ElementDecl)elements.get(i);
-            TypeEntry type = elem.getType();
-            String elemName = elem.getName().getLocalPart();
-            String javaName = Utils.xmlNameToJava(elemName);
-            if (!javaName.equals(elemName)) {
-                // If we did some mangling, make sure we'll write out the XML
-                // the correct way.
-                if (elementMappings == null)
-                    elementMappings = new HashMap();
+        if (elements != null) {
+            for (int i = 0; i < elements.size(); i++) {
+                ElementDecl elem = (ElementDecl)elements.get(i);
+                TypeEntry type = elem.getType();
+                String elemName = elem.getName().getLocalPart();
+                String javaName = Utils.xmlNameToJava(elemName);
+                if (!javaName.equals(elemName)) {
+                    // If we did some mangling, make sure we'll write out the XML
+                    // the correct way.
+                    if (elementMappings == null)
+                        elementMappings = new HashMap();
 
-                elementMappings.put(javaName, elem.getName());
+                    elementMappings.put(javaName, elem.getName());
+                }
+                names.add(type.getName());
+                names.add(javaName);
             }
-            names.add(type.getName());
-            names.add(javaName);
         }
         // add the attributes to the names list (which will be bean elements too)
         if (attributes != null) {
@@ -148,7 +150,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 valueType = (String) names.get(i);
             pw.print("    private " + names.get(i) + " " + variable + ";");
             // label the attribute fields.
-            if (i >= elements.size())
+            if (elements == null || i >= (elements.size()*2))
                 pw.println("  // attribute");
             else
                 pw.println();
@@ -208,7 +210,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             // like the reasonable approach to take for collection types.
             // (It may be more efficient to handle this with an ArrayList...but
             // for the initial support it was easier to use an actual array.) 
-            if (j < elements.size()) {
+            if (elements != null && j < elements.size()) {
                 ElementDecl elem = (ElementDecl)elements.get(j);
                 if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
                     String compName = typeName.substring(0, typeName.lastIndexOf("["));

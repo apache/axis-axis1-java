@@ -645,11 +645,10 @@ public class SymbolTable {
                 IntHolder numDims = new IntHolder();
                 numDims.value = 0;
                 QName arrayEQName = SchemaUtils.getArrayElementQName(node, numDims);
-                QName simpleQName = SchemaUtils.getSimpleTypeBase(node, this);
 
-                if (arrayEQName != null || simpleQName != null) {
-                    // Get the TypeEntry for the array element/simple type
-                    refQName = (arrayEQName != null ? arrayEQName : simpleQName);
+                if (arrayEQName != null) {
+                    // Get the TypeEntry for the array element type
+                    refQName = arrayEQName;
                     TypeEntry refType = getTypeEntry(refQName, false);
                     if (refType == null) {
                         // Not defined yet, add one
@@ -677,9 +676,6 @@ public class SymbolTable {
                         defType = new DefinedType(qName, refType, node, dims);
                     }
                     if (defType != null) {
-                        if (simpleQName != null) {
-                            defType.setSimpleType(true);
-                        }
                         symbolTablePut(defType);
                     }
                 }
@@ -1164,7 +1160,7 @@ public class SymbolTable {
 
             // Get the nested type entries.
             Vector vTypes =
-                    SchemaUtils.getComplexElementDeclarations(node, this);
+                    SchemaUtils.getContainedElementDeclarations(node, this);
 
             if (vTypes != null) {
                 // add the elements in this list
