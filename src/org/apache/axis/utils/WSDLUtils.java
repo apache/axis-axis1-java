@@ -84,7 +84,8 @@ public class WSDLUtils {
         TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
         String name = cls.getName();
         
-        DefinitionFactory factory = DefinitionFactory.newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
+        DefinitionFactory factory = DefinitionFactory.
+                newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
         Definition def = factory.newDefinition();
         Binding binding = def.createBinding();
         Service service = def.createService();
@@ -188,7 +189,8 @@ public class WSDLUtils {
     {
         Message msg = def.createMessage();
         
-        javax.wsdl.QName qName = new javax.wsdl.QName("", method.getName().concat("Request"));
+        javax.wsdl.QName qName = new javax.wsdl.QName("",
+                                        method.getName().concat("Request"));
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -207,13 +209,15 @@ public class WSDLUtils {
     {
         Message msg = def.createMessage();
         
-        javax.wsdl.QName qName = new javax.wsdl.QName("", method.getName().concat("Response"));
+        javax.wsdl.QName qName = new javax.wsdl.QName("",
+                                        method.getName().concat("Response"));
 
         msg.setQName(qName);
         msg.setUndefined(false);
         
         Class type = method.getReturnType();
-        addPartToMessage(def, msg, method.getName().concat("Result"), type, reg);
+        addPartToMessage(def, msg, method.getName().concat("Result"),
+                type, reg);
         
         return msg;
     }
@@ -233,8 +237,9 @@ public class WSDLUtils {
             def.addNamespace("ns" + n++, qName.getNamespaceURI());
         }
 
-        javax.wsdl.QName typeQName = new javax.wsdl.QName(qName.getNamespaceURI(),
-                                                          qName.getLocalPart());
+        javax.wsdl.QName typeQName =
+                new javax.wsdl.QName(qName.getNamespaceURI(),
+                                     qName.getLocalPart());
 
         part.setTypeName(typeQName);
         part.setName(name);
