@@ -30,9 +30,9 @@ public class EmptySATestCase extends junit.framework.TestCase {
     }
 
     public void testStep3() {
-        SoapInteropImport1PortType binding;
+        SoapInteropEmptySAPortType binding;
         try {
-            binding = new Import1Locator().getSoapInteropImport1Port();
+            binding = new EmptySALocator().getSoapInteropEmptySAPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -70,7 +70,7 @@ public class EmptySATestCase extends junit.framework.TestCase {
     public void testStep7() {
         test.wsdl.interop3.emptysa.step6.SoapInteropEmptySAPortType binding;
         try {
-            binding = new EmptySALocator().getSoapInteropEmptySAPort();
+            binding = new test.wsdl.interop3.emptysa.step6.EmptySALocator().getSoapInteropEmptySAPort();
         }
         catch (Throwable t) {
             throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
