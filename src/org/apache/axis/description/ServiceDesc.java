@@ -55,6 +55,7 @@
 package org.apache.axis.description;
 
 import org.apache.axis.AxisServiceConfig;
+import org.apache.axis.InternalException;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -627,6 +628,15 @@ public class ServiceDesc {
                 (stopClasses == null ||
                           !stopClasses.contains(superClass.getName()))) {
             syncOperationToClass(oper, superClass);
+        }
+
+        // Exception if sync fails to find method for operation 
+        if (oper.getMethod() == null) {
+            InternalException ie = 
+                new InternalException(JavaUtils.getMessage("serviceDescOperSync00", 
+                                                           oper.getName(),
+                                                           implClass.getName()));
+            throw ie;
         }
     }
 
