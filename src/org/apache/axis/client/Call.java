@@ -1060,7 +1060,8 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "Call::invoke(RPCElement)") );
+        category.debug(JavaUtils.getMessage("enter00", 
+                                            "Call::invoke(RPCElement)") );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
@@ -1082,33 +1083,9 @@ public class Call implements javax.xml.rpc.Call {
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
 
         msgContext.setRequestMessage(reqMsg);
-        msgContext.setResponseMessage(resMsg);
 
         reqEnv.addBodyElement(body);
         reqEnv.setMessageType(Message.REQUEST);
-
-        if ( body.getPrefix() == null )       body.setPrefix( "m" );
-        if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("Call.invoke", JavaUtils.getMessage("cantInvoke00", body.getMethodName()),
-                    null, null);
-        } else if (msgContext.getServiceHandler() == null) {
-            msgContext.setTargetService(body.getNamespaceURI());
-        }
-
-
-        if (category.isDebugEnabled()) {
-            StringWriter writer = new StringWriter();
-            try {
-                SerializationContext ctx = new SerializationContext(writer,
-                                                                   msgContext);
-                reqEnv.output(ctx);
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace(new PrintWriter(writer));
-            } finally {
-                category.debug(writer.getBuffer().toString());
-            }
-        }
 
         try {
             invoke();
@@ -1153,7 +1130,8 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "Call::invoke(RPCElement)") );
+        category.debug(JavaUtils.getMessage("exit00",
+                                            "Call::invoke(RPCElement)") );
         return( result );
     }
 
@@ -1186,9 +1164,16 @@ public class Call implements javax.xml.rpc.Call {
     public void invoke() throws AxisFault {
         category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
 
-        msgContext.reset();
-        msgContext.setProperty( MessageContext.CALL, this );
+        Message      reqMsg  = null ;
+        SOAPEnvelope reqEnv  = null ;
 
+        msgContext.reset();
+        msgContext.setResponseMessage(null);
+        msgContext.setProperty( MessageContext.CALL, this );
+        msgContext.setMaintainSession(maintainSession);
+
+        // Go thru the properties and ones that are Axis specific, and
+        // need to be moved to the msgContext - do so.
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();
             while (enum.hasMoreElements()) {
@@ -1209,16 +1194,43 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        msgContext.setMaintainSession(maintainSession);
+        // Determine client target service
+        reqMsg = msgContext.getRequestMessage();
+        reqEnv = reqMsg.getSOAPPart().getAsSOAPEnvelope();
+        SOAPBodyElement body = reqEnv.getFirstBody();
 
-        // set up message context if there is a transport
+        if ( body.getPrefix() == null )       body.setPrefix( "m" );
+        if ( body.getNamespaceURI() == null ) {
+            throw new AxisFault("Call.invoke", 
+                   JavaUtils.getMessage("cantInvoke00", body.getName()),
+                                        null, null);
+        } else if (msgContext.getServiceHandler() == null) {
+            msgContext.setTargetService(body.getNamespaceURI());
+        }
+        category.debug("TargetService:" + msgContext.getTargetService());
+
+        // set up transport if there is one
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, this.engine);
         }
         else
             msgContext.setTransportName( transportName );
 
-        category.debug("TargetService:" + msgContext.getTargetService());
+        // For debugging - print request message
+        if (category.isDebugEnabled()) {
+            StringWriter writer = new StringWriter();
+            try {
+                SerializationContext ctx = new SerializationContext(writer,
+                                                                   msgContext);
+                reqEnv.output(ctx);
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace(new PrintWriter(writer));
+            } finally {
+                category.debug(writer.getBuffer().toString());
+            }
+        }
+
         try {
             engine.invoke( msgContext );
 
