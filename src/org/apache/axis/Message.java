@@ -303,7 +303,8 @@ public class Message {
             is = new InputSource(new StringReader(getAsString()));
         }
         SAXParser parser = XMLUtils.getSAXParser();
-        DeserializationContext dser = new DeserializationContext(msgContext);
+        DeserializationContext dser = 
+            new DeserializationContext(msgContext, messageType);
         
         // This may throw a SAXException
         try {
@@ -312,10 +313,7 @@ public class Message {
             throw new AxisFault(e);
         }
 
-        SOAPEnvelope env = dser.getEnvelope();
-        env.setMessageType(messageType);
-        
-        setCurrentMessage( env, FORM_SOAPENVELOPE );
+        setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
         Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
         return( (SOAPEnvelope) currentMessage );
     }

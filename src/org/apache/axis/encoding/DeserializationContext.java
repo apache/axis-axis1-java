@@ -120,19 +120,21 @@ public class DeserializationContext extends DefaultHandler
     protected boolean doneParsing = false;
     protected InputSource inputSource = null;
         
-    public DeserializationContext(MessageContext ctx)
+    public DeserializationContext(MessageContext ctx, String messageType)
     {
         msgContext = ctx;
         
         envelope = new SOAPEnvelope();
         envelope.setRecorder(recorder);
+        envelope.setMessageType(messageType);
         
         pushElementHandler(new EnvelopeHandler());
     }
     
-    public DeserializationContext(InputSource is, MessageContext ctx)
+    public DeserializationContext(InputSource is, MessageContext ctx, 
+                                  String messageType)
     {
-        this(ctx);
+        this(ctx, messageType);
         inputSource = is;
     }
     

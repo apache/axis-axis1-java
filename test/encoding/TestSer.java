@@ -48,7 +48,8 @@ public class TestSer extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        DeserializationContext dser = new DeserializationContext(new InputSource(reader), msgContext);
+        DeserializationContext dser = new DeserializationContext(
+            new InputSource(reader), msgContext, ServiceDescription.REQUEST);
         reg = dser.getTypeMappingRegistry();
         reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
         dser.parse();
