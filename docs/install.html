@@ -115,12 +115,18 @@ Contents
       (see below) cannot find the relevant packages, place them in 
       CATALINA_HOME/common/lib and restart Tomcat. 
     
+    <h3>Axis 1.0 client and Java1.4</h3>
+    Axis 1.0 shipped with a bug that surfaced afterwards: clients need servlet.jar or
+    j2ee.jar on their classpath when running on Java1.4. This has been fixed in the 
+    CVS version. If you get a <tt>NoClassDefFoundError</tt> on the client side, with 
+    Java failing to find <tt>javax/servlet/ServletContext</tt>, either 
+    correct the classpath or upgrade to a later version of Axis.  
 
     <a name="start"/></a>
     <h2>Step 3: starting the web server</h2>
 
     <p>This varies on a product-by-product basis. In many cases it it as
-    simple as double clicking on a startup icon or running a simple command from
+    simple as double clicking on a startup icon or running a command from
     the command line.</p>
 
     <a name="install-test"/></a>
@@ -234,20 +240,29 @@ Again, the exact return values will be different, and you may need to
 change URLs to correct host, port and webapp specifics. 
 
     <a name="websvc"/></a>
-    <h2>Step 3: installing new web services</h2>
+    <h2>Step 5: installing new Web Services</h2>
 
-    <p>If you got this far, the next step should be simple: </p>
+    <p>So far you have got Axis installed and working, now it is time to add
+        your own Web Service.
+     <p>
+     The process here boils down to (1) get the classes and libraries of this
+     new service into the axis WAR directory tree, (2) tell the AxisEngine about 
+     the new file. The latter is done by submitting an XML deployment descriptor
+     to the service via the Admin web service, which is usually done with the 
+     AdminClient program or the &lt;axis-admin&gt; Ant task
+        
+        
       <p>In the WEB-INF directory, look for (or create) a &quot;classes&quot;
         directory (i.e. axis/WEB-INF/classes ). In this directory, copy the
-        compiled java classes you wish to install, being careful to 
-        preserve the directory structure of the java packages.</li>
-    </ul>
+        compiled Java classes you wish to install, being careful to 
+        preserve the directory structure of the Java packages.
+        
       <p>If your classes services are already packaged into JAR files, 
       feel free to drop them into the WEB-INF/lib directory instead. Also
       add any third party libraries you depend on into the same directory.</p>
 
       <p>
-      After adding new classes or libraries to the axis webapp, you must
+      After adding new classes or libraries to the Axis webapp, you must
       restart the webapp. This can be done by restarting your
       application server, or by using a server-specific mechanism to
       restart a specific webapp.
@@ -269,13 +284,19 @@ change URLs to correct host, port and webapp specifics.
     describes in XML what the service is, what methods it exports and
     other aspects of the SOAP endpoint.
     <p>
-    The users guide covers these WSDD files; here we assume one exists.
+    The users guide covers these WSDD files; here we are going to use one from
+    the Axis samples; the stock quote service. 
     <ul>
         <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
           log4j-1.2.4.jar (or whatever is appropriate for your chosen logging implementation),
           and the XML parser jar file or files (e.g., xerces.jar) to your classpath.
-          Locate the deployment descriptor for your service and execute the following
-          command:
+        <li>If you are using Axis1.0 and Java1.4, you need to add servlet.jar to the classpath
+            as a workaround for the aforementioned bug.
+        <li>Look in axis/samples/stock for the file deploy.wsdd. This is the deployment 
+        descriptor we want to tell Axis about. 
+          
+          
+      <li>execute the following command from the samples/stock directory:
           <blockquote>
               <code class="java">java org.apache.axis.client.AdminClient <br>
                 -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</code>
