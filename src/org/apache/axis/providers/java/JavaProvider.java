@@ -74,6 +74,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
+import javax.xml.rpc.server.ServiceLifecycle;
+import javax.xml.rpc.holders.IntHolder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
@@ -91,12 +93,15 @@ public abstract class JavaProvider extends BasicProvider
     protected static Log log =
         LogFactory.getLog(JavaProvider.class.getName());
 
-
     // from the original stubbed-out JavaProvider...
     // not quite sure what these are for but it is to do with WSDD... -- RobJ
     public static final String OPTION_CLASSNAME = "className";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
+
+    public static final int SCOPE_REQUEST = 0;
+    public static final int SCOPE_SESSION = 1;
+    public static final int SCOPE_APPLICATION = 2;
 
     private String classNameOption = "className";
     private String allowedMethodsOption = "allowedMethods";
@@ -107,7 +112,8 @@ public abstract class JavaProvider extends BasicProvider
      */
     public Object getServiceObject (MessageContext msgContext,
                                     Handler service,
-                                    String clsName)
+                                    String clsName,
+                                    IntHolder scopeHolder)
         throws Exception
     {
         String serviceName = msgContext.getService().getName();
@@ -121,12 +127,16 @@ public abstract class JavaProvider extends BasicProvider
         }
 
         if (scope.equalsIgnoreCase("Request")) {
+            // Convey the scope upwards
+            scopeHolder.value = SCOPE_REQUEST;
 
             // make a one-off
             return getNewServiceObject(msgContext, clsName);
 
         } else if (scope.equalsIgnoreCase("Session")) {
-            
+            // Convey the scope upwards
+            scopeHolder.value = SCOPE_SESSION;
+
             // What do we do if serviceName is null at this point???
             if (serviceName == null)
                 serviceName = msgContext.getService().toString();
@@ -145,10 +155,13 @@ public abstract class JavaProvider extends BasicProvider
                 }
             } else {
                 // was no incoming session, sigh, treat as request scope
+                scopeHolder.value = SCOPE_REQUEST;
                 return getNewServiceObject(msgContext, clsName);
             }
 
         } else if (scope.equalsIgnoreCase("Application")) {
+            scopeHolder.value = SCOPE_APPLICATION;
+
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
             if (engine.getApplicationSession() != null) {
@@ -164,7 +177,9 @@ public abstract class JavaProvider extends BasicProvider
                     return obj;
                 }
             } else {
-                // was no incoming session, sigh, treat as request scope
+                // was no application session, sigh, treat as request scope
+                // FIXME : Should we bomb in this case?
+                scopeHolder.value = SCOPE_REQUEST;
                 return getNewServiceObject(msgContext, clsName);
             }
 
@@ -174,6 +189,25 @@ public abstract class JavaProvider extends BasicProvider
             return null;
 
         }
+    }
+
+    /**
+     * Return a new service object which, if it implements the ServiceLifecycle
+     * interface, has been init()ed.  Right now we pass "null" as the context
+     * argument to init() - this might want to be the MessageContext?
+     *
+     * @param msgContext the MessageContext
+     * @param clsName the name of the class to instantiate
+     * @return an initialized service object
+     */
+    private Object getNewServiceObject(MessageContext msgContext,
+                                       String clsName) throws Exception {
+        Object serviceObject = makeNewServiceObject(msgContext, clsName);
+        if (serviceObject != null &&
+                serviceObject instanceof ServiceLifecycle) {
+            ((ServiceLifecycle)serviceObject).init(null);
+        }
+        return serviceObject;
     }
 
     /**
@@ -233,9 +267,11 @@ public abstract class JavaProvider extends BasicProvider
             allowedMethods = null;
 
         try {
+            IntHolder scope   = new IntHolder();
             Object obj        = getServiceObject(msgContext,
                                                  service,
-                                                 clsName);
+                                                 clsName,
+                                                 scope);
             JavaClass jc	  = JavaClass.find(obj.getClass());
 
             Message        reqMsg  = msgContext.getRequestMessage();
@@ -246,9 +282,8 @@ public abstract class JavaProvider extends BasicProvider
                                                         getSOAPConstants()) :
                                      (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
-            // get the response message again! It may have been explicitly set!
-            // (by, say, a proxy service :-) -- RobJ
-            if (msgContext.getResponseMessage() == null) {
+            // If we didn't have a response message, make sure we set one up
+            if (resMsg == null) {
                 resMsg = new Message(resEnv);
                 msgContext.setResponseMessage( resMsg );
             }
@@ -261,8 +296,19 @@ public abstract class JavaProvider extends BasicProvider
                 allowedMethods = axisConfig.getAllowedMethods();
             }
 
-            processMessage(msgContext, clsName, allowedMethods, reqEnv,
-                           resEnv, jc, obj);
+            try {
+                processMessage(msgContext, clsName, allowedMethods, reqEnv,
+                               resEnv, jc, obj);
+            } catch (Exception exp) {
+                throw exp;
+            } finally {
+                // If this is a request scoped service object which implements
+                // ServiceLifecycle, let it know that it's being destroyed now.
+                if (scope.value == SCOPE_REQUEST &&
+                        obj instanceof ServiceLifecycle) {
+                    ((ServiceLifecycle)obj).destroy();
+                }
+            }
         }
         catch( Exception exp ) {
             log.info( JavaUtils.getMessage("toAxisFault00"), exp);
@@ -371,7 +417,7 @@ public abstract class JavaProvider extends BasicProvider
      * class wrapped in jc
      *
      */
-    protected Object getNewServiceObject(MessageContext msgContext,
+    protected Object makeNewServiceObject(MessageContext msgContext,
                                              String clsName)
         throws Exception
     {
@@ -402,13 +448,12 @@ public abstract class JavaProvider extends BasicProvider
     /**
      * Returns the Class info about the service class.
      */ 
-    protected Class getServiceClass(MessageContext msgContext, String clsName) throws Exception {
-        Handler service = msgContext.getService();
-        Object obj = getServiceObject(msgContext,
-                                   service,
-                                   clsName);
-        
-        return obj.getClass();
+    protected Class getServiceClass(MessageContext msgContext, String clsName)
+            throws Exception {
+        ClassLoader cl     = msgContext.getClassLoader();
+        ClassCache cache   = msgContext.getAxisEngine().getClassCache();
+        JavaClass  jc      = cache.lookup(clsName, cl);
+        return jc.getJavaClass();
     }
 
     /**

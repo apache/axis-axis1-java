@@ -162,7 +162,20 @@ public class AxisServlet extends HttpServlet
             jwsClassDir = webInfPath + File.separator +  "jwsClasses";
         }
     }
-    
+
+    /**
+     * Destroy method is called when the servlet is going away.  Pass this
+     * down to the AxisEngine to let it clean up.
+     */
+    public void destroy() {
+        super.destroy();
+        try {
+            getEngine().cleanup();
+        } catch (AxisFault fault) {
+            log.error(JavaUtils.getMessage("faultDuringCleanup"), fault);
+        }
+    }
+
     public AxisServer getEngine() throws AxisFault { return getEngine(this); }
 
     /**

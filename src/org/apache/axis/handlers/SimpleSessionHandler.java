@@ -69,11 +69,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.server.ServiceLifecycle;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Enumeration;
 
 /** This handler uses SOAP headers to do simple session management.
  *
@@ -172,7 +174,22 @@ public class SimpleSessionHandler extends BasicHandler
 
             // Now go remove all the victims we found during the iteration.
             for (i = victims.iterator(); i.hasNext();) {
-                activeSessions.remove(i.next());
+                key = i.next();
+                SimpleSession session = (SimpleSession)activeSessions.get(key);
+                activeSessions.remove(key);
+
+                // For each victim, swing through the data looking for
+                // ServiceLifecycle objects, and calling destroy() on them.
+                // FIXME : This cleanup should probably happen on another
+                //         thread, as it might take a little while.
+                Enumeration keys = session.getKeys();
+                while (keys != null && keys.hasMoreElements()) {
+                    String keystr = (String)keys.nextElement();
+                    Object obj = session.get(keystr);
+                    if (obj != null && obj instanceof ServiceLifecycle) {
+                        ((ServiceLifecycle)obj).destroy();
+                    }
+                }
             }
         }
         

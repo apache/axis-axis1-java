@@ -66,8 +66,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.server.ServiceLifecycle;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -194,6 +196,23 @@ public abstract class AxisEngine extends BasicHandler
             log.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
         }
 
+    }
+
+    public void cleanup() {
+        super.cleanup();
+
+        // Let any application-scoped service objects know that we're going
+        // away...
+        Enumeration keys = session.getKeys();
+        if (keys != null) {
+            while (keys.hasMoreElements()) {
+                String key = (String)keys.nextElement();
+                Object obj = session.get(key);
+                if (obj != null && obj instanceof ServiceLifecycle) {
+                    ((ServiceLifecycle)obj).destroy();
+                }
+            }
+        }
     }
 
     /** Write out our engine configuration.
