@@ -191,7 +191,7 @@ public class WSDDService
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler getInstance(DeploymentRegistry registry)
+    public Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
         if (cachedService != null) {

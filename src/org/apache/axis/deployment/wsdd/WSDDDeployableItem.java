@@ -80,6 +80,13 @@ public abstract class WSDDDeployableItem
     extends WSDDElement
     implements DeployableItem
 {
+    public static final int SCOPE_PER_ACCESS = 0;
+    public static final int SCOPE_PER_REQUEST = 1;
+    public static final int SCOPE_SINGLETON = 2;
+    public static String [] scopeStrings = { "per-access",
+                                             "per-request",
+                                             "singleton" };
+    
     /** Our parameters */
     LockableHashtable parameters;
 
@@ -88,6 +95,12 @@ public abstract class WSDDDeployableItem
     
     /** Our type */
     QName type;
+    
+    /** Scope for this item (default is singleton) */
+    int scope = SCOPE_SINGLETON;
+    
+    /** Placeholder for hanging on to singleton object */
+    Handler singletonInstance = null;
 
     /**
      * Default constructor
@@ -118,6 +131,19 @@ public abstract class WSDDDeployableItem
         String typeStr = e.getAttribute("type");
         if (typeStr != null && !typeStr.equals(""))
             type = XMLUtils.getQNameFromString(typeStr, e);
+        
+        // Figure out our scope - right now if a non-recognized scope
+        // attribute appears, we will ignore it and use the default
+        // scope.  Is this right, or should we throw an error?
+        String scopeStr = e.getAttribute("scope");
+        if (scopeStr != null) {
+            for (int i = 0; i < scopeStrings.length; i++) {
+                if (scopeStr.equals(scopeStrings[i])) {
+                    scope = i;
+                    break;
+                }
+            }
+        }
 
         if (parameters == null)
             parameters = new LockableHashtable();
@@ -257,8 +283,19 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws Exception XXX
      */
-    abstract public Handler getInstance(DeploymentRegistry registry)
-        throws Exception;
+    public final Handler getInstance(DeploymentRegistry registry)
+        throws Exception
+    {
+        if (scope == SCOPE_SINGLETON) {
+            synchronized (this) {
+                if (singletonInstance == null)
+                    singletonInstance = makeNewInstance(registry);
+            }
+            return singletonInstance;
+        }
+        
+        return makeNewInstance(registry);
+    }
 
     /**
      * Creates a new instance of this deployable.  if the
@@ -268,7 +305,7 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws Exception XXX
      */
-    Handler makeNewInstance(DeploymentRegistry registry)
+    protected Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
         try {

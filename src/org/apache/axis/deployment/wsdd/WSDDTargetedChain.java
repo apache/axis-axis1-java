@@ -182,7 +182,7 @@ public abstract class WSDDTargetedChain
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler getInstance(DeploymentRegistry registry)
+    public Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
         TargetedChain c = new org.apache.axis.SimpleTargetedChain();

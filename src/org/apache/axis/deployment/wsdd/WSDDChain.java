@@ -158,7 +158,7 @@ public class WSDDChain
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler getInstance(DeploymentRegistry registry)
+    public Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
         try {

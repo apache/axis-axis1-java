@@ -17,6 +17,7 @@ public class PackageTests extends TestCase {
         TestSuite suite = new TestSuite();
 
         suite.addTestSuite(TestGlobalConfiguration.class);
+        suite.addTestSuite(TestScopeOption.class);
         
         return suite;
     }
