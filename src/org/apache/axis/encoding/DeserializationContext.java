@@ -168,6 +168,30 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
      */
     public Deserializer getDeserializerForType(QName xmlType);
 
+    /**
+     * Convenience method to get the Deserializer for a specific
+     * java class from its meta data.
+     * @param cls is the Class used to find the deserializer 
+     * @return Deserializer
+     */
+    public Deserializer getDeserializerForClass(Class cls);
+
+    /**
+     * Allows the destination class to be set so that downstream
+     * deserializers like ArrayDeserializer can pick it up when
+     * deserializing its components using getDeserializerForClass
+     * @param destClass is the Class of the component to be deserialized 
+     */
+    public void setDestinationClass(Class destClass);
+
+    /**
+     * Allows the destination class to be retrieved so that downstream
+     * deserializers like ArrayDeserializer can pick it up when
+     * deserializing its components using getDeserializerForClass
+     * @return the Class of the component to be deserialized 
+     */
+    public Class getDestinationClass();
+
     /** 
      * Get the TypeMapping for this DeserializationContext
      */

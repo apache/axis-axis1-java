@@ -284,18 +284,11 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         // to deserialize something we have no clue about (no good xsi:type,
         // no good metadata).
         if (dSer == null) {
-            
-// FIXME : Currently this doesn't throw an error solely to enable the 
-//     "terra" testcase to pass.  We should, IMO, fix the test (either
-//     to support <xsd:list> or to throw an error when we find such a thing
-//     in the WSDL at WSDL2Java time).  Once that's done, this should be
-//     uncommented and the next two lines deleted.            
-//            
-//            throw new SAXException(Messages.getMessage("noDeser00",
-//                                                       childXMLType.toString()));
-
-            dSer = new DeserializerImpl();
-            return (SOAPHandler)dSer;
+            dSer = context.getDeserializerForClass(propDesc.getType());
+        }
+        if (dSer == null) {
+            throw new SAXException(Messages.getMessage("noDeser00",
+                                                       childXMLType.toString()));
         }
 
         // Register value target
@@ -340,8 +333,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
     public BeanPropertyDescriptor getAnyPropertyDesc() {
         if (typeDesc == null)
             return null;
-
-        return typeDesc.getAnyDesc();
+        
+       return typeDesc.getAnyDesc();
     }
 
     /**
@@ -398,7 +391,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 // Get the Deserializer for the attribute
                 Deserializer dSer = getDeserializer(null, bpd.getType(), 
                                                     null, context);
-
+                if (dSer == null) {
+                    dSer = context.getDeserializerForClass(bpd.getType());
+                }
                 if (dSer == null)
                     throw new SAXException(
                             Messages.getMessage("unregistered00",
@@ -440,6 +435,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                            Class javaType, 
                                            String href,
                                            DeserializationContext context) {
+        if (javaType.isArray()) {
+            context.setDestinationClass(javaType);
+        } 
         // See if we have a cached deserializer
         if (cacheStringDSer != null) {
             if (String.class.equals(javaType) &&
@@ -470,6 +468,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 dSer = context.getDeserializer(javaType, defaultXMLType);
             } else {
                 dSer = new DeserializerImpl();
+                context.setDestinationClass(javaType);
                 dSer.setDefaultType(defaultXMLType);
             }
         }

@@ -471,6 +471,9 @@ public class DeserializerImpl extends SOAPHandler
             // attribute type qname.
             if (type != null) {
                 Deserializer dser = context.getDeserializerForType(type);
+                if (dser == null) {
+                    dser = context.getDeserializerForClass(null);
+                }
                 if (dser != null) {
                     // Move the value targets to the new deserializer
                     dser.moveValueTargets(this);

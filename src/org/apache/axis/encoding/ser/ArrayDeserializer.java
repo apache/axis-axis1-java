@@ -299,6 +299,9 @@ public class ArrayDeserializer extends DeserializerImpl
             }
         }
         }
+        if (arrayClass == null) {
+            arrayClass = context.getDestinationClass();
+        }
 
         if (arrayClass == null) {
             throw new SAXException(
