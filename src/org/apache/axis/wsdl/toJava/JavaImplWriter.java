@@ -172,7 +172,6 @@ public class JavaImplWriter extends JavaClassWriter {
                          + ".value = " + constructorString + ";");
                 if (bThrow.value) {
                     pw.println("        } catch (Exception e) {");
-                    pw.println("          // TBD - constructor may throw");
                     pw.println("        }");
                 }
             }
