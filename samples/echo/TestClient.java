@@ -218,6 +218,11 @@ public abstract class TestClient {
         map.put("stringKey", new Integer(5));
         map.put(new Date(), "string value");
         test("Map         ", map);
+
+        HashMap map2 = new HashMap();
+        map.put("this is the second map", new Boolean(true));
+        map.put("test", new Float(411));
+        test("MapArray    ", new HashMap [] { map, map2 });
     }
 
     /**
