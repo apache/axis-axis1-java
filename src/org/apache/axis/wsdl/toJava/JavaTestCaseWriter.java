@@ -288,6 +288,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         pw.println("Locator" + "().get" + portName + "();");
         pw.println("        }");
         pw.println("        catch (" + javax.xml.rpc.ServiceException.class.getName() + " jre) {");
+        pw.println("            if(jre.getLinkedCause()!=null)"); 
+        pw.println("                jre.getLinkedCause().printStackTrace();");
         pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
 
