@@ -163,7 +163,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         } else {
             pw.println("        _table_.put(new " + baseClass + "(_value_),this);");
         }
-        pw.println("    };");
+        pw.println("    }");
         pw.println("");
 
         // A public static variable of the base type is generated for each enumeration value.
