@@ -89,8 +89,6 @@ public class GetInfo {
       ServiceClient call = new ServiceClient
             (new HTTPTransport(opts.getURL(), "urn:cominfo"));
 
-      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-
       call.set( Transport.USER, opts.getUser() );
       call.set( Transport.PASSWORD, opts.getPassword() );
       String res = (String) call.invoke(
