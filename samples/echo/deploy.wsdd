@@ -12,9 +12,7 @@
   <service name="http://soapinterop.org/" provider="java:RPC" >
     <parameter name="className" value="samples.echo.EchoService" />
     <parameter name="allowedMethods" value="*" />
+    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStruct"
+      languageSpecificType="java:samples.echo.SOAPStruct"/>
   </service>
-
-  <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-    qname="echo:SOAPStruct" languageSpecificType="java:samples.echo.SOAPStruct"
-    serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"/>
 </deployment>
