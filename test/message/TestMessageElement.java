@@ -65,7 +65,6 @@ public class TestMessageElement extends AxisTestBase {
     }
 
     // Test JAXM methods...
-
     public void testParentage() throws Exception {
         SOAPElement parent = new MessageElement("ns", "parent");
         SOAPElement child = new MessageElement("ns", "child");
@@ -380,6 +379,63 @@ public class TestMessageElement extends AxisTestBase {
         assertEquals( value, me.getValue());
         assertEquals( value, me.getObjectValue());
     }
+
+    public void testGetNodeValue() throws Exception {
+        String data = null;
+
+        data = "<anElement xmlns:ns1=\"aNamespace\"/>";
+        
+        assertTrue(getNodeValueContext(data) == null);
+        assertTrue(getNodeValueDOM(data) == null);
+
+        data = "<anElement xmlns:ns1=\"aNamespace\">FooBar</anElement>";
+        
+        assertEquals("FooBar", getNodeValueContext(data));
+        assertEquals("FooBar", getNodeValueDOM(data));
+
+        data = "<anElement xmlns:ns1=\"aNamespace\"><bElement>FooBar</bElement></anElement>";
+        
+        assertTrue(getNodeValueContext(data) == null);
+        assertTrue(getNodeValueDOM(data) == null);
+
+        data = "<anElement xmlns:ns1=\"aNamespace\"><bElement>FooBar</bElement>Mixed</anElement>";
+        
+        assertTrue(getNodeValueContext(data) == null);
+        assertTrue(getNodeValueDOM(data) == null);
+
+        data = "<anElement xmlns:ns1=\"aNamespace\">Foo<bElement>FooBar</bElement>Mixed</anElement>";
+        
+        assertEquals("Foo", getNodeValueContext(data));
+        assertEquals("Foo", getNodeValueDOM(data));
+    }
+
+    private String getNodeValueDOM(String data) throws Exception {
+        Document doc = 
+            XMLUtils.newDocument(new org.xml.sax.InputSource(new StringReader(data)));
+        MessageElement elem = new MessageElement(doc.getDocumentElement());
+
+        assertTrue(elem.getDeserializationContext() == null);
+        return elem.getValue();
+    }
+
+    private String getNodeValueContext(String data) throws Exception {
+        String env = 
+            "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>" +
+            data +
+            "</SOAP-ENV:Body></SOAP-ENV:Envelope>";
+        
+        MessageContext ctx = new MessageContext(new AxisClient());
+        DeserializationContext dser = new DeserializationContext(
+                           new org.xml.sax.InputSource(new StringReader(env)),
+                           ctx,
+                           Message.REQUEST);
+        dser.parse();
+
+        MessageElement elem = dser.getEnvelope().getFirstBody();
+        assertTrue(elem.getDeserializationContext() != null);
+        return elem.getValue();
+    }
+
 
     public static void main(String[] args) throws Exception {
         new TestRunner().doRun( new TestMessageElement( "TestMessageElement" ) );
