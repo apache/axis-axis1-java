@@ -173,12 +173,12 @@ Copyright:
   <!-- =================================================================== -->
   <target name="samples" depends="compile" unless="samples.built"
     description="build the samples">
+    <!--
     <exec executable="ant">
       <arg line="-buildfile ${axis.home}/buildSamples.xml compile"/>
     </exec> 
-    <!--
-      <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
     -->
+      <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
       <property name="samples.built" value="yes"/>
       <echo message="Samples property set ${samples.built}"/>
   </target>
@@ -194,12 +194,12 @@ Copyright:
 
   <target name="buildTest" depends="compile" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
-    <!--
       <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
-    -->
+    <!--
     <exec executable="ant">
       <arg line="-buildfile ${axis.home}/buildTest.xml compile"/>
     </exec>
+    -->
     <property name="tests.built" value="yes"/>
     <echo message="Tests property set ${tests.built}"/>
   </target>
