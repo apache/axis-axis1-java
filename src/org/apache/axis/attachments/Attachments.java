@@ -194,7 +194,7 @@ public interface Attachments {
      *
      * @throws org.apache.axis.AxisFault
      */
-    public int getContentLength() throws org.apache.axis.AxisFault;
+    public long getContentLength() throws org.apache.axis.AxisFault;
 
     /**
      * Write the content to the stream.
@@ -231,4 +231,38 @@ public interface Attachments {
      * @return True if value should be treated as an attchment.
      */
     public boolean isAttachment(Object value);
+
+
+    /** Use the default attatchment send type. */
+    public final int SEND_TYPE_NOTSET = 1; 
+
+    /** Use the SOAP with MIME attatchment send type. */
+    public final int SEND_TYPE_MIME = 2; //use mime
+
+    /** Use the DIME attatchment type. */
+    public final int  SEND_TYPE_DIME= 3; //use dime;
+
+    final int SEND_TYPE_MAX = 3;
+
+    /** The default attatchment type. MIME */
+    final int SEND_TYPE_DEFAULT = SEND_TYPE_MIME; 
+
+    /**
+     * Set the format for attachments. 
+     *
+     * @param the format to send.
+     *      SEND_TYPE_MIME for Multipart Releated Mail type attachments. 
+     *      SEND_TYPE_DIME for DIME type attachments. 
+     */
+
+    public void setSendType( int sendtype);
+
+    /**
+     * Determine if an object is to be treated as an attchment. 
+     *
+     *
+     * @return SEND_TYPE_MIME, SEND_TYPE_DIME,  SEND_TYPE_NOTSET  
+     */
+
+    public int getSendType();
 }

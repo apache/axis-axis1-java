@@ -90,8 +90,12 @@ public class AttachmentsImpl implements Attachments {
     /**
      * The actual stream to manage the multi-related input stream.
      */
-    protected org.apache.axis.attachments.MultiPartRelatedInputStream mpartStream =
+    protected MultiPartInputStream  mpartStream =
             null;
+    /**
+     * The form of the attachments, whether MIME or DIME.
+     */
+    protected int sendtype= Attachments.SEND_TYPE_NOTSET;
 
     /**
      * This is the content location as specified in SOAP with Attachments.
@@ -132,7 +136,7 @@ public class AttachmentsImpl implements Attachments {
 
                 // Process the input stream for headers to determine the mime
                 // type.
-                // TODO
+                //TODO -- This is for transports that do not process headers.
             } else {
                 java.util.StringTokenizer st =
                         new java.util.StringTokenizer(contentType, " \t;");
@@ -142,6 +146,7 @@ public class AttachmentsImpl implements Attachments {
 
                     if (mimetype.equalsIgnoreCase(
                             org.apache.axis.Message.MIME_MULTIPART_RELATED)) {
+                        sendtype=  SEND_TYPE_MIME;     
                         mpartStream =
                                 new org.apache.axis.attachments.MultiPartRelatedInputStream(
                                         contentType,
@@ -165,10 +170,13 @@ public class AttachmentsImpl implements Attachments {
                         soapPart = new org.apache.axis.SOAPPart(null,
                                 mpartStream,
                                 false);
-                    } else if (mimetype.equalsIgnoreCase(
-                            org.apache.axis.Message.MIME_APPLICATION_DIME)) {    // do nothing today.
-
-                        // is= new DIMEInputStreamManager(is);
+                     } else if (mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) { 
+                         try{
+                            mpartStream=
+                             new MultiPartDimeInputStream( (java.io.InputStream) intialContents);
+                             soapPart = new org.apache.axis.SOAPPart(null, mpartStream, false);
+                         }catch(Exception e){ throw org.apache.axis.AxisFault.makeFault(e);}
+                         sendtype=  SEND_TYPE_DIME;     
                     }
                 }
             }
@@ -206,6 +214,10 @@ public class AttachmentsImpl implements Attachments {
     public Part removeAttachmentPart(String reference)
             throws org.apache.axis.AxisFault {
 
+        multipart = null;
+        
+        dimemultipart = null;
+
         mergeinAttachments();
 
         Part removedPart = getAttachmentByReference(reference);
@@ -231,6 +243,10 @@ public class AttachmentsImpl implements Attachments {
      */
     public Part addAttachmentPart(Part newPart)
             throws org.apache.axis.AxisFault {
+
+        multipart = null;
+
+        dimemultipart = null;
 
         mergeinAttachments();
 
@@ -262,6 +278,10 @@ public class AttachmentsImpl implements Attachments {
     public Part createAttachmentPart(Object datahandler)
             throws org.apache.axis.AxisFault {
 
+        multipart = null;
+
+        dimemultipart = null;
+
         mergeinAttachments();
 
         if (!(datahandler instanceof javax.activation.DataHandler)) {
@@ -289,6 +309,8 @@ public class AttachmentsImpl implements Attachments {
     public void setAttachmentParts(java.util.Collection parts)
             throws org.apache.axis.AxisFault {
 
+        multipart = null;
+        dimemultipart = null;
         mergeinAttachments();
         attachments.clear();
         orderedAttachments.clear();
@@ -395,13 +417,16 @@ public class AttachmentsImpl implements Attachments {
 
         try {
             this.soapPart = (SOAPPart) newRoot;
+            multipart = null;
+            dimemultipart = null;
         } catch (ClassCastException e) {
             throw new ClassCastException(JavaUtils.getMessage("onlySOAPParts"));
         }
     }
 
     /** Field multipart           */
-    public javax.mail.internet.MimeMultipart multipart = null;
+    javax.mail.internet.MimeMultipart multipart = null;
+    DimeMultiPart dimemultipart = null;
 
     /**
      * Get the content length of the stream.
@@ -410,20 +435,53 @@ public class AttachmentsImpl implements Attachments {
      *
      * @throws org.apache.axis.AxisFault
      */
-    public int getContentLength() throws org.apache.axis.AxisFault {
+    public long getContentLength() throws org.apache.axis.AxisFault {
 
         mergeinAttachments();
 
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;       
+
         try {
-            return (int) org.apache.axis.attachments.MimeUtils.getContentLength(
-                    (multipart != null)
-                    ? multipart
-                    : (multipart = org.apache.axis.attachments.MimeUtils.createMP(
-                            soapPart.getAsString(), orderedAttachments)));
+              if(sendtype == SEND_TYPE_MIME)
+                 return (int)org.apache.axis.attachments.MimeUtils.getContentLength(
+                                multipart != null ? multipart : (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
+              else if (sendtype == SEND_TYPE_DIME)return createDimeMessage().getTransmissionSize();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
+        return 0;
     }
+
+    /**
+     * Creates the DIME message 
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    protected DimeMultiPart createDimeMessage() throws org.apache.axis.AxisFault{
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :   this.sendtype;       
+        if (sendtype == SEND_TYPE_DIME){
+           if(dimemultipart== null){
+
+              dimemultipart= new DimeMultiPart(); 
+              dimemultipart.addBodyPart(new DimeBodyPart(
+                soapPart.getAsBytes(), DimeTypeNameFormat.URI,
+                "http://schemas.xmlsoap.org/soap/envelope/",
+                  "uuid:714C6C40-4531-442E-A498-3AC614200295"));
+
+              for( java.util.Iterator i= orderedAttachments.iterator();
+                i.hasNext(); ){
+                AttachmentPart part= (AttachmentPart)i.next();
+                    DataHandler dh= AttachmentUtils.
+                      getActivationDataHandler(part);
+                    dimemultipart.addBodyPart(new 
+                      DimeBodyPart(dh,part.getContentId()));
+              }
+            }
+        }
+        return dimemultipart;
+      }
 
     /**
      * Write the content to the stream.
@@ -434,12 +492,17 @@ public class AttachmentsImpl implements Attachments {
      */
     public void writeContentToStream(java.io.OutputStream os)
             throws org.apache.axis.AxisFault {
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ?
+                          SEND_TYPE_DEFAULT : this.sendtype;       
+        try{    
 
         mergeinAttachments();
+        if(sendtype == SEND_TYPE_MIME){        
         org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os,
                 (multipart != null)
                 ? multipart
-                : (multipart = org.apache.axis.attachments.MimeUtils.createMP(
+                : (multipart =
+                   org.apache.axis.attachments.MimeUtils.createMP(
                         soapPart.getAsString(), orderedAttachments)));
 
         for (java.util.Iterator i = orderedAttachments.iterator();
@@ -453,6 +516,8 @@ public class AttachmentsImpl implements Attachments {
                 ((ManagedMemoryDataSource) ds).delete();
             }
         }
+        }else if (sendtype == SEND_TYPE_DIME)createDimeMessage().write(os);
+       }catch(Exception e){ throw org.apache.axis.AxisFault.makeFault(e);}
     }
 
     /**
@@ -466,13 +531,17 @@ public class AttachmentsImpl implements Attachments {
 
         mergeinAttachments();
 
-        return org.apache.axis.attachments.MimeUtils.getContentType((multipart
-                != null)
-                ? multipart
-                : (multipart =
-                org.apache.axis.attachments.MimeUtils.createMP(
-                        soapPart.getAsString(),
-                        orderedAttachments)));
+        int sendtype= this.sendtype == SEND_TYPE_NOTSET ? SEND_TYPE_DEFAULT :
+               this.sendtype;       
+        if(sendtype == SEND_TYPE_MIME)        
+          return org.apache.axis.attachments.MimeUtils.getContentType((multipart
+                  != null)
+                  ? multipart
+                  : (multipart =
+                  org.apache.axis.attachments.MimeUtils.createMP(
+                          soapPart.getAsString(),
+                          orderedAttachments)));
+        else return org.apache.axis.Message.MIME_APPLICATION_DIME;        
     }
 
     /**
@@ -564,5 +633,17 @@ public class AttachmentsImpl implements Attachments {
      */
     public Part createAttachmentPart() throws org.apache.axis.AxisFault {
         return new AttachmentPart();
+    }
+
+    public void setSendType( int sendtype){
+      if( sendtype < 1)
+        throw new IllegalArgumentException("");
+      if( sendtype > SEND_TYPE_MAX )
+        throw new IllegalArgumentException("");
+      this.sendtype= sendtype;  
+    }
+
+    public int getSendType(){
+      return sendtype;
     }
 }

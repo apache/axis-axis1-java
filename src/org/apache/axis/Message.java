@@ -96,7 +96,6 @@ public class Message extends javax.xml.soap.SOAPMessage {
     // MIME parts defined for messages.
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
 
-    // NOT SUPPORTED NOW
     public static final String MIME_APPLICATION_DIME = "application/dime";
 
     /** Default Attachments Implementation class */
@@ -385,10 +384,10 @@ public class Message extends javax.xml.soap.SOAPMessage {
     }
 
     //This will have to give way someday to HTTP Chunking but for now kludge.
-    public int getContentLength() throws org.apache.axis.AxisFault {
+    public long getContentLength() throws org.apache.axis.AxisFault {
         //Force serialization if it hasn't happend it.
         //Rick Rineholt fix this later.
-        int ret = mSOAPPart.getAsBytes().length;
+        long ret = mSOAPPart.getAsBytes().length;
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentLength();
         }

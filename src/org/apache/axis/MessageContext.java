@@ -55,6 +55,7 @@
 
 package org.apache.axis ;
 
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -437,8 +438,22 @@ public class MessageContext implements SOAPMessageContext {
      */
     public void setResponseMessage(Message respMsg) {
         responseMessage = respMsg ;
-        if (responseMessage != null) responseMessage.setMessageContext(this);
-    };
+        if (responseMessage != null){
+          responseMessage.setMessageContext(this);
+
+          //if we have received attachments of a particular type
+          // than that should be the default type to send.
+          Message reqMsg= getRequestMessage(); 
+          if( null != reqMsg){
+            Attachments reqAttch= reqMsg.getAttachmentsImpl();
+            Attachments respAttch= respMsg.getAttachmentsImpl();
+            if(null != reqAttch  && null != respAttch){
+              if(respAttch.getSendType() == Attachments.SEND_TYPE_NOTSET)  
+                respAttch.setSendType(reqAttch.getSendType());//only if not explicity set.
+            }
+          }
+        }
+    }
 
     /**
      * Return the current (i.e. request before the pivot, response after)
