@@ -96,10 +96,10 @@ public class JavaResolver implements Resolver {
             if (CONTEXT_STYLE_MSG.equals(style)) {
                 h = new MsgProvider();
             }
-            if (clsName != null) h.addOption("className", clsName);
-            if (isStatic != null) h.addOption("isStatic", isStatic);
-            if (classPath != null) h.addOption("classPath", classPath);
-            if (scope != null) h.addOption("scope", scope);
+            if (clsName != null) h.setOption("className", clsName);
+            if (isStatic != null) h.setOption("isStatic", isStatic);
+            if (classPath != null) h.setOption("classPath", classPath);
+            if (scope != null) h.setOption("scope", scope);
             return h;
         } catch (Exception e) {
             return null;

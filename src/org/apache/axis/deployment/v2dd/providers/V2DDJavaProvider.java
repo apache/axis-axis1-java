@@ -91,9 +91,9 @@ public class V2DDJavaProvider
                                                 "java");
         Element  java = (Element) nl.item(0);
 
-        provider.addOption(JavaProvider.OPTION_CLASSNAME,
+        provider.setOption(JavaProvider.OPTION_CLASSNAME,
                            java.getAttribute("class"));
-        provider.addOption(JavaProvider.OPTION_IS_STATIC,
+        provider.setOption(JavaProvider.OPTION_IS_STATIC,
                            new Boolean(java.getAttribute("isStatic")));
     }
 }

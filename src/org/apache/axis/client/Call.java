@@ -1163,7 +1163,7 @@ public class Call implements javax.xml.rpc.Call {
      * Note: Not part of JAX-RPC specification.
      */
     public void addOption(String name, Object value) {
-        engine.addOption(name, value);
+        engine.setOption(name, value);
     }
 
     /**

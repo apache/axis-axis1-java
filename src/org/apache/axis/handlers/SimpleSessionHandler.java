@@ -188,7 +188,7 @@ public class SimpleSessionHandler extends BasicHandler
                              getValueAsType(SOAPTypeMappingRegistry.XSD_LONG);
                 // Store it away.
                 AxisEngine engine = context.getAxisEngine();
-                engine.addOption(SESSION_ID, id);
+                engine.setOption(SESSION_ID, id);
             } catch (Exception e) {
                 throw new AxisFault(e);
             }

@@ -92,9 +92,9 @@ public class V2DDScriptProvider
                                                 "script");
         Element  script = (Element) nl.item(0);
 
-        provider.addOption(BSFProvider.OPTION_LANGUAGE,
+        provider.setOption(BSFProvider.OPTION_LANGUAGE,
                            script.getAttribute("language"));
-        provider.addOption(BSFProvider.OPTION_SCRIPT,
+        provider.setOption(BSFProvider.OPTION_SCRIPT,
                            XMLUtils.getInnerXMLString(script));
     }
 }

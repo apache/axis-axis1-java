@@ -83,15 +83,15 @@ public class EJBResolver implements Resolver {
             String jndiUrl = (String)context.getProperty(CONTEXT_JNDIURL);
             String jndiUser = (String)context.getProperty(CONTEXT_JNDIUSER);
             String jndiPassword = (String)context.getProperty(CONTEXT_JNDIPASSWORD);
-            h.addOption("beanNameOption", beanName);
+            h.setOption("beanNameOption", beanName);
             if (jndiContextClass != null)
-                h.addOption("jndiContextClass", jndiContextClass);
+                h.setOption("jndiContextClass", jndiContextClass);
             if (jndiUrl != null)
-                h.addOption("jndiURL", jndiUrl);
+                h.setOption("jndiURL", jndiUrl);
             if (jndiUser != null)
-                h.addOption("jndiUser", jndiUser);
+                h.setOption("jndiUser", jndiUser);
             if (jndiPassword != null)
-                h.addOption("jndiPassword", jndiPassword);
+                h.setOption("jndiPassword", jndiPassword);
             return h;
         } catch (Exception e) {
             return null;

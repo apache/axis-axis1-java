@@ -231,7 +231,7 @@ public class WSDDService
             for (int i = 0; i < faultFlows.length; i++) {
                 WSDDFaultFlow flow = faultFlows[i];
                 Handler faultHandler = flow.getInstance(registry);
-                wrapper.addOption("fault-" + flow.getQName().getLocalPart(), faultHandler);
+                wrapper.setOption("fault-" + flow.getQName().getLocalPart(), faultHandler);
             }
         }
         
