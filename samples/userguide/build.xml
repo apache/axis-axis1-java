@@ -45,9 +45,9 @@ Copyright:
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
-<target name="compile">
+<target name="compile" depends="copy">
   <javac srcdir="." destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
