@@ -203,6 +203,10 @@ public class MessageElement implements SOAPElement
             // Register this ID with the context.....
             if (id != null) {
                 context.registerElementByID(id, this);
+                if (recorder == null) {
+                    recorder = new SAX2EventRecorder();
+                    context.setRecorder(recorder);
+                }
             }
 
             href = attributes.getValue(Constants.ATTR_HREF);
@@ -237,6 +241,7 @@ public class MessageElement implements SOAPElement
     public void setEndIndex(int endIndex)
     {
         endEventIndex = endIndex;
+        //context.setRecorder(null);
     }
 
     public boolean isDirty() { return _isDirty; }
@@ -248,6 +253,27 @@ public class MessageElement implements SOAPElement
     public String getHref() { return href; }
     
     public Attributes getAttributes() { return attributes; }
+
+    /**
+     * Obtain an Attributes collection consisting of all attributes
+     * for this MessageElement, including namespace declarations.
+     *
+     * @return
+     */
+    public Attributes getCompleteAttributes() {
+        if (namespaces == null)
+            return attributes;
+
+        AttributesImpl attrs = new AttributesImpl(attributes);
+        for (Iterator iterator = namespaces.iterator(); iterator.hasNext();) {
+            Mapping mapping = (Mapping) iterator.next();
+            String prefix = mapping.getPrefix();
+            String nsURI = mapping.getNamespaceURI();
+            attrs.addAttribute(Constants.NS_URI_XMLNS, prefix,
+                               "xmlns:" + prefix, nsURI, "CDATA");
+        }
+        return attrs;
+    }
 
     public String getName() { return( name ); }
     public void setName(String name) { this.name = name; }
@@ -459,7 +485,7 @@ public class MessageElement implements SOAPElement
         if (dser == null)
             throw new Exception(JavaUtils.getMessage("noDeser00", "" + type));
 
-        context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
+        context.pushElementHandler(new EnvelopeHandler(dser));
 
         publishToHandler((org.xml.sax.ContentHandler) context);
 
@@ -800,7 +826,7 @@ public class MessageElement implements SOAPElement
         throws SOAPException {
         try {
             addAttribute(name.getURI(), name.getLocalName(), value);
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             throw new SOAPException(t);
         }
         return this;
@@ -812,7 +838,7 @@ public class MessageElement implements SOAPElement
         try {
             Mapping map = new Mapping(uri, prefix);
             addMapping(map);
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             throw new SOAPException(t);
         }
         return this;

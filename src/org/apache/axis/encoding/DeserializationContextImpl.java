@@ -101,17 +101,16 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 {
     protected static Log log =
             LogFactory.getLog(DeserializationContextImpl.class.getName());
-    
-    
+
     private NSStack namespaces = new NSStack();
     
     private Locator locator;
                                              
     private Stack handlerStack = new Stack();
     
-    private SAX2EventRecorder recorder = new SAX2EventRecorder();
+    //private SAX2EventRecorder recorder = new SAX2EventRecorder();
+    private SAX2EventRecorder recorder = null;
     private SOAPEnvelope envelope;
-
 
     /* A map of IDs -> IDResolvers */
     private HashMap idMap;
@@ -137,10 +136,15 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param ctx is the MessageContext
      * @param initialHandler is the EnvelopeBuilder handler
      */
-    public DeserializationContextImpl(MessageContext ctx, EnvelopeBuilder initialHandler)
+    public DeserializationContextImpl(MessageContext ctx,
+                                      EnvelopeBuilder initialHandler)
     {
         msgContext = ctx;
-        
+
+        // If high fidelity is required, record the whole damn thing.
+        if (ctx == null || ctx.isHighFidelity())
+            recorder = new SAX2EventRecorder();
+
         envelope = initialHandler.getEnvelope();
         envelope.setRecorder(recorder);
         
@@ -153,14 +157,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param ctx is the MessageContext
      * @param messageType is the MessageType to construct an EnvelopeBuilder
      */
-    public DeserializationContextImpl(InputSource is, MessageContext ctx, 
-                                  String messageType)
+    public DeserializationContextImpl(InputSource is,
+                                      MessageContext ctx,
+                                      String messageType)
     {
         EnvelopeBuilder builder = new EnvelopeBuilder(messageType,
                                                       ctx.getSOAPConstants());
         
         msgContext = ctx;
-        
+
+        // If high fidelity is required, record the whole damn thing.
+        if (ctx == null || ctx.isHighFidelity())
+            recorder = new SAX2EventRecorder();
+
         envelope = builder.getEnvelope();
         envelope.setRecorder(recorder);
         
@@ -176,13 +185,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param messageType is the MessageType to construct an EnvelopeBuilder
      * @param env is the SOAPEnvelope to construct an EnvelopeBuilder
      */
-    public DeserializationContextImpl(InputSource is, MessageContext ctx, 
-                                  String messageType, SOAPEnvelope env)
+    public DeserializationContextImpl(InputSource is,
+                                      MessageContext ctx,
+                                      String messageType,
+                                      SOAPEnvelope env)
     {
         EnvelopeBuilder builder = new EnvelopeBuilder(env, messageType);
         
         msgContext = ctx;
         
+        // If high fidelity is required, record the whole damn thing.
+        if (ctx == null || ctx.isHighFidelity())
+            recorder = new SAX2EventRecorder();
+
         envelope = builder.getEnvelope();
         envelope.setRecorder(recorder);
         
@@ -637,6 +652,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public void pushNewElement(MessageElement elem)
     {
+        if (log.isDebugEnabled()) {
+            log.debug("Pushing element " + elem.getName());
+        }
+
         if (!doneParsing && (recorder != null)) {
             recorder.newElement(elem);
         }
@@ -908,6 +927,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 curElement = (MessageElement)curElement.getParentElement();
         
 	        if (log.isDebugEnabled()) {
+                String name = curElement != null ?
+                        curElement.getClass().getName() + ":" +
+                        curElement.getName() : null;
+                log.debug("Popped element stack to " + name);
     	        log.debug("Exit: DeserializationContextImpl::endElement()");
         	}
         }

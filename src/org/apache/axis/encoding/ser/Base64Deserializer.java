@@ -67,7 +67,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Base64;
 
 /**
@@ -77,7 +77,7 @@ import org.apache.axis.encoding.Base64;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
-public class Base64Deserializer extends DeserializerImpl implements Deserializer  {
+public class Base64Deserializer extends Deserializer  {
 
     public QName xmlType;
     public Class javaType;

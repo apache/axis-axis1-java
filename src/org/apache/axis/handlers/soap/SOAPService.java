@@ -77,7 +77,6 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
@@ -109,7 +108,13 @@ public class SOAPService extends SimpleTargetedChain
     /** Service-specific type mappings
      */
     private TypeMappingRegistry tmr;
-    
+
+    /**
+     * Does this service require a high-fidelity SAX recording of messages?
+     * (default is true)
+     */
+    private boolean highFidelityRecording = true;
+
     /**
      * Our ServiceDescription.  Holds pretty much all the interesting
      * metadata about this service.
@@ -387,5 +392,13 @@ public class SOAPService extends SimpleTargetedChain
         if (validTransports != null) {
             validTransports.removeElement(transportName);
         }
+    }
+
+    public boolean needsHighFidelityRecording() {
+        return highFidelityRecording;
+    }
+
+    public void setHighFidelityRecording(boolean highFidelityRecording) {
+        this.highFidelityRecording = highFidelityRecording;
     }
 }

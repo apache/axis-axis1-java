@@ -65,7 +65,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -130,6 +130,7 @@ public class RPCHandler extends SOAPHandler
         if (log.isDebugEnabled()) {
             log.debug("Enter: RPCHandler.onStartChild()");
         }
+
         if (!context.isDoneParsing()) {
             context.pushNewElement(new MessageElement(namespace,
             localName, prefix+":"+localName,attributes,context));
@@ -213,7 +214,7 @@ public class RPCHandler extends SOAPHandler
                                            "nil");
 
         if ( isNil != null && isNil.equals("true") )
-          return( (SOAPHandler) new DeserializerImpl() );
+          return( new Deserializer() );
         
         Deserializer dser = null;
         if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
@@ -223,7 +224,7 @@ public class RPCHandler extends SOAPHandler
           if (type != null) {
               dser = context.getDeserializerForType(type);
           } else {
-              dser = new DeserializerImpl();
+              dser = new Deserializer();
           }
         }
 
@@ -239,7 +240,7 @@ public class RPCHandler extends SOAPHandler
         if (log.isDebugEnabled()) {
             log.debug("Exit: RPCHandler.onStartChild()");
         }
-        return (SOAPHandler) dser;
+        return dser;
     }
 
     public void endElement(String namespace, String localName,

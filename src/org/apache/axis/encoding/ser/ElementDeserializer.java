@@ -74,7 +74,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -87,7 +87,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class ElementDeserializer extends DeserializerImpl implements Deserializer
+public class ElementDeserializer extends Deserializer
 {
     protected static Log log =
         LogFactory.getLog(ElementDeserializer.class.getName());

@@ -67,7 +67,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 import java.beans.IntrospectionException;
 import java.lang.reflect.Method;
 
@@ -77,7 +77,7 @@ import java.lang.reflect.Method;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class EnumDeserializer extends SimpleDeserializer implements Deserializer  {
+public class EnumDeserializer extends SimpleDeserializer {
 
     private Method fromStringMethod = null;
 

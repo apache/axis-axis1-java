@@ -71,7 +71,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
@@ -88,7 +88,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class MapDeserializer extends DeserializerImpl implements Deserializer  {
+public class MapDeserializer extends Deserializer {
 
     protected static Log log =
         LogFactory.getLog(MapDeserializer.class.getName());
@@ -186,7 +186,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
      * the values into the HashMap we're building.
      * 
      */
-    class ItemHandler extends DeserializerImpl implements Deserializer  {
+    class ItemHandler extends Deserializer {
         Object key;
         Object myValue;
         int numSet = 0;
@@ -228,7 +228,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
 
             // If no deserializer, use the base DeserializerImpl.
             if (dser == null)
-                dser = new DeserializerImpl();
+                dser = new Deserializer();
 
             // When the child value is ready, we
             // want our set method to be invoked.
@@ -247,7 +247,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
             if (dt != null) {
                 dser.registerValueTarget(dt);
             }
-            return (SOAPHandler) dser;
+            return dser;
         }
     }
 }

@@ -58,7 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
@@ -85,7 +85,7 @@ import java.util.Set;
  * @author Sam Ruby (rubys@us.ibm.com)
  * Modified for JAX-RPC @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class SimpleDeserializer extends DeserializerImpl {
+public class SimpleDeserializer extends Deserializer {
 
     StringBuffer val = new StringBuffer();
     private Constructor constructor = null;

@@ -70,7 +70,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
@@ -85,7 +85,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Carsten Ziegeler (cziegeler@apache.org)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class VectorDeserializer extends DeserializerImpl implements Deserializer
+public class VectorDeserializer extends Deserializer
 {
     protected static Log log =
         LogFactory.getLog(VectorDeserializer.class.getName());
@@ -165,7 +165,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
            dSer = context.getDeserializerForType(itemType);
         }
         if (dSer == null) {
-            dSer = new DeserializerImpl();
+            dSer = new Deserializer();
         }
 
         // When the value is deserialized, inform us.
@@ -177,7 +177,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         if (log.isDebugEnabled()) {
             log.debug("Exit: VectorDeserializer::onStartChild()");
         }
-        return (SOAPHandler) dSer;
+        return dSer;
     }
     
     /**

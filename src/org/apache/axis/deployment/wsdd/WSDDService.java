@@ -117,6 +117,12 @@ public class WSDDService
     ServiceDesc desc = new ServiceDesc();
 
     /**
+     * Is streaming (i.e. NO high-fidelity recording, deserialize on the fly)
+     * on for this service?
+     */
+    private boolean streaming = false;
+
+    /**
      * Default constructor
      */
     public WSDDService()
@@ -147,6 +153,11 @@ public class WSDDService
                     providerQName = WSDDConstants.JAVARPC_PROVIDER;
                     break;
             }
+        }
+
+        String streamStr = e.getAttribute("streaming");
+        if (streamStr != null && streamStr.equals("on")) {
+            streaming = true;
         }
 
         Element [] operationElements = getChildElements(e, "operation");
@@ -379,6 +390,7 @@ public class WSDDService
         SOAPService service = new SOAPService(reqHandler, providerHandler,
                                               respHandler);
         service.setStyle(style);
+        service.setHighFidelityRecording(!streaming);
 
         if ( getQName() != null )
             service.setName(getQName().getLocalPart());

@@ -60,7 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
@@ -83,7 +83,7 @@ import java.util.Iterator;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  * @author Tom Jordahl <tomj@macromedia.com>
  */
-public class BeanDeserializer extends DeserializerImpl implements Deserializer, Serializable
+public class BeanDeserializer extends Deserializer implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(BeanDeserializer.class.getName());
@@ -288,7 +288,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         // There may not be enough information yet to choose the
         // specific deserializer.
         if (dSer == null) {
-            dSer = new DeserializerImpl();
+            dSer = new Deserializer();
             // determine a default type for this child element
             TypeMapping tm = context.getTypeMapping();
             Class type = propDesc.getType();
@@ -310,7 +310,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                             collectionIndex));
         }
         }
-        return (SOAPHandler)dSer;
+        return dSer;
     }
 
      public BeanPropertyDescriptor getObjectPropertyDesc(QName qname, DeserializationContext context) {
