@@ -188,7 +188,6 @@ public class Types {
         // Create a symbol table and populate it with the input wsdl document
         BaseTypeMapping btm = 
             new BaseTypeMapping() {
-                TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
                     public String getBaseName(QName qNameIn) {
                         QName qName = new QName(
                               qNameIn.getNamespaceURI(),                                 
@@ -248,16 +247,15 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
         if (isSimpleType(type)) {
-            QName typeQName = getTypeQName(type);
             // Still need to write any element declaration...
             if (qname != null) {
-                String elementType = writeType(type);
+                String elementType = writeType(type, qname);
                 Element element = createElementDecl(qname, elementType, false);
                 if (element != null) {
                     writeSchemaElement(qname,element);
                 }
             }
-            return typeQName;
+            return qname;
         }else {
             if (wsdlTypesElem == null) {
                 writeWsdlTypesElement();
@@ -272,11 +270,12 @@ public class Types {
      * @return the QName of the generated Element
      */
     private QName writeTypeAsElement(Class type, QName qName) throws AxisFault {
-        QName typeQName = writeTypeNamespace(type);
-        if (qName == null) {
-            qName = typeQName;
+        if (qName == null ||
+            Constants.equals(Constants.SOAP_ARRAY, qName)) {
+            qName = getTypeQName(type);
         }
-        String elementType = writeType(type);
+        QName typeQName = writeTypeNamespace(type, qName);
+        String elementType = writeType(type, qName);
         if (elementType != null) {
             Element element = createElementDecl(qName, elementType, isNullable(type));
             if (element != null)
@@ -291,13 +290,17 @@ public class Types {
      * given <code>Class</code>
      *
      * @param type input Class
+     * @param qName qname of the Class
      * @return QName for the schema type representing the class
      */
-    private QName writeTypeNamespace(Class type) {
-        QName qName = getTypeQName(type);
+    private QName writeTypeNamespace(Class type, QName qName) {
+        if (qName == null) {
+            qName = getTypeQName(type);
+        }
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null)
-          def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
+          def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()),
+                           qName.getNamespaceURI());
         return qName;
     }
 
@@ -455,13 +458,21 @@ public class Types {
      * Then return the qualified string representation of the generated type
      *
      * @param type Class for which to generate schema
+     * @param qname of the type to write
      * @return a prefixed string for the schema type
      */
     public String writeType(Class type) throws AxisFault {
+        return writeType(type, null);
+    }
+    public String writeType(Class type, QName qName) throws AxisFault {
+        // Get a corresponding QName if one is not provided
+        if (qName == null ||
+            Constants.equals(Constants.SOAP_ARRAY, qName)) {
+            qName = getTypeQName(type);
+        }
 
         // Quick return if schema type
         if (isSimpleType(type)) {
-            QName qName = getTypeQName(type);
             if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
                 return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
                     qName.getLocalPart();
@@ -484,7 +495,7 @@ public class Types {
         // if applicable, otherwise issue errors and return anyType
         if (factory == null) {
             if (isBeanCompatible(type, true)) {
-                factory = new BeanSerializerFactory(type, getTypeQName(type));
+                factory = new BeanSerializerFactory(type, qName);
             } else {
                 return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
                     Constants.XSD_ANYTYPE.getLocalPart();
@@ -501,8 +512,8 @@ public class Types {
                     JavaUtils.getMessage("NoSerializer00", type.getName()));
         }
 
-          // Write the namespace
-        QName qName = writeTypeNamespace(type);
+        // Write the namespace
+       writeTypeNamespace(type, qName);
 
         // If an array the component type should be processed first
         String componentTypeName = null;
@@ -516,7 +527,7 @@ public class Types {
                     componentType = componentType.getComponentType();
                 }
             }
-            componentTypeName = writeType(componentType) + dimString;
+            componentTypeName = writeType(componentType, null) + dimString;
         }
 
         String soapTypeName = qName.getLocalPart();
@@ -618,7 +629,7 @@ public class Types {
         simpleType.setAttribute("name", qName.getLocalPart());
         Element restriction = docHolder.createElement("restriction");
         simpleType.appendChild(restriction);
-        String baseType = writeType(base);
+        String baseType = writeType(base, null);
         restriction.setAttribute("base", baseType);
 
         // Create an enumeration using the field values
