@@ -1263,13 +1263,13 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
         try {
             binding.throwInvalidTradeExchange();
-            fail("Should have received an InvalidTradeExchange exception.");
+            fail("TRY: Should have received an InvalidTradeExchange exception.");
         } catch (InvalidTradeExchange ite) {
             // Test was successful
         } catch (InvalidTickerSymbol its) {
-            fail("Should have received an InvalidTradeExchange exception.");
+            fail("ITS: Should have received an InvalidTradeExchange exception.");
         } catch (InvalidCompanyId ici) {
-            fail("Should have received an InvalidTradeExchange exception.");
+            fail("ICI: Should have received an InvalidTradeExchange exception.");
         } catch (RemoteException re) {
             fail("Remote Exception caught: " + re);
         }
