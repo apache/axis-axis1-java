@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://snv882:10217/gateway/services/CPWebServices" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://snv882:10217/gateway/services/CPWebServices" xmlns:intf="http://snv882:10217/gateway/services/CPWebServices" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://datatypes.cs.amdocs.com" xmlns:tns2="urn:CPWSImpl" xmlns:tns3="http://messages.common.api.cs.amdocs.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <schema targetNamespace="http://datatypes.cs.amdocs.com" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="CSText">
+                <sequence>
+                    <element name="CSText" nillable="true" type="xsd:string"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPricingModel">
+                <sequence>
+                    <element name="CSPricingModel" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSAdditionalParameter">
+                <sequence>
+                    <element name="parameterValue" nillable="true" type="tns1:CSText"/>
+                    <element name="parameterType" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSAdditionalParameters">
+                <sequence>
+                    <element name="additionalParameter" nillable="true" type="impl:ArrayOf_tns1_CSAdditionalParameter"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSSecurityTicket">
+                <sequence>
+                    <element name="CSSecurityTicket" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSNonNegativeInteger">
+                <sequence>
+                    <element name="CSNonNegativeInteger" nillable="true" type="xsd:int"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSRequestId">
+                <sequence>
+                    <element name="CSRequestId" nillable="true" type="tns1:CSNonNegativeInteger"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSSessionId">
+                <sequence>
+                    <element name="CSSessionId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSResultParameter">
+                <sequence>
+                    <element name="parameterValue" nillable="true" type="tns1:CSText"/>
+                    <element name="parameterType" nillable="true" type="xsd:int"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSResultParameters">
+                <sequence>
+                    <element name="resultParameter" nillable="true" type="impl:ArrayOf_tns1_CSResultParameter"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSInteger">
+                <sequence>
+                    <element name="CSInteger" nillable="true" type="xsd:int"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSResult">
+                <sequence>
+                    <element name="resultParameters" nillable="true" type="tns1:CSResultParameters"/>
+                    <element name="minorResultCode" nillable="true" type="tns1:CSInteger"/>
+                    <element name="majorResultCode" nillable="true" type="tns1:CSInteger"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSSubscriberExternalId">
+                <sequence>
+                    <element name="CSSubscriberExternalId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSChargingParameter">
+                <sequence>
+                    <element name="parameterValue" nillable="true" type="tns1:CSText"/>
+                    <element name="parameterType" nillable="true" type="xsd:int"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPartnerExternalId">
+                <sequence>
+                    <element name="CSPartnerExternalId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSApplicationExternalId">
+                <sequence>
+                    <element name="CSApplicationExternalId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSApplicationId">
+                <sequence>
+                    <element name="partnerExternalId" nillable="true" type="tns1:CSPartnerExternalId"/>
+                    <element name="applicationExternalId" nillable="true" type="tns1:CSApplicationExternalId"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSCurrency">
+                <sequence>
+                    <element name="currencySubCode" nillable="true" type="tns1:CSText"/>
+                    <element name="currencyCode" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSBoolean">
+                <sequence>
+                    <element name="CSBoolean" nillable="true" type="xsd:boolean"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSUniversalTime">
+                <sequence>
+                    <element name="CSUniversalTime" nillable="true" type="xsd:string"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSTimeStamp">
+                <sequence>
+                    <element name="timeZone" nillable="true" type="tns1:CSInteger"/>
+                    <element name="daylightSaving" nillable="true" type="tns1:CSBoolean"/>
+                    <element name="universalTime" nillable="true" type="tns1:CSUniversalTime"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSAmount">
+                <sequence>
+                    <element name="CSAmount" nillable="true" type="xsd:double"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSQualifiedAmount">
+                <sequence>
+                    <element name="currency" nillable="true" type="tns1:CSCurrency"/>
+                    <element name="timeStamp" nillable="true" type="tns1:CSTimeStamp"/>
+                    <element name="amount" nillable="true" type="tns1:CSAmount"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSChargingParameters">
+                <sequence>
+                    <element name="chargingParameter" nillable="true" type="impl:ArrayOf_tns1_CSChargingParameter"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPricingParameter">
+                <sequence>
+                    <element name="parameterValue" nillable="true" type="tns1:CSText"/>
+                    <element name="parameterType" nillable="true" type="xsd:int"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSApplicationDescription">
+                <sequence>
+                    <element name="CSApplicationDescription" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPricingParameters">
+                <sequence>
+                    <element name="pricingParameter" nillable="true" type="impl:ArrayOf_tns1_CSPricingParameter"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPricingOption">
+                <sequence>
+                    <element name="discountAmount" nillable="true" type="tns1:CSAmount"/>
+                    <element name="pricingParameters" nillable="true" type="tns1:CSPricingParameters"/>
+                    <element name="pricingModel" nillable="true" type="tns1:CSPricingModel"/>
+                    <element name="loginNeeded" nillable="true" type="tns1:CSBoolean"/>
+                    <element name="price" nillable="true" type="tns1:CSQualifiedAmount"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPricingOptions">
+                <sequence>
+                    <element name="pricingOption" nillable="true" type="impl:ArrayOf_tns1_CSPricingOption"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPartnerAccountExternalId">
+                <sequence>
+                    <element name="CSPartnerAccountExternalId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSTimeSpan">
+                <sequence>
+                    <element name="CSTimeSpan" nillable="true" type="tns1:CSInteger"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSCorrelationId">
+                <sequence>
+                    <element name="type" nillable="true" type="tns1:CSInteger"/>
+                    <element name="correlationExternalId" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSPassword">
+                <sequence>
+                    <element name="CSPassword" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSBECode">
+                <sequence>
+                    <element name="CSBECode" nillable="true" type="tns1:CSText"/>
+                </sequence>
+            </complexType>
+        </schema>
+        <schema targetNamespace="http://messages.common.api.cs.amdocs.com" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType abstract="true" name="CSRequest">
+                <sequence>
+                    <element name="transactionId" nillable="true" type="xsd:string"/>
+                </sequence>
+            </complexType>
+            <complexType name="CSCommonRequest">
+                <complexContent>
+                    <extension base="tns3:CSRequest">
+                        <sequence>
+                            <element name="additionalParameters" nillable="true" type="tns1:CSAdditionalParameters"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType abstract="true" name="CSResponse">
+                <sequence/>
+            </complexType>
+            <complexType name="CSCommonResponse">
+                <complexContent>
+                    <extension base="tns3:CSResponse">
+                        <sequence>
+                            <element name="result" nillable="true" type="tns1:CSResult"/>
+                            <element name="additionalParameters" nillable="true" type="tns1:CSAdditionalParameters"/>
+                            <element name="transactionId" nillable="true" type="tns1:CSText"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+        </schema>
+        <schema targetNamespace="http://snv882:10217/gateway/services/CPWebServices" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="ArrayOf_tns1_CSAdditionalParameter">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:CSAdditionalParameter[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOf_tns1_CSResultParameter">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:CSResultParameter[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOf_tns1_CSChargingParameter">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:CSChargingParameter[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOf_tns1_CSPricingParameter">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:CSPricingParameter[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOf_tns1_CSPricingOption">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:CSPricingOption[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+        </schema>
+        <schema targetNamespace="urn:CPWSImpl" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="releaseRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="getSubscriberIdResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="subscriberId" nillable="true" type="tns1:CSSubscriberExternalId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="startApplicationSessionResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="immediateChargeRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="applicationId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="aggregatorId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="credentials" nillable="true" type="tns1:CSText"/>
+                            <element name="subscriberExternalId" nillable="true" type="tns1:CSSubscriberExternalId"/>
+                            <element name="chargeAmount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                            <element name="subscriberExternalIdType" nillable="true" type="tns1:CSText"/>
+                            <element name="chargingParameters" nillable="true" type="tns1:CSChargingParameters"/>
+                            <element name="reportSubscription" nillable="true" type="tns1:CSText"/>
+                            <element name="pricingModel" nillable="true" type="tns1:CSPricingModel"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="getPriceRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="applicationId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="aggregatorId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="credentials" nillable="true" type="tns1:CSText"/>
+                            <element name="subscriberExternalId" nillable="true" type="tns1:CSSubscriberExternalId"/>
+                            <element name="subscriberExternalIdType" nillable="true" type="tns1:CSText"/>
+                            <element name="chargingParameters" nillable="true" type="tns1:CSChargingParameters"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="reserveRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="minimumAmount" nillable="true" type="tns1:CSAmount"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                            <element name="rateIndicator" nillable="true" type="tns1:CSBoolean"/>
+                            <element name="applicationDescription" nillable="true" type="tns1:CSApplicationDescription"/>
+                            <element name="reservationTimeStamp" nillable="true" type="tns1:CSTimeStamp"/>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="preferredAmount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingParameters" nillable="true" type="tns1:CSChargingParameters"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="getPriceResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="pricingOptions" nillable="true" type="tns1:CSPricingOptions"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="createSessionResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="sessionReference" nillable="true" type="xsd:string"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="notifyConfirmationResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="createSessionRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="applicationId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="aggregatorId" nillable="true" type="tns1:CSApplicationId"/>
+                            <element name="partnerAccountId" nillable="true" type="tns1:CSPartnerAccountExternalId"/>
+                            <element name="applicationDescription" nillable="true" type="tns1:CSApplicationDescription"/>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="correlationId" nillable="true" type="tns1:CSCorrelationId"/>
+                            <element name="subscriberId" nillable="true" type="tns1:CSSubscriberExternalId"/>
+                            <element name="subscriberIdType" nillable="true" type="tns1:CSText"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="startApplicationSessionRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="password" nillable="true" type="tns1:CSPassword"/>
+                            <element name="applicationId" nillable="true" type="tns1:CSApplicationId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="chargeReservationResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="reservedAmountLeft" nillable="true" type="tns1:CSAmount"/>
+                            <element name="chargedAmount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="releaseResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence/>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="notifyConfirmationRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="confirmationTimeStamp" nillable="true" type="tns1:CSTimeStamp"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="confirmationNotification" nillable="true" type="tns1:CSBoolean"/>
+                            <element name="pricingModel" nillable="true" type="tns1:CSPricingModel"/>
+                            <element name="reservationRequestNumber" nillable="true" type="tns1:CSRequestId"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="getSubscriberIdRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="externalId" nillable="true" type="tns1:CSText"/>
+                            <element name="idType" nillable="true" type="tns1:CSText"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="reserveResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="pricingOptions" nillable="true" type="tns1:CSPricingOptions"/>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                            <element name="timeLeft" nillable="true" type="tns1:CSTimeSpan"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="reservedAmount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="immediateChargeResponse">
+                <complexContent>
+                    <extension base="tns3:CSCommonResponse">
+                        <sequence>
+                            <element name="chargedAmount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+            <complexType name="chargeReservationRequest">
+                <complexContent>
+                    <extension base="tns3:CSCommonRequest">
+                        <sequence>
+                            <element name="chargingSessionId" nillable="true" type="tns1:CSSessionId"/>
+                            <element name="applicationDescription" nillable="true" type="tns1:CSApplicationDescription"/>
+                            <element name="amount" nillable="true" type="tns1:CSQualifiedAmount"/>
+                            <element name="chargeReservationTimeStamp" nillable="true" type="tns1:CSTimeStamp"/>
+                            <element name="applicationTicket" nillable="true" type="tns1:CSSecurityTicket"/>
+                            <element name="releaseIndicator" nillable="true" type="tns1:CSBoolean"/>
+                            <element name="requestNumber" nillable="true" type="tns1:CSRequestId"/>
+                            <element name="chargingParameters" nillable="true" type="tns1:CSChargingParameters"/>
+                        </sequence>
+                    </extension>
+                </complexContent>
+            </complexType>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="notifyConfirmationRequest">
+        <wsdl:part name="in0" type="tns2:notifyConfirmationRequest"/>
+    </wsdl:message>
+    <wsdl:message name="immediateChargeRequest">
+        <wsdl:part name="in0" type="tns2:immediateChargeRequest"/>
+    </wsdl:message>
+    <wsdl:message name="getSubscriberIdRequest">
+        <wsdl:part name="in0" type="tns2:getSubscriberIdRequest"/>
+    </wsdl:message>
+    <wsdl:message name="immediateChargeResponse">
+        <wsdl:part name="immediateChargeReturn" type="tns2:immediateChargeResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getPriceRequest">
+        <wsdl:part name="in0" type="tns2:getPriceRequest"/>
+    </wsdl:message>
+    <wsdl:message name="createSessionRequest">
+        <wsdl:part name="in0" type="tns2:createSessionRequest"/>
+    </wsdl:message>
+    <wsdl:message name="reserveResponse">
+        <wsdl:part name="reserveReturn" type="tns2:reserveResponse"/>
+    </wsdl:message>
+    <wsdl:message name="startApplicationSessionResponse">
+        <wsdl:part name="startApplicationSessionReturn" type="tns2:startApplicationSessionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getSubscriberIdResponse">
+        <wsdl:part name="getSubscriberIdReturn" type="tns2:getSubscriberIdResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getPriceResponse">
+        <wsdl:part name="getPriceReturn" type="tns2:getPriceResponse"/>
+    </wsdl:message>
+    <wsdl:message name="notifyConfirmationResponse">
+        <wsdl:part name="notifyConfirmationReturn" type="tns2:notifyConfirmationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="releaseRequest">
+        <wsdl:part name="in0" type="tns2:releaseRequest"/>
+    </wsdl:message>
+    <wsdl:message name="chargeReservationRequest">
+        <wsdl:part name="in0" type="tns2:chargeReservationRequest"/>
+    </wsdl:message>
+    <wsdl:message name="createSessionResponse">
+        <wsdl:part name="createSessionReturn" type="tns2:createSessionResponse"/>
+    </wsdl:message>
+    <wsdl:message name="chargeReservationResponse">
+        <wsdl:part name="chargeReservationReturn" type="tns2:chargeReservationResponse"/>
+    </wsdl:message>
+    <wsdl:message name="releaseResponse">
+        <wsdl:part name="releaseReturn" type="tns2:releaseResponse"/>
+    </wsdl:message>
+    <wsdl:message name="startApplicationSessionRequest">
+        <wsdl:part name="in0" type="tns2:startApplicationSessionRequest"/>
+    </wsdl:message>
+    <wsdl:message name="reserveRequest">
+        <wsdl:part name="in0" type="tns2:reserveRequest"/>
+    </wsdl:message>
+    <wsdl:portType name="CPWSImpl">
+        <wsdl:operation name="createSession" parameterOrder="in0">
+            <wsdl:input message="impl:createSessionRequest" name="createSessionRequest"/>
+            <wsdl:output message="impl:createSessionResponse" name="createSessionResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="release" parameterOrder="in0">
+            <wsdl:input message="impl:releaseRequest" name="releaseRequest"/>
+            <wsdl:output message="impl:releaseResponse" name="releaseResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriberId" parameterOrder="in0">
+            <wsdl:input message="impl:getSubscriberIdRequest" name="getSubscriberIdRequest"/>
+            <wsdl:output message="impl:getSubscriberIdResponse" name="getSubscriberIdResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getPrice" parameterOrder="in0">
+            <wsdl:input message="impl:getPriceRequest" name="getPriceRequest"/>
+            <wsdl:output message="impl:getPriceResponse" name="getPriceResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="startApplicationSession" parameterOrder="in0">
+            <wsdl:input message="impl:startApplicationSessionRequest" name="startApplicationSessionRequest"/>
+            <wsdl:output message="impl:startApplicationSessionResponse" name="startApplicationSessionResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="reserve" parameterOrder="in0">
+            <wsdl:input message="impl:reserveRequest" name="reserveRequest"/>
+            <wsdl:output message="impl:reserveResponse" name="reserveResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="chargeReservation" parameterOrder="in0">
+            <wsdl:input message="impl:chargeReservationRequest" name="chargeReservationRequest"/>
+            <wsdl:output message="impl:chargeReservationResponse" name="chargeReservationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="notifyConfirmation" parameterOrder="in0">
+            <wsdl:input message="impl:notifyConfirmationRequest" name="notifyConfirmationRequest"/>
+            <wsdl:output message="impl:notifyConfirmationResponse" name="notifyConfirmationResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="immediateCharge" parameterOrder="in0">
+            <wsdl:input message="impl:immediateChargeRequest" name="immediateChargeRequest"/>
+            <wsdl:output message="impl:immediateChargeResponse" name="immediateChargeResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CPWebServicesSoapBinding" type="impl:CPWSImpl">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="createSession">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="createSessionRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="createSessionResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="release">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="releaseRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="releaseResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getSubscriberId">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="getSubscriberIdRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="getSubscriberIdResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getPrice">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="getPriceRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="getPriceResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="startApplicationSession">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="startApplicationSessionRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="startApplicationSessionResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="reserve">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="reserveRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="reserveResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="chargeReservation">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="chargeReservationRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="chargeReservationResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="notifyConfirmation">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="notifyConfirmationRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="notifyConfirmationResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="immediateCharge">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="immediateChargeRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.partner.provided.api.cs.amdocs.com" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="immediateChargeResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://snv882:10217/gateway/services/CPWebServices" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CPWSImplService">
+        <wsdl:port binding="impl:CPWebServicesSoapBinding" name="CPWebServices">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/CPWebServices"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
