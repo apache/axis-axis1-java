@@ -127,6 +127,8 @@ public class NSStack {
         // If we've moved below the current default NS, figure out the new
         // default (if any)
         if (top < currentDefaultNS) {
+            // Reset the currentDefaultNS to ignore the frame just removed.
+            currentDefaultNS = top;
             while (currentDefaultNS > 0) {
                 if (stack[currentDefaultNS] != null &&
                         stack[currentDefaultNS].getPrefix().length() == 0)
