@@ -1030,7 +1030,9 @@ public class tcpmon extends JFrame {
                     inputText.append( bufferedData );
 
                     if ( bufferedData.startsWith( "GET " ) ||
-                        bufferedData.startsWith( "POST " ) ) {
+                        bufferedData.startsWith( "POST " ) ||
+                        bufferedData.startsWith( "PUT " ) ||
+                        bufferedData.startsWith( "DELETE " ) ) {
                         int  start, end ;
                         URL  url ;
 
@@ -1771,7 +1773,7 @@ public class tcpmon extends JFrame {
 
                 // Fix Content-Length HTTP headers
                 if ( text.startsWith("POST ") || text.startsWith("GET ") ) {
-                    System.err.println("IN CL" );
+                    // System.err.println("IN CL" );
                     int         pos1, pos2, pos3 ;
                     String      body, headers, headers1, header2 ;
 
@@ -1789,8 +1791,8 @@ public class tcpmon extends JFrame {
                     headers = text.substring( 0, pos3 );
 
                     pos1 = headers.indexOf( "Content-Length:" );
-                    System.err.println("pos1: " + pos1 );
-                    System.err.println("pos3: " + pos3 );
+                    // System.err.println("pos1: " + pos1 );
+                    // System.err.println("pos3: " + pos3 );
                     if ( pos1 != -1 ) {
                         int  newLen = text.length() - pos3 ;
 
