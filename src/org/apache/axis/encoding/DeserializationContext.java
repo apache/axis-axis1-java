@@ -316,6 +316,21 @@ public class DeserializationContext extends DefaultHandler
     }
     
     /**
+     * Get the MessageElement with a particular ID
+     */ 
+    public MessageElement getElementByID(String id)
+    {
+        MessageElement ret = null;
+        if((idMap !=  null)){
+            IDResolver resolver = (IDResolver)idMap.get(id);
+            if(resolver != null)
+               ret = (MessageElement)resolver.getReferencedObject(id);
+        }
+        
+        return ret;
+    }
+    
+    /**
      * Get the object referenced by the href.
      * The object returned may be a MessageElement requiring deserialization or it 
      * may be a deserialized java object.

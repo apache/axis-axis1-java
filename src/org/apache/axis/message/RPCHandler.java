@@ -157,9 +157,19 @@ public class RPCHandler extends SOAPHandler
         currentParam = new RPCParam(namespace, localName, null);
         call.addParam(currentParam);
         
-        QName type = context.getTypeFromAttributes(namespace,
+        MessageElement curEl = context.getCurElement();
+        QName type = null;
+        if (curEl.getHref() != null) {
+            MessageElement ref = context.getElementByID(curEl.getHref());
+            if (ref != null)
+                type = context.getTypeFromAttributes(ref.getNamespaceURI(),
+                                                     ref.getName(),
+                                                     ref.getAttributes());
+        } else {
+            type = context.getTypeFromAttributes(namespace,
                                                    localName,
                                                    attributes);
+        }
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
