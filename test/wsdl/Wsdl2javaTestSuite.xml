@@ -219,6 +219,18 @@
                location="http://localhost:8080/axis/services/RoundtripTest">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
+    <!-- Test adding a second port (RoundtripTest2) to the wsdl file -->
+    <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               input="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               portTypeName="RoundtripPortType"
+               servicePortName="RoundtripTest2"
+               bindingName="RoundtripTestSoapBinding"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               location="http://localhost:8080/axis/services/RoundtripTest2">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
 
 
     <!-- Delete the intermediate files so we recreate over a clean slate -->

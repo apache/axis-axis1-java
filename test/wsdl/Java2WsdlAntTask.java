@@ -78,10 +78,12 @@ public class Java2WsdlAntTask extends Task
     private String location = "";
     private String locationImport = null;
     private String output = "." ;
+    private String input = null ;
     private String outputImpl = null;
     private String className = "." ;
     private String servicePortName = null ;
     private String portTypeName = null ;
+    private String bindingName = null ;
     private String implClass = null;
     private boolean useInheritedMethods = false;
     private String exclude = null;
@@ -97,7 +99,11 @@ public class Java2WsdlAntTask extends Task
             log("\tPkgtoNS:" + namespaceMap, Project.MSG_VERBOSE);
             log("\tlocation:" + location, Project.MSG_VERBOSE);
             log("\toutput:" + output, Project.MSG_VERBOSE);
+            log("\tinput:" + input, Project.MSG_VERBOSE);
             log("\tclassName:" + className, Project.MSG_VERBOSE);
+            log("\tservicePortName:" + servicePortName, Project.MSG_VERBOSE);
+            log("\tportTypeName:" + portTypeName, Project.MSG_VERBOSE);
+            log("\tbindingName:" + bindingName, Project.MSG_VERBOSE);
             log("\timplClass:" + implClass, Project.MSG_VERBOSE);
             log("\tinheritance:" + useInheritedMethods, Project.MSG_VERBOSE);
             log("\texcluded:" + exclude, Project.MSG_VERBOSE);
@@ -114,18 +120,26 @@ public class Java2WsdlAntTask extends Task
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
-            if (servicePortName != null)
+            if (servicePortName != null) {
                 emitter.setServicePortName(servicePortName);
-            if (portTypeName != null)
+            }
+            if (portTypeName != null) {
                 emitter.setPortTypeName(portTypeName);
+            }
+            if (bindingName != null) {
+                emitter.setBindingName(bindingName);
+            }
             log("Java2WSDL " + className, Project.MSG_INFO);
             emitter.setCls(className);
-            if (implClass != null)
+            if (implClass != null) {
                 emitter.setImplCls(implClass);
-            if (exclude != null)
+            }
+            if (exclude != null) {
                 emitter.setDisallowedMethods(exclude);
-            if (stopClasses != null)
+            }
+            if (stopClasses != null) {
                 emitter.setStopClasses(stopClasses);
+            }
 
             if (tm.equals("1.1")) {
                 emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
@@ -138,6 +152,9 @@ public class Java2WsdlAntTask extends Task
                 } else if (style.equalsIgnoreCase("RPC")) {
                     emitter.setMode(Emitter.MODE_RPC);
                 }
+            }
+            if (input != null) {
+                emitter.setInputWSDL(input);
             }
             emitter.setIntfNamespace(namespace);
             emitter.setImplNamespace(namespaceImpl);
@@ -162,6 +179,11 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "output" attribute
     public void setOutput(String parameter) {
         this.output = parameter;
+    }
+
+    // The setter for the "input" attribute
+    public void setInput(String parameter) {
+        this.input = parameter;
     }
 
     // The setter for the "outputImpl" attribute
@@ -197,6 +219,11 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "portTypeName" attribute
     public void setPortTypeName(String parameter) {
         this.portTypeName = parameter;
+    }
+
+    // The setter for the "bindingName" attribute
+    public void setBindingName(String parameter) {
+        this.bindingName = parameter;
     }
 
     // The setter for the "namespace" attribute
