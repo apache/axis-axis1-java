@@ -374,6 +374,26 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
+  <!-- Jars up the the API documentation                                   -->
+  <!-- =================================================================== -->
+  <target name="api-jar" depends="javadocs"
+          description="create API docs jar">
+
+    <jar jarfile="${build.lib}/${name}-api.jar" basedir="${build.javadocs}" />
+    
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Jars up the the source code                                         -->
+  <!-- =================================================================== -->
+  <target name="src-jar"
+          description="create source code jar">
+
+    <jar jarfile="${build.lib}/${name}-src.jar" basedir="${src.dir}" />
+    
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Build/Test EVERYTHING from scratch!                                 -->
   <!-- =================================================================== -->
   <target name="all" depends="junit, functional-tests, dist"
