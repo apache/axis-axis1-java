@@ -58,6 +58,7 @@ import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
+import java.lang.reflect.Array;
 
 /**
  * An OperationDesc is an abstract description of an operation on a service.
@@ -90,9 +91,6 @@ public class OperationDesc {
     
     // FIXME : Just have a return ParamDesc???
 
-    /** The Java method name this maps to (is this just name?) */
-    private String methodName;
-
     /** The actual Java method associated with this operation, if known */
     private Method method;
 
@@ -106,6 +104,17 @@ public class OperationDesc {
      * Default constructor.
      */
     public OperationDesc() {
+    }
+
+    /**
+     * "Complete" constructor
+     */
+    public OperationDesc(String name, ParameterDesc [] parameters, QName returnQName) {
+        this.name = name;
+        this.returnQName = returnQName;
+        for (int i = 0; i < parameters.length; i++) {
+            this.parameters.add(parameters[i]);
+        }
     }
 
     /**
@@ -201,6 +210,16 @@ public class OperationDesc {
 
     public ArrayList getParameters() {
         return parameters;
+    }
+
+    /**
+     * Set the parameters wholesale.  Can only be called from within this
+     * package (by ServiceDesc)
+     *
+     * @param parameters an ArrayList of ParameterDescs
+     */
+    void setParameters(ArrayList parameters) {
+        this.parameters = parameters;
     }
 
     public int getNumInParams() {

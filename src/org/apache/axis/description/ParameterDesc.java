@@ -88,6 +88,22 @@ public class ParameterDesc {
     /** The order of this parameter (-1 indicates unordered) */
     private int order = -1;
 
+    public ParameterDesc() {
+    }
+
+    /**
+     * "Complete" constructor, suitable for usage in skeleton code
+     *
+     * @param name the parameter's fully qualified XML name
+     * @param mode IN, OUT, INOUT
+     * @param typeQName the parameter's XML type QName
+     */
+    public ParameterDesc(QName name, byte mode, QName typeQName) {
+        this.name = name;
+        this.mode = mode;
+        this.typeQName = typeQName;
+    }
+
     public String toString() {
         return "(" + typeEntry + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
