@@ -96,6 +96,7 @@ public class SimpleJMSListener implements MessageListener
     private JMSConnector connector;
     private JMSEndpoint endpoint;
     private AxisServer server;
+    private HashMap connectorProps;
 
     public SimpleJMSListener(HashMap connectorMap, HashMap cfMap,
                              String destination, String username,
@@ -112,6 +113,7 @@ public class SimpleJMSListener implements MessageListener
                                                                   username,
                                                                   password,
                                                                   adapter);
+            connectorProps = connectorMap;
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             throw e;
@@ -164,7 +166,7 @@ public class SimpleJMSListener implements MessageListener
     public void start()
         throws Exception
     {
-        endpoint.registerListener(this);
+        endpoint.registerListener(this, connectorProps);
         connector.start();
     }
 
