@@ -380,7 +380,23 @@ public class SerializationContextImpl implements SerializationContext
         
         // Note that arrays are not primitives.
         // Also note that java.lang wrapper classes (i.e. java.lang.Integer) are
-        // not primitives.
+        // not primitives unless the corresponding type is an xsd type.
+        QName qName = getQNameForClass(javaType);
+        if (qName != null && Constants.isSchemaXSD(qName.getNamespaceURI())) {
+            if (qName.equals(Constants.XSD_BOOLEAN) ||
+                qName.equals(Constants.XSD_DOUBLE) ||
+                qName.equals(Constants.XSD_FLOAT) ||
+                qName.equals(Constants.XSD_INT) ||
+                qName.equals(Constants.XSD_LONG) ||
+                qName.equals(Constants.XSD_SHORT) ||
+                qName.equals(Constants.XSD_BYTE) ||
+                qName.equals(Constants.XSD_STRING) ||
+                qName.equals(Constants.XSD_INTEGER) ||
+                qName.equals(Constants.XSD_DECIMAL)) { 
+                return true;
+            }
+        }
+
         return false;
     }
 

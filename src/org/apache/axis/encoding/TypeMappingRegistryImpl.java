@@ -78,7 +78,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     private HashMap mapTM;          // Type Mappings keyed by the Web Service Namespace URI
     private TypeMapping defaultTM;  // Default Type Mapping 
     
-    static private TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
     /**
      * Construct TypeMappingRegistry
      */
