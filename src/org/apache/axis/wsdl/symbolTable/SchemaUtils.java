@@ -478,8 +478,7 @@ public class SchemaUtils {
      * element from the provided node.  Only the first annotation element and 
      * the first documentation element in the annotation element will be used.
      * 
-     * @param root Parent node.
-     * @param path Path of element names to text of interest, delimited by "/". 
+     * @param typeNode Parent node.
      */
     public static String getAnnotationDocumentation(Node typeNode) {
         Node annotationNode = typeNode.getFirstChild();
@@ -691,7 +690,7 @@ public class SchemaUtils {
                 nodeName = Utils.findQName("", nodeName.getLocalPart());
             } else if (form == null) {
 
-                // check elementForDefault on schema element
+                // check elementFormDefault on schema element
                 String def = Utils.getScopedAttribute(elementNode,
                         "elementFormDefault");
 

@@ -505,7 +505,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
     /** Refactored to call recursively for JAX-RPC 1.1 spec 4.2.5. */
     protected int javifyTypeEntryName(SymbolTable symbolTable, TypeEntry entry, HashMap anonQNames, int uniqueNum) {
-        TypeEntry tEntry = (TypeEntry) entry;
+        TypeEntry tEntry = entry;
         String dims = tEntry.getDimensions();
         TypeEntry refType = tEntry.getRefType();
         while (refType != null) {

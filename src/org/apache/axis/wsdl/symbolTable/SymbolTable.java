@@ -2810,11 +2810,12 @@ public class SymbolTable {
      * @param bEntry    
      * @param operation 
      * @param input     
-     * @throws IOException 
      */
-    private void setBodyType(
-            String use, BindingEntry bEntry, Operation operation, boolean input)
-            throws IOException {
+    private void setBodyType(String use,
+                             BindingEntry bEntry,
+                             Operation operation,
+                             boolean input)
+    {
 
         if (use == null) {
             // Deprecated 

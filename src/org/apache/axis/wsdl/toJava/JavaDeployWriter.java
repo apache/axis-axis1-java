@@ -569,8 +569,7 @@ public class JavaDeployWriter extends JavaWriter {
 
             pw.print("        <parameter");
 
-            if ((paramQName == null)
-                    || "".equals(paramQName.getNamespaceURI())) {
+            if (paramQName == null) {
                 pw.print(" name=\"" + param.getName() + "\"");
             } else {
                 pw.print(" qname=\""
