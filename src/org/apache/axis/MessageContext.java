@@ -56,26 +56,24 @@
 package org.apache.axis ;
 
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.session.Session;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAP11Constants;
-
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.Call;
-
+import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.rpc.namespace.QName;
-
-import java.util.Hashtable;
 import java.io.File;
+import java.util.Hashtable;
 
 /**
  * Some more general docs will go here.
@@ -100,7 +98,7 @@ import java.io.File;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Jacek Kopecky (jacek@idoox.com)
  */
-public class MessageContext {
+public class MessageContext implements SOAPMessageContext {
     protected static Log log =
             LogFactory.getLog(MessageContext.class.getName());
 
@@ -429,6 +427,15 @@ public class MessageContext {
     }
 
     /**
+     *  Gets the SOAPMessage from this message context
+     *  @return Returns the SOAPMessage; returns null if no request
+     *          SOAPMessage is present in this SOAPMessageContext
+     */
+    public javax.xml.soap.SOAPMessage getMessage() {
+        return getCurrentMessage();
+    }
+
+    /**
      * Set the current (i.e. request before the pivot, response after)
      * message.
      */
@@ -441,6 +448,19 @@ public class MessageContext {
         } else {
             requestMessage = curMsg;
         }
+    }
+
+    /**
+     *  Sets the SOAPMessage for this message context
+     *  @param   message  Request SOAP message
+     *  @throws  JAXRPCException  If any error during the setting
+     *     of the request message or if invalid SOAPMessage
+     *     is set
+     *  @throws java.lang.UnsupportedOperationException If this
+     *     operation is not supported
+     */
+    public void setMessage(javax.xml.soap.SOAPMessage message) {
+        setCurrentMessage((Message)message);
     }
 
     /**
@@ -747,6 +767,25 @@ public class MessageContext {
     } // setProperty
 
     /**
+     *  Returns true if the MessageContext contains a property with the specified name.
+     *  @param   name Name of the property whose presense is to be tested
+     *  @return  Returns true if the MessageContext contains the
+          property; otherwise false
+     */
+    public boolean containsProperty(String name) {
+        Object propertyValue = getProperty(name);
+        return (propertyValue != null)?true:false;
+    }
+
+    /**
+     *  Returns an Iterator view of the names of the properties in this MessageContext
+     *  @return Iterator for the property names
+     */
+    public java.util.Iterator getPropertyNames() {
+        return bag.keySet().iterator();
+    }
+
+    /**
      * Returns the value associated with the named property - or null if not
      * defined/set.
      *
@@ -885,7 +924,7 @@ public class MessageContext {
         return encodingStyle;
     } // getEncodingStyle
 
-    public void clearProperty(String propName)
+    public void removeProperty(String propName)
     {
         if (bag != null) {
             bag.remove(propName);
@@ -950,4 +989,19 @@ public class MessageContext {
     public void setHighFidelity(boolean highFidelity) {
         this.highFidelity = highFidelity;
     }
-};
+
+    /**
+     * Gets the SOAP actor roles associated with an execution of the HandlerChain and its contained Handler instances.
+     * Note that SOAP actor roles apply to the SOAP node and are managed using HandlerChain.setRoles and
+     * HandlerChain.getRoles. Handler instances in the HandlerChain use this information about the SOAP actor roles
+     * to process the SOAP header blocks. Note that the SOAP actor roles are invariant during the processing of
+     * SOAP message through the HandlerChain.
+     *
+     * @return Array of URIs for SOAP actor roles
+     * @see javax.xml.rpc.handler.HandlerChain#setRoles(java.lang.String[]) HandlerChain.setRoles(java.lang.String[])
+     * @see javax.xml.rpc.handler.HandlerChain#getRoles() HandlerChain.getRoles()
+     */
+    public String[] getRoles() {
+        return null;
+    }
+}
