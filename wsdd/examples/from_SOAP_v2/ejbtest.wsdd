@@ -1,22 +1,19 @@
 <?xml version="1.0"?>
-<deployment 	name="EJBTest" 
-				xmlns="http://xml.apache.org/axis/wsdd/" 
-				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
-				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
-	<documentation>
+<deployment name="EJBTest" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/" xmlns="http://xml.apache.org/axis/wsdd/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd/
+http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-axis/java/wsdd/WSDD.xsd?rev=HEAD">
+    <documentation>
     		Describes an Enterprise Java Bean Service
     	</documentation>
-	<service name="EJBTest">
-		<provider type="java:org.apache.axis.handlers.providers.StatelessEJBServiceHandler">
-			<java:provider className="sample.ejb.SampleEJB" isStatic="false">
-				<parameter name="FullHomeInterfaceName" value="samples.HelloServiceHome"/>
-				<parameter name="ContextProviderURL" value="iiop://localhost:900"/>
-				<parameter name="FullContextFactoryName" value="com.ibm.ejs.ns.jndi.CNInitialContextFactory"/>
-			</java:provider>
-		</provider>
-		<faultFlow flowType="fault">
-			<handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
-		</faultFlow>
-	</service>
+    <service name="EJBTest">
+        <provider type="java:org.apache.axis.handlers.providers.StatelessEJBServiceHandler">
+            <java:provider className="sample.ejb.SampleEJB" isStatic="false">
+                <parameter name="FullHomeInterfaceName" value="samples.HelloServiceHome"/>
+                <parameter name="ContextProviderURL" value="iiop://localhost:900"/>
+                <parameter name="FullContextFactoryName" value="com.ibm.ejs.ns.jndi.CNInitialContextFactory"/>
+            </java:provider>
+        </provider>
+        <faultFlow flowType="fault">
+            <handler type="org.apache.axis.handlers.SimpleFaultHandler"/>
+        </faultFlow>
+    </service>
 </deployment>
