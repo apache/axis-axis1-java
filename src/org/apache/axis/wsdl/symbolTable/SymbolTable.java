@@ -138,6 +138,9 @@ public class SymbolTable {
     /** Field verbose */
     private boolean verbose;
 
+    /** Field quiet */
+    protected boolean quiet;
+
     /** Field btm */
     private BaseTypeMapping btm = null;
 
@@ -178,6 +181,24 @@ public class SymbolTable {
         this.verbose = verbose;
         this.nowrap = nowrap;
     }    // ctor
+
+    /**
+     * Method isQuiet
+     * 
+     * @return 
+     */
+    public boolean isQuiet() {
+        return quiet;
+    }    
+
+    /**
+     * Method setQuiet
+     * 
+     * @param quiet
+     */
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
+    }   
 
     /**
      * Get the raw symbol table HashMap.
@@ -1702,9 +1723,7 @@ public class SymbolTable {
                 } else if (outdex >= 0) {
                     addOutParm(outputs, outdex, parameters, true);
                 } else {
-                    if (verbose) {
-                        System.err.println(Messages.getMessage("noPart00", name));
-                    }
+                    System.err.println(Messages.getMessage("noPart00", name));
                 }
             }
         }
@@ -3547,7 +3566,7 @@ public class SymbolTable {
                 }
             }
         } else {
-            if (verbose) {
+            if (!quiet) {
                 System.out.println(Messages.getMessage("alreadyExists00",
                                                        "" + name));
             }

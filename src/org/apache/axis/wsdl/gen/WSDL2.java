@@ -52,6 +52,9 @@ public class WSDL2 {
     /** Field NOWRAP_OPT */
     protected static final int NOWRAP_OPT = 'W';
 
+    /** Filed quiet */
+    protected static final int QUIET_OPT = 'q';
+
     /** Field options */
     protected CLOptionDescriptor[] options = new CLOptionDescriptor[]{
         new CLOptionDescriptor("help", CLOptionDescriptor.ARGUMENT_DISALLOWED,
@@ -72,7 +75,11 @@ public class WSDL2 {
         new CLOptionDescriptor("noWrapped",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOWRAP_OPT,
-                Messages.getMessage("optionNoWrap00"))
+                Messages.getMessage("optionNoWrap00")),
+        new CLOptionDescriptor("quiet",
+                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                QUIET_OPT,
+                Messages.getMessage("optionQuiet"))
     };
 
     /** Field wsdlURI */
@@ -212,6 +219,10 @@ public class WSDL2 {
                 parser.setDebug(true);
                 break;
 
+            case QUIET_OPT:
+                parser.setQuiet(true);
+                break;
+
             case NOWRAP_OPT:
                 parser.setNowrap(true);
                 break;
@@ -228,6 +239,17 @@ public class WSDL2 {
         if (wsdlURI == null) {
             System.out.println(Messages.getMessage("w2jMissingWSDLURI00"));
             printUsage();
+        }
+
+        if (parser.isQuiet()) {
+            if (parser.isVerbose()) {
+                System.out.println(Messages.getMessage("exclusiveQuietVerbose"));
+                printUsage();
+            } 
+            if (parser.isDebug()) {
+                System.out.println(Messages.getMessage("exclusiveQuietDebug"));
+                printUsage();
+            }
         }
 
         // Set username and password if provided in URL

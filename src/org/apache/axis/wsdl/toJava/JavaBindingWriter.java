@@ -194,8 +194,11 @@ public class JavaBindingWriter implements Generator {
                     if (Utils.fileExists(fileName,
                             binding.getQName().getNamespaceURI(),
                             emitter.getNamespaces())) {
-                        System.out.println(Messages.getMessage("wontOverwrite",
-                                fileName));
+                        if (!emitter.isQuiet()) {
+                            System.out.println(
+                                 Messages.getMessage("wontOverwrite",
+                                                     fileName));
+                        }
                     } else {
                         implWriter = getJavaImplWriter(emitter, bEntry,
                                 symbolTable);
