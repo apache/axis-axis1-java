@@ -346,7 +346,7 @@
                deployscope="none"
                skeleton="yes"
                noimports="no"
-               verbose="yes"
+               verbose="no"
                testcase="no">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
