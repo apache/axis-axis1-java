@@ -116,7 +116,7 @@ public class SimpleAxisServer implements Runnable {
 
     // Standard MIME headers
     private static byte MIME_STUFF[] =
-        ( "\nContent-Type: text/xml\n" +
+        ( "\nContent-Type: text/xml; charset=utf-8\n" +
           "Content-Length: ").getBytes();
 
     // Mime/Content separator

@@ -184,7 +184,7 @@ public class AxisServlet extends HttpServlet {
     /* Send it back along the wire...  */
     /***********************************/
     msg = msgContext.getResponseMessage();
-    res.setContentType( "text/xml" );
+    res.setContentType( "text/xml; charset=utf-8" );
     String response;
     if (msg == null) {
         response="No data";
