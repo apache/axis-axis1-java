@@ -228,8 +228,11 @@ public class JavaSkelWriter extends JavaWriter {
                         ExtensibilityElement elem = (ExtensibilityElement) it.next();
                         if (elem instanceof SOAPBody) {
                             SOAPBody body = (SOAPBody) elem;
-                            pw.println("                 \"" + body.getNamespaceURI() + "\",");
-                            found = true;
+                            String ns = body.getNamespaceURI();
+                            if (ns != null) {
+                                pw.println("                 \"" + ns + "\",");
+                                found = true;
+                            }
                         }
                     }
                     if (!found) {
@@ -250,8 +253,11 @@ public class JavaSkelWriter extends JavaWriter {
                         ExtensibilityElement elem = (ExtensibilityElement) it.next();
                         if (elem instanceof SOAPBody) {
                             SOAPBody body = (SOAPBody) elem;
-                            pw.println("                 \"" + body.getNamespaceURI() + "\",");
-                            found = true;
+                            String ns = body.getNamespaceURI();
+                            if (ns != null) {
+                                pw.println("                 \"" + ns + "\",");
+                                found = true;
+                            }
                         }
                     }
                     if (!found) {
@@ -267,8 +273,11 @@ public class JavaSkelWriter extends JavaWriter {
                     ExtensibilityElement elem = (ExtensibilityElement) it.next();
                     if (elem instanceof SOAPOperation) {
                         SOAPOperation soapOp = (SOAPOperation) elem;
-                        pw.println("                 \"" + soapOp.getSoapActionURI() + "\");");
-                        found = true;
+                        String action = soapOp.getSoapActionURI();
+                        if (action != null) {
+                            pw.println("                 \"" + action + "\");");
+                            found = true;
+                        }
                     }
                 }
                 if (!found) {
