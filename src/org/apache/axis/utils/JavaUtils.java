@@ -619,10 +619,11 @@ public class JavaUtils
      * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
      * Note that false, true, and null are not strictly keywords; they are literal values,
      * but for the purposes of this array, they can be treated as literals.
+     *    ****** PLEASE KEEP THIS LIST SORTED IN ASCENDING ORDER ******
      */
     static final String keywords[] =
     {
-        "assert",    "abstract",  "boolean",      "break",      "byte",      "case",
+        "abstract",  "assert",       "boolean",    "break",      "byte",      "case",
         "catch",     "char",         "class",      "const",     "continue",
         "default",   "do",           "double",     "else",      "extends",
         "false",     "final",        "finally",    "float",     "for",
