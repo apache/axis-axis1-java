@@ -10,10 +10,10 @@
 <m:deploy xmlns:m="AdminService">
   <service name="urn:xmltoday-delayed-quotes" pivot="RPCDispatcher" >
     <option name="className" value="samples.stock.StockQuoteService" />
-    <option name="methodName" value="getQuote" />
+    <option name="allowedMethods" value="getQuote" />
   </service>
   <service name="urn:cominfo" pivot="RPCDispatcher" >
     <option name="className" value="samples.stock.ComInfoService" />
-    <option name="methodName" value="getInfo" />
+    <option name="allowedMethods" value="getInfo" />
   </service>
 </m:deploy>

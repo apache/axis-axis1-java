@@ -39,7 +39,7 @@ public class TestBadWSDD extends TestCase
             " </handler>\n" +
             " <handler type=\"logger\" name=\"other\"/>\n" +
             " <service name=\"AdminService\" provider=\"java:MSG\">\n" + 
-            "  <parameter name=\"methodName\" value=\"AdminService\"/>" +
+            "  <parameter name=\"allowedMethods\" value=\"AdminService\"/>" +
             "  <parameter name=\"enableRemoteAdmin\" value=\"false\"/>" +
             "  <parameter name=\"className\"" +
                     " value=\"org.apache.axis.utils.Admin\"/>" +

@@ -52,7 +52,7 @@ public class TestSerializedRPC extends TestCase {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.setOption("className", "test.RPCDispatch.Service");
-        reverse.setOption("methodName", "*");
+        reverse.setOption("allowedMethods", "*");
         engine.deployService(SOAPAction, reverse);
     }
 

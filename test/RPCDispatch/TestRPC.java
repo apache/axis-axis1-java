@@ -111,7 +111,7 @@ public class TestRPC extends TestCase {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.setOption("className", "test.RPCDispatch.Service");
-        reverse.setOption("methodName", "reverseString");
+        reverse.setOption("allowedMethods", "reverseString");
         engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
@@ -125,7 +125,7 @@ public class TestRPC extends TestCase {
         // Register the reverseData service
         SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.setOption("className", "test.RPCDispatch.Service");
-        reverse.setOption("methodName", "reverseData");
+        reverse.setOption("allowedMethods", "reverseData");
         engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
@@ -141,7 +141,7 @@ public class TestRPC extends TestCase {
         // Register the targetService service
         SOAPService tgtSvc = new SOAPService(RPCDispatcher);
         tgtSvc.setOption("className", "test.RPCDispatch.Service");
-        tgtSvc.setOption("methodName", "targetServiceImplicit");
+        tgtSvc.setOption("allowedMethods", "targetServiceImplicit");
         engine.deployService(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
@@ -156,7 +156,7 @@ public class TestRPC extends TestCase {
         // Register the targetService service
         SOAPService tgtSvc = new SOAPService(RPCDispatcher);
         tgtSvc.setOption("className", "test.RPCDispatch.Service");
-        tgtSvc.setOption("methodName", "targetServiceExplicit");
+        tgtSvc.setOption("allowedMethods", "targetServiceExplicit");
         engine.deployService(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
@@ -171,7 +171,7 @@ public class TestRPC extends TestCase {
         // Register the echoInt service
         SOAPService echoInt = new SOAPService(RPCDispatcher);
         echoInt.setOption("className", "test.RPCDispatch.Service");
-        echoInt.setOption("methodName", "echoInt");
+        echoInt.setOption("allowedMethods", "echoInt");
         engine.deployService(SOAPAction, echoInt);
 
         // invoke the service and verify the result
@@ -185,7 +185,7 @@ public class TestRPC extends TestCase {
         // Register the reverseData service
         SOAPService simpleFault = new SOAPService(RPCDispatcher);
         simpleFault.setOption("className", "test.RPCDispatch.Service");
-        simpleFault.setOption("methodName", "simpleFault");
+        simpleFault.setOption("allowedMethods", "simpleFault");
         engine.deployService(SOAPAction, simpleFault);
 
         Object result = rpc("simpleFault", new Object[] {"foobar"});

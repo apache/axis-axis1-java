@@ -15,7 +15,7 @@
 
   <service name="ProxyService" provider="java:MSG" >
     <parameter name="className" value="samples.proxy.ProxyService" />
-    <parameter name="methodName" value="ProxyService" />
+    <parameter name="allowedMethods" value="ProxyService" />
     <parameter name="FullMessageService" value="true" />
     <parameter name="URL" value="tcp://localhost:8088/" />
   </service>

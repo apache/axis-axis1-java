@@ -3,6 +3,6 @@
             xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
   <service name="MessageService" provider="java:MSG">
     <parameter name="className" value="samples.message.MessageService" />
-    <parameter name="methodName" value="echoElements" />
+    <parameter name="allowedMethods" value="echoElements" />
   </service>
 </deployment>

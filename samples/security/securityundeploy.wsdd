@@ -13,7 +13,7 @@
   </requestFlow>
 
   <parameter name="className" value="samples.security.Service"/>
-  <parameter name="methodName" value="*"/>
+  <parameter name="allowedMethods" value="*"/>
  </service>
 
 </undeployment>
