@@ -1,9 +1,9 @@
 <m:deploy xmlns:m="AdminService">
  <service name="OrderProcessor" pivot="RPCDispatcher">
-  <option name="className" value="BeanService"/>
+  <option name="className" value="samples.userguide.example5.BeanService"/>
   <option name="methodName" value="processOrder"/>
   <beanMappings>
-   <myNS:order xmlns:myNS="urn:BeanService" classname="Order"/>
+   <myNS:order xmlns:myNS="urn:BeanService" classname="samples.userguide.example5.Order"/>
   </beanMappings>
  </service>
 </m:deploy>
