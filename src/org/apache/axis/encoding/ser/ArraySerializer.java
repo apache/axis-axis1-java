@@ -59,8 +59,12 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
@@ -155,7 +159,36 @@ public class ArraySerializer implements Serializer
 
         // Get the QName of the componentType.
         // If not found, look at the super classes
-        QName componentQName = context.getQNameForClass(componentType);
+        QName componentQName = null;
+        
+        // Try to get componentQName from operation description first.
+        MessageContext messageContext = context.getMessageContext();
+        if (messageContext != null) {
+            OperationDesc op = messageContext.getOperation();
+            if (op != null) {
+                QName typeQName = null;
+                ParameterDesc param = op.getParamByQName(name);
+                if (param == null) {
+                    if (name.equals(op.getReturnQName())) {
+                        typeQName = op.getReturnType();
+                    }
+                }
+                else {
+                    typeQName = param.getTypeQName();
+                }
+                TypeMapping tm = context.getTypeMapping();
+                SerializerFactory componentFactory = (SerializerFactory) tm.getSerializer(componentType, typeQName);
+                if (componentFactory != null && componentFactory instanceof SimpleSerializerFactory) {
+                    SimpleSerializerFactory simpleComponentFactory = (SimpleSerializerFactory) componentFactory;
+                    componentQName = simpleComponentFactory.getXMLType();
+                }
+            }
+        }
+        
+        if (componentQName == null) {
+            componentQName = context.getQNameForClass(componentType);
+        }
+
         if (componentQName == null) {
             Class searchCls = componentType;
             while(searchCls != null && componentQName == null) {
