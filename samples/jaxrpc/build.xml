@@ -45,9 +45,9 @@ Copyright:
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
-<target name="compile">
+<target name="compile" depends="copy">
     <!-- jaxrpc Dynamic proxy with bean - Bug 10824 -->
     <wsdl2java url="${axis.home}/samples/jaxrpc/address/Address.wsdl"
                output="${axis.home}/build/work"
