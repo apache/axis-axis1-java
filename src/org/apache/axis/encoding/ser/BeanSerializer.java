@@ -86,6 +86,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.beans.IntrospectionException;
 
 import org.w3c.dom.Element;
@@ -330,6 +331,11 @@ public class BeanSerializer implements Serializer, Serializable {
         // Build a ClassRep that represents the bean class.  This
         // allows users to provide their own field mapping.
         ClassRep clsRep = types.getBeanBuilder().build(javaType);
+
+        // Map abstract classes to abstract attribute on complexType
+        if (Modifier.isAbstract(clsRep.getModifiers())) {
+            complexType.setAttribute("abstract", "true");
+        }
 
         // Write out fields
         Vector fields = clsRep.getFields();
