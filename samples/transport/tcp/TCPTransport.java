@@ -105,7 +105,6 @@ public class TCPTransport extends Transport
         try {
           String urlString = mc.getStrProp(MessageContext.TRANS_URL);
           if (urlString != null) {
-              System.out.println("URLString is " + urlString);
             URL url = new URL(urlString);
             mc.setProperty(HOST, url.getHost());
             mc.setProperty(PORT, new Integer(url.getPort()).toString());
