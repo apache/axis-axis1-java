@@ -207,7 +207,7 @@ Copyright:
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional-prepare" if="junit.present">
-	  <mkdir dir="${basedir}/${test.functional.reportdir}" />
+    <mkdir dir="${test.functional.reportdir}" />
 	  <path id="deploy.xml.files">
 		<fileset dir="${build.dir}/work">
 		  <include name="**/deploy.wsdd"/>
