@@ -5,6 +5,7 @@
     targetNamespace="comprehensive.types.test"
     xmlns:tns="comprehensive.types.test"
     xmlns:typens="comprehensive.types"
+    xmlns:typens2="comprehensive.types.test2"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
@@ -53,6 +54,8 @@
         <xsd:complexType>
           <xsd:all>
             <xsd:element name="one" type="xsd:string"/>
+            <xsd:element name="two" type="typens2:fwd"/> <!-- Forward type use to dif namespace -->
+            <xsd:element ref="typens2:three"/>           <!-- Forward ref use to a dif namespace -->
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
@@ -65,7 +68,7 @@
                 <xsd:element name="symbol" type="xsd:string"/>
                 <xsd:element name="time" type="xsd:string"/>
                 <xsd:element name="last" type="xsd:string"/>
-                <xsd:element name="change" type="xsd:string"/>
+                <xsd:element name="change" type="xsd:string"/>  
                 <xsd:element name="pctchange" type="xsd:string"/>
                 <xsd:element name="bid" type="xsd:string"/>
                 <xsd:element name="ask" type="xsd:string"/>
@@ -76,7 +79,47 @@
         </xsd:sequence>
       </xsd:complexType>
 
+
+      <!-- The following definitions validate forward refs -->
+      <xsd:complexType name="arrayM">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="typens:arrayM2[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="arrayM2">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="typens:arrayM3[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="arrayM3">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:int[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
     </xsd:schema>
+
+    <xsd:schema 
+        targetNamespace="comprehensive.types.test2"
+        xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+        <xsd:complexType name="fwd">
+          <xsd:complexContent>
+            <xsd:restriction base="soapenc:Array">
+              <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:QName[]"/>
+            </xsd:restriction>
+          </xsd:complexContent>
+        </xsd:complexType>
+
+        <!-- Collection of enums -->
+        <xsd:element name="three" type="typens:enum" maxOccurs="unbounded" />
+    </xsd:schema>
+
   </types>
 
   <!-- message declns -->
@@ -113,6 +156,10 @@
 
   <message name="array">
     <part name="array" type="typens:array"/>
+  </message>
+
+  <message name="arrayM">
+    <part name="arrayM" type="typens:arrayM"/>
   </message>
 
   <message name="complexAll">
@@ -169,6 +216,21 @@
       <input message="tns:empty"/>
       <output message="tns:array"/>
     </operation>
+
+    <!-- Multi-Dimensional Arrays currently don't work
+    <operation name="arrayMIn">
+      <input message="tns:arrayM"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="arrayMInout">
+      <input message="tns:arrayM"/>
+      <output message="tns:arrayM"/>
+    </operation>
+    <operation name="arrayMOut">
+      <input message="tns:emptyM"/>
+      <output message="tns:arrayM"/>
+    </operation>
+     -->
     <operation name="complexAllIn">
       <input message="tns:complexAll"/>
       <output message="tns:empty"/>
@@ -359,6 +421,55 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+
+    <!-- Multi-Dimensional Arrays currently don't work
+    <operation name="arrayMIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="arrayMInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="arrayMOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    -->
+
     <operation name="complexAllIn">
       <soap:operation soapAction=""/>
       <input>

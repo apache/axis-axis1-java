@@ -241,8 +241,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                         pw.print("new byte[0]");
                     } else if (paramType.endsWith("[]")) {
                         pw.print("new "
-                                + paramType.substring(0, paramType.length() - 1)
-                                + "0]");
+                                 + JavaUtils.replace(paramType, "[]", "[0]"));
                     } else {
 
                         // We have some constructed type.

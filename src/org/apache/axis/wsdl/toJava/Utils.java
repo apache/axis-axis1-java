@@ -308,9 +308,10 @@ public class Utils {
         QName qName= getNodeTypeRefQName(node, "type");
 
         // If the node has "type" and "maxOccurs" then the type is really
-        // a collection.  There is qname in the wsdl which we can use to represent
+        // a collection.  There is no qname in the wsdl which we can use to represent
         // the collection, so we need to invent one.
         // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
+        // The namespace uri is changed to the targetNamespace of this node
         if (qName != null) {
             String maxOccursValue = getAttribute(node, "maxOccurs");
             String minOccursValue = getAttribute(node, "minOccurs");
@@ -324,6 +325,9 @@ public class Utils {
                 String localPart = qName.getLocalPart();
                 localPart += "[" + minOccursValue + "," + maxOccursValue + "]";
                 qName.setLocalPart(localPart);
+                String namespace = getScopedAttribute(node, "targetNamespace");
+                if (namespace != null)
+                    qName.setNamespaceURI(namespace);
             }
         }
 
