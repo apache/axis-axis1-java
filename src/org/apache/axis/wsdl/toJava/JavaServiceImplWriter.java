@@ -285,7 +285,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println("            return _stub;");
         pw.println("        }");
         pw.println("        catch (org.apache.axis.AxisFault e) {");
-        pw.println("            return null; // ???");
+        pw.println("            return null;");
         pw.println("        }");
         pw.println("    }");
         pw.println();
