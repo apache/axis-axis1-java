@@ -410,7 +410,7 @@ public class DynamicInvoker {
         } else {
             int size = items.size();
 
-            if (size == 1) {
+            if (size >= 1) {
                 Iterator valueIterator = items.values().iterator();
 
                 Object o = valueIterator.next();
@@ -435,14 +435,10 @@ public class DynamicInvoker {
         int index = 0;
 
         while (keyIterator.hasNext()) {
-            QName key = (QName) keyIterator.next();
-
-            strBuf.append((index > 0 ? ", " : "") + key);
+            strBuf.append((index > 0 ? ", " : "") + keyIterator.next());
             index++;
         }
-
         strBuf.append("}");
-
         return strBuf.toString();
     }
 
