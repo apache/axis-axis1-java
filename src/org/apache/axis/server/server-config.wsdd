@@ -4,15 +4,17 @@
             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
             xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
 
+ <globalConfiguration>
+   <requestFlow>
+     <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+   </requestFlow>
+ </globalConfiguration>
+
  <handler type="java:org.apache.axis.providers.java.RPCProvider" name="RPCDispatcher"/>
  <handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper"/>
  <handler type="java:org.apache.axis.providers.java.MsgProvider" name="MsgDispatcher"/>
  <handler type="java:org.apache.axis.transport.local.LocalResponder" name="LocalResponder"/>
  <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
-
- <chain name="global.request">
-  <handler type="java:org.apache.axis.handlers.JWSHandler"/>
- </chain>
 
  <service name="AdminService" provider="java:MSG">
   <parameter name="methodName" value="AdminService"/>

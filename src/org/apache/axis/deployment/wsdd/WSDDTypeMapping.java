@@ -200,8 +200,9 @@ public class WSDDTypeMapping
                                         typeQName.getNamespaceURI(),
                                         WSDDConstants.WSDD_JAVA));
             }
-
-            return Class.forName(typeQName.getLocalPart());
+            
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            return cl.loadClass(typeQName.getLocalPart());
         }
         
         throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));

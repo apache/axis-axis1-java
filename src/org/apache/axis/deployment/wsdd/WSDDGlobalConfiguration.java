@@ -75,6 +75,9 @@ import java.io.IOException;
 public class WSDDGlobalConfiguration
     extends WSDDDeployableItem
 {
+    private WSDDRequestFlow requestFlow;
+    private WSDDResponseFlow responseFlow;
+
     /**
      * Default constructor
      */ 
@@ -91,6 +94,14 @@ public class WSDDGlobalConfiguration
         throws WSDDException
     {
         super(e);
+        Element reqEl = getChildElement(e, "requestFlow");
+        if (reqEl != null) {
+            requestFlow = new WSDDRequestFlow(reqEl);
+        }
+        Element respEl = getChildElement(e, "responseFlow");
+        if (respEl != null) {
+            responseFlow = new WSDDResponseFlow(respEl);
+        }
     }
     
     protected QName getElementName()
@@ -99,21 +110,34 @@ public class WSDDGlobalConfiguration
     }
 
     /**
-     *
-     * @return XXX
+     * Get our request flow 
      */
     public WSDDRequestFlow getRequestFlow()
     {
-        return null;
+        return requestFlow;
+    }
+    
+    /**
+     * Set our request flow
+     */ 
+    public void setRequestFlow(WSDDRequestFlow reqFlow)
+    {
+        requestFlow = reqFlow;
     }
 
     /**
-     *
-     * @return XXX
+     * Get our response flow
      */
     public WSDDResponseFlow getResponseFlow()
     {
-        return null;
+        return responseFlow;
+    }
+    
+    /**
+     * Set the response flow
+     */
+    public void setResponseFlow(WSDDResponseFlow responseFlow) {
+        this.responseFlow = responseFlow;
     }
 
     /**

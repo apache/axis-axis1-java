@@ -117,6 +117,8 @@ public abstract class AxisEngine extends BasicHandler
      * scope", have it store things in this Session.
      */
     private Session session = new SimpleSession();
+    
+    protected WSDDGlobalConfiguration myGlobalConfig = null;
 
     /**
      * No-arg constructor.
@@ -272,6 +274,30 @@ public abstract class AxisEngine extends BasicHandler
         
         return tmr;
     }
+    
+    public Handler getGlobalRequest()
+        throws Exception
+    {
+        Handler h = null;
+        if (myGlobalConfig != null) {
+            WSDDRequestFlow reqFlow = myGlobalConfig.getRequestFlow();
+            if (reqFlow != null)
+                h = reqFlow.getInstance(myRegistry);
+        }
+        return h;
+    }
+    
+    public Handler getGlobalResponse()
+        throws Exception
+    {
+        Handler h = null;
+        if (myGlobalConfig != null) {
+            WSDDResponseFlow respFlow = myGlobalConfig.getResponseFlow();
+            if (respFlow != null)
+                h = respFlow.getInstance(myRegistry);
+        }
+        return h;
+    }
 
     /*********************************************************************
      * Client engine access
@@ -333,9 +359,9 @@ public abstract class AxisEngine extends BasicHandler
     public void deployWSDD(WSDDDocument doc) throws DeploymentException
     {
         myRegistry.deploy(doc);
-        WSDDGlobalConfiguration global = myRegistry.getGlobalConfiguration();
-        if (global != null)
-            setOptions(global.getParametersTable());
+        myGlobalConfig = myRegistry.getGlobalConfiguration();
+        if (myGlobalConfig != null)
+            setOptions(myGlobalConfig.getParametersTable());
         
         // Convert boolean options to Booleans so we don't need to use
         // string comparisons.  Default is "true".
