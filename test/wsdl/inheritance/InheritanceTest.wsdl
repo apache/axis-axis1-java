@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+
+<!-- This WSDL contains the WSDL for testing inherited service definition interfaces -->
+
+<definitions name="urn:InheritanceTest"
+             targetNamespace="urn:InheritanceTest2"
+             xmlns:tns="urn:InheritanceTest2"
+             xmlns:typens="urn:InheritanceTest2"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- message declns -->  
+  <message name="getRealtimeLastTradePriceResponse">
+     <part name="price" type="xsd:float"/>
+  </message>
+
+  <message name="getRealtimeLastTradePriceRequest">
+     <part name="tickerSymbol" type="xsd:string"/>
+  </message>
+
+  <message name="getLastTradePriceRequest">
+     <part name="tickerSymbol" type="xsd:string"/>
+  </message>
+
+  <message name="getLastTradePriceResponse">
+     <part name="price" type="xsd:float"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="InheritancePortType">
+    <operation name="getLastTradePrice">
+               parameterOrder="tickerSymbol">
+      <input message="tns:getLastTradePriceRequest"/>
+      <output message="tns:getLastTradePriceResponse"/>
+    </operation>
+    <operation name="getRealtimeLastTradePrice">
+      <input message="tns:getRealtimeLastTradePriceRequest"/>
+      <output message="tns:getRealtimeLastTradePriceResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="InheritanceSoapBinding" type="tns:InheritancePortType">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getLastTradePrice">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:InheritanceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:InheritanceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getRealtimeLastTradePrice">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:InheritanceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:InheritanceTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="InheritanceTest">
+    <port name="InheritanceTest" binding="tns:InheritanceSoapBinding">
+      <soap:address location="http://localhost:8080/axis/services/InheritanceTest"/>
+    </port>
+  </service>
+
+</definitions>
