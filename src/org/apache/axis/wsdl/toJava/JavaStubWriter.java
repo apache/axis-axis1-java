@@ -501,12 +501,21 @@ public class JavaStubWriter extends JavaWriter {
 
             // We need to use the Qname of the actual type, not the QName of the element
             QName qn = p.getType().getQName();
+            String javaType = p.getType().getName();
             if (p.getType() instanceof DefinedElement) {
-                Node node = symbolTable.getTypeEntry(p.getType().getQName(), true).getNode();
+                Node node = 
+                    symbolTable.getTypeEntry(p.getType().getQName(), true).getNode();
                 QName qn2 = Utils.getNodeTypeRefQName(node, "type");
                 if (qn2 != null) {
                     qn = qn2;
+                    javaType = symbolTable.getType(qn).getName();
+
                 }
+            }
+            if (javaType != null) {
+                javaType += ".class, ";
+            } else {
+                javaType = "";
             }
 
             String typeString = "new javax.xml.rpc.namespace.QName(\"" +
@@ -519,15 +528,18 @@ public class JavaStubWriter extends JavaWriter {
                     paramQName.getLocalPart() + "\");");
             if (p.getMode() == Parameter.IN) {
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.IN);");
+                           + typeString + ", " 
+                           + javaType + "javax.xml.rpc.ParameterMode.IN);");
             }
             else if (p.getMode() == Parameter.INOUT) {
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.INOUT);");
+                           + typeString + ", " 
+                           + javaType + "javax.xml.rpc.ParameterMode.INOUT);");
             }
             else { // p.getMode() == Parameter.OUT
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.OUT);");
+                           + typeString + ", " 
+                           + javaType + "javax.xml.rpc.ParameterMode.OUT);");
             }
         }
         // set output type
@@ -540,12 +552,13 @@ public class JavaStubWriter extends JavaWriter {
                 if (qn2 != null) {
                     qn = qn2;
                 }
-           }
-            
+            }
+ 
             String outputType = "new javax.xml.rpc.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
                 qn.getLocalPart() + "\")";
-            pw.println("        call.setReturnType(" + outputType + ");");
+            pw.println("        call.setReturnType(" + 
+                       outputType + ");");
         }
         else {
             pw.println("        call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
