@@ -253,6 +253,10 @@ Copyright:
     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests"/>
   </target>
 
+  <target name="functional-tests-secure-only" depends="buildFunctional" description="secure functional tests">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests-secure-only"/>
+  </target>
+
   <!-- All tests -->
   <target name="all-tests" depends="junit, functional-tests">
   </target>
@@ -399,6 +403,21 @@ Copyright:
       <fileset dir="${build.javadocs}"/>
     </copy>
     <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Interop 3                                                           -->
+  <!-- =================================================================== -->
+  <target name="interop3" depends="buildTest"
+      description="run the round3 interop tests">
+    <ant dir="test/wsdl/interop3/import1"/>
+    <ant dir="test/wsdl/interop3/import2"/>
+    <ant dir="test/wsdl/interop3/import3"/>
+    <ant dir="test/wsdl/interop3/compound1"/>
+    <ant dir="test/wsdl/interop3/compound2"/>
+    <ant dir="test/wsdl/interop3/docLit"/>
+    <ant dir="test/wsdl/interop3/docLitParam"/>
+    <ant dir="test/wsdl/interop3/rpcEnc"/>
   </target>
 
   <!-- =================================================================== -->
