@@ -60,8 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.tcp.TCPTransport;
+import org.apache.axis.client.http.AdminClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -70,87 +69,33 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
 
-/** Little serialization test with a struct.
+import samples.misc.TestClient;
+
+/** Test the stock sample code.
  */
-public class TestTCPEcho extends TestCase {
-  
-  public TestTCPEcho(String name) {
-    super(name);
-  }
-  
-  public void testData() throws Exception {
-    try {
-        System.out.println("Testing TCP stock service...");
-      /*
-       Options opts = new Options( args );
-      
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-      
-      args = opts.getRemainingArgs();
-       
-      if ( args == null ) {
-        System.err.println( "Usage: GetQuoteTCP -h <host> -p <port> <symbol>" );
-        System.exit(1);
-      }
-       */
-      String   symbol = "XXX"; // args[0] ;
-      URL url = null;
-      // parse host, port out of URL by hand
-      // what to do about that URL format issue.....
-      try {
-        url = new URL("http://localhost:8088"); // (opts.getURL());
-      } catch (IOException ex) {
-        System.err.println("URL "+url+" hosed: "+ex);
-        System.exit(1);
-      }
-      
-      ServiceClient call   = new ServiceClient
-            ( new TCPTransport(url.getHost(), ""+url.getPort()) );
-      
-      // reconstruct URL
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-      
-      // if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-      
-      /*
-       call.setUserID( opts.getUser() );
-       call.setPassword( opts.getPassword() );
-       */
-      
-      // useful option for profiling - perhaps we should remove before
-      // shipping?
-      /*
-       String countOption = opts.isValueSet('c');
-      int count=1;
-      if ( countOption != null) {
-        count=Integer.valueOf(countOption).intValue();
-        System.out.println("Iterating " + count + " times");
-       }
-       */
-      
-      Float res = new Float(0.0F);
-//      for (int i=0; i<count; i++) {
-        Object ret = call.invoke(
-          "urn:xmltoday-delayed-quotes", "getQuote",
-          new Object[] {symbol} );
-        if (ret instanceof Float) {
-          res = (Float) ret;
-          // System.out.println( symbol + ": " + res );
-          assertEquals("TestTCPEcho: stock price is 55.25", res.floatValue(), 55.25, 0.000001);
-            System.out.println("Test complete.");
-        } else {
-          throw new Exception("Bad return value from TCP stock test: "+ret);
-        }
-      }
-      
-//    }
-    catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      e.printStackTrace();
-      throw new Exception("Fault returned from TCP stock test: "+e);
+public class TestMiscSample extends TestCase {
+    
+    public TestMiscSample(String name) {
+        super(name);
     }
-  }
+    
+    public void doTest () throws Exception {
+        String[] args = { "-d" };
+        TestClient.main(args);
+    }
+    
+    public void testService () throws Exception {
+        try {
+            System.out.println("Testing misc sample.");
+            System.out.println("Testing service...");
+            doTest();
+            System.out.println("Test complete.");
+        }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
+        }
+    }
 }
 

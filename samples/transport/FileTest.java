@@ -5,7 +5,8 @@ import java.lang.Thread ;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.AxisClient ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.Transport ;
+import org.apache.axis.client.http.HTTPTransport ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.encoding.* ;
@@ -35,17 +36,16 @@ class FileTest {
       }
     
       String   symbol = args[0] ;
-      ServiceClient call   = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, opts.getURL());
-      call.set(HTTPClient.ACTION, "urn:xmltoday-delayed-quotes");
+      ServiceClient call = new ServiceClient
+            (new HTTPTransport(opts.getURL(), "urn:xmltoday-delayed-quotes"));
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
     
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
     
-      call.set(AxisClient.USER, opts.getUser() );
-      call.set(AxisClient.PASSWORD, opts.getPassword() );
+      call.set(Transport.USER, opts.getUser() );
+      call.set(Transport.PASSWORD, opts.getPassword() );
       call.setTransportInput( "FileSender" );
     
       Float res = new Float(0.0F);

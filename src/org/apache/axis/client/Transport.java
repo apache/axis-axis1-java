@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *    Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -53,74 +53,46 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client.tcp ;
+package org.apache.axis.client;
 
 import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.Debug ;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
-import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.http.HTTPClient; // UGLY!!!!!
-import org.apache.axis.transport.tcp.TCPDispatchHandler;
-import org.apache.axis.handlers.tcp.TCPActionHandler;
+import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
 
-/**
- * Extends Client by implementing the setupMessageContext function to
- * set TCP-specific message context fields.  May not even be necessary
- * if we arrange things differently somehow.
- *
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@allaire.com)
- */
-public class TCPClient extends AxisClient
-{
+public abstract class Transport {
     /**
-     * Find/load the registries and save them so we don't need to do this
-     * each time we're called.
+     * Synonyms for MessageContext userid / password.
      */
-    public void init() {
-        // Load the simple handler registry and init it
-        Debug.Print( 1, "Enter: TCPClient::init" );
-
-      super.init();
-      
-      // add the TCPDispatchHandler
-      HandlerRegistry hr = (DefaultHandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
-      hr.add("TCPSender", new TCPDispatchHandler());
-      hr.add("TCPAction", new TCPActionHandler());
-
-      SimpleChain c = new SimpleChain();
-      c.addHandler( hr.find( "TCPAction" ) );
-      hr.add( "TCP.input", c );
-    }
-  
-  /**
-   * TCP properties
-   */
-  static public String HOST = "host";
-  static public String PORT = "port";
-  
-  /**
-   * Fill out the given MessageContext based on the given
-   * transport properties.
-   */
-  public void setupMessageContext (MessageContext mc, ServiceClient serv, boolean doLocal)
-  {
-    DefaultServiceRegistry sr = (DefaultServiceRegistry)this.getOption(Constants.SERVICE_REGISTRY);
-    if ( sr == null || sr.find("TCP.input") == null )
-      mc.setProperty( MessageContext.TRANS_INPUT, "TCPSender" );
-    else
-      mc.setProperty( MessageContext.TRANS_INPUT, "TCP.input" );
-    mc.setProperty(MessageContext.TRANS_OUTPUT, "TCP.output" );
+    public static String USER = MessageContext.USERID;
+    public static String PASSWORD = MessageContext.PASSWORD;
     
-    // kind of ugly... fake up a "http://host:port/" url to send down the chain
-    // ROBJ TODO: clean this up so we use TCP transport properties all the way down
-    String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
-    serv.set(HTTPClient.URL, url);
-    mc.setProperty( MessageContext.TRANS_URL, url);
-  }
+    /**
+     * Initialize the given AxisClient with whatever transport state
+     * is appropriate.
+     */
+    public void init (Handler client) {
+        // default is do nothing
+    }
+    
+    /**
+     * Initialize the given MessageContext with the correct handlers and registries.
+     */
+    public abstract void initMessageContext
+        (MessageContext context, ServiceClient message, Handler engine, boolean doLocal)
+        throws AxisFault;
+    
+    /**
+     * Set up any transport-specific derived properties in the message context.
+     * @param context the context to set up
+     * @param message the client service instance
+     * @param engine the engine containing the registries
+     * @param doLocal if true, we are setting up for local testing
+     * @throws AxisFault if service cannot be found
+     */
+    public abstract void setupMessageContext
+        (MessageContext context, ServiceClient message, Handler engine, boolean doLocal)
+        throws AxisFault;
 }
+    
 

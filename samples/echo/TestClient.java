@@ -60,7 +60,7 @@ import java.util.Hashtable;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.http.HTTPTransport ;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
@@ -120,7 +120,7 @@ public class TestClient {
             if (addMethodToAction) {
                 action += method;
             }
-            call.set(HTTPClient.ACTION, action);
+            call.set(HTTPTransport.ACTION, action);
 
             // issue the request
             Object gotBack = call.invoke(
@@ -154,9 +154,9 @@ public class TestClient {
         if (action != null)
             soapAction = action;
         
-        call = new ServiceClient(new HTTPClient());
-        call.set(HTTPClient.URL, opts.getURL());
-        call.set(HTTPClient.ACTION, "http://soapinterop.org/");
+        call = new ServiceClient(new HTTPTransport());
+        call.set(HTTPTransport.URL, opts.getURL());
+        call.set(HTTPTransport.ACTION, "http://soapinterop.org/");
 
         // register the SOAPStruct class
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");

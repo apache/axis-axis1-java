@@ -60,8 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.tcp.TCPTransport;
+import org.apache.axis.client.http.AdminClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -70,87 +69,70 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
 
-/** Little serialization test with a struct.
+import samples.stock.GetQuote;
+
+/** Test the stock sample code.
  */
-public class TestTCPEcho extends TestCase {
-  
-  public TestTCPEcho(String name) {
-    super(name);
-  }
-  
-  public void testData() throws Exception {
-    try {
-        System.out.println("Testing TCP stock service...");
-      /*
-       Options opts = new Options( args );
-      
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-      
-      args = opts.getRemainingArgs();
-       
-      if ( args == null ) {
-        System.err.println( "Usage: GetQuoteTCP -h <host> -p <port> <symbol>" );
-        System.exit(1);
-      }
-       */
-      String   symbol = "XXX"; // args[0] ;
-      URL url = null;
-      // parse host, port out of URL by hand
-      // what to do about that URL format issue.....
-      try {
-        url = new URL("http://localhost:8088"); // (opts.getURL());
-      } catch (IOException ex) {
-        System.err.println("URL "+url+" hosed: "+ex);
-        System.exit(1);
-      }
-      
-      ServiceClient call   = new ServiceClient
-            ( new TCPTransport(url.getHost(), ""+url.getPort()) );
-      
-      // reconstruct URL
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-      
-      // if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-      
-      /*
-       call.setUserID( opts.getUser() );
-       call.setPassword( opts.getPassword() );
-       */
-      
-      // useful option for profiling - perhaps we should remove before
-      // shipping?
-      /*
-       String countOption = opts.isValueSet('c');
-      int count=1;
-      if ( countOption != null) {
-        count=Integer.valueOf(countOption).intValue();
-        System.out.println("Iterating " + count + " times");
-       }
-       */
-      
-      Float res = new Float(0.0F);
-//      for (int i=0; i<count; i++) {
-        Object ret = call.invoke(
-          "urn:xmltoday-delayed-quotes", "getQuote",
-          new Object[] {symbol} );
-        if (ret instanceof Float) {
-          res = (Float) ret;
-          // System.out.println( symbol + ": " + res );
-          assertEquals("TestTCPEcho: stock price is 55.25", res.floatValue(), 55.25, 0.000001);
-            System.out.println("Test complete.");
-        } else {
-          throw new Exception("Bad return value from TCP stock test: "+ret);
-        }
-      }
-      
-//    }
-    catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      e.printStackTrace();
-      throw new Exception("Fault returned from TCP stock test: "+e);
+public class TestStockSample extends TestCase {
+    
+    public TestStockSample(String name) {
+        super(name);
     }
-  }
+    
+    public void doTestStockJWS () throws Exception {
+        String[] args = { "-uuser1", "-wpass1", "XXX", "-s/axis/StockQuoteService.jws" };
+        float val = new GetQuote().getQuote(args);
+        assertEquals("TestStockSample.doTestStockJWS(): stock price is 55.25", val, 55.25, 0.01);
+    }
+    
+    public void doTestDeploy () throws Exception {
+        String[] args = { "samples/stock/deploy.xml" };
+        new AdminClient().doAdmin(args);
+    }
+    
+    public void doTestStock () throws Exception {
+        String[] args = { "-uuser1", "-wpass1", "XXX" };
+        float val = new GetQuote().getQuote(args);
+        assertEquals("TestStockSample.doTestStock(): stock price is 55.25", val, 55.25, 0.01);
+    }
+    
+    public void doTestUndeploy () throws Exception {
+        String[] args = { "samples/stock/undeploy.xml" };
+        new AdminClient().doAdmin(args);
+    }
+    
+    
+    public void testStockService () throws Exception {
+        try {
+            System.out.println("Testing stock sample.");
+            System.out.println("Testing JWS...");
+            doTestStockJWS();
+            System.out.println("Testing deployment...");
+            doTestDeploy();
+            System.out.println("Testing service...");
+            doTestStock();
+            System.out.println("Testing undeployment...");
+            doTestUndeploy();
+            System.out.println("Test complete.");
+        }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
+        }
+    }
+    
+    /**
+     * Read all the contents that are to be read
+     */
+    static void readFully(HttpURLConnection connection) throws IOException
+    {
+        // finish reading it to prevent (harmless) server-side exceptions
+        BufferedInputStream is = new BufferedInputStream(connection.getInputStream());
+        byte[] buffer = new byte[256];
+        while((is.read(buffer)) > 0) {}
+        is.close();
+    }
+    
 }
 

@@ -60,7 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.http.HTTPAdminClient;
+import org.apache.axis.client.http.AdminClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -69,82 +69,42 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
 
-import samples.stock.GetQuote;
+import samples.bidbuy.TestClient;
 
-/** Little serialization test with a struct.
+/** Test the stock sample code.
  */
-public class TestHTTPEcho extends TestCase {
+public class TestBidBuySample extends TestCase {
     
-    public TestHTTPEcho(String name) {
+    public TestBidBuySample(String name) {
         super(name);
-System.out.println("TestHTTPEcho() "+new File(".").getAbsolutePath()+" "+new File(".").getPath());
     }
     
     public void doTestDeploy () throws Exception {
+        String[] args = { "samples/bidbuy/deploy.xml" };
+        new AdminClient().doAdmin(args);
+    }
+    
+    public void doTest () throws Exception {
+        String[] args = { "http://localhost:8080" };
+        TestClient.main(args);
+    }
+    
+    public void testService () throws Exception {
         try {
-            String[] args = { "samples/stock/deploy.xml" };
-            new HTTPAdminClient().doAdmin(args);
+            System.out.println("Testing bidbuy sample.");
+            System.out.println("Testing deployment...");
+            doTestDeploy();
+            System.out.println("Testing service...");
+            doTest();
+            System.out.println("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
-            throw new Exception("TestHTTPEcho.doTestDeploy: Fault returned from echo test: "+e);
+            throw new Exception("Fault returned from test: "+e);
         }
     }
     
-    public void doTestStock () throws Exception {
-        try {
-            String[] args = { "-d", "-uuser1", "-wpass1", "XXX" };
-            float val = new GetQuote().getQuote(args);
-            assertEquals("TestHTTPEcho: stock price is 55.25", val, 55.25, 0.01);
-        }
-        catch( Exception e ) {
-            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-            e.printStackTrace();
-            throw new Exception("TestHTTPEcho.doTestStock: Fault returned from echo test: "+e);
-        }
-    }
-    
-    public void doTestUndeploy () throws Exception {
-        try {
-            String[] args = { "samples/stock/undeploy.xml" };
-            new HTTPAdminClient().doAdmin(args);
-        }
-        catch( Exception e ) {
-            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-            e.printStackTrace();
-            throw new Exception("TestHTTPEcho.doTestUndeploy: Fault returned from echo test: "+e);
-        }
-    }
-    
-    
-    public void testStockService () throws Exception {
-        System.out.println("Testing stock service.");
-        System.out.println("Testing deployment...");
-        doTestDeploy();
-        System.out.println("Testing service...");
-        doTestStock();
-        System.out.println("Testing undeployment...");
-        doTestUndeploy();
-        System.out.println("Test complete.");
-        
-        
-        
-            // second, and more involvedly, stop the http server
-            // Try connecting in case the server is already stopped.
-            URL url = new URL("http://localhost:8080");
-            try {
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.connect();
-                this.readFully(connection);
-                connection.disconnect();
-            } catch (IOException e) {
-                // Server is not running. Make this task a no-op.
-                return;
-            }
-            
-        
-    }
     /**
      * Read all the contents that are to be read
      */
@@ -156,6 +116,6 @@ System.out.println("TestHTTPEcho() "+new File(".").getAbsolutePath()+" "+new Fil
         while((is.read(buffer)) > 0) {}
         is.close();
     }
-
+    
 }
 

@@ -61,7 +61,8 @@ import java.util.*;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.Transport ;
+import org.apache.axis.client.http.HTTPTransport ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -90,17 +91,16 @@ public class GetQuote {
 
       String action = "urn:xmltoday-delayed-quotes";
       symbol = args[0] ;
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, opts.getURL());
-      call.set(HTTPClient.ACTION, action);
+      ServiceClient call = new ServiceClient
+            (new HTTPTransport(opts.getURL(), action));
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
       
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
 
-      call.set( HTTPClient.USER, opts.getUser() );
-      call.set( HTTPClient.PASSWORD, opts.getPassword() );
+      call.set( Transport.USER, opts.getUser() );
+      call.set( Transport.PASSWORD, opts.getPassword() );
 
       // useful option for profiling - perhaps we should remove before
       // shipping?

@@ -20,8 +20,19 @@ System.out.println("Creating FunctionalTests(name)");
 System.out.println("Creating FunctionalTests suite.");
         TestSuite suite = new TestSuite();
 
-        //suite.addTestSuite(TestTCPEcho.class);
-        suite.addTestSuite(TestHTTPEcho.class);
+        // misc (echo) test
+        // BROKEN AS OF RIGHT NOW, 11:26 PST 20010531 -- RobJ
+        // suite.addTestSuite(TestMiscSample.class);
+        
+        // test of the TCP transport
+        // ... should be removed?
+        suite.addTestSuite(TestTCPEcho.class);
+        
+        // stock sample test
+        suite.addTestSuite(TestStockSample.class);
+
+        // bid-buy test
+        suite.addTestSuite(TestBidBuySample.class);
 
         return suite;
     }

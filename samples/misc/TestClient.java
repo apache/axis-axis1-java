@@ -63,7 +63,7 @@ import org.apache.axis.*;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.http.HTTPTransport ;
 
 /**
  *
@@ -71,8 +71,11 @@ import org.apache.axis.client.http.HTTPClient ;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class TestClient {
-  public static void main(String args[]) {
-    try {
+    public static String msg = "<m:GetLastTradePrice xmlns:m=\"Some-URI\">\n" +
+                             "<symbol>IBM</symbol>\n" +
+                             "</m:GetLastTradePrice>\n" ;
+
+    public static String doTest (String args[]) throws Exception {
       Options      opts    = new Options( args );
       String       url     = opts.getURL();
       String       action  = "EchoService" ;
@@ -82,27 +85,28 @@ public class TestClient {
       args = opts.getRemainingArgs();
       if ( args != null ) action = args[0];
 
-      ServiceClient hMsg = new ServiceClient(new HTTPClient());
-      hMsg.set(HTTPClient.URL, url);
-      hMsg.set(HTTPClient.ACTION, action);
+      ServiceClient hMsg = new ServiceClient(new HTTPTransport());
+      hMsg.set(HTTPTransport.URL, url);
+      hMsg.set(HTTPTransport.ACTION, action);
 
       if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
 
-      String       msg     = "<m:GetLastTradePrice xmlns:m=\"Some-URI\">\n" +
-                             "<symbol>IBM</symbol>\n" +
-                             "</m:GetLastTradePrice>\n" ;
-
-      MessageContext msgContext = new MessageContext();
       Message        inMsg      = new Message( msg, "String" );
       Message        outMsg     = null ;
 
       System.out.println( "Request:\n" + msg );
         
-      msgContext.setRequestMessage( inMsg );
-      hMsg.invoke( msgContext );
-      outMsg = msgContext.getResponseMessage();
+      hMsg.setRequestMessage( inMsg );
+      hMsg.invoke();
+      outMsg = hMsg.getMessageContext().getResponseMessage();
 
       System.out.println( "Response:\n" + outMsg.getAs( "String" ) );
+        return (String)outMsg.getAs("String");
+    }
+    
+  public static void main(String args[]) {
+    try {
+        doTest(args);
     }
     catch( Exception e ) {
       if ( e instanceof AxisFault ) ((AxisFault)e).dump();

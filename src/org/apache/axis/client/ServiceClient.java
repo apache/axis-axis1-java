@@ -97,8 +97,8 @@ public class ServiceClient {
     public  boolean doLocal = false ;
     private static final boolean DEBUG_LOG = false;
     
-    // Our selected Client
-    private AxisClient transport;
+    // Our engine; either AxisClient (usually) or AxisServer (doLocal)
+    private Handler engine;
     
     // The description of our service
     private ServiceDescription serviceDesc;
@@ -106,28 +106,77 @@ public class ServiceClient {
     // The message context we use across invocations
     private MessageContext msgContext;
     
+    // Our Transport, if any
+    private Transport transport;
+    
+    
     /**
-     * Construct a ServiceClient on the given AxisClient.
+     * Construct a ServiceClient with no properties.
+     * Set it up yourself!
      */
-    public ServiceClient (AxisClient transport) {
-        this.transport = transport;
+    public ServiceClient () {
         msgContext = new MessageContext();
+        this.setupEngine();
     }
     
     /**
-     * set property
+     * Construct a ServiceClient with the given Transport.
+     */
+    public ServiceClient (Transport transport) {
+        msgContext = new MessageContext();
+        this.transport = transport;
+        
+        this.setupEngine();
+        
+        // set up the message context with the transport
+        try {
+            transport.init(engine);
+            transport.initMessageContext(msgContext, this, engine, doLocal);
+        } catch (AxisFault f) {
+            // this will happen if there is no appropriate service
+            // what?  system.err for now
+            System.err.println("ServiceClient(Transport): Faulted when initializing message context: "+f);
+        }
+    }
+    
+    /**
+     * Set up the engine as appropriate for client / server.
+     */
+    private void setupEngine () {
+        // For testing - skip HTTP layer
+        if (engine != null) {
+            return;
+        }
+        
+        if ( doLocal ) {
+            engine = new org.apache.axis.server.AxisServer();
+            engine.init();
+        } else {
+            engine = new AxisClient();
+            engine.init();
+        }
+    }
+    
+    
+    
+    /**
+     * Set property; pass through to MessageContext.
+     * This works because the constants defined in Transport and its
+     * subclasses are synonyms for MessageContext constants.
      */
     public void set (String name, String value) {
         if (value == null) return;
         
-        properties.put(name, value);
+        msgContext.setProperty(name, value);
     }
     
     /**
-     * get property
+     * Get property; pass through to MessageContext.
+     * This works because the constants defined in Transport and its
+     * subclasses are synonyms for MessageContext constants.
      */
     public String get (String name) {
-        return (String)properties.get(name);
+        return (String)msgContext.getProperty(name);
     }
     
     public void setEncodingStyleURI( String uri ) {
@@ -144,6 +193,17 @@ public class ServiceClient {
   
     public void setTransportOutput(String handlerName) {
       msgContext.setProperty( MessageContext.TRANS_OUTPUT, handlerName );
+    }
+    
+    public void setRequestMessage(Message msg) {
+        msgContext.setRequestMessage(msg);
+    }
+    
+    /**
+     * all-purpose accessor for fringe cases....
+     */
+    public MessageContext getMessageContext () {
+        return msgContext;
     }
      
     public void setServiceDescription(ServiceDescription serviceDesc)
@@ -214,7 +274,7 @@ public class ServiceClient {
         }
         
         try {
-            invoke( msgContext );
+            invoke();
         }
         catch( Exception e ) {
             Debug.Print( 1, e );
@@ -250,13 +310,19 @@ public class ServiceClient {
         return( result );
     }
     
-    public void invoke( MessageContext mc ) throws AxisFault {
+    /**
+     * invoke this ServiceClient with its established MessageContext
+     * (perhaps because you called this.setRequestMessage())
+     */
+    public void invoke() throws AxisFault {
         Debug.Print( 1, "Enter: ClientMessage::invoke(MessageContext)" );
         
-        // set up the message context with the transport
-        transport.setupMessageContext(mc, this, doLocal);
+        // set up message context if there is a transport
+        if (transport != null) {
+            transport.setupMessageContext(msgContext, this, this.engine, doLocal);
+        }
         
-        Message              inMsg = mc.getRequestMessage();
+        Message              inMsg = msgContext.getRequestMessage();
         
         SOAPEnvelope         reqEnv = null ;
         
@@ -272,35 +338,21 @@ public class ServiceClient {
         }
         
         // local (if null) or pre-existing transport (if !null)
-        Handler              client = null ;
         Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
         
-        // For testing - skip HTTP layer
-        if ( doLocal ) {
-            if ( localServer == null ) {
-                localServer = new org.apache.axis.server.AxisServer();
-                localServer.init();
-            }
-            client = localServer;
-        }
-        else {
-            /* Ok, this might seem strange, but here it is...                    */
-            /* Create a new AxisClient Engine and init it.  This will load any   */
-            /* registries that *might* be there.  We set the target service to   */
-            /* the service so that if it is registered here on the client        */
-            /* we'll find it's request/response chains and invoke them.  Next we */
-            /* check to see if there is any ServiceRegistry at all, or if there  */
-            /* is one, check to see if a chain called HTTP.input is there.  If   */
-            /* not then we need to default to just the simple HTTPDispatchHandler*/
-            /* to call the server.                                               */
-            /* The hard part about the client is that we can't assume *any*      */
-            /* configuration has happened at all so hard-coded defaults are      */
-            /* required.                                                         */
-            /*********************************************************************/
-            client = transport;
-            client.init();
-        }
-        
+        /* Ok, this might seem strange, but here it is...                    */
+        /* Create a new AxisClient Engine and init it.  This will load any   */
+        /* registries that *might* be there.  We set the target service to   */
+        /* the service so that if it is registered here on the client        */
+        /* we'll find it's request/response chains and invoke them.  Next we */
+        /* check to see if there is any ServiceRegistry at all, or if there  */
+        /* is one, check to see if a chain called HTTP.input is there.  If   */
+        /* not then we need to default to just the simple HTTPDispatchHandler*/
+        /* to call the server.                                               */
+        /* The hard part about the client is that we can't assume *any*      */
+        /* configuration has happened at all so hard-coded defaults are      */
+        /* required.                                                         */
+        /*********************************************************************/
         if ( Debug.getDebugLevel() > 0  ) {
             DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
             header.setActor( Constants.URI_NEXT_ACTOR );
@@ -309,17 +361,17 @@ public class ServiceClient {
         }
         
         try {
-            client.invoke( mc );
-            client.cleanup();
+            engine.invoke( msgContext );
+            engine.cleanup();
         }
         catch( AxisFault fault ) {
             Debug.Print( 1,  fault );
             throw fault ;
         }
         
-        Message       resMsg = mc.getResponseMessage();
+        Message       resMsg = msgContext.getResponseMessage();
         //SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
-        mc.setResponseMessage(resMsg);
+        msgContext.setResponseMessage(resMsg);
         /*
          SOAPBody      resBody = null; //resEnv.getFirstBody();
         
