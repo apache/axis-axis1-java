@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -278,10 +277,9 @@ public class ArraySerializer implements Serializer
             if (list == null) {
                 for (int index = 0; index < len; index++) {
                     Object aValue = Array.get(value, index);
-                    Class aClass = (aValue == null) ? null : aValue.getClass();
 
                     // Serialize the element.
-                    context.serialize(elementName, null, aValue, aClass,
+                    context.serialize(elementName, null, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
                                       Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
@@ -289,10 +287,9 @@ public class ArraySerializer implements Serializer
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
                     Object aValue = (Object)iterator.next();
-                    Class aClass = (aValue == null) ? null : aValue.getClass();
 
                     // Serialize the element.
-                    context.serialize(elementName, null, aValue, aClass,
+                    context.serialize(elementName, null, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
                                       Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
@@ -304,8 +301,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    Class aClass = (aValue == null) ? null : aValue.getClass();
-                    context.serialize(elementName, null, aValue, aClass);
+                    context.serialize(elementName, null, aValue);
                 }
             }
         }

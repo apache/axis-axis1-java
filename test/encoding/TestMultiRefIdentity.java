@@ -109,8 +109,8 @@ public class TestMultiRefIdentity extends TestCase {
         CharArrayWriter caw = new CharArrayWriter();
         SerializationContextImpl sci = new SerializationContextImpl(caw);
         sci.setDoMultiRefs(true);
-        sci.serialize(new QName("someLocalPart"), null, tb1, TestBeanA.class);
-        sci.serialize(new QName("someOtherLocalPart"), null, tb2, TestBeanA.class);
+        sci.serialize(new QName("someLocalPart"), null, tb1);
+        sci.serialize(new QName("someOtherLocalPart"), null, tb2);
         
         String s = caw.toString();
         
@@ -132,8 +132,8 @@ public class TestMultiRefIdentity extends TestCase {
         CharArrayWriter caw = new CharArrayWriter();
         SerializationContextImpl sci = new SerializationContextImpl(caw);
         sci.setDoMultiRefs(true);
-        sci.serialize(new QName("someLocalPart"), null, tb1, TestBeanB.class);
-        sci.serialize(new QName("someOtherLocalPart"), null, tb2, TestBeanB.class);
+        sci.serialize(new QName("someLocalPart"), null, tb1);
+        sci.serialize(new QName("someOtherLocalPart"), null, tb2);
         
         String s = caw.toString();
         
@@ -156,8 +156,8 @@ public class TestMultiRefIdentity extends TestCase {
         CharArrayWriter caw = new CharArrayWriter();
         SerializationContextImpl sci = new SerializationContextImpl(caw);
         sci.setDoMultiRefs(true);
-        sci.serialize(new QName("someLocalPart"), null, tb1, TestBeanA.class);
-        sci.serialize(new QName("someOtherLocalPart"), null, tb2, TestBeanA.class);
+        sci.serialize(new QName("someLocalPart"), null, tb1);
+        sci.serialize(new QName("someOtherLocalPart"), null, tb2);
         
         String s = caw.toString();
         
@@ -180,8 +180,8 @@ public class TestMultiRefIdentity extends TestCase {
         CharArrayWriter caw = new CharArrayWriter();
         SerializationContextImpl sci = new SerializationContextImpl(caw);
         sci.setDoMultiRefs(true);
-        sci.serialize(new QName("someLocalPart"), null, tb1, TestBeanA.class);
-        sci.serialize(new QName("someOtherLocalPart"), null, tb2, TestBeanA.class);
+        sci.serialize(new QName("someLocalPart"), null, tb1);
+        sci.serialize(new QName("someOtherLocalPart"), null, tb2);
         
         String s = caw.toString();
         
@@ -204,8 +204,8 @@ public class TestMultiRefIdentity extends TestCase {
         CharArrayWriter caw = new CharArrayWriter();
         SerializationContextImpl sci = new SerializationContextImpl(caw);
         sci.setDoMultiRefs(true);
-        sci.serialize(new QName("someLocalPart"), null, tb1, TestBeanB.class);
-        sci.serialize(new QName("someOtherLocalPart"), null, tb2, TestBeanB.class);
+        sci.serialize(new QName("someLocalPart"), null, tb1);
+        sci.serialize(new QName("someOtherLocalPart"), null, tb2);
         
         String s = caw.toString();
         

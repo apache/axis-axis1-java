@@ -56,26 +56,18 @@
 package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.utils.JavaUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -83,7 +75,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 
 /**
  * A <code>VectorSerializer</code> is be used to serialize and
@@ -124,7 +115,7 @@ public class VectorSerializer implements Serializer
         for (Iterator i = vector.iterator(); i.hasNext(); )
         {
             Object item = i.next();
-            context.serialize(Constants.QNAME_LITERAL_ITEM,  null, item, (item!=null ? item.getClass(): null) );
+            context.serialize(Constants.QNAME_LITERAL_ITEM,  null, item);
         }
         context.endElement();
     }

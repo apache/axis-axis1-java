@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -124,8 +123,8 @@ public class MapSerializer implements Serializer
 
             context.startElement(QNAME_ITEM, null);
 
-            context.serialize(QNAME_KEY,   null, key, (key!=null ? key.getClass(): null) );
-            context.serialize(QNAME_VALUE, null, val, (val!=null ? val.getClass(): null));
+            context.serialize(QNAME_KEY,   null, key);
+            context.serialize(QNAME_VALUE, null, val);
 
             context.endElement();
         }

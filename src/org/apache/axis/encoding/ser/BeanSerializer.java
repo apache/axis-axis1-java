@@ -137,13 +137,13 @@ public class BeanSerializer implements Serializer, Serializable {
 
         // Get the encoding style
         String encodingStyle = context.getMessageContext().getEncodingStyle();
-        
+
         // check whether we have and xsd:any namespace="##any" type
         boolean suppressElement = !context.getMessageContext().isEncoded() &&
-                                  name.getNamespaceURI().equals("") && 
+                                  name.getNamespaceURI().equals("") &&
                                   name.getLocalPart().equals("any");
 
-        if (!suppressElement) 
+        if (!suppressElement)
             context.startElement(name, beanAttrs);
 
         try {
@@ -179,27 +179,21 @@ public class BeanSerializer implements Serializer, Serializable {
 
                 // Read the value from the property
                 if(propertyDescriptor[i].isReadable()) {
-                    Class baseJavaType = propertyDescriptor[i].getType();
-                    Class javaType;
                     if (!propertyDescriptor[i].isIndexed()) {
                         // Normal case: serialize the value
-                        Object propValue = 
+                        Object propValue =
                             propertyDescriptor[i].get(value);
                         // if meta data says minOccurs=0, then we can skip
                         // it if its value is null and we aren't doing SOAP
                         // encoding.
-                        if (propValue == null && 
+                        if (propValue == null &&
                                 isOmittable &&
                                 !Constants.isSOAP_ENC(encodingStyle))
                             continue;
-                        
-                        javaType = (propValue == null || 
-                                    baseJavaType.isPrimitive())
-                            ? baseJavaType : propValue.getClass();
+
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          javaType,
                                           context.getQNameForClass(javaType),
                                           true,
                                           null);
@@ -209,18 +203,15 @@ public class BeanSerializer implements Serializer, Serializable {
                         while(j >= 0) {
                             Object propValue = null;
                             try {
-                                propValue = 
+                                propValue =
                                     propertyDescriptor[i].get(value, j);
                                 j++;
                             } catch (Exception e) {
                                 j = -1;
                             }
                             if (j >= 0) {
-                                javaType = (propValue == null || 
-                                            baseJavaType.isPrimitive())
-                                    ? baseJavaType : propValue.getClass();
                                 context.serialize(qname, null,
-                                                  propValue, javaType);
+                                                  propValue);
                             }
                         }
                     }
@@ -235,7 +226,7 @@ public class BeanSerializer implements Serializer, Serializable {
             throw new IOException(e.toString());
         }
 
-        if (!suppressElement) 
+        if (!suppressElement)
             context.endElement();
     }
 
@@ -320,10 +311,10 @@ public class BeanSerializer implements Serializer, Serializable {
                         writeProperty = false;
                     }
                 }
-            }            
+            }
             if (!writeProperty) {
                 continue;
-            }                
+            }
 
             // If we have type metadata, check to see what we're doing
             // with this field.  If it's an attribute, skip it.  If it's
@@ -352,8 +343,8 @@ public class BeanSerializer implements Serializer, Serializable {
                         writeField(types,
                                    propName,
                                    propertyDescriptor[i].getType(),
-                                   propertyDescriptor[i].isIndexed(), 
-                                   field.isMinOccursIs0(), 
+                                   propertyDescriptor[i].isIndexed(),
+                                   field.isMinOccursIs0(),
                                    all);
                     }
                 } else {
@@ -464,7 +455,7 @@ public class BeanSerializer implements Serializer, Serializable {
                     qname = new QName("", propName);
                 }
 
-                if (propertyDescriptor[i].isReadable() && 
+                if (propertyDescriptor[i].isReadable() &&
                     !propertyDescriptor[i].isIndexed()) {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].get(value);
@@ -474,7 +465,7 @@ public class BeanSerializer implements Serializer, Serializable {
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
                         setAttributeProperty(propValue, qname, attrs, context);
-                    } 
+                    }
                 }
             }
         } catch (Exception e) {
@@ -485,15 +476,15 @@ public class BeanSerializer implements Serializer, Serializable {
         return attrs;
     }
 
-    private void setAttributeProperty(Object propValue, 
-                                      QName qname, 
-                                      AttributesImpl attrs, 
+    private void setAttributeProperty(Object propValue,
+                                      QName qname,
+                                      AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
         StringWriter writer = new StringWriter();
         SerializationContext attributeContext = new AttributeSerializationContextImpl(writer, context);
         attributeContext.serialize(qname,
                                    null,
-                                   propValue, propValue.getClass());
+                                   propValue);
         writer.close();
         String propString = writer.getBuffer().toString();
         String namespace = qname.getNamespaceURI();
@@ -504,5 +495,5 @@ public class BeanSerializer implements Serializer, Serializable {
                            context.attributeQName2String(qname),
                            "CDATA",
                            propString);
-    } 
+    }
 }
