@@ -6,7 +6,7 @@ Now change directory to the directory that contains the samples subdirectory.
 
 Finally, run the command:
 
-java org.apache.axis.wsdl.WSDL2Java -s -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl 
+java org.apache.axis.wsdl.WSDL2Java -s -d Session -Nurn:AddressFetcher2=samples.addr samples\addr\AddressBook.wsdl 
 
 This will generate all the bindings, both client-side and server-side, into the samples/addre subdirectory.
 
