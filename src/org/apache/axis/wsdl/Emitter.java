@@ -1310,10 +1310,10 @@ public class Emitter {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
             else if (p.mode == Parameter.INOUT) {
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_INOUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
-                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_OUT);");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_OUT);");
             }
         }
         // set output type
@@ -1327,13 +1327,11 @@ public class Emitter {
         }
 
         pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
+        pw.println("        call.setProperty(call.NAMESPACE, \"" + namespace
+                                                 + "\");" );
+        pw.println("        call.setOperationName( \"" + name + "\");" );
         pw.print("        Object resp = call.invoke(");
-
-        // Namespace
-        pw.print("\"" + namespace + "\"");
-
-        // Operation
-        pw.print(", \"" + name + "\", new Object[] {");
+        pw.print("new Object[] {");
 
         // Write the input and inout parameter list
         boolean needComma = false;
@@ -1347,11 +1345,9 @@ public class Emitter {
             else
                 needComma = true;
             if (p.mode == Parameter.IN)
-                pw.print("new org.apache.axis.message.RPCParam(\"" + p.name +
-                        "\", " + wrapPrimitiveType(p.type, p.name) + ")");
+                pw.print(wrapPrimitiveType(p.type, p.name));
             else if (p.mode == Parameter.INOUT)
-                pw.print("new org.apache.axis.message.RPCParam(\"" + p.name +
-                        "\", " + wrapPrimitiveType(p.type, p.name + "._value")+ ")");
+                pw.print(wrapPrimitiveType(p.type, p.name + "._value"));
         }
         pw.println("});");
         pw.println();
