@@ -153,21 +153,24 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                 }
             }
 
-//            // Set the class if we found a description
-//            if (faultDesc != null) {
-//                try {
-//                    faultClass = ClassUtils.forName(faultDesc.getClassName());
-//                } catch (ClassNotFoundException e) {
-//                    // Just create an AxisFault, no custom exception
-//                }
-//            }
+            // Set the class if we found a description
+            if (faultDesc != null) {
+                try {
+                    faultClass = ClassUtils.forName(faultDesc.getClassName());
+                } catch (ClassNotFoundException e) {
+                    // Just create an AxisFault, no custom exception
+                }
+            }
         } else {
             faultXmlType = context.getTypeFromAttributes(namespace,
                                                        name,
                                                        attributes); 
         }
 
-        faultClass = context.getTypeMapping().getClassForQName(faultXmlType);            
+        if (faultClass == null) {
+            faultClass =
+                    context.getTypeMapping().getClassForQName(faultXmlType);
+        }
         
         if(faultClass != null && faultXmlType != null) {
             builder.setFaultClass(faultClass);
