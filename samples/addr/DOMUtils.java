@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.addressbook;
+package samples.addr;
 
 import org.w3c.dom.*;
 

@@ -55,10 +55,10 @@
  * <http://www.apache.org/>.
  */
 
-package samples.addressbook;
+package samples.addr;
 
 /**
- * See \samples\addressbook\readme for info.
+ * See \samples\addr\readme for info.
  *
  * @author Matthew J. Duftler (duftler@us.ibm.com)
  */
