@@ -65,6 +65,7 @@ import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.*;
+import org.apache.axis.session.Session;
 
 /**
  * Some more general docs will go here.
@@ -117,6 +118,11 @@ public class MessageContext {
      * The AxisEngine which this context is involved with
      */
     private AxisEngine       axisEngine;
+    
+    /**
+     * A Session associated with this request.
+     */
+    private Session          session;
 
     /**
      *
@@ -157,6 +163,19 @@ public class MessageContext {
 
     public void setServiceDescription(ServiceDescription serviceDesc) {
         this.serviceDesc = serviceDesc;
+    }
+    
+    /**
+     * Sessions
+     */
+    public Session getSession()
+    {
+        return session;
+    }
+    
+    public void setSession(Session session)
+    {
+        this.session = session;
     }
 
     /**
