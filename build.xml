@@ -549,7 +549,7 @@ Copyright:
                 start="1 Dec 2003"
     />        
     <style in="${build.dest}/changelog.xml" 
-           out="${axis.home}/docs/changelog.html" 
+           out="${axis.home}/docs/cvslog.html" 
            style="${axis.home}/tools/changelog.xsl">
       <param name="title" expression="Apache Axis 1.2 Beta ChangeLog (Changes after 1.2 Alpha)"/>
       <param name="module" expression="ant"/>
