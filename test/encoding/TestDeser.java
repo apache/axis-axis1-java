@@ -1,5 +1,6 @@
 package test.encoding;
 
+import java.lang.reflect.Array;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -45,6 +46,23 @@ public class TestDeser extends TestCase {
             "</soap:Envelope>\n";
     }
 
+    /**
+     * Verify that two objects have the same value, handling arrays...
+     */
+    private static boolean equals(Object obj1, Object obj2) {
+       if (obj1 == null) return (obj2 == null);
+       if (obj1.equals(obj2)) return true;
+       if (!obj2.getClass().isArray()) return false;
+       if (!obj1.getClass().isArray()) return false;
+       if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
+       for (int i=0; i<Array.getLength(obj1); i++)
+           if (!equals(Array.get(obj1,i),Array.get(obj2,i))) return false;
+       return true;
+    }
+
+    /**
+     * Verify that a given XML deserialized produces the expected result
+     */
     private void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer, "String");
        message.setMessageContext(new MessageContext());
@@ -63,7 +81,7 @@ public class TestDeser extends TestCase {
        assertNotNull("param", param);
 
        Object result = param.getValue();
-       assertEquals(expected, result);
+       if (!equals(expected,result)) assertEquals(expected, result);
     }
 
     public void testString() {
@@ -99,6 +117,15 @@ public class TestDeser extends TestCase {
     public void testShort() {
         deserialize("<result xsi:type=\"xsd:short\">3</result>",
                     new Short((short)3));
+    }
+
+    public void testArray() {
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[2]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" + 
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    new String[] {"abc", "def"});
     }
 
     public void testUntyped() {

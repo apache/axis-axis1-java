@@ -81,7 +81,6 @@ public class RPCDispatchHandler extends BasicHandler {
     /********************************************/
     String  clsName    = (String) service.getOption( "className" );
     String  methodName = (String) service.getOption( "methodName" );
-    String  typemap    = (String) service.getOption( "typemap" );
 
     try {
       /* We know we're doing a Java/RPC call so we can ask for the */
@@ -127,13 +126,6 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Method name=" + clsName + "\n" +
                                  "Service name=" + methodName,
                                null, null );
-  
-        // if a method is registerd for defining typemaps, invoke it
-        if (typemap != null) {
-          Method typemapMethod = jc.getMethod(typemap, 1);
-          typemapMethod.invoke(obj, 
-            new Object[] {msgContext.getTypeMappingRegistry()});
-        }
 
         Object[] argValues  =  null ;
 

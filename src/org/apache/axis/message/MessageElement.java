@@ -202,10 +202,13 @@ public class MessageElement extends DeserializerBase
         if (DEBUG_LOG) {
             System.err.println("Start element in MessageElement.");
         }
-    
+ 
         if (isDeserializing()) {
-            if (typeQName == null)
-                typeQName = context.getTypeFromAttributes(attributes);
+            // We may have determined the default type from metadata and/or
+            // reflection for most messages of this type, but let the XML
+            // itself determine the xsi:type for THIS message.
+            QName typeQNameFromAttr = context.getTypeFromAttributes(attributes);
+            if (typeQNameFromAttr != null) typeQName = typeQNameFromAttr;
 
             // !!! This check might not be complete; in the case of
             //     a multi-ref, we might need to check BOTH the name

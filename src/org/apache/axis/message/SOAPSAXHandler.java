@@ -132,10 +132,15 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 return new SOAPBodyElement(namespace, localName, attributes, context);
             }
 
-            return RPCElement.getFactory().createElement(namespace,
-                                                         localName,
-                                                         attributes,
-                                                         context);
+            RPCElement body = (RPCElement) 
+                RPCElement.getFactory().createElement(namespace,
+                                                     localName,
+                                                     attributes,
+                                                     context);
+
+            body.setContext(context.getMessageContext());
+
+            return body;
         }
     }
 

@@ -57,10 +57,13 @@ package org.apache.axis.message;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import org.apache.axis.*;
 import org.apache.axis.encoding.*;
-import org.apache.axis.utils.QName;
+import org.apache.axis.utils.*;
+import org.apache.axis.utils.cache.*;
 import java.util.*;
 import java.io.*;
+import java.lang.reflect.*;
 
 /** An RPC body element.
  * 
@@ -90,6 +93,8 @@ public class RPCElement extends SOAPBodyElement
     
     protected String methodName;    
     protected Vector params = new Vector();
+    protected Class  defaultParamTypes[] = null;
+    protected MessageContext msgContext;
     
     public RPCElement(String namespace, String localName, Attributes attrs,
                       DeserializationContext context)
@@ -136,6 +141,41 @@ public class RPCElement extends SOAPBodyElement
      *  Deserialization
      *  *******************************************************
      */
+
+    public void setContext(MessageContext msgContext) {
+        Handler service    =
+            (Handler) msgContext.getProperty(MessageContext.SVC_HANDLER);
+        if (service == null) return;
+
+        String  clsName    = (String) service.getOption( "className" );
+        String  typemap    = (String) service.getOption( "typemap" );
+
+        try {
+            AxisClassLoader cl     = msgContext.getClassLoader();
+            JavaClass       jc     = cl.lookup(clsName);
+            Class           cls    = jc.getJavaClass();
+
+            // try to find the method without knowing the number of
+            // parameters.  If we are successful, we can make better
+            // decisions about what deserializers to use for parameters
+            Method method = jc.getMethod(methodName, -1);
+            if (method != null) defaultParamTypes = method.getParameterTypes();
+
+            // if a method is registered for defining typemaps, invoke it
+            if (typemap != null) {
+                Method typemapMethod = jc.getMethod(typemap, 1);
+                Object obj           = cls.newInstance();
+                typemapMethod.invoke(obj,
+                    new Object[] {msgContext.getTypeMappingRegistry()});
+            }
+
+            // in the future, we should add support for runtime information
+            // from sources like WSDL, based on Handler.getDeploymentData();
+        } catch (Exception e) {
+            // oh well, we tried.
+        }
+    }
+
     public void onStartChild(String namespace, String name, String qName,
                              Attributes attributes)
         throws SAXException
@@ -143,6 +183,12 @@ public class RPCElement extends SOAPBodyElement
         // Start of an arg...
         RPCParam param = new RPCParam(namespace, name, attributes, context);
         
+        // See if we can default xsi:type...
+        if (defaultParamTypes!=null && params.size()<defaultParamTypes.length) {
+            TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
+            param.setType(typeMap.getTypeQName(defaultParamTypes[params.size()]));
+        }
+ 
         params.addElement(param);
         
         context.pushElementHandler(param);
