@@ -208,6 +208,10 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         }
     }
 
+    public boolean isBaseType() {
+        return isBaseType;
+    }
+
     public boolean isSimpleType() {
         return isSimpleType;
     }

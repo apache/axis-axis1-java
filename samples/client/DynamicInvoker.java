@@ -54,13 +54,17 @@
  */
 package samples.client;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.ser.SimpleDeserializer;
 import org.apache.axis.wsdl.gen.Parser;
+import org.apache.axis.wsdl.symbolTable.BaseType;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
@@ -69,6 +73,8 @@ import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
+import javax.xml.rpc.encoding.Deserializer;
+import javax.xml.rpc.encoding.DeserializerFactory;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -187,7 +193,6 @@ public class DynamicInvoker {
 
         // Output types and names
         Vector outNames = new Vector();
-        Vector outTypes = new Vector();
 
         // Input types and names
         Vector inNames = new Vector();
@@ -214,20 +219,15 @@ public class DynamicInvoker {
         for (int j = 0; j < parameters.list.size(); ++j) {
             Parameter p = (Parameter) parameters.list.get(j);
 
-            // Get the QName representing the parameter type
-            QName paramType = org.apache.axis.wsdl.toJava.Utils.getXSIType(p);
-
             if (p.getMode() == 1) {           // IN
                 inNames.add(p.getQName().getLocalPart());
-                addTypeClass(inTypes, paramType.getLocalPart());
+                inTypes.add(p);
             } else if (p.getMode() == 2) {    // OUT
                 outNames.add(p.getQName().getLocalPart());
-                addTypeClass(outTypes, paramType.getLocalPart());
             } else if (p.getMode() == 3) {    // INOUT
                 inNames.add(p.getQName().getLocalPart());
-                addTypeClass(inTypes, paramType.getLocalPart());
+                inTypes.add(p);
                 outNames.add(p.getQName().getLocalPart());
-                addTypeClass(outTypes, paramType.getLocalPart());
             }
         }
 
@@ -239,7 +239,6 @@ public class DynamicInvoker {
             QName returnQName = parameters.returnParam.getQName();
 
             outNames.add(returnQName.getLocalPart());
-            addTypeClass(outTypes, returnType.getLocalPart());
         }
 
         if (inNames.size() != args.length - 2)
@@ -247,8 +246,8 @@ public class DynamicInvoker {
 
         for (int pos = 0; pos < inNames.size(); ++pos) {
             String arg = args[pos + 2];
-            Class c = (Class) inTypes.get(pos);
-            inputs.add(getParamData(c, arg));
+            Parameter p = (Parameter) inTypes.get(pos);
+            inputs.add(getParamData((org.apache.axis.client.Call) call, p, arg));
         }
         System.out.println("Executing operation " + operationName + " with parameters:");
         for (int j = 0; j < inputs.size(); j++) {
@@ -277,46 +276,20 @@ public class DynamicInvoker {
      * @param c
      * @param arg
      */
-    private Object getParamData(Class c, String arg) {
-        Object value;
-        if (c.equals(String.class)) {
-            value = arg;
-        } else if (c.equals(Double.TYPE)) {
-            value = new Double(arg);
-        } else if (c.equals(Float.TYPE)) {
-            value = new Float(arg);
-        } else if (c.equals(Integer.TYPE)) {
-            value = new Integer(arg);
-        } else if (c.equals(Boolean.TYPE)) {
-            value = new Boolean(arg);
-        } else {
-            throw new RuntimeException("not know how to convert '" + arg
-                                       + "' into " + c);
-        }
-        return value;
-    }
+    private Object getParamData(org.apache.axis.client.Call c, Parameter p, String arg) throws Exception {
+        // Get the QName representing the parameter type
+        QName paramType = org.apache.axis.wsdl.toJava.Utils.getXSIType(p);
 
-    /**
-     * Method addTypeClass
-     *
-     * @param v
-     * @param type
-     */
-    private void addTypeClass(Vector v, String type) {
-
-        if ("string".equals(type)) {
-            v.add(String.class);
-        } else if ("double".equals(type)) {
-            v.add(Integer.TYPE);
-        } else if ("float".equals(type)) {
-            v.add(Float.TYPE);
-        } else if ("int".equals(type)) {
-            v.add(Integer.TYPE);
-        } else if ("boolean".equals(type)) {
-            v.add(Boolean.TYPE);
-        } else {
-            throw new RuntimeException("Type " + type + " is not supported");
+        TypeEntry type = p.getType();
+        if (type instanceof BaseType && ((BaseType) type).isBaseType()) {
+            DeserializerFactory factory = c.getTypeMapping().getDeserializer(paramType);
+            Deserializer deserializer = factory.getDeserializerAs(Constants.AXIS_SAX);
+            if (deserializer instanceof SimpleDeserializer) {
+                return ((SimpleDeserializer)deserializer).makeValue(arg);
+            }
         }
+        throw new RuntimeException("not know how to convert '" + arg
+                                   + "' into " + c);
     }
 
     /**
