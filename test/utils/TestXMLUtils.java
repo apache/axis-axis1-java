@@ -384,9 +384,43 @@ public class TestXMLUtils extends AxisTestBase
                      Constants.NS_URI_XML);
     }
 
+    String msg3 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+            "                  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
+            "                  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+            "  <soapenv:Header>" +
+            "     <TrackingHeader xmlns=\"http://testns.org/test\">1234</TrackingHeader>" +
+            "     <ns1:Security soapenv:mustUnderstand=\"0\" xmlns:ns1=\"http://schemas.xmlsoap.org/ws/2002/07/secext\">" +
+            "         <ns1:UsernameToken>" +
+            "            <ns1:Username xsi:type=\"xsd:string\">foobar</ns1:Username>" +
+            "            <ns1:Password xsi:type=\"xsd:string\">wibble</ns1:Password>" +
+            "         </ns1:UsernameToken>" +
+            "      </ns1:Security>" +
+            "   </soapenv:Header>" +
+            "   <soapenv:Body>" +
+            "         <EchoString>asdadsf</EchoString>" +
+            "   </soapenv:Body>" +
+            "</soapenv:Envelope>";
+    
+    /**
+     * Test for Bug 22980
+     * @throws Exception
+     */ 
+    public void testNSStack() throws Exception
+    {
+        StringReader strReader3 = new StringReader(msg3);
+        DeserializationContext dser = new DeserializationContextImpl(
+            new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
+        dser.parse();
+        org.apache.axis.message.SOAPEnvelope env = dser.getEnvelope();
+        String xml = env.toString();
+        assertXMLEqual(xml,msg3);
+    }
+    
     public static void main(String[] args) throws Exception
     {
         TestXMLUtils test = new TestXMLUtils("TestXMLUtils");
         test.testSAXXXE3();
+        test.testNSStack();
     }
 }
