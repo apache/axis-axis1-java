@@ -61,6 +61,7 @@ import java.net.* ;
 import javax.swing.table.* ;
 import javax.swing.text.* ;
 import javax.swing.event.* ;
+import javax.swing.plaf.basic.* ;
 import java.util.* ;
 import java.io.* ;
 import java.text.* ;
@@ -75,11 +76,12 @@ public class tcpmon extends JFrame {
   class AdminPage extends JPanel {
     public JTextField  port, host, tport ;
     public JTabbedPane noteb ;
+    public JCheckBox   proxyBox ;
 
     public AdminPage( JTabbedPane notebook, String name ) {
-      JPanel   mainPane  = null ;
-      JPanel   buttons   = null ;
-      JButton  addButton = null ;
+      JPanel     mainPane  = null ;
+      JPanel     buttons   = null ;
+      JButton    addButton = null ;
 
       setLayout( new BorderLayout() );
       noteb = notebook ;
@@ -121,16 +123,25 @@ public class tcpmon extends JFrame {
       c.gridwidth = 1 ;
       mainPane.add( addButton = new JButton( "Add" ), c );
   
+      c.anchor    = GridBagConstraints.WEST ;
+      c.gridwidth = 1 ;
+      mainPane.add( proxyBox = new JCheckBox( "Act As A Proxy" ), c );
+  
       add( new JScrollPane( mainPane ), BorderLayout.CENTER );
 
       // addButton.setEnabled( false );
       addButton.addActionListener( new ActionListener() {
           public void actionPerformed(ActionEvent event) {
             if ( "Add".equals(event.getActionCommand()) ) {
-              int lPort = Integer.parseInt(port.getText());
+              String tmp ;
+              int    lPort = Integer.parseInt(port.getText());
               String tHost = host.getText();
-              int tPort = Integer.parseInt(tport.getText());
-              new Listener( noteb, null, lPort, tHost, tPort );
+              int    tPort = 0 ;
+              tmp = tport.getText();
+              if ( tmp != null && !tmp.equals("") )
+                tPort = Integer.parseInt(tmp );
+              new Listener( noteb, null, lPort, tHost, tPort, 
+                            proxyBox.isSelected() );
 
               port.setText(null);
               host.setText(null);
@@ -139,6 +150,14 @@ public class tcpmon extends JFrame {
           };
         });
 
+      proxyBox.addChangeListener( new BasicButtonListener(proxyBox) {
+          public void stateChanged(ChangeEvent event) {
+            JCheckBox box = (JCheckBox) event.getSource();
+            boolean state = box.isSelected();
+            tport.setEnabled( !state );
+            host.setEnabled( !state );
+          }
+        });
 
       notebook.addTab( name, this );
       notebook.repaint();
@@ -196,15 +215,17 @@ public class tcpmon extends JFrame {
     JTextArea     textArea ;
     InputStream   in = null ;
     OutputStream  out = null ;
+    boolean       xmlFormat ;
 
     public SocketRR(Socket inputSocket, InputStream inputStream, 
                     Socket outputSocket, OutputStream outputStream, 
-                    JTextArea _textArea) {
+                    JTextArea _textArea, boolean format) {
       inSocket = inputSocket ;
       in       = inputStream ;
       outSocket = outputSocket ;
       out       = outputStream ;
       textArea  = _textArea ;
+      xmlFormat = format ;
       start();
     }
 
@@ -226,10 +247,16 @@ public class tcpmon extends JFrame {
           len = in.read(buffer,saved,len);
           if ( len == -1 ) break ;
 
-          if ( false ) {
+          // No matter how we may (or may not) format it, send it
+          // on unformatted - we don't want to mess with how its
+          // sent to the other side, just how its displayed
+          out.write( buffer, saved, len );
+
+          if ( xmlFormat ) {
             // Do XML Formatting
             i1 = 0 ;
             i2 = 0 ;
+            saved = 0 ;
             for( ; i1 < len ; i1++ ) {
               if ( buffer[i1] != '<' && buffer[i1] != '/' )
                 tmpbuffer[i2++] = buffer[i1];
@@ -255,16 +282,18 @@ public class tcpmon extends JFrame {
 
                    tmpbuffer[i2++] = buffer[i1];
                 }
+                else {
+                  // last char is special - save it
+                  saved = 1 ;
+                }
               }
             }
             textArea.append( new String( tmpbuffer, 0, i2 ) );
-            out.write( tmpbuffer, 0, i2 );
           }
           else {
             textArea.append( new String( buffer, 0, len ) );
-            out.write( buffer, 0, len );
           }
-          this.sleep(3);
+          this.sleep(3);  // Let other threads have a chance to run
         }
         halt();
       }
@@ -359,7 +388,7 @@ public class tcpmon extends JFrame {
 
         String  bufferedData = null ;
 
-        if ( false ) {
+        if ( listener.isProxyBox.isSelected() ) {
           // Check if we're a proxy
           int          ch ;
           byte[]       b = new byte[1];
@@ -385,6 +414,7 @@ public class tcpmon extends JFrame {
             URL  url ;
 
             start = bufferedData.indexOf( ' ' )+1;
+            while( bufferedData.charAt(start) == ' ' ) start++ ;
             end   = bufferedData.indexOf( ' ', start );
             String tmp = bufferedData.substring( start, end );
             if ( tmp.charAt(0) == '/' ) tmp = tmp.substring(1);
@@ -392,6 +422,7 @@ public class tcpmon extends JFrame {
             targetHost = url.getHost();
             targetPort = url.getPort();
             if ( targetPort == -1 ) targetPort = 80 ;
+            System.err.println("Routing to: " + targetHost + ":" + targetPort );
 
             bufferedData = bufferedData.substring( 0, start) +
                            url.getFile() +
@@ -410,8 +441,12 @@ public class tcpmon extends JFrame {
           inputText.append( bufferedData );
         }
 
-        rr1 = new SocketRR( inSocket, tmpIn1, outSocket, tmpOut2, inputText);
-        rr2 = new SocketRR( outSocket, tmpIn2, inSocket, tmpOut1, outputText);
+        boolean format = listener.xmlFormatBox.isSelected();
+
+        rr1 = new SocketRR( inSocket, tmpIn1, outSocket, 
+                            tmpOut2, inputText, format );
+        rr2 = new SocketRR( outSocket, tmpIn2, inSocket, 
+                            tmpOut1, outputText, format );
 
         while( rr1.isAlive() || rr2.isAlive() ) {
                 Thread.sleep( 10 );
@@ -467,10 +502,12 @@ public class tcpmon extends JFrame {
     public  JTextField  portField       = null ;
     public  JTextField  hostField       = null ;
     public  JTextField  tPortField      = null ;
+    public  JCheckBox   isProxyBox      = null ;
     public  JButton     stopButton      = null ;
     public  JButton     removeButton    = null ;
     public  JButton     removeAllButton = null ;
-    public  JButton     xmlFormatButton = null ;
+    // public  JButton     xmlFormatButton = null ;
+    public  JCheckBox   xmlFormatBox    = null ;
     public  JButton     saveButton      = null ;
     public  JButton     switchButton    = null ;
     public  JButton     closeButton     = null ;
@@ -486,7 +523,8 @@ public class tcpmon extends JFrame {
     final public Vector connections = new Vector();
 
     public Listener(JTabbedPane _notebook, String name, 
-                    int listenPort, String host, int targetPort)
+                    int listenPort, String host, int targetPort,
+                    boolean isProxy)
     {
       notebook = _notebook ;
       if ( name == null ) name = "Port " + listenPort ;
@@ -503,9 +541,21 @@ public class tcpmon extends JFrame {
       top.add( new JLabel( "  Listen Port: ", SwingConstants.RIGHT ) );
       top.add( portField = new JTextField( ""+listenPort, 3 ) );
       top.add( new JLabel( "  Host:", SwingConstants.RIGHT ) );
-      top.add( hostField = new JTextField( host, 15 ) );
+      top.add( hostField = new JTextField( host, 30 ) );
       top.add( new JLabel( "  Port: ", SwingConstants.RIGHT ) );
       top.add( tPortField = new JTextField( ""+targetPort, 3 ) );
+      top.add( Box.createRigidArea(new Dimension(5,0)) );
+      top.add( isProxyBox = new JCheckBox("Proxy") );
+
+      isProxyBox.addChangeListener( new BasicButtonListener(isProxyBox) {
+          public void stateChanged(ChangeEvent event) {
+            JCheckBox box = (JCheckBox) event.getSource();
+            boolean state = box.isSelected();
+            tPortField.setEnabled( !state );
+            hostField.setEnabled( !state );
+          }
+        });
+      isProxyBox.setSelected(isProxy);
 
       portField.setEditable(false);
       portField.setMaximumSize(new Dimension(50, Short.MAX_VALUE) );
@@ -548,7 +598,7 @@ public class tcpmon extends JFrame {
             setRight( new JLabel("") );
             removeButton.setEnabled(false);
             removeAllButton.setEnabled(false);
-            xmlFormatButton.setEnabled(false);
+            // xmlFormatButton.setEnabled(false);
             saveButton.setEnabled(false);
           }
           else {
@@ -559,7 +609,7 @@ public class tcpmon extends JFrame {
                 setRight(new JLabel(""));
                 removeButton.setEnabled(false);
                 removeAllButton.setEnabled(false);
-                xmlFormatButton.setEnabled(false);
+                // xmlFormatButton.setEnabled(false);
                 saveButton.setEnabled(false);
               }
               else {
@@ -636,7 +686,8 @@ public class tcpmon extends JFrame {
       JPanel bottomButtons = new JPanel();
       bottomButtons.setLayout( new BoxLayout(bottomButtons, BoxLayout.X_AXIS));
       bottomButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-      bottomButtons.add( xmlFormatButton = new JButton( "XML Format" ) );
+      // bottomButtons.add( xmlFormatButton = new JButton( "XML Format" ) );
+      bottomButtons.add( xmlFormatBox = new JCheckBox( "XML Format" ) );
       bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
       bottomButtons.add( saveButton = new JButton( "Save" ) );
       bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
@@ -645,12 +696,12 @@ public class tcpmon extends JFrame {
       bottomButtons.add( closeButton = new JButton( "Close" ) );
       pane2.add( bottomButtons, BorderLayout.SOUTH );
 
-      xmlFormatButton.setEnabled( false );
-      xmlFormatButton.addActionListener( new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            if ( "XML Format".equals(event.getActionCommand()) ) xmlFormat();
-          };
-        });
+      // xmlFormatButton.setEnabled( false );
+      // xmlFormatButton.addActionListener( new ActionListener() {
+          // public void actionPerformed(ActionEvent event) {
+            // if ( "XML Format".equals(event.getActionCommand()) ) xmlFormat();
+          // };
+        // });
 
       saveButton.setEnabled( false );
       saveButton.addActionListener( new ActionListener() {
@@ -715,6 +766,11 @@ public class tcpmon extends JFrame {
 
       sw = new SocketWaiter( this, port );
       stopButton.setText( "Stop" );
+
+      portField.setEditable(false);
+      hostField.setEditable(false);
+      tPortField.setEditable(false);
+      isProxyBox.setEnabled(false);
     }
 
     public void close() {
@@ -733,6 +789,7 @@ public class tcpmon extends JFrame {
         portField.setEditable(true);
         hostField.setEditable(true);
         tPortField.setEditable(true);
+        isProxyBox.setEnabled(true);
       }
       catch( Exception e ) {
         e.printStackTrace();
@@ -759,9 +816,9 @@ public class tcpmon extends JFrame {
       lsm.setSelectionInterval(0,0);
     }
 
-    public void xmlFormat() {
-      System.err.println("Formatting...");
-    }
+    // public void xmlFormat() {
+      // System.err.println("Formatting...");
+    // }
 
     public void save() {
       JFileChooser  dialog = new JFileChooser( "." );
@@ -807,7 +864,12 @@ public class tcpmon extends JFrame {
     new AdminPage( notebook, "Admin" );
 
     if ( listenPort != 0 ) {
-      new Listener( notebook, null, listenPort, targetHost, targetPort );
+      if ( targetHost == null )
+        new Listener( notebook, null, listenPort, 
+                      targetHost, targetPort, true );
+      else
+        new Listener( notebook, null, listenPort, 
+                      targetHost, targetPort, false );
       notebook.setSelectedIndex( 1 );
     }
 
@@ -842,6 +904,11 @@ public class tcpmon extends JFrame {
         int p2 = Integer.parseInt( args[2] );
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         new tcpmon( p1, args[1], p2 );
+      }
+      else if ( args.length == 1 ) {
+        int p1 = Integer.parseInt( args[0] );
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        new tcpmon( p1, null, 0 );
       }
       else if ( args.length != 0 ) {
         System.err.println( "Usage: " +
