@@ -272,6 +272,15 @@ public class WSDDTypeMapping
     }
 
     /**
+     * Set the serializer factory name
+     * @param ser name of the serializer factory class
+     */
+    public void setSerializer(String ser)
+    {
+        serializer = ser;
+    }
+
+    /**
      *
      * @return XXX
      * @throws ClassNotFoundException XXX
@@ -298,6 +307,15 @@ public class WSDDTypeMapping
     public void setDeserializer(Class deser)
     {
         deserializer = deser.getName();
+    }
+
+    /**
+     * Set the deserializer factory name
+     * @param deser name of the deserializer factory class
+     */
+    public void setDeserializer(String deser)
+    {
+        deserializer = deser;
     }
 }
 

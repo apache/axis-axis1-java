@@ -151,7 +151,9 @@ public class WSDDDeployment
     public void deployTypeMapping(WSDDTypeMapping typeMapping)
         throws WSDDException
     {
-        typeMappings.add(typeMapping);
+        if (!typeMappings.contains(typeMapping)) {
+            typeMappings.add(typeMapping);
+        }
         if (tmrDeployed)
             deployMapping(typeMapping);
     }
@@ -256,7 +258,7 @@ public class WSDDDeployment
         }
     }
 
-    public void deployMapping(WSDDTypeMapping mapping)
+    private void deployMapping(WSDDTypeMapping mapping)
             throws WSDDException
     {
         try {
