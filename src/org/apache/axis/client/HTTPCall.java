@@ -57,7 +57,6 @@ package org.apache.axis.client ;
 
 import java.util.* ;
 import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
@@ -83,6 +82,9 @@ public class HTTPCall {
   private String  action ;
   private String  userID ;
   private String  passwd ;
+
+  // For testing
+  public  boolean doLocal = false ;
 
   public HTTPCall() {
   }
@@ -135,7 +137,7 @@ public class HTTPCall {
     RPCBody              body   = new RPCBody( method, args );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
     SOAPEnvelope         resEnv = null ;
-    Handler              client = new HTTPDispatchHandler();
+    HTTPMessage          hMsg   = new HTTPMessage( url, action );
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     Message              resMsg = null ;
     MessageContext       msgContext = new MessageContext( reqMsg );
@@ -143,35 +145,18 @@ public class HTTPCall {
     Vector               resArgs = null ;
     RPCArg               arg ;
 
+    hMsg.setUserID( userID );
+    hMsg.setPassword( passwd );
+
+    // for testing - skip HTTP layer
+    hMsg.doLocal = this.doLocal ;
+
     body.setPrefix( "m" );
     body.setNamespaceURI( action );
-    reqEnv.addBody( body );
+    reqEnv.addBody( body.getAsSOAPBody() );
 
-    // Until we have chains on the client force a debug header if needed
-    if ( true ) { // Debug.getDebugLevel() > 0  ) {
-      SOAPHeader  header = new SOAPHeader();
-      header.setPrefix("d");
-      header.setName("Debug");
-      header.setNamespaceURI( Constants.URI_DEBUG );
-      header.setActor( Constants.URI_NEXT_ACTOR );
-      Document doc = new DocumentImpl();
-      Node node = doc.createTextNode( "" + Debug.getDebugLevel() );
-      header.addDataNode( node );
-  
-      reqEnv.addHeader( header );
-    }
-
-    msgContext.setProperty( MessageContext.TRANS_URL, url );
-    msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
-    if ( userID != null ) {
-      msgContext.setProperty( MessageContext.USERID, userID );
-      if ( passwd != null )
-        msgContext.setProperty( MessageContext.PASSWORD, passwd );
-    }
     try {
-      client.init();
-      client.invoke( msgContext );
-      client.cleanup();
+      hMsg.invoke( msgContext );
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
@@ -180,10 +165,8 @@ public class HTTPCall {
     }
 
     resMsg = msgContext.getOutgoingMessage();
-    resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
-    resBodies = resEnv.getAsRPCBody();
-    if ( resBodies == null || resBodies.size() == 0 ) return( null );
-    body = (RPCBody) resBodies.get( 0 );
+    Document doc = (Document) resMsg.getAs("Document");
+    body = new RPCBody( doc.getDocumentElement() );
     resArgs = body.getArgs();
     arg = (RPCArg) resArgs.get(0);
     Debug.Print( 1, "Exit: HTTPCall.invoke" );

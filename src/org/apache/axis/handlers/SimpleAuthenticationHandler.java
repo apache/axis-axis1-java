@@ -115,9 +115,12 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                              null, null );
     }
     catch( Exception e ) {
-      Debug.Print( 1, e );
       // If no file - just allow everyone!
-      if ( e instanceof FileNotFoundException ) return ;
+      if ( e instanceof FileNotFoundException ) {
+        Debug.Print( 1, "No 'users.lst' file found" );
+        return ;
+      }
+      Debug.Print( 1, e );
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     }

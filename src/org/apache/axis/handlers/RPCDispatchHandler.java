@@ -101,7 +101,10 @@ public class RPCDispatchHandler extends BasicHandler {
         Vector       args  = body.getArgs();        //RPCArg's
   
         if ( !methodName.equals(mName) )
-          throw new AxisFault( "AxisServier.error", "Method names don't match",
+          throw new AxisFault( "AxisServier.error", 
+                               "Method names don't match\n" +
+                                 "Body name=" + mName + "\n" +
+                                 "Service name=" + methodName,
                                null, null );  // Should they??
   
         Class[]  argClasses = new Class[ args.size() ];
@@ -126,7 +129,7 @@ public class RPCDispatchHandler extends BasicHandler {
         arg.setName( "return" );
         arg.setValue( objRes.toString() );
         resBody.addArg( arg );
-        resEnv.addBody( resBody );
+        resEnv.addBody( resBody.getAsSOAPBody() );
       }
 
       Message outMsg = new Message( resEnv, "SOAPEnvelope" );

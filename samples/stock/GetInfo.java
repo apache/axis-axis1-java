@@ -59,6 +59,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.AxisFault ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.HTTPCall ;
@@ -77,13 +78,15 @@ public class GetInfo {
 
       args = opts.getRemainingArgs();
 
-      if ( args.length % 2 != 0 ) {
+      if ( args == null || args.length % 2 != 0 ) {
         System.err.println( "Usage: GetInfo <symbol> <datatype>" );
         System.exit(1);
       }
 
       String  symbol = args[0] ;
       HTTPCall call = new HTTPCall( opts.getURL(), "urn:cominfo" );
+
+      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
 
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
@@ -93,7 +96,8 @@ public class GetInfo {
       System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
-      System.err.println( e );
+      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+      else e.printStackTrace();
     }
   };
 

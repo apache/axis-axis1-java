@@ -93,6 +93,14 @@ public class AxisFault extends Exception {
     setFaultString( stream.toString() );
   }
 
+  public void dump() {
+    System.out.println( "AxisFault\n" +
+                        "  faultCode: " + faultCode + "\n" +
+                        "  faultString: " + faultString + "\n" +
+                        "  faultActor: " + faultActor + "\n" +
+                        "  faultDetails: " + faultDetails + "\n"  );
+  }
+
   public void setFaultCode(String code) {
     faultCode = code ;
   }
