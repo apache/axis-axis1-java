@@ -82,7 +82,10 @@ public class SimpleAuthenticationHandler extends BasicHandler {
      * Authenticate the user and password from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthenticationHandler::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleAuthenticationHandler::invoke"));
+        }
 
         SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
         if (provider == null) {
@@ -92,7 +95,9 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
         if (provider != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-            category.debug( JavaUtils.getMessage("user00", userID) );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("user00", userID) );
+            }
 
             // in order to authenticate, the user must exist
             if ( userID == null || userID.equals(""))
@@ -101,7 +106,9 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                     null, null );
 
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-            category.debug( JavaUtils.getMessage("password00", passwd) );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("password00", passwd) );
+            }
 
             AuthenticatedUser authUser = provider.authenticate(msgContext);
 
@@ -111,19 +118,29 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                     JavaUtils.getMessage("cantAuth01", userID),
                     null, null );
 
-            category.debug( JavaUtils.getMessage("auth00", userID) );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("auth00", userID) );
+            }
 
             msgContext.setProperty(MessageContext.AUTHUSER, authUser);
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthenticationHandler::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleAuthenticationHandler::invoke") );
+        }
     }
 
     /**
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthenticationHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthenticationHandler::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleAuthenticationHandler::undo") );
+        
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleAuthenticationHandler::undo") );
+        }
     }
 };

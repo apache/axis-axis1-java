@@ -89,11 +89,18 @@ public class LocalSender extends BasicHandler {
     }
 
     public void invoke(MessageContext clientContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "LocalSender::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "LocalSender::invoke") );
+        }
 
-        AxisServer targetServer = (AxisServer)clientContext.
-                                                            getProperty(LocalTransport.LOCAL_SERVER);
-        category.debug(JavaUtils.getMessage("usingServer00", "LocalSender", "" + targetServer));
+        AxisServer targetServer = 
+            (AxisServer)clientContext.getProperty(LocalTransport.LOCAL_SERVER);
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("usingServer00", 
+                "LocalSender", "" + targetServer));
+        }
 
         if (targetServer == null) {
             // This should have already been done, but it doesn't appear to be
@@ -109,8 +116,10 @@ public class LocalSender extends BasicHandler {
         // exercise the serializers.
         String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
 
-        category.debug( JavaUtils.getMessage("sendingXML00", "LocalSender"));
-        category.debug( msgStr);
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("sendingXML00", "LocalSender"));
+            category.debug(msgStr);
+        }
 
         serverContext.setRequestMessage(new Message(msgStr));
         serverContext.setTransportName("local");
@@ -160,11 +169,19 @@ public class LocalSender extends BasicHandler {
         clientContext.setResponseMessage(serverContext.getResponseMessage());
         //clientContext.getResponseMessage().getAsString();
 
-        category.debug(JavaUtils.getMessage("exit00", "LocalSender::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "LocalSender::invoke"));
+        }
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "LocalSender::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "LocalSender::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "LocalSender::undo"));
+
+            category.debug(JavaUtils.getMessage("exit00", 
+                "LocalSender::undo"));
+        }
     }
 };
