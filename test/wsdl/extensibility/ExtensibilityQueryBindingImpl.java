@@ -8,13 +8,53 @@ package test.wsdl.extensibility;
 import java.util.Calendar;
 import javax.xml.rpc.namespace.QName;
 
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializationContextImpl;
+import org.apache.axis.encoding.ser.BeanDeserializer;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.client.Call;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.StringReader;
+import java.util.Calendar;
+import java.util.Vector;
+import java.rmi.RemoteException;
+
 public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryBinding {
     private final static String[] books = new String[] { "The Grid", "The Oxford Dictionary" }; 
     private final static String[] subjects = new String[] { "Computer Science", "English" }; 
 
-    public ExtensibilityType query(ExtensibilityType query) throws java.rmi.RemoteException {
+    public ExtensibilityType query(ExtensibilityType query) throws RemoteException {
         ExtensibilityType result = new ExtensibilityType();
-        Object obj = query.getAny();
+        Element element = (Element) query.getAny();
+        Object obj = null;
+        try {
+            obj = ObjectSerializer.toObject(element);
+        } catch (Exception e) {
+            throw new RemoteException("Failed to deserialize any to object: " + e);
+        }
+        
         if (obj instanceof BookType) {
             BookType bookQuery = (BookType) obj;
             String subject = bookQuery.getSubject();
@@ -33,7 +73,51 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryBinding 
             }
             resultList.setResult(queryResult);
             result.setAny(resultElement);
+        } else {
+            throw new RemoteException("Failed to get book type. Got: " + obj.getClass().getName() + ":" + obj.toString());
         }
         return result;
+    }
+}
+
+class ObjectSerializer {
+
+    static Log logger =
+              LogFactory.getLog(ObjectSerializer.class.getName());
+
+    static Object toObject(Element element) throws Exception {
+       MessageContext currentContext = MessageContext.getCurrentContext();
+       MessageContext messageContext = new MessageContext(currentContext.getAxisEngine()); 
+       messageContext.setTypeMappingRegistry(currentContext.getTypeMappingRegistry());
+       messageContext.setEncodingStyle("");
+       messageContext.setProperty(Call.SEND_TYPE_ATTR, Boolean.FALSE);
+       SOAPEnvelope message = new SOAPEnvelope();
+       Document doc = XMLUtils.newDocument();
+       Element operationWrapper = doc.createElementNS("urn:operationNS","operation"); 
+       doc.appendChild(operationWrapper); 
+       Node node = doc.importNode(element,true);
+       operationWrapper.appendChild(node);
+
+       message.addBodyElement(new SOAPBodyElement(operationWrapper));
+       
+       StringWriter stringWriter = new StringWriter(); 
+       SerializationContext context = new SerializationContextImpl(stringWriter, messageContext);
+       context.setDoMultiRefs(false);
+       message.output(context);
+       stringWriter.close();
+       String messageString = stringWriter.getBuffer().toString();
+       logger.debug(messageString);
+       Reader reader = new StringReader(messageString);
+       messageContext.setProperty(BeanDeserializer.DESERIALIZE_ANY, Boolean.TRUE);
+       DeserializationContext deserializer = new DeserializationContextImpl(new InputSource(reader),
+                                                                           messageContext, 
+                                                                           Message.REQUEST);
+       deserializer.parse();
+       SOAPEnvelope env = deserializer.getEnvelope();
+       
+       RPCElement rpcElem = (RPCElement)env.getFirstBody();
+       Vector parameters = rpcElem.getParams();
+       RPCParam param = (RPCParam) parameters.get(0);
+       return param.getValue();
     }
 }

@@ -10,9 +10,11 @@ package test.wsdl.extensibility;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.client.AdminClient;
+import org.apache.axis.client.Stub;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializer;
 
 import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.rpc.namespace.QName;
@@ -45,6 +47,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             book.setSubject("all");
             bookQuery.setBookQuery(book);
             expression.setAny(bookQuery); 
+            ((Stub)binding)._setProperty(BeanDeserializer.DESERIALIZE_ANY, Boolean.TRUE);          
             ExtensibilityType any = binding.query(expression);
             ResultListType result = (ResultListType) any.getAny();
             QueryResultType[] queryResult = result.getResult();

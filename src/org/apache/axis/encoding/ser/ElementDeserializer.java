@@ -92,6 +92,9 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
     protected static Log log =
         LogFactory.getLog(ElementDeserializer.class.getName());
 
+   public static final String DESERIALIZE_CURRENT_ELEMENT = "DeserializeCurrentElement";
+   public static final String SERIALIZE_CURRENT_ELEMENT = "SerializeCurrentElement";
+
     public final void onEndElement(String namespace, String localName,
                                    DeserializationContext context)
         throws SAXException
@@ -100,10 +103,10 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
             MessageElement msgElem = context.getCurElement();
             if ( msgElem != null ) {
                 MessageContext messageContext = context.getMessageContext();
-                Boolean currentElement = (Boolean) messageContext.getProperty("DeserializeCurrentElement");
+                Boolean currentElement = (Boolean) messageContext.getProperty(DESERIALIZE_CURRENT_ELEMENT);
                 if (currentElement != null && currentElement.booleanValue()) {
                     value = msgElem.getAsDOM();
-                    messageContext.setProperty("SerializeCurrentElement", Boolean.FALSE);
+                    messageContext.setProperty(SERIALIZE_CURRENT_ELEMENT, Boolean.FALSE);
                     return;
                 }
                 ArrayList children = msgElem.getChildren();
