@@ -120,9 +120,9 @@ public class SOAPHeaderElement extends MessageElement
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
                                     roleQName.getLocalPart());
-        if (actor == null) {
-            actor = "";
-        }
+//        if (actor == null) {
+//            actor = "";
+//        }
         
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
             String relayVal = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
@@ -173,9 +173,9 @@ public class SOAPHeaderElement extends MessageElement
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = attributes.getValue(roleQName.getNamespaceURI(),
                                     roleQName.getLocalPart());
-        if (actor == null) {
-            actor = "";
-        }
+//        if (actor == null) {
+//            actor = "";
+//        }
 
         if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
             String relayVal = attributes.getValue(soapConstants.getEnvelopeURI(),
@@ -226,9 +226,11 @@ public class SOAPHeaderElement extends MessageElement
             SOAPConstants soapVer = getEnvelope().getSOAPConstants();
             QName roleQName = soapVer.getRoleAttributeQName();
 
-            setAttribute(roleQName.getNamespaceURI(),
-                         roleQName.getLocalPart(), actor);
-
+            if (actor != null) {
+                setAttribute(roleQName.getNamespaceURI(),
+                             roleQName.getLocalPart(), actor);
+            }
+            
             String val;
             if (context.getMessageContext() != null && context.getMessageContext().getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
                 val = mustUnderstand ? "true" : "false";
