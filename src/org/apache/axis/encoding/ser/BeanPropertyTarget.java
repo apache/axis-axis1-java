@@ -65,7 +65,7 @@ import org.xml.sax.SAXException;
 /**
  * Class which knows how to update a bean property
  */
-class BeanPropertyTarget implements Target {
+public class BeanPropertyTarget implements Target {
     protected static Log log =
         LogFactory.getLog(BeanPropertyTarget.class.getName());
 
