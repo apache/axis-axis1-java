@@ -10,14 +10,8 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
-import java.lang.reflect.Array;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -30,11 +24,6 @@ public class TestBeanDeser2 extends TestCase {
     private AxisServer server = new AxisServer();
 
     public TestBeanDeser2(String name) {
-        this(name, Constants.URI_DEFAULT_SCHEMA_XSI,
-                Constants.URI_DEFAULT_SCHEMA_XSD);
-    }
-
-    public TestBeanDeser2(String name, String NS_XSI, String NS_XSD) {
         super(name);
         header =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

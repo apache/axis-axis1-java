@@ -70,14 +70,14 @@ public interface TypeMappingRegistry
     public void delegate(TypeMappingRegistry secondaryTMR);
     
     /**
-     * Obtain a type mapping for the given namespaceURI.  If no specific
-     * mapping exists for this namespaceURI, we will create and register
+     * Obtain a type mapping for the given encoding style.  If no specific
+     * mapping exists for this encoding style, we will create and register
      * one before returning it.
      * 
-     * @param namespaceURI
-     * @return a registered TypeMapping for the given namespaceURI
+     * @param encodingStyle
+     * @return a registered TypeMapping for the given encoding style
      */ 
-    public TypeMapping getOrMakeTypeMapping(String namespaceURI);
+    public TypeMapping getOrMakeTypeMapping(String encodingStyle);
 }
 
 
