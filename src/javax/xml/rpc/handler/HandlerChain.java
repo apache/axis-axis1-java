@@ -56,6 +56,7 @@
 package javax.xml.rpc.handler;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerChain</code> represents an
@@ -65,4 +66,63 @@ import java.util.List;
  * the policy and mechanism for the invocation of the registered
  * handlers.
  */
-public interface HandlerChain extends Handler, List {}
+public interface HandlerChain extends List {
+
+    /**
+     * The handleRequest method initiates the request processing for this
+     * handler chain.
+     * @param context - MessageContext parameter provides access to the request
+     *                  SOAP message.
+     *
+     * @throws JAXRPCException - if any processing error happens
+     */
+    public void handleRequest(MessageContext context);
+
+    /**
+     * The handleResponse method initiates the response processing for this
+     * handler chain.
+     *
+     * @param context - MessageContext parameter provides access to the response
+     *                  SOAP message.
+     *
+     * @throws JAXRPCException - if any processing error happens
+     */
+    public void handleResponse(MessageContext context);
+
+    /**
+     * Initializes the configuration for a HandlerChain.
+     *
+     * @param config - Configuration for the initialization of this handler
+     *                 chain
+     *
+     * @throws JAXRPCException - If any error during initialization
+     */
+    public void init(Map config);
+
+    /**
+     * Indicates the end of lifecycle for a HandlerChain.
+     *
+     * @throws JAXRPCException - If any error during destroy
+     */
+    public void destroy();
+
+    /**
+     * Sets SOAP Actor roles for this HandlerChain. This specifies the set of
+     * roles in which this HandlerChain is to act for the SOAP message
+     * processing at this SOAP node. These roles assumed by a HandlerChain must
+     * be invariant during the processing of an individual SOAP message.
+     * <p>
+     * A HandlerChain always acts in the role of the special SOAP actor next.
+     * Refer to the SOAP specification for the URI name for this special SOAP
+     * actor. There is no need to set this special role using this method.
+     *
+     * @param soapActorNames - URIs for SOAP actor name
+     */
+    public void setRoles(String[] soapActorNames);
+
+    /**
+     * Gets SOAP actor roles registered for this HandlerChain at this SOAP node.
+     * The returned array includes the special SOAP actor next.
+     */
+    public java.lang.String[] getRoles();
+}
