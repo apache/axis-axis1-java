@@ -1,0 +1,12 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+ <service name="OrderProcessor" provider="java:RPC">
+  <parameter name="className" value="samples.userguide.example5.BeanService"/>
+  <parameter name="methodName" value="processOrder"/>
+
+  <beanMapping qname="myNS:order" xmlns:myNS="urn:BeanService"
+               languageSpecificType="java:samples.userguide.example5.Order"/>
+ </service>
+
+</deployment>
