@@ -226,7 +226,7 @@ public class DeserializationContext extends DefaultHandler
 
                 try {
                     // cleanup - so that the parser can be reused.
-                    parser.setProperty("http://xml.org/sax/properties/lexical-handler", null);
+                    parser.setProperty("http://xml.org/sax/properties/lexical-handler", nullLexicalHandler);
                 } catch (Exception e){
                     // Ignore.
                 }
@@ -1201,6 +1201,26 @@ public class DeserializationContext extends DefaultHandler
     public InputSource resolveEntity(String publicId, String systemId)
     {
         return XMLUtils.getEmptyInputSource();
+    }
+
+
+    /** We only need one instance of this dummy handler to set into the parsers. */
+    private static final NullLexicalHandler nullLexicalHandler = new NullLexicalHandler();
+
+    /**
+     * It is illegal to set the lexical-handler property to null. To facilitate
+     * discarding the heavily loaded instance of DeserializationContextImpl from
+     * the SAXParser instance that is kept in the Stack maintained by XMLUtils
+     * we use this class.
+     */
+    private static class NullLexicalHandler implements LexicalHandler {
+    	public void startDTD(String arg0, String arg1, String arg2) throws SAXException {}
+    	public void endDTD() throws SAXException {}
+    	public void startEntity(String arg0) throws SAXException {}
+    	public void endEntity(String arg0) throws SAXException {}
+    	public void startCDATA() throws SAXException {}
+    	public void endCDATA() throws SAXException {}
+    	public void comment(char[] arg0, int arg1, int arg2) throws SAXException {}
     }
 }
 
