@@ -171,5 +171,21 @@ public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
 			}
 			
 			context.endElement();
-	}
+    }
+    
+    public ArrayList getHandlerInfoList() {
+        return _hiList;
+    }
+    
+    public void setHandlerInfoList(ArrayList hiList) {
+        _hiList = hiList;
+    }
+    
+    public String[] getRoles() {
+        return _roles;
+    }
+    
+    public void setRoles(String[] roles) {
+        _roles = roles;
+    }
 }
