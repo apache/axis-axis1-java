@@ -46,6 +46,7 @@ Copyright:
 
   <property name="axis.home" location="../.." />
   <property name="componentName" value="test/httpunit" />
+  <property name="component.home" location="${axis.home}/${componentName}" />
  
   <!-- Load the application specific settings -->
   <!-- #Project specific props -->
@@ -76,7 +77,7 @@ Copyright:
   
   
   <path id="test.compile.classpath">
-    <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="${component.home}/lib" includes="**/*.jar" />
   </path>
     
   <path id="test.classpath">
@@ -113,7 +114,7 @@ Copyright:
            debug="${build.debug}"
            includeAntRuntime="false"
            fork="${javac.fork}"
-           srcdir="${axis.home}/${componentName}/src">
+           srcdir="${component.home}/src">
       <classpath refid="test.compile.classpath"/>
     </javac>
   </target>
@@ -136,7 +137,7 @@ Copyright:
       <formatter type="brief" usefile="false"/>
       <test name="${testcase}" if="testcase"/>
       <batchtest todir="${test.data.dir}" unless="testcase">
-        <fileset dir="src" includes="**/*Test.java"/>
+        <fileset dir="${component.home}/src" includes="**/*Test.java"/>
       </batchtest>
     </junit>
   </target>
