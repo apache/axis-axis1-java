@@ -261,27 +261,45 @@ public class RPCProvider extends JavaProvider {
         checkMethodName(msgContext, allowedMethods, operation.getName());
 
         // Now create any out holders we need to pass in
-        if (numArgs < argValues.length) {
-            ArrayList outParams = operation.getOutParams();
-            for (int i = 0; i < outParams.size(); i++) {
-                ParameterDesc param = (ParameterDesc) outParams.get(i);
-                Class holderClass = param.getJavaType();
+        int count = numArgs;
+        for (int i = 0; i < argValues.length; i++) {
+            
+            // We are interested only in OUT/INOUT
+            ParameterDesc param = operation.getParameter(i);
+            if(param.getMode() == ParameterDesc.IN)
+                continue;
 
-                if (holderClass != null &&
-                        Holder.class.isAssignableFrom(holderClass)) {
-                    argValues[numArgs + i] = holderClass.newInstance();
-                    // Store an RPCParam in the outs collection so we
-                    // have an easy and consistent way to write these
-                    // back to the client below
-                    RPCParam p = new RPCParam(param.getQName(),
-                            argValues[numArgs + i]);
-                    p.setParamDesc(param);
-                    outs.add(p);
-                } else {
-                    throw new AxisFault(Messages.getMessage("badOutParameter00",
-                            "" + param.getQName(),
-                            operation.getName()));
-                }
+            Class holderClass = param.getJavaType();
+            if (holderClass != null &&
+                    Holder.class.isAssignableFrom(holderClass)) {
+                int index = count;
+                if (param.getMode()==ParameterDesc.OUT) {
+                    // OUT params don't have param order, just stick them at the end. 
+                    count++;
+                } else if (param.getMode()==ParameterDesc.INOUT) {
+                    // Use the parameter order if specified or just stick them to the end.  
+                    if(param.getOrder() != -1) {
+                        index = param.getOrder();
+                    } else {
+                        count++;
+                    }
+                    // If it's already filled, don't muck with it
+                    if(argValues[index] != null) {
+                        continue;
+                    }
+                }                    
+                argValues[index] = holderClass.newInstance();
+                // Store an RPCParam in the outs collection so we
+                // have an easy and consistent way to write these
+                // back to the client below
+                RPCParam p = new RPCParam(param.getQName(),
+                        argValues[index]);
+                p.setParamDesc(param);
+                outs.add(p);
+            } else {
+                throw new AxisFault(Messages.getMessage("badOutParameter00",
+                        "" + param.getQName(),
+                        operation.getName()));
             }
         }
         
