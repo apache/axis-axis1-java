@@ -252,20 +252,30 @@ public abstract class JavaWriter implements Generator {
         }
 
         // make @ tags start a new line (for javadoc tags mostly)
-        // it will have a bad impact on e-mail address and such, but oh well
-        // you should probobly be spam proofing your e-mail anyway
         StringTokenizer st = new StringTokenizer(doc, "@");
         StringBuffer newComments;
         if (st.hasMoreTokens()) {
-            newComments = new StringBuffer(st.nextToken());
+            String token = st.nextToken();
+            boolean startLine = Character.isWhitespace(token.charAt(token.length() - 1))
+            	&& (token.charAt(token.length() - 1) != '\n');
+            newComments = new StringBuffer(token);
+            
             while (st.hasMoreTokens()) {
-                newComments.append(addTab ? "\n    * @" : "\n * @");
-                newComments.append(st.nextToken().trim());
+                token = st.nextToken();
+                // don't span links across lines
+                if (startLine) {
+                    newComments.append('\n');
+                }
+                newComments.append('@');
+                startLine = Character.isWhitespace(token.charAt(token.length() - 1))
+		    & (token.charAt(token.length() - 1) != '\n');
+
+                newComments.append(token);
             }
         } else {
             newComments = new StringBuffer(doc);
         }
-        newComments.insert(0, addTab ? "    * " : " * ");
+        newComments.insert(0, addTab ? "     * " : " * ");
 
         // tweak comment ending tags by insterting a
         // space between the star and the slash, BUG13407
@@ -279,15 +289,42 @@ public abstract class JavaWriter implements Generator {
         int lineStart = 0;
         int newlinePos = 0;
         while (lineStart < newComments.length()) {
-            lineStart = newlinePos + 1;
             newlinePos = newComments.toString().indexOf("\n", lineStart);
             if (newlinePos == -1) {
                 newlinePos = newComments.length();
             }
-            if ((lineStart - newlinePos) > LINE_LENGTH) {
+            if ((newlinePos - lineStart) > LINE_LENGTH) {
+                // find first whitespace after length
                 lineStart += LINE_LENGTH;
-                while (!Character.isWhitespace(newComments.charAt(lineStart++)));
-                newComments.insert(lineStart, addTab ? "\n    *" : "\n *");
+                while ((lineStart < newComments.length()) 
+                    && !Character.isWhitespace(newComments.charAt(lineStart))) {
+                    lineStart++;
+                }
+
+                if (lineStart < newComments.length()) {
+                    // don't insert if line wold break at EOF
+                    char next = newComments.charAt(lineStart);
+                    // insert new line header
+                    if ((next == '\r') || (next == '\n')) {
+                        //newline exists at the break point, don't put in another one
+                        newComments.insert(lineStart + 1, addTab ? "     * " : " * ");
+                        lineStart += addTab ? 8 : 4;
+                    } else {
+                        newComments.insert(lineStart, addTab ? "\n     * " : "\n * ");
+                        lineStart += addTab ? 8 : 4;
+                    }
+                }
+
+                // chew up witespace after newline
+                while ((lineStart < newComments.length()) 
+                    && (newComments.charAt(lineStart) == ' ')) { // only chew up simple spaces
+                    newComments.delete(lineStart, lineStart + 1);
+                }
+            } else {
+                if (++newlinePos < newComments.length()) {
+                    newComments.insert(newlinePos, addTab ? "     * " : " * ");
+                }
+                lineStart = newlinePos;
                 lineStart += addTab ? 7 : 3;
             }
         }
