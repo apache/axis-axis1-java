@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ public class WSDDBsfProvider
         throws WSDDException
     {
         super(d, n);
-    
+
 	    Element specificProvider =
 	    	d.createElementNS(WSDDConstants.WSDD_BSF, "bsf:provider");
 	    getElement().appendChild(specificProvider);
@@ -120,7 +120,7 @@ public class WSDDBsfProvider
 	        throw new WSDDException(
 	            "The BSF Provider requires the presence of a bsf:provider element in the WSDD");
 	    }
-    	
+
     	return prov;
     }
 
@@ -133,14 +133,12 @@ public class WSDDBsfProvider
     public Handler newProviderInstance(DeploymentRegistry registry)
         throws Exception
     {
+        Class _class = getJavaClass();
 
-        String type;
+        if (_class == null) {
+            _class = Class.forName("org.apache.axis.handlers.providers.BSFProvider");
+        }
 
-        type = (!(type = getType()).equals("")
-                ? type
-                : "org.apache.axis.handlers.providers.BSFProvider");
-
-        Class         _class   = Class.forName(type);
         BasicProvider provider = (BasicProvider) _class.newInstance();
 
         // set the basic java provider deployment options

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -133,7 +133,7 @@ public class SimpleDeploymentManager
     public void deployItem(DeployableItem item)
         throws DeploymentException
     {
-        items.put(item.getQName().toString(), item);
+        items.put(item.getQName(), item);
     }
 
     /**
@@ -145,21 +145,8 @@ public class SimpleDeploymentManager
     public Handler getDeployedItem(QName qname)
         throws DeploymentException
     {
-        return getDeployedItem(qname.toString());
-    }
-
-    /**
-     * Return an instance of the deployed item
-     * @param name XXX
-     * @return XXX
-     * @throws DeploymentException XXX
-     */
-    public Handler getDeployedItem(String name)
-        throws DeploymentException
-    {
-
         try {
-            DeployableItem item = (DeployableItem) items.get(name);
+            DeployableItem item = (DeployableItem) items.get(qname);
 
             return item.newInstance(this);
         }
@@ -173,22 +160,12 @@ public class SimpleDeploymentManager
      * @param name XXX
      * @throws DeploymentException XXX
      */
-    public void removeDeployedItem(String name)
-        throws DeploymentException
-    {
-        items.remove(name);
-    }
-
-    /**
-     * remove the given item
-     * @param qname XXX
-     * @throws DeploymentException XXX
-     */
     public void removeDeployedItem(QName qname)
         throws DeploymentException
     {
-        removeDeployedItem(qname.toString());
+        items.remove(qname);
     }
+
 
     /**
      * return the named mapping registry

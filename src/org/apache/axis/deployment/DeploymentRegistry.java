@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,15 +93,6 @@ public abstract class DeploymentRegistry
 
     /**
      * retrieve an instance of the named handler
-     * @param name XXX
-     * @return XXX
-     * @throws DeploymentException XXX
-     */
-    public abstract Handler getDeployedItem(String name)
-        throws DeploymentException;
-
-    /**
-     * retrieve an instance of the named handler
      * @param qname XXX
      * @return XXX
      * @throws DeploymentException XXX
@@ -151,14 +142,6 @@ public abstract class DeploymentRegistry
      * @throws DeploymentException XXX
      */
     public abstract void deployItem(DeployableItem item)
-        throws DeploymentException;
-
-    /**
-     * remove the given item
-     * @param name XXX
-     * @throws DeploymentException XXX
-     */
-    public abstract void removeDeployedItem(String name)
         throws DeploymentException;
 
     /**

@@ -285,6 +285,29 @@ public class XMLUtils {
         }
         return null;
     }
+
+    /**
+     * Return a QName when passed a string like "foo:bar" by mapping
+     * the "foo" prefix to a namespace in the context of the given Node.
+     *
+     * @return a QName generated from the given string representation
+     */
+    public static QName getQNameFromString(String str, Node e) {
+        if (str == null || e == null)
+            return null;
+
+        int idx = str.indexOf(':');
+        if (idx > -1) {
+            String prefix = str.substring(0, idx);
+            String ns = getNamespace(prefix, e);
+            if (ns == null)
+                return null;
+            return new QName(ns, str.substring(idx + 1));
+        } else {
+            return new QName("", str);
+        }
+    }
+
     /**
      * Gather all existing prefixes in use in this document
      *

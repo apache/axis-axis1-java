@@ -61,6 +61,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
+import org.apache.axis.utils.QName;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
 
@@ -72,7 +73,8 @@ import org.apache.axis.deployment.DeployableItem;
 public class WSDDChain
     extends WSDDHandler
 {
-
+    public static final QName DEFAULT_QNAME =
+            new QName(WSDDConstants.WSDD_JAVA, "org.apache.axis.SimpleChain");
     /**
      *
      * @param e (Element) XXX
@@ -152,13 +154,12 @@ public class WSDDChain
      *
      * @return XXX
      */
-    public String getType()
+    public QName getType()
     {
+        QName type = super.getType();
 
-        String type = super.getType();
-
-        if (type.equals("")) {
-            type = "java:org.apache.axis.SimpleChain";
+        if (type == null) {
+            type = DEFAULT_QNAME;
         }
 
         return type;

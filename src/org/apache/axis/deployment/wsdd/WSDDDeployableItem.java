@@ -65,6 +65,7 @@ import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.utils.QName;
+import org.apache.axis.utils.XMLUtils;
 
 
 /**
@@ -151,9 +152,13 @@ public abstract class WSDDDeployableItem
      *
      * @return XXX
      */
-    public String getType()
+    public QName getType()
     {
-        return getAttribute("type");
+        String type = getAttribute("type");
+        if (type != null && !type.equals(""))
+            return XMLUtils.getQNameFromString(type, getElement());
+
+        return null;
     }
 
     /**
@@ -193,7 +198,6 @@ public abstract class WSDDDeployableItem
      */
     public WSDDParameter[] getParameters()
     {
-
         WSDDElement[]   e = createArray("parameter", WSDDParameter.class);
         WSDDParameter[] p = new WSDDParameter[e.length];
 
@@ -266,30 +270,20 @@ public abstract class WSDDDeployableItem
         throws Exception
     {
         try {
-            Class   c = getTypeClass(getType());
-            Handler h = (Handler) createInstance(c);
+            Class   c = getJavaClass();
+            Handler h = null;
 
-            h.setOptions(getParametersTable());
-
-            return h;
-        }
-        catch (ClassNotFoundException e) {
-            String  type = getType();
-            Handler h    = registry.getDeployedItem(type);
-
-            if (h != null) {
-                WSDDParameter[] parms = getParameters();
-
-                for (int n = 0; n < parms.length; n++) {
-                    WSDDParameter parm = parms[n];
-
-                    h.addOption(parm.getName(), parm.getValue());
-                }
-
-                return h;
+            if (c != null) {
+                h = (Handler)createInstance(c);
+            } else {
+                h = registry.getDeployedItem(getType());
             }
 
-            throw e;
+            if (h != null) {
+                h.setOptions(getParametersTable());
+            }
+
+            return h;
         }
         catch (Exception e) {
             throw e;
@@ -314,12 +308,14 @@ public abstract class WSDDDeployableItem
      * @return XXX
      * @throws ClassNotFoundException XXX
      */
-    Class getTypeClass(String type)
+    public Class getJavaClass()
         throws ClassNotFoundException
     {
-
-        type = type.substring(type.indexOf(":") + 1);
-
-        return Class.forName(type);
+        QName type = getType();
+        if (type != null &&
+                WSDDConstants.WSDD_JAVA.equals(type.getNamespaceURI())) {
+            return Class.forName(type.getLocalPart());
+        }
+        return null;
     }
 }
