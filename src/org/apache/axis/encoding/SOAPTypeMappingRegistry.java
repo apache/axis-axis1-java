@@ -16,7 +16,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
-    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
+    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
@@ -106,6 +106,11 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         for (int i=0; i<Constants.URIS_SCHEMA_XSD.length; i++) {
             if (!Constants.URIS_SCHEMA_XSD[i].equals(base.getNamespaceURI())) {
                QName qname = new QName(Constants.URIS_SCHEMA_XSD[i], localPart);
+
+               // The schema wizards changed the name of timeInstanct in 2001.
+               if (localPart.equals("dateTime") &&
+                   Constants.URIS_SCHEMA_XSD[i].substring(0,4).compareTo("2001")<0)
+                   qname = new QName(Constants.URIS_SCHEMA_XSD[i], "timeInstant");
                addDeserializerFactory(qname, cls, factory);
             }
         }
