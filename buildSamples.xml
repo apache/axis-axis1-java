@@ -113,7 +113,7 @@ Copyright:
 
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the sample code -->
-    <foreach target="buildThem">
+    <foreach target="component-compile">
         <param name="file">
              <fileset dir="." includes="samples/**/buildComponent.xml"/>
         </param>

@@ -119,13 +119,12 @@ Copyright:
 <!-- =========================================================================== -->
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the code -->
-    <foreach target="buildThem">
+    <foreach target="component-compile">
         <param name="file">
              <fileset dir="./" >
 		<patternset>
                  <include name="test/**/buildComponent.xml"/>
 		 <exclude name="test/httpunit/buildComponent.xml"/>
-                 <exclude name="test/wsdl/literal/buildComponent.xml"/>
 		</patternset>
              </fileset>
         </param>
@@ -246,7 +245,7 @@ Copyright:
               <include name="**/*TestCase.class" />
               <exclude name="**/Interop3TestCase.class"/>
 <!--  These are failing for WHATEVER reason -->
-              <exclude name="**/inout/etailedInoutTestCase.class"/>
+              <exclude name="**/inout/DetailedInoutTestCase.class"/>
               <exclude name="**/qualify/Qualify_ServiceTestCase.class"/>
               <exclude name="**/inheritance/InheritanceTestCase.class"/>
               <exclude name="**/addrNoImplSEI/AddressBookTestCase.class"/>
@@ -317,21 +316,41 @@ Copyright:
       stopTarget="stop-functional-test-http-server" />
   </target>
 
-
+  <!-- =================================================================== -->
+  <!--   This simply echos the component files, for sanity checks -->
+  <!-- =================================================================== -->
   <target name="echoTest" >
-    <foreach target="echoThem">
+    <foreach target="echo-file">
         <param name="file">
              <fileset dir="." >
                 <patternset>
                  <include name="test/wsdl/**/buildComponent.xml"/>
                  <include name="test/functional/buildComponent.xml"/>
-		 <exclude name="test/wsdl/inout/buildComponent.xml"/>
                 </patternset>
              </fileset>
         </param>
      </foreach>
   </target>
 
+  <!-- =================================================================== -->
+  <!--    This runs each test component, instantiating the server each time -->
+  <!-- =================================================================== -->
+  <target name="componentTest" >
+    <foreach target="batch-component-run">
+        <param name="file">
+             <fileset dir="." >
+                <patternset>
+                 <include name="test/wsdl/**/buildComponent.xml"/>
+                 <include name="test/functional/buildComponent.xml"/>
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <!-- =================================================================== -->
+  <!--    This runs all the tests, but only execs the server ONCE -->
+  <!-- =================================================================== -->
   <target name="batchTest" depends="transport-layer">
     <runaxisfunctionaltests
       url="http://localhost:${test.functional.TCPListenerPort}"
@@ -346,7 +365,7 @@ Copyright:
    </target>
 
    <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
-    <foreach target="runThem">
+    <foreach target="batch-component-test">
         <param name="file">
              <fileset dir="." >
                 <patternset>
@@ -356,6 +375,5 @@ Copyright:
         </param>
      </foreach>
     </target>
-
 
 </project>
