@@ -273,6 +273,7 @@ Copyright:
       <exclude name="test/arrays/*.java" />
       <exclude name="test/refattr/*.java" />
       <exclude name="test/*/impl/*.java" />
+      <exclude name="test/wsdl/types/*.java"/>
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
     </javac>

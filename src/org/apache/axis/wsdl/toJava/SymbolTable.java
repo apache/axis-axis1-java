@@ -422,7 +422,10 @@ public class SymbolTable {
                         symbolTablePut(new BaseJavaType(qName));
                     }
                     else if (isElement) {
-                        symbolTablePut(new ElementType(qName, getJavaName(qName), node));
+                        ElementType element = new ElementType(
+                                qName, getJavaName(qName), node);
+                        symbolTablePut(element);
+                        element.setShouldEmit(true);
                     }
                     else {
                         symbolTablePut(new DefinedType(qName, getJavaName(qName), node));
@@ -541,7 +544,7 @@ public class SymbolTable {
                 // TODO: Remove this patch...
                 // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
                 Iterator operations = (new HashSet(portType.getOperations())).iterator();
-
+ 
                 while(operations.hasNext()) {
                     Operation operation = (Operation) operations.next();
                     String namespace = portType.getQName().getNamespaceURI();
@@ -924,7 +927,7 @@ public class SymbolTable {
         if (addImports || node == null || node.getOwnerDocument() == doc) {
             entry.setIsReferenced(true);
             if (entry instanceof ElementType) {
-                QName referentName = Utils.getNodeTypeRefQName(entry.getNode());
+                QName referentName = Utils.getNodeTypeRefQName(node);
                 if (referentName != null) {
                     // Discover whether type is from a type= or ref=/element=
                     boolean typeAttr = false;
