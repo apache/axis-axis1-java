@@ -59,6 +59,8 @@ import javax.xml.namespace.QName;
 
 /**
  * Class XMLType
+ *
+ * @version 1.0
  */
 public class XMLType {
 

@@ -59,67 +59,78 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 /**
- * The javax.xml.rpc.encoding.TypeMapping is the base interface for 
- * representation of a type mapping.  A TypeMapping implementation class 
- * may support one or more encoding styles and XML schema namespaces. 
- * 
- * For its supported encoding styles and XML schema namespaces, 
- * a TypeMapping instance maintains a set of tuples of 
- * the type
- * {Java type, SerializerFactory, DeserializerFactory, XML data type}. 
+ * The <code>javax.xml.rpc.encoding.TypeMapping</code> is the base
+ * interface for the representation of a type mapping. A TypeMapping
+ * implementation class may support one or more encoding styles.
+ * <p>
+ * For its supported encoding styles, a TypeMapping instance
+ * maintains a set of tuples of the type {Java type,
+ * <code>SerializerFactory</code>,
+ * <code>DeserializerFactory</code>, XML type}.
  *
- * @version 0.6
+ * @version 1.0
  */
 public interface TypeMapping {
 
     /**
-     * Gets the list of encoding styles supported by this TypeMapping.
+     * Returns the encodingStyle URIs (as String[]) supported by
+     * this TypeMapping instance. A TypeMapping that contains only
+     * encoding style independent serializers and deserializers
+     * returns <code>null</code> from this method.
      *
-     * @return  String[] of namespace URIs for the supported encoding 
-     * styles and XML schema namespaces.
+     * @return  Array of encodingStyle URIs for the supported
+     *    encoding styles
      */
     public String[] getSupportedEncodings();
 
     /**
-     * Sets the list of encoding styles supported by this
-     * TypeMapping.
+     * Sets the encodingStyle URIs supported by this TypeMapping
+     * instance. A TypeMapping that contains only encoding
+     * independent serializers and deserializers requires
+     * <code>null</code> as the parameter for this method.
      *
-     * @param namespaceURIs String[] of namespace URI's                
+     * @param encodingStyleURIs Array of encodingStyle URIs for the
+                           supported encoding styles
      */
-    public void setSupportedEncodings(String[] namespaceURIs);
+    public void setSupportedEncodings(String[] encodingStyleURIs);
 
     /**
-     * isRegistered returns true if the [javaType, xmlType]
-     * pair is registered.
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
-     * @return: false if either javaType or xmlType is null
-     * or if the pair is not specifically registered.
+     * Checks whether or not type mapping between specified XML
+     * type and Java type is registered.
+     *
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
+     * @return boolean; <code>true</code> if type mapping between the
+     *      specified XML type and Java type is registered;
+     *      otherwise <code>false</code>
      */
     public boolean isRegistered(Class javaType, QName xmlType);
 
     /**
-     * Registers SerializerFactory and DeserializerFactory for a 
+     * Registers SerializerFactory and DeserializerFactory for a
      * specific type mapping between an XML type and Java type.
+     * This method replaces any existing registered SerializerFactory
+     * DeserializerFactory instances.
      *
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
-     * @param sf - SerializerFactory
-     * @param dsf - DeserializerFactory
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
+     * @param sf SerializerFactory
+     * @param dsf DeserializerFactory
      *
-     * @throws JAXRPCException - If any error during the registration
+     * @throws JAXRPCException If any error during the registration
      */
     public void register(Class javaType, QName xmlType, SerializerFactory sf,
            DeserializerFactory dsf);
 
     /**
-     * Gets the SerializerFactory registered for the specified pair
-     * of Java type and XML data type.
+     * Gets the SerializerFactory registered for the specified
+     * pair of Java type and XML data type.
      *
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
      *
-     * @return Registered SerializerFactory or null if there is no registered factory.
+     * @return Registered SerializerFactory or <code>null</code>
+     *    if there is no registered factory
      */
     public SerializerFactory getSerializer(Class javaType, QName xmlType);
 
@@ -127,10 +138,11 @@ public interface TypeMapping {
      * Gets the DeserializerFactory registered for the specified pair 
      * of Java type and XML data type.
      *
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
      *
-     * @return Registered DeserializerFactory or null if there is no registered factory.
+     * @return Registered SerializerFactory or <code>null</code>
+     *     if there is no registered factory
      */
     public DeserializerFactory getDeserializer(Class javaType, QName xmlType);
 
@@ -138,10 +150,10 @@ public interface TypeMapping {
      * Removes the SerializerFactory registered for the specified 
      * pair of Java type and XML data type.
      *
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error 
+     * @throws JAXRPCException If there is error
      * in removing the registered SerializerFactory 
      */
     public void removeSerializer(Class javaType, QName xmlType);
@@ -150,10 +162,10 @@ public interface TypeMapping {
      * Removes the DeserializerFactory registered for the specified 
      * pair of Java type and XML data type.
      *
-     * @param javaType - Class of the Java type
-     * @param xmlType - Qualified name of the XML data type
+     * @param javaType Class of the Java type
+     * @param xmlType Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error in removing 
+     * @throws JAXRPCException If there is error in removing
      * the registered DeserializerFactory
      */
     public void removeDeserializer(Class javaType, QName xmlType);
