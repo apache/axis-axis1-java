@@ -377,14 +377,23 @@ public class Emitter {
      */
     private void init(int mode) {
 
+        // Get a default TM if not specified.
+        if (defaultTM == null) {
+            defaultTM = DefaultTypeMappingImpl.getSingleton();
+        }
+
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
             serviceDesc = new ServiceDesc();
             serviceDesc.setImplClass(cls);
-            //serviceDesc.setStyle();
-            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-            serviceDesc.setTypeMapping((TypeMapping)
-                                       tmr.getDefaultTypeMapping());
+
+            // Set the typeMapping to the one provided.
+            // If not available use the default TM
+            if (tm != null) {
+                serviceDesc.setTypeMapping(tm);
+            } else {
+                serviceDesc.setTypeMapping(defaultTM);
+            }
         }
 
         serviceDesc.setStopClasses(stopClasses);
@@ -400,9 +409,14 @@ public class Emitter {
             serviceDesc2 == null) {
             serviceDesc2 = new ServiceDesc();
             serviceDesc2.setImplClass(implCls);
-            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-            serviceDesc2.setTypeMapping((TypeMapping)
-                                       tmr.getDefaultTypeMapping());
+
+            // Set the typeMapping to the one provided.
+            // If not available use the default TM
+            if (tm != null) {
+                serviceDesc2.setTypeMapping(tm);
+            } else {
+                serviceDesc2.setTypeMapping(defaultTM);
+            }
             serviceDesc2.setStopClasses(stopClasses);
             serviceDesc2.setAllowedMethods(allowedMethods);
             serviceDesc2.setDisallowedMethods(disallowedMethods);
@@ -452,16 +466,7 @@ public class Emitter {
             
             encodingList = new ArrayList();
             encodingList.add(Constants.URI_DEFAULT_SOAP_ENC);
-
-
-            // We want to produce valid SOAP 1.2 JAX-RPC
-            // translations, so make sure that the default type mapping
-            // is for SOAP 1.2.
-            if (defaultTM == null ||
-                defaultTM instanceof DefaultTypeMappingImpl) {
-                defaultTM = DefaultSOAP12TypeMappingImpl.create();
-            }
-
+            
             if (intfNS == null) {
                 Package pkg = cls.getPackage();
                 intfNS = namespaces.getCreate(
@@ -1067,9 +1072,9 @@ public class Emitter {
         QName elemQName = null;
         if (mode != MODE_RPC)
             elemQName = param.getQName();
-        QName typeQName = types.writePartType(javaType,
-                elemQName); 
         if (mode == MODE_RPC) {
+            QName typeQName = types.writePartType(javaType,
+                                                  param.getTypeQName()); 
             if (typeQName != null) {
                 part.setTypeName(typeQName);
                 part.setName(param.getName());
