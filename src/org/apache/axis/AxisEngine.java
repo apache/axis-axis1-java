@@ -341,12 +341,18 @@ public abstract class AxisEngine extends BasicHandler
         // string comparisons.  Default is "true".
         
         for (int i = 0; i < booleanOptions.length; i++) {
-            String val = (String)getOption(booleanOptions[i]);
-            if (val != null && val.equalsIgnoreCase("false")) {
-                addOption(booleanOptions[i], Boolean.FALSE);
-            } else {
-                addOption(booleanOptions[i], Boolean.TRUE);
+            Object val = getOption(booleanOptions[i]);
+            if (val != null) {
+                if (val instanceof Boolean)
+                    continue;
+                if (val instanceof String &&
+                    "false".equalsIgnoreCase((String)val)) {
+                    addOption(booleanOptions[i], Boolean.FALSE);
+                    continue;
+                }
             }
+            // If it was null or not "false"...
+            addOption(booleanOptions[i], Boolean.TRUE);
         }
         
         // Deal with admin password's default value.
