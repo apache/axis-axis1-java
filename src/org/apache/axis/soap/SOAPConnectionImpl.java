@@ -86,6 +86,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
             
             call.setTimeout(timeout);
             call.setReturnClass(SOAPMessage.class);
+            call.setProperty(Call.CHECK_MUST_UNDERSTAND,Boolean.FALSE);
             call.invoke((Message) request);
             return call.getResponseMessage();
         } catch (java.net.MalformedURLException mue){

@@ -151,7 +151,9 @@ public class AxisClient extends AxisEngine {
                             Messages.getMessage("noTransport00", hName));
                 }
 
-                checker.invoke(msgContext);
+                if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
+                    checker.invoke(msgContext);
+                }
                 
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
@@ -171,7 +173,9 @@ public class AxisClient extends AxisEngine {
 
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
-                checker.invoke(msgContext);
+                if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
+                    checker.invoke(msgContext);
+                }
             }
 
         } catch ( Exception e ) {

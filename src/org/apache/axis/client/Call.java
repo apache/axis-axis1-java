@@ -218,6 +218,12 @@ public class Call implements javax.xml.rpc.Call {
     public static final String FAULT_ON_NO_RESPONSE = "call.FaultOnNoResponse";
 
     /**
+     * If this property is true, code will enforce must understand check on both
+     * the request and the response paths.
+     */ 
+    public static final String CHECK_MUST_UNDERSTAND = "call.CheckMustUnderstand";
+    
+    /**
      * Property for setting attachment format.
      * Can be set to either DIME or MIME (default)
      * @see #setProperty
