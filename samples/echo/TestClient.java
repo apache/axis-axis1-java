@@ -84,12 +84,12 @@ import javax.xml.rpc.holders.FloatHolder;
  * for more details on usage.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
+ * Modified to use WSDL2Java generated stubs and artifacts by
+ * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public abstract class TestClient {
 
-    private static boolean addMethodToAction = false;
-    private static String soapAction = "http://soapinterop.org/";
-    private static EchoServicePortType binding = null;
+    private static InteropTestPortType binding = null;
 
     /**
      * When testMode is true, we throw exceptions up to the caller
@@ -176,10 +176,8 @@ public abstract class TestClient {
         throws AxisFault
     {
         try {
-            binding = new EchoServiceAccessLocator().
-                getEchoServicePortType(new java.net.URL(url));
-            ((EchoServiceBindingStub) binding).soapAction = soapAction;
-            ((EchoServiceBindingStub) binding).addMethodToAction = addMethodToAction;
+            binding = new InteropTestServiceLocator().
+                getEcho(new java.net.URL(url));
         } catch (Exception exp) {
             throw AxisFault.makeFault(exp);
         }
@@ -285,7 +283,10 @@ public abstract class TestClient {
         }
 
         {
-            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            SOAPStruct input = new SOAPStruct();
+            input.setVarInt(5);
+            input.setVarString("Hello");
+            input.setVarFloat(103F);
             try {
                 output = binding.echoStruct(input);
                 verify("echoStruct", input, output);
@@ -300,9 +301,19 @@ public abstract class TestClient {
 
         {
             SOAPStruct[] input = new SOAPStruct[] {
-                new SOAPStruct(1, "one", 1.1F),
-                new SOAPStruct(2, "two", 2.2F),
-                new SOAPStruct(3, "three", 3.3F)};
+                new SOAPStruct(),
+                new SOAPStruct(),
+                new SOAPStruct()};
+            input[0].setVarInt(1);
+            input[0].setVarString("one");
+            input[0].setVarFloat(1.1F);
+            input[1].setVarInt(2);
+            input[1].setVarString("two");
+            input[1].setVarFloat(2.2F);
+            input[2].setVarInt(3);
+            input[2].setVarString("three");
+            input[2].setVarFloat(3.3F);
+
             try {
                 output = binding.echoStructArray(input);
                 verify("echoStructArray", input, output);
@@ -441,15 +452,20 @@ public abstract class TestClient {
         // execute the tests
         Object output = null;
         {
-            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            SOAPStruct input = new SOAPStruct();
+            input.setVarInt(5);
+            input.setVarString("Hello");
+            input.setVarFloat(103F);
             try {
                 StringHolder outputString = new StringHolder();
                 IntHolder outputInteger = new IntHolder();
                 FloatHolder outputFloat = new FloatHolder();
-                binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
-                output = new SOAPStruct(outputInteger.value,
-                                        outputString.value,
-                                        outputFloat.value);
+                binding.echoStructAsSimpleTypes(input, outputString, 
+                                                 outputInteger, outputFloat);
+                output = new SOAPStruct();
+                ((SOAPStruct)output).setVarInt(outputInteger.value);
+                ((SOAPStruct)output).setVarString(outputString.value);
+                ((SOAPStruct)output).setVarFloat(outputFloat.value);
                 verify("echoStructAsSimpleTypes",
                        input, output);
             } catch (Exception e) {
@@ -462,7 +478,10 @@ public abstract class TestClient {
         }
 
         {
-            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            SOAPStruct input = new SOAPStruct();
+            input.setVarInt(5);
+            input.setVarString("Hello");
+            input.setVarFloat(103F);
             try {
                 output = binding.echoSimpleTypesAsStruct(
                    input.getVarString(), input.getVarInt(), input.getVarFloat());
@@ -499,10 +518,15 @@ public abstract class TestClient {
         }
 
         {
-            SOAPStructStruct input = new SOAPStructStruct("AXIS",
-                                                          1,
-                                                          3F,
-                                                          new SOAPStruct(5, "Hello", 103F));
+            SOAPStruct inputS =new SOAPStruct();
+            inputS.setVarInt(5);
+            inputS.setVarString("Hello");
+            inputS.setVarFloat(103F);
+            SOAPStructStruct input = new SOAPStructStruct();
+            input.setVarString("AXIS");
+            input.setVarInt(1);
+            input.setVarFloat(3F);
+            input.setVarStruct(inputS);
             try {
                 output = binding.echoNestedStruct(input);
                 verify("echoNestedStruct", input, output);
@@ -515,10 +539,11 @@ public abstract class TestClient {
             }
         }
         {
-            SOAPArrayStruct input = new SOAPArrayStruct("AXIS",
-                                                        1,
-                                                        3F,
-                                                        new String[] {"one", "two", "three"});
+            SOAPArrayStruct input = new SOAPArrayStruct();
+            input.setVarString("AXIS");
+            input.setVarInt(1);
+            input.setVarFloat(3F);
+            input.setVarArray(new String[] {"one", "two", "three"});
             try {
                 output = binding.echoNestedArray(input);
                 verify("echoNestedArray", input, output);
@@ -597,12 +622,6 @@ public abstract class TestClient {
 
         // set up the call object
         client.setURL(opts.getURL());
-
-        // support for tests with non-compliant applications
-        client.addMethodToAction = (opts.isFlagSet('m') > 0);
-
-        String action = opts.isValueSet('a');
-        if (action != null) client.soapAction = action;
 
         if (testPerformance) {
             long startTime = System.currentTimeMillis();
