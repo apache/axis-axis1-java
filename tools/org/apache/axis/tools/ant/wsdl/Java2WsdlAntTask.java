@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /*
@@ -86,6 +87,7 @@ public class Java2WsdlAntTask extends Task
     private Path classpath = null;
     private String soapAction = null;
     private List complexTypes = new LinkedList();
+    private boolean isDeploy = false;
     private CommandlineJava commandline = new CommandlineJava();
 
     /**
@@ -244,6 +246,9 @@ public class Java2WsdlAntTask extends Task
                 emitter.emit(output, outputImpl);
             }
 
+            if (isDeploy == true) {
+                generateServerSide(emitter, (outputImpl != null) ? outputImpl : output);
+            }
 
         } catch(BuildException b) {
             //pass build exceptions up the wire
@@ -534,5 +539,59 @@ public class Java2WsdlAntTask extends Task
      */
     public void addSysproperty(Environment.Variable sysp) {
         commandline.addSysproperty(sysp);
+    }
+    
+    /**
+     * Sets the deploy flag
+     * @param deploy true if deploy mode
+     */
+    public void setDeploy(boolean deploy) {
+        this.isDeploy = deploy;
+    }
+    
+    /**
+     * Generate the server side artifacts from the generated WSDL
+     * 
+     * @param j2w the Java2WSDL emitter
+     * @param wsdlFileName the generated WSDL file
+     * @throws Exception
+     */
+    protected void generateServerSide(Emitter emitter, String wsdlFileName) throws Exception {
+        org.apache.axis.wsdl.toJava.Emitter w2j = new org.apache.axis.wsdl.toJava.Emitter();
+        File wsdlFile = new File(wsdlFileName);
+        w2j.setServiceDesc(emitter.getServiceDesc());
+        w2j.setQName2ClassMap(emitter.getQName2ClassMap());
+        w2j.setOutputDir(wsdlFile.getParent());
+        w2j.setServerSide(true);   
+        w2j.setDeploy(true);
+
+        // setup namespace-to-package mapping
+        String ns = emitter.getIntfNamespace();
+        String pkg = emitter.getCls().getPackage().getName();
+        w2j.getNamespaceMap().put(ns, pkg);
+        
+        Map nsmap = emitter.getNamespaceMap();
+        if (nsmap != null) {
+            for (Iterator i = nsmap.keySet().iterator(); i.hasNext(); ) {
+                pkg = (String) i.next();
+                ns = (String) nsmap.get(pkg);
+                w2j.getNamespaceMap().put(ns, pkg);
+            }
+        }
+        
+        // set 'deploy' mode
+        w2j.setDeploy(true);
+        
+        if (emitter.getImplCls() != null) {
+            w2j.setImplementationClassName(emitter.getImplCls().getName());
+        } else {
+            if (!emitter.getCls().isInterface()) {
+                w2j.setImplementationClassName(emitter.getCls().getName());
+            } else {
+                throw new Exception("implementation class is not specified.");
+            }
+        }
+        
+        w2j.run(wsdlFileName);
     }
 }

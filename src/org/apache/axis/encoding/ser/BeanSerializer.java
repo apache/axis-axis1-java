@@ -27,6 +27,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.FieldPropertyDescriptor;
 import org.apache.axis.wsdl.fromJava.Types;
@@ -119,6 +120,13 @@ public class BeanSerializer implements Serializer, Serializable {
         if (!suppressElement)
             context.startElement(name, beanAttrs);
 
+        // check whether the array is converted to ArrayOfT shema type    
+        if (value.getClass().isArray()) {
+           Object newVal = JavaUtils.convert(value, javaType); 
+           if (newVal != null && javaType.isAssignableFrom(newVal.getClass())) {
+               value = newVal; 
+           }
+        }
         try {
             // Serialize each property
             for (int i=0; i<propertyDescriptor.length; i++) {

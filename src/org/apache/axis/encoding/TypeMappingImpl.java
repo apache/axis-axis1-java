@@ -24,6 +24,7 @@ import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.utils.ArrayUtil;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -322,6 +323,14 @@ public class TypeMappingImpl implements Serializable
                     break;
                 }
                 componentType = componentType.getSuperclass();
+            }
+        }
+        
+        // check if ArrayOfT(xml)->T[](java) conversion is possible
+        if (sf == null && javaType.isArray() && xmlType != null) {
+            Pair pair2 = (Pair) qName2Pair.get(xmlType);
+            if (ArrayUtil.isConvertable(pair.javaType, javaType)) {
+                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair2);
             }
         }
         

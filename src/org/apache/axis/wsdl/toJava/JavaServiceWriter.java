@@ -39,6 +39,15 @@ public class JavaServiceWriter implements Generator {
 
     /** Field PORT_NAME */
     public static final String PORT_NAME = "port name";
+	
+    /** Field emitter */
+    protected Emitter emitter;
+	
+    /** Field WSDL service */
+    protected Service service;
+    
+    /** Field symbolTable */
+    protected SymbolTable symbolTable;
 
     /**
      * Constructor.
@@ -49,7 +58,18 @@ public class JavaServiceWriter implements Generator {
      */
     public JavaServiceWriter(Emitter emitter, Service service,
                              SymbolTable symbolTable) {
-
+        this.emitter = emitter;
+        this.service = service;
+        this.symbolTable = symbolTable;
+    }    // ctor
+	
+    /**
+     * setGenerators
+     * Logic to set the generators that are based on the Service.
+     * This logic was moved from the constructor so extended interfaces
+     * can more effectively use the hooks.
+     */	
+    protected void setGenerators() {
         ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
 
         if (sEntry.isReferenced()) {
@@ -63,7 +83,17 @@ public class JavaServiceWriter implements Generator {
                         symbolTable);
             }
         }
-    }    // ctor
+    }
+    
+    /**
+     * Set the writer based on the other condition after generate() is called.
+     */    
+    protected void postSetGenerators() {	
+        if (emitter.isDeploy()) {
+            serviceIfaceWriter = null;
+            serviceImplWriter = null;
+        }
+    }
 
     /**
      * Write all the service bindnigs:  service and testcase.
@@ -71,6 +101,8 @@ public class JavaServiceWriter implements Generator {
      * @throws IOException 
      */
     public void generate() throws IOException {
+        setGenerators();
+        postSetGenerators();
 
         if (serviceIfaceWriter != null) {
             serviceIfaceWriter.generate();

@@ -1242,4 +1242,19 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println("    }");
         pw.println("");
     }
+    
+    /** Generate a java source file and/or helper source file.
+     * If the emitter works in deploy mode and the class already exists, only the helper is generated.
+     * Otherwise, the java bean and helper source are generated.     
+     */
+    public void generate() throws IOException {
+        String fqcn = getPackage() + "." + getClassName();	
+        if (emitter.isDeploy() && emitter.doesExist(fqcn)) {
+            if (emitter.isHelperWanted()) {
+                helper.generate();
+            }
+        } else {
+            super.generate();
+        }
+    }
 }    // class JavaBeanWriter

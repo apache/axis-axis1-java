@@ -313,6 +313,20 @@ public class JavaUtils
             return array;
         }
 
+        // in case destClass is array and arg is ArrayOfT class. (ArrayOfT -> T[])
+        if (arg != null && destClass.isArray()) {
+            Object newArg = ArrayUtil.convertObjectToArray(arg, destClass);            
+            if (newArg != null && newArg != arg)  
+                return newArg;
+        }
+       
+        // in case arg is ArrayOfT and destClass is an array. (T[] -> ArrayOfT)
+        if (arg != null && arg.getClass().isArray()) {			
+            Object newArg = ArrayUtil.convertArrayToObject(arg, destClass);
+            if (newArg != null)
+                return newArg;
+        }       
+
         // Return if no conversion is available
         if (!(arg instanceof Collection ||
               (arg != null && arg.getClass().isArray())) &&
@@ -581,6 +595,19 @@ public class JavaUtils
         if (src.isPrimitive()) {
             return isConvertable(getWrapperClass(src),dest);
         }
+        
+        // ArrayOfT -> T[] ? 
+        if (dest.isArray()) {        	
+        	if (ArrayUtil.isConvertable(src, dest) == true)
+        		return true;
+        } 
+        
+        // T[] -> ArrayOfT ?
+        if (src.isArray()) {
+        	if (ArrayUtil.isConvertable(src, dest) == true)
+        		return true;
+        }
+        
         return false;
     }
 

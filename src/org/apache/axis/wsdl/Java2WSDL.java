@@ -25,8 +25,11 @@ import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.TypeMappingImpl;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Command line interface to the java2wsdl utility
@@ -114,6 +117,9 @@ public class Java2WSDL {
 
     /** Field STYLE_OPT */
     protected static final int STYLE_OPT = 'y';
+        
+    /** Field DEPLOY_OPT */
+    protected static final int DEPLOY_OPT = 'd';
 
     /**
      * Define the understood options. Each CLOptionDescriptor contains:
@@ -223,7 +229,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("classpath",
                 CLOptionDescriptor.ARGUMENT_OPTIONAL,
                 CLASSPATH_OPT,
-                Messages.getMessage("optionClasspath"))
+                Messages.getMessage("optionClasspath")),
+        new CLOptionDescriptor("deploy",
+                        CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                        DEPLOY_OPT,
+                        Messages.getMessage("j2woptDeploy00")),
     };
 
     /** Field emitter */
@@ -249,6 +259,9 @@ public class Java2WSDL {
 
     /** Field typeMappingVersion */
     protected String typeMappingVersion = "1.2";
+    
+    /** Field isDeplpy */
+    protected boolean isDeploy = false;
     
     /**
      * Instantiate a Java2WSDL emitter.
@@ -479,7 +492,11 @@ public class Java2WSDL {
                         option.getArgument(),
                         this.getClass().getClassLoader()));
                 break;
-
+                
+            case DEPLOY_OPT:
+                isDeploy = true;
+                break;
+                
             default :
                 break;
         }
@@ -572,7 +589,10 @@ public class Java2WSDL {
             } else {
                 emitter.emit(wsdlFilename, wsdlImplFilename);
             }
-
+						            		
+            if (isDeploy) {
+                generateServerSide(emitter, (wsdlImplFilename != null) ? wsdlImplFilename : wsdlFilename);             
+            }
             // everything is good
             return (0);
         } catch (Throwable t) {
@@ -582,6 +602,51 @@ public class Java2WSDL {
         }
     }    // run
 
+    /**
+     * Generate the server side artifacts from the generated WSDL
+     * 
+     * @param j2w the Java2WSDL emitter
+     * @param wsdlFileName the generated WSDL file
+     * @throws Exception
+     */
+    protected void generateServerSide(Emitter j2w, String wsdlFileName) throws Exception {
+        org.apache.axis.wsdl.toJava.Emitter w2j = new org.apache.axis.wsdl.toJava.Emitter();
+        File wsdlFile = new File(wsdlFileName);
+        w2j.setServiceDesc(j2w.getServiceDesc());
+        w2j.setQName2ClassMap(j2w.getQName2ClassMap());
+        w2j.setOutputDir(wsdlFile.getParent());
+        w2j.setServerSide(true);	
+        w2j.setHelperWanted(true);
+        
+        // setup namespace-to-package mapping
+        String ns = j2w.getIntfNamespace();
+        String pkg = j2w.getCls().getPackage().getName();
+        w2j.getNamespaceMap().put(ns, pkg);
+        
+        Map nsmap = j2w.getNamespaceMap();
+        if (nsmap != null) {
+            for (Iterator i = nsmap.keySet().iterator(); i.hasNext(); ) {
+                pkg = (String) i.next();
+                ns = (String) nsmap.get(pkg);
+                w2j.getNamespaceMap().put(ns, pkg);
+            }
+        }
+        
+        // set 'deploy' mode
+        w2j.setDeploy(true);
+        
+        if (j2w.getImplCls() != null) {
+            w2j.setImplementationClassName(j2w.getImplCls().getName());
+        } else {
+            if (!j2w.getCls().isInterface()) {
+                w2j.setImplementationClassName(j2w.getCls().getName());
+            } else {
+                throw new Exception("implementation class is not specified.");
+            }
+        }
+        
+        w2j.run(wsdlFileName);
+    }
     /**
      * printUsage
      * print usage information and quit.

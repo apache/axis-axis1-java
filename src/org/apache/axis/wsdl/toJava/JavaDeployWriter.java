@@ -17,6 +17,9 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Scope;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
@@ -29,6 +32,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -57,6 +61,8 @@ import java.util.Vector;
  * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
  */
 public class JavaDeployWriter extends JavaWriter {
+    /** Field log */
+    protected static Log log = LogFactory.getLog(JavaDeployWriter.class.getName());
 
     /** Field definition */
     protected Definition definition;
@@ -413,6 +419,8 @@ public class JavaDeployWriter extends JavaWriter {
         
         HashSet allowedMethods = new HashSet();
 
+        String namespaceURI = binding.getQName().getNamespaceURI();
+		
         if (!emitter.isSkeletonWanted()) {
             Iterator operationsIterator =
                     binding.getBindingOperations().iterator();
@@ -422,8 +430,6 @@ public class JavaDeployWriter extends JavaWriter {
                         (BindingOperation) operationsIterator.next();
                 Operation operation = bindingOper.getOperation();
                 OperationType type = operation.getStyle();
-                String javaOperName =
-                        JavaUtils.xmlNameToJava(operation.getName());
 
                 // These operation types are not supported.  The signature
                 // will be a string stating that fact.
@@ -431,7 +437,28 @@ public class JavaDeployWriter extends JavaWriter {
                         || (type == OperationType.SOLICIT_RESPONSE)) {
                     continue;
                 }
+                String javaOperName = null;				
 
+                ServiceDesc serviceDesc = emitter.getServiceDesc();
+                if (emitter.isDeploy() && serviceDesc != null) {
+               		// If the emitter works in deploy mode, sync the java operation name with it of the ServiceDesc
+                    OperationDesc[] operDescs = serviceDesc.getOperationsByQName(new QName(namespaceURI, operation.getName()));
+                    if (operDescs.length == 0) {
+                        log.warn("Can't find operation in the Java Class for WSDL binding operation : " + operation.getName());
+                        continue;
+                    }
+                    OperationDesc operDesc = operDescs[0];
+                    if (operDesc.getMethod() == null) {
+                        log.warn("Can't find Java method for operation descriptor : " + operDesc.getName());
+                        continue;
+                    }
+                    
+                    javaOperName = operDesc.getMethod().getName();
+                } else {
+                    javaOperName =
+                        JavaUtils.xmlNameToJava(operation.getName());
+                }
+                
                 allowedMethods.add(javaOperName);
 
                 // We pass "" as the namespace argument because we're just

@@ -138,6 +138,7 @@ public class JavaBindingWriter implements Generator {
     public void generate() throws IOException {
 
         setGenerators();
+        postSetGenerators();
 
         if (interfaceWriter != null) {
             interfaceWriter.generate();
@@ -214,5 +215,17 @@ public class JavaBindingWriter implements Generator {
                 }
             }
         }
+    }
+    
+    /**
+     * Set the writer based on the other condition after generate() is called.
+     */
+    protected void postSetGenerators() {
+        if (emitter.isDeploy()) {
+            interfaceWriter = null;
+            stubWriter = null;
+            skelWriter = null;	       
+            implWriter = null;
+        }	       
     }
 }    // class JavaBindingWriter

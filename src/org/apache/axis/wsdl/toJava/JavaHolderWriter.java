@@ -79,4 +79,18 @@ public class JavaHolderWriter extends JavaClassWriter {
         pw.println("    }");
         pw.println();
     }    // writeOperation
+
+    /** Generate a java source file for the holder class.
+     * If the emitter works in deploy mode and the class already exists, the source wull not be generated.
+     */
+    public void generate() throws IOException {
+        String fqcn = getPackage() + "." + getClassName();
+        if (emitter.isDeploy()) {
+            if (!emitter.doesExist(fqcn)) {
+                super.generate();
+            }
+        } else {
+            super.generate();
+        }
+    }
 }    // class JavaHolderWriter

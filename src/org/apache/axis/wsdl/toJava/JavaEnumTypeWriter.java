@@ -358,4 +358,18 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 
         return ids;
     }
+
+    /** Generate a java source file for enum class.
+     * If the emitter works in deploy mode and the class already exists, the source wull not be generated.
+     */
+    public void generate() throws IOException {
+        String fqcn = getPackage() + "." + getClassName();	
+        if (emitter.isDeploy()) {
+            if (!emitter.doesExist(fqcn)) {
+                super.generate();
+            }
+        } else {
+            super.generate();
+        }
+    }
 }    // class JavaEnumTypeWriter

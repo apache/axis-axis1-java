@@ -571,6 +571,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         // Need to javify the ref'd TypeEntry if it was not
         // already processed
         if (tEntry.getName() == null) {
+            boolean processed = false;	// true if the java name is already determined
             // Get the QName of the ref'd TypeEntry, which
             // is will be used to javify the name
             QName typeQName = tEntry.getQName();
@@ -591,69 +592,79 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 typeQName = new QName(baseName.getNamespaceURI(),
                                         baseName.getLocalPart() + "[]");
             }
-
-            if ((typeQName.getLocalPart().
-                    indexOf(SymbolTable.ANON_TOKEN) < 0)) {
-                // Normal Case: The ref'd type is not anonymous
-                // Simply construct the java name from
-                // the qName
-                tEntry.setName(emitter.getJavaName(typeQName));
-            } else {
-                // This is an anonymous type name.
-                // Axis uses '>' as a nesting token to generate
-                // unique qnames for anonymous types.
-                // Only consider the localName after the last '>'
-                // when generating the java name
-                // String localName = typeQName.getLocalPart();
-                // localName =
-                // localName.substring(
-                // localName.lastIndexOf(
-                // SymbolTable.ANON_TOKEN)+1);
-                // typeQName = new QName(typeQName.getNamespaceURI(),
-                // localName);
-                String localName = typeQName.getLocalPart();
-
-                // Check to see if this is an anonymous type,
-                // if it is, replace Axis' ANON_TOKEN with
-                // an underscore to make sure we don't run
-                // into name collisions with similarly named
-                // non-anonymous types
-                StringBuffer sb = new StringBuffer(localName);
-                int aidx;
-
-                while ((aidx = sb.toString().indexOf(SymbolTable.ANON_TOKEN)) > -1) {
-                    sb.replace(aidx, aidx + SymbolTable.ANON_TOKEN.length(), "");
-                    char c = sb.charAt(aidx);
-                    if (Character.isLetter(c) && Character.isLowerCase(c)) {
-                        sb.setCharAt(aidx, Character.toUpperCase(c));
-                    }
-                }
-                        
-                localName = sb.toString();
-                typeQName = new QName(typeQName.getNamespaceURI(),
-                        localName);
-
-                if (emitter.isTypeCollisionProtection() &&
-                        !emitter.getNamespaceExcludes().contains(new NamespaceSelector(typeQName.getNamespaceURI()))) {
-                    // If there is already an existing type,
-                    // there will be a collision.
-                    // If there is an existing anon type,
-                    // there will be a  collision.
-                    // In both cases, mangle the name.
-                    if (symbolTable.getType(typeQName) != null ||
-                            anonQNames.get(typeQName) != null) {
-                        localName += "Type" + uniqueNum++;
-                        typeQName =
-                            new QName(typeQName.getNamespaceURI(),
-                                      localName);
-                    }
-                    
-                    anonQNames.put(typeQName, typeQName);
-                }
-
-                // Now set the name with the constructed qname
-                tEntry.setName(emitter.getJavaName(typeQName));
+            
+            if (emitter.isDeploy()) {				
+                Class class1 = (Class) emitter.getQName2ClassMap().get(typeQName);				
+				if (class1 != null && !class1.isArray()) {                    
+                    tEntry.setName(getJavaClassName(class1));
+                    processed = true;
+                }                            
             }
+            
+            if (!processed) {
+	            if ((typeQName.getLocalPart().
+	                    indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+	                // Normal Case: The ref'd type is not anonymous
+	                // Simply construct the java name from
+	                // the qName
+	                tEntry.setName(emitter.getJavaName(typeQName));
+	            } else {
+	                // This is an anonymous type name.
+	                // Axis uses '>' as a nesting token to generate
+	                // unique qnames for anonymous types.
+	                // Only consider the localName after the last '>'
+	                // when generating the java name
+	                // String localName = typeQName.getLocalPart();
+	                // localName =
+	                // localName.substring(
+	                // localName.lastIndexOf(
+	                // SymbolTable.ANON_TOKEN)+1);
+	                // typeQName = new QName(typeQName.getNamespaceURI(),
+	                // localName);
+	                String localName = typeQName.getLocalPart();
+	
+	                // Check to see if this is an anonymous type,
+	                // if it is, replace Axis' ANON_TOKEN with
+	                // an underscore to make sure we don't run
+	                // into name collisions with similarly named
+	                // non-anonymous types
+	                StringBuffer sb = new StringBuffer(localName);
+	                int aidx;
+	
+	                while ((aidx = sb.toString().indexOf(SymbolTable.ANON_TOKEN)) > -1) {
+	                    sb.replace(aidx, aidx + SymbolTable.ANON_TOKEN.length(), "");
+	                    char c = sb.charAt(aidx);
+	                    if (Character.isLetter(c) && Character.isLowerCase(c)) {
+	                        sb.setCharAt(aidx, Character.toUpperCase(c));
+	                    }
+	                }
+	                        
+	                localName = sb.toString();
+	                typeQName = new QName(typeQName.getNamespaceURI(),
+	                        localName);
+	
+	                if (emitter.isTypeCollisionProtection() &&
+	                        !emitter.getNamespaceExcludes().contains(new NamespaceSelector(typeQName.getNamespaceURI()))) {
+	                    // If there is already an existing type,
+	                    // there will be a collision.
+	                    // If there is an existing anon type,
+	                    // there will be a  collision.
+	                    // In both cases, mangle the name.
+	                    if (symbolTable.getType(typeQName) != null ||
+	                            anonQNames.get(typeQName) != null) {
+	                        localName += "Type" + uniqueNum++;
+	                        typeQName =
+	                            new QName(typeQName.getNamespaceURI(),
+	                                      localName);
+	                    }
+	                    
+	                    anonQNames.put(typeQName, typeQName);
+	                }
+	
+	                // Now set the name with the constructed qname
+	                tEntry.setName(emitter.getJavaName(typeQName));
+	            }
+            }   // if (!processed)
         
             Vector elements = tEntry.getContainedElements();
             if (elements != null) {
@@ -679,6 +690,24 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         entry.setName(tEntry.getName() + dims);
 
         return uniqueNum;
+    }
+    
+    /**  
+     * Gets class name from Java class.
+     * If the class is an array, get its component type's name
+     * @param clazz a java class
+     * @return the class name in string
+     */
+    private static String getJavaClassName(Class clazz) {
+        Class class1 = clazz;
+        
+        while (class1.isArray()) {
+            class1 = class1.getComponentType();
+        }
+        
+        String name = class1.getName();        
+        name.replace('$', '.');
+        return name;
     }
 
     /**

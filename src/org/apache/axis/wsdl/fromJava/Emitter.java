@@ -211,6 +211,9 @@ public class Emitter {
 
     /** Version string to put at top of WSDL */
     private String versionMessage = null;
+    
+    /** The mapping of generated type qname to its corresponding java type. For use with java<-->wsdl roundtripping */
+    private HashMap qName2ClassMap;
 
     // Style Modes
 
@@ -235,6 +238,7 @@ public class Emitter {
         namespaces = new Namespaces();
         exceptionMsg = new HashMap();
         usedElementNames = new HashMap();
+        qName2ClassMap = new HashMap();
     }
 
     /**
@@ -693,7 +697,9 @@ public class Emitter {
             }
 
             if (cls != null) {
-                namespaces.put(cls.getName(), intfNS, "intf");
+                if (cls.getPackage() != null) {
+                    namespaces.put(cls.getPackage().getName(), intfNS, "intf");
+                }
             }
 
             namespaces.putPrefix(implNS, "impl");
@@ -753,7 +759,7 @@ public class Emitter {
             ParserConfigurationException {
 
         types = new Types(def, tm, (TypeMapping)tmr.getDefaultTypeMapping(),
-                          namespaces, intfNS, stopClasses, serviceDesc);
+                          namespaces, intfNS, stopClasses, serviceDesc, this);
 
         if (inputWSDL != null) {
             types.loadInputTypes(inputWSDL);
@@ -2738,5 +2744,13 @@ public class Emitter {
     public void setVersionMessage(String versionMessage)
     {
         this.versionMessage = versionMessage;
+    }
+
+	/**
+     * Return the type qname to java type mapping
+     * @return mapping of type qname to its corresponding java type
+     */
+    public HashMap getQName2ClassMap() {
+        return qName2ClassMap;   
     }
 }
