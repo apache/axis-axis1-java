@@ -145,10 +145,6 @@ public class MapDeserializer extends DeserializerImpl {
             log.debug("Enter: MapDeserializer::onStartChild()");
         }
 
-        if (!localName.equals("item"))
-            throw new SAXException(
-                    JavaUtils.getMessage("itemInMap00"));
-                    
         SOAPHandler sh = new ItemHandler(this);
         
         if (log.isDebugEnabled()) {
