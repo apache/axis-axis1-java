@@ -66,15 +66,16 @@ import java.util.HashSet ;
 import java.io.InputStream ;
 import java.io.FileInputStream ;
 
-import org.apache.axis.utils.XMLUtils ;
-
+import org.apache.axis.Constants ;
 import org.apache.axis.encoding.XMLType ;
 import org.apache.axis.rpc.JAXRPCException ;
 import org.apache.axis.rpc.namespace.QName ;
 import org.apache.axis.transport.http.HTTPConstants ;
+import org.apache.axis.utils.XMLUtils ;
 
 import javax.wsdl.Definition ;
 import javax.wsdl.Binding ;
+import javax.wsdl.BindingInput ;
 import javax.wsdl.BindingOperation ;
 import javax.wsdl.Input ;
 import javax.wsdl.Message ;
@@ -86,6 +87,7 @@ import javax.wsdl.PortType ;
 
 import com.ibm.wsdl.xml.WSDLReader ;
 import com.ibm.wsdl.extensions.soap.SOAPAddress ;
+import com.ibm.wsdl.extensions.soap.SOAPBody ;
 import com.ibm.wsdl.extensions.soap.SOAPOperation ;
 
 /**
@@ -358,6 +360,25 @@ public class Service implements org.apache.axis.rpc.Service {
                 String        action = sop.getSoapActionURI();
                 if ( action != null )
                     call.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
+                break ;
+            }
+        }
+
+        // Get the body's namespace URI and encoding style
+        ////////////////////////////////////////////////////////////////////
+        BindingInput bIn = bop.getBindingInput();
+        list = bIn.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPBody ) { 
+                SOAPBody sBody  = (SOAPBody) obj ;
+                String   tmp     = sBody.getNamespaceURI();
+                if ( tmp != null )
+                    call.setProperty( Constants.NAMESPACE, tmp );
+                list = sBody.getEncodingStyles();
+                if ( list != null && list.size() > 0 )
+                    call.setEncodingStyle( (String) list.get(0) );
+                break ;
             }
         }
 
@@ -373,7 +394,6 @@ public class Service implements org.apache.axis.rpc.Service {
         if ( parts != null ) {
             for ( int i = 0 ; i < parts.size() ; i++ ) {
                 Part    part = (Part) parts.get(i);
-                // Part    part = message.getPart( name );
                 if ( part == null ) continue ;
 
                 String           name  = part.getName();
@@ -383,8 +403,6 @@ public class Service implements org.apache.axis.rpc.Service {
                 XMLType          xmlType = new XMLType(tmpQN);
                 int              mode = Call.PARAM_MODE_IN ;
                 call.addParameter( name, xmlType, mode );
-
-                // System.err.println("Adding param: " + name );
             }
         }
 
@@ -409,7 +427,6 @@ public class Service implements org.apache.axis.rpc.Service {
                                                     type.getLocalPart());
                 XMLType          xmlType = new XMLType(tmpQN);
                 call.setReturnType( xmlType );
-                // System.err.println("Return type: " + type.getLocalPart() );
                 break ;
             }
         }
