@@ -94,6 +94,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DOMULTIREFS = "sendMultiRefs";
     public static final String PROP_PASSWORD = "adminPassword";
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
+    public static final String PROP_SEND_XSI = "sendXsiTypes";
 
     /** Our go-to guy for configuration... */
     protected ConfigurationProvider configProvider;
