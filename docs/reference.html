@@ -574,97 +574,84 @@ the options that we currently document, though there may be more
    &lt;/globalConfiguration&gt;
 </pre>
 <table>
-
-<tr><td><b>adminPassword</b></td>
-<td>Adminstrator password, as used by AdminService.
-</td>
-</tr>
-
-<tr><td><b>attachments.Directory</b></td>
-<td>The directory where attachments end up. This should be in the syntax
-appropriate for the target platform. 
-</td>
-</tr>
-
-<tr><td><b>attachments.implementation</b></td>
-<td>
-Name of class that implements attachments support. Default is
-<tt>org.apache.axis.attachments.AttachmentsImpl</tt>
-</td>
-</tr>
-
-<tr><td><b>axis.enableListQuery</b></td>
-<td>Flag to enable the "list the WSDD" feature. Set to false by default,
-because listing the current system config can expose information (such as the
-adminservice password) that one does not want widely avaialable. 
-</td>
-</tr>
-
-<tr><td><b>axis.Compiler</b></td>
-<td>Compiler adapter classname for JWS compilation. Default is
-<tt>org.apache.axis.components.compiler.Javac</tt>; change this to
-<tt>org.apache.axis.components.compiler.Jikes</tt> to invoke jikes instead.
-</td>
-</tr>
-
-<tr><td><b>axis.development.system</b></td>
-<td>Flag to switch the system from <i>production</i> (false) to 
-<i>development</i> (true). A development system gives out stack traces
-and other information that production boxes should not. 
-</td>
-
-<tr><td><b>axis.engineConfigClass</b></td>
-<td>Name of a class that provides Axis configuration. Implement a new
-class implementing <tt>EngineConfiguration</tt> and name it here to 
-use alternate configuration mechanisms.  
-</td>
-
-<tr><td><b>axis.jws.servletClassDir</b></td>
-<td>Path to where compiled JWS pages are placed.
-</td>
-</tr>
-
-<tr><td><b>axis.sendMinimizedElements</b></td>
-<td>Flag to turn on support for a when .NET1.0 can't
-correctly handle some bits of XML 
-<a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17021">
-that it should. 
-</a> The flag defaults to true; 
-if some .NET clients are failing to handle a Web Service returning an 
-empty array inside another object, set this flag to <i>false</i>. 
-</td>
-</tr>
-
-<tr><td><b>enable2DArrayEncoding</b></td>
-<td>Set this to "true" to turn 2D array encoding on; 
-    this encoding is incompatible with .NET 1.0: default="false".
-</td>
-</tr>
-
-
-<tr><td><b>sendMultiRefs</b></td>
-<td>true/false flag to control whether multirefs are sent or not.
-</td>
-</tr>
-
-<tr><td><b>sendXMLDeclaration</b></td>
-<td>true/false flag to control whether the &lt;?xml?&gt; declaration is sent in messages
-</td>
-</tr>
-
-<tr><td><b>sendXsiTypes</b></td>
-<td>true/false flag to enable/disable sending the type of every value sent over the wire. 
-Defaults to true.
-</td>
-</tr>
-
-<tr><td><b>use-servlet-security</b></td>
-<td>Set this flag to hand authentication off to the servlet container.
-</td>
-</tr>
-
-
-<!-- end table -->
+  <tr>
+    <td><b>adminPassword</b></td>
+    <td>Adminstrator password, as used by AdminService. </td>
+  </tr>
+  <tr>
+    <td><b>attachments.Directory</b></td>
+    <td>The directory where attachments end up. This should be in the syntax appropriate 
+      for the target platform. </td>
+  </tr>
+  <tr>
+    <td><b>attachments.implementation</b></td>
+    <td> Name of class that implements attachments support. Default is <tt>org.apache.axis.attachments.AttachmentsImpl</tt> 
+    </td>
+  </tr>
+  <tr>
+    <td><b>axis.enableListQuery</b></td>
+    <td>Flag to enable the "list the WSDD" feature. Set to false by default, because 
+      listing the current system config can expose information (such as the adminservice 
+      password) that one does not want widely avaialable. </td>
+  </tr>
+  <tr>
+    <td><b>axis.Compiler</b></td>
+    <td>Compiler adapter classname for JWS compilation. Default is <tt>org.apache.axis.components.compiler.Javac</tt>; 
+      change this to <tt>org.apache.axis.components.compiler.Jikes</tt> to invoke 
+      jikes instead. </td>
+  </tr>
+  <tr>
+    <td><b>axis.development.system</b></td>
+    <td>Flag to switch the system from <i>production</i> (false) to <i>development</i> 
+      (true). A development system gives out stack traces and other information 
+      that production boxes should not. </td>
+  <tr>
+    <td><b>axis.engineConfigClass</b></td>
+    <td>Name of a class that provides Axis configuration. Implement a new class 
+      implementing <tt>EngineConfiguration</tt> and name it here to use alternate 
+      configuration mechanisms. </td>
+  <tr>
+    <td><b>axis.jws.servletClassDir</b></td>
+    <td>Path to where compiled JWS pages are placed. </td>
+  </tr>
+  <tr>
+    <td><b>axis.sendMinimizedElements</b></td>
+    <td>Flag to turn on support for a when .NET1.0 can't correctly handle some 
+      bits of XML <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17021"> 
+      that it should. </a> The flag defaults to true; if some .NET clients are 
+      failing to handle a Web Service returning an empty array inside another 
+      object, set this flag to <i>false</i>. </td>
+  </tr>
+  <tr>
+    <td><b>enable2DArrayEncoding</b></td>
+    <td>Set this to "true" to turn 2D array encoding on; this encoding is incompatible 
+      with .NET 1.0: default="false". </td>
+  </tr>
+  <tr>
+    <td><b>sendMultiRefs</b></td>
+    <td>true/false flag to control whether multirefs are sent or not. </td>
+  </tr>
+  <tr>
+    <td><b>sendXMLDeclaration</b></td>
+    <td>true/false flag to control whether the &lt;?xml?&gt; declaration is sent 
+      in messages </td>
+  </tr>
+  <tr>
+    <td><b>sendXsiTypes</b></td>
+    <td>true/false flag to enable/disable sending the type of every value sent 
+      over the wire. Defaults to true. </td>
+  </tr>
+  <tr> 
+    <td><strong>SingleSOAPVersion</strong></td>
+    <td>When set to either &quot;1.1&quot; or &quot;1.2&quot;, this configures 
+      the engine to only accept the specified SOAP version. Attempts to connect 
+      to the engine using another version will result in a fault.</td>
+  </tr>
+  <tr>
+    <td><b>use-servlet-security</b></td>
+    <td>Set this flag to hand authentication off to the servlet container. </td>
+  </tr>
+  <!-- end table -->
 </table>
 
 <a name="individual_service" />
@@ -681,24 +668,26 @@ they will be picked up.
 More may exist. 
 
 <table>
-
-<tr><td><b>style</b></td>
-<td>whether to use RPC:enc or doc/lit encoding
-</td>
-</tr>
-
-<tr><td><b>wsdlFile</b></td>
-<td>The path to a WSDL File; can be an absolute path or
-a resource that axis.jar can load. Useful to export
-your custom WSDL file.  When specify a path to a resource, place a forward
-slash to start at the beginning of the classpath (e.g
-"/org/someone/res/mywsdl.wsdl"). How does Axis know whether to return 
-a file or resource? It looks for a file first, if that is missing a
-resource is returned. 
-
-</td>
-</tr>
-<!-- TODO: what does this mean?
+  <tr>
+    <td><b>style</b></td>
+    <td>whether to use RPC:enc or doc/lit encoding </td>
+  </tr>
+  <tr>
+    <td><strong>SingleSOAPVersion</strong></td>
+    <td>When set to either &quot;1.1&quot; or &quot;1.2&quot;, this configures 
+      a service to only accept the specified SOAP version. Attempts to connect 
+      to the service using another version will result in a fault.</td>
+  </tr>
+  <tr>
+    <td><b>wsdlFile</b></td>
+    <td>The path to a WSDL File; can be an absolute path or a resource that axis.jar 
+      can load. Useful to export your custom WSDL file. When specify a path to 
+      a resource, place a forward slash to start at the beginning of the classpath 
+      (e.g "/org/someone/res/mywsdl.wsdl"). How does Axis know whether to return 
+      a file or resource? It looks for a file first, if that is missing a resource 
+      is returned. </td>
+  </tr>
+  <!-- TODO: what does this mean?
  <tr><td><b>streaming</b></td>
 <td>
 </td>
