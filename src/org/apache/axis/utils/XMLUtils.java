@@ -237,8 +237,12 @@ public class XMLUtils {
 
         try {
             SAXParser parser = saxFactory.newSAXParser();
-            parser.getParser().setEntityResolver(new DefaultEntityResolver());
             XMLReader reader = parser.getXMLReader(); 
+            // parser.getParser().setEntityResolver(new DefaultEntityResolver());
+            // The above commented line and the following line are added 
+            // for preventing XXE (bug #14105).
+            // We may need to uncomment the deprecated setting
+            // in case that it is considered necessary.  
             reader.setEntityResolver(new DefaultEntityResolver());
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
             return parser;
