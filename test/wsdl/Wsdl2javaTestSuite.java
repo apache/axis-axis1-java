@@ -52,7 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.test;
+package test.wsdl;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestResult;

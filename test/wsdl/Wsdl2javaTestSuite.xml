@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <project name="Wsdl2javaTestSuite" default="main">
-  <taskdef name="wsdl2java" classname="org.apache.axis.wsdl.test.Wsdl2javaAntTask"/>
+  <taskdef name="wsdl2java" classname="test.wsdl.Wsdl2javaAntTask"/>
 
   <target name="main">
     <wsdl2java url="samples/addr/AddressBook.wsdl" 
@@ -26,13 +26,13 @@
                testcase="no">
     </wsdl2java>
     <!--
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestC.wsdl"
-               package="org.soapinteropC" 
+    <wsdl2java url="http://www.whitemesa.net/wsdl/std/InteropTestC.wsdl"
+               package="org.soapinterop.echoheadersvc" 
                output="build/work" 
                testcase="no">
     </wsdl2java>
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
-               package="org.soapinterop.echo" 
+               package="org.soapinterop.echoheadersvc" 
                output="build/work" 
                testcase="no">
     </wsdl2java>
