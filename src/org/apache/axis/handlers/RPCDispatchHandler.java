@@ -59,6 +59,7 @@ import java.util.* ;
 import java.lang.reflect.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.utils.cache.* ;
 import org.apache.axis.message.* ;
 
 /**
@@ -87,7 +88,8 @@ public class RPCDispatchHandler extends BasicHandler {
       /*************************************************************/
       int             i ;
       AxisClassLoader cl     = msgContext.getClassLoader();
-      Class           cls    = cl.loadClass(clsName); 
+      JavaClass       jc     = cl.lookup(clsName); 
+      Class           cls    = jc.getJavaClass();
       Object          obj    = cls.newInstance();
       Message         inMsg  = msgContext.getRequestMessage();
       Message         outMsg = msgContext.getResponseMessage();
@@ -113,33 +115,29 @@ public class RPCDispatchHandler extends BasicHandler {
                                "Method names don't match\n" +
                                  "Body name=" + mName + "\n" +
                                  "Service name=" + methodName,
-                               null, null );  // Should they??
+                               null, null );  // should they??
   
-        Class[]  argClasses = null ;
+        Method       method = jc.getMethod(methodName, args.size());
+        if ( method == null )
+          throw new AxisFault( "AxisServer.error", 
+                               "Method not found\n" +
+                                 "Method name=" + clsName + "\n" +
+                                 "Service name=" + methodName,
+                               null, null );
+  
         Object[] argValues  =  null ;
 
         if ( args != null && args.size() > 0 ) {
-          argClasses = new Class[ args.size() ];
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
-            Object arg  = ((RPCParam)args.get(i)).getValue() ;
-            if (arg == null) {
-                argClasses[i] = String.class;
-            } else {
-                argValues[i]  = arg;
-                argClasses[i] = arg.getClass();
-            }
+            argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
 
             if (DEBUG_LOG) {
-              System.out.println("  class: " + argClasses[i] );
-              System.out.println("  value: " + argValues[i] == null ? 
-                                             "null" :
-                                             argValues[i].toString() );
+              System.out.println("  value: " + argValues[i] );
             }
           }
         }
   
-        Method method = cls.getMethod( mName, argClasses );
         Object objRes = method.invoke( obj, argValues );
   
         /* Now put the result in the result SOAPEnvelope */
