@@ -42,7 +42,7 @@ Copyright:
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv,clean"/>
 
 <target name="compile">
 
