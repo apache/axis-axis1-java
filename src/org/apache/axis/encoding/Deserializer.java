@@ -88,8 +88,9 @@ public class Deserializer extends SOAPHandler
             Category.getInstance(Deserializer.class.getName());
 
     protected Object value = null;
-    //protected DeserializationContext context = null;
-    protected boolean isComplete = false;
+
+    // isEnded is set when the endElement is called
+    protected boolean isEnded = false;
 
     protected Vector targets = null;
     
@@ -230,16 +231,16 @@ public class Deserializer extends SOAPHandler
      */
     public void valueComplete() throws SAXException
     {
-        isComplete = true;
-        
-        if (targets != null) {
-            Enumeration e = targets.elements();
-            while (e.hasMoreElements()) {
-                Target target = (Target)e.nextElement();
-                target.set(value);
-                if (category.isDebugEnabled()) {
-                    category.debug(JavaUtils.getMessage("setValueInTarget00",
-                            "" + value, "" + target));
+        if (componentsReady()) {            
+            if (targets != null) {
+                Enumeration e = targets.elements();
+                while (e.hasMoreElements()) {
+                    Target target = (Target)e.nextElement();
+                    target.set(value);
+                    if (category.isDebugEnabled()) {
+                        category.debug(JavaUtils.getMessage("setValueInTarget00",
+                                                            "" + value, "" + target));
+                    }
                 }
             }
         }
@@ -248,6 +249,7 @@ public class Deserializer extends SOAPHandler
     private int startIdx = 0;
     private int endIdx = -1;
     private boolean isHref = false;
+    private String id = null;  // Set to the id of the element
     
     /** Subclasses override this
      */
@@ -316,20 +318,19 @@ public class Deserializer extends SOAPHandler
         // current element contains child elements that cause an href back to this id.)
         // Also note that that endElement() method is responsible for the final
         // assoication of this id with the completed value.
-        String id = attributes.getValue("id");
+        id = attributes.getValue("id");
         if (id != null) {
             context.addObjectById(id, value);
             if (category.isDebugEnabled()) {
-                category.debug("Initiali put of deserialized value=" + value + " for id= "+ id);
+                category.debug("Initial put of deserialized value=" + value + " for id= "+ id);
             }     
         }
 
         String href = attributes.getValue("href");
         if (href != null) {
             isHref = true;
-            
-            Object ref = context.getObjectByRef(href);
-            
+
+            Object ref = context.getObjectByRef(href);            
             if (category.isDebugEnabled()) {
                 category.debug(JavaUtils.getMessage(
                         "gotForID00",
@@ -342,18 +343,6 @@ public class Deserializer extends SOAPHandler
             }
             
             if (ref instanceof MessageElement) {
-                /*
-                if (this.getClass().equals(Deserializer.class)) {
-                    QName type = ((MessageElement)ref).getType();
-                    Deserializer dser = 
-                                   context.getTypeMappingRegistry().getDeserializer(type);
-                    System.out.println("dser = " + dser);
-                    if (dser != null) {
-                        dser.copyValueTargets(this);
-                        context.replaceElementHandler(dser);
-                    }
-                }
-                */
                 context.replaceElementHandler(new EnvelopeHandler(this));
 
                 SAX2EventRecorder r = context.recorder;
@@ -364,6 +353,7 @@ public class Deserializer extends SOAPHandler
                 // If the ref is not a MessageElement, then it must be an
                 // element that has already been deserialized.  Use it directly.
                 value = ref;
+                valueComplete();
             }
             
             // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
@@ -410,53 +400,42 @@ public class Deserializer extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
+
+        isEnded = true;
         if (!isHref) {
             onEndElement(namespace, localName, context);
-            // !!! It would be nice if we could put the valueComplete()
-            // in here, so that it doesn't get called multiple times per
-            // multi-ref object, but that's problematic right now.  If
-            // a bean containing an array is serialized like this:
-            //
-            // <bean>
-            //  <array href="#1"/>
-            // </bean>
-            // <multiRef id="1" sOAP-ENC:arrayType="xsd:string[2]">
-            //  <item href="#2"/>
-            //  <item href="#3"/>
-            // </multiRef>
-            // <multiRef id="2">Hi there!</multiRef>
-            // <multiRef id="3">Hi again</multiRef>
-            //
-            // ... we'll end up setting the bean's array field at the
-            // end of the first <multiRef> element (the array), which
-            // will at that point have null values, since the items
-            // have yet to be deserialized.  Then when the items get
-            // processed (2nd + 3rd multiRefs), the values make it into
-            // the Vector inside the ArraySerializer, but not into the
-            // bean's array field....
-            //
-            // The solution to this might be to have each object know
-            // when it's "done" (i.e. all array elements are set), and
-            // let it call valueComplete() itself.  Though really this is
-            // only a problem with objects that we convert (i.e. arrays
-            // at the moment), because if no conversion occurs, the
-            // values for the later multiRefs just drop into the existing
-            // object in place.
         }
-        if (value != null)
+        
+        // Time to call valueComplete to copy the value to 
+        // the targets.  First a call is made to componentsReady
+        // to ensure that all components are ready.
+
+        if (componentsReady())
             valueComplete();
 
         // If this element has an id, then associate the value with the id.
         // Subsequent hrefs to the id will obtain the value directly.
         // This is necessary for proper multi-reference deserialization.
-        if (context.curElement != null) {
-            String id = context.curElement.getAttributeValue("id");
-            if (id != null) {
-                context.addObjectById(id, value);
-                if (category.isDebugEnabled()) {
-                    category.debug("Put deserialized value=" + value + " for id= "+ id);
-                }     
-            }
+        if (id != null) {
+            context.addObjectById(id, value);
+            if (category.isDebugEnabled()) {
+                category.debug("Put deserialized value=" + value + " for id= "+ id);
+            }     
         }
+    }
+
+    /**
+     * Return whether components are ready. 
+     * Use the default componentsReady if the  
+     * Deserializer value is used directly.  For arrays,
+     * componentsReady is overridden (since the
+     * ArraySerializer value is an ArrayList which will
+     * be converted into an actual array).  
+     * If componentsReady is overridden, the
+     * actual Deserializer is responsible for calling valueComplete
+     * when the value is ready.
+     */
+    protected boolean componentsReady() {
+        return true; 
     }
 }

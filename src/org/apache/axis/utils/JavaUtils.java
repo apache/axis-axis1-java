@@ -56,6 +56,7 @@
 package org.apache.axis.utils;
 
 import org.apache.log4j.Category;
+import org.apache.axis.encoding.ArraySerializer;
 
 import java.lang.reflect.Array;
 
@@ -95,6 +96,14 @@ public class JavaUtils
         
         if (!(arg instanceof List))
             return arg;
+
+        // See if a previously converted value is stored in the argument.
+        Object destValue = null;
+        if (arg instanceof ArraySerializer.ArrayListExtension) {
+            destValue = (( ArraySerializer.ArrayListExtension) arg).getConvertedValue(destClass);
+            if (destValue != null)
+                return destValue;
+        }
         
         List list = (List)arg;
         int length = list.size();
@@ -107,7 +116,7 @@ public class JavaUtils
                 for (int i = 0; i < length; i++) {
                     Array.set(array, i, list.get(i));
                 }
-                return array;
+                destValue = array;
                 
             } else {
                 Object [] array;
@@ -122,11 +131,10 @@ public class JavaUtils
                 for (int i=0; i < length; i++) {
                     array[i] = convert(list.get(i), destClass.getComponentType()); 
                 }
-                return array;
+                destValue = array;
             }
         }
-        
-        if (List.class.isAssignableFrom(destClass)) {
+        else if (List.class.isAssignableFrom(destClass)) {
             List newList = null;
             try {
                 newList = (List)destClass.newInstance();
@@ -138,10 +146,17 @@ public class JavaUtils
             for (int j = 0; j < ((List)arg).size(); j++) {
                 newList.add(list.get(j));
             }
-            return newList;
+            destValue = newList;
         }
-        
-        return arg;
+        else {
+            destValue = arg;
+        }
+
+        // Store the converted value in the argument if possible.
+        if (arg instanceof ArraySerializer.ArrayListExtension) {
+            (( ArraySerializer.ArrayListExtension) arg).setConvertedValue(destClass, destValue);
+        }
+        return destValue;
     }
 
     /**

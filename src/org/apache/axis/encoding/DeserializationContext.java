@@ -386,8 +386,12 @@ public class DeserializationContext extends DefaultHandler
     {
         if (fixups == null)
             fixups = new HashMap();
-        
-        fixups.put(id, dser);
+
+        Deserializer prev = (Deserializer) fixups.put(id, dser);
+
+        // If previously registered deserializer, move the targets
+        if (prev != null && prev != dser)
+            dser.copyValueTargets(prev);
     }
     
     public void registerElementByID(String id, MessageElement elem)
