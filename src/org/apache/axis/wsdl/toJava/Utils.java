@@ -613,15 +613,23 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Get the QName that could be used in the xsi:type
      * when serializing an object for this parameter/return
      * @param param is a parameter
-     * @return the QName of the parameter's type
+     * @return the QName of the parameter's xsi type
      */
     public static QName getXSIType(Parameter param) {
         if (param.getMIMEType() != null) {
             return getMIMETypeQName(param.getMIMEType());
         }
+        return getXSIType(param.getType());
+    } // getXSIType
 
+    /**
+     * Get the QName that could be used in the xsi:type
+     * when serializing an object of the given type.
+     * @param te is the type entry
+     * @return the QName of the type's xsi type
+     */
+    public static QName getXSIType(TypeEntry te) {
         QName xmlType = null;
-        TypeEntry te = param.getType();
 
         // If the TypeEntry describes an Element, get
         // the referenced Type.
