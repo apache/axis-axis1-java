@@ -113,6 +113,7 @@
             <xsd:element name="enum6" type="typens:enumShort"/>
             <xsd:element name="enum7" type="typens:enumByte"/>
             <xsd:element name="enum8" type="typens:enumInteger"/>
+            <xsd:element name="enum9" type="typens:enumNMTOKEN"/>
             <xsd:element name="soapint" type="soapenc:int"/>
             <xsd:element name="nested" type="typens2:b"/>
             <xsd:element name="D_TSENT" type="xsd:string"/> <!-- test strange name -->
@@ -328,6 +329,14 @@
           <xsd:enumeration value="in"/>
           <xsd:enumeration value="inOut"/>
           <xsd:enumeration value="out"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="enumNMTOKEN">
+        <xsd:restriction base="xsd:NMTOKEN"> <!-- axis provided simple type -->
+          <xsd:enumeration value="NameToken1"/>
+          <xsd:enumeration value="NameToken2"/>                    
+          <xsd:enumeration value="NameToken3"/>                    
         </xsd:restriction>
       </xsd:simpleType>
 

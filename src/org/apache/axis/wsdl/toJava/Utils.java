@@ -66,6 +66,7 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -285,25 +286,17 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
             // The restriction node indicates the type being restricted
             // (the base attribute contains this type).
-            // The base type must be a built-in type, and not boolean
+            // The base type must be a simple type, and not boolean
             TypeEntry baseEType = null;
             if (restrictionNode != null) {
                 QName baseType = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
                 baseEType = symbolTable.getType(baseType);
                 if (baseEType != null) {
                     String javaName = baseEType.getName();
-                    if (javaName.equals("java.lang.String") ||
-                        javaName.equals("java.math.BigInteger") ||
-                        javaName.equals("java.math.BigDecimal") ||
-                        javaName.equals("int") ||
-                        javaName.equals("long") ||
-                        javaName.equals("short") ||
-                        javaName.equals("float") ||
-                        javaName.equals("double") ||
-                        javaName.equals("byte"))
-                        ; // Okay Type
-                    else
+                    if (javaName.equals("boolean") ||
+                        ! SchemaUtils.isSimpleSchemaType(baseEType.getQName())) {
                         baseEType = null;
+                    }
                 }
             }
 
