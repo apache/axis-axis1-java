@@ -63,7 +63,7 @@ import java.util.Calendar;
  */
 public final class CalendarHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public Calendar value;
 
     /**
@@ -80,5 +80,4 @@ public final class CalendarHolder implements Holder {
         this.value = value;
     }
 }
-
 

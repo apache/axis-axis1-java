@@ -61,7 +61,7 @@ package javax.xml.rpc.holders;
  */
 public final class BooleanHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public boolean value;
 
     /**
@@ -78,5 +78,4 @@ public final class BooleanHolder implements Holder {
         this.value = value;
     }
 }
-
 

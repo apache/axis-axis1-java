@@ -156,7 +156,7 @@ public interface SOAPEnvelope extends SOAPElement {
      *   for use in the SOAP/XML document.
      *
      * @param localName a <CODE>String</CODE> giving
-          the local name
+     * the local name
      * @return a <CODE>Name</CODE> object initialized with the given
      *     local name
      * @throws  SOAPException  if there is a SOAP error

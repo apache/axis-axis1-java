@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler;
 
 import javax.xml.namespace.QName;
@@ -213,6 +212,8 @@ public interface Handler {
      * various handle method.
      *
      * @param HandlerInfo Configuration for the initialization of this handler
+     *
+     * @param config
      * @throws JAXRPCException If initialization of the handler fails
      */
     public abstract void init(HandlerInfo config);
@@ -235,3 +236,4 @@ public interface Handler {
      */
     public QName[] getHeaders();
 }
+

@@ -61,7 +61,7 @@ package javax.xml.rpc.holders;
  */
 public final class DoubleWrapperHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public Double value;
 
     /**
@@ -78,5 +78,4 @@ public final class DoubleWrapperHolder implements Holder {
         this.value = value;
     }
 }
-
 

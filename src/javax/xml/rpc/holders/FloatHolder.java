@@ -61,7 +61,7 @@ package javax.xml.rpc.holders;
  */
 public final class FloatHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public float value;
 
     /**
@@ -78,5 +78,4 @@ public final class FloatHolder implements Holder {
         this.value = value;
     }
 }
-
 

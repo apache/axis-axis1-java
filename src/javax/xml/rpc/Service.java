@@ -54,156 +54,161 @@
  */
 package javax.xml.rpc;
 
-
-
 import javax.xml.namespace.QName;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.handler.HandlerRegistry;
 
-
 /**
- * A service class acts as a factory of the following objects:
- * <UL>
- * <LI>Dynamic proxy for a service port.
- * <LI>Instance of the type javax.xml.rpc.Call for the dynamic
- *    invocation of a remote operation on a service port. 
- * <LI>Instance of a generated static stub class
- * </UL>
- * 
- * <p>The Service implementation class is required to implement 
- * java.io.Serializable and javax.naming.Referenceable 
- * interfaces to support registration in the JNDI namespace.
+ * <code>Service</code> class acts as a factory of the following:
+ * <ul>
+ * <li>Dynamic proxy for the target service endpoint.
+ * <li>Instance of the type <code>javax.xml.rpc.Call</code> for
+ *     the dynamic invocation of a remote operation on the
+ *     target service endpoint.
+ * <li>Instance of a generated stub class
+ * </ul>
  *
- * @version 0.1
+ * @version 1.0
  */
 public interface Service {
 
     /**
-     * The getPort method returns a dynamic proxy for the specified
-     * service port. A service client uses this dynamic proxy to invoke
-     * operations on the target service port. The proxyInterface
-     * specifies the service definition interface that is supported by
-     * the created dynamic proxy.
+     * The getPort method returns either an instance of a generated
+     * stub implementation class or a dynamic proxy. A service client
+     * uses this dynamic proxy to invoke operations on the target
+     * service endpoint. The <code>serviceEndpointInterface</code>
+     * specifies the service endpoint interface that is supported by
+     * the created dynamic proxy or stub instance.
      *
-     * @param portName - Qualified name of the service port in the WSDL
-     *                   based service description
-     * @param proxyInterface - Service definition interface supported by
-     *                         the dynamic proxy
-     *
-     * @return Dynamic proxy object that supports the service definition
-     *         interface that extends the java.rmi.Remote
-     *
-     * @throws ServiceException - If the service class fails to create a
-     *                            dynamic proxy
+     * @param portName Qualified name of the service endpoint in
+     *              the WSDL service description
+     * @param serviceEndpointInterface Service endpoint interface
+     *              supported by the dynamic proxy or stub
+     *              instance
+     * @return java.rmi.Remote Stub instance or dynamic proxy that
+     *              supports the specified service endpoint
+     *              interface
+     * @throws ServiceException This exception is thrown in the
+     *              following cases:
+     *              <ul>
+     *              <li>If there is an error in creation of
+     *                  the dynamic proxy or stub instance
+     *              <li>If there is any missing WSDL metadata
+     *                  as required by this method
+     *              <li>Optionally, if an illegal
+     *                  <code>serviceEndpointInterface</code>
+     *                  or <code>portName</code> is specified
+     *              </ul>
      */
-    public java.rmi.Remote getPort(QName portName, Class proxyInterface)
-        throws ServiceException;
-
-    /**
-     * The getPort method returns a dynamic proxy for a default service
-     * port. A service client uses this dynamic proxy to invoke operations
-     * on the target service port. The serviceDefInterface specifies the
-     * service definition interface that is supported by the created
-     * dynamic proxy.
-     *
-     * @param serviceDefInterface - Service definition interface supported
-     *                              by the dynamic proxy
-     *
-     * @return Dynamic proxy object that supports the service definition
-     *         interface that extends the java.rmi.Remote
-     *
-     * @throws ServiceException - If the service class fails to create a
-     *                            dynamic proxy
-     */
-    public java.rmi.Remote getPort(Class serviceDefInterface)
+    public java.rmi
+        .Remote getPort(QName portName, Class serviceEndpointInterface)
             throws ServiceException;
 
     /**
-     * Creates a Call instance.
+     * The getPort method returns either an instance of a generated
+     * stub implementation class or a dynamic proxy. The parameter
+     * <code>serviceEndpointInterface</code> specifies the service
+     * endpoint interface that is supported by the returned stub or
+     * proxy. In the implementation of this method, the JAX-RPC
+     * runtime system takes the responsibility of selecting a protocol
+     * binding (and a port) and configuring the stub accordingly.
+     * The returned <code>Stub</code> instance should not be
+     * reconfigured by the client.
      *
-     * @param - The qualified name for the target service port
+     * @param serviceEndpointInterface Service endpoint interface
+     * @return Stub instance or dynamic proxy that supports the
+     *              specified service endpoint interface
      *
-     * @return Call object
+     * @throws ServiceException <ul>
+     *              <li>If there is an error during creation
+     *                  of stub instance or dynamic proxy
+     *              <li>If there is any missing WSDL metadata
+     *                  as required by this method
+     *              <li>Optionally, if an illegal
+     *                  <code>serviceEndpointInterface</code>
      *
-     * @throws ServiceException - If the Service class fails to create
-     *                            a Call object
+     *                  is specified
+     *              </ul>
+     */
+    public java.rmi.Remote getPort(Class serviceEndpointInterface)
+        throws ServiceException;
+
+    /**
+     * Gets an array of preconfigured <code>Call</code> objects for
+     * invoking operations on the specified port. There is one
+     * <code>Call</code> object per operation that can be invoked
+     * on the specified port. Each <code>Call</code> object is
+     * pre-configured and does not need to be configured using
+     * the setter methods on <code>Call</code> interface.
+     *
+     * <p>Each invocation of the <code>getCalls</code> method
+     * returns a new array of preconfigured <code>Call</code>
+     *
+     * objects
+     *
+     * <p>This method requires the <code>Service</code> implementation
+     * class to have access to the WSDL related metadata.
+     *
+     * @param portName Qualified name for the target service endpoint
+     * @return Call[]  Array of pre-configured Call objects
+     * @throws ServiceException If this Service class does not
+     *              have access to the required WSDL metadata
+     *              or if an illegal <code>portName</code> is
+     *              specified.
+     */
+    public Call[] getCalls(QName portName) throws ServiceException;
+
+    /**
+     * Creates a <code>Call</code> instance.
+     *
+     * @param portName Qualified name for the target service endpoint
+     * @return Call instance
+     * @throws ServiceException If any error in the creation of
+     *              the <code>Call</code> object
      */
     public Call createCall(QName portName) throws ServiceException;
 
     /**
-     * Creates a Call instance.
+     * Creates a <code>Call</code> instance.
      *
-     * @param portName - The qualified name for the target service port
-     * @param operationName - Name of the operation for which this Call
-     *                        object is created.
-     *
-     * @return Call object
-     *
-     * @throws ServiceException - If the Service class fails to create
-     *                            a Call object
-     */
-    public Call createCall(QName portName, String operationName)
-        throws ServiceException;
-
-    /**
-     * Creates a Call instance.
-     *
-     * @param portName - The qualified name for the target service port
-     * @param operationName - QName of the operation for which this Call
-     *                        object is created.
-     *
-     * @return Call object
-     *
-     * @throws ServiceException - If the Service class fails to create
-     *                            a Call object
+     * @param portName Qualified name for the target service
+     *              endpoint
+     * @param operationName Qualified Name of the operation for
+     *              which this <code>Call</code> object is to
+     *              be created.
+     * @return Call instance
+     * @throws ServiceException If any error in the creation of
+     *              the <code>Call</code> object
      */
     public Call createCall(QName portName, QName operationName)
         throws ServiceException;
 
     /**
-     * Creates an empty Call object that needs to be configured using
-     * the setter methods on the Call interface.
+     * Creates a <code>Call</code> instance.
+     *
+     * @param portName Qualified name for the target service
+     *              endpoint
+     * @param operationName Name of the operation for which this
+     *                  <code>Call</code> object is to be
+     *                  created.
+     * @return Call instance
+     * @throws ServiceException If any error in the creation of
+     *              the <code>Call</code> object
+     */
+    public Call createCall(QName portName, String operationName)
+        throws ServiceException;
+
+    /**
+     * Creates a <code>Call</code> object not associated with
+     * specific operation or target service endpoint. This
+     * <code>Call</code> object needs to be configured using the
+     * setter methods on the <code>Call</code> interface.
      *
      * @return  Call object
-     *
-     * @throws ServiceException
+     * @throws ServiceException If any error in the creation of
+     *              the <code>Call</code> object
      */
     public Call createCall() throws ServiceException;
-
-    /**
-     * Gets an array of preconfigured Call objects for invoking operations
-     * on the specified port. There is one Call object per operation that
-     * can be invoked on the specified port. Each Call object is
-     * pre-configured and does not need to be configured using the setter
-     * methods on Call interface.
-     *
-     * This method requires the Service implementation class to have access
-     * to the WSDL related metadata.
-     *
-     * @param portName - Qualified name for the target service endpoint
-     *
-     * @throws ServiceException - If this Service class does not have access
-     * to the required WSDL metadata or if an illegal portName is specified.
-     */
-    public Call[] getCalls(QName portName) throws ServiceException;
-
-    /**
-     * Returns the configured HandlerRegistry instance for this Service
-     * instance.
-     *
-     * @return HandlerRegistry
-     * @throws java.lang.UnsupportedOperationException - if the Service
-     *         class does not support the configuration of a
-     *         HandlerRegistry.
-     */
-    public HandlerRegistry getHandlerRegistry();
-
-    /**
-     * Gets location of the WSDL document for this Service.
-     *
-     * @return Location of the WSDL document for this service
-     */
-    public java.net.URL getWSDLDocumentLocation();
 
     /**
      * Gets the name of this Service.
@@ -213,21 +218,46 @@ public interface Service {
     public QName getServiceName();
 
     /**
-     * Gets the list of qualified names of the ports grouped by this service
+     * Returns an <code>Iterator</code> for the list of
+     * <code>QName</code>s of service endpoints grouped by this
+     * service
      *
-     * @return iterator containing list of qualified names of the ports  
-     * @throws ServiceException If this Service class does not have access
-     *         to the required WSDL metadata
+     * @return Returns <code>java.util.Iterator</code> with elements
+     *     of type <code>javax.xml.namespace.QName</code>
+     * @throws ServiceException If this Service class does not
+     *     have access to the required WSDL metadata
      */
     public java.util.Iterator getPorts() throws ServiceException;
 
     /**
-     * Gets the TypeMappingRegistry registered with this Service object
+     * Gets location of the WSDL document for this Service.
      *
-     * @return  The configured TypeMappingRegistry or null if no
-     *          TypeMappingRegistry has been set on the Service object
+     * @return URL for the location of the WSDL document for
+     *     this service
+     */
+    public java.net.URL getWSDLDocumentLocation();
+
+    /**
+     * Gets the <code>TypeMappingRegistry</code> for this
+     * <code>Service</code> object. The returned
+     * <code>TypeMappingRegistry</code> instance is pre-configured
+     * to support the standard type mapping between XML and Java
+     * types types as required by the JAX-RPC specification.
+     *
+     * @return  The TypeMappingRegistry for this Service object.
+     * @throws java.lang.UnsupportedOperationException if the <code>Service</code> class does not support
+     *     the configuration of <code>TypeMappingRegistry</code>.
      */
     public TypeMappingRegistry getTypeMappingRegistry();
-}
 
+    /**
+     * Returns the configured <code>HandlerRegistry</code> instance
+     * for this <code>Service</code> instance.
+     *
+     * @return HandlerRegistry
+     * @throws java.lang.UnsupportedOperationException - if the <code>Service</code> class does not support
+     *     the configuration of a <code>HandlerRegistry</code>
+     */
+    public HandlerRegistry getHandlerRegistry();
+}
 

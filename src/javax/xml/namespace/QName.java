@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.namespace;
 
 import java.io.Serializable;
@@ -69,13 +68,14 @@ import java.io.Serializable;
  * @version 1.0
  */
 public class QName implements Serializable {
-    /** comment/shared empty string     */
+
+    /** comment/shared empty string */
     private static final String emptyString = "".intern();
 
-    /** Field namespaceURI           */
+    /** Field namespaceURI */
     private final String namespaceURI;
 
-    /** Field localPart           */
+    /** Field localPart */
     private final String localPart;
 
     /**
@@ -84,10 +84,13 @@ public class QName implements Serializable {
      * @param localPart Local part of the QName
      */
     public QName(String localPart) {
+
         this.namespaceURI = emptyString;
-        this.localPart= (localPart == null) ? emptyString : localPart.intern();
+        this.localPart    = (localPart == null)
+                            ? emptyString
+                            : localPart.intern();
     }
-    
+
     /**
      * Constructor for the QName.
      *
@@ -95,11 +98,13 @@ public class QName implements Serializable {
      * @param localPart Local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
-        this.namespaceURI =
-            (namespaceURI == null) ? emptyString : namespaceURI.intern();
 
-        this.localPart =
-            (localPart == null) ? emptyString : localPart.intern();
+        this.namespaceURI = (namespaceURI == null)
+                            ? emptyString
+                            : namespaceURI.intern();
+        this.localPart    = (localPart == null)
+                            ? emptyString
+                            : localPart.intern();
     }
 
     /**
@@ -126,6 +131,7 @@ public class QName implements Serializable {
      * @return  a string representation of the QName
      */
     public String toString() {
+
         return ((namespaceURI == emptyString)
                 ? localPart
                 : namespaceURI + ":" + localPart);
@@ -151,6 +157,7 @@ public class QName implements Serializable {
      *      QName: <code>false</code> otherwise.
      */
     public final boolean equals(Object obj) {
+
         if (obj == this) {
             return true;
         }
@@ -158,11 +165,12 @@ public class QName implements Serializable {
         if (!(obj instanceof QName)) {
             return false;
         }
-        
-        if (namespaceURI == ((QName)obj).namespaceURI &&
-            localPart == ((QName)obj).localPart) {
+
+        if ((namespaceURI == ((QName) obj).namespaceURI)
+                && (localPart == ((QName) obj).localPart)) {
             return true;
         }
+
         return false;
     }
 
@@ -183,14 +191,18 @@ public class QName implements Serializable {
      * @return QName corresponding to the given String
      */
     public static QName valueOf(String s) {
+
         if ((s == null) || s.equals("")) {
             throw new IllegalArgumentException("invalid QName literal");
         }
+
         if (s.charAt(0) == '{') {
             int i = s.indexOf('}');
+
             if (i == -1) {
                 throw new IllegalArgumentException("invalid QName literal");
             }
+
             if (i == s.length() - 1) {
                 throw new IllegalArgumentException("invalid QName literal");
             } else {
@@ -213,5 +225,3 @@ public class QName implements Serializable {
         return namespaceURI.hashCode() ^ localPart.hashCode();
     }
 }
-
-

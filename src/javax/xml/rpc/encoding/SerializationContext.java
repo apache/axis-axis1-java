@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
 
 /**
@@ -66,5 +65,4 @@ package javax.xml.rpc.encoding;
  * @version 1.0
  */
 public interface SerializationContext {}
-
 

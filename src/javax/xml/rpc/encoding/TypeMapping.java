@@ -52,11 +52,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
 
 /**
  * The <code>javax.xml.rpc.encoding.TypeMapping</code> is the base
@@ -90,7 +88,7 @@ public interface TypeMapping {
      * <code>null</code> as the parameter for this method.
      *
      * @param encodingStyleURIs Array of encodingStyle URIs for the
-                           supported encoding styles
+     * supported encoding styles
      */
     public void setSupportedEncodings(String[] encodingStyleURIs);
 
@@ -120,7 +118,7 @@ public interface TypeMapping {
      * @throws JAXRPCException If any error during the registration
      */
     public void register(Class javaType, QName xmlType, SerializerFactory sf,
-           DeserializerFactory dsf);
+                         DeserializerFactory dsf);
 
     /**
      * Gets the SerializerFactory registered for the specified
@@ -135,7 +133,7 @@ public interface TypeMapping {
     public SerializerFactory getSerializer(Class javaType, QName xmlType);
 
     /**
-     * Gets the DeserializerFactory registered for the specified pair 
+     * Gets the DeserializerFactory registered for the specified pair
      * of Java type and XML data type.
      *
      * @param javaType Class of the Java type
@@ -147,19 +145,19 @@ public interface TypeMapping {
     public DeserializerFactory getDeserializer(Class javaType, QName xmlType);
 
     /**
-     * Removes the SerializerFactory registered for the specified 
+     * Removes the SerializerFactory registered for the specified
      * pair of Java type and XML data type.
      *
      * @param javaType Class of the Java type
      * @param xmlType Qualified name of the XML data type
      *
      * @throws JAXRPCException If there is error
-     * in removing the registered SerializerFactory 
+     * in removing the registered SerializerFactory
      */
     public void removeSerializer(Class javaType, QName xmlType);
 
     /**
-     * Removes the DeserializerFactory registered for the specified 
+     * Removes the DeserializerFactory registered for the specified
      * pair of Java type and XML data type.
      *
      * @param javaType Class of the Java type
@@ -170,5 +168,4 @@ public interface TypeMapping {
      */
     public void removeDeserializer(Class javaType, QName xmlType);
 }
-
 

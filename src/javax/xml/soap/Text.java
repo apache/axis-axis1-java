@@ -57,7 +57,7 @@ package javax.xml.soap;
 /**
  * A representation of a node whose value is text. A <CODE>
  *   Text</CODE> object may represent text that is content or text
- *   that is a comment. 
+ *   that is a comment.
  */
 public interface Text extends Node {
 

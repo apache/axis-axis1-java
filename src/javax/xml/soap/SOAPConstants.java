@@ -63,14 +63,14 @@ public interface SOAPConstants {
 
     /**
      * The namespace identifier for the SOAP encoding (see section 5 of
-     * the SOAP 1.1 specification). 
+     * the SOAP 1.1 specification).
      */
     public static final String URI_NS_SOAP_ENCODING =
         "http://schemas.xmlsoap.org/soap/encoding/";
 
     /**
      * The URI identifying the first application processing a SOAP request as the intended
-     * actor for a SOAP header entry (see section 4.2.2 of the SOAP 1.1 specification). 
+     * actor for a SOAP header entry (see section 4.2.2 of the SOAP 1.1 specification).
      */
     public static final String URI_SOAP_ACTOR_NEXT =
         "http://schemas.xmlsoap.org/soap/actor/next";

@@ -52,12 +52,11 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler;
 
-import java.io.Serializable;
-
 import javax.xml.namespace.QName;
+
+import java.io.Serializable;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerRegistry</code>
@@ -107,6 +106,6 @@ public interface HandlerRegistry extends Serializable {
      *  @throws java.lang.IllegalArgumentException If an invalid
      *     <code>portName</code> is specified
      */
-    public abstract void setHandlerChain(
-            QName portName, java.util.List chain);
+    public abstract void setHandlerChain(QName portName, java.util.List chain);
 }
+

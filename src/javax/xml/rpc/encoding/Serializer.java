@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.encoding;
 
 /**
@@ -73,5 +72,4 @@ public interface Serializer extends java.io.Serializable {
      */
     public String getMechanismType();
 }
-
 

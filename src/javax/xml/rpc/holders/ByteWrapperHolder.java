@@ -61,7 +61,7 @@ package javax.xml.rpc.holders;
  */
 public final class ByteWrapperHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public Byte value;
 
     /**
@@ -78,5 +78,3 @@ public final class ByteWrapperHolder implements Holder {
         this.value = value;
     }
 }
-
-

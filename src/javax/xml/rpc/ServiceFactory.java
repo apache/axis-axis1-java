@@ -54,74 +54,88 @@
  */
 package javax.xml.rpc;
 
-import java.net.URL;
-
 import javax.xml.namespace.QName;
 
+import java.net.URL;
+
 /**
- * The javax.xml.rpc.ServiceFactory is an abstract class that provides
- * a factory for the creation of instances of the type
+ * The <code>javax.xml.rpc.ServiceFactory</code> is an abstract class
+ * that provides a factory for the creation of instances of the type
  * <code>javax.xml.rpc.Service</code>. This abstract class follows the
  * abstract static factory design pattern. This enables a J2SE based
- * client to create a Service instance in a portable manner without
- * using the constructor of the Service implementation class.
+ * client to create a <code>Service instance</code> in a portable manner
+ * without using the constructor of the <code>Service</code>
+ * implementation class.
+ * <p>
+ * The ServiceFactory implementation class is set using the
+ * system property <code>SERVICEFACTORY_PROPERTY</code>.
+ *
+ * @version 1.0
  */
 public abstract class ServiceFactory {
 
-    /** */
+    /**  */
     protected ServiceFactory() {}
 
     /**
-     * A constant representing the property used to lookup the name of a
-     * ServiceFactory implementation class.
+     * A constant representing the property used to lookup the
+     * name of a <code>ServiceFactory</code> implementation
+     * class.
      */
     public static final java.lang.String SERVICEFACTORY_PROPERTY =
-            "javax.xml.rpc.ServiceFactory";
+        "javax.xml.rpc.ServiceFactory";
 
     /**
-     * Gets an instance of the ServiceFactory.
+     * Gets an instance of the <code>ServiceFactory</code>
+     *
      * <p>Only one copy of a factory exists and is returned to the
      * application each time this method is called.
+     *
      * <p> The implementation class to be used can be overridden by
      * setting the javax.xml.rpc.ServiceFactory system property.
+     *
      * @return  ServiceFactory.
      * @throws  ServiceException
      */
     public static ServiceFactory newInstance() throws ServiceException {
+
         String factoryImplName =
             System.getProperty("javax.xml.rpc.ServiceFactory",
                                "org.apache.axis.client.ServiceFactory");
+
         try {
             Class clazz = Class.forName(factoryImplName);
+
             return (ServiceFactory) clazz.newInstance();
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new ServiceException(e);
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new ServiceException(e);
-        }
-        catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             throw new ServiceException(e);
         }
     }
 
     /**
-     *  Create a Service instance.
-     *  @param   wsdlDocumentLocation URL for the WSDL document location
-                              for the service
-     *  @param   serviceName  QName for the service.
-     *  @return  Service.
-     *  @throws  ServiceException If any error in creation of the specified service
+     * Create a <code>Service</code> instance.
+     *
+     * @param   wsdlDocumentLocation URL for the WSDL document location
+     * @param   serviceName  QName for the service.
+     * @return  Service.
+     * @throws  ServiceException If any error in creation of the
+     *                specified service
      */
-    public abstract Service createService(URL wsdlDocumentLocation, QName serviceName)
-        throws ServiceException;
+    public abstract Service createService(
+        URL wsdlDocumentLocation, QName serviceName) throws ServiceException;
 
     /**
-     *  Create a Service instance.
-     *  @param   serviceName QName for the service
-     *  @return  Service.
-     *  @throws  ServiceException If any error in creation of the specified service
+     * Create a <code>Service</code> instance.
+     *
+     * @param   serviceName QName for the service
+     * @return  Service.
+     * @throws  ServiceException If any error in creation of the specified service
      */
-    public abstract Service createService(QName serviceName) throws ServiceException;
+    public abstract Service createService(QName serviceName)
+        throws ServiceException;
 }
+

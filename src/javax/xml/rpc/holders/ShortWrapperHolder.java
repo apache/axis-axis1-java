@@ -61,7 +61,7 @@ package javax.xml.rpc.holders;
  */
 public final class ShortWrapperHolder implements Holder {
 
-    /** Field _value           */
+    /** Field _value */
     public Short value;
 
     /**
@@ -78,5 +78,3 @@ public final class ShortWrapperHolder implements Holder {
         this.value = value;
     }
 }
-
-

@@ -87,13 +87,15 @@ public class SOAPFaultException extends RuntimeException {
      *  @param  faultactor   <code>faultactor</code> element of SOAP fault
      *  @param  detail       <code>faultdetail</code> element of SOAP fault
      */
-    public SOAPFaultException(QName faultcode, String faultstring, String faultactor,
-                     Detail detail) {
+    public SOAPFaultException(QName faultcode, String faultstring,
+                              String faultactor, Detail detail) {
+
         super(faultstring);
-        this.faultcode = faultcode;
+
+        this.faultcode   = faultcode;
         this.faultstring = faultstring;
-        this.faultactor = faultactor;
-        this.detail = detail;
+        this.faultactor  = faultactor;
+        this.detail      = detail;
     }
 
     /**

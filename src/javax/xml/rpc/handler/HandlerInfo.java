@@ -52,15 +52,14 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler;
+
+import javax.xml.namespace.QName;
 
 import java.io.Serializable;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerInfo</code> represents
@@ -76,7 +75,7 @@ public class HandlerInfo implements Serializable {
     /** Default constructor */
     public HandlerInfo() {
         handlerClass = null;
-        config = new HashMap();
+        config       = new HashMap();
     }
 
     /**
@@ -89,9 +88,10 @@ public class HandlerInfo implements Serializable {
      *          of the outermost element of a header block
      */
     public HandlerInfo(Class handlerClass, Map config, QName[] headers) {
+
         this.handlerClass = handlerClass;
-        this.config = config;
-        this.headers = headers;
+        this.config       = config;
+        this.headers      = headers;
     }
 
     /**
@@ -157,3 +157,4 @@ public class HandlerInfo implements Serializable {
     /** headers */
     private QName[] headers;
 }
+

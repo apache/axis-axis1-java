@@ -54,43 +54,110 @@
  */
 package javax.xml.soap;
 
-public abstract class SOAPFactory
-{
-    public SOAPFactory()
-    {
-    }
+/**
+ * Class SOAPFactory
+ *
+ * @author
+ * @version %I%, %G%
+ */
+public abstract class SOAPFactory {
 
-    public abstract SOAPElement createElement(Name name)
-        throws SOAPException;
+    /**
+     * Constructor SOAPFactory
+     */
+    public SOAPFactory() {}
 
-    public abstract SOAPElement createElement(String s)
-        throws SOAPException;
+    /**
+     * Method createElement
+     *
+     * @param name
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    public abstract SOAPElement createElement(Name name) throws SOAPException;
 
+    /**
+     * Method createElement
+     *
+     * @param s
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    public abstract SOAPElement createElement(String s) throws SOAPException;
+
+    /**
+     * Method createElement
+     *
+     * @param s
+     * @param s1
+     * @param s2
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
     public abstract SOAPElement createElement(String s, String s1, String s2)
         throws SOAPException;
 
-    public abstract Detail createDetail()
-        throws SOAPException;
+    /**
+     * Method createDetail
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    public abstract Detail createDetail() throws SOAPException;
 
+    /**
+     * Method createName
+     *
+     * @param s
+     * @param s1
+     * @param s2
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
     public abstract Name createName(String s, String s1, String s2)
         throws SOAPException;
 
-    public abstract Name createName(String s)
-        throws SOAPException;
+    /**
+     * Method createName
+     *
+     * @param s
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    public abstract Name createName(String s) throws SOAPException;
 
-    public static SOAPFactory newInstance()
-        throws SOAPException
-    {
-        try
-        {
-            return (SOAPFactory)FactoryFinder.find(SF_PROPERTY, DEFAULT_SF);
-        }
-        catch(Exception exception)
-        {
-            throw new SOAPException("Unable to create SOAP Factory: " + exception.getMessage());
+    /**
+     * Method newInstance
+     *
+     * @return
+     *
+     * @throws SOAPException
+     */
+    public static SOAPFactory newInstance() throws SOAPException {
+
+        try {
+            return (SOAPFactory) FactoryFinder.find(SF_PROPERTY, DEFAULT_SF);
+        } catch (Exception exception) {
+            throw new SOAPException("Unable to create SOAP Factory: "
+                                    + exception.getMessage());
         }
     }
 
+    /** Field SF_PROPERTY           */
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";
-    private static final String DEFAULT_SF = "org.apache.axis.soap.SOAPFactoryImpl";
+
+    /** Field DEFAULT_SF           */
+    private static final String DEFAULT_SF =
+        "org.apache.axis.soap.SOAPFactoryImpl";
 }

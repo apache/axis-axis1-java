@@ -52,7 +52,6 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package javax.xml.rpc.handler.soap;
 
 import javax.xml.rpc.handler.MessageContext;
@@ -104,3 +103,4 @@ public interface SOAPMessageContext extends MessageContext {
      */
     public abstract String[] getRoles();
 }
+

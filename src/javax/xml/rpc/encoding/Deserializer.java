@@ -73,3 +73,4 @@ public interface Deserializer extends java.io.Serializable {
      */
     public String getMechanismType();
 }
+
