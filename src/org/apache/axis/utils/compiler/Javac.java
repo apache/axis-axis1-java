@@ -104,6 +104,7 @@ public class Javac extends AbstractCompiler {
             throw new RuntimeException("No compiler found in your classpath. Make sure you added 'tools.jar'");
         }
     }
+    category.debug("Javac compiler class: " + (modern?MODERN_CLASS:CLASSIC_CLASS));
   }
 
   /**
@@ -166,6 +167,7 @@ public class Javac extends AbstractCompiler {
             }
             return errors;
         }
+        category.debug(line);
         buffer.append(line);
         buffer.append('\n');
       } while (!line.endsWith("^"));
@@ -223,6 +225,7 @@ public class Javac extends AbstractCompiler {
       // each error has 3 lines
       for (int i = 0; i < 3 ; i++) {
         if ((line = input.readLine()) == null) return errors;
+        category.debug(line);
         buffer.append(line);
         buffer.append('\n');
       }
