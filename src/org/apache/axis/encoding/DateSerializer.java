@@ -73,7 +73,8 @@ import org.xml.sax.*;
  */
 public class DateSerializer implements Serializer {
 
-    static SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+    private static SimpleDateFormat zulu = 
+      new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
 
     static {
       zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -82,7 +83,7 @@ public class DateSerializer implements Serializer {
     static class DateDeser extends SOAPTypeMappingRegistry.BasicDeser {
         Object makeValue(String source) { 
           try {
-            return DateFormat.getDateInstance().parse(source); 
+            return zulu.parse(source); 
           } catch (Exception e) {
             throw new NumberFormatException(e.toString());
           }
