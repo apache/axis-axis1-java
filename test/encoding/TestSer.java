@@ -3,8 +3,12 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.Constants;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -58,13 +62,17 @@ public class TestSer extends TestCase {
         msg.addBodyElement(body);
         
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContext(stringWriter, msgContext);
+        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
         context.setDoMultiRefs(multiref);
         
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
+        TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP_ENC);
+        if (tm == null) {
+            tm = (TypeMapping) reg.createTypeMapping();
+            reg.register(tm, new String[] {Constants.URI_SOAP_ENC});
+        }
         QName dataQName = new QName("typeNS", "Data");
-        
-        reg.addSerializer(Data.class, dataQName, new DataSer());
+        tm.register(Data.class, dataQName, new DataSerFactory(), new DataDeserFactory());
 
         msg.output(context);
         
@@ -76,10 +84,8 @@ public class TestSer extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        DeserializationContext dser = new DeserializationContext(
+        DeserializationContext dser = new DeserializationContextImpl(
             new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
-        reg = dser.getTypeMappingRegistry();
-        reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
         dser.parse();
         
         SOAPEnvelope env = dser.getEnvelope();

@@ -2,8 +2,12 @@ package samples.encoding;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.Constants;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -48,11 +52,15 @@ public class TestSer
             
             if (args.length == 0) {
                 Writer stringWriter = new StringWriter();
-                SerializationContext context = new SerializationContext(stringWriter, msgContext);
+                SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
                 
                 TypeMappingRegistry reg = context.getTypeMappingRegistry();
-                
-                reg.addSerializer(Data.class, dataQName, new DataSer());
+                TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP_ENC);
+                if (tm == null) {
+                    tm = (TypeMapping) reg.createTypeMapping();
+                    reg.register(tm, new String[] {Constants.URI_SOAP_ENC});
+                }
+                tm.register(Data.class, dataQName, new DataSerFactory(), new DataDeserFactory());
 
                 msg.output(context);
                 
@@ -68,10 +76,7 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
-            reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
-            
-            DeserializationContext dser = new DeserializationContext(
+            DeserializationContext dser = new DeserializationContextImpl(
                 new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
             dser.parse();
             SOAPEnvelope env = dser.getEnvelope();

@@ -2,7 +2,8 @@ package samples.bidbuy ;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPConstants;
 
@@ -211,20 +212,17 @@ public class v3 implements vInterface {
       // register the PurchaseOrder class
       QName poqn = new QName("http://www.soapinterop.org/Bid", "PurchaseOrder");
       Class cls = PurchaseOrder.class;
-      call.addSerializer(cls, poqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(poqn, cls, BeanSerializer.getFactory());
+      call.registerTypeMapping(cls, poqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
 
       // register the Address class
       QName aqn = new QName("http://www.soapinterop.org/Bid", "Address");
       cls = Address.class;
-      call.addSerializer(cls, aqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(aqn, cls, BeanSerializer.getFactory());
+      call.registerTypeMapping(cls, aqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
 
       // register the LineItem class
       QName liqn = new QName("http://www.soapinterop.org/Bid", "LineItem");
       cls = LineItem.class;
-      call.addSerializer(cls, liqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(liqn, cls, BeanSerializer.getFactory());
+      call.registerTypeMapping(cls, liqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
 
       LineItem[]     lineItems = new LineItem[numItems];
       
