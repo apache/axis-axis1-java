@@ -251,7 +251,7 @@ method on the public Axis server at Apache.
 (You'll find this file in <a href="../samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
 <p>Assuming you have a network connection active, this program can be run
 as follows:
-<pre>% java samples.userguide.example1.TestClient
+<pre class="example">% java samples.userguide.example1.TestClient
 Sent 'Hello!', got 'Hello!'
 %</pre>
 So what's happening here? On lines 11 and 12 we create new Service and
@@ -383,7 +383,7 @@ is on port 8080):
 SOAP calls correctly into Java invocations of your service class. Try it
 out - there's a calculator client in samples/userguide/example2/CalcClient.java,
 which you can use like this:
-<pre>% java samples.userguide.example2.CalcClient -p8080 add 2 5
+<pre class="example">% java samples.userguide.example2.CalcClient -p8080 add 2 5
 Got result : 7
 % java samples.userguide.example2.CalcClient -p8080 subtract 10 9
 Got result : 1
@@ -435,11 +435,11 @@ Once we have this file, we need to send it to an Axis server in order to
 actually deploy the described service. We do this with the AdminClient,
 or the "org.apache.axis.client.AdminClient" class. An invocation of the
 AdminClient looks like this:
-<pre>% java org.apache.axis.client.AdminClient deploy.wsdd
+<pre class="example">% java org.apache.axis.client.AdminClient deploy.wsdd
 &lt;Admin>Done processing&lt;/Admin></pre>
 This command has now made our service accessible via SOAP. Check it out
 by running the Client class - it should look like this:
-<pre>% java samples.userguide.example3.Client "test me!"
+<pre class="example">% java samples.userguide.example3.Client "test me!"
 You typed : test me!
 %</pre>
 If you want to prove to yourself that the deployment really worked, try
@@ -449,7 +449,7 @@ file above.&nbsp; Run the AdminClient on that file, then try the service
 Client again and see what happens.
 <p>You can also use the AdminClient to get a listing of all the deployed
 components in the server:
-<pre>% java org.apache.axis.client.AdminClient list
+<pre class="example">% java org.apache.axis.client.AdminClient list
 &lt;big XML document returned here></pre>
 In there you'll see services, handlers, transports, etc. Note that this
 listing is an exact copy of the server's "server-config.wsdd" file, which
@@ -462,25 +462,24 @@ called. We've included a sample handler in the samples/log directory to
 do just this. To use a handler class like this, you first need to deploy
 the Handler itself, and then use the name that you give it in deploying
 a service. Here's a sample deploy.wsdd file (this is example 4 in samples/userguide):
-<div class="example"><pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-&nbsp;
-&nbsp;&lt;!-- define the logging handler configuration -->
-&nbsp;&lt;handler name="track" type="java:samples.userguide.example4.LogHandler">
-&nbsp; &lt;parameter name="filename" value="MyService.log"/>
-&nbsp;&lt;/handler>
-
-&nbsp;&lt;!-- define the service, using the log handler we just defined -->
-&nbsp;&lt;service name="LogTestService"<b> </b>provider="java:RPC">
-&nbsp; &lt;requestFlow>
-&nbsp;&nbsp; &lt;handler type="track"/>
-&nbsp; &lt;/requestFlow>
-
-&nbsp; &lt;parameter name="className" value="samples.userguide.example4.Service"/>
-&nbsp; &lt;parameter name="allowedMethods" value="*"/>
-&nbsp;&lt;/service>
-&lt;/deployment></pre></div>
-The first section defines a Handler called "track" that is implemented
+<div class="example"><br>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+<br>&nbsp;&nbsp;&lt;!-- define the logging handler configuration -->
+<br>&nbsp;&lt;handler name="track" type="java:samples.userguide.example4.LogHandler">
+<br>&nbsp; &lt;parameter name="filename" value="MyService.log"/>
+<br>&nbsp;&lt;/handler>
+<br>&nbsp;
+<br>&nbsp;&lt;!-- define the service, using the log handler we just defined -->
+<br>&nbsp;&lt;service name="LogTestService"<b> </b>provider="java:RPC">
+<br>&nbsp; &lt;requestFlow>
+<br>&nbsp;&nbsp; &lt;handler type="track"/>
+<br>&nbsp; &lt;/requestFlow>
+<br>&nbsp;
+<br>&nbsp; &lt;parameter name="className" value="samples.userguide.example4.Service"/>
+<br>&nbsp; &lt;parameter name="allowedMethods" value="*"/>
+<br>&nbsp;&lt;/service>
+<br>&lt;/deployment></div>
+<p>The first section defines a Handler called "track" that is implemented
 by the class samples.userguide.example4.LogHandler. We give this Handler
 an option to let it know which file to write its messages into.
 <p>Then we define a service, LogTestService, which is an RPC service just
@@ -497,12 +496,12 @@ administration, you must set the "enableRemoteAdmin" property of the AdminServic
 to <b>true</b>. To do this, find the "server-config.wsdd" file in your
 webapp's WEB-INF directory. In it, you'll see a deployment for the AdminService.
 Add an option as follows:
-<pre>&lt;service name="AdminService" provider="java:MSG">
-&nbsp;&lt;parameter name="className" value="org.apache.axis.util.Admin"/>
-&nbsp;&lt;parameter name="methodName" value="*"/>
-&nbsp;<b>&lt;parameter name="enableRemoteAdmin" value="true"/>
-</b>&lt;/service></pre>
-<b>WARNING: enabling remote administration may give unauthorized parties
+<div class="example"><br>&lt;service name="AdminService" provider="java:MSG">
+<br>&nbsp;&nbsp;&lt;parameter name="className" value="org.apache.axis.util.Admin"/>
+<br>&nbsp;&nbsp;&lt;parameter name="allowedMethods" value="*"/>
+<br>&nbsp;&nbsp;<b>&lt;parameter name="enableRemoteAdmin" value="true"/>
+<br></b>&lt;/service></div>
+<p><b>WARNING: enabling remote administration may give unauthorized parties
 access to your machine. If you do this, please make sure to add security
 to your configuration!</b>
 <h2>
@@ -562,18 +561,19 @@ Deploying custom mappings - the &lt;typeMapping> tag</h4>
 Now that you've built your serializers and deserializers, you need to tell
 Axis which types they should be used for. You do this with a typeMapping
 tag in WSDD, which looks like this:
-<pre class="xml">&lt;typeMapping qname="ns:local" xmlns:ns="someNamespace"
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; languageSpecificType="java:my.java.thingy"
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serializer="my.java.Serializer"
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deserializer="my.java.DeserializerFactory"/></pre>
-This looks a lot like the &lt;beanMapping> tag we saw earlier, but there
-are two extra attributes. One, <b>serializer</b>, is the Java class name
+<div class="example"><br>&lt;typeMapping qname="ns:local" xmlns:ns="someNamespace"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; languageSpecificType="java:my.java.thingy"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serializer="my.java.Serializer"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deserializer="my.java.DeserializerFactory"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></div>
+<p>This looks a lot like the &lt;beanMapping> tag we saw earlier, but there
+are three extra attributes. One, <b>serializer</b>, is the Java class name
 of the Serializer class which should be used to write the specified Java
-class (i.e. my.java.thingy) into XML. The other, <b>deserializer</b>, is
+class (i.e. my.java.thingy) into XML. Two, <b>deserializer</b>, is
 the class name of a Deserializer <i>factory</i> that generates Deserializers
-which can be used to unmarshall XML into the correct Java class.
+which can be used to unmarshall XML into the correct Java class.  Finally, the encoding style, which is SOAP encoding.
 <p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping>
-tag with serializer="org.apache.axis.encoding.BeanSerializer" and deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory",
+tag with serializer="org.apache.axis.encoding.BeanSerializer", deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory", and encodingStyle="http://schemas.xmlsoap.org/soap/encoding/",
 but clearly it can save a lot of typing!)
 <h2>
 <a NAME="WSDL"></a>Using WSDL with Axis</h2>
@@ -962,7 +962,7 @@ emit server-side bindings for web service
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 deploy skeleton (true) or implementation (false) in deploy.wsdd.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Default is true.&nbsp; Only valid with --server-side.
+Default is true.&nbsp; Assumes --server-side.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 mapping of namespace to package
@@ -1039,8 +1039,7 @@ provider="java:RPC">
 <br>&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingImpl"/>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
 <br>&nbsp;&nbsp; &lt;/service></font></div>
-<p>The default for this option is true.&nbsp; This option is only valid
-with the --server-side option.
+<p>The default for this option is true.&nbsp; When you use this option, the --server-side option is assumed, so you don't have to explicitly specify --server-side as well.
 <h4>
 -N, --NStoPkg &lt;argument>=&lt;value></h4>
 By default, package names are generated from the namespace strings in the
