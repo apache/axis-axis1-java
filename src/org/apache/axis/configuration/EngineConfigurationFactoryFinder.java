@@ -59,7 +59,7 @@ import javax.servlet.ServletContext;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.tools.SPInterface;
 import org.apache.commons.logging.Log;
 
 

@@ -56,7 +56,7 @@
 package org.apache.axis.components.logger;
 
 import org.apache.axis.AxisProperties;
-import org.apache.commons.discovery.DiscoverSingleton;
+import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
 
 
@@ -69,8 +69,7 @@ public class LogFactory {
      */
     private static final org.apache.commons.logging.LogFactory logFactory =
         (org.apache.commons.logging.LogFactory)
-            DiscoverSingleton.find(AxisProperties.getCommonsGroupContext(),
-                                   org.apache.commons.logging.LogFactory.class,
+            DiscoverSingleton.find(org.apache.commons.logging.LogFactory.class,
                                    org.apache.commons.logging.LogFactory.FACTORY_PROPERTIES,
                                    org.apache.commons.logging.LogFactory.FACTORY_DEFAULT);
 
