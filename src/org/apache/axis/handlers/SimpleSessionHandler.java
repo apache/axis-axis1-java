@@ -112,7 +112,7 @@ public class SimpleSessionHandler extends BasicHandler
     static Category category =
             Category.getInstance(SimpleSessionHandler.class.getName());
 
-    public static final String SESSION_ID = SESSION_ID;
+    public static final String SESSION_ID = "SimpleSession.id";
     public static final String SESSION_NS = "http://xml.apache.org/axis/session";
     public static final String SESSION_LOCALPART = "sessionID";
     public static final QName sessionHeaderName = new QName(SESSION_NS,
