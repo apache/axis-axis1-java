@@ -55,10 +55,10 @@
 
 package org.apache.axis.utils.bytecode;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class implements a factory to instantiate bytecode Extractor.
@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExtractorFactory {
     protected static Log log =
-            LogFactory.getLog(ExtractorFactory.class.getName());
+            AxisInternalServices.getLog(ExtractorFactory.class.getName());
 
     public static Extractor getExtractor() {
         String extractorClassName =

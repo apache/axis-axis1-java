@@ -55,9 +55,6 @@
 package org.apache.axis.transport.http;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.OutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;

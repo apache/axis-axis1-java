@@ -55,10 +55,10 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -84,7 +84,8 @@ import java.util.StringTokenizer;
 
 public class Javac extends AbstractCompiler
 {
-    protected static Log log = LogFactory.getLog(Javac.class.getName());
+    protected static Log log =
+        AxisInternalServices.getLog(Javac.class.getName());
 
     public final static String CLASSIC_CLASS = "sun.tools.javac.Main";
     public final static String MODERN_CLASS = "com.sun.tools.javac.Main";

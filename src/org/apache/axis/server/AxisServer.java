@@ -57,6 +57,7 @@ package org.apache.axis.server ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -67,7 +68,6 @@ import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 /**
@@ -78,16 +78,16 @@ import java.util.Map;
 public class AxisServer extends AxisEngine
 {
     protected static Log log =
-        LogFactory.getLog(AxisServer.class.getName());
+        AxisInternalServices.getLog(AxisServer.class.getName());
     private static Log tlog =
-        LogFactory.getLog("org.apache.axis.TIME");
+        AxisInternalServices.getLog("org.apache.axis.TIME");
 
     private static AxisServerFactory factory = null;
     
     public static AxisServer getServer(Map environment) throws AxisFault
     {
         if (factory == null) {
-            String factoryClassName = getGlobalProperty("axis.ServerFactory");
+            String factoryClassName = AxisInternalServices.getGlobalProperty("axis.ServerFactory");
             if (factoryClassName != null) {
                 try {
                     Class factoryClass = ClassUtils.forName(factoryClassName);

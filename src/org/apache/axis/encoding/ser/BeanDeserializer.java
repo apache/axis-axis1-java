@@ -55,6 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
@@ -67,7 +68,6 @@ import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -87,7 +87,7 @@ import java.util.Iterator;
 public class BeanDeserializer extends DeserializerImpl implements Serializable
 {
     protected static Log log =
-        LogFactory.getLog(BeanDeserializer.class.getName());
+        AxisInternalServices.getLog(BeanDeserializer.class.getName());
 
     QName xmlType;
     Class javaType;

@@ -55,11 +55,11 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.Target;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -67,7 +67,7 @@ import org.xml.sax.SAXException;
  */
 public class BeanPropertyTarget implements Target {
     protected static Log log =
-        LogFactory.getLog(BeanPropertyTarget.class.getName());
+        AxisInternalServices.getLog(BeanPropertyTarget.class.getName());
 
     private Object object;
     private BeanPropertyDescriptor pd;
