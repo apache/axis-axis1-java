@@ -151,41 +151,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                                Constants.XSD_BASE64 ),
                    new Base64DeserializerFactory(byte[].class,
                                            Constants.XSD_BASE64));
-        /*
-        // This JSR 101 change occurred right before v1.0.
-        // This mapping is not roundtrippable, and breaks the roundtrip
-        // testcase, so it is commented out for now.
-        // SOAP 1.1
-        // byte[] -ser-> XSD_BASE64
-        // Byte[] -ser-> XSD_BASE64
-        // XSD_BASE64 -deser-> byte[]
-        // SOAP_BASE64 -deser->byte[]
-        //
-        // NOTE: If the following code is enabled, the
-        // commented out code "//type == Byte[].class ||"
-        // code in org.apache.axis.wsdl.fromJava.Types also needs to be enabled.
 
-        myRegister(Constants.SOAP_BASE64,     byte[].class,
-                   new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class,
-                                                 Constants.SOAP_BASE64),
-                   true);
-        myRegister(Constants.XSD_BASE64,     Byte[].class,
-                   new Base64SerializerFactory(Byte[].class,
-                                               Constants.XSD_BASE64 ),
-                   new Base64DeserializerFactory(Byte[].class,
-                                           Constants.XSD_BASE64),true);
-        myRegister(Constants.XSD_BASE64,     byte[].class,
-                   new Base64SerializerFactory(byte[].class,
-                                               Constants.XSD_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class,
-                                           Constants.XSD_BASE64),true);
-        */
         // anySimpleType is mapped to java.lang.String according to JAX-RPC 1.1 spec.
         myRegisterSimple(Constants.XSD_ANYSIMPLETYPE, java.lang.String.class);
-        myRegisterSimple(Constants.XSD_LANGUAGE, java.lang.String.class);
-        myRegisterSimple(Constants.XSD_NAME, java.lang.String.class);
         
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);
