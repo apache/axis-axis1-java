@@ -43,20 +43,26 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
 
 /**
  * This class uses Jakarta Commons's HttpClient to call a SOAP server.
@@ -73,12 +79,16 @@ public class CommonsHTTPSender extends BasicHandler {
     
     /** Field log           */
     protected static Log log =
-    LogFactory.getLog(CommonsHTTPSender.class.getName());
+        LogFactory.getLog(CommonsHTTPSender.class.getName());
     
-    private HttpConnectionManager connectionManager;
-    private CommonsHTTPClientProperties clientProperties;
+    protected HttpConnectionManager connectionManager;
+    protected CommonsHTTPClientProperties clientProperties;
     
     public CommonsHTTPSender() {
+        initialize();
+    }
+
+    protected void initialize() {
         MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
         this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
         cm.setMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
@@ -98,131 +108,141 @@ public class CommonsHTTPSender extends BasicHandler {
         HttpMethodBase method = null;
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("enter00",
-            "CommonsHTTPSender::invoke"));
+                                          "CommonsHTTPSender::invoke"));
         }
         try {
             URL targetURL =
-            new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
+                new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
             
             // no need to retain these, as the cookies/credentials are
             // stored in the message context across multiple requests.
             // the underlying connection manager, however, is retained
             // so sockets get recycled when possible.
-            HttpClient httpClient = new HttpClient(connectionManager);
+            HttpClient httpClient = new HttpClient(this.connectionManager);
             // the timeout value for allocation of connections from the pool
-            httpClient.setHttpConnectionFactoryTimeout(clientProperties.getConnectionPoolTimeout());
+            httpClient.setHttpConnectionFactoryTimeout(
+                             this.clientProperties.getConnectionPoolTimeout());
             
-            HostConfiguration hostConfiguration = getHostConfiguration(httpClient, targetURL);
-            httpClient.setHostConfiguration(hostConfiguration);
+            HostConfiguration hostConfiguration = 
+                getHostConfiguration(httpClient, msgContext, targetURL);
             
-            String webMethod = null;
             boolean posting = true;
             
             // If we're SOAP 1.2, allow the web method to be set from the
             // MessageContext.
             if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
-                webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
+                String webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
                 if (webMethod != null) {
                     posting = webMethod.equals(HTTPConstants.HEADER_POST);
                 }
             }
-            
-            Message reqMessage = msgContext.getRequestMessage();
-            if(posting) {
+
+            if (posting) {
+                Message reqMessage = msgContext.getRequestMessage();
                 method = new PostMethod(targetURL.toString());
+
+                // set false as default, addContetInfo can overwrite
+                method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE,
+                                                       false);
+                
                 addContextInfo(method, httpClient, msgContext, targetURL);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                reqMessage.writeTo(baos);
-                ((PostMethod)method).setRequestBody(new ByteArrayInputStream(baos.toByteArray()));
-                ((PostMethod)method).setUseExpectHeader(false); // workaround for
+
+                ((PostMethod)method).setRequestEntity(
+                                               new MessageRequestEntity(method, reqMessage));
             } else {
                 method = new GetMethod(targetURL.toString());
                 addContextInfo(method, httpClient, msgContext, targetURL);
             }
-           // don't forget the cookies!
-           // Cookies need to be set on HttpState, since HttpMethodBase 
-           // overwrites the cookies from HttpState
-           if (msgContext.getMaintainSession()) {
+
+            String httpVersion = 
+                msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
+            if (httpVersion != null) {
+                if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_V10)) {
+                    method.getParams().setVersion(HttpVersion.HTTP_1_0);
+                }
+                // assume 1.1
+            }
+            
+            // don't forget the cookies!
+            // Cookies need to be set on HttpState, since HttpMethodBase 
+            // overwrites the cookies from HttpState
+            if (msgContext.getMaintainSession()) {
                 HttpState state = httpClient.getState();
                 state.setCookiePolicy(CookiePolicy.COMPATIBILITY);
                 String host = hostConfiguration.getHost();
                 String path = targetURL.getPath();
                 boolean secure = hostConfiguration.getProtocol().isSecure();
                 String ck1 = (String)msgContext.getProperty(HTTPConstants.HEADER_COOKIE);
-                
-                String ck2 = (String)msgContext.getProperty(HTTPConstants.HEADER_COOKIE2);
                 if (ck1 != null) {
                     int index = ck1.indexOf('=');
-                    state.addCookie(new Cookie(host,ck1.substring(0, index),ck1.substring(index+1),path,null,secure));
+                    state.addCookie(new Cookie(host, ck1.substring(0, index),
+                                               ck1.substring(index+1), path,
+                                               null, secure));
                 }
+                String ck2 = (String)msgContext.getProperty(HTTPConstants.HEADER_COOKIE2);
                 if (ck2 != null) {
                     int index = ck2.indexOf('=');
-                    state.addCookie(new Cookie(host,ck2.substring(0, index),ck2.substring(index+1),path,null,secure));
+                    state.addCookie(new Cookie(host, ck2.substring(0, index),
+                                               ck2.substring(index+1), path,
+                                               null, secure));
                 }
                 httpClient.setState(state);
             }
-            int returnCode = httpClient.executeMethod(method);
-            String contentType = null;
-            String contentLocation = null;
-            String contentLength = null;
-            if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE)
-            != null) {
-                contentType = method.getResponseHeader(
-                HTTPConstants.HEADER_CONTENT_TYPE).getValue();
-            }
-            if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_LOCATION)
-            != null) {
-                contentLocation = method.getResponseHeader(
-                HTTPConstants.HEADER_CONTENT_LOCATION).getValue();
-            }
-            if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_LENGTH)
-            != null) {
-                contentLength = method.getResponseHeader(
-                HTTPConstants.HEADER_CONTENT_LENGTH).getValue();
-            }
-            contentType = (null == contentType)
-            ? null
-            : contentType.trim();
+
+            int returnCode = httpClient.executeMethod(hostConfiguration, method, null);
+
+            String contentType = 
+                getHeader(method, HTTPConstants.HEADER_CONTENT_TYPE);
+            String contentLocation = 
+                getHeader(method, HTTPConstants.HEADER_CONTENT_LOCATION);
+            String contentLength = 
+                getHeader(method, HTTPConstants.HEADER_CONTENT_LENGTH);
+
             if ((returnCode > 199) && (returnCode < 300)) {
                 
                 // SOAP return is OK - so fall through
             } else if (msgContext.getSOAPConstants() ==
-            SOAPConstants.SOAP12_CONSTANTS) {
+                       SOAPConstants.SOAP12_CONSTANTS) {
                 // For now, if we're SOAP 1.2, fall through, since the range of
                 // valid result codes is much greater
             } else if ((contentType != null) && !contentType.equals("text/html")
-            && ((returnCode > 499) && (returnCode < 600))) {
+                       && ((returnCode > 499) && (returnCode < 600))) {
                 
                 // SOAP Fault should be in here - so fall through
             } else {
                 String statusMessage = method.getStatusText();
                 AxisFault fault = new AxisFault("HTTP",
-                "(" + returnCode + ")"
-                + statusMessage, null,
-                null);
+                                                "(" + returnCode + ")"
+                                                + statusMessage, null,
+                                                null);
                 
                 try {
-                    fault.setFaultDetailString(Messages.getMessage("return01",
-                            "" + returnCode, method.getResponseBodyAsString()));
+                    fault.setFaultDetailString(
+                         Messages.getMessage("return01",
+                                             "" + returnCode,
+                                             method.getResponseBodyAsString()));
                     fault.addFaultDetail(Constants.QNAME_FAULTDETAIL_HTTPERRORCODE,
-                            Integer.toString(returnCode));
+                                         Integer.toString(returnCode));
                     throw fault;
                 } finally {
                     method.releaseConnection(); // release connection back to pool.
                 }
             }
-
-            // wrap the response body stream so that close() also releases the connection back to the pool.
-            InputStream releaseConnectionOnCloseStream = createConnectionReleasingInputStream(method);
+            
+            // wrap the response body stream so that close() also releases 
+            // the connection back to the pool.
+            InputStream releaseConnectionOnCloseStream = 
+                createConnectionReleasingInputStream(method);
 
             Message outMsg = new Message(releaseConnectionOnCloseStream,
-            false, contentType, contentLocation);
+                                         false, contentType, contentLocation);
             // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
             Header[] responseHeaders = method.getResponseHeaders();
             MimeHeaders responseMimeHeaders = outMsg.getMimeHeaders();
             for (int i = 0; i < responseHeaders.length; i++) {
                 Header responseHeader = responseHeaders[i];
-                responseMimeHeaders.addHeader(responseHeader.getName(), responseHeader.getValue());
+                responseMimeHeaders.addHeader(responseHeader.getName(), 
+                                              responseHeader.getValue());
             }
             outMsg.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(outMsg);
@@ -242,9 +262,11 @@ public class CommonsHTTPSender extends BasicHandler {
                 Header[] headers = method.getResponseHeaders();
                 for (int i = 0; i < headers.length; i++) {
                     if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE))
-                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE, cleanupCookie(headers[i].getValue()));
+                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE, 
+                                               cleanupCookie(headers[i].getValue()));
                     else if (headers[i].getName().equalsIgnoreCase(HTTPConstants.HEADER_SET_COOKIE2))
-                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, cleanupCookie(headers[i].getValue()));
+                        msgContext.setProperty(HTTPConstants.HEADER_COOKIE2, 
+                                               cleanupCookie(headers[i].getValue()));
                 }
                 
             }
@@ -256,7 +278,7 @@ public class CommonsHTTPSender extends BasicHandler {
         
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("exit00",
-            "CommonsHTTPSender::invoke"));
+                                          "CommonsHTTPSender::invoke"));
         }
     }
     
@@ -278,11 +300,14 @@ public class CommonsHTTPSender extends BasicHandler {
         return cookie;
     }
     
-    private HostConfiguration getHostConfiguration(HttpClient client, URL targetURL) {
-        TransportClientProperties tcp = TransportClientPropertiesFactory.create(targetURL.getProtocol()); // http or https
+    protected HostConfiguration getHostConfiguration(HttpClient client, 
+                                                     MessageContext context,
+                                                     URL targetURL) {
+        TransportClientProperties tcp = 
+            TransportClientPropertiesFactory.create(targetURL.getProtocol()); // http or https
         int port = targetURL.getPort();
         boolean hostInNonProxyList =
-        isHostInNonProxyList(targetURL.getHost(), tcp.getNonProxyHosts());
+            isHostInNonProxyList(targetURL.getHost(), tcp.getNonProxyHosts());
         
         HostConfiguration config = new HostConfiguration();
         
@@ -294,12 +319,13 @@ public class CommonsHTTPSender extends BasicHandler {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
             if (tcp.getProxyHost().length() == 0 ||
-            tcp.getProxyPort().length() == 0) {
+                tcp.getProxyPort().length() == 0) {
                 config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
             } else {
                 if (tcp.getProxyUser().length() != 0) {
-                    Credentials proxyCred = new UsernamePasswordCredentials(tcp.getProxyUser(),
-                                                tcp.getProxyPassword());
+                    Credentials proxyCred = 
+                        new UsernamePasswordCredentials(tcp.getProxyUser(),
+                                                        tcp.getProxyPassword());
                     // if the username is in the form "user\domain" 
                     // then use NTCredentials instead.
                     int domainIndex = tcp.getProxyUser().indexOf("\\");
@@ -331,9 +357,11 @@ public class CommonsHTTPSender extends BasicHandler {
      *
      * @throws Exception
      */
-    private void addContextInfo(
-    HttpMethodBase method, HttpClient httpClient, MessageContext msgContext, URL tmpURL)
-    throws Exception {
+    private void addContextInfo(HttpMethodBase method, 
+                                HttpClient httpClient, 
+                                MessageContext msgContext, 
+                                URL tmpURL)
+        throws Exception {
         
         // optionally set a timeout for the request
         if (msgContext.getTimeout() != 0) {
@@ -347,18 +375,21 @@ public class CommonsHTTPSender extends BasicHandler {
         
         // Get SOAPAction, default to ""
         String action = msgContext.useSOAPAction()
-        ? msgContext.getSOAPActionURI()
-        : "";
+            ? msgContext.getSOAPActionURI()
+            : "";
         
         if (action == null) {
             action = "";
         }
+
         Message msg = msgContext.getRequestMessage();
         if (msg != null){
             method.setRequestHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,
-            msg.getContentType(msgContext.getSOAPConstants())));
+                                               msg.getContentType(msgContext.getSOAPConstants())));
         }
-        method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, "\"" + action + "\""));
+        method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, 
+                                           "\"" + action + "\""));
+
         String userID = msgContext.getUsername();
         String passwd = msgContext.getPassword();
         
@@ -383,7 +414,8 @@ public class CommonsHTTPSender extends BasicHandler {
             // during all-tests if this is missing.
             StringBuffer tmpBuf = new StringBuffer();
             tmpBuf.append(userID).append(":").append((passwd == null) ? "" : passwd);
-            method.addRequestHeader(HTTPConstants.HEADER_AUTHORIZATION, "Basic " + Base64.encode(tmpBuf.toString().getBytes()));
+            method.addRequestHeader(HTTPConstants.HEADER_AUTHORIZATION, 
+                                    "Basic " + Base64.encode(tmpBuf.toString().getBytes()));
         }
         
         // Transfer MIME headers of SOAPMessage to HTTP headers. 
@@ -391,18 +423,19 @@ public class CommonsHTTPSender extends BasicHandler {
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader mimeHeader = (MimeHeader) i.next();
-                method.addRequestHeader(mimeHeader.getName(), mimeHeader.getValue());
+                method.addRequestHeader(mimeHeader.getName(), 
+                                        mimeHeader.getValue());
             }
         }
 
         // process user defined headers for information.
         Hashtable userHeaderTable =
-        (Hashtable) msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
+            (Hashtable) msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
         
         if (userHeaderTable != null) {
-            for (java.util.Iterator e = userHeaderTable.entrySet().iterator();
-            e.hasNext();) {
-                java.util.Map.Entry me = (java.util.Map.Entry) e.next();
+            for (Iterator e = userHeaderTable.entrySet().iterator();
+                 e.hasNext();) {
+                Map.Entry me = (Map.Entry) e.next();
                 Object keyObj = me.getKey();
                 
                 if (null == keyObj) {
@@ -411,7 +444,13 @@ public class CommonsHTTPSender extends BasicHandler {
                 String key = keyObj.toString().trim();
                 String value = me.getValue().toString().trim();
                 
-                method.addRequestHeader(key, value);
+                if (key.equalsIgnoreCase(HTTPConstants.HEADER_EXPECT) &&
+                    value.equalsIgnoreCase(HTTPConstants.HEADER_EXPECT_100_Continue)) {
+                    method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE,
+                                                           true);
+                } else {
+                    method.addRequestHeader(key, value);
+                }
             }
         }
     }
@@ -466,7 +505,7 @@ public class CommonsHTTPSender extends BasicHandler {
      *         <code>false</code> otherwise.
      */
     protected static boolean match(String pattern, String str,
-    boolean isCaseSensitive) {
+                                   boolean isCaseSensitive) {
         
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();
@@ -615,6 +654,11 @@ public class CommonsHTTPSender extends BasicHandler {
         return true;
     }
 
+    private static String getHeader(HttpMethodBase method, String headerName) {
+        Header header = method.getResponseHeader(headerName);
+        return (header == null) ? null : header.getValue().trim();
+    }
+
     private InputStream createConnectionReleasingInputStream(final HttpMethodBase method) throws IOException {
         return new FilterInputStream(method.getResponseBodyAsStream()) {
                 public void close() throws IOException {
@@ -625,6 +669,46 @@ public class CommonsHTTPSender extends BasicHandler {
                     }
                 }
             };
+    }
+
+    private static class MessageRequestEntity implements RequestEntity {
+        
+        private HttpMethodBase method;
+        private Message message;
+
+        public MessageRequestEntity(HttpMethodBase method, Message message) {
+            this.message = message;
+            this.method = method;
+        }
+
+        public boolean isRepeatable() {
+            return false;
+        }
+
+        public void writeRequest(OutputStream out) throws IOException {
+            try {
+                this.message.writeTo(out);
+            } catch (SOAPException e) {
+                throw new IOException(e.getMessage());
+            }
+        }
+
+        public long getContentLength() {
+            if (this.method.getParams().getVersion() == HttpVersion.HTTP_1_0) {
+                try {
+                    return message.getContentLength();
+                } catch (Exception e) {
+                    return -1; /* -1 for chunked */
+                }
+            } else {
+                return -1; /* -1 for chunked */
+            }
+        }
+
+        public String getContentType() {
+            return null; // a separate header is added
+        }
+        
     }
 }
 
