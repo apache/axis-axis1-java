@@ -326,6 +326,12 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
+        if (style != ServiceDesc.STYLE_RPC) {
+            // No Multirefs/xsi:types
+            service.setOption(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+            service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
+        }
+
         if (tmr == null) {
             tmr = new TypeMappingRegistryImpl();
         }

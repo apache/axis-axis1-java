@@ -166,7 +166,7 @@ public class Call implements javax.xml.rpc.Call {
     private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
     private Integer            timeout         = null;
 
-    private OperationDesc      operation       = null;
+    private OperationDesc      operation       = new OperationDesc();
 
     // Our Transport, if any
     private Transport          transport       = null ;
@@ -721,10 +721,6 @@ public class Call implements javax.xml.rpc.Call {
     public void addParameter(QName paramName, QName xmlType,
             Class javaType, ParameterMode parameterMode) {
         if (parmAndRetReq) {
-            if (operation == null) {
-                operation = new OperationDesc();
-            }
-
             ParameterDesc param = new ParameterDesc();
             param.setQName( paramName );
             param.setTypeQName( xmlType );
@@ -805,8 +801,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     public QName getParameterTypeByQName(QName paramQName) {
         int i;
-        if ( operation == null ) return( null );
-
         ParameterDesc param = operation.getParamByQName(paramQName);
         if (param != null) {
             return param.getTypeQName();
@@ -822,11 +816,9 @@ public class Call implements javax.xml.rpc.Call {
     public void setReturnType(QName type) {
         if (parmAndRetReq) {
             returnType = type ;
-            if (operation != null) {
-                operation.setReturnType(type);
-                TypeMapping tm = getTypeMapping();
-                operation.setReturnClass(tm.getClassForQName(type));
-            }
+            operation.setReturnType(type);
+            TypeMapping tm = getTypeMapping();
+            operation.setReturnClass(tm.getClassForQName(type));
         }
         else {
             throw new JAXRPCException();
@@ -885,7 +877,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void removeAllParameters() {
         if (parmAndRetReq) {
-            operation = null; // FIXME -- ???
+            operation = new OperationDesc();
         }
         else {
             throw new JAXRPCException();
@@ -1383,7 +1375,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
-        if ( operation == null ) return( params );
+        if ( operation.getNumParams() == 0 ) return( params );
 
         // Count the number of IN and INOUT params, this needs to match the
         // number of params passed in - if not throw an error
@@ -1531,7 +1523,7 @@ public class Call implements javax.xml.rpc.Call {
     {
         myHeaders = null;
     }
-    
+
     public TypeMapping getTypeMapping()
     {
         // Get the TypeMappingRegistry
@@ -1570,7 +1562,7 @@ public class Call implements javax.xml.rpc.Call {
         TypeMapping tm = getTypeMapping();
         if (!force && tm.isRegistered(javaType, xmlType))
             return;
-        
+
         // Register the information
         tm.register(javaType, xmlType, sf, df);
     }
@@ -1862,15 +1854,9 @@ public class Call implements javax.xml.rpc.Call {
         }
         msgContext.setMaintainSession(maintainSession);
 
-        OperationDesc oper = operation;
+        msgContext.setOperation(operation);
 
-        // If we haven't set up an OperationDesc for this Call, just make a
-        // temporary one.
-        if (oper == null)
-             oper = new OperationDesc();
-        msgContext.setOperation(oper);
-
-        oper.setStyle(operationStyle);
+        operation.setStyle(operationStyle);
         msgContext.setOperationStyle(operationStyle);
 
         if (useSOAPAction) {
