@@ -91,6 +91,7 @@ public class Client
             call.setTargetEndpointAddress( new java.net.URL(options.getURL()) );
             call.setOperationName( new QName("OrderProcessor", "processOrder") );
             call.addParameter( "arg1", qn, ParameterMode.PARAM_MODE_IN );
+            call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING );
 
             result = (String) call.invoke( new Object[] { order } );
         } catch (AxisFault fault) {

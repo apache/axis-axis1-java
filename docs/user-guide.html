@@ -521,8 +521,7 @@ QName. You'll note that it has two important attributes, <b>qname</b> and
 <b>languageSpecificType</b>.
 So in this case, we'd be mapping the "my.java.thingy" class to the XML
 QName [someNamespace]:[local].
-<p>Let's take a look at how this works in practice. Go look at the samples/userguide/example5/BeanService.java
-file. (we won't reproduce it here, it's pretty straightforward) The key
+<p>Let's take a look at how this works in practice. Go look at <a href="../samples/userguide/example5/BeanService.java">samples/userguide/example5/BeanService.java</a>.  The key
 thing to notice is that the argument to the service method is an Order
 object. Since Order is not a basic type which Axis understands by default,
 trying to run this service without a type mapping will result in a fault
@@ -532,8 +531,8 @@ all will be well. Here's how to run this example (from the example5 directory):
 <pre class="example">% java org.apache.axis.client.AdminClient -llocal:///AdminService deploy.wsdd
 &lt;Admin>Done processing&lt;/Admin>
 
-% java Client -llocal:// -n "Glen"
-Hi, Glen!
+% java samples.userguide.example5.Client -llocal://
+Hi, Glen Daniels!
 
 You seem to have ordered the following:
 
@@ -573,7 +572,7 @@ of the Serializer class which should be used to write the specified Java
 class (i.e. my.java.thingy) into XML. The other, <b>deserializer</b>, is
 the class name of a Deserializer <i>factory</i> that generates Deserializers
 which can be used to unmarshall XML into the correct Java class.
-<p>(the &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping>
+<p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping>
 tag with serializer="org.apache.axis.encoding.BeanSerializer" and deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory",
 but clearly it can save a lot of typing!)
 <h2>
@@ -617,8 +616,8 @@ may be saved or used as input to proxy-generation, described next. You
 can give the WSDL-generation URL to your online partners, and they'll be
 able to use it to access your service with toolkits like .NET, SOAP::Lite,
 or any other software which supports using WSDL.
-<p>You can also generate WSDL files from existing Java classes (see <a href="#Java2WSDL: Building WSDL from Java">#Java2WSDL:
-Building WSDL from Java</a>&nbsp; ).
+<p>You can also generate WSDL files from existing Java classes (see <a href="#Java2WSDL: Building WSDL from Java">Java2WSDL:
+Building WSDL from Java</a>&nbsp;).
 <br>&nbsp;
 <h3>
 <a NAME="WSDL2Java: Building stubs, skeletons, and data"></a>WSDL2Java:
@@ -628,18 +627,18 @@ Building stubs, skeletons, and data types from WSDL</h3>
 Client-side bindings</h4>
 You'll find the AXIS WSDL -> Java tool in "org.apache.axis.wsdl.WSDL2Java".
 The basic invocation form looks like this:
-<div class="example">&nbsp;
+<div class="example">
 <br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
 (WSDL-file-URL)</font></div>
 
-<p><br>This will generate only those bindings necessary for the client.&nbsp;
+<p>This will generate only those bindings necessary for the client.&nbsp;
 AXIS follows the JAX-RPC specification when generating Java client bindings
 from WSDL.&nbsp; For this discussion, assume we executed the following:
-<p><font face="Courier New,Courier">% cd samples/addr</font>
-<br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
-AddressBook.wsdl</font>
+<div class="example"><br><font face="Courier New,Courier">% cd samples/addr
+<br>% java org.apache.axis.wsdl.WSDL2Java
+AddressBook.wsdl</font></div>
 <p>The generated files will reside in the directory "AddressFetcher2".&nbsp;
-They are put here because that is the target namespace from the WSDL.&nbsp;
+They are put here because that is the target namespace from the WSDL and namespaces map to Java packages.&nbsp;
 Namespaces will be discussed in detail later.
 <br>&nbsp;
 <br>&nbsp;
@@ -692,39 +691,26 @@ Types</h4>
 The Java class generated from a WSDL type will be named from the WSDL type.&nbsp;
 This class will typically, though not always, be a bean.&nbsp; For example,
 given the WSDL (the WSDL used throughout the WSDL2Java discussion is from
-the Address Book sample):
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xsd:complexType
-name="phone"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;xsd:all></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;xsd:element name="areaCode" type="xsd:int"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;xsd:element name="exchange" type="xsd:string"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;xsd:element name="number" type="xsd:string"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;/xsd:all></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xsd:complexType></font>
+the <a href="../samples/addr/AddressBook.wsdl">Address Book sample</a>):
+<div class="example"><br><font face="Courier New,Courier">&lt;xsd:complexType
+name="phone">
+<br>&nbsp;&nbsp;&lt;xsd:all>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element name="areaCode" type="xsd:int"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element name="exchange" type="xsd:string"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsd:element name="number" type="xsd:string"/>
+<br>&nbsp;&nbsp;&lt;/xsd:all>
+<br>&lt;/xsd:complexType></font></div>
 <p>WSDL2Java will generate:
-<p><font face="Courier New,Courier">public class Phone implements java.io.Serializable
-{</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public Phone()
-{...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public int getAreaCode()
-{...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setAreaCode(int
-areaCode) {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public java.lang.String
-getExchange() {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setExchange(java.lang.String
-exchange) {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public java.lang.String
-getNumber() {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setNumber(java.lang.String
-number) {...}</font>
-<br><font face="Courier New,Courier">}</font>
-<br>&nbsp;
+<div class="example"><br><font face="Courier New,Courier">public class Phone implements java.io.Serializable {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public Phone() {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public int getAreaCode() {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public void setAreaCode(int areaCode) {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public java.lang.String getExchange() {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public void setExchange(java.lang.String exchange) {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public java.lang.String getNumber() {...}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public void setNumber(java.lang.String number) {...}
+<br>}</font>
+</div>
 <h4>
 Holders</h4>
 This type may be used as an inout or out parameter.&nbsp; Java does not
@@ -732,19 +718,19 @@ have the concept of inout/out parameters.&nbsp; In order to achieve this
 behavior, JAX-RPC specifies the use of holder classes.&nbsp; A holder class
 is simply a class that contains an instance of its type.&nbsp; For example,
 the holder for the Phone class would be:
-<p><font face="Courier New,Courier">public final class PhoneHolder implements
-javax.xml.rpc.holders.Holder {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public Phone value;</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public PhoneHolder()
-{</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public PhoneHolder(Phone
-value) {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-this.value = value;</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<br><font face="Courier New,Courier">}</font>
-<p>A holder class is ONLY generated for a type if that type is used as
+<div class="example"><br><font face="Courier New,Courier">public final class PhoneHolder implements
+javax.xml.rpc.holders.Holder {
+<br>&nbsp;&nbsp;&nbsp; public Phone value;
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; public PhoneHolder()
+{
+<br>&nbsp;&nbsp;&nbsp; }
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; public PhoneHolder(Phone value) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.value = value;
+<br>&nbsp;&nbsp;&nbsp; }
+<br>}</font></div>
+<p>A holder class is <b>only</b> generated for a type if that type is used as
 an inout or out parameter.
 <p>The holder classes for the primitive types can be found in javax.xml.rpc.holders.
 <br>&nbsp;
@@ -753,26 +739,23 @@ PortTypes</h4>
 The Service Definition Interface (SDI) is the interface that's derived
 from a WSDL's portType.&nbsp; This is the interface you use to access the
 operations on the service.&nbsp; For example, given the WSDL:
-<p><font face="Courier New,Courier">&nbsp; &lt;message name="empty"></font>
-<br><font face="Courier New,Courier">&nbsp; &lt;message name="AddEntryRequest"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;part name="name"
-type="xsd:string"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;part name="address"
-type="typens:address"/></font>
-<br><font face="Courier New,Courier">&nbsp; &lt;/message></font>
-<br><font face="Courier New,Courier">&nbsp; &lt;portType name="AddressBook"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;operation name="addEntry"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input
-message="tns:AddEntryRequest"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;output
-message="tns:empty"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;/operation></font>
+<div class="example"><br><font face="Courier New,Courier">&lt;message name="empty">
+<br>&lt;message name="AddEntryRequest">
+<br>&nbsp; &lt;part name="name" type="xsd:string"/>
+<br>&nbsp; &lt;part name="address" type="typens:address"/>
+<br>&lt;/message>
+<br>&lt;portType name="AddressBook">
+<br>&nbsp; &lt;operation name="addEntry">
+<br>&nbsp;&nbsp;&nbsp; &lt;input message="tns:AddEntryRequest"/>
+<br>&nbsp;&nbsp;&nbsp; &lt;output message="tns:empty"/>
+<br>&nbsp; &lt;/operation>
+<br>&lt;/portType></font></div>
 <p>WSDL2Java will generate:
-<p><font face="Courier New,Courier">public interface AddressBook extends
-java.rmi.Remote {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
-name, Address address) throws java.rmi.RemoteException;</font>
-<br><font face="Courier New,Courier">}</font>
+<div class="example"><br><font face="Courier New,Courier">public interface AddressBook extends
+java.rmi.Remote {
+<br>&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws java.rmi.RemoteException;
+<br>}</font></div>
 <p>The name of the SDI is typically the name of the portType.&nbsp; However,&nbsp;
 if information in the binding affects the appearance of the SDI, then the
 name of the SDI is the name of the binding, not the name of the portType.&nbsp;
@@ -792,24 +775,23 @@ you don't need to deal with the endpoint URL, namespace, or parameter arrays
 which are involved in dynamic invocation via the Service and Call objects.
 The stub hides all that work for you.
 <p>Given the following WSDL snippet:
-<p><font face="Courier New,Courier">&nbsp; &lt;binding name="AddressBookSOAPBinding"
-type="tns:AddressBook"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; ...</font>
-<br><font face="Courier New,Courier">&nbsp; &lt;/binding></font>
+<div class="example"><br><font face="Courier New,Courier">&lt;binding name="AddressBookSOAPBinding"
+type="tns:AddressBook">
+<br>&nbsp; ...
+<br>&lt;/binding></font></div>
 <p>WSDL2Java will generate:
-<p><font face="Courier New,Courier">public class AddressBookSOAPBindingStub
-extends org.apache.axis.client.Stub implements AddressBook {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub()
-throws org.apache.axis.AxisFault {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(URL
+<div class="example"><br><font face="Courier New,Courier">public class AddressBookSOAPBindingStub
+extends org.apache.axis.client.Stub implements AddressBook {
+<br>&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub()
+throws org.apache.axis.AxisFault {...}
+<br>&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(URL
 endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault
-{...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(javax.xml.rpc.Service
-service) throws org.apache.axis.AxisFault {...}</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
-name, Address address) throws RemoteException{...}</font>
-<br><font face="Courier New,Courier">}</font>
-<br>&nbsp;
+{..}
+<br>&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(javax.xml.rpc.Service
+service) throws org.apache.axis.AxisFault {...}
+<br>&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws RemoteException{...}
+<br>}</font></div>
 <h4>
 Services</h4>
 Normally, a client program would not instantiate a stub directly.&nbsp;
@@ -817,25 +799,25 @@ It would instead instantiate a service locator and call a get method which
 returns a stub.&nbsp; This locator is derived from the service clause in
 the WSDL.&nbsp; WSDL2Java generates two objects from a service clause.&nbsp;
 For example, given the WSDL:
-<p>&nbsp; &lt;service name="AddressBookService">
-<br>&nbsp;&nbsp;&nbsp; &lt;port name="AddressBook" binding="tns:AddressBookSOAPBinding">
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:address location="http://localhost:8080/axis/services/AddressBook"/>
-<br>&nbsp;&nbsp;&nbsp; &lt;/port>
-<br>&nbsp; &lt;/service>
+<div class="example"><br><font face="Courier New,Courier">&lt;service name="AddressBookService">
+<br>&nbsp; &lt;port name="AddressBook" binding="tns:AddressBookSOAPBinding">
+<br>&nbsp;&nbsp;&nbsp; &lt;soap:address location="http://localhost:8080/axis/services/AddressBook"/>
+<br>&nbsp; &lt;/port>
+<br>&lt;/service></font></div>
 <p>WSDL2Java will generate the service interface:
-<p><font face="Courier New,Courier">public interface AddressBookService
-extends javax.xml.rpc.Service {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public String getAddressBookAddress();</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBook
-getAddressBook() throws javax.xml.rpc.ServiceException;</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBook
-getAddressBook(URL portAddress) throws javax.xml.rpc.ServiceException;</font>
-<br><font face="Courier New,Courier">}</font>
+<div class="example"><br><font face="Courier New,Courier">public interface AddressBookService
+extends javax.xml.rpc.Service {
+<br>&nbsp;&nbsp;&nbsp; public String getAddressBookAddress();
+<br>&nbsp;&nbsp;&nbsp; public AddressBook
+getAddressBook() throws javax.xml.rpc.ServiceException;
+<br>&nbsp;&nbsp;&nbsp; public AddressBook
+getAddressBook(URL portAddress) throws javax.xml.rpc.ServiceException;
+<br>}</font></div>
 <p>WSDL2Java will also generate the locator which implements this interface:
-<p><font face="Courier New,Courier">public class AddressBookServiceLocator
-extends org.apache.axis.client.Service implements AddressBookService {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; ...</font>
-<br><font face="Courier New,Courier">}</font>
+<div class="example"><br><font face="Courier New,Courier">public class AddressBookServiceLocator
+extends org.apache.axis.client.Service implements AddressBookService {
+<br>&nbsp;&nbsp;&nbsp; ...
+<br>}</font></div>
 <p>The service interface defines a get method for each port listed in the
 service element of the WSDL. The locator is the implementation of this
 service interface.&nbsp; It implements these get methods. It serves as
@@ -844,27 +826,25 @@ make a Stub which points to the endpoint URL described in the WSDL file,
 but you may also specify a different URL when you ask for the PortType.
 <p>A typical usage of the stub classes would be as follows:
 
-<p class="example"><font face="Courier New,Courier">public class Tester
-{</font>
-<br><font face="Courier New,Courier">&nbsp; public static void main(String
-[] args) throws Exception</font>
-<br><font face="Courier New,Courier">&nbsp; {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Make a service</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; AddressBookService
-service = new AddressBookServiceLocator();</font>
+<div class="example"><br><font face="Courier New,Courier">public class Tester
+{
+<br>&nbsp; public static void main(String
+[] args) throws Exception {
+<br>&nbsp;&nbsp;&nbsp; // Make a service
+<br>&nbsp;&nbsp;&nbsp; AddressBookService
+service = new AddressBookServiceLocator();
 <br>&nbsp;
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Now use the service
-to get a stub which implements the SDI.</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; AddressBook port
-= service.getAddressBook();</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Make the actual
-call</font>
-<div class="example"><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;
-Address address = new Address(...);</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; port.addEntry("Russell
-Butek", address);</font>
-<br><font face="Courier New,Courier">&nbsp; }</font>
-<br><font face="Courier New,Courier">}</font></div>
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; // Now use the service
+to get a stub which implements the SDI.
+<br>&nbsp;&nbsp;&nbsp; AddressBook port
+= service.getAddressBook();
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; // Make the actual call
+<br>&nbsp;&nbsp;&nbsp; Address address = new Address(...);
+<br>&nbsp;&nbsp;&nbsp; port.addEntry("Russell Butek", address);
+<br>&nbsp;&nbsp;&nbsp; }
+<br>}</font></div>
 
 <h4>
 Server-side bindings</h4>
@@ -872,8 +852,8 @@ Just as a stub is the client side of a Web Service represented in Java,
 a <b>skeleton</b> is a Java framework for the server side.&nbsp; To make
 skeleton classes, you just specify the "--skeleton" option to WSDL2Java.
 For instance, using the AddressBook.wsdl as we had above:
-<p><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
---skeleton AddressBook.wsdl</font>
+<div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
+--skeleton AddressBook.wsdl</font></div>
 <p>You will see that WSDL2Java generates all the classes that were generated
 before for the client, but it generates a few new files:
 <br>&nbsp;
@@ -916,29 +896,25 @@ The skeleton class is the class that sits between the AXIS engine and the
 actual service implementation.&nbsp; Its name is the binding name with
 suffix "Skeleton".&nbsp; For example, for the AddressBook binding, WSDL2Java
 will generate:
-<p><font face="Courier New,Courier">public class AddressBookSOAPBindingSkeleton
-implements AddressBook,</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; org.apache.axis.wsdl.Skeleton
-{</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; private AddressBook
-impl;</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton()
-{</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-this.impl = new AddressBookSOAPBindingImpl();</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton(AddressBook
-impl) {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-this.impl = impl;</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(java.lang.String
-name, Address address) throws java.rmi.RemoteException</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-impl.addEntry(name, address);</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<br><font face="Courier New,Courier">}</font>
+<div class="example"><br><font face="Courier New,Courier">public class AddressBookSOAPBindingSkeleton
+implements AddressBook,
+<br>&nbsp;&nbsp;&nbsp; org.apache.axis.wsdl.Skeleton {
+<br>&nbsp;&nbsp;&nbsp; private AddressBook impl;
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton() {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.impl = new AddressBookSOAPBindingImpl();
+<br>&nbsp;&nbsp;&nbsp; }
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton(AddressBook impl) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.impl = impl;
+<br>&nbsp;&nbsp;&nbsp; }
+<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; public void addEntry(java.lang.String
+name, Address address) throws java.rmi.RemoteException
+<br>&nbsp;&nbsp;&nbsp; {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; impl.addEntry(name, address);
+<br>&nbsp;&nbsp;&nbsp; }
+<br>}</font></div>
 <p>(The real skeleton is actually much richer.&nbsp; For brevity I'm just
 showing you the basic skeleton.)
 <p>The skeleton contains an implementation of the AddressBook service.&nbsp;
@@ -948,12 +924,12 @@ AXIS engine calls the skeleton's addEntry method, it simply delegates the
 invocation to the real implementation's addEntry method.
 <p>Besides the skeleton, WSDL2Java also generates an implementation template
 from the binding:
-<p><font face="Courier New,Courier">public class AddressBookSOAPBindingImpl
-implements AddressBook {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
-name, Address address) throws java.rmi.RemoteException {</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
-<br><font face="Courier New,Courier">}</font>
+<div class="example"><br><font face="Courier New,Courier">public class AddressBookSOAPBindingImpl
+implements AddressBook {
+<br>&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws java.rmi.RemoteException {
+<br>&nbsp;&nbsp;&nbsp; }
+<br>}</font></div>
 <p>This template could actually be used as a test implementation but, as
 you can see, it doesn't do anything.&nbsp; It is intended that the service
 writer fill out the implementation from this template.
@@ -1053,19 +1029,16 @@ undeploy.wsdd</li>
 Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd.&nbsp;
 In other words, for "true" the service clause in the deploy.wsdd file will
 look something like:
-<p><font face="Courier New,Courier">&nbsp; &lt;service name="AddressBook"
-provider="java:RPC"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;parameter
-name="className" value="samples.addr.AddressBookSOAPBindingSkeleton"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp; &lt;/service></font>
+<div class="example"><br><font face="Courier New,Courier">&lt;service name="AddressBook"
+provider="java:RPC">
+<br>&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingSkeleton"/>
+<br>&nbsp;&nbsp;&nbsp; ...
+<br>&lt;/service></font></div>
 <p>and for "false" it would look like:
-<p><font face="Courier New,Courier">&nbsp; &lt;service name="AddressBook"
-provider="java:RPC"></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;parameter
-name="className" value="samples.addr.AddressBookSOAPBindingImpl"/></font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</font>
-<br><font face="Courier New,Courier">&nbsp;&nbsp; &lt;/service></font>
+<div class="example"><br><font face="Courier New,Courier">&lt;service name="AddressBook" provider="java:RPC">
+<br>&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingImpl"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<br>&nbsp;&nbsp; &lt;/service></font></div>
 <p>The default for this option is true.&nbsp; This option is only valid
 with the --server-side option.
 <h4>
@@ -1159,29 +1132,24 @@ Indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
 <h3>
 <a NAME="Java2WSDL: Building WSDL from Java"></a>Java2WSDL: Building WSDL
 from Java</h3>
-The Java2WSDL and WSDL2Java emitters make it easy to develop a new web
-service.
-<br>The following sections describe the steps in building a web service
-from a Java interface.
+The Java2WSDL and WSDL2Java emitters make it easy to develop a new web service.  The following sections describe the steps in building a web service from a Java interface.
 <br>&nbsp;
 <h4>
 Step 1: Provide a Java interface or class</h4>
 Write and compile a Java interface (or class) that describes the web service
 interface.&nbsp; Here is an example interface that describes a web services
-that can be used to set/query the price of widgets ( <a href="xml-axis/java/samples/userguide/example6/WidgetPrice.java">../samples/userguide/example6/WidgetPrice.java</a>
-):
-<p><tt><font color="#006600">package samples.userguide.example6;</font></tt>
-<p><tt><font color="#006600">/**</font></tt>
-<br><tt><font color="#006600">&nbsp;* Interface describing a web service
-to set and get Widget prices.</font></tt>
-<br><tt><font color="#006600">&nbsp;**/</font></tt>
-<br><tt><font color="#006600">public interface WidgetPrice</font></tt>
-<br><tt><font color="#006600">{</font></tt>
-<br><tt><font color="#006600">&nbsp;&nbsp;&nbsp; public void setWidgetPrice(String
-widgetName, String price);</font></tt>
-<br><tt><font color="#006600">&nbsp;&nbsp;&nbsp; public String getWidgetPrice(String
-widgetName);</font></tt>
-<br><tt><font color="#006600">}</font></tt>
+that can be used to set/query the price of widgets (<a href="../samples/userguide/example6/WidgetPrice.java">samples/userguide/example6/WidgetPrice.java</a>):
+<div class="example"><br><font face="Courier New,Courier">package samples.userguide.example6;
+<br>/**
+<br>&nbsp;* Interface describing a web service
+to set and get Widget prices.
+<br>&nbsp;**/
+<br>public interface WidgetPrice {
+<br>&nbsp;&nbsp;&nbsp; public void setWidgetPrice(String
+widgetName, String price);
+<br>&nbsp;&nbsp;&nbsp; public String getWidgetPrice(String
+widgetName);
+<br>}</font></div>
 <p><b>Note: </b>If you compile your class with debug information, Java2WSDL
 will use the debug information to obtain the method parameter names.
 <h4>
@@ -1189,9 +1157,7 @@ Step 2: Create WSDL using Java2WSDL</h4>
 Use the Java2WSDL tool to create a WSDL file from the interface above.
 <p>Here is an example invocation that produces the wsdl file (<tt>wp.wsdl</tt>)
 from the interface described in the previous section:
-<p><tt><font color="#009900">java org.apache.axis.wsdl.Java2WSDL -o wp.wsdl
--l"http://localhost:8080/axis/services/WidgetPrice" -n "urn:Example6" -p"samples.userguide.example6"
-"urn:Example6"&nbsp; samples.userguide.example6.WidgetPrice</font></tt>
+<div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.Java2WSDL -o wp.wsdl&nbsp; -l"http://localhost:8080/axis/services/WidgetPrice" -n&nbsp; "urn:Example6"&nbsp;-p"samples.userguide.example6" "urn:Example6"&nbsp; samples.userguide.example6.WidgetPrice</font></div>
 <p>Where:
 <ul>
 <li>
@@ -1371,8 +1337,7 @@ could be the actual implementation class, a stub class or a skeleton class.
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated wsdl file to build the appropriate client/server bindings
 for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java</a>):
-<p>&nbsp;<tt><font color="#009900">java org.apache.axis.wsdl.Wsdl2java
--o . -d session -s -Nurn:Example6 samples.userguide.example6 ws.wsdl</font></tt>
+<div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.Wsdl2java -o . -d session -s&nbsp; -Nurn:Example6 samples.userguide.example6 ws.wsdl</font></div>
 <p>This will generate the following files:
 <ul>
 <li>
@@ -1380,7 +1345,7 @@ for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and dat
 the default server implementation of the WidgetPrice web service.</li>
 
 <br>You will need to modify the *SoapBindingImpl file to add your implementation
-(see&nbsp; <a href="xml-axis/java/samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a>
+(see&nbsp; <a href="../samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a>
 ).
 <li>
 <b><tt>WidgetPrice.java</tt></b>:&nbsp; New interface file that contains
@@ -1411,7 +1376,7 @@ Now you have all of the necessary files to build your client/server side
 code and deploy the web service!
 <h2>
 <a NAME="published interfaces"></a>Published Axis Interfaces</h2>
-Although you may use any of the interfaces present in Axis, you need to
+Although you may use any of the interfaces and classes present in Axis, you need to
 be aware that some are more stable than others since there is a continuing
 need to refactor Axis to maintain and improve its modularity.
 <p>Hence certain interfaces are designated as <i>published</i>, which means
@@ -1428,9 +1393,98 @@ mailing list.
 <p>The current list of published interfaces is as follows:
 <ul>
 <li>
-No interfaces published so far -- everything is subject to change!</li>
+JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public review stage of its existence, meaning that it may still change.  As it does, the JAX-RPC interfaces may also change.  JAX-RPC is expected to become official some time during the summer of 2002.
+<ul>
+<li>javax.xml.messaging.Endpoint</li>
+<li>javax.xml.messaging.URLEndpoint</li>
+<li>javax.xml.rpc.Call</li>
+<li>javax.xml.rpc.FaultException</li>
+<li>javax.xml.rpc.JAXRPCException</li>
+<li>javax.xml.rpc.ParameterMode</li>
+<li>javax.xml.rpc.Service</li>
+<li>javax.xml.rpc.ServiceException</li>
+<li>javax.xml.rpc.ServiceFactory</li>
+<li>javax.xml.rpc.Stub</li>
+<li>javax.xml.rpc.encoding.DeserializationContext</li>
+<li>javax.xml.rpc.encoding.Deserializer</li>
+<li>javax.xml.rpc.encoding.DeserializerFactory</li>
+<li>javax.xml.rpc.encoding.SerializationContext</li>
+<li>javax.xml.rpc.encoding.Serializer</li>
+<li>javax.xml.rpc.encoding.SerializerFactory</li>
+<li>javax.xml.rpc.encoding.TypeMapping</li>
+<li>javax.xml.rpc.encoding.TypeMappingRegistry</li>
+<li>javax.xml.rpc.handler.Handler</li>
+<li>javax.xml.rpc.handler.HandlerChain</li>
+<li>javax.xml.rpc.handler.HandlerInfo</li>
+<li>javax.xml.rpc.handler.HandlerRegistry</li>
+<li>javax.xml.rpc.handler.MessageContext</li>
+<li>javax.xml.rpc.handler.soap.SOAPMessageContext</li>
+<li>javax.xml.rpc.holders.BigDecimalHolder</li>
+<li>javax.xml.rpc.holders.BigIntegerHolder</li>
+<li>javax.xml.rpc.holders.BooleanHolder</li>
+<li>javax.xml.rpc.holders.BooleanWrapperHolder</li>
+<li>javax.xml.rpc.holders.ByteArrayHolder</li>
+<li>javax.xml.rpc.holders.ByteHolder</li>
+<li>javax.xml.rpc.holders.ByteWrapperArrayHolder</li>
+<li>javax.xml.rpc.holders.ByteWrapperHolder</li>
+<li>javax.xml.rpc.holders.CalendarHolder</li>
+<li>javax.xml.rpc.holders.DateHolder</li>
+<li>javax.xml.rpc.holders.DoubleHolder</li>
+<li>javax.xml.rpc.holders.DoubleWrapperHolder</li>
+<li>javax.xml.rpc.holders.FloatHolder</li>
+<li>javax.xml.rpc.holders.FloatWrapperHolder</li>
+<li>javax.xml.rpc.holders.Holder</li>
+<li>javax.xml.rpc.holders.IntHolder</li>
+<li>javax.xml.rpc.holders.IntegerWrapperHolder</li>
+<li>javax.xml.rpc.holders.LongHolder</li>
+<li>javax.xml.rpc.holders.LongWrapperHolder</li>
+<li>javax.xml.rpc.holders.ObjectHolder</li>
+<li>javax.xml.rpc.holders.QNameHolder</li>
+<li>javax.xml.rpc.holders.ShortHolder</li>
+<li>javax.xml.rpc.holders.ShortWrapperHolder</li>
+<li>javax.xml.rpc.holders.StringHolder</li>
+<li>javax.xml.rpc.namespace.QName</li>
+<li>javax.xml.rpc.server.ServiceLifecycle</li>
+<li>javax.xml.rpc.soap.SOAPFault</li>
+<li>javax.xml.rpc.soap.SOAPHeaderFault</li>
+<li>javax.xml.soap.AttachmentPart</li>
+<li>javax.xml.soap.Detail</li>
+<li>javax.xml.soap.DetailEntry</li>
+<li>javax.xml.soap.FactoryFinder</li>
+<li>javax.xml.soap.MessageFactory</li>
+<li>javax.xml.soap.MimeHeader</li>
+<li>javax.xml.soap.MimeHeaders</li>
+<li>javax.xml.soap.Name</li>
+<li>javax.xml.soap.Node</li>
+<li>javax.xml.soap.SOAPBody</li>
+<li>javax.xml.soap.SOAPBodyElement</li>
+<li>javax.xml.soap.SOAPConnection</li>
+<li>javax.xml.soap.SOAPConnectionFactory</li>
+<li>javax.xml.soap.SOAPConstants</li>
+<li>javax.xml.soap.SOAPElement</li>
+<li>javax.xml.soap.SOAPElementFactory</li>
+<li>javax.xml.soap.SOAPEnvelope</li>
+<li>javax.xml.soap.SOAPException</li>
+<li>javax.xml.soap.SOAPFault</li>
+<li>javax.xml.soap.SOAPFaultElement</li>
+<li>javax.xml.soap.SOAPHeader</li>
+<li>javax.xml.soap.SOAPHeaderElement</li>
+<li>javax.xml.soap.SOAPMessage</li>
+<li>javax.xml.soap.SOAPPart</li>
+<li>javax.xml.soap.Text</li>
+<li>javax.xml.transform.Source</li>
 </ul>
-
+</li>
+<li>AXIS interfaces:
+<ul>
+<li>org.apache.axis.client.Call</li>
+<li>org.apache.axis.client.Service</li>
+<li>org.apache.axis.client.ServiceFactory</li>
+<li>org.apache.axis.client.Stub</li>
+<li>org.apache.axis.wsdl.WSDL2Java</li>
+<li>org.apache.axis.wsdl.Java2WSDL</li>
+</ul>
+</ul>
 <h2>
 <a NAME="tcpmon"></a>Using the Axis TCP Monitor (tcpmon)</h2>
 The included "tcpmon" utility can be found in the org.apache.axis.utils
