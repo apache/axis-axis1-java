@@ -22,49 +22,35 @@ public class FileTest {
     FileReader  reader = new FileReader();
     reader.start();
 
-    try {
-      Options opts = new Options( args );
+    Options opts = new Options( args );
     
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
+    Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
     
-      args = opts.getRemainingArgs();
+    args = opts.getRemainingArgs();
     
-      if ( args == null ) {
-        System.err.println( "Usage: GetQuote <symbol>" );
-        System.exit(1);
-      }
-    
-      String   symbol = args[0] ;
-      ServiceClient call = new ServiceClient();
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-    
-      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-    
-      call.set(Transport.USER, opts.getUser() );
-      call.set(Transport.PASSWORD, opts.getPassword() );
-      call.setTransportRequest( "FileSender" );
-    
-      Float res = new Float(0.0F);
-      res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
-                                 "getQuote",
-                                 new Object[] {symbol} );
-    
-      System.out.println( symbol + ": " + res );
-
-      // Once more just for fun...
-      res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
-                                 "getQuote",
-                                 new Object[] {symbol} );
-    
-      System.out.println( symbol + ": " + res );
+    if ( args == null ) {
+      System.err.println( "Usage: GetQuote <symbol>" );
+      System.exit(1);
     }
-    catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      e.printStackTrace();
-        throw e;
-    }
+    
+    String   symbol = args[0] ;
+    ServiceClient call = new ServiceClient();
+    ServiceDescription sd = new ServiceDescription("stockQuotes", true);
+    sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
+    call.setServiceDescription(sd);
+  
+    if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
+  
+    call.set(Transport.USER, opts.getUser() );
+    call.set(Transport.PASSWORD, opts.getPassword() );
+    call.setTransportRequest( "FileSender" );
+  
+    Float res = new Float(0.0F);
+    res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
+                               "getQuote",
+                               new Object[] {symbol} );
+  
+    System.out.println( symbol + ": " + res );
 
     reader.halt();
   }
