@@ -84,7 +84,7 @@ public class JavaDeployWriter extends JavaWriter {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "deploy"),
                 "",
-                "xml",
+                "wsdd",
                 JavaUtils.getMessage("genDeploy00"));
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -104,7 +104,7 @@ public class JavaDeployWriter extends JavaWriter {
         try {
             writeDeployServices();
             writeDeployTypes();
-            pw.println("</m:deploy>");
+            pw.println("</deployment>");
             pw.close();
         }
         catch (IOException e) {
@@ -123,7 +123,7 @@ public class JavaDeployWriter extends JavaWriter {
             Service myService = (Service) mapIterator.next();
 
             pw.println();
-            pw.println("   <!-- " + JavaUtils.getMessage(
+            pw.println("  <!-- " + JavaUtils.getMessage(
                     "wsdlService00", myService.getQName().getLocalPart())
                     + " -->");
             pw.println();
@@ -141,35 +141,19 @@ public class JavaDeployWriter extends JavaWriter {
     private void writeDeployTypes() throws IOException {
         Vector types = symbolTable.getTypes();
 
-        if (types.size() == 0) return;
-
         pw.println();
-
-        pw.print("   <beanMappings ");
-        HashMap nsMap = new HashMap();
-        int i = 1;
-        String nsPrefix = null;
-        for (int j = 0; j < types.size(); ++j) {
-            Type type = (Type) types.elementAt(j);
+        for (int i = 0; i < types.size(); ++i) {
+            Type type = (Type) types.elementAt(i);
             if (type.getBaseType() == null && type.getShouldEmit()) {
-                if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
-                  pw.println("");
-                  nsPrefix = "ns" + i++;
-                  nsMap.put(type.getQName().getNamespaceURI(), nsPrefix);
-                  pw.print("     xmlns:" + nsPrefix  + "=\"" + type.getQName().getNamespaceURI() + "\"");
-                }
+                pw.println("  <typeMapping");
+                pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
+                pw.println("    qname=\"ns:" + Utils.capitalizeFirstChar(type.getQName().getLocalPart()) + '"');
+                pw.println("    languageSpecificType=\"java:" + type.getJavaName() + '"');
+                pw.println("    serializer=\"org.apache.axis.encoding.BeanSerializer\"");
+                pw.println("    deserializer=\"org.apache.axis.encoding.BeanSerializer$BeanSerFactory\"");
+                pw.println("  />");
             }
         }
-        pw.println(">");
-        for (int j = 0; j < types.size(); ++j) {
-            Type type = (Type) types.elementAt(j);
-            if (type.getBaseType() == null && type.getShouldEmit()) {
-                nsPrefix = (String)nsMap.get(type.getQName().getNamespaceURI());
-                pw.println("     <" + nsPrefix + ":" + Utils.capitalizeFirstChar(type.getQName().getLocalPart())
-                       + " classname=\"" + type.getJavaName() +"\"/>");
-            }
-        }
-        pw.println("   </beanMappings>");
     } //writeDeployTypes
 
     /**
@@ -182,12 +166,12 @@ public class JavaDeployWriter extends JavaWriter {
 
         boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
-        pw.println("   <service name=\"" + serviceName
-                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
+        pw.println("  <service name=\"" + serviceName
+                + "\" provider=\"" + (isRPC ? "java:RPC" : "java:MSG") + "\">");
 
         writeDeployBinding(binding);
 
-        pw.println("   </service>");
+        pw.println("  </service>");
     } //writeDeployPort
 
     /**
@@ -196,7 +180,7 @@ public class JavaDeployWriter extends JavaWriter {
     private void writeDeployBinding(Binding binding) throws IOException {
         QName bindingQName = binding.getQName();
         String packageName = namespaces.getCreate(bindingQName.getNamespaceURI());
-        pw.println("      <option name=\"className\" value=\""
+        pw.println("      <parameter name=\"className\" value=\""
                          + packageName + "."
                          + bindingQName.getLocalPart() + "Skeleton" + "\"/>");
 
@@ -207,16 +191,16 @@ public class JavaDeployWriter extends JavaWriter {
             methodList = methodList + " " + op.getName();
         }
 
-        pw.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
+        pw.println("      <parameter name=\"methodName\" value=\"" + methodList + "\"/>");
 
         if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
-            pw.println("      <option name=\"scope\" value=\"Application\"/>");
+            pw.println("      <parameter name=\"scope\" value=\"Application\"/>");
         }
         else if (emitter.getScope() == Emitter.REQUEST_SCOPE) {
-            pw.println("      <option name=\"scope\" value=\"Request\"/>");
+            pw.println("      <parameter name=\"scope\" value=\"Request\"/>");
         }
         else if (emitter.getScope() == Emitter.SESSION_SCOPE) {
-            pw.println("      <option name=\"scope\" value=\"Session\"/>");
+            pw.println("      <parameter name=\"scope\" value=\"Session\"/>");
         }
     } //writeDeployBinding
 
