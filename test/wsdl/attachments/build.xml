@@ -50,7 +50,7 @@ Copyright:
 
 <target name="copy" depends="setenv"/>
 
-<target name="compile" depends="copy">
+<target name="compile" depends="copy" if="jimiAndAttachments.present">
   <echo message="Compiling test.wsdl.attachments"/>
     <wsdl2java url="${axis.home}/test/wsdl/attachments/mime.wsdl"
                output="${axis.home}/build/work"
