@@ -116,7 +116,7 @@ Copyright:
     </ant>
     <copy todir="${build.dir}/work/test" overwrite="yes">
       <fileset dir="${test.dir}">
-        <include name="**/*BindingImpl.java"/>
+        <include name="**/*Impl.java"/>
       </fileset>
       <fileset dir="${test.dir}">
         <include name="**/*TestCase.java"/>

@@ -439,12 +439,6 @@ public class Emitter {
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
-            // If this portType wasn't mentioned in a binding we are emitting,
-            // skip it.
-            if (!wsdlAttr.isInSoapBinding(portType)) {
-                continue;
-            }
-
             HashMap portTypeInfo = writePortType(portType);
             if (bEmitSkeleton && bMessageContext) {
                 writeAxisPortType(portType);
@@ -1467,7 +1461,7 @@ public class Emitter {
 
 
             servicePW.println("" );
-            servicePW.println("    public String getAddress() {" );
+            servicePW.println("    public String get" + portName + "Address() {" );
             servicePW.println("        return " + portName + "_address;" );
             servicePW.println("    }" );
             servicePW.println("" );

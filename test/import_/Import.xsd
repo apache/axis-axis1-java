@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+  targetNamespace="urn:types.import.test"
+    xmlns="http://www.w3.org/2001/XMLSchema">
+
+<types>
+  <schema
+    targetNamespace="urn:types.import.test"
+    xmlns:tns="urn:types.import.test"
+    xmlns="http://www.w3.org/2001/XMLSchema/">
+
+    <complexType name="PhoneNumber">
+      <all>
+        <element name="areaCode" type="int"/>
+        <element name="exchange" type="string"/>
+        <element name="number" type="string"/>
+      </all>
+    </complexType>
+
+    <complexType name="Address">
+      <all>
+        <element name="streetNum" type="int"/>
+        <element name="streetName" type="string"/>
+        <element name="city" type="string"/>
+        <element name="state" type="string"/>
+        <element name="zip" type="int"/>
+        <element name="phoneNumber" type="tns:PhoneNumber"/>
+      </all>
+    </complexType>
+
+  </schema>
+</types>
+</schema>

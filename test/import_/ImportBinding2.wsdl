@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    targetNamespace="urn:importBinding2"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:iface="urn:iface.import.test">
+
+<import
+    location="test/import_/ImportInterface.wsdl"
+    namespace="urn:iface.import.test">
+</import>
+
+<binding name="ImportBinding2" type="iface:Import">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="addEntry">
+    <soap:operation soapAction=""/>
+    <input>
+      <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import" use="encoded"/>
+    </input>
+    <output>
+      <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import" use="encoded"/>
+    </output>
+  </operation>
+  <operation name="getAddressFromName">
+    <soap:operation soapAction=""/>
+    <input>
+      <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import" use="encoded"/>
+    </input>
+    <output>
+      <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:Import" use="encoded"/>
+    </output>
+  </operation>
+</binding>
+</definitions>

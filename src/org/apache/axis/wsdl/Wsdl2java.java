@@ -106,7 +106,7 @@ public class Wsdl2java {
                 MESSAGECONTEXT_OPT,
                 "emit a MessageContext parameter to skeleton methods"),
         new CLOptionDescriptor("NStoPkg",
-                CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
+                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
                 "mapping of namespace to package"),
         new CLOptionDescriptor("output",
