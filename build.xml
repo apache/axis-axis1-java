@@ -384,6 +384,11 @@ Copyright:
     <copy todir="${dist.dir}/webapps/axis">
       <fileset dir="${webapp}"/>
     </copy>
+    <copy todir="${dist.dir}/webapps/axis/WEB-INF">
+      <fileset dir="${samples.dir}/stock">
+        <include name="*.lst"/>
+      </fileset>
+    </copy>
     <copy todir="${dist.dir}/webapps/axis/WEB-INF/lib">
       <fileset dir="${build.lib}">
         <include name="*.jar"/>
