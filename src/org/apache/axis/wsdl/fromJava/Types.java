@@ -59,7 +59,6 @@ package org.apache.axis.wsdl.fromJava;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
-import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
@@ -79,6 +78,7 @@ import org.w3c.dom.NodeList;
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -159,6 +159,9 @@ public class Types {
         */
         if (type.getName().equals("void")) {
           return null;
+        }
+        if (Holder.class.isAssignableFrom(type)) {
+            type = JavaUtils.getHolderValueType(type);
         }
         if (isSimpleType(type)) {
             javax.xml.namespace.QName typeQName = getTypeQName(type);
@@ -850,8 +853,8 @@ public class Types {
     
     /**
      * isBeanCompatible
-     * @param type Class
-     * @param boolean issueMessages if not compatible
+     * @param javaType Class
+     * @param issueErrors if true, issue messages if not compatible
      * Returns true if it appears that this class is a bean and
      * can be mapped to a complexType
      */
