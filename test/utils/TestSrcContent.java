@@ -189,9 +189,11 @@ public class TestSrcContent extends TestCase {
                                        + "|wsdl\\1)"
                                        + "([a-zA-Z0-9_]+\\1)*"
                                        + "[^\\\\/]+\\.java",
+                                       
                                        "log\\.(info|warn|error|fatal)"
                                        + "[ \\t]*\\("
-                                       + "(?![ \\t]*Messages\\.getMessage)",
+                                       + "(?=[ \\t]*\\\")",
+                                       
                                        false),
 
             // Verify that exceptions are built with messages.
