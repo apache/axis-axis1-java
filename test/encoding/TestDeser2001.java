@@ -18,6 +18,7 @@ import org.apache.axis.types.MonthDay;
 import org.apache.axis.types.Name;
 import org.apache.axis.types.NCName;
 import org.apache.axis.types.NMToken;
+import org.apache.axis.types.Duration;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -288,5 +289,13 @@ public class TestDeser2001 extends TestDeser {
         org.apache.axis.types.MonthDay ym = new MonthDay(8, 5);
         deserialize("<result xsi:type=\"xsd:gMonthDay\">--08-05</result>",
                      ym);
+    }
+    public void testDuration() throws Exception {
+        org.apache.axis.types.Duration ym = new Duration(false, 2, 3, 8, 8, 1, 3.3);
+        deserialize("<result xsi:type=\"xsd:duration\">P2Y3M8DT8H1M3.3S</result>",
+                     ym);
+        org.apache.axis.types.Duration ym2 = new Duration(true, 2, 3, 8, 8, 1, 3.3);
+        deserialize("<result xsi:type=\"xsd:duration\">-P2Y3M8DT8H1M3.3S</result>",
+                     ym2);
     }
 }
