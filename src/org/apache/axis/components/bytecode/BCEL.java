@@ -61,6 +61,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
+import org.apache.axis.utils.ClassUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,8 +106,7 @@ public class BCEL implements Extractor {
             try {
                 String className = c.getName();
                 String classFile = className.replace('.', '/');
-                InputStream is =
-                        c.getClassLoader().getResourceAsStream(classFile + ".class");
+                InputStream is = ClassUtils.getResourceAsStream(c, classFile + ".class");
 
                 ClassParser parser = new ClassParser(is, className);
                 bclass = parser.parse();
