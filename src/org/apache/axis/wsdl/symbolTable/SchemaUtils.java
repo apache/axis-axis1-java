@@ -336,13 +336,9 @@ public class SchemaUtils {
      */
     private static ElementDecl processChildElementNode(Node elementNode, 
                                                   SymbolTable symbolTable) {
-        // Get the name and type qnames.
-        // The type qname is used to locate the TypeEntry, which is then
-        // used to retrieve the proper java name of the type.
+        // Get the name qnames.
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
-        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
-
 
         // An element inside a complex type is either qualified or unqualified.
         // If the ref= attribute is used, the name of the ref'd element is used
@@ -365,15 +361,15 @@ public class SchemaUtils {
                     nodeName = new QName("", nodeName.getLocalPart());            
                 }
             }
-        } else {
-            nodeName = nodeType;
         }
+
+        // The type qname is used to locate the TypeEntry, which is then
+        // used to retrieve the proper java name of the type.
+        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
         if (nodeType == null) {
             nodeType = getElementAnonQName(elementNode);            
             forElement.value = false;
-        }
-
-        
+        }        
         TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
                                                              forElement.value);
         if (type != null) {
