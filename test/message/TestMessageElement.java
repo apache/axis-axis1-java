@@ -123,4 +123,29 @@ public class TestMessageElement extends TestCase {
         assertEquals("Child 1 not found", child1, c1only.next());
         assertTrue("Unexpected child", !c1only.hasNext());
     }
+    public void testDetachNode() throws Exception {
+        SOAPConstants sc = SOAPConstants.SOAP11_CONSTANTS;
+        EnvelopeBuilder eb = new EnvelopeBuilder(Message.REQUEST, sc);
+        DeserializationContext dc = new DeserializationContextImpl(null,
+                                                                   eb); 
+        SOAPElement parent = new MessageElement("parent.names",
+                                                "parent",
+                                                "parns:parent",
+                                                null,
+                                                dc);
+        SOAPElement child1 = parent.addChildElement("child1");
+        SOAPElement child2 = parent.addChildElement("child2");
+        SOAPElement child3 = parent.addChildElement("child3");
+
+        child2.detachNode();
+        SOAPElement c[] = {child1, child3}; 
+        
+        Iterator children = parent.getChildElements();
+        for (int i = 0; i < 2; i++) {
+            assertEquals("Child not found",
+                         c[i],
+                         children.next());
+        }
+        assertTrue("Unexpected child", !children.hasNext());
+    }
 }
