@@ -74,7 +74,6 @@ public class SOAPHeader extends MessageElement {
 
     protected String    actor;
     protected boolean   mustUnderstand = false;
-    protected Object    value = null;
 
     public SOAPHeader() {
     }
@@ -89,7 +88,7 @@ public class SOAPHeader extends MessageElement {
     {
         setNamespaceURI(namespace);
         setName(localPart);
-        setValue(value);
+        setObjectValue(value);
     }
 
     public SOAPHeader(Element elem)
@@ -137,23 +136,19 @@ public class SOAPHeader extends MessageElement {
         processed = value ;
     }
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
     public boolean isProcessed() {
         return( processed );
     }
 
     protected void outputImpl(SerializationContext context) throws Exception {
+        Object value = getObjectValue();
         if (value == null) {
             super.outputImpl(context);
         } else {
-            context.serialize(new QName(namespaceURI,name), attributes, value, value.getClass() );
+            context.serialize(new QName(namespaceURI,name),
+                              attributes, 
+                              value, 
+                              value.getClass() );
         }
     }
-};
+}

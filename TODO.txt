@@ -13,7 +13,6 @@ MUST DO FOR BETA1
 ! <Doug> Doug's issue 1: Attachments are broken
 ! <Russell> Published interfaces must be vetted.
 ! <?> getParameterName() should return a QName
-! <?> Taras' fix to MessageElement (getValue-like method).
 
 
 MESSAGE PARSING / ENCODING
