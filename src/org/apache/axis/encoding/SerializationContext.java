@@ -161,20 +161,23 @@ public class SerializationContext
     {
         this.writer = writer;
         this.msgContext = msgContext;
-        if (msgContext==null) throw new NullPointerException();
-        AxisEngine engine = msgContext.getAxisEngine();
-        Boolean shouldSendDecl = (Boolean)engine.getOption(
+        // if (msgContext==null) throw new NullPointerException();
+        AxisEngine engine = null ;
+        if ( msgContext != null ) {
+            engine = msgContext.getAxisEngine();
+            Boolean shouldSendDecl = (Boolean)engine.getOption(
                                                   AxisEngine.PROP_XML_DECL);
-        if (shouldSendDecl != null)
-            sendXMLDecl = shouldSendDecl.booleanValue();
-        Boolean shouldSendMultiRefs = (Boolean)engine.getOption(
+            if (shouldSendDecl != null)
+                sendXMLDecl = shouldSendDecl.booleanValue();
+            Boolean shouldSendMultiRefs = (Boolean)engine.getOption(
                                                   AxisEngine.PROP_DOMULTIREFS);
-        if (shouldSendMultiRefs != null)
-            doMultiRefs = shouldSendMultiRefs.booleanValue();
+            if (shouldSendMultiRefs != null)
+                doMultiRefs = shouldSendMultiRefs.booleanValue();
 
-        // Only turn this off is the user tells us to
-        if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ) )
-            sendXSIType = false ;
+            // Only turn this off is the user tells us to
+            if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ) )
+                sendXSIType = false ;
+        }
     }
 
     public void setSendDecl(boolean sendDecl)

@@ -165,6 +165,21 @@ public class DeserializationContext extends DefaultHandler
         inputSource = is;
     }
     
+    public DeserializationContext(InputSource is, MessageContext ctx, 
+                                  String messageType, SOAPEnvelope env)
+    {
+        EnvelopeBuilder builder = new EnvelopeBuilder(env, messageType);
+        
+        msgContext = ctx;
+        
+        envelope = builder.getEnvelope();
+        envelope.setRecorder(recorder);
+        
+        pushElementHandler(new EnvelopeHandler(builder));
+
+        inputSource = is;
+    }
+    
     public void parse() throws SAXException
     {
         if (inputSource != null) {

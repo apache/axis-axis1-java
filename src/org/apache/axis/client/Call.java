@@ -368,22 +368,25 @@ public class Call implements org.apache.axis.rpc.Call {
         /* If ALL of the params are SOAPBodyElements then we're doing       */
         /* Messaging, otherwise just fall through to normal RPC processing. */
         /********************************************************************/
+        SOAPEnvelope  env = null ;
         int i ;
+
         for ( i = 0 ; params != null && i < params.length ; i++ )
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
+
         if ( i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
-            SOAPEnvelope env = new SOAPEnvelope();
-            Message      msg = null ;
+            env = new SOAPEnvelope();
             
             for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
                 env.addHeader((SOAPHeader)myHeaders.get(i));
 
-            for ( i = 0 ; i < params.length ; i++ )
-                env.addBodyElement( (SOAPBodyElement) params[i] );
+            if ( !(params[0] instanceof SOAPEnvelope) )
+                for ( i = 0 ; i < params.length ; i++ )
+                    env.addBodyElement( (SOAPBodyElement) params[i] );
 
-            msg = new Message( env );
+            Message msg = new Message( env );
             msgContext.setRequestMessage( msg );
 
             invoke();
@@ -434,6 +437,38 @@ public class Call implements org.apache.axis.rpc.Call {
     /************************************************************************/
     /* End of core JAX-RPC stuff                                            */
     /************************************************************************/
+
+    /** Invoke the service with a custom SOAPEnvelope.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param env a SOAPEnvelope to send.
+     * @exception AxisFault
+     */
+    public SOAPEnvelope invoke(SOAPEnvelope env) 
+                                  throws java.rmi.RemoteException {
+        try { 
+            Message msg = null ;
+            int     i ;
+
+            for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
+                env.addHeader((SOAPHeader)myHeaders.get(i));
+
+            msg = new Message( env );
+            msgContext.setRequestMessage( msg );
+            invoke();
+            msg = msgContext.getResponseMessage();
+            if ( msg == null ) return( null );
+            return( msg.getAsSOAPEnvelope() );
+        }
+        catch( Exception exp ) {
+            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+
+            throw new AxisFault( "Error invoking operation",
+                                                exp );
+        }
+    }
+
 
     /** Register a Transport that should be used for URLs of the specified
      * protocol.
@@ -723,21 +758,6 @@ public class Call implements org.apache.axis.rpc.Call {
      * Invocation
      */
 
-    /** Invoke the service with a custom SOAPEnvelope.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @param env a SOAPEnvelope to send.
-     * @exception AxisFault
-     */
-    public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
-    {
-        msgContext.reset();
-        msgContext.setRequestMessage(new Message(env));
-        invoke();
-        return msgContext.getResponseMessage().getAsSOAPEnvelope();
-    }
-
     /** Invoke an RPC service with a method name and arguments.
      *
      * This will call the service, serializing all the arguments, and
@@ -972,5 +992,4 @@ public class Call implements org.apache.axis.rpc.Call {
     {
         return this.outParams;
     }
-
 }
