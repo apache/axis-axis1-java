@@ -159,52 +159,56 @@ public class Type {
     private String initBaseType() {
         String localName = qName.getLocalPart();
         if (Utils.isSchemaNS(qName.getNamespaceURI())) {
-            if (localName.equals("string"))
+            if (localName.equals("string")) {
                 return "java.lang.String";
-            else if (localName.equals("integer"))
+            } else if (localName.equals("integer")) {
                 return "int";
-            else if (localName.equals("int"))
+            } else if (localName.equals("int")) {
                 return "int";
-            else if (localName.equals("long"))
+            } else if (localName.equals("long")) {
                 return "long";
-            else if (localName.equals("short"))
+            } else if (localName.equals("short")) {
                 return "short";
-            else if (localName.equals("decimal"))
+            } else if (localName.equals("decimal")) {
                 return "java.math.BigDecimal";
-            else if (localName.equals("float"))
+            } else if (localName.equals("float")) {
                 return "float";
-            else if (localName.equals("double"))
+            } else if (localName.equals("double")) {
                 return "double";
-            else if (localName.equals("boolean"))
+            } else if (localName.equals("boolean")) {
                 return "boolean";
-            else if (localName.equals("byte"))
+            } else if (localName.equals("byte")) {
                 return "byte";
-            else if (localName.equals("QName"))
+            } else if (localName.equals("QName")) {
                 return "org.apache.axis.rpc.namespace.QName";
-            else if (localName.equals("dateTime"))
+            } else if (localName.equals("dateTime")) {
                 return "java.util.Date";
-            else if (localName.equals("base64Binary"))
+            } else if (localName.equals("base64Binary")) {
                 return "byte[]";
-            else if (localName.equals("date"))
+            } else if (localName.equals("date")) {
                 return "java.util.Date";
-            else if (localName.equals("void"))
+            } else if (localName.equals("void")) {
                 return "void";
+            }
         }
         else if (Utils.isSoapEncodingNS(qName.getNamespaceURI())) {
-            if (localName.equals("string"))
+            if (localName.equals("string")) {
                 return "java.lang.String";
-            else if (localName.equals("int"))
+            } else if (localName.equals("int")) {
                 return "int";
-            else if (localName.equals("short"))
+            } else if (localName.equals("short")) {
                 return "short";
-            else if (localName.equals("decimal"))
+            } else if (localName.equals("decimal")) {
                 return "java.math.BigDecimal";
-            else if (localName.equals("float"))
+            } else if (localName.equals("float")) {
                 return "float";
-            else if (localName.equals("double"))
+            } else if (localName.equals("double")) {
                 return "double";
-            else if (localName.equals("boolean"))
+            } else if (localName.equals("boolean")) {
                 return "boolean";
+            } else if (localName.equals("Vector")) {
+                return "java.util.Vector";
+            }
         }
         return null;
     }
