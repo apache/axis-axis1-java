@@ -104,6 +104,7 @@ public class Types {
     Element wsdlTypesElem = null;
     HashMap schemaTypes = null;
     HashMap schemaElementNames = null;
+    HashMap schemaUniqueElementNames = null; 
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -121,6 +122,7 @@ public class Types {
         this.namespaces = namespaces;
         this.targetNamespace = targetNamespace;
         schemaElementNames = new HashMap();
+        schemaUniqueElementNames = new HashMap();
         schemaTypes = new HashMap();
     }
 
@@ -156,7 +158,9 @@ public class Types {
     private QName writeTypeAsElement(Class type) throws Exception {
         QName qName = writeTypeNamespace(type);
         String elementType = writeType(type);
-        writeSchemaElement(qName, createElement(qName, elementType, isNullable(type)));
+        Element element = createRootElement(qName, elementType, isNullable(type));
+        if (element != null)
+            writeSchemaElement(qName,element);
         return qName;
     }
 
@@ -457,15 +461,23 @@ public class Types {
     }
 
     /**
-     * Create Element with a unique name generated from the namespace information
+     * Create Element
      * @param qName the namespace of the created element
      * @param elementType schema type representation of the element
      * @param nullable nillable attribute of the element
      * @return the created Element
      */
-    private Element createElement(QName qName, String elementType, boolean nullable) {
+    private Element createRootElement(QName qName, String elementType, boolean nullable) {
+        if (!addToElementsList(qName))
+            return null;
+
         Element element = docHolder.createElement("element");
-        String name = generateUniqueElementName(qName);
+
+        //Generate an element name that matches the type.
+        // Previously a unique element name was generated.
+        //String name = generateUniqueElementName(qName);
+        String name = elementType.substring(elementType.lastIndexOf(":")+1);
+
         element.setAttribute("name", name);
         if (nullable)
             element.setAttribute("nillable", "true");
@@ -531,12 +543,12 @@ public class Types {
      * @return elementname
      */
     private String generateUniqueElementName(QName qName) {
-      Integer count = (Integer)schemaElementNames.get(qName.getNamespaceURI());
+      Integer count = (Integer)schemaUniqueElementNames.get(qName.getNamespaceURI());
       if (count == null)
         count = new Integer(0);
       else
         count = new Integer(count.intValue() + 1);
-      schemaElementNames.put(qName.getNamespaceURI(), count);
+      schemaUniqueElementNames.put(qName.getNamespaceURI(), count);
       return "el" + count.intValue();
     }
 
@@ -544,7 +556,7 @@ public class Types {
      * Add the type to an ArrayList and return true if the Schema node
      * needs to be generated
      * If the type already exists, just return false to indicate that the type is already
-     * generated in a previous iterration
+     * generated in a previous iteration
      *
      * @param qName the name space of the type
      * @param typeName the name of the type
@@ -580,7 +592,35 @@ public class Types {
         }
         return false;
     }
- 
+
+    /**
+     * Add the element to an ArrayList and return true if the Schema element
+     * needs to be generated
+     * If the element already exists, just return false to indicate that the type is already
+     * generated in a previous iteration
+     *
+     * @param qName the name space of the element
+     * @param typeName the name of the type
+     * @return if the type is added returns true, else if the type is already present returns false
+     */
+    private boolean addToElementsList (QName qName) {
+        boolean added = false;
+        ArrayList elements = (ArrayList)schemaElementNames.get(qName.getNamespaceURI());
+        if (elements == null) {
+            elements = new ArrayList();
+            elements.add(qName.getLocalPart());
+            schemaElementNames.put(qName.getNamespaceURI(), elements);
+            added = true;
+        }
+        else {
+            if (!elements.contains(qName.getLocalPart())) {
+               elements.add(qName.getLocalPart());
+               added = true;
+            }
+        }
+        return added;
+    }
+  
     /**
      * Determines if the Field in the Class has bean compliant accessors. If so returns true,
      * else returns false
