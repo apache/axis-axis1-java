@@ -97,6 +97,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  *
@@ -124,6 +126,9 @@ public class Types {
     List stopClasses = null;
     List beanCompatErrs = new ArrayList();
     ServiceDesc serviceDesc = null;
+    
+    /** Keep track of the element QNames we've written to avoid dups */
+    private Set writtenQNames = new HashSet();
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -669,6 +674,12 @@ public class Types {
      */
     public void writeSchemaElement(QName qName, Element element) 
         throws AxisFault {
+        if (writtenQNames.contains(qName)) {
+            throw new AxisFault(Constants.FAULT_SERVER_GENERAL,
+                                Messages.getMessage("duplicateSchemaElement",
+                                                    qName.toString()),
+                                null, null);
+        }
         if (wsdlTypesElem == null) {
             try {
                 writeWsdlTypesElement();
@@ -714,6 +725,7 @@ public class Types {
             writeTypeNamespace(qName);
         }
         schemaElem.appendChild(element);
+        writtenQNames.add(qName);
     }
 
     /**

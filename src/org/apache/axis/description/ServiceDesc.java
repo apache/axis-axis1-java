@@ -699,7 +699,13 @@ public class ServiceDesc {
         //         a with-conversion match from the target class?  If so,
         //         we'll need to change the logic below.
         if (possibleMatch != null) {
-            oper.setReturnClass(possibleMatch.getReturnType());
+            Class returnClass = possibleMatch.getReturnType();
+            oper.setReturnClass(returnClass);
+            
+            QName returnType = oper.getReturnType();
+            if (returnType == null) {
+                oper.setReturnType(tm.getTypeQName(returnClass));
+            }
 
             // Do the faults
             createFaultMetadata(possibleMatch, oper);
