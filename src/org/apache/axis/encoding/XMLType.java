@@ -120,8 +120,3 @@ public class XMLType implements org.apache.axis.rpc.encoding.XMLType {
         this.type = type ;
     }
 }
-
-
-
-
-    

@@ -58,8 +58,11 @@ package org.apache.axis.client ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.RPCParam;
 import org.apache.axis.rpc.encoding.XMLType;
 import org.apache.axis.rpc.namespace.QName;
+
+import java.util.Vector ;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -75,6 +78,9 @@ public class Call implements org.apache.axis.rpc.Call {
     private ServiceClient      client        = null ;
     private ServiceDescription serviceDesc   = null ;
     private String             operationName = null ;
+    private Vector             paramNames    = null ;
+    private Vector             paramTypes    = null ;
+    private Vector             paramModes    = null ;
 
     /**
      * Default constructor - not much else to say.
@@ -117,14 +123,25 @@ public class Call implements org.apache.axis.rpc.Call {
 
         QName qn = paramType.getType();
 
+        if ( paramNames == null ) {
+            paramNames = new Vector();
+            paramTypes = new Vector();
+            paramModes = new Vector();
+        }
+        
+        paramNames.add( paramName );
+        paramTypes.add( paramType.getType() );
+        paramModes.add( new Integer(parameterMode) );
+
+/*
         switch( parameterMode ) {
-            case PARAM_MODE_IN: 
-                     serviceDesc.addInputParam( paramName,
-                         new org.apache.axis.utils.QName(qn.getNamespaceURI(),
-                                                         qn.getLocalPart() ) );
+            case PARAM_MODE_IN: paramNames.add( paramName );
+                                paramTypes.add( qn );
+                                paramModes.add( PARAM_MODE_IN );
                      break ;
 
-            case PARAM_MODE_OUT:
+            case PARAM_MODE_OUT: paramNames.add( paramName );
+                    
                      serviceDesc.addOutputParam( paramName,
                          new org.apache.axis.utils.QName(qn.getNamespaceURI(),
                                                          qn.getLocalPart() ) );
@@ -134,6 +151,7 @@ public class Call implements org.apache.axis.rpc.Call {
             default:                // Unsupported - but can't throw anything!
                       throw new RuntimeException( "Unsupport parameter type" );
         }
+        */
     }
 
     /**
@@ -264,18 +282,17 @@ public class Call implements org.apache.axis.rpc.Call {
      * @return Object Return value of the operation/method - or null
      * @throws RemoteException if there's an error
      */
-    public Object invoke(Object[] params)
-                           throws java.rmi.RemoteException {
+    public Object invoke(Object[] params) throws java.rmi.RemoteException {
         if ( operationName == null )
             throw new java.rmi.RemoteException( "No operation name specified" );
         try {
             String ns = (String) client.get( Constants.NAMESPACE );
             if ( ns == null )
-                return( client.invoke( operationName, params ) );
+                return( client.invoke(operationName,getParamList(params)) );
             else
-                return( client.invoke( ns, operationName, params ) );
+                return( client.invoke(ns,operationName,getParamList(params)) );
         }
-        catch( AxisFault exp ) {
+        catch( Exception exp ) {
             throw new java.rmi.RemoteException( "Error invoking operation",
                                                 exp );
         }
@@ -295,10 +312,59 @@ public class Call implements org.apache.axis.rpc.Call {
     public void invokeOneWay(Object[] params)
                            throws org.apache.axis.rpc.JAXRPCException {
         try {
-            invoke( params );
+            invoke( getParamList(params) );
         }
-        catch( java.rmi.RemoteException exp ) {
+        catch( Exception exp ) {
             throw new org.apache.axis.rpc.JAXRPCException( exp.toString() );
         }
+    }
+
+    /**
+     * Convert the list of objects into RPCParam's based on the paramNames,
+     * paramTypes and paramModes variables.  If those aren't set then just
+     * return what was passed in.
+     *
+     * @param  params   Array of parameters to pass into the operation/method
+     * @return Object[] Array of parameters to pass to invoke()
+     */
+    private Object[] getParamList(Object[] params) 
+                           throws org.apache.axis.rpc.JAXRPCException {
+        int  numParams = 0 ;
+        int  i ;
+
+        // If we never set-up any names... then just return what was passed in
+        //////////////////////////////////////////////////////////////////////
+        if ( paramNames == null ) return( params );
+
+        // Count the number of IN and INOUT params, this needs to match the
+        // number of params passed in - if not throw an error
+        /////////////////////////////////////////////////////////////////////
+        for ( i = 0 ; i < paramNames.size() ; i++ ) {
+            if (((Integer)paramModes.get(i)).intValue() == Call.PARAM_MODE_OUT)
+                continue ;
+            numParams++ ;
+        }
+
+        if ( numParams != params.length )
+            throw new org.apache.axis.rpc.JAXRPCException( 
+                                       "Number of parameters passed in (" +
+                                       params.length + ") doesn't match the " +
+                                       "number of IN/INOUT parameters (" + 
+                                       numParams + ") from the addParameter" +
+                                       "() calls" );
+
+        // All ok - so now produce an array of RPCParams
+        //////////////////////////////////////////////////
+        Vector result = new Vector();
+        int    j = 0 ;
+        for ( i = 0 ; i < numParams ; i++ ) {
+            if (((Integer)paramModes.get(i)).intValue() == Call.PARAM_MODE_OUT)
+                continue ;
+            RPCParam p = new RPCParam( (String) paramNames.get(i), 
+                                          params[j++] );
+            result.add( p );
+        }
+
+        return( result.toArray() );
     }
 }

@@ -18,7 +18,7 @@
 
   <!-- port type declns -->
   <portType name="GetQuote">
-    <operation name="getQuote">
+    <operation name="getQuote" >
       <input  message="tns:GetQuoteRequest"/>
       <output message="tns:GetQuoteResponse"/>
     </operation>

@@ -55,30 +55,38 @@
 
 package org.apache.axis.client ;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
-import com.ibm.wsdl.xml.WSDLReader;
-import org.apache.axis.rpc.JAXRPCException;
-import org.apache.axis.rpc.namespace.QName;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.XMLUtils;
+import java.net.URL ;
+import java.lang.String ;
+import java.util.Map ;
+import java.util.Set ;
+import java.util.List ;
+import java.util.Iterator ;
+import java.util.HashSet ;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.InputStream ;
+import java.io.FileInputStream ;
+
+import org.apache.axis.utils.XMLUtils ;
+
+import org.apache.axis.encoding.XMLType ;
+import org.apache.axis.rpc.JAXRPCException ;
+import org.apache.axis.rpc.namespace.QName ;
+import org.apache.axis.transport.http.HTTPConstants ;
+
+import javax.wsdl.Definition ;
+import javax.wsdl.Binding ;
+import javax.wsdl.BindingOperation ;
+import javax.wsdl.Input ;
+import javax.wsdl.Message ;
+import javax.wsdl.Operation ;
+import javax.wsdl.Output ;
+import javax.wsdl.Part ;
+import javax.wsdl.Port ;
+import javax.wsdl.PortType ;
+
+import com.ibm.wsdl.xml.WSDLReader ;
+import com.ibm.wsdl.extensions.soap.SOAPAddress ;
+import com.ibm.wsdl.extensions.soap.SOAPOperation ;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -355,12 +363,56 @@ public class Service implements org.apache.axis.rpc.Service {
 
         // Get the parameters
         ////////////////////////////////////////////////////////////////////
-        // to do - dug
+        List    paramOrder = op.getParameterOrdering();
+        Input   input      = op.getInput();
+        Message message    = null ;
+        List    parts      = null ;
+
+        if ( input   != null ) message = input.getMessage();
+        if ( message != null ) parts   = message.getOrderedParts( paramOrder );
+        if ( parts != null ) {
+            for ( int i = 0 ; i < parts.size() ; i++ ) {
+                Part    part = (Part) parts.get(i);
+                // Part    part = message.getPart( name );
+                if ( part == null ) continue ;
+
+                String           name  = part.getName();
+                javax.wsdl.QName type  = part.getTypeName();
+                QName            tmpQN = new QName( type.getNamespaceURI(),
+                                                    type.getLocalPart());
+                XMLType          xmlType = new XMLType(tmpQN);
+                int              mode = Call.PARAM_MODE_IN ;
+                call.addParameter( name, xmlType, mode );
+
+                // System.err.println("Adding param: " + name );
+            }
+        }
+
 
         // Get the return type
         ////////////////////////////////////////////////////////////////////
-        Output   output = op.getOutput();
-        Message  messae = output.getMessage();
+        Output   output  = op.getOutput();
+        message = null ;
+
+        if ( output  != null ) message = output.getMessage();
+        if ( message != null ) parts   = message.getOrderedParts(null);
+
+        if ( parts != null ) {
+            for( int i = 0 ;i < parts.size() ; i++ ) {
+                Part part  = (Part) parts.get( i );
+
+                if (paramOrder != null && paramOrder.contains(part.getName()))
+                        continue ;
+
+                javax.wsdl.QName type  = part.getTypeName();
+                QName            tmpQN = new QName( type.getNamespaceURI(),
+                                                    type.getLocalPart());
+                XMLType          xmlType = new XMLType(tmpQN);
+                call.setReturnType( xmlType );
+                // System.err.println("Return type: " + type.getLocalPart() );
+                break ;
+            }
+        }
 
         return( call );
     }

@@ -87,14 +87,16 @@ public class GetQuote1 {
       }
 
       // Define the service QName and port QName
+      /////////////////////////////////////////////////////////////////////////
       QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
       QName portQN = new QName("urn:xmltoday-delayed-quotes","GetQuote");
 
       Service service = new Service( "GetQuote.wsdl", servQN );
       Call    call    = service.createCall( portQN, "getQuote" );
 
-      //  set params, return-type   - dug
-
+      // Define some service and Axis specific properties
+      // Namespace should be part of JAXRPC but it isn't - too bad
+      ////////////////////////////////////////////////////////////////////////
       call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.setProperty( Transport.USER, opts.getUser() );
       call.setProperty( Transport.PASSWORD, opts.getPassword() );
