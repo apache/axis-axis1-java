@@ -57,10 +57,13 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.fromJava.Namespaces;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -139,10 +142,6 @@ public class TypeMappingImpl implements TypeMapping
     protected TypeMapping delegate;   // Pointer to delegate or null
     private ArrayList namespaces;   // Supported namespaces
 
-    /**
-     * Should we "auto-type" classes we don't recognize into the "java:"
-     * namespace?
-     */
     private boolean doAutoTypes = false;
 
     /**
@@ -327,13 +326,6 @@ public class TypeMappingImpl implements TypeMapping
             if (xmlType == null) {
                 return null;
             }
-
-            // If we're doing autoTyping, and we got a type in the right
-            // namespace, we can use the default serializer.
-            if (doAutoTypes &&
-                    xmlType.getNamespaceURI().equals(Constants.NS_URI_JAVA)) {
-                return new BeanSerializerFactory(javaType, xmlType);
-            }
         }
 
         // Try to get the serializer associated with this pair
@@ -393,12 +385,6 @@ public class TypeMappingImpl implements TypeMapping
             if (xmlType == null) {
                 return null;
             }
-
-            // If we're doing autoTyping, we can use the default.
-            if (doAutoTypes &&
-                    xmlType.getNamespaceURI().equals(Constants.NS_URI_JAVA)) {
-                return xmlType;
-            }
         }
 
         // Try to get the serializer associated with this pair
@@ -457,16 +443,6 @@ public class TypeMappingImpl implements TypeMapping
             // has already asked all our delegates.
             if (javaType == null) {
                 return null;
-            }
-
-            if (doAutoTypes &&
-                Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
-                try {
-                    javaType = ClassUtils.forName(xmlType.getLocalPart());
-                } catch (ClassNotFoundException e) {
-                    return null;
-                }
-                return new BeanDeserializerFactory(javaType, xmlType);
             }
         }
 
@@ -567,26 +543,62 @@ public class TypeMappingImpl implements TypeMapping
             xmlType = pair.xmlType;
         }
 
-        if (xmlType == null && doAutoTypes) {
-            xmlType = new QName(Constants.NS_URI_JAVA,
-                                javaType.getName());
-        }
-
         // Can only detect arrays via code
         if (xmlType == null && (javaType.isArray() ||
-             javaType == List.class ||
-             List.class.isAssignableFrom(javaType))) {
+            javaType == List.class ||
+            List.class.isAssignableFrom(javaType))) {
 
-            // get the registered array if any
-            pair = (Pair) class2Pair.get(Object[].class);
-            // TODO: it always returns the last registered one,
-            //  so that's why the soap 1.2 typemappings have to 
-            //  move to an other registry to differentiate them
-            if (pair != null) {
-                xmlType = pair.xmlType;
-            } else {
-                xmlType = Constants.SOAP_ARRAY;
+            /* If auto-typing is on, generate a namespace for this array
+             * intelligently, then register it's javaType and xmlType. Also
+             * make sure the class isn't derived from List, because they
+             * should be serialized as an anyType array.
+             */
+            if ( doAutoTypes && 
+                 javaType != List.class &&
+                 !List.class.isAssignableFrom(javaType) )
+            {
+                xmlType = new QName(
+                    Namespaces.makeNamespace( javaType.getName() ),
+                    Types.getLocalNameFromFullName( javaType.getName() ) );
+                
+                register( javaType,
+                          xmlType, 
+                          new ArraySerializerFactory(),
+                          new ArrayDeserializerFactory() );
             }
+            else
+            {
+                // get the registered array if any
+                pair = (Pair) class2Pair.get(Object[].class);
+                // TODO: it always returns the last registered one,
+                //  so that's why the soap 1.2 typemappings have to 
+                //  move to an other registry to differentiate them
+                if (pair != null) {
+                    xmlType = pair.xmlType;
+                } else {
+                    xmlType = Constants.SOAP_ARRAY;
+                }
+            }
+        }
+        
+        /* If the class isn't an array or List and auto-typing is turned on,
+         * register the class and it's type as beans.
+         */
+        if (xmlType == null && doAutoTypes)
+        {   
+            xmlType = new QName(
+                Namespaces.makeNamespace( javaType.getName() ),
+                Types.getLocalNameFromFullName( javaType.getName() ) );
+            
+            /* If doAutoTypes is set, register a new type mapping for the
+             * java class with the above QName.  This way, when getSerializer()
+             * and getDeserializer() are called, this QName is returned and
+             * these methods do not need to worry about creating a serializer.
+             */
+            register( javaType,
+                      xmlType, 
+                      new BeanSerializerFactory(javaType, xmlType),
+                      new BeanDeserializerFactory(javaType, xmlType) );
         }
 
         //log.debug("getTypeQName xmlType =" + xmlType);
@@ -609,15 +621,6 @@ public class TypeMappingImpl implements TypeMapping
             javaType = delegate.getClassForQName(xmlType);
         } else if (pair != null) {
             javaType = pair.javaType;
-        }
-
-        if (javaType == null && doAutoTypes &&
-                Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
-            // Classloader?
-            try {
-                javaType = ClassUtils.forName(xmlType.getLocalPart());
-            } catch (ClassNotFoundException e) {
-            }
         }
 
         //log.debug("getClassForQName javaType =" + javaType);
