@@ -104,7 +104,7 @@ public class WSDLUtils {
 
         portType.setQName(new javax.wsdl.QName(url, name + "PortType"));
 
-        Method[] methods = cls.getMethods();
+        Method[] methods = cls.getDeclaredMethods();
         ArrayList encodingList = new ArrayList();
         encodingList.add(Constants.URI_SOAP_ENC);
 
@@ -117,13 +117,13 @@ public class WSDLUtils {
 
             Input input = def.createInput();
 
-            msg = getRequestMessage(def, methods[i], reg);
+            msg = getRequestMessage(def, url, methods[i], reg);
             input.setMessage(msg);
             oper.setInput(input);
 
             def.addMessage(msg);
 
-            msg = getResponseMessage(def, methods[i], reg);
+            msg = getResponseMessage(def, url, methods[i], reg);
             Output output = def.createOutput();
             output.setMessage(msg);
             oper.setOutput(output);
@@ -186,12 +186,13 @@ public class WSDLUtils {
     }
 
     public static Message getRequestMessage(Definition def,
+                                            String namespace,
                                             Method method,
                                             TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName = new javax.wsdl.QName("",
+        javax.wsdl.QName qName = new javax.wsdl.QName(namespace,
                                         method.getName().concat("Request"));
 
         msg.setQName(qName);
@@ -206,12 +207,13 @@ public class WSDLUtils {
     }
 
     public static Message getResponseMessage(Definition def,
+                                             String namespace,
                                              Method method,
                                              TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName = new javax.wsdl.QName("",
+        javax.wsdl.QName qName = new javax.wsdl.QName(namespace,
                                         method.getName().concat("Response"));
 
         msg.setQName(qName);
