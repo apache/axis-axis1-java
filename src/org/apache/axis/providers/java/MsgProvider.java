@@ -161,8 +161,10 @@ public class MsgProvider extends JavaProvider {
                 argObjects[0] = bodies ;
                 Element[] result = (Element[]) method.invoke( obj, argObjects );
                 if ( result != null ) {
-                    for ( int i = 0 ; i < result.length ; i++ )
-                        resEnv.addBodyElement( new SOAPBodyElement(result[i]));
+                    for ( int i = 0 ; i < result.length ; i++ ) {
+                        if(result[i] != null)
+                            resEnv.addBodyElement( new SOAPBodyElement(result[i]));
+                    }
                 }
                 return ;
             } else if (params[0] == Document.class) {
