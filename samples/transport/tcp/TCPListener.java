@@ -258,7 +258,7 @@ public class TCPListener implements Runnable {
             /* Send it back along the wire...  */
             /***********************************/
             msg = msgContext.getResponseMessage();
-            String response = (String) msg.getAsString();
+            String response = (String) msg.getSOAPPart().getAsString();
             if (msg == null) response="No data";
             try {
                 OutputStream buf = new BufferedOutputStream(socket.getOutputStream());

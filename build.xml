@@ -124,6 +124,10 @@ Copyright:
       classname="org.apache.avalon.excalibur.cli.CLUtil"
       classpathref="classpath"/>
 
+    <available property="activation.present"
+      classname="javax.activation.DataHandler"
+      classpathref="classpath"/>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <echo message="--- Build environment for ${Name} ---" />
@@ -138,6 +142,7 @@ Copyright:
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
     <echo message="junit.present=${junit.present}" />
+    <echo message="activation.present=${activation.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
@@ -159,6 +164,9 @@ Copyright:
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
+      <exclude name="org/apache/axis/attachments/AttachmentsImpl.java" unless="activation.present"/>
+      <exclude name="org/apache/axis/attachments/AttachmentPart.java" unless="activation.present"/>
+      <exclude name="org/apache/axis/attachments/MimeUtil.java" unless="activation.present"/>
       <exclude name="org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>

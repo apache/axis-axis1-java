@@ -71,10 +71,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 /** This handler uses SOAP headers to do simple session management.
- * 
+ *
  * <p>Essentially, you install it on both the request and response chains of
  * your service, on both the client and the server side.</p>
- * 
+ *
  * <p>ON THE SERVER:</p>
  * <ul>
  * <li>The REQUEST is checked for a session ID header.  If present, we
@@ -97,7 +97,7 @@ import java.util.Set;
  *     in the AxisClient associated with the MessageContext.  If so, we
  *     insert a session ID header with the appropriate ID.
  * </ul>
- * 
+ *
  * <p>SimpleSessions are "reaped" periodically via a very simplistic
  * mechanism.  Each time the handler is invoke()d we check to see if more
  * than <b>reapPeriodicity</b> milliseconds have elapsed since the last
@@ -128,7 +128,7 @@ public class SimpleSessionHandler extends BasicHandler
     
     /**
      * Process a MessageContext.
-     */ 
+     */
     public void invoke(MessageContext context) throws AxisFault
     {
         // Should we reap timed out sessions?
@@ -167,7 +167,7 @@ public class SimpleSessionHandler extends BasicHandler
 
     /**
      * Client side of processing.
-     */ 
+     */
     public void doClient(MessageContext context) throws AxisFault
     {
         if (context.getPastPivot()) {
@@ -175,7 +175,7 @@ public class SimpleSessionHandler extends BasicHandler
             Message msg = context.getResponseMessage();
             if (msg == null)
                 return;
-            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = env.getHeaderByName(SESSION_NS,
                                                     SESSION_LOCALPART);
             if (header == null)
@@ -202,7 +202,7 @@ public class SimpleSessionHandler extends BasicHandler
             if (msg == null)
                 throw new AxisFault("No request message in MessageContext?");
             
-            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = new SOAPHeader(SESSION_NS,
                                                SESSION_LOCALPART,
                                                id);
@@ -212,7 +212,7 @@ public class SimpleSessionHandler extends BasicHandler
 
     /**
      * Server side of processing.
-     */ 
+     */
     public void doServer(MessageContext context) throws AxisFault
     {
         if (context.getPastPivot()) {
@@ -225,7 +225,7 @@ public class SimpleSessionHandler extends BasicHandler
             Message msg = context.getResponseMessage();
             if (msg == null)
                 return;
-            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = new SOAPHeader(SESSION_NS,
                                                SESSION_LOCALPART,
                                                id);
@@ -236,7 +236,7 @@ public class SimpleSessionHandler extends BasicHandler
             if (msg == null)
                 throw new AxisFault("No request message?");
             
-            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = env.getHeaderByName(SESSION_NS,
                                                     SESSION_LOCALPART);
             Long id;
@@ -271,9 +271,9 @@ public class SimpleSessionHandler extends BasicHandler
     
     /**
      * Generate a new session, register it, and return its ID.
-     * 
+     *
      * @return the new session's ID for later lookup.
-     */ 
+     */
     private synchronized Long getNewSession()
     {
         Long id = new Long(curSessionID++);

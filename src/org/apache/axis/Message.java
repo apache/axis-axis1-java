@@ -53,23 +53,25 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis ;
+package org.apache.axis;
 
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.message.InputStreamBody;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.log4j.Category;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import java.io.ByteArrayOutputStream;
+import org.apache.axis.attachments.Attachments;
+
 import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
+ * A complete SOAP (and/or XML-RPC, eventually) message.
+ * Includes both the root part (as a SOAPPart), and zero or
+ * more MIME attachments (as AttachmentParts).
+ * <p>
+ * Eventually should be refactored to generalize SOAPPart
+ * for multiple protocols (XML-RPC?).
  *
+ * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
@@ -77,82 +79,29 @@ public class Message {
     static Category category =
             Category.getInstance(Message.class.getName());
 
-    /**
-     * Just a placeholder until we figure out what the actual Message
-     * object is.
-     */
-    private Object originalMessage ;
-    private Object currentMessage ;
-
     public static final String REQUEST  = "request" ;
     public static final String RESPONSE = "response" ;
 
-    private static final int FORM_STRING       = 1;
-    private static final int FORM_INPUTSTREAM  = 2;
-    private static final int FORM_SOAPENVELOPE = 3;
-    private static final int FORM_BYTES        = 4;
-    private static final int FORM_BODYINSTREAM = 5;
-    private static final int FORM_FAULT        = 6;
-    private int currentForm ;
-
-    private static final String[] formNames =
-    { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
-      "FORM_BYTES", "FORM_BODYINSTREAM", "FORM_FAULT" };
-
-    private String messageType ;
-    private MessageContext msgContext;
-
     /**
-     * Just something to us working...
+     * The messageType indicates whether this is request or response.
      */
-    public Message(String stringForm) {
-        category.debug( "Enter Message ctor (String)" );
-        originalMessage = stringForm;
-        setCurrentMessage(stringForm, FORM_STRING);
-    }
-
-    public Message(SOAPEnvelope env) {
-        category.debug( "Enter Message ctor (SOAPEnvelope)" );
-        originalMessage = env;
-        setCurrentMessage(env, FORM_SOAPENVELOPE);
-    }
-
-    public Message(InputStream inputStream) {
-        category.debug( "Enter Message ctor (InputStream)" );
-        originalMessage = inputStream;
-        setCurrentMessage(inputStream, FORM_INPUTSTREAM);
-    }
-
-    public Message(InputStream inputStream, boolean isBody) {
-        category.debug( "Enter Message ctor (BodyInputStream)" );
-        originalMessage = inputStream;
-        setCurrentMessage(inputStream, isBody ? FORM_BODYINSTREAM :
-                                                FORM_INPUTSTREAM);
-    }
-
-    public Message(byte [] bytes) {
-        category.debug("Enter Message ctor (byte[])" );
-        originalMessage = bytes;
-        setCurrentMessage(bytes, FORM_BYTES);
-    }
-
-    public Message(AxisFault fault) {
-        category.debug("Enter Message ctor (AxisFault)" );
-        originalMessage = fault;
-        setCurrentMessage(fault, FORM_FAULT);
-    }
-
-    public Object getOriginalMessage() {
-        return( originalMessage );
-    }
-
-    public Object getCurrentMessage() {
-        return( currentMessage );
-    }
-
-    private int getCurrentForm() {
-        return( currentForm );
-    }
+    private String messageType;
+    
+    /**
+     * This Message's SOAPPart.  Will always be here.
+     */
+    private SOAPPart mSOAPPart;
+    
+    /**
+     * This Message's Attachments object, which manages the attachments
+     * contained in this Message.
+     */
+    private Attachments mAttachments;
+    
+    /**
+     * The MessageContext we are associated with.
+     */
+    private MessageContext msgContext;
 
     public String getMessageType()
     {
@@ -172,165 +121,90 @@ public class Message {
     {
         this.msgContext = msgContext;
     }
-
-    private void setCurrentMessage(Object currMsg, int form) {
-        category.debug( "Setting current message form to: " +
-                        formNames[form] +" (currentMessage is now " +
-                        currMsg + ")" );
-        currentMessage = currMsg ;
-        currentForm = form ;
+    
+    /**
+     * Get this message's Content-Length in bytes (which will include any
+     * MIME part dividers, but will not include any transport headers).
+     */
+    public int getContentLength () {
+        // TODO: something real!
+		return mSOAPPart.getContentLength();
     }
-
-    public byte[] getAsBytes() {
-        category.debug( "Enter: Message::getAsBytes" );
-        if ( currentForm == FORM_BYTES ) {
-            category.debug( "Exit: Message::getAsBytes" );
-            return( (byte[]) currentMessage );
-        }
-
-        if ( currentForm == FORM_BODYINSTREAM ) {
-            try {
-                getAsSOAPEnvelope();
-            } catch (Exception e) {
-                category.fatal("Couldn't make envelope", e);
-                return null;
-            }
-        }
-
-        if ( currentForm == FORM_INPUTSTREAM ) {
-            // Assumes we don't need a content length
-            try {
-                InputStream  inp = (InputStream) currentMessage ;
-                ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-                byte[]  buf = new byte[4096];
-                int len ;
-                while ( (len = inp.read(buf,0,4096)) != -1 )
-                    baos.write( buf, 0, len );
-                buf = baos.toByteArray();
-                // int len = inp.available();
-                // byte[]  buf = new byte[ len ];
-                // inp.read( buf );
-                setCurrentMessage( buf, FORM_BYTES );
-                category.debug( "Exit: Message::getAsByes" );
-                return( (byte[]) currentMessage );
-            }
-            catch( Exception e ) {
-                e.printStackTrace( System.err );
-            }
-            category.debug( "Exit: Message::getAsByes" );
-            return( null );
-        }
-
-        if ( currentForm == FORM_SOAPENVELOPE ||
-             currentForm == FORM_FAULT )
-            getAsString();
-
-        if ( currentForm == FORM_STRING ) {
-            setCurrentMessage( ((String)currentMessage).getBytes(),
-                               FORM_BYTES );
-            category.debug( "Exit: Message::getAsBytes" );
-            return( (byte[]) currentMessage );
-        }
-
-        System.err.println("Can't convert " + currentForm + " to Bytes" );
-        category.debug( "Exit: Message::getAsBytes" );
-        return( null );
+    
+    /**
+     * Construct a Message, using the provided initialContents as the
+     * contents of the Message's SOAPPart.
+     * <p>
+     * Eventually, genericize this to
+     * return the RootPart instead, which will have some kind of
+     * EnvelopeFactory to enable support for things other than SOAP.
+     * But that all will come later, with lots of additional refactoring.
+	 *
+	 * @param initialContents may be String, byte[], InputStream, SOAPEnvelope, or AxisFault.
+     * @param bodyInStream is true if initialContents is an InputStream containing just
+     * the SOAP body (no SOAP-ENV).
+     */
+    public Message (Object initialContents, boolean bodyInStream) {
+		setup(initialContents, bodyInStream);
     }
-
-    public String getAsString() {
-        category.debug( "Enter: Message::getAsString" );
-        if ( currentForm == FORM_STRING ) {
-            category.debug( "Exit: Message::getAsString, currentMessage is "+
-                            currentMessage );
-            return( (String) currentMessage );
-        }
-
-        if ( currentForm == FORM_INPUTSTREAM ||
-             currentForm == FORM_BODYINSTREAM ) {
-            getAsBytes();
-            // Fall thru to "Bytes"
-        }
-
-        if ( currentForm == FORM_BYTES ) {
-            setCurrentMessage( new String((byte[]) currentMessage),
-                               FORM_STRING );
-            category.debug( "Exit: Message::getAsString, currentMessage is "+
-                            currentMessage );
-            return( (String) currentMessage );
-        }
-
-        if ( currentForm == FORM_FAULT ) {
-            StringWriter writer = new StringWriter();
-            AxisFault env = (AxisFault)currentMessage;
-            try {
-                env.output(new SerializationContext(writer, msgContext));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
-            return (String)currentMessage;
-        }
-
-        if ( currentForm == FORM_SOAPENVELOPE ) {
-            StringWriter writer = new StringWriter();
-            SOAPEnvelope env = (SOAPEnvelope)currentMessage;
-            try {
-                env.output(new SerializationContext(writer, msgContext));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-            setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
-            return (String)currentMessage;
-        }
-
-        System.err.println("Can't convert form " + currentForm +
-                           " to String" );
-        category.debug( "Exit: Message::getAsString" );
-        return( null );
-    }
-
-    public SOAPEnvelope getAsSOAPEnvelope()
-        throws AxisFault
-    {
-        category.debug( "Enter: Message::getAsSOAPEnvelope; currentForm is "+
-                        formNames[currentForm] );
-        if ( currentForm == FORM_SOAPENVELOPE )
-            return( (SOAPEnvelope) currentMessage );
-
-        if (currentForm == FORM_BODYINSTREAM) {
-            InputStreamBody bodyEl =
-                             new InputStreamBody((InputStream)currentMessage);
-            SOAPEnvelope env = new SOAPEnvelope();
-            env.addBodyElement(bodyEl);
-            setCurrentMessage(env, FORM_SOAPENVELOPE);
-            return env;
-        }
-
-        InputSource is;
-
-        if ( currentForm == FORM_INPUTSTREAM ) {
-            is = new InputSource( (InputStream) currentMessage );
-        } else {
-            is = new InputSource(new StringReader(getAsString()));
-        }
-        DeserializationContext dser =
-            new DeserializationContext(is, msgContext, messageType);
-
-        // This may throw a SAXException
+	
+	/**
+	 * Construct a Message.  An overload of Message(Object, boolean),
+	 * defaulting bodyInStream to false.
+	 */
+	public Message (Object initialContents) {
+		setup(initialContents, false);
+	}
+    
+	/**
+	 * Do the work of construction.
+	 */
+	private void setup (Object initialContents, boolean bodyInStream) {
+        mSOAPPart = new SOAPPart(this, initialContents, bodyInStream);
+        
+        // Try to construct an AttachmentsImpl object for attachment functionality.
+        // If there is no org.apache.axis.attachments.AttachmentsImpl class,
+        // it must mean activation.jar is not present and attachments are not
+        // supported.
         try {
-            dser.parse();
-        } catch (SAXException e) {
-            Exception real = e.getException();
-            if (real == null)
-                real = e;
-            throw new AxisFault(real);
+            Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
+            // Construct one, and cast to Attachments.
+            // There must be exactly one constructor of AttachmentsImpl, which must
+            // take an org.apache.axis.Message!
+            Constructor attachImplConstr = attachImpl.getConstructors()[0];
+            Object[] args = new Object[1];
+            args[0] = this;
+            mAttachments = (Attachments)attachImplConstr.newInstance(args);
+        } catch (ClassNotFoundException ex) {
+            // no support for it, leave mAttachments null.
+        } catch (InvocationTargetException ex) {
+            // no support for it, leave mAttachments null.
+        } catch (InstantiationException ex) {
+            // no support for it, leave mAttachments null.
+        } catch (IllegalAccessException ex) {
+            // no support for it, leave mAttachments null.
         }
-
-        setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
-        category.debug( "Exit: Message::getAsSOAPEnvelope" );
-        return( (SOAPEnvelope) currentMessage );
+	}
+	
+    /**
+     * Get this message's SOAPPart.
+	 * <p>
+	 * Eventually, this should be generalized beyond just SOAP,
+	 * but it's hard to know how to do that without necessitating
+	 * a lot of casts in client code.  Refactoring keeps getting
+	 * easier anyhow.
+     */
+    public SOAPPart getSOAPPart () {
+        return mSOAPPart;
     }
-
-};
+            
+    /**
+     * Get the Attachments of this Message.
+     * If this returns null, then NO ATTACHMENT SUPPORT EXISTS in this
+     * configuration of Axis, and no attachment operations may be
+     * performed.
+     */
+    public Attachments getAttachments () {
+        return mAttachments;
+    }
+}

@@ -140,7 +140,7 @@ public class MessageElement
                    Attributes attributes, DeserializationContext context)
     {
         if (category.isDebugEnabled()) {
-            category.debug("New MessageElement (" + this + ") named " + qName);
+            category.debug("New MessageElement (" + super.toString() + ") named " + qName);
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 category.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }

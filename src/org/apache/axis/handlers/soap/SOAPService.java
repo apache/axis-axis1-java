@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9,7 +9,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -17,7 +17,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -25,7 +25,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -78,8 +78,8 @@ import java.util.Vector;
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
  * and handles the SOAP semantics when invoke()d.
- * 
- * @author Glen Daniels (gdaniels@macromedia.com) 
+ *
+ * @author Glen Daniels (gdaniels@macromedia.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SOAPService extends SimpleTargetedChain
@@ -89,7 +89,7 @@ public class SOAPService extends SimpleTargetedChain
 
     /** Valid transports for this service
      * (server side only!)
-     * 
+     *
      * !!! For now, if this is null, we assume all
      * transports are valid.
      */
@@ -127,7 +127,7 @@ public class SOAPService extends SimpleTargetedChain
     }
     
     /** Tell this service which engine it's deployed to.
-     * 
+     *
      * The main result of this right now is to set up type mapping
      * relationships.
      */
@@ -174,7 +174,7 @@ public class SOAPService extends SimpleTargetedChain
         category.debug( "Doing SOAP semantic checks...");
         
         // 1. Check mustUnderstands
-        SOAPEnvelope env = msgContext.getRequestMessage().getAsSOAPEnvelope();
+        SOAPEnvelope env = msgContext.getRequestMessage().getSOAPPart().getAsSOAPEnvelope();
         Vector headers = env.getHeaders();
         Vector misunderstoodHeaders = null;
         Enumeration enum = headers.elements();
@@ -199,7 +199,7 @@ public class SOAPService extends SimpleTargetedChain
                     respMsg = new Message(new SOAPEnvelope());
                     msgContext.setResponseMessage(respMsg);
                 }
-                env = respMsg.getAsSOAPEnvelope();
+                env = respMsg.getSOAPPart().getAsSOAPEnvelope();
                 enum = misunderstoodHeaders.elements();
                 while (enum.hasMoreElements()) {
                     SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
@@ -243,7 +243,7 @@ public class SOAPService extends SimpleTargetedChain
         category.debug("Exit : SOAPService::invoke" );
     }
 
-    public void undo(MessageContext msgContext) 
+    public void undo(MessageContext msgContext)
     {
         category.debug("Enter: SOAPService::undo" );
         category.debug("Exit: SOAPService::undo" );
@@ -268,10 +268,10 @@ public class SOAPService extends SimpleTargetedChain
 
     /*********************************************************************
      * Administration and management APIs
-     * 
+     *
      * These can get called by various admin adapters, such as JMX MBeans,
      * our own Admin client, web applications, etc...
-     * 
+     *
      *********************************************************************
      */
     

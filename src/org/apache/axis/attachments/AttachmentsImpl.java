@@ -53,56 +53,48 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.attachments;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
 import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
-import org.apache.log4j.Category;
+import org.apache.axis.Part;
+
+import java.util.Hashtable;
 
 /**
+ * Implements the Attachment interface, via an actual Hashtable of actual
+ * AttachmentParts.
  *
- * @author Doug Davis (dug@us.ibm.com)
+ * @author Rob Jellinghaus (robj@unrealities.com)
  */
-public class DebugHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(DebugHandler.class.getName());
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: DebugHandler::invoke" );
-        try {
-            Message       msg = msgContext.getRequestMessage();
-
-            SOAPEnvelope message = (SOAPEnvelope)msg.getSOAPPart().getAsSOAPEnvelope();
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG,
-                                                        "Debug");
-
-            if (header != null) {
-                Integer i = ((Integer)header
-                             .getValueAsType(SOAPTypeMappingRegistry.XSD_INT));
-                if (i == null)
-                    throw new AxisFault("Couldn't convert value to int");
-
-                int debugVal = i.intValue();
-                category.debug( "Setting debug level to: " + debugVal );
-                //Debug.setDebugLevel(debugVal);
-                header.setProcessed(true);
-            }
-        }
-        catch( Exception e ) {
-            category.error( e );
-            throw new AxisFault( e );
-        }
-        category.debug("Exit: DebugHandler::invoke" );
+public class AttachmentsImpl implements Attachments {
+    private Message msg;
+    
+    private Hashtable attachments = new Hashtable();
+    
+    /**
+     * Construct one of these on a parent Message.
+     * Should only ever be called by Message constructor!
+     */ 
+    public AttachmentsImpl (Message parent) {
+        msg = parent;
     }
 
-    public void undo(MessageContext msgContext) {
-        category.debug("Enter: DebugHandler::undo" );
-        category.debug("Exit: DebugHandler::undo" );
+    public Part createAttachmentPart() {
+        return new AttachmentPart(msg);
     }
 
-};
+    /**
+     * TODO: everything!
+     */ 
+    public Part getAttachmentById(String contentId) {
+        return null;
+    }
+
+    /**
+     * TODO: everything!
+     */ 
+    public Part getAttachmentByLocation(String contentLocation) {
+        return null;
+    }
+}

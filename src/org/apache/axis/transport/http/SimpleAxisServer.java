@@ -172,6 +172,7 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
+        category.debug("SimpleAxisServer starting up.");
 
         // create an Axis server
         AxisServer engine = getAxisServer();
@@ -236,8 +237,8 @@ public class SimpleAxisServer implements Runnable {
                     // read headers
                     is.setInputStream(socket.getInputStream());
                     // parse all headers into hashtable
-                    int contentLength = parseHeaders(is, soapAction, 
-                                                     httpRequest, fileName, 
+                    int contentLength = parseHeaders(is, soapAction,
+                                                     httpRequest, fileName,
                                                      cookie, cookie2, authInfo);
                     is.setContentLength(contentLength);
 
@@ -389,7 +390,7 @@ public class SimpleAxisServer implements Runnable {
                         msgContext.setResponseMessage(msg);
                     } else {
                         try {
-                            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+                            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
                             env.clearBody();
                             env.addBodyElement(new SOAPFaultElement((AxisFault)e));
                         } catch (AxisFault fault) {
@@ -400,7 +401,7 @@ public class SimpleAxisServer implements Runnable {
 
                 // Retrieve the response from Axis
                 Message responseMsg = msgContext.getResponseMessage();
-                byte[] response = (byte[]) responseMsg.getAsBytes();
+                byte[] response = (byte[]) responseMsg.getSOAPPart().getAsBytes();
 
                 // Send it on its way...
                 OutputStream out = socket.getOutputStream();

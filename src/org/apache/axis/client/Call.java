@@ -60,6 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.SOAPPart;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -411,7 +412,7 @@ public class Call implements javax.xml.rpc.Call {
             if (msg == null)
                 throw new AxisFault(new Exception("Null response message!"));
 
-            env = msg.getAsSOAPEnvelope();
+            env = msg.getSOAPPart().getAsSOAPEnvelope();
             return( env.getBodyElements() );
         }
 
@@ -479,7 +480,7 @@ public class Call implements javax.xml.rpc.Call {
             msg = msgContext.getResponseMessage();
             if (msg == null)
                 throw new AxisFault(new Exception("Null response message!"));
-            return( msg.getAsSOAPEnvelope() );
+            return( msg.getSOAPPart().getAsSOAPEnvelope() );
         }
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
@@ -901,7 +902,7 @@ public class Call implements javax.xml.rpc.Call {
          */
         resMsg.setMessageType(Message.RESPONSE);
 
-        resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
+        resEnv = (SOAPEnvelope)resMsg.getSOAPPart().getAsSOAPEnvelope();
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFaultElement) {

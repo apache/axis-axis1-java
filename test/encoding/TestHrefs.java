@@ -11,10 +11,10 @@ import org.apache.axis.server.AxisServer;
 
 import java.util.Vector;
 
-/** 
+/**
  * Test deserialization of SOAP messages with references, by putting the
  * actual value in various places in the message.
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class TestHrefs extends TestCase {
@@ -23,7 +23,7 @@ public class TestHrefs extends TestCase {
     private String [] messageParts;
     
     public TestHrefs(String name) {
-        this(name, Constants.URI_CURRENT_SCHEMA_XSI, 
+        this(name, Constants.URI_CURRENT_SCHEMA_XSI,
                    Constants.URI_CURRENT_SCHEMA_XSD);
     }
 
@@ -40,7 +40,7 @@ public class TestHrefs extends TestCase {
     public TestHrefs(String name, String NS_XSI, String NS_XSD) {
         super(name);
 
-        header = 
+        header =
             "<?xml version=\"1.0\"?>\n" +
             "<soap:Envelope " +
               "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
@@ -58,7 +58,7 @@ public class TestHrefs extends TestCase {
              "</soap:Envelope>\n" };
     }
 
-    private void deserialize(String data, Object expected, int pos) 
+    private void deserialize(String data, Object expected, int pos)
        throws Exception
     {
        String msgString = header;
@@ -72,7 +72,7 @@ public class TestHrefs extends TestCase {
        Message message = new Message(msgString);
        message.setMessageContext(new MessageContext(new AxisServer()));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
        assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();
@@ -90,13 +90,13 @@ public class TestHrefs extends TestCase {
     }
 
     public void testStringReference1() throws Exception {
-        String result = 
+        String result =
             "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
         deserialize(result, "abc", 0);
     }
 
     public void testStringReference2() throws Exception {
-        String result = 
+        String result =
             "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
         deserialize(result, "abc", 1);
     }

@@ -248,7 +248,7 @@ public class AxisServlet extends HttpServlet {
                     Message respMsg = msgContext.getResponseMessage();
                     if (respMsg != null) {
                         writer.println("<p>Got response message:</p>");
-                        writer.println(respMsg.getAsString());
+                        writer.println(respMsg.getSOAPPart().getAsString());
                     } else {
                         writer.println("<p>No response message!</p>");
                     }
@@ -406,7 +406,7 @@ public class AxisServlet extends HttpServlet {
                 msgContext.setResponseMessage(msg);
             } else {
                 try {
-                    SOAPEnvelope env = msg.getAsSOAPEnvelope();
+                    SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
                     env.clearBody();
                     env.addBodyElement(new SOAPFaultElement((AxisFault)e));
                 } catch (AxisFault af) {
@@ -417,13 +417,14 @@ public class AxisServlet extends HttpServlet {
 
         /* Send it back along the wire...  */
         /***********************************/
+        // ROBJDO this must change for MIME outgoing content
         msg = msgContext.getResponseMessage();
         res.setContentType( "text/xml; charset=utf-8" );
         String response;
         if (msg == null) {
             response="No data";
         } else {
-            response = (String)msg.getAsString();
+            response = (String)msg.getSOAPPart().getAsString();
         }
         res.setContentLength( response.getBytes().length );
         res.getWriter().print( response );

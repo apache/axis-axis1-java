@@ -106,7 +106,7 @@ public class LocalSender extends BasicHandler {
 
         // copy the request, and force its format to String in order to
         // exercise the serializers.
-        String msgStr = clientContext.getRequestMessage().getAsString();
+        String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
 
         category.debug( "LocalSender sending XML:");
         category.debug( msgStr);
@@ -147,7 +147,7 @@ public class LocalSender extends BasicHandler {
                 serverContext.setResponseMessage(respMsg);
             } else {
                 SOAPFaultElement faultEl = new SOAPFaultElement(fault);
-                SOAPEnvelope env = respMsg.getAsSOAPEnvelope();
+                SOAPEnvelope env = respMsg.getSOAPPart().getAsSOAPEnvelope();
                 env.clearBody();
                 env.addBodyElement(faultEl);
             }

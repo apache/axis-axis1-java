@@ -73,7 +73,7 @@ public class EchoHandler extends BasicHandler {
         category.debug("Enter: EchoHandler::invoke" );
         try {
             Message  msg = msgContext.getRequestMessage();
-            SOAPEnvelope env = (SOAPEnvelope) msg.getAsSOAPEnvelope();
+            SOAPEnvelope env = (SOAPEnvelope) msg.getSOAPPart().getAsSOAPEnvelope();
             msgContext.setResponseMessage( new Message( env ) );
         }
         catch( Exception e ) {

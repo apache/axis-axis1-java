@@ -87,8 +87,8 @@ public class LogHandler extends BasicHandler {
 
                 pw.println( "=======================================================" );
                 pw.println( "= Elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
-                pw.println( "= InMsg: " + (inMsg == null ? "null" : inMsg.getAsString()));
-                pw.println( "= OutMsg: " + (outMsg == null ? "null" : outMsg.getAsString()));
+                pw.println( "= InMsg: " + (inMsg == null ? "null" : inMsg.getSOAPPart().getAsString()));
+                pw.println( "= OutMsg: " + (outMsg == null ? "null" : outMsg.getSOAPPart().getAsString()));
                 pw.println( "=======================================================" );
 
                 pw.close();

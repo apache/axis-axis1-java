@@ -10,7 +10,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 
-/** 
+/**
  * Verify that deserialization actually can cause the soap service
  * to be set...
  */
@@ -22,14 +22,14 @@ public class TestBody extends TestCase {
 
     private String namespace = "http://xml.apache.org/axis/TestBody";
 
-    private String request = 
+    private String request =
         "<?xml version=\"1.0\"?>\n" +
         "<soap:Envelope " +
           "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
           "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">" +
           "<soap:Body>\n" +
             "<method xmlns=\"" + namespace + "\">\n" +
-              "<arg>5</arg>" + 
+              "<arg>5</arg>" +
             "</method>\n" +
           "</soap:Body>\n" +
         "</soap:Envelope>\n";
@@ -51,7 +51,7 @@ public class TestBody extends TestCase {
        message.setMessageContext(msgContext);
 
        // ensure that the message is parsed
-       SOAPEnvelope envelope = message.getAsSOAPEnvelope();
+       SOAPEnvelope envelope = message.getSOAPPart().getAsSOAPEnvelope();
        RPCElement body = (RPCElement)envelope.getFirstBody();
 
        // verify the service is set

@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 
 /**
  * A convenient little test program which will send a message as is to
- * the server.  Useful for debugging interoperability problems or 
+ * the server.  Useful for debugging interoperability problems or
  * handling of ill-formed messages that are hard to reproduce programmatically.
  *
  * Accepts the standard options, followed by a list of files containing
@@ -36,7 +36,7 @@ class put {
     
             call.invoke();
         
-            System.out.println(call.getResponseMessage().getAsString());
+            System.out.println(call.getResponseMessage().getSOAPPart().getAsString());
         }
     }
 }
