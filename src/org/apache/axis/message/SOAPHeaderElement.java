@@ -110,7 +110,9 @@ public class SOAPHeaderElement extends MessageElement
     }
 
     public void detachNode() {
-        ((SOAPHeader)parent).removeHeader(this);
+        if (parent != null) {
+            ((SOAPHeader)parent).removeHeader(this);
+        }
         super.detachNode();
     }
 

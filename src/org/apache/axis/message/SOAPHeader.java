@@ -87,7 +87,9 @@ public class SOAPHeader extends MessageElement
     }
 
     public void detachNode() {
-        ((SOAPEnvelope)parent).removeHeaders();
+        if (parent != null) {
+            ((SOAPEnvelope)parent).removeHeaders();
+        }
         super.detachNode();
     }
 
