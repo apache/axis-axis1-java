@@ -858,8 +858,10 @@ public class ServiceDesc {
             Class [] superClasses = implClass.getInterfaces();
             for (int i = 0; i < superClasses.length; i++) {
                 Class superClass = superClasses[i];
-                if (stopClasses == null ||
-                        !stopClasses.contains(superClass.getName())) {
+                if (!superClass.getName().startsWith("java.") &&
+                        !superClass.getName().startsWith("javax.") &&
+                        (stopClasses == null ||
+                        !stopClasses.contains(superClass.getName()))) {
                     loadServiceDescByIntrospectionRecursive(superClass);
                 }
             }
