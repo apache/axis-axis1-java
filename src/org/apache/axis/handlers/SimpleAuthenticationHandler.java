@@ -88,10 +88,10 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             log.debug("Enter: SimpleAuthenticationHandler::invoke");
         }
 
-        SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
+        SecurityProvider provider = (SecurityProvider)msgContext.getProperty(MessageContext.SECURITY_PROVIDER);
         if (provider == null) {
             provider = new SimpleSecurityProvider();
-            msgContext.setProperty("securityProvider", provider);
+            msgContext.setProperty(MessageContext.SECURITY_PROVIDER, provider);
         }
 
         if (provider != null) {
