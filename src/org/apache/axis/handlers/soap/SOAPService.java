@@ -313,6 +313,9 @@ public class SOAPService extends SimpleTargetedChain
 
     public void setPropertyParent(Hashtable parent)
     {
+        if (options == null) {
+            options = new LockableHashtable();
+        }
         ((LockableHashtable)options).setParent(parent);
     }
 
