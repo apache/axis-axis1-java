@@ -55,33 +55,20 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.utils.JavaUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 
 /**
  * A <code>MapSerializer</code> is be used to serialize and
