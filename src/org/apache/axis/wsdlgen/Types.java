@@ -204,7 +204,8 @@ public class Types {
             // Get the QName from the registry, or create our own.
             qName = reg.getTypeQName(type);
             if (qName == null) {
-                String ns = namespaces.getCreate(type.getName().substring(0, type.getName().lastIndexOf('.')));
+                String ns = namespaces.getCreate(
+                  type.getName().substring(0, type.getName().lastIndexOf('.')));
                 String pre = namespaces.getCreatePrefix(ns);
                 String localPart = type.getName().substring(type.getName().lastIndexOf('.') + 1);
                 localPart = localPart.replace('$', '_');

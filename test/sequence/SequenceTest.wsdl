@@ -40,7 +40,7 @@
   </message>
 
   <!-- port type declns -->
-  <portType name="SequenceTest">
+  <portType name="SequenceTestPortType">
     <operation name="testSequence">
       <input message="tns:testSequenceRequest"/>
       <output message="tns:testSequenceResponse"/>
@@ -48,7 +48,7 @@
   </portType>
 
   <!-- binding declns -->
-  <binding name="SequenceTestSOAPBinding" type="tns:SequenceTest">
+  <binding name="SequenceTestSoapBinding" type="tns:SequenceTestPortType">
     <soap:binding style="rpc"
                   transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="testSequence">
@@ -67,8 +67,8 @@
   </binding>
 
   <!-- service decln -->
-  <service name="SequenceTestService">
-    <port name="SequenceTest" binding="tns:SequenceTestSOAPBinding">
+  <service name="SequenceTest">
+    <port name="SequenceTest" binding="tns:SequenceTestSoapBinding">
       <soap:address location="http://localhost:8080/axis/services/SequenceTest"/>
     </port>
   </service>

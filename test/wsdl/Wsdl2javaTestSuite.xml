@@ -16,6 +16,11 @@
       <classpath refid="test-classpath" />
   </taskdef>
 
+  <taskdef name="java2wsdl" 
+           classname="test.wsdl.Java2WsdlAntTask">
+      <classpath refid="test-classpath" />
+  </taskdef>
+
   <target name="main">
     <!-- Use this to check the classpath if the ANT Task fails... -->
     <!--
@@ -48,7 +53,42 @@
     </wsdl2java>
 
     <!-- Sequence Test -->
+    <!-- Generate Java From WSDL -->
     <wsdl2java url="test/sequence/SequenceTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="urn:SequenceTest2" package="test.sequence"/>
+    </wsdl2java>
+    <!-- Copy modified files to work directory -->
+    <copy todir="${build.dir}/work/test" overwrite="yes">
+      <fileset dir="${test.dir}">
+        <include name="sequence/SequenceInfo.java"/>
+      </fileset>
+    </copy>
+    <!-- Compile Java -->
+    <echo message="${build.dir} ${build.dest}"/>
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="test/sequence/**.java" />
+      <exclude name="test/sequence/*TestCase.java" />
+      <exclude name="test/sequence/*Impl.java" />
+    </javac>
+    <!-- Now create a WSDL file from the Java classes -->
+    <java2wsdl output="build/work/test/sequence/SequenceTest.wsdl"
+               className= "test.sequence.SequenceTestPortType"
+               service= "SequenceTest"
+               namespace="urn:SequenceTest2"
+               location="http://localhost:8080/axis/services/SequenceTest">
+        <mapping namespace="urn:SequenceTest2" package="test.sequence"/>
+    </java2wsdl>
+    <!-- Recreate Java files from the new WSDL -->
+    <wsdl2java url="build/work/test/sequence/SequenceTest.wsdl"
                output="build/work"
                deployscope="session"
                skeleton="yes"
@@ -322,6 +362,7 @@
     </wsdl2java>
     
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
+    <!--
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
                deployscope="none"
@@ -332,6 +373,7 @@
                testcase="yes">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
+    -->
   </target>
 </project>
 

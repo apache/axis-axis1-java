@@ -114,7 +114,7 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
                 "service location"),
-        new CLOptionDescriptor("service name",
+        new CLOptionDescriptor("service",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_NAME_OPT,
                 "service name"),
