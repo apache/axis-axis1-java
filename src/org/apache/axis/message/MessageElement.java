@@ -133,7 +133,7 @@ public class MessageElement
     {
         elementRep = elem;
         namespaceURI = elem.getNamespaceURI();
-        name = elem.getTagName();
+        name = elem.getLocalName();
     }
 
     public MessageElement(String namespace, String localPart, String qName,
