@@ -64,7 +64,7 @@ package test.wsdl.roundtrip;
  */
 public class InvalidTradeExchange extends Exception {
 
-    private String tradeExchange;
+    public String tradeExchange;
 
     public InvalidTradeExchange(String tradeExchange) {
         this.tradeExchange = tradeExchange;
