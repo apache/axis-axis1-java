@@ -66,6 +66,12 @@ Copyright:
 
 <target name="compile" depends="copy">
 
+  <!-- cleanup old code -->
+  <delete>
+    <fileset dir="${build.dir}" includes="work/test/wsdl/_import/**/*.java"/>
+    <fileset dir="${build.dir}" includes="work/test/import2/**/*.java"/>
+  </delete>
+
   <echo message="Compiling test.wsdl._import"/>
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
