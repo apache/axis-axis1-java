@@ -192,11 +192,11 @@ public class ServiceClient {
         return( encodingStyleURI );
     }
     
-    public void setTransportInput(String handlerName) {
+    public void setTransportRequest(String handlerName) {
       msgContext.setProperty( MessageContext.TRANS_REQUEST, handlerName );
     }
   
-    public void setTransportOutput(String handlerName) {
+    public void setTransportResponse(String handlerName) {
       msgContext.setProperty( MessageContext.TRANS_RESPONSE, handlerName );
     }
     
