@@ -55,101 +55,87 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message ;
-
-// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
+package org.apache.axis.client ;
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
+import org.apache.axis.* ;
 import org.apache.axis.message.* ;
+import org.apache.axis.handlers.* ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class RPCBody extends SOAPBody {
-  protected String    namespace ;
-  protected String    namespaceURI ;
-  protected ArrayList args ;                // RPCArgs
 
-  public RPCBody() {}
 
-  public RPCBody(Element elem) {
-    NodeList  list ;
+// Need to add proxy, ssl.... other cool things - but it's a start
+// Only supports String
 
-    namespace = elem.getPrefix();
-    namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    parseArgs( elem.getChildNodes() );
+public class HTTPCall {
+  private String  url ;
+  private String  action ;
+
+  public HTTPCall() {
   }
 
-  public RPCBody(SOAPBody b) {
-    setMethodName( b.getName() );
-    setNamespace( b.getNamespace() );
-    setNamespaceURI( b.getNamespaceURI() );
-    Vector list = b.getData();
-    if ( list != null )
-      for ( int i = 0 ; i < list.size() ; i++ )
-        addArg( new RPCArg( (Element) list.get(i) ) );
+  public HTTPCall(String url) {
+    this.url = url ;
   }
 
-  public RPCBody(String methodName, Object[] args) {
-    setMethodName( methodName );
-    if ( args != null ) {
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        RPCArg  arg = new RPCArg( "arg" + i, (String) args[i] );
-        addArg( arg );
-      }
+  public HTTPCall(String url, String action) {
+    setURL( url );
+    setAction( action );
+  }
+
+  public void setURL( String url ) {
+    this.url = url ;
+  }
+
+  public void setAction( String action ) {
+    this.action = action ;
+  }
+
+  public static Object invoke(String url, String act, String m, Object[] args) {
+    HTTPCall  ahc = new HTTPCall();
+    ahc.setURL( url );
+    ahc.setAction( act );
+    return( ahc.invoke( m, args ) );
+  }
+
+  public Object invoke( String method, Object[] args ) {
+    // quote = HTTPCall.invoke( "getQuote", Object[] { "IBM" } );
+    RPCBody              body   = new RPCBody( method, args );
+    SOAPEnvelope         reqEnv = new SOAPEnvelope();
+    SOAPEnvelope         resEnv = null ;
+    HTTPDispatchHandler  client = new HTTPDispatchHandler();
+    Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
+    Message              resMsg = null ;
+    MessageContext       msgContext = new MessageContext( reqMsg );
+    Vector               resBodies = null ;
+    Vector               resArgs = null ;
+    RPCArg               arg ;
+
+    reqEnv.addBody( body );
+    msgContext.setProperty( "HTTP_URL", url );   // horrible name!
+    msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
+    try {
+      client.init();
+      client.invoke( msgContext );
+      client.cleanup();
     }
-  }
-
-  public String getMethodName() { return( name ); }
-  public void   setMethodName(String name) { this.name = name ; }
-
-  public String getNamespace() { return( namespace ); }
-  public void   setNamespace(String ns) { namespace = ns; }
-
-  public String getNamespaceURI() { return( namespaceURI ); }
-  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
-
-  public Vector getArgs() { 
-    if ( args == null || args.size() == 0 ) return( null );
-    Vector v = new Vector();
-    for ( int i = 0 ; i < args.size() ; i++ )
-      v.add( args.get(i) );
-    return( v );
-  }
-
-  public void addArg(RPCArg arg) { 
-    if ( args == null ) args = new ArrayList();
-    args.add( arg ); 
-  }
-  
-  public void      parseArgs(NodeList list) {
-    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-      Node  n = list.item(i);
-      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-      if ( args == null ) args = new ArrayList();
-      args.add( new RPCArg( (Element) n ) );
+    catch( AxisFault fault ) {
+      System.err.println( fault );
+      System.exit(1); /// ha!
     }
+
+    resMsg = msgContext.getOutgoingMessage();
+    resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
+    resBodies = resEnv.getAsRPCBody();
+    if ( resBodies == null || resBodies.size() == 0 ) return( null );
+    body = (RPCBody) resBodies.get( 0 );
+    resArgs = body.getArgs();
+    arg = (RPCArg) resArgs.get(0);
+    return( (String) arg.getValue() );
   }
 
-  public Element getAsXML(Document doc) {
-    Element   root ;
-   
-    if ( namespace != null ) {
-      root = doc.createElementNS(namespace, namespace + ":" + name );
-      root.setAttribute( "xmlns:" + namespace, namespaceURI );
-    }
-    else {
-      root = doc.createElement( name );
-    }
-    for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
-      RPCArg  arg = (RPCArg) args.get(i) ;
-      root.appendChild( arg.getAsXML(doc) );
-    }
-    return( root );
-  }
-
-};
+}
