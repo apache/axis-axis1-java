@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    targetNamespace="urn:messages.import.test"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:addressTypes="urn:types.import.test">
+
+<type>
+  <schema
+    targetNamespace="urn:types.import.test"
+    xmlns:tns="urn:types.import.test"
+    xmlns="http://www.w3.org/2001/XMLSchema/">
+
+    <import
+      schemaLocation="Phone.xsd"
+      namespace="urn:types.import.test">
+    </import>
+
+    <complexType name="Address">
+      <all>
+        <element name="streetNum" type="int"/>
+        <element name="streetName" type="string"/>
+        <element name="city" type="string"/>
+        <element name="state" type="string"/>
+        <element name="zip" type="int"/>
+        <element name="phoneNumber" type="tns:PhoneNumber"/>
+      </all>
+    </complexType>
+
+  </schema>
+</type>
+
+<message name="empty"/>
+
+<message name="InaddEntryRequest">
+  <part name="key" type="xsd:string"/>
+  <part name="value" type="addressTypes:Address"/>
+</message>
+
+<message name="IngetAddressFromNameRequest">
+  <part name="key" type="xsd:string"/>
+</message>
+
+<message name="OutgetAddressFromNameResponse">
+  <part name="value" type="addressTypes:Address"/>
+</message>
+
+<message name="Fault">
+  <part name="value" type="xsd:string"/>
+</message>
+
+</definitions>
