@@ -113,6 +113,8 @@ public class Types {
 
     /** Keep track of the element QNames we've written to avoid dups */
     private Set writtenElementQNames = new HashSet();
+    
+    private Class [] mappedTypes = null;
 
     public static boolean isArray(Class clazz)
     {
@@ -158,6 +160,9 @@ public class Types {
 
         this.tm = tm;
         this.defaultTM = defaultTM;
+        
+        mappedTypes = tm.getAllClasses();
+        
         this.namespaces = namespaces;
         this.targetNamespace = targetNamespace;
         this.stopClasses = stopClasses;
@@ -368,7 +373,7 @@ public class Types {
         if (type.getName().equals("void")) {
             return null;
         }
-
+        
         if (Holder.class.isAssignableFrom(type)) {
             type = JavaUtils.getHolderValueType(type);
         }
@@ -390,7 +395,52 @@ public class Types {
 
         return qname;
     }
-
+    
+    /**
+     * Write out a type (and its subtypes) referenced by a part type attribute.
+     *
+     * @param type <code>Class</code> to generate the XML Schema info for
+     * @param qname <code>QName</code> of the type.  If null, qname is
+     *             defaulted from the class.
+     * @return the QName of the generated Schema type, null if void,
+     *         if the Class type cannot be converted to a schema type
+     *         then xsd:anytype is returned.
+     */
+    public QName writeTypeAndSubTypeForPart(Class type, QName qname)
+            throws AxisFault {
+        
+        // Write out type in parameter
+        QName qNameRet = writeTypeForPart(type, qname);
+        
+        // If mappedTypesexists 
+        // Will write subTypes of the type in parameters
+        if (mappedTypes != null) {
+            for (int i = 0; i < mappedTypes.length; i++) {
+                Class tempMappedType = mappedTypes[i];
+                QName name;
+                
+                // If tempMappedType is subtype of the "type" parameter
+                // and type is not Object (Object superclass of all Java class...)  
+                // write the subtype
+                if (tempMappedType != null &&
+                        type != Object.class && 
+                        tempMappedType != type &&
+                        type.isAssignableFrom(tempMappedType)) {
+                    name = tm.getTypeQName(tempMappedType);
+                    if (!isAnonymousType(name)) {
+                        writeTypeForPart(tempMappedType, name);
+                    }
+                    
+                    // Only do each one once.  This is OK to do because each
+                    // Types instance is for generating a single WSDL.
+                    mappedTypes[i] = null;
+                }
+            }
+        } //if (mappedTyped != null) {
+        
+        return qNameRet;	
+    }
+    
     /**
      * Write out an element referenced by a part element attribute.
      *
@@ -525,9 +575,7 @@ public class Types {
 
         if (javaType.isArray()) {
             type = writeTypeForPart(javaType.getComponentType(), null);
-        }
-
-        if (type == null) {
+        } else {
             type = writeTypeForPart(javaType, type);
         }
 

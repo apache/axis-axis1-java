@@ -751,28 +751,6 @@ public class Emitter {
             }
         }
 
-        if (tm != null) {
-            Class[] mappedTypes = tm.getAllClasses();
-
-            for (int i = 0; i < mappedTypes.length; i++) {
-                Class mappedType = mappedTypes[i];
-                QName name = tm.getTypeQName(mappedType);
-                if (name.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) != -1) {
-                    // If this is an anonymous type, it doesn't need to be written out here
-                    // (and trying to do so will generate an error).  Skip it.
-                    continue;
-                }
-
-                /**
-                 * If it's a non-standard type, make sure it shows up in
-                 * our WSDL
-                 */
-                if (standardTypes.getSerializer(mappedType) == null) {
-                    types.writeTypeForPart(mappedType, name);
-                }
-            }
-        }
-
         return types;
     }
 
@@ -1813,7 +1791,7 @@ public class Emitter {
             QName typeQName = param.getTypeQName();
 
             if (javaType != null) {
-                typeQName = types.writeTypeForPart(javaType, typeQName);
+                typeQName = types.writeTypeAndSubTypeForPart(javaType, typeQName);
             }
 
             // types.writeElementForPart(javaType, param.getTypeQName());
