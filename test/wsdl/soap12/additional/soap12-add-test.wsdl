@@ -5,7 +5,7 @@
 	xmlns="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:enc="http://www.w3.org/2002/12/soap-encoding"
+	xmlns:enc="http://www.w3.org/2003/05/soap-encoding"
 	xmlns:tns="http://whitemesa.net/wsdl/soap12-test"
 	xmlns:types="http://example.org/ts-tests/xsd"
 	xmlns:test="http://example.org/ts-tests"
@@ -256,10 +256,10 @@
 		<operation name="echoVoid">
 			<soap12:operation/>
 			<input>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</input>
 			<output>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
@@ -267,10 +267,10 @@
 		<operation name="echoSimpleTypesAsStruct">
 			<soap12:operation/>
 			<input>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</input>
 			<output>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
@@ -278,7 +278,7 @@
 		<operation name="getTime">
 			<soap12:operation/>
 			<output>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
@@ -286,10 +286,10 @@
 		<operation name="echoString">
 			<soap12:operation/>
 			<input>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</input>
 			<output>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
@@ -297,10 +297,10 @@
 		<operation name="echoSimpleTypesAsStructOfSchemaTypes">
 			<soap12:operation/>
 			<input>
-				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</input>
 			<output>
-				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
@@ -308,10 +308,10 @@
 		<operation name="echoInteger">
 			<soap12:operation/>
 			<input>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</input>
 			<output>
-				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2003/05/soap-encoding"/>
 			</output>
 		</operation>
 
