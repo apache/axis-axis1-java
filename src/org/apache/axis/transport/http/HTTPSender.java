@@ -662,7 +662,7 @@ public class HTTPSender extends BasicHandler {
 
         String transferEncoding =
                 (String) headers
-                .get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
 
         if (null != transferEncoding) {
             transferEncoding = transferEncoding.toLowerCase();
