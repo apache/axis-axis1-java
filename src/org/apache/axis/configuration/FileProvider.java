@@ -58,6 +58,7 @@
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -111,7 +112,7 @@ public class FileProvider implements ConfigurationProvider
         }
 
         if (is == null) {
-            throw new Exception("No engine configuration file - aborting!");
+            throw new Exception(JavaUtils.getMessage("noconfig00"));
         }
 
         Document doc = XMLUtils.newDocument(is);
