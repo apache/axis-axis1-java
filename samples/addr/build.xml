@@ -73,7 +73,8 @@ Copyright:
     <copy todir="${build.dir}/work/samples/addr" overwrite="yes">
       <fileset dir="${axis.home}/samples/addr">
         <include name="Main.java"/>
-	<include name="DOMUtils.java"/>
+        <include name="DOMUtils.java"/>
+        <include name="AddressBookSOAPBindingImpl.java"/>
       </fileset>
     </copy>
 
