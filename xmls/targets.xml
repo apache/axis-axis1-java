@@ -5,6 +5,9 @@
    <target name="my-forking-ant">
      <echo message="Forking a JVM for target ${target} in file ${file}"/>
      <java classname="org.apache.tools.ant.Main" fork="yes" failonerror="true" dir="${dir}">
+       <!-- See if this helps with Gump test failures -->
+       <sysproperty name="build.clonevm" value="true"/>
+
        <!-- Pass the parser settings -->
        <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
        <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
