@@ -130,11 +130,7 @@ public class MsgProvider extends JavaProvider {
             argObjects = new Object[2];
             SOAPBodyElement reqBody = reqEnv.getFirstBody();
             
-            StringWriter writer = new StringWriter();
-            reqBody.output(new SerializationContext(writer, msgContext));
-            
-            Reader reader = new StringReader(writer.getBuffer().toString());
-            doc = XMLUtils.newDocument(new InputSource(reader));
+            doc = reqBody.getAsDOM().getOwnerDocument();
 
             /* If no methodName was specified during deployment then get it */
             /* from the root of the Body element                            */
