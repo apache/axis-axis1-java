@@ -56,6 +56,8 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 
+import org.apache.axis.utils.JavaUtils;
+
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -79,7 +81,7 @@ public class RPCParam
         try {
             valueField = cls.getField("value");
         } catch (NoSuchFieldException e) {
-            System.err.println("No value field for RPCParam to use?!? " + e);
+            System.err.println(JavaUtils.getMessage("noValue00", "" + e));
             System.exit(-1);
         }
     }

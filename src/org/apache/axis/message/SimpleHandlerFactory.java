@@ -60,6 +60,7 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -100,7 +101,8 @@ public class SimpleHandlerFactory implements HandlerFactory
             try {
                 handler = (SOAPHandler)cls.newInstance();
             } catch (Exception e) {
-                throw new SAXException("Coudldn't create class " + cls.getName());
+                throw new SAXException(
+                        JavaUtils.getMessage("noClass00", cls.getName()));
             }
         }
         
@@ -108,7 +110,8 @@ public class SimpleHandlerFactory implements HandlerFactory
             handler = defaultHandler;
         
         if (handler == null)
-            throw new SAXException("No handler for QName " + qName);
+            throw new SAXException(
+                    JavaUtils.getMessage("noHandler00", "" + qName));
         return handler;
     }
 }

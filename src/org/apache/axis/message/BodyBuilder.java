@@ -63,6 +63,7 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -91,7 +92,7 @@ public class BodyBuilder extends SOAPHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("In BodyBuilder.onStartChild()");
+            category.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
         }
         SOAPHandler handler = null;
         
@@ -110,8 +111,7 @@ public class BodyBuilder extends SOAPHandler
 
         if (isRoot &&
             context.getMessageContext().getServiceHandler() == null) {
-            category.debug( "Dispatching to body namespace '" +
-                        namespace + "'");
+            category.debug( JavaUtils.getMessage("dispatching00", namespace));
             context.getMessageContext().setTargetService(namespace);
         }
         
@@ -147,7 +147,7 @@ public class BodyBuilder extends SOAPHandler
         handler.myElement = element;
         
         if (category.isDebugEnabled()) {
-            category.debug("Out BodyBuilder.onStartChild()");
+            category.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onStartChild()"));
         }
         return handler;
     }
@@ -156,7 +156,7 @@ public class BodyBuilder extends SOAPHandler
                            DeserializationContext context)
     {
         if (category.isDebugEnabled()) {
-            category.debug("In BodyBuilder.onEndChild()");
+            category.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onEndChild()"));
         }
         
         if (element != null) {
@@ -165,7 +165,7 @@ public class BodyBuilder extends SOAPHandler
         }
 
         if (category.isDebugEnabled()) {
-            category.debug("Out BodyBuilder.onEndChild()");
+            category.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onEndChild()"));
         }
     }
 }

@@ -62,6 +62,7 @@ import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
@@ -171,7 +172,7 @@ public class SOAPEnvelope extends MessageElement
     public void addHeader(SOAPHeader header)
     {
         if (category.isDebugEnabled())
-            category.debug("Adding header to message...");
+            category.debug(JavaUtils.getMessage("addHeader00"));
         header.setEnvelope(this);
         headers.addElement(header);
         _isDirty = true;
@@ -180,7 +181,7 @@ public class SOAPEnvelope extends MessageElement
     public void addBodyElement(SOAPBodyElement element)
     {
         if (category.isDebugEnabled())
-            category.debug("Adding body element to message...");
+            category.debug(JavaUtils.getMessage("addBody00"));
         element.setEnvelope(this);
         bodyElements.addElement(element);
         _isDirty = true;
@@ -189,7 +190,7 @@ public class SOAPEnvelope extends MessageElement
     public void removeHeader(SOAPHeader header)
     {
         if (category.isDebugEnabled())
-            category.debug("Removing header from message...");
+            category.debug(JavaUtils.getMessage("removeHeader00"));
         headers.removeElement(header);
         _isDirty = true;
     }
@@ -197,7 +198,7 @@ public class SOAPEnvelope extends MessageElement
     public void removeBodyElement(SOAPBodyElement element)
     {
         if (category.isDebugEnabled())
-            category.debug("Removing body element from message...");
+            category.debug(JavaUtils.getMessage("removeBody00"));
         bodyElements.removeElement(element);
         _isDirty = true;
     }
@@ -205,7 +206,7 @@ public class SOAPEnvelope extends MessageElement
     public void removeTrailer(MessageElement element)
     {
         if (category.isDebugEnabled())
-            category.debug("Removing trailer from message...");
+            category.debug(JavaUtils.getMessage("removeTrailer00"));
         trailers.removeElement(element);
         _isDirty = true;
     }
@@ -220,7 +221,7 @@ public class SOAPEnvelope extends MessageElement
     public void addTrailer(MessageElement element)
     {
         if (category.isDebugEnabled())
-            category.debug("Adding trailer to message...");
+            category.debug(JavaUtils.getMessage("removeTrailer00"));
         element.setEnvelope(this);
         trailers.addElement(element);
         _isDirty = true;
@@ -313,7 +314,8 @@ public class SOAPEnvelope extends MessageElement
                                        Constants.ELEM_ENVELOPE), attrs);
         
         if (category.isDebugEnabled())
-            category.debug(headers.size() + " headers");
+            category.debug(headers.size() + " "
+                    + JavaUtils.getMessage("headers00"));
         
         if (!headers.isEmpty()) {
             // Output <SOAP-ENV:Header>
