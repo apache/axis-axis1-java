@@ -31,12 +31,12 @@ M 9393 - must - Rich
 M 9405 - must - Tom
 _ 9452 - post
 _ 9473 - post
-_ 9642 - nice - Russell
+* 9642 - nice - Russell
 _ 9659 - pend - Glen
 _ 9665 - nice - Rich
 _ 9667 - dup of 9665
 M 9717 - must - Tom
-M 9767 - must - Russell
+* 9767 - must - Russell
 _ 9773 - post
 M 9780 - must - Rick
 _ 9815 - nice - ?

@@ -756,6 +756,7 @@ public class RoundtripTestServiceTestCase extends TestCase {
                                      new BigInteger("545"),
                                      new BigDecimal("546.545"),
                                      dateTime,
+                                     dateTime,
                                      true,
                                      (byte) 2,
                                      (short) 14,
@@ -823,6 +824,33 @@ public class RoundtripTestServiceTestCase extends TestCase {
         }
 
     } // testMethodDateTime
+
+    /**
+     * Just do the same thing that testMethodDateTime does.  The REAL
+     * test here is a compile test.  Both Calendar and Date map to
+     * xsd:dateTime.  The original SEI in this roundtrip test contained
+     * method:  "Date methodDate(Date)".  But taking that Java -> WSDL ->
+     * Java should result in:  "Calendar methodDate(Calendar)".  If that
+     * didn't happen, then the compile would fail.
+     */
+    public void testMethodDate() {
+
+        try {
+            Calendar expected = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            expected.setTimeZone(gmt);
+            expected.setTime(new Date(1012937861800L));
+            Calendar parameter = Calendar.getInstance();
+            parameter.setTimeZone(gmt);
+            parameter.setTime(new Date(1012937861996L));
+            Calendar actual = binding.methodDate(parameter);
+            assertEquals("The expected and actual values did not match.",
+                         expected,
+                         actual);
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+    } // testMethodDate
 
     /**
      *  Test to insure that a BigDecimal matches the expected values on 

@@ -95,12 +95,15 @@ public interface RoundtripPortType {
         throws java.rmi.RemoteException;
     public java.util.Calendar methodDateTime(java.util.Calendar inDateTime)
         throws java.rmi.RemoteException;
+    public java.util.Date methodDate(java.util.Date inDateTime)
+        throws java.rmi.RemoteException;
     public byte[] methodByteArray(byte[] inByteArray)
         throws java.rmi.RemoteException;
     public void methodAllTypesIn(java.lang.String string,
                                  java.math.BigInteger integer,
                                  java.math.BigDecimal decimal,
                                  java.util.Calendar dateTime,
+                                 java.util.Date date,
                                  boolean _boolean,
                                  byte _byte,
                                  short _short,

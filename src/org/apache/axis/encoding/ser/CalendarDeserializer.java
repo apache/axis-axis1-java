@@ -196,7 +196,12 @@ public class CalendarDeserializer extends SimpleDeserializer {
         if (bc) {
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
-        
-        return calendar;
+
+        if (super.javaType == Date.class) {
+            return date;
+        }
+        else {
+            return calendar;
+        }
     }
 }

@@ -97,8 +97,8 @@ public class CalendarSerializer implements Serializer {
     {
         context.startElement(name, attributes);
 
-        Calendar calendar = (Calendar) value;
-        Date date = calendar.getTime();
+        Date date = value instanceof Date ? (Date) value : ((Calendar) value).getTime();
+
         // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
         String format = null;
         synchronized (zulu) {
