@@ -217,7 +217,7 @@ public final class ClassUtils {
     public static InputStream getResourceAsStream(Class clazz, String resource) {
         InputStream myInputStream = null;
 
-        if(clazz.getClass().getClassLoader()!=null) {
+        if(clazz.getClassLoader()!=null) {
             // Try the class loader that loaded this class.
             myInputStream = clazz.getClassLoader().getResourceAsStream(resource);
         } else {
