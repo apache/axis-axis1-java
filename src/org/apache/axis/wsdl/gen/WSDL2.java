@@ -77,7 +77,7 @@ public class WSDL2 {
                 NOWRAP_OPT,
                 Messages.getMessage("optionNoWrap00")),
         new CLOptionDescriptor("quiet",
-                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 QUIET_OPT,
                 Messages.getMessage("optionQuiet"))
     };
