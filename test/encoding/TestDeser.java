@@ -146,35 +146,56 @@ public class TestDeser extends TestCase {
         throws Exception {
         deserialize(data, expected, false);
     }
+
     protected void deserialize(String data, Object expected, boolean tryConvert)
+            throws Exception {
+        deserialize(data, expected,tryConvert,"");
+    }
+
+
+    /**
+     * Verify that a given XML deserialized produces the expected result
+     * @param data
+     * @param expected
+     * @param tryConvert
+     * @param comment extra text to add
+     * @throws Exception
+     */
+    protected void deserialize(String data, Object expected, boolean tryConvert, String comment)
        throws Exception
     {
        Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(server));
+       String postfix="";
+       if(comment!=null) {
+           postfix=" "+comment;
+       }
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
-       assertNotNull("SOAP envelope should not be null", envelope);
+       assertNotNull("SOAP envelope should not be null"+ postfix, envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();
-       assertNotNull("SOAP body should not be null", body);
+       assertNotNull("SOAP body should not be null" + postfix, body);
 
        Vector arglist = body.getParams();
        assertNotNull("arglist", arglist);
-       assertTrue("param.size()<=0 {Should be > 0}", arglist.size()>0);
+       assertTrue("param.size()<=0 {Should be > 0}" + postfix, arglist.size()>0);
 
        RPCParam param = (RPCParam) arglist.get(0);
-       assertNotNull("SOAP param should not be null", param);
+       assertNotNull("SOAP param should not be null" + postfix, param);
 
        Object result = param.getValue();
        if (!equals(result, expected)) {
+           String errorText = "Failed to decode " + data + postfix+" : ";
            // Try to convert to the expected class
            if (tryConvert) {
                Object result2 = JavaUtils.convert(result, expected.getClass());
                if (!equals(result2, expected)) {
-                   assertEquals("The result is not what is expected.", expected, result);
+
+                   assertEquals(errorText, expected, result);
                }
            } else {
-               assertEquals("The result is not what is expected.", expected, result);
+               assertEquals(errorText, expected, result);
            }
        }
     }
