@@ -1,0 +1,293 @@
+<html>
+<head>
+<title>Axis User's Guide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.example { background:#ccccff }
+.xml { background:#eeeeee }
+body {  font-family: Verdana, Arial, Helvetica, sans-serif; margin-left: 40px}
+h2 {  text-decoration: underline; background-color: #DCE1FF; background-position: left; margin-left: -30px}
+h3 {  margin-left: -10px}
+h1 {  margin-left: -30px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<h1>Axis User's Guide</h1>
+<p><i>Alpha 1 Version</i></p>
+<h3>Table of Contents</h3>
+<p><a href="#Introduction">Introduction</a><br>
+  <a href="#Installation">Installing Axis</a><br>
+  <a href="#Architecture">Axis Architecture - a Brief Primer</a><br>
+  <a href="#ConsumingServices">Consuming Web Services with Axis</a><br>
+  <a href="#PublishingServices">Publishing Web Services with Axis</a><br>
+  <a href="#DataMapping">XML &lt;-&gt; Java Data Mapping in Axis<br>
+  </a><br>
+  <a href="#DeploymentReference">Deployment Reference</a><br>
+  <a href="#Glossary">Glossary</a></p>
+<h2><a name="Introduction"></a>Introduction</h2>
+Welcome to Axis! This is the <b>alpha 1</b> version, our first publically annouced 
+milestone. Please note that this is a work in progress, and although the basic 
+functionality is there, there are still a lot of unfinished areas and rough edges 
+- so watch your step, and don't expect perfection. That said, we're very psyched 
+about the package so far, and would love to get your take on how we can make it 
+better. 
+<h3>What is Axis?</h3>
+<p>Axis is the third generation of Apache SOAP, which began at IBM as &quot;SOAP4J&quot; 
+  and then became Apache SOAP version 2. The committers on the v2 project began 
+  some conversations in late 2000 about making the engine much more flexible, 
+  configurable, and able to handle both SOAP and the upcoming XML Protocol specification 
+  from the W3C. After a little while, it became clear that a ground-up rearchitecture 
+  was the way to go. Several of the v2 committers proposed very similar designs, 
+  all based around configurable &quot;chains&quot; of message &quot;handlers&quot; 
+  which would implement small bits of functionality in a very flexible and composable 
+  manner. This system is the result of months of continued discussion and coding 
+  effort in this direction. Some of the key Axis features include the following:</p>
+<ul>
+  <li> Speed. Axis uses SAX (event-based) parsing to acheive significantly greater 
+    speed than earlier versions of Apache SOAP.</li>
+  <li>Flexibility. The Axis architecture gives the developer complete freedom 
+    to insert extensions into the engine for custom header processing, system 
+    management, or anything else you can imagine.</li>
+  <li>Component-oriented deployment. You can easily define reusable networks of 
+    Handlers to implement common patterns of processing for your applications, 
+    or to distribute to partners.</li>
+  <li>Transport framework. We have a clean and simple abstraction for designing 
+    transports (i.e. senders and listeners for SOAP over various protocols such 
+    as SMTP, FTP, message-oriented middleware, etc), and the core of the engine 
+    is completely transport-independent.</li>
+  <li>...</li>
+</ul>
+<p>We hope you enjoy using Axis, and please note that this is an open-source effort 
+  - if you feel the code could use some new features or fixes, please get involved 
+  and lend a hand! The Axis developer community would welcome your participation.</p>
+<p><b>Let us know what you think!</b> Please send feedback about the package to 
+  &quot;<a href="mailto:axis-dev@xml.apache.org">axis-dev@xml.apache.org</a>&quot; 
+</p>
+<h3>What is SOAP?</h3>
+<i><font color="#FF0000">TBD - links to SOAP information sites, brief description... 
+</font></i> 
+<h3>What's in this release?</h3>
+<p>This release contains:</p>
+<ul>
+  <li>A SOAP 1.1 compliant engine</li>
+  <li>A flexible configuration / deployment system</li>
+  <li>Support for &quot;drop-in&quot; deployment of SOAP services (JWS)</li>
+  <li>Support for all basic types, and a type mapping system for defining new 
+    serializers/deserializers</li>
+  <li>Automatic serialization/deserialization of Java Beans</li>
+  <li>Automatic two-way conversions between Java &quot;List&quot; collections 
+    and SOAP Arrays</li>
+  <li>Providers for RPC and message based SOAP services</li>
+  <li>Preliminary security extensions</li>
+  <li>An HTTP servlet-based transport</li>
+  <li>A standalone version of the server (HTTP)</li>
+  <li>Examples, including a client and server for the soapbuilders community interoperability 
+    tests </li>
+</ul>
+<h2><a name="Installation"></a>Installing Axis</h2>
+See the <a href="file:///E|/Documents/Axis/install.html">Axis Installation Guide</a> for instructions on 
+installing Axis. 
+<h2><a name="Architecture"></a>Axis Architecture - a Brief Primer</h2>
+<p>(This section may be skipped if you want to dive right in)</p>
+<p><i><font color="#FF0000">TBD - explanation of Axis architecture, Handlers, 
+  Chains, Services... How transports and global chains work, our deployment architecture, 
+  etc...</font></i> </p>
+<h2><a name="ConsumingServices"></a>Consuming Web Services with Axis</h2>
+<h3>Basics - Getting Started</h3>
+<p>Let's take a look at an example Web Service client, which will call the &quot;echoString&quot; 
+  method on the public Axis server at Apache.</p>
+<div class="example">
+  <pre>1   import org.apache.axis.client.ServiceClient;
+2   public class TestClient {
+3     public static void main(String [] args) {
+4       String endpoint = &quot;http://nagoya.apache.org:5049/axis/servlet/AxisServlet&quot;;
+5 
+6       ServiceClient client = new ServiceClient(endpoint);
+7       String ret = (String)client.invoke(&quot;http://soapinterop.org/&quot;,
+8                                          &quot;echoString&quot;,
+9                                          new Object [] { &quot;Hello!&quot; });
+10   
+11      System.out.println(&quot;Sent 'Hello!', got '&quot; + ret + &quot;'&quot;);
+12    }
+13  }
+</pre>
+</div>
+<p>(You'll find this file in axis/docs/examples/example1/TestClient.java)</p>
+<p>If all goes well, this program can be run as follows, and should output:</p>
+<pre>% javac TestClient.java
+% java TestClient
+Sent 'Hello!', got 'Hello!'
+% </pre>
+<p>So what's happening here? On line 4, we set up our endpoint URL - this is the 
+  destination for our SOAP message. On line 6, we initialize a new ServiceClient 
+  instance with our URL. The ServiceClient class is the center of the Axis client 
+  API - we'll cover the very basics here, but take a look at the JavaDoc for this 
+  class to see what it can do.</p>
+<p>We're all set to go, so on line 7 we invoke the remote service. The invoke() 
+  API takes several arguments - first, the XML namespace of the desired service. 
+  Second, the method name which should be invoked. Finally, we pass an Object 
+  array containing the arguments to the method.</p>
+<p>You can see the effect these arguments have by looking at the SOAP which goes 
+  out on the wire (look at the colored bits, and notice they match the values 
+  in the call above):</p>
+  <div class="xml">
+  <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;SOAP-ENV:Envelope xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                   xmlns:SOAP-ENV=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+                   xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+  &lt;SOAP-ENV:Body&gt;
+    &lt;ns1:<font color="#993333"><b>echoString</b></font> xmlns:ns1=&quot;<font color="#009933"><b>http://soapinterop.org/</b></font>&quot;&gt;
+      &lt;arg0 xsi:type=&quot;xsd:string&quot;&gt;<b><font color="#CC00CC">Hello!</font></b>&lt;/arg0&gt;
+    &lt;/ns1:echoString&gt;
+  &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;
+</pre>
+  <div align="center"> </div>
+</div>
+The String argument is automatically serialized into XML, and the server responds 
+with an identical String, which we deserialize and print. 
+<h3>Naming Parameters</h3>
+<p>In the above example, the parameters are in the same order we sent them, but 
+  since we only passed the objects themselves, Axis automatically named the arguments 
+  in the SOAP messsage &quot;arg0&quot;, &quot;arg1&quot;, etc. If you want to 
+  change this, it's easy! Instead of passing the actual Object value of your argument 
+  in the arguments array, simply wrap the argument in an RPCParam class like so:</p>
+<div class="example"><pre>  String ret = (String)client.invoke(&quot;http://soapinterop.org&quot;,
+                                     &quot;echoString&quot;,
+                                     new Object [] { new RPCParam(&quot;testParam&quot;, &quot;Hello!&quot;) };
+</pre></div>
+Now you'll get a message that looks like this:
+
+<div class="xml">
+  <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;SOAP-ENV:Envelope xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                   xmlns:SOAP-ENV=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;
+                   xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+  &lt;SOAP-ENV:Body&gt;
+    &lt;ns1:echoString xmlns:ns1=&quot;http://soapinterop.org/&quot;&gt;
+      &lt;<font color="#CC00CC">testParam</font> xsi:type=&quot;xsd:string&quot;&gt;Hello!&lt;/<font color="#CC00CC">testParam</font>&gt;
+    &lt;/ns1:echoString&gt;
+  &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</pre>
+  
+</div>
+<p>You'll note the param is now named &quot;testParam&quot; as expected.</p>
+<p>OK - so now you know how to access SOAP services as a client. But how do you 
+  publish your own services?</p>
+<h2><a name="PublishingServices"></a>Publishing Web Services with Axis</h2>
+<p>Let's say we have a simple class like the following:</p>
+<pre class="example">public class Calculator {
+  public int add(int i1, int i2)
+  {
+    return i1 + i2; 
+  }
+
+
+  public int subtract(int i1, int i2)
+  {
+    return i1 - i2;
+  }
+} 
+</pre>
+<p>(you'll find this file in axis/docs/examples/example2/Calculator.java)</p>
+<p>How do we go about making this class available via SOAP? There are a couple 
+  of answers to that question, but we'll start with the easiest way Axis provides 
+  to do this, which takes almost no effort at all!</p>
+<h3>JWS (Java Web Service) Files - Instant Deployment</h3>
+<p>OK, here's step 1 : copy the above .java file into your webapp directory, and 
+  rename it &quot;Calculator.jws&quot;. So you might do something like this:</p>
+<pre>% copy Calculator.java JRUN_ROOT/servers/default/axis/Calculator.jws</pre>
+<p>Now for step 2... hm, wait a minute. You're done! You should now be able to 
+  access the service at the following URL:</p>
+<p><a href="http://localhost/axis/Calculator.jws">http://localhost/axis/Calculator.jws</a> 
+</p>
+<p>Axis will automatically locate the file, compile the class, and convert SOAP 
+  calls correctly into Java invocations of your service class. Try it out - there's 
+  a calculator client in docs/example2/Calc.java, which you can use like this:</p>
+<pre>% javac CalcClient.java
+% java CalcClient add 2 5
+Got result : 7
+% java CalcClient subtract 10 9
+Got result : 1
+% </pre>
+<h3>Custom Deployment - deploy.xml files and the AdminClient</h3>
+<font color="#FF0000"><i>TBD - explanation of the AdminClient and the deploy.xml 
+file. Link to the deployment reference.</i></font> 
+<h2><a name="DataMapping"></a>XML &lt;-&gt; Java Data Mapping in Axis</h2>
+<h3>Encoding Your Beans - the BeanSerializer</h3>
+<p><i><font color="#FF0000">TBD - how to use bean mappings</font></i> </p>
+<h3>When Beans Are Not Enough - Custom Serialization</h3>
+<i><font color="#FF0000">TBD - explanation of custom serializers/deserializers, 
+and how to use the contexts.</font></i> 
+<h2><a name="DeploymentReference"></a>Deployment Reference</h2>
+<i>Note: this reference reflects the state of the deploy.xml structure as of the 
+alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
+become a format called WSDD (Web Service Deployment Descriptor). You can find 
+information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i> 
+<p>&lt;deploy&gt;</p>
+<p>&lt;undeploy&gt;</p>
+<p>&lt;handler&gt;</p>
+<p>&lt;service&gt;</p>
+<p>&lt;chain&gt;</p>
+<p>&lt;transport&gt;</p>
+<p>&lt;typeMappings&gt;</p>
+<p>&lt;beanMappings&gt;</p>
+<p>&nbsp; </p>
+<h2>Pre-Configured Axis Components Reference</h2>
+<h3>On the server:</h3>
+<p><b>DebugHandler</b></p>
+<dl> 
+  <dt><b>LogHandler</b></dt>
+  <dd>The LogHandler will simply log a message to a logger when it gets invoked.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b>EchoHandler</b></dt>
+  <dd>The EchoHandler copies the request message into the response message.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b>RPCDispatcher</b></dt>
+  <dd>The RPCDispatcher is the pivot point for all RPC services. It accepts the 
+    following options: </dd>
+  <dt>&nbsp;</dt>
+  <dt><b>MsgDispatcher</b></dt>
+  <dd>The MsgDispatcher is the pivot point for all messaging services. It accepts 
+    the following options:</dd>
+  <dt>&nbsp;</dt>
+  <dt><b>LocalResponder</b></dt>
+  <dd>The LocalResponder is a Handler whose job in life is to serialize the response 
+    message coming back from a local invocation into a String. It is by default 
+    on the server's local transport response chain, and it ensures that serializing 
+    the message into String form happens in the context of the server's type mappings.</dd>
+</dl>
+<h3>On the client:</h3>
+<dl> 
+  <dt>HTTPSender</dt>
+  <dd>&lt;definition&gt;</dd>
+  <dt>&nbsp;</dt>
+  <dt>LocalSender</dt>
+  <dd>&lt;definition&gt;</dd>
+  <dt>&nbsp;</dt>
+</dl>
+<dl>
+  <dt>&nbsp; </dt>
+</dl>
+<a name="Glossary"></a><h2>Glossary</h2>
+<dl> 
+  <dt><i>Handler</i></dt>
+  <dd>&lt;definition&gt;</dd>
+  <dt>&nbsp;</dt>
+  <dt><i>SOAP</i></dt>
+  <dd>The Simple Object Access Protocol (yes, despite the fact that it sometimes 
+    doesn't seem so simple, and doesn't have anything to do with objects... :)). 
+    You can read the SOAP 1.1 specification at <a href="http://www.w3.org/TR/SOAP">http://www.w3.org/TR/SOAP</a>. 
+    The W3C is currently in the midst of work on SOAP 1.2, under the auspices 
+    of the <a href="http://www.w3.org/2000/xp/Group/">XML Protocol Group</a>.</dd>
+  <dt>&nbsp;</dt>
+  <dt><i>Provider</i></dt>
+  <dd>&lt;definition&gt;</dd>
+  <dt>&nbsp;</dt>
+  <dt><i></i></dt>
+</dl>
+</body>
+</html>
