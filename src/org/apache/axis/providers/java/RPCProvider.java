@@ -397,7 +397,7 @@ public class RPCProvider extends JavaProvider
      * of the method specified. 
      * (Use i=-1 to access the return name.)
      */
-    protected String getParameterName(Object obj,
+    protected QName getParameterName(Object obj,
                                       Method method,
                                       int i,
                                       String mName) {
@@ -411,21 +411,21 @@ public class RPCProvider extends JavaProvider
      * 
      * (Use i=-1 to access the return name.)
      */
-    protected String getParameterName(Object obj,
+    protected QName getParameterName(Object obj,
                                       Method method,
                                       int i,
                                       String mName,
                                       Vector rpcParams) {
-        String parmName = null;
+        QName parmName = null;
         // Emitter skeletons keep track of the parameter names
         if (obj instanceof org.apache.axis.wsdl.Skeleton) 
             parmName = ((org.apache.axis.wsdl.Skeleton)obj).getParameterName(method.getName(), i);
         if (parmName == null) {
             if (i >= 0) {
                 if (rpcParams != null && rpcParams.size() > i) {
-                    parmName = ((RPCParam)rpcParams.get(i)).getName();
+                    parmName = ((RPCParam)rpcParams.get(i)).getQName();
                 } else {
-                    parmName = mName + "Result" + i;
+                    parmName = new QName("", mName + "Result" + i);
                 }
             }
         }

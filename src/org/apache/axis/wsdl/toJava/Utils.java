@@ -688,6 +688,22 @@ public class Utils {
         }
     } // getJavaPackageName
 
+    /**
+     * Common code for generating a QName in emitted code.  Note that there's
+     * no semicolon at the end, so we can use this in a variety of contexts.
+     */ 
+    public static String getNewQName(javax.xml.rpc.namespace.QName qname)
+    {
+        return "new javax.xml.rpc.namespace.QName(\"" +
+                qname.getNamespaceURI() + "\", \"" +
+                qname.getLocalPart() + "\")";
+    }
+    
+    public static javax.xml.rpc.namespace.QName getAxisQName(QName qname)
+    {
+        return new javax.xml.rpc.namespace.QName(qname.getNamespaceURI(),
+                                                 qname.getLocalPart());
+    }
 }
 
 

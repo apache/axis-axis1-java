@@ -1606,7 +1606,7 @@ public class Call implements javax.xml.rpc.Call {
                 
                 for (int i = outParamStart; i < resArgs.size(); i++) {
                     RPCParam param = (RPCParam) resArgs.get(i);
-                    outParams.put(param.getName(), param.getValue());
+                    outParams.put(param.getQName(), param.getValue());
                 }
             }
         } else {

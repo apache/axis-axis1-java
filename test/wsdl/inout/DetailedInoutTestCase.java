@@ -607,18 +607,4 @@ public class DetailedInoutTestCase extends TestCase
         }
     }
 
-    public static void main (String[] args) throws Exception {
-        try
-        {
-            Options opts = new Options(args);
-//            Log log = LogFactory.getLog(org.apache.axis.transport.http.HTTPSender.class.getName());
-//            log.setPriority (Priority.DEBUG);
-
-            TestRunner.main(new String[] {DetailedInoutTestCase.class.getName()});
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace (System.err);
-        }
-    }
 }

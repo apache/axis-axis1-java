@@ -15,6 +15,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Map;
 
 /**
@@ -81,11 +82,11 @@ public class TestOutParams extends TestCase {
         Map outParams = client.getOutputParams();
         assertNotNull("No output Params returned!", outParams);
 
-        Object param = outParams.get("out1");
-        assertEquals("Param 0 does not equal expected value", param, ServiceHandler.OUTPARAM1);
+        Object param = outParams.get(new QName(null, "out1"));
+        assertEquals("Param out1 does not equal expected value", ServiceHandler.OUTPARAM1, param);
 
-        param = outParams.get("out2");
-        assertEquals("Param 1 does not equal expected value", param, ServiceHandler.OUTPARAM2);
+        param = outParams.get(new QName(null, "out2"));
+        assertEquals("Param out2 does not equal expected value", ServiceHandler.OUTPARAM2, param);
 
         assertEquals("Return value does not equal expected value", ((Integer)ret).intValue(), ServiceHandler.RESPONSE.intValue());
     }

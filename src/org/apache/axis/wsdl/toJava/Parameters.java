@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 
 /**
@@ -69,7 +70,7 @@ public class Parameters {
 
     // The name of the return type (from the part name of the output message.
     // Used to create the RPCParam for the return value.
-    public String returnName = null;
+    public QName returnName = null;
 
     // A comma-separated list of all of the faults
     public String faultString = null;
@@ -84,7 +85,7 @@ public class Parameters {
 
     public String toString() {
         return "\nreturnType = " + returnType
-                + "\nreturnTypeName = " + returnName
+                + "\nreturnName = " + returnName
                 + "\nfaultString = " + faultString
                 + "\nsignature = " + signature
                 + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"

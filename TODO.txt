@@ -12,12 +12,13 @@ MUST DO FOR BETA1
 -----------------
 ! <Doug> Doug's issue 1: Attachments are broken
 ! <Russell> Published interfaces must be vetted.
+X <Glen> getParameterName() should return a QName
+X <Glyn> Taras' fix to MessageElement (getValue-like method).
 ! <?> getParameterName() should return a QName
-
 
 MESSAGE PARSING / ENCODING
 --------------------------
-* <Glen/Rich> Support different encodingStyles
+X <Glen/Rich> Support different encodingStyles
 ! <> Support literalxml encodingStyle
 X <Rich> Multi-dimensional array support
 
@@ -114,8 +115,8 @@ X <> Plug new framework into autogen mechanism
 GENERAL / UNCATEGORIZED
 -----------------------
 ! <> Reorganize resources.properties into packages
-! <> Remove search-for-first-MessageContext-arg code
-! <> Remove ServiceClient
+X <Glen> Remove search-for-first-MessageContext-arg code
+X <Glen> Remove ServiceClient
 ! <> Before each release, make sure there aren't any English-language 
      strings in the code.  Folks aren't very good about putting these
      strings into resources.properties!

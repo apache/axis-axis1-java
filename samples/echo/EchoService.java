@@ -61,6 +61,7 @@ import java.util.HashMap;
 
 import org.apache.axis.encoding.Hex;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 /**
  * Test implementation of the echo interop service.  Original description of
@@ -79,11 +80,11 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         init() ;
     }
     
-    public String getParameterName(String opName, int i) {
+    public QName getParameterName(String opName, int i) {
         return skel.getParameterName(opName, i);
     }
 
-    public static String getParameterNameStatic(String opName, int i) {
+    public static QName getParameterNameStatic(String opName, int i) {
         init();
         return skel.getParameterName(opName, i);
     }

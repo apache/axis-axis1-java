@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 /**
  * Interface for WSDL2Java generated skeletons    
@@ -65,7 +66,7 @@ public interface Skeleton {
      * operation.  Use n=-1 to get the return value.
      * Returns null if problems occur or the parameter is not known.
      */
-    public String getParameterName(String operationName, int n);
+    public QName getParameterName(String operationName, int n);
 
     /**
      * Note: The implementor should also provide a static version of the
