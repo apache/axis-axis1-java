@@ -1162,8 +1162,17 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      */
-    public void addOption(String name, Object value) {
+    public void setOption(String name, Object value) {
         engine.setOption(name, value);
+    }
+    
+    /**
+     * Old version of above
+     * 
+     * @deprecated replaced with setOption()
+     */
+    public void addOption(String name, Object value) {
+        setOption(name, value);
     }
 
     /**

@@ -486,7 +486,7 @@ public class ServiceClient {
      * Set engine option.
      */
     public void addOption(String name, Object value) {
-        call.addOption(name, value);
+        call.setOption(name, value);
     }
 
     /**
