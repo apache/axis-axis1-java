@@ -54,18 +54,14 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
-
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.wsdl.QName;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 /**
  * This factory creates Type objects for the types supported by the WSDL2Java emitter.
  * The factory creates the Types by analyzing the XML Document.  The Type encapsulates
