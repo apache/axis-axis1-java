@@ -93,6 +93,7 @@ public class MimeMultipartDataHandlerDeserializer extends JAFDataHandlerDeserial
                 setValue(mmp);
             }
             catch (Exception e) {
+                throw new SAXException(e);
             }
         }
     } // startElement
