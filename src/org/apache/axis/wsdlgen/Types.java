@@ -338,27 +338,113 @@ public class Types {
             attribute.setAttribute("ref", "soapenc:arrayType");
             attribute.setAttribute("wsdl:arrayType", componentTypeName + "[]" );
         } else {
-            // ComplexType representation of bean class
-            Element complexType = docHolder.createElement("complexType");
-            writeSchemaElement(qName, complexType);
-            complexType.setAttribute("name", soapTypeName);
-            Element sequence = docHolder.createElement("sequence");
-            complexType.appendChild(sequence);
-
-            Field[] fld= type.getDeclaredFields();         
-            for (int i=0;i<fld.length;i++) {
-                if ((fld[i].getModifiers() == Modifier.PUBLIC) ||
-                    (isJavaBean(type, fld[i]))) {
-                    writeField (fld[i].getName(),fld[i].getType(),sequence);
-                }
+            if (isEnumClass(type)) {
+                writeEnumType(qName, type);
+            } else {
+                writeBeanClassType(qName, type);
             }
         }
         return prefixedName;
     }
+    
+    /**
+     * Returns true if indicated type matches the JAX-RPC enumeration class.
+     * (Only supports enumeration classes of string)
+     */
+    private boolean isEnumClass(Class type) {
+        try {
+            if (type.getDeclaredConstructor( new Class[] {String.class} ) != null &&
+                type.getMethod ("getValue", null) != null &&
+                type.getDeclaredMethod ("fromValue", new Class[] {String.class}) != null &&
+                type.getDeclaredFields() != null)
+                return true;
+            else
+                return false;
+                
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     /**
-     * write a schema representation of the given Class field and append it to the where Node
-     * recurse on complex types
+     * Write Enumeration Complex Type
+     * (Only supports enumeration classes of string types)
+     * @param qname QName of type.
+     * @param type class of type
+     */
+    private void writeEnumType(QName qName, Class type)  throws Exception  {
+        if (!isEnumClass(type))
+            return;
+        Element simpleType = docHolder.createElement("simpleType");
+        writeSchemaElement(qName, simpleType);
+        simpleType.setAttribute("name", qName.getLocalPart());
+        Element restriction = docHolder.createElement("restriction");
+        simpleType.appendChild(restriction);
+        String stringType = writeType(String.class);
+        restriction.setAttribute("base", stringType);
+        Field[] fields= type.getDeclaredFields();
+        for (int i=0; i < fields.length; i++) {
+            Field field = fields[i];
+            int mod = field.getModifiers();
+
+            // Inspect each public static final field of the same type as the class.
+            if (Modifier.isPublic(mod) && 
+                Modifier.isStatic(mod) &&
+                Modifier.isFinal(mod) &&
+                field.getType() == type) {
+                Element enumeration = docHolder.createElement("enumeration");
+                enumeration.setAttribute("value", field.getName());
+                restriction.appendChild(enumeration);
+                
+            }
+        }
+
+    }
+
+    /**
+     * Write Bean Class Complex Type
+     * @param qname QName of type.
+     * @param type class of type
+     */
+    private void writeBeanClassType(QName qName, Class type)  throws Exception  {
+        // ComplexType representation of bean class
+        Element complexType = docHolder.createElement("complexType");
+        writeSchemaElement(qName, complexType);
+        complexType.setAttribute("name", qName.getLocalPart());
+
+        // See if there is a super class
+        Element e = null;
+        Class superClass = type.getSuperclass();
+        if (superClass != null &&
+            superClass != java.lang.Object.class) {
+            // Write out the super class
+            String base = writeType(superClass);
+            Element complexContent = docHolder.createElement("complexContent");
+            complexType.appendChild(complexContent);
+            Element extension = docHolder.createElement("extension");
+            complexContent.appendChild(extension);
+            extension.setAttribute("base", base);
+            e = extension;
+        } else {
+            e = complexType;
+        }
+
+        // Add fields under all element
+        Element all = docHolder.createElement("all");
+        e.appendChild(all);
+        
+        // Write out public fields and fields with bean accessors
+        Field[] fld= type.getDeclaredFields();         
+        for (int i=0;i<fld.length;i++) {
+            if ((fld[i].getModifiers() == Modifier.PUBLIC) ||
+                (isJavaBean(type, fld[i]))) {
+                writeField (fld[i].getName(),fld[i].getType(),all);
+            }
+        }
+    }
+
+    /**
+     * write a schema representation of the given Class field and append it to the where Node     * recurse on complex types
      * @param fieldName name of the field
      * @param fieldType type of the field
      * @param where location for the generated schema node
