@@ -428,14 +428,11 @@ public class JavaStubWriter extends JavaClassWriter {
             // Get the Exception class name
             String className = Utils.getFullExceptionName(message, symbolTable);
             
-            // Get the xmlType of the exception data
-            QName xmlType = Utils.getFaultDataType(message, symbolTable);
-            
             // output the registration API call
             pw.print("        _call.addFault(");
             pw.print( Utils.getNewQName(qname) + ", ");
             pw.print( className + ".class, ");
-            pw.print( Utils.getNewQName(xmlType) + ", ");
+            pw.print( Utils.getNewQName(info.getXMLType()) + ", ");
             pw.print( Utils.isFaultComplex(message, symbolTable));
             pw.println(");");
         }

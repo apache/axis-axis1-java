@@ -54,6 +54,8 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
+import java.io.IOException;
+
 import java.util.Map;
 
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
@@ -65,6 +67,8 @@ import javax.wsdl.Part;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.enum.Use;
+
+import org.apache.axis.utils.Messages;
 
 /**
 * Fault information object.  This should probably really be FaultEntry and
@@ -110,9 +114,14 @@ public class FaultInfo {
     /**
      * This constructor creates FaultInfo for a soap:headerFault.
      */
-    public FaultInfo(SOAPHeaderFault fault, SymbolTable symbolTable) {
-        this.message = symbolTable.getMessageEntry(fault.getMessage()).
-                getMessage();
+    public FaultInfo(SOAPHeaderFault fault, SymbolTable symbolTable)
+            throws IOException {
+        MessageEntry mEntry = symbolTable.getMessageEntry(fault.getMessage());
+        if (mEntry == null) {
+            throw new IOException(Messages.getMessage("noMsg",
+                    fault.getMessage().toString()));
+        }
+        this.message = mEntry.getMessage();
         Part part    = message.getPart(fault.getPart());
         this.xmlType = getFaultType(symbolTable, part);
         this.use     = Use.getUse(fault.getUse());
@@ -159,7 +168,7 @@ public class FaultInfo {
      * Convenience method for getting the local part of the QName.
      */
      public String getName() {
-         return qName.getLocalPart();
+         return qName == null ? null : qName.getLocalPart();
      } // getName
 
     /**
