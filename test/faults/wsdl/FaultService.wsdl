@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://test.com/wsdl/faults" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:serviceNS="http://test.com/wsdl/faults" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <message name="getQuoteResponse">
+    <part name="getQuoteResult" type="xsd:float"/>
+  </message>
+  <message name="getQuoteRequest">
+    <part name="tickerSymbol" type="xsd:string"/>
+  </message>
+  <message name="InvalidTickerFaultMessage">
+    <part name="tickerSymbol" type="xsd:string"/>
+  </message>
+  <portType name="FaultServicePortType">
+    <operation name="getQuote">
+      <input message="serviceNS:getQuoteRequest"/>
+      <output message="serviceNS:getQuoteResponse"/>
+      <fault name="InvalidTickerFault" message="serviceNS:InvalidTickerFaultMessage"/>
+    </operation>
+  </portType>
+  <binding name="FaultServiceSoapBinding" type="serviceNS:FaultServicePortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getQuote">
+      <soap:operation soapAction="" style="rpc"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </output>
+      <fault>
+        <soap:fault name="InvalidTickerFault" use="encoded"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultService">
+    <port name="FaultService" binding="serviceNS:FaultServiceSoapBinding">
+      <soap:address location="http://localhost:8080/axis/services/FaultService"/>
+    </port>
+  </service>
+</definitions>
