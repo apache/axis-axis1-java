@@ -11,20 +11,14 @@
 <a href="http://xml.apache.org/axis">
 <img border=0 align=left src="images/axis.jpg" />
 </a>
-<div class="head">
+<h1>
 Installing and deploying web applications using xml-axis
-</div>
+</h1>
 </td>
 </tr>
 </table>
-<table cellspacing=4 width=100% border=0>
-<tr>
-<td colspan=2>
+
 <hr size=1 noshade= />
-</td>
-</tr>
-<tr>
-<td class=sidebar nowrap=true valign=top>
 <strong>
 Contents
 </strong>
@@ -53,163 +47,269 @@ Contents
 <li>
 <a href="#test">Testing</a>
 </li>
-</ul></td>
-<td valign=top align=left>
+</ul>
 
     <a name="intro"/></a>
-    <table width=100%>
-      <tr><td class="section">Introduction</td></tr>
-    </table>
+      <h2>Introduction</h2>
 
-      <p>This document describes how to install xml-axis in as unobtrusive of a
-        manner as possible.&nbsp; There will be no editing of configuration files,
-        setting of server classpaths, or the like.&nbsp; Instead, these instructions
-        will rely only on the automatic configuration and isolation that every
-        implementation compliant with the servlet 2.2 specification is required
-        to support.</p>
+      <p>This document describes how to install Apache Axis. It assumes
+      you already know how to write and run Java code and not be scare
+      of XML. You should also have an application server or servlet 
+      engine and be familiar with operating and deploying to it.
+      If you need an application server, we recommend 
+      <a href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>.
+      Other servlet engines are supported, provided they are version 2.2
+      or greater. Note also that Axis client and server requires Java1.3
+      or later. 
+      
       <p>For more details on using Axis, please see the <a href="user-guide.html">user's
-        guide</a>.</p>
-
+        guide</a>.
+        
+     <h2>Step 0: Concepts</h2>
+     
+     Axis is implemented in the JAR file <i>axis.jar</i>; implementing the
+     JAX-RPC API declared in the JAR files <i>jaxrpc.jar</i> and <i>saaj.jar</i>. It
+     needs various helper libraries, for logging, WSDL processing and
+     introspection. All these files come prepackaged into a
+     webapplication, <i>axis.war</i>, that is configured to act as a
+     SOAP Server. It ships with some sample SOAP services, but you can
+     add your own by adding new compiled classes to the Axis webapp and
+     telling it about them.
+     
+     <p>
+     Before you can do that, you have to install it and get it working.
+     
     <a name="webapp"/></a>
-    <table width=100%>
-      <tr><td class="section">Step 1: creating the webapps</td></tr>
-    </table>
+    <h2>Step 1: creating the webapps</h2>
 
     <p>In your servlet installation, you should find a directory into which web
-    applications (webapps) are to be placed.&nbsp; Into this directory copy the
-    webapps/axis directory
-    from the xml-axis distribution.&nbsp; You can actually name this
+    applications ("webapps") are to be placed. Into this directory copy the
+    webapps/axis directory from the xml-axis distribution. You can actually name this
     directory anything you want, just be aware that the name you choose will
-    form the basis for the URL by which clients will access your service.</p>
+    form the basis for the URL by which clients will access your service.
+    The rest of this document assumes that the default webapp name,
+    "axis" has been used; rename these references if appropriate.
 
     <a name="depend"/></a>
-    <table width=100%>
-      <tr><td class="section">Step 2: installing the dependencies</td></tr>
-    </table>
+    <h2>Step 2: setting up the libraries</h2>
 
-    <p>In the directory you just created, you will find a WEB-INF
-    directory.&nbsp; This contains some basic configuration information, but
+    <p>In the axis directory, you will find a WEB-INF sub-directory. 
+    This directory contains some basic configuration information, but
     can also be used to contain the dependencies and web services you wish to
-    deploy.&nbsp; This is actually the recommended way to deploy as the servlet
-    engine will then keep each web application isolated from each other.</p>
+    deploy.</p>
       <p>In the WEB-INF directory, you'll find a &quot;lib&quot; directory.&nbsp;
       </p>
     <ul>
         <li>In this directory, copy the jars associated with the JAXP 1.1 XML
-          compliant parser of your choice. This generally means either the xerces.jar
+          compliant parser of your choice. We recommend xerces.jar
           from the <a href="http://xml.apache.org/dist/xerces-j/">xml-xerces distribution</a>,
-          or the crimson.jar and jaxp.jar from the <a href="http://java.sun.com/xml/xml_jaxp.html">JAXP
-          1.1 reference implementation</a>. </li>
+          though others work. If you omit this stage you may be able to
+          use the default XML parser provided by the web application.
     </ul>
 
-    <p><span class="note">Note:</span>
-    Note that there is no requirement that each webapp or the web server itself
-    use the same xml parsers.</p>
-
-    <a name="websvc"/></a>
-    <table width=100%>
-      <tr><td class="section">Step 3: installing the web services</td></tr>
-    </table>
-
-    <p>If you got this far, the next step should be simple: </p>
-      <p>In the WEB-INF directory, look for (or create) a &quot;classes&quot;
-        directory.&nbsp; </p>
-    <ul>
-      <li>In this directory, copy the services you wish to
-        install, being careful to preserve the directory structure.</li>
-    </ul>
-      <p>Again, isolation is preserved.&nbsp; And, by the way, should your services
-        already be packaged into jar files, feel free to drop them into the lib
-        directory instead!</p>
-
-      <p><span class="note">Note:</span> If your web service will be making use
-        of the simple authorization handlers provided with xml-axis (this is actually
-        <u>not</u> recommended as these are merely illustrations of how to write
-        a handler than intended for production use), then you will need to copy
-        the corresponding perms.lst and users.lst files into the WEB-INF directory.</p>
+    <h3>Tomcat 4.x and Java1.4</h3>
+      Java 1.4 changed the rules as to to how packages beginning in java.* and
+      javax.* get loaded. Specifically, they only get loaded from
+      <i>endorsed</i> directories. jaxrpc.jar and saaj.jar contain javax
+      packages, so may not get picked up. If happyaxis.jsp 
+      (see below) cannot find the relevant packages, place them in 
+      CATALINA_HOME/common/lib and restart Tomcat. 
+    
 
     <a name="start"/></a>
-    <table width=100% height="20">
-      <tr><td class="section" height="16">Step 4: starting the web server</td></tr>
-    </table>
+    <h2>Step 3: starting the web server</h2>
 
-    <p>This varies on a product by product basis.&nbsp; In many cases it it as
+    <p>This varies on a product-by-product basis. In many cases it it as
     simple as double clicking on a startup icon or running a simple command from
     the command line.</p>
 
     <a name="install-test"/></a>
-    <table width=100% height="20">
-      <tr><td class="section" height="16">Step 5: Installation testing</td></tr>
-    </table>
+    <h2>Step 4: Validate the Installation</h2>
 
     <p>
     After installing the web application and dependencies, you should
     make sure that the server is running the web application.
-    <ul>
-      <li>Navigate to the start page of the webapp, usually
+    <h3> Look for the start page </h3>
+      Navigate to the start page of the webapp, usually
       <a href="http://127.0.0.1:8080/axis/">http://127.0.0.1:8080/axis/</a>,
       though of course the port may differ.<br>
-      You should see an Apache-Axis start page.
+      You should now see an Apache-Axis start page. If you do not, then
+      the webapp is not actually installed, or the appserver is not running. 
 
-      <li>Follow the link <i>
+    <h3>Validate Axis with happyaxis</h3>
+      Follow the link <i>
       Validate the local installation's configuration</i><br>
-      This will bring you to a test page that verifies that needed and
-      optional libraries are present. If any of the needed libraries are missing,
-      Axis will not work. <b>You must not proceed until all needed libraries
+      This will bring you to <i>happyaxis.jsp</i> a test page that verifies that needed and
+      optional libraries are present. The URL for this will be something
+      like 
+      <A
+      href="http://localhost:8080/axis/happyaxis.jsp">
+      http://localhost:8080/axis/happyaxis.jsp</A>
+      <p>
+      If any of the needed libraries are missing,
+      Axis will not work. <br><b>You must not proceed until all needed libraries
       can be found, and this validation page is happy.</b> <br>
       Optional components are optional; install them as your need arises.
 
-      <li>From the start page, select <i>View the list of deployed Web services</i>.
+      <h3>Look for some services</h3>
+      From the start page, select <i>View the list of deployed Web services</i>.
       This will list all registered Web Services, unless the servlet is configured
       not to do so. On this page, You should be able to click on <i>(wsdl)</i> for
       each deployed Web service to make sure that your web service is up and running.
+      
+      <h3>Test a SOAP Endpoint</h3>
+      Now it's time to test a service. Although SOAP1.1 uses HTTP POST
+      to submit an XML request to the <i>endpoint</i>, Axis also
+      supports HTTP GET access, which is useful for testing. First let's
+      retrieve the version of Axis from the version endpoint, calling the 
+      getVersion method: 
+      
+      <a
+      href="http://localhost:8080/axis/services/Version?method=getVersion">
+      http://localhost:8080/axis/services/Version?method=getVersion
+      </a>
+      This should return something like
+<pre class="xml">
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt; 
+  &lt;soapenv:Envelope 
+      xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; 
+      xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+      &lt;soapenv:Body&gt;
+      &lt;getVersionResponse 
+          soapenv:encodingStyle=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;&gt;
+          &lt;getVersionReturn 
+              xsi:type=&quot;xsd:string&quot;&gt;
+              Apache Axis version: 1.0 Built on Nov 04, 2002 (01:30:37 PST)
+          &lt;/getVersionReturn&gt; 
+      &lt;/getVersionResponse&gt;
+      &lt;/soapenv:Body&gt;
+  &lt;/soapenv:Envelope&gt;
+</pre>  
+  The Axis version and build date will of course be different. 
+
+    <h3>Test a JWS Endpoint</h3>
+    
+    Now let's test a JWS web service. Axis' JWS Web Services are java files
+    you save into the axis webapp <i>anywhere but the WEB-INF tree</i>,
+    giving them the .java extension. When some requests the .jws file by
+    giving its URL, it is compiled and executed. The user guide covers
+    JWS pages in detail.
+    
+    <p>
+    
+    To test the JWS service, we make a request against a built in
+    example, EchoHeaders.jws (look for this in the axis/ directory).
+    <p>
+    Point your browser at 
+    <a href="http://localhost:8080/axis/EchoHeaders.jws?method=list">
+    http://localhost:8080/axis/EchoHeaders.jws?method=list
+    </a>.<p>
+    This should return an XML listing of your application headers,
+    such as 
+<pre class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt; 
+&lt;soapenv:Envelope 
+    xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; 
+    xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+    &lt;soapenv:Body&gt;
+        &lt;listResponse 
+            soapenv:encodingStyle=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;&gt;
+            &lt;listReturn xsi:type=&quot;soapenc:Array&quot; 
+                soapenc:arrayType=&quot;xsd:string[6]&quot; 
+                xmlns:soapenc=&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;&gt;
+                &lt;item&gt;accept:image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*&lt;/item&gt; 
+                &lt;item&gt;accept-language:en-us&lt;/item&gt; 
+                &lt;item&gt;accept-encoding:gzip, deflate&lt;/item&gt; 
+                &lt;item&gt;user-agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)&lt;/item&gt; 
+                &lt;item&gt;host:localhost:8080&lt;/item&gt; 
+                &lt;item&gt;connection:Keep-Alive&lt;/item&gt; 
+            &lt;/listReturn&gt;
+        &lt;/listResponse&gt;
+    &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+
+</pre>
+Again, the exact return values will be different, and you may need to
+change URLs to correct host, port and webapp specifics. 
+
+    <a name="websvc"/></a>
+    <h2>Step 3: installing new web services</h2>
+
+    <p>If you got this far, the next step should be simple: </p>
+      <p>In the WEB-INF directory, look for (or create) a &quot;classes&quot;
+        directory (i.e. axis/WEB-INF/classes ). In this directory, copy the
+        compiled java classes you wish to install, being careful to 
+        preserve the directory structure of the java packages.</li>
     </ul>
+      <p>If your classes services are already packaged into JAR files, 
+      feel free to drop them into the WEB-INF/lib directory instead. Also
+      add any third party libraries you depend on into the same directory.</p>
+
+      <p>
+      After adding new classes or libraries to the axis webapp, you must
+      restart the webapp. This can be done by restarting your
+      application server, or by using a server-specific mechanism to
+      restart a specific webapp.
+
+      <p><span class="note">Note:</span> If your web service uses
+        the simple authorization handlers provided with xml-axis (this is actually
+        <u>not</u> recommended as these are merely illustrations of how to write
+        a handler than intended for production use), then you will need to copy
+        the corresponding perms.lst and users.lst files into the WEB-INF directory.</p>
 
     <a name="deploy"/></a>
-    <table width=100% height="20">
-      <tr><td class="section" height="16">Step 6: deploying the web services</td></tr>
+    <h2>Step 6: deploying your own web services</h2>
     </table>
 
-    <p>The various classes and jars you have just set up contain a number of
-    interfaces.&nbsp; What remains to be done is to tell the soap and axis
-    servlets how these are to be combined and what is to be exposed.&nbsp; There
-    are a number of ways to do this, for now I'll simply describe one way that
-    is suitable for automation.</p>
+    <p>The various classes and JARs you have just set up implement your
+    new Web Service. 
+    What remains to be done is to tell Axis how to expose this web service.
+    Axis takes a Web Service Deployment Descriptor, (a WSDD file), that
+    describes in XML what the service is, what methods it exports and
+    other aspects of the SOAP endpoint.
+    <p>
+    The users guide covers these WSDD files; here we assume one exists.
     <ul>
         <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
-          log4j-1.2.4.jar (or whatever is appropriate for your chosen logging implementation),
-          and the XML parser jar file or files (e.g., xerces.jar) to your classpath.&nbsp;
+          log4j.jar (or whatever is appropriate for your chosen logging implementation),
+          and the XML parser jar file or files (e.g., xerces.jar) to your classpath.
           Locate the deployment descriptor for your service and execute the following
           command:
           <blockquote>
-              <code>java org.apache.axis.client.AdminClient -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</code>
+              <code class="java">java org.apache.axis.client.AdminClient <br>
+                -lhttp://localhost:8080/axis/services/AdminService deploy.wsdd</code>
           </blockquote>
         </li>
 
     </ul>
+    The <a href="user-guide.html">user's guide</a> covers the
+    AdminClient in more detail, and there is also an 
+    <a href="ant/axis-admin.html">Ant task</a> to automate its use in your
+    build process.
 
     <p><span class="note">Note:</span>
     You may need to replace localhost with your host name, and 8080 with the
-    port number used by your web server.</p>
+    port number used by your web server.If you have renamed the web application,
+    something other than "axis" change the URL appropriately.</p>
 
 
     <a name="test"/></a>
-    <table width=100% height="20">
-      <tr><td class="section" height="16">Step 7: testing</td></tr>
-    </table>
+    <h2>Step 7: testing</h2>
 
-    <p>This step is optional, but highly recommended.&nbsp; For illustrative
+    <p>This step is optional, but highly recommended. For illustrative
     purposes, it is presumed that you have installed and deployed the stockquote
     demo.</p>
     <ul>
         <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
-          log4j-1.2.4.jar (or whatever is appropriate for your chosen logging implementation),
-          and the XML parser jar file or files (e.g., xerces.jar), as well as the axis
-          installation directory to your classpath.&nbsp;
+          log4j.jar (or whatever is appropriate for your chosen logging implementation),
+          and the XML parser jar file or files (e.g., xerces.jar), as well as the Axis
+          installation directory to your classpath.
           Change directory to the distribution directory for xml-axis
           and execute the following command:
           <blockquote>
-              <code>java samples.stock.GetQuote -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1 -wpass1 XXX</code>
+              <code  class="java">java samples.stock.GetQuote <br>
+               -lhttp://localhost:8080/axis/servlet/AxisServlet -uuser1 -wpass1 XXX</code>
           </blockquote>
         </li>
       <li>You should get back "55.25" as a result.</li>
@@ -217,20 +317,42 @@ Contents
 
     <p><span class="note">Note:</span>
     Again, you may need to replace localhost with your host name, and 8080 with
-    the port number used by your web server.</p>
+    the port number used by your web server. If you have renamed the web application,
+    something other than "axis" change the URL appropriately.</p>
 
-</td>
-</tr>
-<tr>
-<td colspan=2>
+    <h2>Advanced Installation: adding Axis to your own Webapp</h2>
+    
+    If you are experienced in webapp development, and especially if you
+    want to add web services to an existing or complex webapp, you can
+    take an alternate approach to running Axis. Instead of adding your
+    classes to the axis webapp, you can add Axis to your application. 
+    <p>
+    The core concepts are
+    <ol>
+    <li>Add axis.jar, wsdl.jar, saaj.jar, jaxrpc.jar and the other
+    dependent libraries to your WAR file.
+    <li>Copy all the Axis Servlet declarations and mappings from 
+    axis/WEB-INF/web.xml and add them to your own web.xml
+    <li>Build and deploy your webapp. 
+    <li>Run the Axis AdminClient against your own webapp, instead of
+    Axis, by changing the URL you invoke it with.
+    </ol>
+
+    The process is also covered in covered in chapter 15 of 
+    <A href="http://manning.com/antbook">Java Development with Ant</A>,
+    which can be downloaded as a 
+    <A href="http://www.manning.com/hatcher/chap15.pdf">PDF file</A>.
+
+    <h3>Summary</h3>
+    
+    Axis is simply an implementation of SOAP which can be added to your
+    own webapp, and a webapp which can host your own web services.
+    Installing it can be a bit fiddly, especially given Java1.4's
+    stricter requirements. If you follow a methodical process, and test
+    along the way, using happyaxis and the bundled test services, you
+    will find it easier to get started with Axis. 
+    
 <hr size=1 noshade= />
-</td>
-</tr>
-<tr>
-<td colspan=2>
-<div class=copyright align=center>Copyright &#169; 2001, Apache Software Foundation</div>
-</td>
-</tr>
-</table>
+<div class=copyright align=center>Copyright &#169; 2001-2002, Apache Software Foundation</div>
   </body>
 </html>

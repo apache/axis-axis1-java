@@ -6,6 +6,10 @@
     background:#eeeeee 
 }
 
+.java {
+    background:#eeeeee 
+}
+
 body { 
     background-color:#FFFFFF; 
     font-family: Verdana, Arial, Helvetica, sans-serif; 
@@ -47,3 +51,5 @@ td.section {
 small.red { 
     color: red 
 }
+
+
