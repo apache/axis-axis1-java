@@ -80,7 +80,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -256,7 +255,7 @@ public class AxisServlet extends HttpServlet
 
             try {
 
-                String url = HttpUtils.getRequestURL(req).toString();
+                String url = req.getRequestURL().toString();
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
