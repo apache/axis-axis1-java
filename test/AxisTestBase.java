@@ -53,15 +53,15 @@
  */
 
 
-package org.apache.axis.test;
+package test;
 
-import junit.framework.TestCase;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 /**
  *  base test class for Axis test cases.
  * @author steve loughran
  */
-public abstract class AxisTestBase extends TestCase {
+public abstract class AxisTestBase extends XMLTestCase {
 
     public AxisTestBase(String s) {
         super(s);

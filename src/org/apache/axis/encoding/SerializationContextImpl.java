@@ -907,7 +907,9 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if (startOfDocument && sendXMLDecl) {
-            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            writer.write("<?xml version=\"1.0\" encoding=\"");
+            writer.write(XMLUtils.getEncoding());
+            writer.write("\"?>\n");
             startOfDocument = false;
         }
 

@@ -54,8 +54,9 @@
 <!-- there is no commons-httpunit, AFAIK it is a sourceforge project -->
 <!-- <property name="httpunit.jar" location="${lib.dir}/commons-httpunit.jar"/> -->
 
-<!-- this jar is only in the test lib dir -->
+<!-- these jars are in the test lib dir -->
 <property name="regexp.jar" location="${test.dir}/lib/jakarta-oro-2.0.5.jar"/>
+<property name="xmlunit.jar" location="${test.dir}/lib/xmlunit1.0.jar"/>
 
 <!-- pull this in from the compiler -->
 <property name="tools.jar" location="${java.home}/../lib/tools.jar"/>

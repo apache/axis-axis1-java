@@ -57,7 +57,11 @@ package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
+import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.encoding.XMLEncoder;
+import org.apache.axis.components.encoding.XMLEncoderFactory;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
@@ -103,7 +107,7 @@ public class XMLUtils {
     protected static Log log =
         LogFactory.getLog(XMLUtils.class.getName());
         
-    public static final String charEncoding = "ISO-8859-1";
+    public static final String httpAuthCharEncoding = "ISO-8859-1";
     private static final String saxParserFactoryProperty =
         "javax.xml.parsers.SAXParserFactory";
 
@@ -119,60 +123,49 @@ public class XMLUtils {
         initSAXFactory(null, true, false);
     }
 
-    /** Encode a string appropriately for XML.
-     *
-     * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
-     *
+    /** 
+     * Encode a string appropriately for XML.
      * @param orig the String to encode
      * @return a String in which XML special chars are repalced by entities
      */
     public static String xmlEncodeString(String orig)
     {
-        if (orig == null)
-        {
-            return "";
-        }
+        XMLEncoder encoder = getXMLEncoder();
+        return encoder.encode(orig);
+    }
 
-        char[] chars = orig.toCharArray();
-
-        // if the string doesn't have any of the magic characters, leave
-        // it alone.
-        boolean needsEncoding = false;
-
-        search:
-        for(int i = 0; i < chars.length; i++) {
-            switch(chars[i]) {
-            case '&': case '"': case '\'': case '<': case '>':
-                needsEncoding = true;
-                break search;
+    /**
+     * Get the current XMLEncoder
+     * @return XMLEncoder
+     */ 
+    private static XMLEncoder getXMLEncoder() {
+        MessageContext msgContext = MessageContext.getCurrentContext();
+        XMLEncoder encoder = null;
+        if(msgContext == null) {
+            encoder = XMLEncoderFactory.getDefaultEncoder();
+        } else {
+            String encoding = (String) msgContext.getAxisEngine().getOption(AxisEngine.PROP_XML_ENCODING);
+            try {
+                if(encoding != null) {
+                    encoder = XMLEncoderFactory.getEncoder(encoding);
+                } else {
+                    encoder = XMLEncoderFactory.getDefaultEncoder();
+                }
+            } catch (Exception e) {
+                log.error(Messages.getMessage("exception00"), e);
+                encoder = XMLEncoderFactory.getDefaultEncoder();
             }
         }
+        return encoder;
+    }
 
-        if (!needsEncoding) return orig;
-
-        StringBuffer strBuf = new StringBuffer();
-        for (int i = 0; i < chars.length; i++)
-        {
-            switch (chars[i])
-            {
-            case '&'  : strBuf.append("&amp;");
-                        break;
-            case '\"' : strBuf.append("&quot;");
-                        break;
-            case '\'' : strBuf.append("&apos;");
-                        break;
-            case '<'  : strBuf.append("&lt;");
-                        break;
-            case '\r' : strBuf.append("&#xd;");
-                        break;
-            case '>'  : strBuf.append("&gt;");
-                        break;
-            default   : strBuf.append(chars[i]);
-                        break;
-            }
-        }
-
-        return strBuf.toString();
+    /**
+     * Get the current encoding in effect
+     * @return string 
+     */ 
+    public static String getEncoding() {
+        XMLEncoder encoder = getXMLEncoder();
+        return encoder.getEncoding();        
     }
 
     /** Initialize the SAX parser factory.
@@ -751,7 +744,7 @@ public class XMLUtils {
         if (auth != null) {
             uconn.setRequestProperty("Authorization",
                                      "Basic " + 
-                                     base64encode(auth.getBytes(charEncoding)));
+                                     base64encode(auth.getBytes(httpAuthCharEncoding)));
         }
         
         uconn.connect();
