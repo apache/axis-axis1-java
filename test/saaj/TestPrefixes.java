@@ -6,7 +6,11 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.Name;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 /**
  * Test case for Prefixes
@@ -38,5 +42,23 @@ public class TestPrefixes extends junit.framework.TestCase {
         assertTrue(xml.indexOf("prefix2") != -1);
         assertTrue(xml.indexOf("http://www.sun.com") != -1);
         assertTrue(xml.indexOf("http://www.apache.org") != -1);
+    }
+    
+    public void testAttribute() throws Exception {
+        String soappacket = "<SOAP-ENV:Envelope xmlns:SOAP-ENV =\"http://schemas.xmlsoap.org/soap/envelope/\"" + 
+                            "       xmlns:xsi =\"http://www.w3.org/1999/XMLSchema-instance\"" +
+                            "       xmlns:xsd =\"http://www.w3.org/1999/XMLSchema\">" + 
+                            "   <SOAP-ENV:Body> " +
+                            "       <helloworld name=\"tester\" />" + 
+                            "   </SOAP-ENV:Body>" +
+                            "</SOAP-ENV:Envelope>";
+        SOAPMessage msg = MessageFactory.newInstance().createMessage(new MimeHeaders(), new ByteArrayInputStream(soappacket.getBytes()));
+        SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
+
+        SOAPElement ele = (SOAPElement) body.getChildElements().next();
+        Iterator attit = ele.getAllAttributes();
+
+        Name n = (Name) attit.next();
+        assertEquals("Test fail prefix problem",n.getQualifiedName(),"name");
     }
 }
