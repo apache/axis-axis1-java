@@ -57,6 +57,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Part;
+import org.apache.axis.client.Call;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -101,7 +102,6 @@ public class JAFDataHandlerSerializer implements Serializer {
             throw new IOException(Messages.getMessage("noAttachments"));
         }
         SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
-
         Part attachmentPart= attachments.createAttachmentPart(dh);
 
         AttributesImpl attrs = new AttributesImpl();
@@ -116,8 +116,12 @@ public class JAFDataHandlerSerializer implements Serializer {
             attrs.removeAttribute(typeIndex);
         }
 
+        boolean doTheDIME = false;
+        if(attachments.getSendType() == Attachments.SEND_TYPE_DIME)
+            doTheDIME = true;
+        
         attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
-                               "CDATA", attachmentPart.getContentIdRef() );
+                               "CDATA", doTheDIME ? attachmentPart.getContentId() : attachmentPart.getContentIdRef() );
 
         context.startElement(name, attrs);
         context.endElement(); //There is no data to so end the element.
