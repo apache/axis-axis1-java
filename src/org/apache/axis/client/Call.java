@@ -285,6 +285,10 @@ public class Call implements javax.xml.rpc.Call {
     /** This is false when invoke() is called. */
     private boolean isNeverInvoked  = true;     
 
+    static {
+        initialize();
+    }
+
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -301,7 +305,6 @@ public class Call implements javax.xml.rpc.Call {
         msgContext = new MessageContext( engine );
         myProperties.setParent(engine.getOptions());
         maintainSession = service.getMaintainSession();
-        initialize();
     }
 
     /**
