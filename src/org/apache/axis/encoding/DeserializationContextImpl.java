@@ -228,8 +228,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
         if (inputSource != null) {
             SAXParser parser = XMLUtils.getSAXParser();
             try {
-                if (this instanceof LexicalHandler)
-                    parser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
+                parser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
                 parser.parse(inputSource, this);
 
                 // only release the parser for reuse if there wasn't an
