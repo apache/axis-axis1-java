@@ -853,17 +853,6 @@ public class SerializationContextImpl implements SerializationContext
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
         }
 
-        if (startOfDocument && sendXMLDecl) {
-            writer.write("<?xml version=\"1.0\" encoding=\"");
-            // The origional logic is very simple
-            // writer.write(XMLUtils.getEncoding());
-            // The following logic is devised to utilize CHARACTER_SET_ENCODING property from SAAJ 1.2.
-            String encoding = XMLUtils.getEncoding(msgContext);
-            writer.write(encoding);
-            writer.write("\"?>\n");
-            startOfDocument = false;
-        }
-
         if (writingStartTag) {
             writer.write('>');
             if (pretty) writer.write('\n');
