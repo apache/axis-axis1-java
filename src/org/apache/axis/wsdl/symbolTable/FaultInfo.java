@@ -218,7 +218,7 @@ public class FaultInfo {
      * part for type="" or element="" - if type, return the QName.  If
      * element, return the reference type for the element.
      * 
-     * @param fault the Fault to dig into
+     * @param part the Fault to dig into
      * @param st the SymbolTable we're using
      * @return the XML type of the Fault's part, or null
      */ 
