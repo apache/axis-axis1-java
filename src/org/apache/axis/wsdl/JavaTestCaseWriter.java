@@ -168,7 +168,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             pw.println("        try {");
             Operation op = (Operation) ops.next();
             String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
-            Emitter.Parameters params = (Emitter.Parameters) operationParameters.get(op.getName());
+            Parameters params = (Parameters) operationParameters.get(op.getName());
 
             if ( !"void".equals( params.returnType ) ) {
                 pw.print("            ");
