@@ -75,6 +75,8 @@ public class PackageTests extends TestCase {
 
         suite.addTestSuite(FaultDecode.class);
         suite.addTestSuite(FaultEncode.class);
+        suite.addTest(TestAxisFault.suite());
+
 
         return suite;
     }
