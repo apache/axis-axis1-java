@@ -91,6 +91,11 @@ public class DeserializerImpl extends SOAPHandler
 
     protected Object value = null;
 
+    // invariant member variable to track low-level logging requirements
+    // we cache this once per instance lifecycle to avoid repeated lookups
+    // in heavily used code.
+    private final boolean debugEnabled = log.isDebugEnabled();
+
     // isEnded is set when the endElement is called
     protected boolean isEnded = false;
 
@@ -280,7 +285,7 @@ public class DeserializerImpl extends SOAPHandler
                 while (e.hasMoreElements()) {
                     Target target = (Target)e.nextElement();
                     target.set(value);
-                    if (log.isDebugEnabled()) {
+                    if (debugEnabled) {
                         log.debug(Messages.getMessage("setValueInTarget00",
                                                             "" + value, "" + target));
                     }
@@ -373,7 +378,7 @@ public class DeserializerImpl extends SOAPHandler
         id = attributes.getValue("id");
         if (id != null) {
             context.addObjectById(id, value);
-            if (log.isDebugEnabled()) {
+            if (debugEnabled) {
                 log.debug(Messages.getMessage("deserInitPutValueDebug00", "" + value, id));
             }
             context.registerFixup("#" + id, this);
@@ -384,7 +389,7 @@ public class DeserializerImpl extends SOAPHandler
             isHref = true;
 
             Object ref = context.getObjectByRef(href);            
-            if (log.isDebugEnabled()) {
+            if (debugEnabled) {
                 log.debug(Messages.getMessage(
                         "gotForID00",
                         new String[] {"" + ref, href, (ref == null ? "*null*" : ref.getClass().toString())}));
@@ -462,7 +467,7 @@ public class DeserializerImpl extends SOAPHandler
                 }
             }
             
-            if (log.isDebugEnabled()) {
+            if (debugEnabled) {
                 log.debug(Messages.getMessage("gotType00", "Deser", "" + type));
             }
             
@@ -549,7 +554,7 @@ public class DeserializerImpl extends SOAPHandler
         // This is necessary for proper multi-reference deserialization.
         if (id != null) {
             context.addObjectById(id, value);
-            if (log.isDebugEnabled()) {
+            if (debugEnabled) {
                 log.debug(Messages.getMessage("deserPutValueDebug00", "" + value, id));
             }     
         }

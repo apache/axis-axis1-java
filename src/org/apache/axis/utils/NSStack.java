@@ -88,6 +88,10 @@ public class NSStack {
     private int top = 0;
     private int iterator = 0;
     private int currentDefaultNS = -1;
+    // invariant member variable to track low-level logging requirements
+    // we cache this once per instance lifecycle to avoid repeated lookups
+    // in heavily used code.
+    private final boolean traceEnabled = log.isTraceEnabled();
 
     public NSStack() {
         stack = new Mapping[32];
@@ -106,7 +110,7 @@ public class NSStack {
            stack = newstack;
         }
 
-        if (log.isTraceEnabled())
+        if (traceEnabled)
             log.trace("NSPush (" + stack.length + ")");
 
         stack[top] = null;
@@ -132,13 +136,13 @@ public class NSStack {
         }
         
         if (top == 0) {
-            if (log.isTraceEnabled())
+            if (traceEnabled)
                 log.trace("NSPop (" + Messages.getMessage("empty00") + ")");
 
             return;
         }
         
-        if (log.isTraceEnabled()){
+        if (traceEnabled){
             log.trace("NSPop (" + stack.length + ")");
         }
     }
