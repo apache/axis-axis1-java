@@ -185,6 +185,8 @@ public class Type {
                 return "java.util.Date";
             } else if (localName.equals("base64Binary")) {
                 return "byte[]";
+            } else if (localName.equals("hexBinary")) {
+                return "byte[]";
             } else if (localName.equals("date")) {
                 return "java.util.Date";
             } else if (localName.equals("void")) {

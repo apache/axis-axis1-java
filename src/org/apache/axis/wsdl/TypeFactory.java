@@ -85,7 +85,7 @@ public class TypeFactory {
     /**
      * Invoke this method to associate a namespace URI with a particular Java Package
      */
-    public void map (String namespace, String pkg) {
+    private void map (String namespace, String pkg) {
         mapNamespaceToPackage.put(namespace, pkg);
     }
 
@@ -257,11 +257,11 @@ public class TypeFactory {
             }
 
             // Process the enumeration elements underneath the restriction node
-            if (baseEType != null) {
+            if (baseEType != null && restrictionNode != null) {
 
                 Vector v = new Vector();
                 v.add(baseEType);
-                NodeList enums = children.item(1).getChildNodes();
+                NodeList enums = restrictionNode.getChildNodes();
                 for (int i=0; i < enums.getLength(); i++) {
                     QName enumKind = Utils.getNodeQName(enums.item(i));
                     if (enumKind != null &&

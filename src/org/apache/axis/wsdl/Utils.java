@@ -57,6 +57,12 @@ package org.apache.axis.wsdl;
 import org.w3c.dom.Node;
 
 import javax.wsdl.QName;
+
+import java.text.Collator;
+
+import java.util.Arrays;
+import java.util.Locale;
+
 /**
  * This class contains static utility methods for the emitter.                            
  *
@@ -95,8 +101,6 @@ public class Utils {
             return null;
         }
 
-        String nameValue = null;
-    
         Node attrNode = node.getAttributes().getNamedItem(attr);
         if (attrNode != null) {
             return attrNode.getNodeValue();
@@ -115,8 +119,6 @@ public class Utils {
             return null;
         }
 
-        String nameValue = null;
-    
         Node attrNode = node.getAttributes().getNamedItem(attr);
         if (attrNode != null) {
             return attrNode.getNodeValue();
@@ -225,6 +227,46 @@ public class Utils {
     public static boolean isSoapEncodingNS(String s) {
         return (s.equals("http://www.w3.org/2001/06/soap-encoding"));
     }
+
+    /**
+     * These are java keywords as specified at the following URL (sorted alphabetically).
+     * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
+     */
+    static final String keywords[] =
+    {
+        "abstract",  "boolean",     "break",    "byte",         "case",
+        "catch",     "char",        "class",    "const",        "continue",
+        "default",   "do",          "double",   "else",         "extends",
+        "final",     "finally",     "float",    "for",          "goto",
+        "if",        "implements",  "import",   "instanceof",   "int",
+        "interface", "long",        "native",   "new",          "package",
+        "private",   "protected",   "public",   "return",       "short",
+        "static",    "strictfp",    "super",    "switch",       "synchronized",
+        "this",      "throw",       "throws",   "transient",    "try",
+        "void",      "volatile",    "while"
+    };
+
+    /** Collator for comparing the strings */
+    static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
+
+    /** Use this character as suffix */
+    static final char keywordSuffix = '_';
+
+    /**
+     * checks if the input string is a valid java keyword.
+     * @return boolean true/false
+     */
+    public static boolean isJavaKeyword(String keyword) {
+      return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
+    }
+
+    /**
+     * Turn a java keyword string into a non-Java keyword string.  (Right now
+     * this simply means appending an underscore.)
+     */
+    public static String makeNonJavaKeyword(String keyword){
+        return  keyword + keywordSuffix;
+     }
 }
 
 

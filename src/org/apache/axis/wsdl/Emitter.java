@@ -79,13 +79,25 @@ import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -112,10 +124,10 @@ public class Emitter {
     private boolean bVerbose = false;
     private boolean bGeneratePackageName = false;
     private boolean bGenerateImports = true;
-    String packageName = null;
-    String packageDirName = "";
-    String outputDir = null;
-    byte scope = NO_EXPLICIT_SCOPE;
+    private String packageName = null;
+    private String packageDirName = "";
+    private String outputDir = null;
+    private byte scope = NO_EXPLICIT_SCOPE;
     private ArrayList classList = new ArrayList();
     private ArrayList fileList = new ArrayList();
 
@@ -217,8 +229,8 @@ public class Emitter {
             // Collect information about ports and operations
             wsdlAttr = new WsdlAttributes(def, new HashMap());
 
-            // output interfaces for portTypes
-            portTypesInfo = writePortTypes();
+            // Output interfaces for portTypes - fill in the portTypesInfo HashMap
+            writePortTypes(portTypesInfo);
 
             // Output Stub classes for bindings
             writeBindings(portTypesInfo);
@@ -459,12 +471,11 @@ public class Emitter {
     } // getNestedTypes
 
     /**
-     * Generate the bindings for all port types.
+     * Generate the bindings for all port types, and fill in the portTypesInfo HashMap.
      */
-    private HashMap writePortTypes() throws IOException {
+    private void writePortTypes(HashMap portTypesInfo) throws IOException {
         Map portTypes = def.getPortTypes();
         Iterator i = portTypes.values().iterator();
-        HashMap portTypesInfo = new HashMap();
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
@@ -482,7 +493,6 @@ public class Emitter {
 
             portTypesInfo.put(portType, portTypeInfo);
         }
-        return portTypesInfo;
     } // writePortTypes
 
     /**
@@ -831,7 +841,7 @@ public class Emitter {
             if (literal) {
                 QName elementName = part.getElementName();
                 if (elementName != null) {
-                    v.add(elementName.getLocalPart());
+                    v.add(Utils.capitalize(elementName.getLocalPart()));
                     v.add(part.getName());
                 }
             } else {
@@ -1816,8 +1826,13 @@ public class Emitter {
         writeFileHeader(fileName, typePW);
         typePW.println("public class " + javaName + " implements java.io.Serializable {");
 
-        for (int i = 0; i < elements.size(); i += 2)
-            typePW.println("    private " + elements.get(i) + " " + elements.get(i + 1) + ";");
+        for (int i = 0; i < elements.size(); i += 2) {
+            String variable = (String) elements.get(i + 1);
+            if (Utils.isJavaKeyword(variable)) {
+                variable = Utils.makeNonJavaKeyword(variable);
+            }
+            typePW.println("    private " + elements.get(i) + " " + variable + ";");
+        }
 
         typePW.println();
         typePW.println("    public " + javaName + "() {");
@@ -1827,12 +1842,18 @@ public class Emitter {
             typePW.print("    public " + javaName + "(");
             for (int i = 0; i < elements.size(); i += 2) {
                 if (i != 0) typePW.print(", ");
-                typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
+                String variable = (String) elements.get(i + 1);
+                if (Utils.isJavaKeyword(variable)) {
+                    variable = Utils.makeNonJavaKeyword(variable);
+                }
+                typePW.print((String) elements.get(i) + " " + variable);
             }
             typePW.println(") {");
             for (int i = 1; i < elements.size(); i += 2) {
                 String variable = (String) elements.get(i);
-
+                if (Utils.isJavaKeyword(variable)) {
+                    variable = Utils.makeNonJavaKeyword(variable);
+                }
                 typePW.println("        this." + variable + " = " + variable + ";");
             }
             typePW.println("    }");
@@ -1843,6 +1864,9 @@ public class Emitter {
             String name = (String) elements.get(i + 1);
             String capName = Utils.capitalize(name);
 
+            if (Utils.isJavaKeyword(name)) {
+                name = Utils.makeNonJavaKeyword(name);
+            }
             typePW.println("    public " + typeName + " get" + capName + "() {");
             typePW.println("        return " + name + ";");
             typePW.println("    }");
