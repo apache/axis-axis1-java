@@ -1002,21 +1002,30 @@ public class Emitter {
 
         writeFileHeader(stubFileName, stubPW);
         stubPW.println("public class " + stubName + " extends org.apache.axis.rpc.Stub implements " + portTypeName + " {");
-        stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient(new org.apache.axis.transport.http.HTTPTransport());");
+        stubPW.println("    private org.apache.axis.client.Service service = null ;");
+        stubPW.println("    private org.apache.axis.client.Call call = null ;");
         stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
         stubPW.println();
-        stubPW.println("    public " + stubName + "(java.net.URL endpointURL) throws org.apache.axis.SerializationException {");
+        stubPW.println("    public " + stubName + "(java.net.URL endpointURL) throws org.apache.axis.AxisFault {");
         stubPW.println("         this();");
-        stubPW.println("         call.set(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
+        stubPW.println("         call.setTargetEndpointAddress( endpointURL );");
+        stubPW.println("         call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
         stubPW.println("    }");
 
-        stubPW.println("    public " + stubName + "() throws org.apache.axis.SerializationException {");
+        stubPW.println("    public " + stubName + "() throws org.apache.axis.AxisFault {");
 
         HashSet types = getTypesInPortType(portType);
         Iterator it = types.iterator();
 
+        stubPW.println("        try {" );
+        stubPW.println("            service = new org.apache.axis.client.Service();");
+        stubPW.println("            call = (org.apache.axis.client.Call) service.createCall();");
         while (it.hasNext())
             writeSerializationInit(stubPW, (Type) it.next());
+        stubPW.println("        }");
+        stubPW.println("        catch(Exception t) {");
+        stubPW.println("            throw new org.apache.axis.AxisFault(t);");
+        stubPW.println("        }");
 
         stubPW.println("    }");
         stubPW.println();
@@ -1031,13 +1040,13 @@ public class Emitter {
         stubPW.println();
         stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public void _setTargetEndpoint(java.net.URL address) {");
-        stubPW.println("        call.set(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
+        stubPW.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From org.apache.axis.rpc.Stub");
         stubPW.println("    public java.net.URL _getTargetEndpoint() {");
         stubPW.println("        try {");
-        stubPW.println("            return new java.net.URL((String) call.get(org.apache.axis.transport.http.HTTPTransport.URL));");
+        stubPW.println("            return new java.net.URL((String) call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL));");
         stubPW.println("        }");
         stubPW.println("        catch (java.net.MalformedURLException mue) {");
         stubPW.println("            return null; // ???");
@@ -1161,15 +1170,10 @@ public class Emitter {
             return;
         }
         QName qname = type.getQName();
-        pw.println("        try {");
         pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
         pw.println("            Class cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn1, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
-        pw.println("        }");
-        pw.println("        catch (Throwable t) {");
-        pw.println("            throw new org.apache.axis.SerializationException(\"" + qname + "\", t);");
-        pw.println("        }");
         pw.println();
     } // writeSerializationInit
 
@@ -1199,14 +1203,12 @@ public class Emitter {
     private void writeStubOperation(String name, Parameters parms, String soapAction,
                                     String namespace, boolean isRPC, PrintWriter pw) {
         pw.println(parms.signature + "{");
-        pw.println("        if (call.get(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
+        pw.println("        if (call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
 
-        // Create ServiceDescription
-        String isRpcArg = isRPC ? "true" : "false";
-        pw.println("        org.apache.axis.encoding.ServiceDescription sd ");
-        pw.println("            = new org.apache.axis.encoding.ServiceDescription(\"" + name + "\", " + isRpcArg +");");
+        // DUG: need to set the isRPC flag in the Call object
+
         // loop over paramters and set up in/out params
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
@@ -1217,33 +1219,29 @@ public class Emitter {
                 // XXX yikes, something is wrong
             }
             QName qn = type.getQName();
-            String typeString = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\")";
+            String typeString = "new org.apache.axis.encoding.XMLType( new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+                    qn.getLocalPart() + "\"))";
             if (p.mode == Parameter.IN) {
-                pw.println("        sd.addInputParam(\"" + p.name + "\", " + typeString + ");");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
             else if (p.mode == Parameter.INOUT) {
-                pw.println("        sd.addInputParam(\"" + p.name + "\", " + typeString + ");");
-                pw.println("        sd.addOutputParam(\"" + p.name + "\", " + typeString + ");");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
-                pw.println("        sd.addOutputParam(\"" + p.name + "\", " + typeString + ");");
+                pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_OUT);");
             }
         }
         // set output type
         if (!"void".equals(parms.returnType)) {
             QName qn = emitFactory.getType(parms.returnType).getQName();
-            String outputType = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-              qn.getLocalPart() + "\")";
-            pw.println("        sd.setOutputType(" + outputType + ");");
+            String outputType = "new org.apache.axis.encoding.XMLType(new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+              qn.getLocalPart() + "\"))";
+            pw.println("        call.setReturnType(" + outputType + ");");
 
             pw.println();
         }
 
-        // Set this service description for the call
-        pw.println("        call.setServiceDescription(sd);");
-        pw.println();
-        pw.println("        call.set(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
+        pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
         pw.print("        Object resp = call.invoke(");
 
         // Namespace
@@ -1534,7 +1532,7 @@ public class Emitter {
             servicePW.println("        try {");
             servicePW.println("            return new " + stubClass + "(portAddress);");
             servicePW.println("        }");
-            servicePW.println("        catch (org.apache.axis.SerializationException e) {");
+            servicePW.println("        catch (org.apache.axis.AxisFault e) {");
             servicePW.println("            return null; // ???");
             servicePW.println("        }");
             servicePW.println("    }");
