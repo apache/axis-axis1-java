@@ -300,7 +300,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Remote getPort(QName portName, Class proxyInterface)
                            throws ServiceException {
 
-        if (wsdlLocation == null)
+        if (wsdlService == null)
             throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
@@ -359,7 +359,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public Remote getPort(Class proxyInterface) throws ServiceException {
-        if (wsdlLocation == null)
+        if (wsdlService == null)
             throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
 
         return getPort(null, null, proxyInterface);
@@ -534,7 +534,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         if (portName == null)
             throw new ServiceException(JavaUtils.getMessage("badPort00"));
 
-        if (wsdlLocation == null) 
+        if (wsdlService == null) 
             throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
 
         javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[]{createCall(portName)};
