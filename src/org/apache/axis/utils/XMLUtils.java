@@ -56,6 +56,7 @@
 package org.apache.axis.utils ;
 
 import java.io.* ;
+import java.util.Properties;
 import org.w3c.dom.* ;
 import javax.xml.parsers.* ;
 import javax.xml.transform.*;
@@ -180,20 +181,18 @@ public class XMLUtils {
       }
   }
   
-  public static String DocumentToString(Document doc) {
-      return ElementToString(doc.getDocumentElement());
-  }
-
-  public static void DocumentToStream(Document doc, OutputStream out) {
-      ElementToStream(doc.getDocumentElement(), out);
-  }
-
-  public static String ElementToString(Element element) {
+  private static String privateElementToString(Element element,
+                                               boolean omitXMLDecl)
+  {
       try {
         StringWriter sw = new StringWriter();
         DOMSource source = new DOMSource(element);
         StreamResult result = new StreamResult(sw);
         Transformer transformer = getTransformer();
+        Properties p = new Properties();
+        p.put(OutputKeys.OMIT_XML_DECLARATION,
+              omitXMLDecl ? "yes" : "no");
+        transformer.setOutputProperties(p);
         transformer.transform(source, result);
         sw.close();
         return sw.toString();
@@ -202,6 +201,18 @@ public class XMLUtils {
           e.printStackTrace();
       }
       return( null );
+  }
+  
+  public static String DocumentToString(Document doc) {
+      return privateElementToString(doc.getDocumentElement(), false);
+  }
+
+  public static void DocumentToStream(Document doc, OutputStream out) {
+      ElementToStream(doc.getDocumentElement(), out);
+  }
+
+  public static String ElementToString(Element element) {
+      return privateElementToString(element, true);
   }
   
   public static void ElementToStream(Element element, OutputStream out) {
