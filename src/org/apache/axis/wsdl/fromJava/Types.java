@@ -73,6 +73,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -95,6 +96,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -215,14 +217,31 @@ public class Types {
      */ 
     private void processSymTabEntries(SymbolTable symbolTable)
     {
-        Iterator iterator = symbolTable.getElementIndex().keySet().iterator();
+        Iterator iterator = 
+            symbolTable.getElementIndex().entrySet().iterator();
         while(iterator.hasNext()) {
-            QName name = (QName) iterator.next();
+            Map.Entry me = (Map.Entry) iterator.next();
+            QName name = (QName) me.getKey();
+            TypeEntry te = (TypeEntry) me.getValue();
+            String prefix = 
+                XMLUtils.getPrefix(name.getNamespaceURI(), te.getNode());
+            if (!(null == prefix || "".equals(prefix))) {
+                namespaces.putPrefix(name.getNamespaceURI(), prefix);
+                def.addNamespace(prefix, name.getNamespaceURI());
+            }
             addToElementsList(name);
         }
-        iterator = symbolTable.getTypeIndex().keySet().iterator();
+        iterator = symbolTable.getTypeIndex().entrySet().iterator();
         while(iterator.hasNext()) {
-            QName name = (QName) iterator.next();
+            Map.Entry me = (Map.Entry) iterator.next();
+            QName name = (QName) me.getKey();
+            TypeEntry te = (TypeEntry) me.getValue();
+            String prefix = 
+                XMLUtils.getPrefix(name.getNamespaceURI(), te.getNode());
+            if (!(null == prefix || "".equals(prefix))) {
+                namespaces.putPrefix(name.getNamespaceURI(), prefix);
+                def.addNamespace(prefix, name.getNamespaceURI());
+            }
             addToTypesList(name);
         }
     }

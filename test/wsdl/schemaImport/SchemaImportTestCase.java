@@ -95,6 +95,8 @@ public class SchemaImportTestCase extends junit.framework.TestCase {
             def = reader.readWSDL(path, doc);
             assertNotNull("unable to generate WSDL definition from document: " 
                           + path, def);
+            assertEquals("Expected xmlns:foo to be set to urn:ImportSchemaTest",
+                         "urn:ImportSchemaTest", def.getNamespace("foo"));
         } catch (Exception e) {
             throw new junit.framework.AssertionFailedError("Exception caught: "
                                                            + e);
