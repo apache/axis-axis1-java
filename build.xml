@@ -160,6 +160,7 @@ Copyright:
       <exclude name="**/bak/**"/>
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
+      <exclude name="**/*TestSuite.java" unless="junit.present"/>
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.xml"
           toDir="${build.dest}/org/apache/axis/server"/>
