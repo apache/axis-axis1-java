@@ -392,6 +392,12 @@ public class MessageElement implements SOAPElement, Serializable
             addMapping(enc11Mapping);
         } else if (encodingStyle.equals(Constants.URI_SOAP12_ENC)) {
             addMapping(enc12Mapping);
+        } else if (encodingStyle.equals(Constants.URI_SOAP12_NOENC)) {
+            // Do nothing.
+        } else if(encodingStyle.length() == 0){
+            // Do nothing.
+        } else {
+            throw new IllegalArgumentException(Messages.getMessage("badEncodingStyle"));            
         }
     }
 

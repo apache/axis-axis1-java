@@ -64,6 +64,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -233,26 +234,30 @@ public class SOAPBody extends MessageElement
     }
 
     public javax.xml.soap.SOAPFault addFault() throws SOAPException {
-        SOAPFault fault = new SOAPFault(new AxisFault());
+        
+        AxisFault af = new AxisFault(new QName(Constants.NS_URI_AXIS, Constants.FAULT_SERVER_GENERAL), "", "", new Element[0]);
+        SOAPFault fault = new SOAPFault(af);
         addBodyElement(fault);
         return fault;
     }
 
     public javax.xml.soap.SOAPFault getFault() {
-        try {
-            return (javax.xml.soap.SOAPFault)getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT);
-        } catch(AxisFault af){
-            log.fatal(Messages.getMessage("exception00"), af);
-            return null;
+        Enumeration e = bodyElements.elements();
+        while (e.hasMoreElements()) {
+            Object element = e.nextElement();
+            if(element instanceof javax.xml.soap.SOAPFault) {
+                return (javax.xml.soap.SOAPFault) element;
+            }
         }
+        return null;
     }
 
     public boolean hasFault() {
-        try {
-            if(getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT)!=null)
+        Enumeration e = bodyElements.elements();
+        while (e.hasMoreElements()) {
+            if(e.nextElement() instanceof javax.xml.soap.SOAPFault) {
                 return true;
-        } catch(AxisFault af){
-            log.fatal(Messages.getMessage("exception00"), af);
+            }
         }
         return false;
     }
@@ -268,11 +273,10 @@ public class SOAPBody extends MessageElement
     public java.util.Iterator getChildElements(Name name) {
         Vector v = new Vector();
         Enumeration e = bodyElements.elements();
-        SOAPBodyElement bodyEl;
+        SOAPElement bodyEl;
         while (e.hasMoreElements()) {
-            bodyEl = (SOAPBodyElement)e.nextElement();
-            if (bodyEl.getNamespaceURI().equals(name.getURI()) &&
-                bodyEl.getName().equals(name.getLocalName())) {
+            bodyEl = (SOAPElement)e.nextElement();
+            if (bodyEl.getElementName().equals(name)) {
                 v.addElement(bodyEl);
             }
         }
