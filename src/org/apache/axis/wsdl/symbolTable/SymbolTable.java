@@ -2108,7 +2108,7 @@ public class SymbolTable {
                     wrapped = false;
                 }
                 
-                if (!SchemaUtils.isWrappedType(node, this)) {
+                if (!SchemaUtils.isWrappedType(node)) {
                   wrapped = false;
                 }
 
