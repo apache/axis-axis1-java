@@ -61,4 +61,8 @@ public class PerfService_ServiceTestCase extends junit.framework.TestCase {
                 (end.getTime() - start.getTime()) + "\tReturn:" + value);
     }
 
+    public static void main(String[] args) throws Exception {
+        PerfService_ServiceTestCase tests = new PerfService_ServiceTestCase("Perf");
+        tests.test1PerfPortHandleStringArray();
+    }
 }
