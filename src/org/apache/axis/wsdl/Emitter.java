@@ -1396,7 +1396,12 @@ public class Emitter {
             NamedNodeMap attributes = type.getAttributes();
             String typeName = capitalize(attributes.getNamedItem("name").getNodeValue());
 
-            pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + packageName + "." + typeName + "\"/>");
+            if (packageName == null) {
+                pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
+            }
+            else {
+                pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + packageName + "." + typeName + "\"/>");
+            }
         }
         pw.println("   </beanMappings>");
 
@@ -1450,9 +1455,15 @@ public class Emitter {
      * Write out deployment instructions for given WSDL binding
      */
     private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException {
-        deployPW.println("      <option name=\"className\" value=\""
-                + packageName + "."
-                + binding.getQName().getLocalPart() + "Skeleton" + "\"/>");
+        if (packageName == null) {
+            deployPW.println("      <option name=\"className\" value=\""
+                             + binding.getQName().getLocalPart() + "Skeleton" + "\"/>");
+        }
+        else {
+            deployPW.println("      <option name=\"className\" value=\""
+                             + packageName + "."
+                             + binding.getQName().getLocalPart() + "Skeleton" + "\"/>");
+        }
 
         String methodList = "";
         Iterator operationsIterator = binding.getBindingOperations().iterator();
