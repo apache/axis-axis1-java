@@ -939,7 +939,7 @@ public class MessageElement implements SOAPElement, Serializable
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
                               attributes,
-                              objectValue, null, false, Boolean.TRUE);
+                              objectValue, null, false, null);
             return;
         }
 

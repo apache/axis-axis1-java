@@ -104,8 +104,7 @@ public class TestSOAPEnvelope extends TestCase {
         SOAPHeader h2 = env.addHeader();
         assertTrue("null created header", h2 != null);
         assertEquals("wrong header retrieved", h2, env.getHeader());
-        assertEquals("header parent incorrect", env,
-                     (SOAPEnvelope)h2.getParentElement());
+        assertEquals("header parent incorrect", env, h2.getParentElement());
         try {
             env.addHeader();
             assertTrue("second header added", false);
@@ -122,8 +121,7 @@ public class TestSOAPEnvelope extends TestCase {
         SOAPBody b2 = env.addBody();
         assertTrue("null created body", b2 != null);
         assertEquals("wrong body retrieved", b2, env.getBody());
-        assertEquals("body parent incorrect", env,
-                     (SOAPEnvelope)b2.getParentElement());
+        assertEquals("body parent incorrect", env, b2.getParentElement());
         try {
             env.addBody();
             assertTrue("second body added", false);
@@ -145,7 +143,7 @@ public class TestSOAPEnvelope extends TestCase {
     // Test for bug 14574
     public void testNullpointerInHeader() throws Exception{
 		org.apache.axis.message.SOAPEnvelope env=new org.apache.axis.message.SOAPEnvelope();
-		SOAPHeaderElement hdr=new SOAPHeaderElement(null,"testHeader");
+		SOAPHeaderElement hdr=new SOAPHeaderElement("", "testHeader");
 		env.addHeader(hdr);
 		Message msg=new Message(env);
 		SOAPHeaderElement she = msg.getSOAPEnvelope().getHeaderByName(null,"testHeader");

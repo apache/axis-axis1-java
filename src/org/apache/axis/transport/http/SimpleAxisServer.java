@@ -63,6 +63,8 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.axis.collections.LRUMap;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.commons.logging.Log;
 
 import java.net.MalformedURLException;
@@ -153,6 +155,14 @@ public class SimpleAxisServer implements Runnable {
         return doThreads ;
     }
 
+    public EngineConfiguration getMyConfig() {
+        return myConfig;
+    }
+
+    public void setMyConfig(EngineConfiguration myConfig) {
+        this.myConfig = myConfig;
+    }
+
     protected Session createSession(String cooky) {
 
         // is there a session already?
@@ -177,9 +187,14 @@ public class SimpleAxisServer implements Runnable {
     // Axis server (shared between instances)
     private static AxisServer myAxisServer = null;
 
-    public static synchronized AxisServer getAxisServer() {
+    private EngineConfiguration myConfig = null;
+
+    public synchronized AxisServer getAxisServer() {
         if (myAxisServer == null) {
-            myAxisServer = new AxisServer();
+            if (myConfig == null) {
+                myConfig = EngineConfigurationFactoryFinder.newFactory().getServerEngineConfig();
+            }
+            myAxisServer = new AxisServer(myConfig);
         }
         return myAxisServer;
     }

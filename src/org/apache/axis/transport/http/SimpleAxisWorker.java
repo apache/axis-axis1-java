@@ -436,10 +436,6 @@ public class SimpleAxisWorker implements Runnable {
 
                 // Retrieve the response from Axis
                 responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null) {
-                    throw new AxisFault(Messages.getMessage("nullResponse00"));
-                }
-
             } catch (Exception e) {
                 AxisFault af;
                 if (e instanceof AxisFault) {
@@ -500,7 +496,8 @@ public class SimpleAxisWorker implements Runnable {
             }
 
             out.write(SEPARATOR);
-            responseMsg.writeTo(out);
+            if (responseMsg != null)
+                responseMsg.writeTo(out);
             // out.write(response);
             out.flush();
         } catch (Exception e) {
