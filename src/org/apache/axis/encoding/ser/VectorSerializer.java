@@ -66,10 +66,12 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.IdentityHashMap;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Stack;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -110,7 +112,12 @@ public class VectorSerializer implements Serializer
                                      value.getClass().getName()));
 
         Vector vector = (Vector)value;
-
+        
+        // Check for circular references. 
+        if(isRecursive(new IdentityHashMap(), vector)){
+            throw new IOException(Messages.getMessage("badVector00"));
+        }
+        
         context.startElement(name, attributes);
         for (Iterator i = vector.iterator(); i.hasNext(); )
         {
@@ -118,6 +125,24 @@ public class VectorSerializer implements Serializer
             context.serialize(Constants.QNAME_LITERAL_ITEM,  null, item);
         }
         context.endElement();
+    }
+
+    public boolean isRecursive(IdentityHashMap map, Vector vector) 
+    {
+        map.add(vector);
+        boolean recursive = false;
+        for(int i=0;i<vector.size() && !recursive;i++)
+        {
+            Object o = vector.get(i);
+            if(o instanceof Vector) {
+                if(map.containsKey(o)) {
+                    return true;
+                } else { 
+                    recursive = isRecursive(map, (Vector)o);
+                }
+            }
+        }
+        return recursive;
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

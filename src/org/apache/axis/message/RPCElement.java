@@ -67,6 +67,7 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -227,7 +228,33 @@ public class RPCElement extends SOAPBodyElement
                                            context, rpcHandler);
                         }
 
+                        // Check if the RPCParam's value match the signature of the 
+                        // param in the operation.
+                        boolean match = true;
+                        for ( int j = 0 ; j < params.size() && match ; j++ ) {
+                            RPCParam rpcParam = (RPCParam)params.get(j);
+                            Object value = rpcParam.getValue();
 
+                            // first check the type on the paramter
+                            ParameterDesc paramDesc = rpcParam.getParamDesc();
+
+                            // if we found some type info try to make sure the value type is
+                            // correct.  For instance, if we deserialized a xsd:dateTime in
+                            // to a Calendar and the service takes a Date, we need to convert
+                            if (paramDesc != null && paramDesc.getJavaType() != null) {
+
+                                // Get the type in the signature (java type or its holder)
+                                Class sigType = paramDesc.getJavaType();
+                                if(!JavaUtils.isConvertable(value, sigType))
+                                    match = false;
+                            }
+                        }
+                        // This is not the right operation, try the next one.
+                        if(!match) {
+                            params = new Vector();
+                            continue;
+                        }
+                        
                         // Success!!  This is the right one...
                         msgContext.setOperation(operation);
                         return;

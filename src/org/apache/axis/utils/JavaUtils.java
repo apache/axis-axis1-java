@@ -481,6 +481,9 @@ public class JavaUtils
             } else {
                 src = obj.getClass();
             }
+        } else {
+            if(!dest.isPrimitive())
+                return true;
         }
         
         if (dest == null)
@@ -499,8 +502,13 @@ public class JavaUtils
             
             // If it's List -> Array or vice versa, we're good.
             if ((Collection.class.isAssignableFrom(src) || src.isArray()) &&
-                (Collection.class.isAssignableFrom(dest) || dest.isArray()))
-                return true;
+                (Collection.class.isAssignableFrom(dest) || dest.isArray()) &&
+                (src.getComponentType() == Object.class || 
+                 src.getComponentType() == null ||
+                 dest.getComponentType() == Object.class ||
+                 dest.getComponentType() == null ||
+                 isConvertable(src.getComponentType(), dest.getComponentType())))
+                    return true;
             
             // If destination is an array, and src is a component, we're good.
             if (dest.isArray() &&

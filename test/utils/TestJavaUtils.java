@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.Calendar;
 import java.lang.reflect.Array;
 
 public class TestJavaUtils extends TestCase
@@ -151,6 +152,16 @@ public class TestJavaUtils extends TestCase
         assertTrue(JavaUtils.isConvertable(clazz,Byte.class));
         assertTrue(JavaUtils.isConvertable(clazz,Object.class));
     }
+    
+    /**
+     * Make sure we can't say convert from string[] to Calendar[]
+     */
+    public void testIsConvert2() 
+    {
+        String[] strings = new String[]{"hello"};
+        Calendar[] calendars = new Calendar[1];
+        assertTrue(!JavaUtils.isConvertable(strings, calendars.getClass()));
+    }    
 
     public static void main(String args[]){
         TestJavaUtils tester = new TestJavaUtils("TestJavaUtils");

@@ -59,6 +59,9 @@ public class FunctionalTests extends TestCase
 
         // Message service test.
         suite.addTestSuite(TestMessageSample.class);
+        
+        // test.rpc test
+        suite.addTestSuite(TestIF3SOAP.class);
 
         // Attachments service test.
         try{
