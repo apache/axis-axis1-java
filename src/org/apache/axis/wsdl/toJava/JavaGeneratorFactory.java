@@ -489,6 +489,17 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         String exceptionClassName = null;
         for(int j=0; j < parts.size(); j++) {
             TypeEntry te = ((Parameter)(parts.elementAt(j))).getType();
+
+            // If the TypeEntry is an element, advance to the type.
+            // This occurs if the message part uses the element= attribute
+            TypeEntry elementTE = null;
+            if (te instanceof Element) {
+                elementTE = te;
+                te = te.getRefType();
+            }
+
+            // Determine if the te should be processed using the
+            // simple type mapping or the complex type mapping
             if (te.getBaseType() != null ||
                 te.isSimpleType()) {
                 // Simple Type Exception
@@ -498,9 +509,16 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
                 if (isComplexFault == null ||
                     !isComplexFault.booleanValue()) {
+                    // Mark the type as a complex type fault
                     te.setDynamicVar(
                         JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
                         new Boolean(true));
+                    if (elementTE != null) {
+                        te.setDynamicVar(
+                           JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+                           new Boolean(true));
+                    }
+
                     // Mark all derived types as Complex Faults
                     HashSet derivedSet =
                         org.apache.axis.wsdl.symbolTable.Utils.getDerivedTypes(
@@ -526,7 +544,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             symbolTable);
                     }
                 }
-                exceptionClassName = emitter.getJavaName(te.getQName());
+                // The exception class name is the name of the type
+                exceptionClassName = te.getName();
             }
         }
         // Set the name of the exception and
