@@ -13,9 +13,12 @@
 <property file="${user.home}/build.properties"/>
 
 <property name="axis.version" value="1.1RC1" />
+<!-- This should be the version # above with dots replaced by underscores -->
+<property name="axis.dirname" value="1_1RC1" />
+
 <property name="name" value="axis" />
 <property name="Name" value="Axis" />
-<property name="year" value="2002" />
+<property name="year" value="2003" />
 <property name="jaxrpc" value="jaxrpc" />
 <property name="saaj" value="saaj" />
 
@@ -72,7 +75,7 @@
 <property name="build.webapp" location="${build.dir}/webapps/axis"/>
 
 <property name="webapp" location="${axis.home}/webapps/axis" />
-<property name="dist.dir" location="${axis.home}/axis-1_1beta" />
+<property name="dist.dir" location="${axis.home}/axis-${axis.dirname}" />
 
 <property name="test.setup.dir" location="${test.dir}/setup" />
 <property name="test.build.dir" location="${build.dir}/test/" />
