@@ -2,9 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; U) [Netscape]">
    <title>Axis User's Guide</title>
-<!-- saved from url=(0022)http://internet.e-mail -->
 <style type="text/css">
 <!--
 .example { background:#ccccff }
@@ -24,7 +22,7 @@ h1 {  margin-left: -30px}
 
 <h1>
 Axis User's Guide</h1>
-<i>Beta 2 Version</i> 
+<i>Post Beta 3 Version</i> 
 <h3>
 Table of Contents</h3>
 
@@ -580,14 +578,14 @@ must be handled.
 <h5>Unsigned data</h5>
 
 You cannot consume or generate services that use unsigned datatypes with
-JAX-RPC or Axis. This can be an issue if you are consuming Web Services
-written in other languages, or implementing a service against a WSDL
-specification or XSD schema that uses them. Axis may add support for
-unsigned datatypes if we can come up with an elegant solution and
-somebody (it could be you...) invests the time to implement it, or when
-a revision of JAX-RPC adds this. The fundamental problem is of course
-the lack of unsigned datatypes in Java.
-
+pure JAX-RPC, because there are no unsigned dataypes in Java. 
+<p>
+Axis does have support for the unsigned types, so you can consume services
+written in C++, C# and the like, and re-implement interfaces designed for 
+those languages. Be very wary about exporting unsigned datatypes, however, as to
+do so will stop Java clients that do not use Axis or another SOAP client library 
+with unsigned support from using them. At least, until 
+a revision of JAX-RPC adds this. 
 
 
 <h5>Arbitrary Objects without registration</h5>
@@ -1222,7 +1220,9 @@ mailing list.
 <p>The current list of published interfaces is as follows:
 <ul>
 <li>
-JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public review stage of its existence, meaning that it may still change.  As it does, the JAX-RPC interfaces may also change.  JAX-RPC is expected to become official some time during the summer of 2002.
+JAX-RPC interfaces.  
+These interfaces are from JAX-RPC 1.0 specification, and will change only when 
+new versions of the specification are released.
 <ul>
 <li>javax.xml.messaging.Endpoint</li>
 <li>javax.xml.messaging.URLEndpoint</li>
@@ -1279,7 +1279,7 @@ JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public
 <li>javax.xml.transform.Source</li>
 </ul>
 </li>
-<li>AXIS interfaces:
+<li>AXIS interfaces. These have less guarantees of stability:
 <ul>
 <li>org.apache.axis.AxisFault</li>
 <li>org.apache.axis.Handler</li>
