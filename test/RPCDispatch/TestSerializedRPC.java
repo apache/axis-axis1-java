@@ -15,6 +15,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 
+import org.xml.sax.SAXException;
+
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 
@@ -63,7 +65,7 @@ public class TestSerializedRPC extends TestCase {
      */
     private final Object rpc(String method, String bodyStr,
                              boolean setService)
-        throws AxisFault
+        throws AxisFault, SAXException
     {
 
         // Create the message context
