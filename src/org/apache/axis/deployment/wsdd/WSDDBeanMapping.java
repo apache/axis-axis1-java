@@ -54,13 +54,8 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.Constants;                      
+import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -92,7 +87,7 @@ public class WSDDBeanMapping
     public WSDDBeanMapping(Element e)
         throws WSDDException
     {
-        super(e, true);
+        super(e);
         
         serializer = "org.apache.axis.encoding.ser.BeanSerializerFactory";
         deserializer = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
