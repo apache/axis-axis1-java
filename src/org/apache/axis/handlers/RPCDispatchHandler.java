@@ -76,41 +76,46 @@ public class RPCDispatchHandler implements Handler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In RPCDispatchHandler");
 
-    Document  doc = (Document) msgContext.getIncomingMessage().getAs("Document");
-
     // Find the service we're invoking
     Handler service = (Handler) msgContext.getProperty( "ServiceHandler" );
 
     // Now get the service specific info 
-    String  cls    = (String) service.getOption( "className" );
-    String  method = (String) service.getOption( "methodName" );
+    String  clsName    = (String) service.getOption( "className" );
+    String  methodName = (String) service.getOption( "methodName" );
 
-    
     try {
-      Class        c = Class.forName(cls);
-      Object       o = c.newInstance();
-      SOAPEnvelope env = null ;
-      env = (SOAPEnvelope) msgContext.getIncomingMessage().getAs("SOAPEnvelope");
-      RPCBody body = env.getAsRPCBody();
-      System.err.println( "Method: " + body.getMethodName() );
-      Vector    args = body.getArgs();
-      String    str  = ((RPCArg)args.get(0)).getValue();
-      Float    result ;
+      // We know we're doing a java call so find the class, create a
+      // new instance of it.
+      int          i ;
+      Class        cls   = Class.forName(clsName);
+      Object       obj   = cls.newInstance();
+      Message      inMsg = msgContext.getIncomingMessage();
+      SOAPEnvelope env   = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
+      RPCBody      body  = env.getAsRPCBody();
+      String       mName = body.getMethodName();
+      Vector       args  = body.getArgs();        //RPCArg's
 
-      Method m = c.getMethod( body.getMethodName(), new Class[] {str.getClass()} );
-      result = (Float) m.invoke( o, new Object[] { str } );
-      System.err.println("result=" + result );
+      if ( !methodName.equals(mName) )
+        throw new AxisFault( "AxisServier.error", "Method names don't match",
+                             null, null );  // Should they??
 
-      Message msg = new Message( result.toString(), "String" );
-      msgContext.setOutgoingMessage( msg );
+      Class[]  argClasses = new Class[ args.size() ];
+      Object[] argValues  = new Object[ args.size()];
+      for ( i = 0 ; i < args.size() ; i++ ) {
+        argClasses[i] = Class.forName("java.lang.String") ;
+        argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
+      }
+
+      Method method = cls.getMethod( mName, argClasses );
+      Object objRes = method.invoke( obj, argValues );
+
+      Message outMsg = new Message( objRes.toString(), "String" );
+      msgContext.setOutgoingMessage( outMsg );
     }
     catch( Exception e ) {
       e.printStackTrace();
       throw new AxisFault( e );
     }
-
-    // Right now its just an echo - but I'll add more once the
-    // reader/writer is there
   }
 
   public void undo(MessageContext msgContext) { 

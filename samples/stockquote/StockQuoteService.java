@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "AXIS" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
@@ -49,71 +49,56 @@
  *
  * This software consists of voluntary contributions made by many
  * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * originally based on software copyright (c) 2000, International
+ * Business Machines, Inc., http://www.apache.org.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis ;
+package samples.stockquote ;
 
-import java.util.* ;
-import org.w3c.dom.* ;
+import java.io.*;
+import java.net.URL;
+
+import org.w3c.dom.*;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.* ;
 import org.apache.xerces.framework.* ;
-import org.apache.xml.serialize.* ;
 
-// PLACEHOLDER until we figure out what we really want to put here
-// Just something to keep us moving forward
+/**
+ * See \samples\stockquote\readme for info.
+ *
+ * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
+ */
+public class StockQuoteService {
+  public float getQuote (String symbol) throws Exception {
+    // get a real (delayed by 20min) stockquote from 
+    // http://www.xmltoday.com/examples/stockquote/. The IP addr 
+    // below came from the host that the above form posts to ..
 
-public class AxisFault extends Exception {
-  protected String    faultCode ;
-  protected String    faultString ;
-  protected String    faultActor ;
-  protected Vector    faultDetails ;  // vector of Element's
+    URL          url = new URL( "http://www.xmltoday.com/examples/" +
+                                "stockquote/getxmlquote.vep?s="+symbol );
 
-  public AxisFault(String code, String str, String actor, Element[] details) {
-    setFaultCode( code );
-    setFaultString( str );
-    setFaultActor( actor );
-    setFaultDetails( details );
+    DOMParser    parser = new DOMParser();
+    InputSource  inp    = new InputSource( url.openStream() );
+
+    parser.parse( inp );
+
+    Document     doc  = parser.getDocument();
+    Element      elem = doc.getDocumentElement ();
+    NodeList     list = elem.getElementsByTagName( "price" );
+
+    elem = (Element) list.item( 0 );
+    String quoteStr = elem.getAttribute ("value");
+    try {
+      return Float.valueOf(quoteStr).floatValue();
+    } catch (NumberFormatException e1) {
+      // maybe its an int?
+      try {
+        return Integer.valueOf(quoteStr).intValue() * 1.0F;
+      } catch (NumberFormatException e2) {
+        return -1.0F;
+      }
+    }
   }
-
-  public AxisFault(Exception exception) {
-    setFaultCode( "Server.generalException" );
-    setFaultString( exception.toString() );
-    // need to set details if we were in the body at the time!!
-  }
-
-  public void setFaultCode(String code) {
-    faultCode = code ;
-  }
-
-  public String getFaultCode() { 
-    return( faultCode );
-  }
-
-  public void setFaultString(String str) {
-    faultString = str ;
-  }
-
-  public String getFaultString() {
-    return( faultString );
-  }
-
-  public void setFaultActor(String actor) {
-    faultActor = actor ;
-  }
-
-  public void setFaultDetails(Element[] details) {
-    if ( details == null ) return ;
-    faultDetails = new Vector( details.length );
-    for ( int loop = 0 ; loop < details.length ; loop++ )
-      faultDetails.add( details[loop] );
-  }
-
-  public Element[] getFaultDetails() {
-    return( (Element[]) faultDetails.toArray() );
-  }
-};
+}

@@ -26,13 +26,14 @@ AdminClient
 EchoClient:
   - Just send the server an xml file and get it back
 
-GetQuoteClient:
-  - Hardcoded client for stock quote sample
-
 TestClient:
   - Allows you to run a service - actually it just allows you to
     specify the SOAPAction header line on the command line.  It sends
     a static SOAPEnvelope.
+
+
+** Also, look at the samples\stockquote example.  This is a full blown
+** service in action!
 
 
 
@@ -88,8 +89,4 @@ the specified attributes):
 Any of these allow for 'option' sub-elements to allow for name/value pairs
 of options.
 
-
-Misc:
------
-GetQuoteClient actually works!!  It's very very hardcoded but it works.
 
