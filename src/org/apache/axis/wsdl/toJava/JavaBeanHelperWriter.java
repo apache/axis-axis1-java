@@ -22,6 +22,7 @@ import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionTE;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -333,17 +334,15 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         // If we have a DefinedType with dimensions, it must
                         // be a SOAP array derived type.  In this case, use
                         // the refType's QName for the metadata.
-                        xmlType = elemType.getRefType().getQName();
+                        elemType = elemType.getRefType();
                     } else {
-
-                        // Otherwise, use the type at the end of the ref
-                        // chain.
-                        while (elemType.getRefType() != null) {
+                        // Otherwise, use the first non-Collection type we
+                        // encounter up the ref chain.
+                        while (elemType instanceof CollectionTE) {
                             elemType = elemType.getRefType();
                         }
-
-                        xmlType = elemType.getQName();
                     }
+                    xmlType = elemType.getQName();
 
                     pw.print("        ");
 
