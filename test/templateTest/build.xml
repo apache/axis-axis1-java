@@ -4,11 +4,11 @@ My Test.... Documentation Abounds!
 -->
 
 <!DOCTYPE project [
-        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
-        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
-        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
-        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
-        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+        <!ENTITY properties SYSTEM "file:../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -47,19 +47,9 @@ Then, we construct a classpath that includes, hopefully, all of the things that 
 <!-- =========================================================================================== -->
 <!-- This target actually "makes" things -->
 <!-- =========================================================================================== -->
-<taskdef name="script" classname="org.apache.tools.ant.taskdefs.optional.Script" />
 
 <target name="compile">
-  <mkdir dir="${build.dest}/mattTest"/>
-   <script language="javascript"><![CDATA[
-      var moduleNames=new Array("helper","jtas","name","rg", "ctrl", "octl", "tas","tr");
-      var i=0;
-      for(i=0; i<moduleNames.length; i++) {
-	echo = mattTest.createTask("echo");
-	compile.addTask(echo);
-	echo.setMessage("Looking at " + moduleNames[i]);
-      }
-  ]]></script>
+  <echo message="Usually, this would build something..." />
 </target>
 
 <target name="run" >
