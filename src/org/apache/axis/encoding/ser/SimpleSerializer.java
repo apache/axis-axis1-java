@@ -142,7 +142,7 @@ public class SimpleSerializer implements Serializer {
                 } else {
                     data = ((Double) value).doubleValue();
                 }
-                if (data == Double.NaN) {
+                if (Double.isNaN(data)) {
                     context.writeString("NaN");
                 } else if (data == Double.POSITIVE_INFINITY) {
                     context.writeString("INF");
