@@ -155,8 +155,19 @@ public class BodyBuilder extends SOAPHandler
                  (operations[0].getStyle() !=
                   ServiceDesc.STYLE_MESSAGE))) {
                 gotRPCElement = true;
-                element = new RPCElement(namespace, localName, prefix,
-                                         attributes, context, operations);
+                
+                try {
+                    
+                    element = new RPCElement(namespace, localName, prefix,
+                            attributes, context, operations);
+                    
+                } catch (ClassNotFoundException e) {
+                    // SAXException is already known to this method, so I
+                    // don't have an exception-handling propogation explosion.
+                    //
+                    throw new SAXException(e);
+                }
+                
                 // Only deserialize this way if there is a unique operation
                 // for this QName.  If there are overloads,
                 // we'll need to start recording.  If we're making a high-

@@ -83,7 +83,7 @@ public class RPCElement extends SOAPBodyElement
                       String prefix,
                       Attributes attributes,
                       DeserializationContext context,
-                      OperationDesc [] operations)
+                      OperationDesc [] operations) throws ClassNotFoundException
     {
         super(namespace, localName, prefix, attributes, context);
 
@@ -101,8 +101,12 @@ public class RPCElement extends SOAPBodyElement
             SOAPService service    = msgContext.getService();
             if (service != null) {
                 ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
-
+                
                 String lc = Utils.xmlNameToJava(name);
+                if (serviceDesc == null) {
+                    throw new ClassNotFoundException(JavaUtils.getMessage("noClassForService00", lc));
+                }
+
                 operations = serviceDesc.getOperationsByName(lc);
             }
         }
