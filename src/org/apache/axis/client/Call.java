@@ -151,7 +151,7 @@ public class Call implements javax.xml.rpc.Call {
     protected static Log log =
         LogFactory.getLog(Call.class.getName());
     private static Log tlog =
-        LogFactory.getLog("org.apache.axis.TIME");
+        LogFactory.getLog(Constants.TIME_LOG_CATEGORY);
 
     // The enterprise category is for stuff that an enterprise product might
     // want to track, but in a simple environment (like the AXIS build) would
@@ -1609,7 +1609,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         catch( Exception exp ) {
             //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-            entLog.info(Messages.getMessage("toAxisFault00"), exp);
+            entLog.debug(Messages.getMessage("toAxisFault00"), exp);
             throw new AxisFault(
                     Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
@@ -1669,7 +1669,7 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
-            entLog.info(Messages.getMessage("toAxisFault00"), exp);
+            entLog.debug(Messages.getMessage("toAxisFault00"), exp);
             throw new AxisFault(
                     Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
@@ -2152,7 +2152,7 @@ public class Call implements javax.xml.rpc.Call {
 
             invoke();
         } catch (Exception e) {
-            entLog.info(Messages.getMessage("toAxisFault00"), e);
+            entLog.debug(Messages.getMessage("toAxisFault00"), e);
             throw AxisFault.makeFault(e);
         }
 
