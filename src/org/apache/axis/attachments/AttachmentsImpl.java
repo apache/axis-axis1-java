@@ -309,11 +309,7 @@ public class AttachmentsImpl implements Attachments {
     public void setAttachmentParts(java.util.Collection parts)
             throws org.apache.axis.AxisFault {
 
-        multipart = null;
-        dimemultipart = null;
-        mergeinAttachments();
-        attachments.clear();
-        orderedAttachments.clear();
+        removeAllAttachments();
 
         if ((parts != null) && !parts.isEmpty()) {
             for (java.util.Iterator i = parts.iterator(); i.hasNext();) {
@@ -581,19 +577,13 @@ public class AttachmentsImpl implements Attachments {
      */
     public void removeAllAttachments() {
         try {
+            multipart = null;
+            dimemultipart = null;
             mergeinAttachments();
+            attachments.clear();
+            orderedAttachments.clear();
         } catch (AxisFault af){
             log.warn(JavaUtils.getMessage("exception00"));
-        }
-
-        java.util.Iterator iterator = attachments.values().iterator();
-        while(iterator.hasNext()){
-            Part removedPart = (Part) iterator.next();
-            if (removedPart != null) {
-                attachments.remove(removedPart.getContentId());
-                attachments.remove(removedPart.getContentLocation());
-                orderedAttachments.remove(removedPart);
-            }
         }
     }
 

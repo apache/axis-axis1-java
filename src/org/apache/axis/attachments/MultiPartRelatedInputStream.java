@@ -297,12 +297,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
-                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                                 contentId);
                     }
 
                     if (contentLocation != null) {
-                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
+                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
                                 contentLocation);
                     }
 
@@ -565,12 +565,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
-                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                                 contentId);
                     }
 
                     if (contentLocation != null) {
-                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
+                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
                                 contentLocation);
                     }
 
