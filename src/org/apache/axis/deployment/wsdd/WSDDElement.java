@@ -55,10 +55,10 @@
 package org.apache.axis.deployment.wsdd;
 
 import java.io.Serializable;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import java.util.Hashtable; 
 import java.util.Vector;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * abstract class extended by all WSDD Element classes
@@ -98,61 +98,37 @@ public abstract class WSDDElement implements Serializable {
      * Used to create an array of child elements of a particular type
      */
     WSDDElement[] createArray(String name, Class type) {
-        try {
-            NodeList nl = element.getChildNodes();
-            Vector v = new Vector();
-            for (int n = 0; n < nl.getLength(); n++) {
-                if (nl.item(n).getNodeType() == Element.ELEMENT_NODE) {
-                    Element e = (Element)nl.item(n);
-                    if (e.getNamespaceURI().equals(WSDDConstants.WSDD_NS) &&
-                        e.getLocalName().equals(name)) {
-                        if (hasChild(e)) {
-                            v.addElement(e);
-                        } else {
-                            Class[] c = {Element.class};
-                            Object[] o = {e};
-                            WSDDElement w = (WSDDElement)type.getConstructor(c).newInstance(o);
-                            addChild(e,w);
-                            v.addElement(w);
-                        }
-                    }
-                }
-            }
-            Object[] obj = v.toArray();
-            WSDDElement[] ret = new WSDDElement[obj.length];
-            System.arraycopy(obj,0,ret,0,obj.length);
-            return ret;
-        } catch (Exception e) {
-            return null;
-        }
+        String[] names = {name};
+        Class[] types = {type};
+        return createArray(names,types);
     }
 
     /**
      * Used to create an array of child elements of a particular type
      */
-    WSDDElement[] createArray(String n1, String n2, Class type1, Class type2) {
+    WSDDElement[] createArray(String[] names, Class[] types) {
         try {
             NodeList nl = element.getChildNodes();
             Vector v = new Vector();
             for (int n = 0; n < nl.getLength(); n++) {
                 if (nl.item(n).getNodeType() == Element.ELEMENT_NODE) {
                     Element e = (Element)nl.item(n);
-                    if (e.getNamespaceURI().equals(WSDDConstants.WSDD_NS) &&
-                        (e.getLocalName().equals(n1) || e.getLocalName().equals(n2))) {
-                        if (hasChild(e)) {
-                            v.addElement(e);
-                        } else {
-                            Class[] c = {Element.class};
-                            Object[] o = {e};
-                            WSDDElement w = null;
-                            if (e.getLocalName().equals(n1)) 
-                                w = (WSDDElement)type1.getConstructor(c).newInstance(o);
-                            if (e.getLocalName().equals(n2))
-                                w = (WSDDElement)type2.getConstructor(c).newInstance(o);
-                            addChild(e,w);
-                            v.addElement(w);
+                    if (e.getNamespaceURI().equals(WSDDConstants.WSDD_NS)) {
+                        for (int i = 0; i < names.length; i++) {
+                            if (e.getLocalName().equals(names[i])) {
+                                if (hasChild(e)) {
+                                    v.addElement(getChild(e));
+                                } else {
+                                    Class[] c = {Element.class};
+                                    Object[] o = {e};
+                                    WSDDElement w = null;
+                                    w = (WSDDElement)types[i].getConstructor(c).newInstance(o);
+                                    addChild(e,w);
+                                    v.addElement(w);
+                                }   
+                            }
                         }
-                    }
+                    }                    
                 }
             }
             Object[] obj = v.toArray();

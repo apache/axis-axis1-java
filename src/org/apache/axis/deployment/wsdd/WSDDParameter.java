@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.w3c.dom.Element;
+import org.apache.axis.utils.XMLUtils;
 
 public class WSDDParameter extends WSDDElement { 
     
@@ -69,9 +70,10 @@ public class WSDDParameter extends WSDDElement {
     }
     
     public String getValue() {
-        // either return the body value or the attribute value, 
-        // in that order
-        return null;
+        Element e = getElement();
+        String value;
+        if (!(value = e.getAttribute("value")).equals("")) return value;
+        return XMLUtils.getInnerXMLString(e);
     }
     
 }

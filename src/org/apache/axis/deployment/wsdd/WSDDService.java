@@ -62,8 +62,10 @@ import org.apache.axis.Handler;
 import org.apache.axis.Chain;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.description.ServiceDescription;
 
-public class WSDDService extends WSDDDeployableItem { 
+public class WSDDService extends WSDDDeployableItem implements DeployableItem { 
     
     public WSDDService(Element e) throws WSDDException { super(e, "service"); }
    
@@ -74,8 +76,16 @@ public class WSDDService extends WSDDDeployableItem {
         return type;
     }
     
-    public String getDescription() {
+    public String getServiceDescriptionURL() {
         return getElement().getAttribute("description");
+    }
+    
+    /**
+     * Eventually need to fill this in with the code to 
+     * actually return the Service Description object
+     */
+    public ServiceDescription getServiceDescription() {
+        return null;
     }
     
     public WSDDTypeMapping[] getTypeMappings() {
@@ -115,11 +125,17 @@ public class WSDDService extends WSDDDeployableItem {
         if (ex == null) {
             return null;
         } else {
-            String exuri = ex.getNamespaceURI();
-            Class c = WSDDProvider.getProviderClass(exuri);
-            Class[] cs = {Element.class};
-            Object[] p = {e};
-            return (WSDDProvider)c.getConstructor(cs).newInstance(p);
+            if (hasChild(e)) {
+                return (WSDDProvider)getChild(e);
+            } else {
+                String exuri = ex.getNamespaceURI();
+                Class c = WSDDProvider.getProviderClass(exuri);
+                Class[] cs = {Element.class};
+                Object[] p = {e};
+                WSDDElement w = (WSDDElement)c.getConstructor(cs).newInstance(p);
+                addChild(e,w);
+                return (WSDDProvider)w;
+            }
         }
     }
     

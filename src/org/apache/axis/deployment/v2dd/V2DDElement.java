@@ -52,60 +52,36 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
+package org.apache.axis.deployment.v2dd;
 
+import java.io.Serializable;
+import java.util.Hashtable;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.apache.axis.Chain;
-import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
 
-/**
- * WSDD chain element
- * 
- * @author James Snell
- */
-public class WSDDChain extends WSDDHandler implements DeployableItem { 
+public class V2DDElement implements Serializable { 
     
-    public WSDDChain(Element e) throws WSDDException { super(e, "chain"); }
+    Hashtable elements = new Hashtable();
     
+    protected Element element;
     
-    public WSDDHandler[] getHandlers() {
-        WSDDElement[] w = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[w.length];
-        System.arraycopy(w,0,h,0,w.length);
-        return h;
+    public V2DDElement(Element element) {
+        this.element = element;
     }
     
-    
-    public WSDDHandler getHandler(String name) {
-        WSDDHandler[] h = getHandlers();
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name))
-                return h[n];
-        }
-        return null;
+    public Element getElement() {
+        return element;
     }
     
-    
-    public String getType() {
-        String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleChain";
-        return type;
+    void addChild(Element e, V2DDElement element) {
+        elements.put(e,element);
     }
     
-    /**
-     * Creates a new instance of this Chain 
-     */
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.newInstance(registry);
-        Chain c = (Chain)h;
-        WSDDHandler[] handlers = getHandlers();
-        for (int n = 0; n < handlers.length; n++) {
-            c.addHandler(handlers[n].newInstance(registry));
-        }
-        return c;
+    V2DDElement getChild(Element e) {
+        return (V2DDElement)elements.get(e);
     }
+    
+    boolean hasChild(Element e) {
+        return elements.containsKey(e);
+    }
+    
 }

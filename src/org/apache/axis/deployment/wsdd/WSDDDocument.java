@@ -56,19 +56,27 @@ package org.apache.axis.deployment.wsdd;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.DeserializerFactory;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)
  */
-public class WSDDDocument { 
+public class WSDDDocument extends DeploymentDocument { 
    
     protected Document d;
     protected WSDDDeployment dep;
     
     public WSDDDocument() {}
+    
     public WSDDDocument(Document doc) {
         d = doc;
     }
+    
     public WSDDDocument(Element e) {
         d = e.getOwnerDocument();
     }
@@ -84,4 +92,57 @@ public class WSDDDocument {
         return dep;
     }
     
+    public void deploy(DeploymentRegistry registry) throws DeploymentException {
+        WSDDGlobalConfiguration global = dep.getGlobalConfiguration();
+        if (global != null) {
+            registry.setGlobalConfiguration(global);
+        }
+        
+        WSDDHandler[] handlers = dep.getHandlers();
+        WSDDChain[] chains = dep.getChains();
+        WSDDTransport[] transports = dep.getTransports();
+        WSDDService[] services = dep.getServices();
+        WSDDTypeMapping[] mappings = dep.getTypeMappings();
+        
+        for (int n = 0; n < handlers.length; n++) {
+            registry.deployItem(handlers[n]);
+        }
+        for (int n = 0; n < chains.length; n++) {
+            registry.deployItem(chains[n]);
+        }
+        for (int n = 0; n < transports.length; n++) {
+            registry.deployItem(transports[n]);
+        }
+        for (int n = 0; n < services.length; n++) {
+            registry.deployItem(services[n]);
+        }
+        
+        for (int n = 0; n < mappings.length; n++) {
+            WSDDTypeMapping mapping = mappings[n];
+            TypeMappingRegistry tmr = registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+            if (tmr == null) {
+                tmr = new TypeMappingRegistry();
+                registry.addTypeMappingRegistry(mapping.getEncodingStyle(), tmr);
+            }
+
+            Serializer ser = null;
+            DeserializerFactory deser = null;
+            
+            try {
+                ser = (Serializer)mapping.getSerializer().newInstance();
+                deser = (DeserializerFactory)mapping.getDeserializer().newInstance();
+            } catch (Exception e) {}
+            
+            try {
+                if (ser != null)
+                    tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                    mapping.getQName(), ser);
+            
+                if (deser != null)
+                    tmr.addDeserializerFactory(mapping.getQName(), deser);
+            } catch (Exception e) {
+                throw new DeploymentException(e.getMessage());
+            }
+        }
+    }
 }

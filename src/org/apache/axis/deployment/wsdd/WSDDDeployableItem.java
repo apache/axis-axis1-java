@@ -59,6 +59,7 @@ import org.w3c.dom.Element;
 import org.apache.axis.Handler;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.utils.QName;
 
 /**
  * WSDD DeployableItem complexType
@@ -68,6 +69,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
 public abstract class WSDDDeployableItem extends WSDDElement { 
     
     LockableHashtable parms;
+    QName qname;
     
     public WSDDDeployableItem(Element e, String n) throws WSDDException {
         super(e,n);
@@ -75,6 +77,18 @@ public abstract class WSDDDeployableItem extends WSDDElement {
     
     public String getName() {
         return getElement().getAttribute("name");
+    }
+
+    public QName getQName() {
+        if (qname == null) {
+            String nsURI = element.getOwnerDocument().getDocumentElement().getAttribute("targetNamespace");
+            if (nsURI.equals("")) {
+                qname = new QName(null, getName());
+            } else {
+                qname = new QName(nsURI, getName());
+            }
+        }     
+        return qname;
     }
     
     protected String getType() {
@@ -129,20 +143,7 @@ public abstract class WSDDDeployableItem extends WSDDElement {
             return h;
         } catch (ClassNotFoundException e) {
             String type = getType();
-            Handler h = null;
-            if (this instanceof WSDDChain) {
-                h = (Handler)registry.getChain(type);
-            }
-            if (this instanceof WSDDHandler ||
-                this instanceof WSDDProvider) {
-                h = (Handler)registry.getHandler(type);
-            }
-            if (this instanceof WSDDTransport) {
-                h = (Handler)registry.getTransport(type);
-            }
-            if (this instanceof WSDDService) {
-                h = (Handler)registry.getService(type);
-            }
+            Handler h = registry.getDeployedItem(type);
             if (h != null) {
                 WSDDParameter[] parms = getParameters();
                 for (int n = 0; n < parms.length; n++) {

@@ -57,8 +57,9 @@ package org.apache.axis.deployment.wsdd;
 import org.w3c.dom.Element; 
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
 
-public class WSDDHandler extends WSDDDeployableItem { 
+public class WSDDHandler extends WSDDDeployableItem implements DeployableItem { 
     
     public WSDDHandler(Element e) throws WSDDException { super(e, "handler"); }
     public WSDDHandler(Element e, String n) throws WSDDException { super(e,n);}
