@@ -595,6 +595,14 @@ public class TestDeser extends TestCase {
                     "</molNames>",
                     s, true);
     }
+    
+    public void testBug25536() throws Exception {
+        int[] array = new int[]{3,4};
+        deserialize("<myFavoriteNumbers soapenc:arrayType=\"xsd:int[2]\">\n" +
+                "   <number>3</number> \n" +
+                "   <number>4</number> \n" +
+                "</myFavoriteNumbers>",array,true);
+    }
 
     // Struct within Struct
     public void testStructStruct2() throws Exception {
