@@ -670,7 +670,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         setCurrentForm(nse, FORM_SOAPENVELOPE);
 
         log.debug("Exit: SOAPPart::getAsSOAPEnvelope");
-        return (SOAPEnvelope)currentMessage;
+        SOAPEnvelope env = (SOAPEnvelope)currentMessage;
+        env.setOwnerDocument(this);
+        return env;
     }
 
     /**
