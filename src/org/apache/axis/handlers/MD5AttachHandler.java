@@ -75,7 +75,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
         LogFactory.getLog(MD5AttachHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug("Enter: EchoHandler::invoke");
+        log.debug("Enter: MD5AttachHandler::invoke");
         try {
             // log.debug("IN MD5");        
             Message  msg = msgContext.getRequestMessage();
@@ -157,7 +157,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             throw AxisFault.makeFault(e);
         }
         
-        log.debug("Exit: EchoHandler::invoke");
+        log.debug("Exit: MD5AttachHandler::invoke");
     }
 
 }
