@@ -271,8 +271,11 @@ public class MimeUtils {
 
                 messageBodyPart.setDataHandler(dh);
 
-                String contentType = dh.getContentType();
-
+                String contentType = part.getContentType();
+                if ((contentType == null)
+                        || (contentType.trim().length() == 0)) {
+                    contentType = dh.getContentType();
+                }
                 if ((contentType == null)
                         || (contentType.trim().length() == 0)) {
                     contentType = "application/octet-stream";
