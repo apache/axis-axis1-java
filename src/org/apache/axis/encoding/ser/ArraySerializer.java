@@ -19,6 +19,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.enum.Use;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -403,6 +404,8 @@ public class ArraySerializer implements Serializer
         MessageContext mc = MessageContext.getCurrentContext();
         if (mc != null) {
             encoded = mc.isEncoded();
+        } else {
+            encoded = types.getServiceDesc().getUse() == Use.ENCODED;
         }
         
         if (!encoded) {
