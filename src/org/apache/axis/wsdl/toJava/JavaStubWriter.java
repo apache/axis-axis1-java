@@ -528,6 +528,9 @@ public class JavaStubWriter extends JavaWriter {
         // Encoding: literal or encoded use.
         int use = bEntry.getInputBodyType(operation.getOperation());
         if (use == BindingEntry.USE_LITERAL) {
+            if (symbolTable.isWrapped()) {
+                pw.println("        call.setProperty(\"wrapped\", Boolean.TRUE);");
+            }
             // Turn off encoding
             pw.println("        call.setEncodingStyle(null);");
             // turn off multirefs
