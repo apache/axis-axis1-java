@@ -254,8 +254,9 @@ public class Java2WSDL {
      * Parse an option
      * @param option CLOption is the option
      */
-    protected void parseOption(CLOption option) {
+    protected boolean parseOption(CLOption option) {
         String value;
+        boolean status = true;
         
         switch (option.getId()) {
         case CLOption.TEXT_ARGUMENT:
@@ -264,6 +265,7 @@ public class Java2WSDL {
                                                         className, 
                                                         option.getArgument()));
                 printUsage();
+                status = false; // error
             }
             className = option.getArgument();
             break;
@@ -282,6 +284,7 @@ public class Java2WSDL {
             
         case HELP_OPT:
             printUsage();
+            status = false;
             break;
             
         case OUTPUT_WSDL_MODE_OPT:
@@ -367,6 +370,7 @@ public class Java2WSDL {
                                               DefaultSOAP12TypeMappingImpl.create());
             } else {
                 System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
+                status = false;
             }
             break;
             
@@ -380,6 +384,7 @@ public class Java2WSDL {
                 emitter.setSoapAction("NONE");
             } else {
                 System.out.println(Messages.getMessage("j2wBadSoapAction00"));
+                status = false;
             }
             break;
 
@@ -390,7 +395,9 @@ public class Java2WSDL {
                     value.equalsIgnoreCase("WRAPPED")) {
                     emitter.setStyle(value);
                 } else {
-                    System.out.println(Messages.getMessage("j2woptBadStyle00"));                }
+                    System.out.println(Messages.getMessage("j2woptBadStyle00"));
+                    status = false;
+                }
                 break;
         case USE_OPT:
                 value = option.getArgument();
@@ -399,6 +406,7 @@ public class Java2WSDL {
                     emitter.setUse(value);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadUse00"));
+                    status = false;
                 }
                 break;
         case EXTRA_CLASSES_OPT:
@@ -406,12 +414,14 @@ public class Java2WSDL {
                     emitter.setExtraClasses(option.getArgument());
                 } catch (ClassNotFoundException e) {
                     System.out.println(Messages.getMessage("j2woptBadClass00", e.toString()));
+                    status = false;
                 }
                 break;
             
         default: 
             break;
         }
+        return status;
     }        
 
     /**
@@ -419,23 +429,27 @@ public class Java2WSDL {
      * This method is invoked after the options are set to validate 
      * the option settings.
      */
-    protected void validateOptions() {
+    protected boolean validateOptions() {
         // Can't proceed without a class name
         if ((className == null)) {
             System.out.println(Messages.getMessage("j2wMissingClass00"));
             printUsage();
+            return false;
         }
         
         if (!locationSet && (mode == Emitter.MODE_ALL ||
                              mode == Emitter.MODE_IMPLEMENTATION)) {
             System.out.println(Messages.getMessage("j2wMissingLocation00"));
             printUsage();
+            return false;
         }
         
         // Default to SOAP 1.2 JAX-RPC mapping
         if (emitter.getDefaultTypeMapping() == null) {
             emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
-        }            
+        }
+        
+        return true; // a-OK
     }
 
     /**
@@ -443,7 +457,7 @@ public class Java2WSDL {
      * checks the command-line arguments and runs the tool.
      * @param args String[] command-line arguments.
      */
-    protected void run(String[] args) {
+    protected int run(String[] args) {
         // Parse the arguments
         CLArgsParser argsParser = new CLArgsParser(args, options);
 
@@ -452,6 +466,7 @@ public class Java2WSDL {
             System.err.println(
                     Messages.getMessage("j2werror00", argsParser.getErrorString()));
             printUsage();
+            return(1);
         }
 
         // Get a list of parsed options
@@ -461,11 +476,14 @@ public class Java2WSDL {
         try {
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {
-                parseOption((CLOption)clOptions.get(i));
+                if (parseOption((CLOption)clOptions.get(i)) == false) {
+                    return (1);
+                }
             }
 
             // validate argument combinations
-            validateOptions();
+            if (validateOptions() == false)
+                return (1);
 
             // Set the namespace map
             if (!namespaceMap.isEmpty()) {
@@ -483,11 +501,11 @@ public class Java2WSDL {
             }
 
             // everything is good
-            System.exit(0);
+            return (0);
         }
         catch (Throwable t) {
             t.printStackTrace();
-            System.exit(1);
+            return (1);
         }
     } // run
 
@@ -506,7 +524,6 @@ public class Java2WSDL {
         msg.append(CLUtil.describeOptions(options).toString());
         msg.append(Messages.getMessage("j2wdetails00")).append(lSep);
         System.out.println(msg.toString());
-        System.exit(0);
     }
 
    /**
@@ -516,6 +533,6 @@ public class Java2WSDL {
      */
     public static void main(String args[]) {
         Java2WSDL java2wsdl = new Java2WSDL();
-        java2wsdl.run(args);
+        System.exit(java2wsdl.run(args));
     }
 }
