@@ -59,11 +59,8 @@ import com.ibm.wsdl.xml.WSDLReader;
 import org.apache.axis.utils.XMLUtils;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
@@ -72,7 +69,6 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
-import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
@@ -98,7 +94,6 @@ import java.util.Vector;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter {
-
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
     public static final byte APPLICATION_SCOPE = 0x01;
@@ -184,7 +179,8 @@ public class Emitter {
 
             // Output deploy.xml and undeploy.xml outside of the recursive emit method.
             if (bEmitSkeleton) {
-                writeDeploymentXML(def.getTargetNamespace());
+                Writer writer = writerFactory.getWriter(def);
+                writer.write();
             }
         }
         catch (Throwable t) {
@@ -348,6 +344,13 @@ public class Emitter {
     public void setScope(byte scope) {
         this.scope = scope;
     } // setScope
+
+    /**
+     * Get the scope for the deploy.xml file.
+     */
+    public byte getScope() {
+        return scope;
+    } // getScope
 
     ///////////////////////////////////////////////////
     //
@@ -854,174 +857,6 @@ public class Emitter {
             writer.write();
        }
     }
-
-    /**
-     * Generate the deployment descriptor and undeployment descriptor
-     * for the current WSDL file
-     */
-    private void writeDeploymentXML(String namespace) {
-        try {
-            QName dummyQName = new QName(namespace, "deploy");
-            PrintWriter deployPW = printWriter(dummyQName, null, "xml", "Generating deployment document:  ");
-            initializeDeploymentDoc(deployPW, "deploy");
-
-            dummyQName = new QName(namespace, "undeploy");
-            PrintWriter undeployPW = printWriter(dummyQName, null, "xml", "Generating deployment document:  ");
-            initializeDeploymentDoc(undeployPW, "undeploy");
-            writeDeployServices(deployPW, undeployPW);
-            writeDeployTypes(deployPW);
-            deployPW.println("</m:deploy>");
-            deployPW.close();
-            undeployPW.println("</m:undeploy>");
-            undeployPW.close();
-        }
-        catch (IOException e) {
-            System.err.println("Failed to write deployment documents");
-            e.printStackTrace();
-        }
-
-    } // writeDeploymentXML
-
-    /**
-     * Initialize the deployment document, spit out preamble comments
-     * and opening tag
-     */
-    private void initializeDeploymentDoc(PrintWriter pw, String deploymentOpName) throws IOException {
-        pw.println("<!--                                         " +
-                "                    -->");
-        pw.println("<!--Use this file to " + deploymentOpName +
-                " some handlers/chains and services  -->");
-        pw.println("<!--Two ways to do this:                     " +
-                "                    -->");
-        pw.println("<!--  java org.apache.axis.utils.Admin " +
-                deploymentOpName + ".xml              -->");
-        pw.println("<!--     from the same dir that the Axis " +
-                "engine runs             -->");
-        pw.println("<!--or                                     " +
-                "                      -->");
-        pw.println("<!--  java org.apache.axis.client.AdminClient " +
-                deploymentOpName + ".xml       -->");
-        pw.println("<!--     after the axis server is running    " +
-                "                    -->");
-        pw.println("<!--This file will be replaced by WSDD once " +
-                "it's ready           -->");
-        pw.println();
-        pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
-    } // initializeDeploymentDoc
-
-    /**
-     * Write out bean mappings for each type
-     */
-    private void writeDeployTypes(PrintWriter pw) throws IOException {
-        HashMap types = emitFactory.getTypes();
-
-        if (types.isEmpty()) return;
-
-        pw.println();
-
-        pw.print("   <beanMappings ");
-        HashMap nsMap = new HashMap();
-        int i = 1;
-        String nsPrefix = null;
-        Iterator it = types.values().iterator();
-        while (it.hasNext()) {
-            Type type = (Type) it.next();
-            if (type.getBaseType() == null) {
-                if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
-                  pw.println("");
-                  nsPrefix = "ns" + i++;
-                  nsMap.put(type.getQName().getNamespaceURI(), nsPrefix);
-                  pw.print("     xmlns:" + nsPrefix  + "=\"" + type.getQName().getNamespaceURI() + "\"");
-                }
-            }
-        }
-        pw.println(">");
-        it = types.values().iterator();
-        while (it.hasNext()) {
-            Type type = (Type) it.next();
-            if (type.getBaseType() == null) {
-                nsPrefix = (String)nsMap.get(type.getQName().getNamespaceURI());
-                pw.println("     <" + nsPrefix + ":" + type.getQName().getLocalPart()
-                       + " classname=\"" + type.getJavaName() +"\"/>");
-            }
-        }
-        pw.println("   </beanMappings>");
-
-    } //writeDeployTypes
-
-    /**
-     * Write out deployment and undeployment instructions for each WSDL service
-     */
-    private void writeDeployServices(PrintWriter deployPW, PrintWriter undeployPW) throws IOException {
-        //deploy the ports on each service
-        Map serviceMap = def.getServices();
-        for (Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
-            Service myService = (Service) mapIterator.next();
-
-            deployPW.println();
-            deployPW.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
-            deployPW.println();
-
-            undeployPW.println();
-            undeployPW.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
-            undeployPW.println();
-
-            for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
-                Port myPort = (Port) portIterator.next();
-                writeDeployPort(deployPW, undeployPW, myPort);
-            }
-        }
-    } //writeDeployServices
-
-    /**
-     * Write out deployment and undeployment instructions for given WSDL port
-     */
-    private void writeDeployPort(PrintWriter deployPW, PrintWriter undeployPW, Port port) throws IOException {
-        Binding binding = port.getBinding();
-        String serviceName = port.getName();
-
-        boolean isRPC = (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_RPC);
-
-        deployPW.println("   <service name=\"" + serviceName
-                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
-        undeployPW.println("   <service name=\"" + serviceName
-                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
-
-        writeDeployBinding(deployPW, binding);
-
-        deployPW.println("   </service>");
-        undeployPW.println("   </service>");
-    } //writeDeployPort
-
-    /**
-     * Write out deployment instructions for given WSDL binding
-     */
-    private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException {
-        QName bindingQName = binding.getQName();
-        String packageName = namespaces.getCreate(bindingQName.getNamespaceURI());
-        deployPW.println("      <option name=\"className\" value=\""
-                         + packageName + "."
-                         + bindingQName.getLocalPart() + "Skeleton" + "\"/>");
-
-        String methodList = "";
-        Iterator operationsIterator = binding.getBindingOperations().iterator();
-        for (; operationsIterator.hasNext();) {
-            BindingOperation op = (BindingOperation) operationsIterator.next();
-            methodList = methodList + " " + op.getName();
-        }
-
-        deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
-
-        if (scope == APPLICATION_SCOPE) {
-            deployPW.println("      <option name=\"scope\" value=\"Application\"/>");
-        }
-        else if (scope == REQUEST_SCOPE) {
-            deployPW.println("      <option name=\"scope\" value=\"Request\"/>");
-        }
-        else if (scope == SESSION_SCOPE) {
-            deployPW.println("      <option name=\"scope\" value=\"Session\"/>");
-        }
-    } //writeDeployBinding
 
     //////////////////////////////
     //

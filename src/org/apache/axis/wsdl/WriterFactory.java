@@ -57,6 +57,7 @@ package org.apache.axis.wsdl;
 import java.util.HashMap;
 
 import javax.wsdl.Binding;
+import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
@@ -97,6 +98,12 @@ public interface WriterFactory {
      * Type.
      */
     public Writer getWriter(Type type);
+
+    /**
+     * Get a Writer implementation that will generate anything that doesn't
+     * fit into the scope of any of the other writers.
+     */
+    public Writer getWriter(Definition definition);
 
     /**
      * Provide the Emitter to the factory.

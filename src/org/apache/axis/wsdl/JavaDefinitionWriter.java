@@ -54,66 +54,32 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
+import java.io.IOException;
 
-import javax.wsdl.Binding;
 import javax.wsdl.Definition;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's Definition Writer.  It writes the following files:
+* deploy.xml, undeploy.xml.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaDefinitionWriter implements Writer {
+    Writer deployWriter = null;
+    Writer undeployWriter = null;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaDefinitionWriter(Emitter emitter, Definition definition) {
+        deployWriter = new JavaDeployWriter(emitter, definition);
+        undeployWriter = new JavaUndeployWriter(emitter, definition);
     } // ctor
 
     /**
-     * Provide the emitter object to this class.
+     * Write all the service bindnigs:  service and testcase.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    public void write() throws IOException {
+        deployWriter.write();
+        undeployWriter.write();
+    } // write
 
-    /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaBindingWriter object.
-     */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaServiceWriter object.
-     */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaDefinitionWriter object.
-     */
-    public Writer getWriter(Definition definition) {
-        return new JavaDefinitionWriter(emitter, definition);
-    } // getWriter
-} // class JavaWriterFactory
+} // class JavaDefinitionWriter

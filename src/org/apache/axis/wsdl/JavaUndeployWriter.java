@@ -54,66 +54,89 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
+import java.io.IOException;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
-import javax.wsdl.PortType;
+import javax.wsdl.Port;
+import javax.wsdl.QName;
 import javax.wsdl.Service;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaUndeployWriter extends JavaWriter {
+    private Definition definition;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaUndeployWriter(Emitter emitter, Definition definition) {
+        super(emitter,
+                new QName(definition.getTargetNamespace(), "undeploy"),
+                "",
+                "xml",
+                "Generating deployment document:  ");
+        this.definition = definition;
     } // ctor
 
     /**
-     * Provide the emitter object to this class.
+     * Replace the default file header with the deployment doc file header.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    protected void writeFileHeader() throws IOException {
+        initializeDeploymentDoc("undeploy");
+    } // writeFileHeader
 
     /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
+     * Write the body of the deploy.xml file.
      */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
+    protected void writeFileBody() throws IOException {
+        try {
+            writeDeployServices();
+            pw.println("</m:undeploy>");
+            pw.close();
+        }
+        catch (IOException e) {
+            System.err.println("Failed to write deployment documents");
+            e.printStackTrace();
+        }
+    } // writeFileBody
 
     /**
-     * Return Wsdl2java's JavaBindingWriter object.
+     * Write out deployment and undeployment instructions for each WSDL service
      */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
+    private void writeDeployServices() throws IOException {
+        //deploy the ports on each service
+        Map serviceMap = definition.getServices();
+        for (Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
+            Service myService = (Service) mapIterator.next();
+
+            pw.println();
+            pw.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
+            pw.println();
+
+            for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
+                Port myPort = (Port) portIterator.next();
+                writeDeployPort(myPort);
+            }
+        }
+    } //writeDeployServices
 
     /**
-     * Return Wsdl2java's JavaServiceWriter object.
+     * Write out deployment and undeployment instructions for given WSDL port
      */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
+    private void writeDeployPort(Port port) throws IOException {
+        Binding binding = port.getBinding();
+        String serviceName = port.getName();
 
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
-    } // getWriter
+        boolean isRPC = (emitter.wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_RPC);
 
-    /**
-     * Return Wsdl2java's JavaDefinitionWriter object.
-     */
-    public Writer getWriter(Definition definition) {
-        return new JavaDefinitionWriter(emitter, definition);
-    } // getWriter
-} // class JavaWriterFactory
+        pw.println("   <service name=\"" + serviceName
+                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
+        pw.println("   </service>");
+    } //writeDeployPort
+
+} // class JavaUndeployWriter
