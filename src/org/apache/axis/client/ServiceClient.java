@@ -440,6 +440,23 @@ public class ServiceClient {
         return ret;
     }
     
+    /** Convenience method to invoke a method with a default (empty)
+     * namespace.  Calls invoke() above.
+     * 
+     * @param method the method name
+     * @param args an array of Objects representing the arguments to the
+     *             invoked method.  If any of these objects are RPCParams,
+     *             Axis will use the embedded name of the RPCParam as the
+     *             name of the parameter.  Otherwise, we will serialize
+     *             each argument as an XML element called "arg<n>".
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
+    public Object invoke( String method, Object [] args ) throws AxisFault
+    {
+        return invoke("", method, args);
+    }
+    
     /** Invoke an RPC service with a pre-constructed RPCElement.
      * 
      * @param body an RPCElement containing all the information about
