@@ -150,8 +150,9 @@ public class ServiceClient {
      * Construct a ServiceClient with just an AxisEngine.
      */
     public ServiceClient (AxisEngine engine) throws Exception {
-        call = new Call(new Service());
-        call.setEngine(engine);
+        Service service = new Service();
+        service.setEngine(engine);
+        call = new Call(service);
     }
 
 
@@ -178,8 +179,9 @@ public class ServiceClient {
             throws AxisFault, Exception
     {
         try {
+            Service  service = new Service();
+            service.setEngine(engine);
             call = new Call(endpointURL);
-            call.setEngine(engine);
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
         }

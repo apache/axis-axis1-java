@@ -91,12 +91,12 @@ public class ProxyService {
             // use the server's client engine in case anything has 
             // been deployed to it
             Service service = new Service();
+            service.setEngine( msgContext.getAxisEngine().getClientEngine() );
             Call    call = (Call) service.createCall();
-            call.setEngine( msgContext.getAxisEngine().getClientEngine() );
 
             SimpleTargetedChain c = new SimpleTargetedChain();
             c.setPivotHandler(new TCPSender());
-	    call.getEngine().deployTransport("tcp", c);
+	    service.getEngine().deployTransport("tcp", c);
     
             // add TCP for proxy testing
             call.addTransportPackage("samples.transport");

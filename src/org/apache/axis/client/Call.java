@@ -55,7 +55,6 @@
 
 package org.apache.axis.client ;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
@@ -138,7 +137,6 @@ public class Call implements javax.xml.rpc.Call {
     private String             encodingStyle   = null ;
     private XMLType            returnType      = null ;
 
-    private AxisEngine         engine          = null ;
     private MessageContext     msgContext      = null ;
 
     // Collection of properties to store and put in MessageContext at
@@ -158,7 +156,6 @@ public class Call implements javax.xml.rpc.Call {
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
 
-
     public static final String NAMESPACE         = "namespace" ;
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TIMEOUT           = "timeout" ;
@@ -171,10 +168,6 @@ public class Call implements javax.xml.rpc.Call {
     private static Hashtable transports  = new Hashtable();
     private static boolean   initialized = false;
 
-    private static FileProvider configProvider =
-                           new FileProvider(Constants.CLIENT_CONFIG_FILE);
-
-
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -184,7 +177,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Call(Service service) {
         this.service = service ;
-        setEngine( new AxisClient(configProvider) );
+        msgContext = new MessageContext( service.getEngine() );
         if ( !initialized ) initialize();
     }
 
@@ -658,6 +651,7 @@ public class Call implements javax.xml.rpc.Call {
                 return( this.invoke(ns,operationName,getParamList(params)) );
         }
         catch( Exception exp ) {
+exp.printStackTrace();
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
@@ -784,33 +778,6 @@ public class Call implements javax.xml.rpc.Call {
 
         System.setProperty(TRANSPORT_PROPERTY, currentPackages);
     }
-
-    /**
-     * Change the AxisEngine being used by this Call object.  This should
-     * be called right away after creating the Call object since any
-     * values in the old msgContext object associated with the old engine
-     * will NOT be carried over to the new msgContext of this new engine.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @param newEngine the new AxisEngine to use
-     */
-    public void setEngine(AxisEngine newEngine) {
-        engine = newEngine ;
-        msgContext = new MessageContext( engine );
-    }
-
-    /**
-     * Returns the current AxisEngine being used by this Call object.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @return AxisEngine the current AxisEngine
-     */
-    public AxisEngine getEngine() {
-        return( engine );
-    }
-
 
     /**
      * Convert the list of objects into RPCParam's based on the paramNames,
@@ -1163,7 +1130,7 @@ public class Call implements javax.xml.rpc.Call {
      * Note: Not part of JAX-RPC specification.
      */
     public void setOption(String name, Object value) {
-        engine.setOption(name, value);
+        service.getEngine().setOption(name, value);
     }
     
     /**
@@ -1238,7 +1205,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // set up transport if there is one
         if (transport != null) {
-            transport.setupMessageContext(msgContext, this, this.engine);
+            transport.setupMessageContext(msgContext, this, service.getEngine());
         }
         else
             msgContext.setTransportName( transportName );
@@ -1259,7 +1226,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         try {
-            engine.invoke( msgContext );
+            service.getEngine().invoke( msgContext );
 
             if (transport != null)
                 transport.processReturnedMessageContext(msgContext);
@@ -1283,10 +1250,22 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @return a Vector of RPCParams
+     * @return Vector of RPCParams
      */
     public Vector getOutputParams()
     {
         return this.outParams;
+    }
+
+    /**
+     * Get the Service object associated with this Call object.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @return Service the Service object this Call object is associated with
+     */
+    public Service getService()
+    {
+        return this.service;
     }
 }

@@ -101,7 +101,7 @@ public class TestTCPTransportSample extends TestCase {
 
             SimpleTargetedChain c = new SimpleTargetedChain();
             c.setPivotHandler(new TCPSender());
-            call.getEngine().deployTransport("tcp", c);
+            service.getEngine().deployTransport("tcp", c);
 
             call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
             call.setOperationName( "getQuote" );
