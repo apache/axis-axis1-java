@@ -204,11 +204,9 @@ public class TestSrcContent extends TestCase {
                                        false),
 
             // Verify that we don't explicitly create NPEs.
-            // NPE in TypeDesc needs removing.
 
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
-                                       + "(?!description\\1TypeDesc\\.java)"
                                        + "([a-zA-Z0-9_]+\\1)*"
                                        + "[^\\\\/]+\\.java",
                                        "new[ \\t]+"

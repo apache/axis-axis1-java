@@ -584,7 +584,9 @@ public class Emitter {
         portType.setUndefined(false);
 
         // PortType name is the name of the class being processed
-        portType.setQName(new QName(intfNS, getPortTypeName()));
+        // Split statement to isolate NPE
+        QName tempqn = new QName(intfNS, getPortTypeName());
+        portType.setQName(tempqn);
 
         ArrayList operations = serviceDesc.getOperations();
         for (Iterator i = operations.iterator(); i.hasNext();) {
