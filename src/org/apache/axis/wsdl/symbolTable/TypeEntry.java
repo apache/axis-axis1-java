@@ -254,6 +254,15 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     }
 
     /**
+     * Method setBaseType
+     * 
+     * @param baseType 
+     */
+    public void setBaseType(boolean baseType) {
+        isBaseType = baseType;
+    }
+    
+    /**
      * Method isSimpleType
      * 
      * @return 
