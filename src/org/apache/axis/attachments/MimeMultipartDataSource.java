@@ -68,7 +68,6 @@ public class MimeMultipartDataSource implements DataSource {
     private final String name;
     private final String contentType;
     private byte[] data;
-    private ByteArrayInputStream is;
     private ByteArrayOutputStream os;
 
     public MimeMultipartDataSource(String name, MimeMultipart data) {
