@@ -256,10 +256,25 @@ public class BeanUtils {
 
     public static BeanPropertyDescriptor getAnyContentPD(Class javaType) {
         PropertyDescriptor [] pds = getPropertyDescriptors(javaType);
+        return getSpecificPD(pds, Constants.ANYCONTENT);
+    }
+
+    public static BeanPropertyDescriptor getSpecificPD(PropertyDescriptor[] pds,
+                                                       String name) {
         for (int i = 0; i < pds.length; i++) {
             PropertyDescriptor pd = pds[i];
-            if (pd.getName().equals(Constants.ANYCONTENT))
+            if (pd.getName().equals(name))
                 return new BeanPropertyDescriptor(pd);
+        }
+        return null;
+    }
+
+    public static BeanPropertyDescriptor getSpecificPD(BeanPropertyDescriptor[] pds,
+                                                       String name) {
+        for (int i = 0; i < pds.length; i++) {
+            BeanPropertyDescriptor pd = pds[i];
+            if (pd.getName().equals(name))
+                return pd;
         }
         return null;
     }

@@ -57,7 +57,7 @@ Copyright:
                output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
-               skeletonDeploy="yes"
+               skeletonDeploy="no"
                typemappingversion="1.3"
                testcase="yes">
         <mapping namespace="urn:CityBBB" package="test.wsdl.schema2"/>
@@ -67,6 +67,7 @@ Copyright:
       <fileset dir="${axis.home}/test/wsdl/schema2">
         <include name="*TestCase.java"/>
         <include name="*Impl.java"/>
+        <include name="Document.java"/>
       </fileset>
     </copy>
 

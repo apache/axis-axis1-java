@@ -21,7 +21,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
@@ -33,6 +32,8 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
@@ -45,6 +46,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
     private BeanPropertyDescriptor[] propertyDescriptor = null;
     private TypeDesc typeDesc = null;
+    public static final String VALUE_PROPERTY = "_value";
 
     public SimpleSerializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
@@ -62,20 +64,16 @@ public class SimpleSerializer implements SimpleValueSerializer {
     * Initialize the typeDesc and propertyDescriptor array.
     */
     private void init() {
-        // The typeDesc and propertyDescriptor array are only necessary
-        // if this class extends SimpleType.
-        if (SimpleType.class.isAssignableFrom(javaType)) {
-            // Set the typeDesc if not already set
-            if (typeDesc == null) {
-                typeDesc = TypeDesc.getTypeDescForClass(javaType);
-            }
-            // Get the cached propertyDescriptor from the type or
-            // generate a fresh one.
-            if (typeDesc != null) {
-                propertyDescriptor = typeDesc.getPropertyDescriptors();
-            } else {
-                propertyDescriptor = BeanUtils.getPd(javaType, null);
-            }
+        // Set the typeDesc if not already set
+        if (typeDesc == null) {
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
+        }
+        // Get the cached propertyDescriptor from the type or
+        // generate a fresh one.
+        if (typeDesc != null) {
+            propertyDescriptor = typeDesc.getPropertyDescriptors();
+        } else {
+            propertyDescriptor = BeanUtils.getPd(javaType, null);
         }
     }
 
@@ -95,8 +93,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
         }
 
         // get any attributes
-        if (value instanceof SimpleType)
-            attributes = getObjectAttributes(value, attributes, context);
+        attributes = getObjectAttributes(value, attributes, context);
 
         String valueStr = null;
         if (value != null) {
@@ -132,13 +129,20 @@ public class SimpleSerializer implements SimpleValueSerializer {
             return context.qName2String((QName)value);
         }
 
+        BeanPropertyDescriptor pd = BeanUtils.getSpecificPD(propertyDescriptor, "_value");
+        if(pd != null) {
+            try {
+                return pd.get(value).toString();
+            } catch (Exception e) {
+            }
+        }
         return value.toString();
     }
 
     private Attributes getObjectAttributes(Object value,
                                            Attributes attributes,
                                            SerializationContext context) {
-        if (typeDesc == null || !typeDesc.hasAttributes())
+        if (typeDesc != null && !typeDesc.hasAttributes())
             return attributes;
 
         AttributesImpl attrs;
@@ -158,12 +162,17 @@ public class SimpleSerializer implements SimpleValueSerializer {
                 if (propName.equals("class"))
                     continue;
 
-                FieldDesc field = typeDesc.getFieldByName(propName);
-                // skip it if its not an attribute
-                if (field == null || field.isElement())
-                    continue;
-
-                QName qname = field.getXmlName();
+                QName qname = null;
+                if(typeDesc != null) {
+                    FieldDesc field = typeDesc.getFieldByName(propName);
+                    // skip it if its not an attribute
+                    if (field == null || field.isElement())
+                        continue;
+                    qname = field.getXmlName();
+                } else {
+                    if(propName.equals(VALUE_PROPERTY))
+                        continue;
+                }
                 if (qname == null) {
                     qname = new QName("", propName);
                 }
@@ -212,10 +221,6 @@ public class SimpleSerializer implements SimpleValueSerializer {
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
-        // Let the caller generate WSDL if this is not a SimpleType
-        if (!SimpleType.class.isAssignableFrom(javaType))
-            return null;
-
         // ComplexType representation of SimpleType bean class
         Element complexType = types.createElement("complexType");
         types.writeSchemaTypeDecl(xmlType, complexType);

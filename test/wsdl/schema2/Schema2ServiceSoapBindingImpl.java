@@ -68,4 +68,7 @@ public class Schema2ServiceSoapBindingImpl implements test.wsdl.schema2.Schema2T
         return date;
     }
 
+    public test.wsdl.schema2.Document echoDocument(test.wsdl.schema2.Document document) throws java.rmi.RemoteException {
+        return document;
+    }
 }

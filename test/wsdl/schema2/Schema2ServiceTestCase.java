@@ -349,4 +349,29 @@ public class Schema2ServiceTestCase extends junit.framework.TestCase {
         // TBD - validate results
     }
 
+    public void test16Schema2ServiceEchoDocumentTest() throws Exception {
+        test.wsdl.schema2.Schema2ServiceSoapBindingStub binding;
+        try {
+            binding = (test.wsdl.schema2.Schema2ServiceSoapBindingStub)
+                          new test.wsdl.schema2.Schema2ServiceLocator().getSchema2Service();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if(jre.getLinkedCause()!=null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+
+        // Time out after a minute
+        binding.setTimeout(60000);
+
+        // Test operation
+        Document value = new Document();
+        value.set_value("XYZ");
+        value.setID("ID#1");
+        value = binding.echoDocument(value);
+        // TBD - validate results
+        assertEquals("ID#1",value.getID());
+        assertEquals("XYZ",value.get_value());
+    }
 }

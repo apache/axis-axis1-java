@@ -73,7 +73,7 @@ public class SimpleDeserializer extends DeserializerImpl {
      * javaType (which could be a java primitive like int.class)
      */
     public SimpleDeserializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
+         this.xmlType = xmlType;
         this.javaType = javaType;
         
         init();
@@ -98,17 +98,17 @@ public class SimpleDeserializer extends DeserializerImpl {
             if (typeDesc == null) {
                 typeDesc = TypeDesc.getTypeDescForClass(javaType);
             }
-            // Get the cached propertyDescriptor from the type or 
-            // generate a fresh one.
-            if (typeDesc != null) {
-                propertyMap = typeDesc.getPropertyDescriptorMap();
-            } else {   
-                BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, null);
-                propertyMap = new HashMap();
-                for (int i = 0; i < pd.length; i++) {
-                    BeanPropertyDescriptor descriptor = pd[i];
-                    propertyMap.put(descriptor.getName(), descriptor);
-                }
+        }
+        // Get the cached propertyDescriptor from the type or 
+        // generate a fresh one.
+        if (typeDesc != null) {
+            propertyMap = typeDesc.getPropertyDescriptorMap();
+        } else {
+            BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, null);
+            propertyMap = new HashMap();
+            for (int i = 0; i < pd.length; i++) {
+                BeanPropertyDescriptor descriptor = pd[i];
+                propertyMap.put(descriptor.getName(), descriptor);
             }
         }
     }
@@ -237,11 +237,18 @@ public class SimpleDeserializer extends DeserializerImpl {
             }
         }
         
-        if (args == null) {
-            args = new Object[] { source };
+        if(constructor.getParameterTypes().length==0){
+            Object obj = constructor.newInstance(new Object[]{});
+            obj.getClass().getMethod("set_value", new Class[]{String.class})
+                    .invoke(obj, new Object[]{source});
+            return obj;
+        } else {
+            if (args == null) {
+                args = new Object[] { source };
+            }
+            
+            return constructor.newInstance(args);
         }
-        
-        return constructor.newInstance(args);
     }
 
     private Object makeBasicValue(String source) throws Exception {
@@ -336,18 +343,19 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         this.context = context;
 
-        // If we have no metadata, we have no attributes.  Q.E.D.
-        if (typeDesc == null)
-            return;
-        
         // loop through the attributes and set bean properties that
         // correspond to attributes
         for (int i=0; i < attributes.getLength(); i++) {
             QName attrQName = new QName(attributes.getURI(i),
                                         attributes.getLocalName(i));
-            String fieldName = typeDesc.getFieldNameForAttribute(attrQName);
-            if (fieldName == null)
-                continue;
+            
+            String fieldName = attributes.getLocalName(i);
+            
+            if(typeDesc != null) {
+                typeDesc.getFieldNameForAttribute(attrQName);
+                if (fieldName == null)
+                    continue;
+            } 
             
             // look for the attribute property
             BeanPropertyDescriptor bpd =
@@ -394,9 +402,7 @@ public class SimpleDeserializer extends DeserializerImpl {
      * Process any attributes we may have encountered (in onStartElement)
      */ 
     private void setSimpleTypeAttributes() throws SAXException {
-        // if this isn't a simpleType bean, wont have attributes
-        if (! SimpleType.class.isAssignableFrom(javaType) ||
-                attributeMap == null)
+        if (attributeMap == null)
             return;
         
         // loop through map

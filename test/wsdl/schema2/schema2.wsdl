@@ -34,6 +34,18 @@
             <element name="Time1" type="xsd:time"/>
             <element name="Date" type="xsd:date"/>
             <element name="Date1" type="xsd:date"/>
+            <complexType name="Document">
+                <simpleContent>
+                    <extension base="string">
+                        <xsd:attribute
+                            name="ID"
+                            type="string"
+                            xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+                    </extension>
+                </simpleContent>
+            </complexType>
+            <element name="EchoDocumentRequest" type="tns1:Document"/>
+            <element name="EchoDocumentResponse" type="tns1:Document"/>
         </schema>
     </wsdl:types>
     <wsdl:message name="echoDateTestRequest">
@@ -126,6 +138,12 @@
     <wsdl:message name="echoPositiveIntegerTestRequest">
         <wsdl:part name="PositiveInteger" element="tns1:PositiveInteger"/>
     </wsdl:message>
+    <wsdl:message name="echoDocumentRequest">
+        <wsdl:part name="Document" element="tns1:EchoDocumentRequest"/>
+    </wsdl:message>
+    <wsdl:message name="echoDocumentResponse">
+        <wsdl:part name="Document" element="tns1:EchoDocumentResponse"/>
+    </wsdl:message>
     <wsdl:portType name="Schema2Test">
         <wsdl:operation name="echoLanguageTypeTest" parameterOrder="languageElem">
             <wsdl:input name="echoLanguageTypeTestRequest" message="impl:echoLanguageTypeTestRequest"/>
@@ -186,6 +204,10 @@
         <wsdl:operation name="echoDateTest" parameterOrder="Date">
             <wsdl:input name="echoDateTestRequest" message="impl:echoDateTestRequest"/>
             <wsdl:output name="echoDateTestResponse" message="impl:echoDateTestResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="echoDocument">
+            <wsdl:input message="impl:echoDocumentRequest"/>
+            <wsdl:output message="impl:echoDocumentResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="Schema2ServiceSoapBinding" type="impl:Schema2Test">
@@ -318,6 +340,15 @@
         </wsdl:operation>
         <wsdl:operation name="echoDateTest">
             <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echoDocument">
+            <wsdlsoap:operation soapAction=""/>
             <wsdl:input>
                 <wsdlsoap:body use="literal"/>
             </wsdl:input>
