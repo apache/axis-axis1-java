@@ -72,8 +72,8 @@ public class TestSer extends TestCase {
         Data val = (Data)struct.getValue();
         assertNotNull("No value for struct param", val);
         
-        assertEquals(data.stringMember, val.stringMember);
-        assertEquals(data.floatMember.floatValue(), 
+        assertEquals("Data and Val string members are not equal", data.stringMember, val.stringMember);
+        assertEquals("Data and Val float members are not equal",data.floatMember.floatValue(), 
                      val.floatMember.floatValue(), 0.00001F);
     }
 }

@@ -75,20 +75,20 @@ public class TestHrefs extends TestCase {
        message.setMessageContext(new MessageContext(new AxisServer()));
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
-       assertNotNull("envelope", envelope);
+       assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();
-       assertNotNull("body", body);
+       assertNotNull("SOAP body should not be null", body);
 
        Vector arglist = body.getParams();
        assertNotNull("arglist", arglist);
-       assertTrue("param.size()>0", arglist.size()>0);
+       assertTrue("SOAP param.size()<=0 {Should be > 0}", arglist.size()>0);
 
        RPCParam param = (RPCParam) arglist.get(0);
-       assertNotNull("param", param);
+       assertNotNull("SOAP param should not be null", param);
 
        Object result = param.getValue();
-       assertEquals("case " + pos, expected, result);
+       assertEquals("Expected result not received for case " + pos, expected, result);
     }
 
     public void testStringReference1() throws Exception {

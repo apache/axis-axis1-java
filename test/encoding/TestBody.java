@@ -60,7 +60,7 @@ public class TestBody extends TestCase {
        RPCElement body = (RPCElement)envelope.getFirstBody();
 
        // verify the service is set
-       assertEquals(namespace, msgContext.getTargetService());
-       assertEquals(target, msgContext.getServiceHandler());
+       assertEquals("Namespace does not equal the message context target service.", namespace, msgContext.getTargetService());
+       assertEquals("The target is not the same as the message context service handler", target, msgContext.getServiceHandler());
     }
 }
