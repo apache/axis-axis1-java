@@ -837,7 +837,7 @@ public class SerializationContextImpl implements SerializationContext
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
-        java.util.Vector vecQNames = new java.util.Vector();
+        java.util.ArrayList vecQNames = null;
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
@@ -890,7 +890,11 @@ public class SerializationContextImpl implements SerializationContext
                     if(qname.equals(""))
                         qname = attributes.getLocalName(i);
                 }
-                vecQNames.add(qname);
+
+                if (qname.startsWith("xmlns")) {
+                  if (vecQNames == null) vecQNames = new ArrayList();
+                  vecQNames.add(qname);
+                }
                 writer.write(qname);
                 writer.write("=\"");
                 writer.write(XMLUtils.xmlEncodeString(attributes.getValue(i)));
@@ -906,12 +910,12 @@ public class SerializationContextImpl implements SerializationContext
                 sb.append(":");
                 sb.append(map.getPrefix());
             }
-            if(vecQNames.indexOf(sb.toString())==-1){
+            if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
                 writer.write(" ");
+                sb.append("=\"");
+                sb.append(map.getNamespaceURI());
+                sb.append("\"");
                 writer.write(sb.toString());
-                writer.write("=\"");
-                writer.write(map.getNamespaceURI());
-                writer.write("\"");
             }
         }
 
