@@ -345,7 +345,7 @@ public class HTTPSender extends BasicHandler {
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_CONTENT_TYPE)
                 .append(": ")
-                .append(reqMessage.getContentType())
+                .append(reqMessage.getContentType(msgContext.getSOAPConstants()))
                 .append("\r\n")
                 .append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
                 .append( ": ")

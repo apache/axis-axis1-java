@@ -450,7 +450,7 @@ public class SimpleAxisWorker implements Runnable {
             out.write(HTTP);
             out.write(status);
             //out.write(XML_MIME_STUFF);
-            out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType()).getBytes());
+            out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType(msgContext.getSOAPConstants())).getBytes());
             out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes());
             // putInt(out, response.length);
 

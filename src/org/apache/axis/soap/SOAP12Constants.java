@@ -99,4 +99,11 @@ public class SOAP12Constants implements SOAPConstants {
     public QName getRoleAttributeQName() {
         return roleQName;
     }
+
+    /**
+     * Obtain the MIME content type
+     */
+    public String getContentType() {
+        return "application/soap+xml; charset=utf-8";
+    }
 }
