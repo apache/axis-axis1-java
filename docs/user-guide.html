@@ -29,24 +29,12 @@ Axis User's Guide</h1>
 Table of Contents</h3>
 
 <ul>
-<li>
-<a href="#Introduction">Introduction</a></li>
-
-<li>
-<a href="#Installation">Installing Axis</a></li>
-
-<li>
-<a href="#ConsumingServices">Consuming Web Services with Axis</a></li>
-
-<li>
-<a href="#PublishingServices">Publishing Web Services with Axis</a></li>
-
-<li>
-<a href="#DataMapping">XML &lt;-> Java Data Mapping in Axis</a></li>
-
-<li>
-<a href="#WSDL">Using WSDL with Axis</a></li>
-
+  <li> <a href="#Introduction">Introduction</a></li>
+  <li> <a href="#Installation">Installing Axis</a></li>
+  <li> <a href="#ConsumingServices">Consuming Web Services with Axis</a></li>
+  <li> <a href="#PublishingServices">Publishing Web Services with Axis</a></li>
+  <li> <a href="#DataMapping">XML &lt;-> Java Data Mapping in Axis</a></li>
+  <li> <a href="#WSDL">Using WSDL with Axis</a></li>
   <ul>
     <li> &nbsp;<a href="#WSDL: Obtaining WSDL for deployed services">?WSDL: Obtaining 
       WSDL for deployed services</a></li>
@@ -55,15 +43,9 @@ Table of Contents</h3>
     <li> &nbsp;<a href="#Java2WSDL: Building WSDL from Java">Java2WSDL: Building 
       WSDL from Java</a></li>
   </ul>
-
-<li>
-<a href="#published interfaces">Published Interfaces</a></li>
-
-<li>
-<a href="#tcpmon">Using TCPMon</a></li>
-
-<li>
-<a href="#Glossary">Glossary</a></li>
+  <li> <a href="#published interfaces">Published Interfaces</a></li>
+  <li> <a href="#tcpmon">Appendix : Using TCPMon</a></li>
+  <li> <a href="#Glossary">Glossary</a></li>
 </ul>
 
 <h2>
@@ -609,8 +591,7 @@ or any other software which supports using WSDL.
 <p>You can also generate WSDL files from existing Java classes (see <a href="#Java2WSDL: Building WSDL from Java">Java2WSDL:
 Building WSDL from Java</a>&nbsp;).
 <br>&nbsp;
-<h3>
-<a NAME="WSDL2Java: Building stubs, skeletons, and data"></a>WSDL2Java:
+<h3><a NAME="WSDL2Java: Building stubs, skeletons, and data"></a>WSDL2Java:
 Building stubs, skeletons, and data types from WSDL</h3>
 
 <h4>Client-side bindings</h4>
@@ -630,8 +611,6 @@ from WSDL.&nbsp; For this discussion, assume we executed the following:</p>
 <p>The generated files will reside in the directory "AddressFetcher2".&nbsp;
 They are put here because that is the target namespace from the WSDL and namespaces map to Java packages.&nbsp;
 Namespaces will be discussed in detail later.</p>
-<br>
-<br>
 <table BORDER COLS=2 WIDTH="100%" >
 <tr>
 <td><b>WSDL clause</b></td>
@@ -676,12 +655,11 @@ Namespaces will be discussed in detail later.</p>
 </tr>
 </table>
 
-<h4>
-Types</h4>
-The Java class generated from a WSDL type will be named from the WSDL type.&nbsp;
+<h4>Types</h4>
+<p>The Java class generated from a WSDL type will be named from the WSDL type.&nbsp;
 This class will typically, though not always, be a bean.&nbsp; For example,
 given the WSDL (the WSDL used throughout the WSDL2Java discussion is from
-the <a href="../samples/addr/AddressBook.wsdl">Address Book sample</a>):
+the <a href="../samples/addr/AddressBook.wsdl">Address Book sample</a>):</p>
 <pre class="example">
 &lt;xsd:complexType name="phone">
 &nbsp;&nbsp;&lt;xsd:all>
@@ -984,226 +962,16 @@ from the binding:
 }</pre>
 <p>This template could actually be used as a test implementation but, as
 you can see, it doesn't do anything.&nbsp; It is intended that the service
-writer fill out the implementation from this template.
+writer fill out the implementation from this template.</p>
 <p>When WSDL2Java is asked to generate the implementation template (via the --server-side 
   flag), it will ONLY generate it if it does not already exist.&nbsp; If this 
-  implementation already exists, it will not be overwritten. <br>
-<p>&nbsp;
-<h4>
-Services</h4>
-The tool also builds you a "deploy.wsdd" and an "undeploy.wsdd" for each
+  implementation already exists, it will not be overwritten.</p>
+<h4>Services</h4>
+<p>The tool also builds you a "deploy.wsdd" and an "undeploy.wsdd" for each
 service for use with the AdminClient. These files may be used to deploy
 the service once you've filled in the methods of the Implementation class,
-compiled the code, and made the classes available to your Axis engine.
-<br>&nbsp;
-<h4>
-Other WSDL2Java details</h4>
-<p>Usage:&nbsp; java org.apache.axis.wsdl.WSDL2Java [options] WSDL-URI
-<br>Options:
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -h, --help
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-print this message and exit
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -v, --verbose
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-print informational messages
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s, --server-side
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-emit server-side bindings for web service
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -S, --skeletonDeploy &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-deploy skeleton (true) or implementation (false) in deploy.wsdd.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Default is false.&nbsp; Assumes --server-side.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-mapping of namespace to package
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -f, --fileNStoPkg &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-file of NStoPkg mappings (default NStoPkg.properties)
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -p, --package &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-override all namespace to package mappings, use this package
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-name instead
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output directory for emitted files
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -d, --deployScope &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-add scope to deploy.xml: "Application", "Request", "Session"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -t, --testCase
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-emit junit testcase class for web service
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n, --noImports
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-only generate code for the immediate WSDL document
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -a, --all
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-generate code for all elements, even unreferenced ones
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -D, --Debug
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-print debug information
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -F, --factory
-&lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-name of the JavaWriterFactory class for extending Java generation functions
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-ompliant)
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -O, --timeout &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-timeout in seconds (default is 45, specify -1 to disable)
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -U, --user &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-username to access the WSDL-URI 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -P, --password &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-password to access the WSDL-URI <br>&nbsp;
-<h4>
--h, --help</h4>
-Print the usage statement and exit
-<h4>
--v, --verbose</h4>
-See what the tool is generating as it is generating it.
-<h4>
--s, --server-side</h4>
-Emit the server-side bindings for the web service:
-<ul>
-<li>
-a skeleton class named &lt;bindingName>Skeleton.&nbsp; This may or may
-not be emitted (see -S, --skeletonDeploy).</li>
-
-<li>
-an implementation template class named &lt;bindingName>Impl.&nbsp; Note
-that, if this class already exists, then it is not emitted.</li>
-
-<li>
-deploy.wsdd</li>
-
-<li>
-undeploy.wsdd</li>
-</ul>
-
-<h4>
--S, --skeletonDeploy &lt;argument></h4>
-Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd.&nbsp;
-In other words, for "true" the service clause in the deploy.wsdd file will
-look something like:
-<pre class="example">&lt;service name="AddressBook" provider="java:RPC">
-&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingSkeleton"/>
-&nbsp;&nbsp;&nbsp; ...
-&lt;/service></pre>
-<p>and for "false" it would look like:
-<pre class="example">&lt;service name="AddressBook" provider="java:RPC">
-&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingImpl"/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
-&lt;/service></pre>
-<p>The default for this option is false.&nbsp; When you use this option, the --server-side 
-  option is assumed, so you don't have to explicitly specify --server-side as 
-  well. 
-<h4>
--N, --NStoPkg &lt;argument>=&lt;value></h4>
-By default, package names are generated from the namespace strings in the
-WSDL document in a magical manner (typically, if the namespace is of the
-form "http://x.y.com" or "urn:x.y.com" the corresponding package will be
-"com.y.x").&nbsp; If this magic is not what you want, you can provide your
-own mapping using the --NStoPkg argument, which can be repeated as often
-as necessary, once for each unique namespace mapping.&nbsp; For example,
-if there is a namespace in the WSDL document called "urn:AddressFetcher2",
-and you want files generated from the objects within this namespace to
-reside in the package samples.addr, you would provide the following option
-to WSDL2Java:
-<pre>--NStoPkg urn:AddressFetcher2=samples.addr</pre>
-(Note that if you use the short option tag, "-N", then there must not be
-a space between "-N" and the namespace.)
-<br>&nbsp;
-<h4>
--f, --fileNStoPkg &lt;argument></h4>
-If there are a number of namespaces in the WSDL document, listing a mapping
-for them all could become tedious.&nbsp; To help keep the command line
-terse, WSDL2Java will also look for mappings in a properties file.&nbsp;
-By default, this file is named "NStoPkg.properties" and it must reside
-in the default package (ie., no package).&nbsp; But you can explicitly
-provide your own file using the --fileNStoPkg option.
-<p>The entries in this file are of the same form as the arguments to the
---NStoPkg command line option.&nbsp; For example, instead of providing
-the command line option as above, we could provide the same information
-in NStoPkg.properties:
-<pre>urn\:AddressFetcher2=samples.addr</pre>
-(Note that the colon must be escaped in the properties file.)
-<p>If an entry for a given mapping exists both on the command line and
-in the properties file, the command line entry takes precedence.
-<h4>
--p, --package &lt;argument></h4>
-This is a shorthand option to map all namespaces in a WSDL document to
-the same Java package name.&nbsp; This can be useful, but dangerous.&nbsp;
-You must make sure that you understand the effects of doing this.&nbsp;
-For instance there may be multiple types with the same name in different
-namespaces.&nbsp; It is an error to use the --NStoPkg switch and --package
-at the same time.
-<h4>
--o, --output &lt;argument></h4>
-The root directory for all emitted files.
-<h4>
--d, --deployScope &lt;argument></h4>
-Add scope to deploy.wsdd: "Application", "Request", or "Session".&nbsp;
-If this option does not appear, no scope tag appears in deploy.wsdd, which
-the AXIS runtime defaults to "Request".
-<h4>
--t, --testCase</h4>
-Generate a client-side JUnit test case.&nbsp; This test case can stand
-on its own, but it doesn't really do anything except pass default values
-(null for objects, 0 or false for primitive types).&nbsp; Like the generated
-implementation file, the generated test case file could be considered a
-template that you may fill in.
-<h4>
--n, --noImports</h4>
-Only generate code for the WSDL document that appears on the command line.&nbsp;
-The default behaviour is to generate files for all WSDL documents, the
-immediate one and all imported ones.
-<h4>
--a, --all</h4>
-Generate code for all elements, even unreferenced ones.&nbsp; By default,
-WSDL2Java only generates code for those elements in the WSDL file that
-are referenced.
-<p>A note about what it means to be referenced.&nbsp; We cannot simply
-say:&nbsp; start with the services, generate all bindings referenced by
-the service, generated all portTypes referenced by the referenced bindings,
-etc.&nbsp; What if we're generating code from a WSDL file that only contains
-portTypes, messages, and types?&nbsp; If WSDL2Java used service as an anchor,
-and there's no service in the file, then nothing will be generated.&nbsp;
-So the anchor is the lowest element that exists in the WSDL file in the
-order:
-<br>types
-<br>portTypes
-<br>bindings
-<br>services
-<p>For example, if a WSDL file only contained types, then all the listed
-types would be generated.&nbsp; But if a WSDL file contained types and
-a portType, then that portType will be generated and only those types that
-are referenced by that portType.
-<h4>
--D, --Debug</h4>
-Print debug information, which currently is WSDL2Java's symbol table.
-<h4>
--T, --typeMappingVersion &lt;argument></h4>
-Indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
-<h4>
--F, --factory &lt;argument></h4>
-Used to extend the functionality of the WSDL2Java emitter. The argument
-is the name of a class which extends JavaWriterFactory.
-<h4> -U, --user &lt;argument&gt;</h4>
-This username is used in resolving the WSDL-URI provided as the input to 
-WSDL2Java. &nbsp;If the URI contains a username, this will override the command
-line switch. &nbsp;An example of a URL with a username and password is: 
-<code>http://user:password@hostname:port/path/to/service?WSDL</code><br>
-<h4> -P, --password &lt;argument&gt;</h4>
- This password is used in resolving the WSDL-URI provided as the input to WSDL2Java.
- &nbsp;If the URI contains a password, this will override the command
-line switch.<br>
-
-<br>&nbsp;
-<h3>
-<a NAME="Java2WSDL: Building WSDL from Java"></a>Java2WSDL: Building WSDL
+compiled the code, and made the classes available to your Axis engine.</p>
+<h3><a NAME="Java2WSDL: Building WSDL from Java"></a>Java2WSDL: Building WSDL
 from Java</h3>
 The Java2WSDL and WSDL2Java emitters make it easy to develop a new web service.  The following sections describe the steps in building a web service from a Java interface.
 <br>&nbsp;
@@ -1253,188 +1021,8 @@ classes, the Java2WSDL tool will generate the appropriate xml types to
 represent the classes and any nested/inherited types.&nbsp; The tool supports
 JAX-RPC complex types (bean classes), extension classes, enumeration classes,
 arrays and Holder classes.
-<p>The Java2WSDL tool has many additional options which are detailed in
-the next section.
-<h5>
-<a NAME="Java2WSDL Details"></a>Java2WSDL Details</h5>
-Here is the help message generated from the current tool:
-<p><tt><font color="#993366">Java2WSDL emitter</font></tt>
-<br><tt><font color="#993366">Usage: java org.apache.axis.wsdl.Java2WSDL
-[options] class-of-portType</font></tt>
-<br><tt><font color="#993366">Options:</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--h, --help</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-print this message and exit</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--o, --output &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output WSDL filename</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--l, --location &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-service location url</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--P, --portTypeName &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-portType name (obtained from class-of-portType if not specified)</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--S, --serviceElementName &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-service element name (defaults to servicePortName value + "Service")</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--s, --servicePortName &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-service port name (obtained from --location if not specified)</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--n, --namespace &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-target namespace</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--p, --PkgtoNS &lt;argument>=&lt;value></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-package=namespace, name value pairs</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--m, --methods &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-space or comma separated list of methods to export</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--a, --all</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-look for allowed methods in inherited class</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--w, --outputWsdlMode &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output WSDL mode: All, Interface, Implementation</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--L, --locationImport &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-location of interface WSDL</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--N, --namespaceImpl &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-target namespace for implementation WSDL</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--O, --outputImpl &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output Implementation WSDL filename, setting this causes --outputWsdlMode
-to be ignored</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--f, --factory &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-name of the Java2WSDLFactory class for extending WSDL generation functions</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--i, --implClass &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-optional class that contains implementation of methods in</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-class-of-portType.&nbsp; The debug information in the class is used</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-to obtain the method parameter names, which are used to set</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-the WSDL part names.</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--x, --exclude &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-space or comma separated list of methods not to export</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--c, --stopClasses &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-space or comma separated list of class names which stop inheritance search </font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-if --all switch is enabled</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--T, --typeMappingVersion &lt;argument></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-indicate 1.1 or 1.2.  The default is 1.2 (SOAP 1.2 JAX-RPC compliant)</font></tt>
-
-<br><tt><font color="#993366">Details:</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; portType element name=
-&lt.portTypeName value> OR &lt;class-of-portType name></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; binding element&nbsp;
-name= &lt;--servicePortName value>SoapBinding</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; service element&nbsp;
-name= &lt;--serviceElementName value> OR &lt;portTypeName value>Service</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; port element &nbsp;&nbsp;&nbsp;
-name= &lt;--servicePortName value></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; address location&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &lt;--location
-value></font></tt>
-<br>&nbsp;
-<p><b>-h , --help</b>
-<br>Prints the help message.
-<p><b>-o, --output &lt;WSDL file></b>
-<br>Indicates the name of the output WSDL file.&nbsp; If not specified,
-a suitable default WSDL file is written into the current directory.
-<p><b>-l, --location &lt;location></b>
-<br>Indicates the url of the location of the service.&nbsp; The name after
-the last slash or backslash is the name of the service port (unless overriden
-by the -s option).&nbsp; The service port address location attribute is
-assigned the specified value.
-<p><b>-p, --portTypeName &lt;name></b>
-<br>Indicates the name to use use for the portType element.  If not specified,
-the class-of-portType name is used. 
-<p><b>-s, -serviceElementName &lt;name></b>
-<br>Indicates the name of the service element.&nbsp; If not specified, the service
-element is the &lt;portTypeName>Service.&nbsp;
-<p><b>-s, -servicePortName &lt;name></b>
-<br>Indicates the name of the service port.&nbsp; If not specified, the service
-port name is derived from the --location value.&nbsp;
-<p><b>-n, --namespace &lt;target namespace></b>
-<br>Indicates the name of the target namespace of the WSDL.
-<p><b>-p, --PkgToNS &lt;package> &lt;namespace></b>
-<br>Indicates the mapping of a package to a namespace.&nbsp; If a package
-is encountered that does not have a namespace, the Java2WSDL emitter will
-generate a suitable namespace name.&nbsp; This option may be specified
-multiple times.
-<p><b>-m, --methods &lt;arguments></b>
-<br>If this option is specified, only the indicated methods in your interface
-class will be exported into the WSDL file.&nbsp; The methods list must
-be comma separated.&nbsp; If not specified, all methods declared in the
-interface class will be exported into the WSDL file.
-<p><b>-a, --all</b>
-<br>If this option is specified, the Java2WSDL parser will look into extended
-classes to determine the list of methods to export into the WSDL file.
-<p><b>-w, --outputWSDLMode &lt;mode></b>
-<br>Indicates the kind of WSDL to generate.&nbsp; Accepted values are:
-<ul>
-<li>
-All --- (default) Generates wsld containing both interface and implementation
-WSDL constructs.</li>
-
-<li>
-Interface --- Generates a WSDL containing the interface constructs (no
-service element).</li>
-
-<li>
-Implementation -- Generates a WSDL containing the implementation.&nbsp;
-The interface WSDL is imported via the -L option.</li>
-</ul>
-<b>-L, --locationImport &lt;url></b>
-<br>Used to indicate the location of the interface WSDL when generating
-an implementation WSDL.
-<p><b>-N, --namespaceImpl &lt;namespace></b>
-<br>Namespace of the implementation WSDL.
-<p><b>-O, --outputImpl &lt;WSDL file></b>
-<br>Use this option to indicate the name of the output implementation WSDL
-file.&nbsp; If specified, Java2WSDL will produce interface and implementation
-WSDL files.&nbsp; If this option is used, the -w option is ignored.
-<p><b>-f, --factory &lt;class></b>
-<br>(No longer used.)
-<p><b>-i, --implClass &lt;impl-class></b>
-<br>
-Sometimes extra information is avalable in the implementation class file.
-Use this option to specify the implementation class.
-<p><b>-f, --factory &lt;class></b>
-<br>(No longer used.)
-<p><b>-x, --exclude &lt;list></b>
-<br>
-List of methods to not exclude from the wsdl file.
-<p><b>-c, --stopClasses &lt;list></b>
-<br>
-List of classes which stop the Java2WSDL inheritance search.
-<p><b>-T, --typeMappingVersion &lt;version></b>
-<br>
-Choose the default type mapping registry to use.  Either 1.1 or 1.2.
+<p>The Java2WSDL tool has many additional options which are detailed in the <a href="reference.html#Java2WSDL">reference 
+  guide</a>. 
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated WSDL file to build the appropriate client/server bindings
@@ -1442,43 +1030,28 @@ for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and dat
 <pre class="example">% java org.apache.axis.wsdl.WSDL2Java -o . -d Session -s -S true&nbsp; -Nurn:Example6 samples.userguide.example6 wp.wsdl</pre>
 <p>This will generate the following files:
 <ul>
-<li>
-<b><tt>WidgetPriceSoapBindingImpl.java</tt></b> : Java file containing
-the default server implementation of the WidgetPrice web service.</li>
-
-<br>You will need to modify the *SoapBindingImpl file to add your implementation
-(see&nbsp; <a href="../samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a>
-).
-<li>
-<b><tt>WidgetPrice.java</tt></b>:&nbsp; New interface file that contains
-the appropriate <b><tt>java.rmi.Remote</tt></b> usages.</li>
-
-<li>
-<b><tt>WidgetPriceService.java</tt></b>: Java file containing the client
-side service interface.</li>
-
-<li>
-<b><tt>WidgetPriceServiceLocator.java</tt></b>: Java file containing the client side service implementation class.</li>
-
-<li>
-<b><tt>WidgetPriceSoapBindingSkeleton.java</tt></b>: Server side skeleton.</li>
-
-<li>
-<b><tt>WidgetPriceSoapBindingStub.java</tt></b>: Client side stub.</li>
-
-<li>
-<b><tt>deploy.xml</tt></b>: Deployment descriptors</li>
-
-<li>
-<b><tt>undeploy.xml</tt></b>: Undeploy descriptors</li>
-
-<li>
-(data types):&nbsp; Java files will be produced for all of the other types
-and holders necessary for the web service.&nbsp; There are no additional
-files for the WidgetPrice web service.</li>
+  <li> <b><tt>WidgetPriceSoapBindingImpl.java</tt></b> : Java file containing 
+    the default server implementation of the WidgetPrice web service.</li>
+  <br>
+  You will need to modify the *SoapBindingImpl file to add your implementation 
+  (see&nbsp; <a href="../samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a> 
+  ). 
+  <li> <b><tt>WidgetPrice.java</tt></b>:&nbsp; New interface file that contains 
+    the appropriate <b><tt>java.rmi.Remote</tt></b> usages.</li>
+  <li> <b><tt>WidgetPriceService.java</tt></b>: Java file containing the client 
+    side service interface.</li>
+  <li> <b><tt>WidgetPriceServiceLocator.java</tt></b>: Java file containing the 
+    client side service implementation class.</li>
+  <li> <b><tt>WidgetPriceSoapBindingSkeleton.java</tt></b>: Server side skeleton.</li>
+  <li> <b><tt>WidgetPriceSoapBindingStub.java</tt></b>: Client side stub.</li>
+  <li> <b><tt>deploy.wsdd</tt></b>: Deployment descriptor</li>
+  <li> <b><tt>undeploy.wsdd</tt></b>: Undeployment descriptor</li>
+  <li> (data types):&nbsp; Java files will be produced for all of the other types 
+    and holders necessary for the web service.&nbsp; There are no additional files 
+    for the WidgetPrice web service.</li>
 </ul>
-Now you have all of the necessary files to build your client/server side
-code and deploy the web service!
+<p>Now you have all of the necessary files to build your client/server side code 
+  and deploy the web service!</p>
 <h2>
 <a NAME="published interfaces"></a>Published Axis Interfaces</h2>
 Although you may use any of the interfaces and classes present in Axis, you need to
@@ -1598,8 +1171,7 @@ JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public
 <li>org.apache.axis.wsdl.Java2WSDL</li>
 </ul>
 </ul>
-<h2>
-<a NAME="tcpmon"></a>Using the Axis TCP Monitor (tcpmon)</h2>
+<h2> <a NAME="tcpmon"></a>Appendix : Using the Axis TCP Monitor (tcpmon)</h2>
 The included "tcpmon" utility can be found in the org.apache.axis.utils
 package. To run it from the command line:
 <pre>% java org.apache.axis.utils.tcpmon [listenPort targetHost targetPort]</pre>
@@ -1623,19 +1195,14 @@ server in the "Response" panel. Tcpmon keeps a log of all request/response
 pairs, and allows you to view any particular pair by selecting an entry
 in the top panel. You may also remove selected entries, or all of them,
 or choose to save to a file for later viewing.
-<p>The "resend" button will resend the request you are currently viewing,
-and record a new response. This is particularly handy in that you can edit
-the XML in the request window before resending - so you can use this as
-a great tool for testing the effects of different XML on SOAP servers.
-Note that you may need to change the content-length HTTP header value
-before resending an edited request.
-<dl>
-<dt>
-</dt>
-</dl>
-<a NAME="Glossary"></a>
-<h2>
-Glossary</h2>
+<p>The "resend" button will resend the request you are currently viewing, and 
+  record a new response. This is particularly handy in that you can edit the XML 
+  in the request window before resending - so you can use this as a great tool 
+  for testing the effects of different XML on SOAP servers. Note that you may 
+  need to change the content-length HTTP header value before resending an edited 
+  request. 
+<a NAME="Glossary">
+<h2>Glossary</h2></a>
 
 <dl> 
   <dt> <i>Handler</i></dt>
@@ -1654,7 +1221,7 @@ Glossary</h2>
     this means calling a method on some back-end service object. The two commonly 
     used providers are RPCProvider and MsgProvider, both in the org.apache.axis.providers.java 
     package.</dd>
-  <dt> </dt>
+  
 </dl>
 
 </body>
