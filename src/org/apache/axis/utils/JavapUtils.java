@@ -94,29 +94,42 @@ public class JavapUtils
         if (text == null)
             return null;
 
-        // Allocate the parameter names array
+        // Allocate the parameter + return names array
         int numParams = method.getParameterTypes().length + 1;
-        if (numParams ==0)
-            return null;
-        String[] paramNames = new String[numParams + 1];
+        String[] paramNames = new String[numParams];
         paramNames[0] = null;  // Don't know the return name
+        if (numParams == 1)
+            return paramNames;
 
-        // Get the Method signature without modifiers, return type and throws
-        // Also javap puts a space after each comma
-        String signature = method.toString();
-        int start = signature.indexOf(method.getName()); 
-        int end = signature.indexOf(")") +1;                
-        signature = signature.substring(start,end);
+        // Get the list of parameters
+        String parms = method.toString();
+        int start = parms.indexOf("("); 
+        int end = parms.indexOf(")") +1;
+        parms = parms.substring(start, end);
 
-        signature = JavaUtils.replace(signature, ",", ", ");
+        // Build a signature according to the form used in javap.
+        // Note that the signature consists of the method name and
+        // parameter types...not the return information or throw information.
+        // The method name plus parameter types is sufficient.
+        StringTokenizer parmsST = new StringTokenizer(parms, "(,)");
+        String signature = method.getName() + "(";
+        while (parmsST.hasMoreTokens()) {
+            String parm = parmsST.nextToken();
+            signature += parm;
+            if (parmsST.hasMoreTokens()) {
+                signature += ", ";
+            }
+        }
+        signature += ")";
 
-        // Find the Method
+        // Find the Method by looking for a line that starts with
+        // the start string and contains the signature.
         String search = "Local variables for method ";
         int index = -1;    
         for (int i=0; i<text.size() && index<0; i++) {
             String line = (String) text.elementAt(i);
             if (line.startsWith(search) && 
-                line.endsWith(signature)) {
+                line.indexOf(signature) > 0) {
                 index = i;
             }
         }
@@ -124,7 +137,7 @@ public class JavapUtils
         // (Probably the class was not compiled with -g)
         if (index < 0)
             return null;
-        
+
         // The lines after "Local variables..." will list 
         // the types and names of the parameters.  The "this" parameter
         // is ignored.  Here is an example javap snippet.
@@ -172,9 +185,11 @@ public class JavapUtils
 
             Runtime rt = Runtime.getRuntime();
             // The -l option is used to access the local variables.
-            Process pr = rt.exec("javap -classpath \"" + cp + "\" -private -l " + cls.getName());
+            Process pr = rt.exec("javap -classpath \"" + cp + "\" -private -l "
+                                 + cls.getName());
 
-            //BufferedReader ebr = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+            //BufferedReader ebr = 
+            //new BufferedReader(new InputStreamReader(pr.getErrorStream()));
             //if (ebr != null) {
             //    String line = ebr.readLine();
             //    System.out.println(line);
@@ -183,7 +198,8 @@ public class JavapUtils
             //    }
             //}
 
-            br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            br = new 
+                BufferedReader(new InputStreamReader(pr.getInputStream()));
             if (br != null) {
                 cachedInfo = new Vector();
                 String line = br.readLine();
@@ -199,3 +215,4 @@ public class JavapUtils
         return cachedInfo;
     }
 }
+
