@@ -209,6 +209,7 @@ public abstract class JavaProvider extends BasicProvider
                 obj = new LockObject();
                 makeNewObject = true;
                 session.set(serviceName, obj);
+                msgContext.getService().addSession(session);
             }
         }
 
@@ -226,6 +227,7 @@ public abstract class JavaProvider extends BasicProvider
                 try {
                   obj = getNewServiceObject(msgContext, clsName);
                   session.set(serviceName, obj);
+                  msgContext.getService().addSession(session);
                 } finally {
                   lock.complete();
                 }

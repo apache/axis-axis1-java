@@ -74,6 +74,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
@@ -90,6 +91,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
@@ -132,6 +134,36 @@ public class SOAPService extends SimpleTargetedChain
      */
     private ServiceDesc serviceDescription = new ServiceDesc();
     private AxisEngine engine;
+
+    /**
+     * List of sessions (for all services), key=serviceName, value=Service
+     */
+    static private Hashtable sessions = new Hashtable();
+
+    /** 
+     * Add this passed in Session to this Service's list of sessions
+     */
+    public void addSession(Session session) {
+      Vector v = (Vector) sessions.get( this.getName() );
+      if ( v == null )  {
+        v = new Vector();
+        sessions.put( this.getName(), v);
+      }
+      if ( !v.contains(session) ) v.add(session);
+    }
+
+    /** 
+     * Remove all of this Service's serviceObjects from it known sessions
+     */
+    public void clearSessions() {
+      Vector v = (Vector) sessions.get( this.getName() );
+      if ( v == null ) return ;
+      Iterator iter = v.iterator();
+      while ( iter.hasNext() ) {
+        Session session = (Session) iter.next();
+        session.remove( this.getName() );
+      }
+    }
 
     /**
      * Actor list - these are just the service-specific ones
