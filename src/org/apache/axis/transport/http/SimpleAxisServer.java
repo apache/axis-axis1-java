@@ -235,9 +235,23 @@ public class SimpleAxisServer implements Runnable {
 
         try {
             int port = opts.getPort();
-            ServerSocket ss = new ServerSocket(port);
-            sas.setServerSocket(ss);
-            sas.start();
+            ServerSocket ss = null;
+            // Try five times
+            for (int i=0;i<5;i++) {
+                try {
+                    ss = new ServerSocket(port);
+                    break;
+                } catch (java.net.BindException be){
+                    // At 3 second intervals.
+                    Thread.sleep(3000);
+                }
+            }
+            if (ss != null){
+                sas.setServerSocket(ss);
+                sas.start();
+            } else {
+                throw new Exception(JavaUtils.getMessage("unableToStartServer00",Integer.toString(port)));
+            }
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
             return;
