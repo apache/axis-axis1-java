@@ -60,6 +60,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
 
@@ -165,8 +166,16 @@ public class Admin {
             if ( loop == 1 ) {
               Element tmpElem = doc.createElement( "service" );
               NodeList list = elem.getChildNodes();
-              for ( int ii = 0 ; ii < list.getLength() ; ii++ )
+              for ( int ii = 0 ; ii < list.getLength() ; ii++ ) {
+                // Not the cleanest way to do this, but this code will be
+                // replaced anyhow...
+                if (h instanceof SOAPService) {
+                  tmpElem.setAttribute(SOAPService.OPTION_PIVOT, (String)h.getOption("pivot"));
+                }
+                
+                
                 tmpElem.appendChild( doc.importNode(list.item(ii),true) );
+              }
               elem = tmpElem ;
             }
 
@@ -320,7 +329,7 @@ public class Admin {
         else if ( type.equals( "service" ) ) {
           Debug.Print( 2, "Deploying service: " + name );
           StringTokenizer      st = null ;
-          SimpleTargetedChain  cc = null ;
+          SOAPService     service = null ;
           Chain                c  = null ;
 
           if ( pivot == null && input == null && output == null )
@@ -328,17 +337,17 @@ public class Admin {
                                  "Services must use targeted chains", 
                                  null, null );
 
-          cc = (SimpleTargetedChain) hr.find( name );
+          service = (SOAPService) hr.find( name );
 
-          if ( cc == null ) cc = new SimpleTargetedChain();
-          else              cc.clear();
+          if ( service == null ) service = new SOAPService();
+          else              service.clear();
   
           if ( input != null && !"".equals(input) ) {
             st = new StringTokenizer( input, " \t\n\r\f," );
             c  = null ;
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                cc.setInputChain( c = new SimpleChain() );
+                service.setInputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -349,15 +358,18 @@ public class Admin {
             }
           }
           
-          if ( pivot != null && !"".equals(pivot) )
-            cc.setPivotHandler( hr.find( pivot ) );
+          if ( pivot != null && !"".equals(pivot) ) {
+            service.setPivotHandler( hr.find( pivot ) );
+            // Save pivot name so we can list it later.
+            service.addOption("pivot", pivot);
+          }
   
           if ( output != null && !"".equals(output) ) {
             st = new StringTokenizer( output, " \t\n\r\f," );
             c  = null ;
             while ( st.hasMoreElements() ) {
               if ( c == null )
-                cc.setOutputChain( c = new SimpleChain() );
+                service.setOutputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -367,9 +379,9 @@ public class Admin {
               c.addHandler( tmpH );
             }
           }
-          getOptions( elem, cc );
-          hr.add( name, cc );
-          sr.add( name, cc );
+          getOptions( elem, service );
+          hr.add( name, service ); // ???
+          sr.add( name, service );
         }
         else 
           throw new AxisFault( "Admin.error", 

@@ -116,7 +116,7 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
 
     if ( onServer ) {
       this.add( "debug"        , new DebugHandler() );
-      this.add( "SOAPServer"   , new SOAPServerHandler() );
+      //this.add( "SOAPServer"   , new SOAPServerHandler() );
       this.add( "MsgDispatcher", new MsgDispatchHandler() );
       this.add( "RPCDispatcher", new RPCDispatchHandler() );
       this.add( "HTTPSender"   , new HTTPDispatchHandler() );

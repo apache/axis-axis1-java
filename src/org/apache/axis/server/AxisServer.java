@@ -183,8 +183,17 @@ public class AxisServer extends BasicHandler
       
               /* Process the Protocol Specific-Handler/Chain */
               /***********************************************/
+              /*
               hName = msgContext.getStrProp(MessageContext.PROTOCOL_HANDLER);
               if ( hName == null ) hName = "SOAPServer" ;
+              if ( hName != null && (h = hr.find( hName )) != null )
+                h.invoke(msgContext);
+              else
+                throw new AxisFault( "Server.error",
+                                     "Can't find '" + hName + "' handler", 
+                                     null, null );
+              */
+              hName = msgContext.getTargetService();
               if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
               else
