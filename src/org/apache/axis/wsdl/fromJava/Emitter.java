@@ -1242,16 +1242,7 @@ public class Emitter {
         bindingInput.addExtensibilityElement(inputBody);
 
         // add soap:headers, if any, to binding <input> element
-        ArrayList params = desc.getAllInParams();
-        for (int i = 0; i < params.size(); i++)
-        {
-            ParameterDesc p = (ParameterDesc) params.get(i);
-            if (p.isInHeader())
-            {
-                SOAPHeader hdr = writeSOAPHeader(p);
-                bindingInput.addExtensibilityElement(hdr);
-            }
-        }
+        // only when we write the Message and parts.
 
         // Add soap:body element to the binding <output> element
         ExtensibilityElement outputBody = null;
@@ -1259,16 +1250,7 @@ public class Emitter {
         bindingOutput.addExtensibilityElement(outputBody);
 
         // add soap:headers, if any, to binding <output> element
-        params = desc.getAllOutParams();
-        for (int i = 0; i < params.size(); i++)
-        {
-            ParameterDesc p = (ParameterDesc) params.get(i);
-            if (p.isOutHeader())
-            {
-                SOAPHeader hdr = writeSOAPHeader(p);
-                bindingOutput.addExtensibilityElement(hdr);
-            }
-        }
+        // only when we write the Message and parts.
 
         // Add input and output to operation
         bindingOper.setBindingInput(bindingInput);
@@ -1301,7 +1283,7 @@ public class Emitter {
     /**
      * Create a SOAPHeader element
      */
-    protected SOAPHeader writeSOAPHeader(ParameterDesc p)
+    protected SOAPHeader writeSOAPHeader(ParameterDesc p, QName messageQName, String partName)
     {
         SOAPHeaderImpl soapHeader = new SOAPHeaderImpl();
 
@@ -1324,9 +1306,9 @@ public class Emitter {
             soapHeader.setNamespaceURI(headerQName.getNamespaceURI());
         }
 
-        // The Message and Part information get set when the Message is generated
-        // soapHeader.setMessage(...);
-        // soapHeader.setPart(...);
+        // Set the Message and Part information
+         soapHeader.setMessage(messageQName);
+         soapHeader.setPart(partName);
 
         return soapHeader;
     }
@@ -1421,7 +1403,6 @@ public class Emitter {
         String partName;
         ArrayList bodyParts = new ArrayList();
         ArrayList parameters = oper.getAllInParams();
-        List extensibilityElements = bindop.getBindingInput().getExtensibilityElements();
 
         Message msg = def.createMessage();
         QName qName = createMessageName(def,
@@ -1431,7 +1412,7 @@ public class Emitter {
         msg.setUndefined(false);
 
         // output all the parts for headers
-        boolean headers = writeHeaderParts(def, parameters, extensibilityElements, msg, true);
+        boolean headers = writeHeaderParts(def, parameters, bindop, msg, true);
 
         if (oper.getStyle() == Style.MESSAGE) {
 
@@ -1473,6 +1454,7 @@ public class Emitter {
         // if not, we just leave it out (which means all parts)
         if (headers) {
             // Find soap:body in binding
+            List extensibilityElements = bindop.getBindingInput().getExtensibilityElements();
             for (int i = 0; i < extensibilityElements.size(); i++)
             {
                 Object ele = extensibilityElements.get(i);
@@ -1489,19 +1471,18 @@ public class Emitter {
 
     /**
      * Create parts of a Message for header parameters and write then in
-     * to the provided Message element.  Fill in the message and part
-     * attributes on the bindings soap:header elements, now that we
-     * have these values.
+     * to the provided Message element. Also create a soap:header element
+     * in the binding
      *
      * @param parameters the list of parameters for the current operation
-     * @param bindingElements the soap elements in the current bindingOperation
+     * @param bindop the current bindingOperation
      * @param msg the message to add the parts to
      * @param request true if we are do an input message, false if it is output
      * @return true if we wrote any header parts
      */
     private boolean writeHeaderParts(Definition def,
                                      ArrayList parameters,
-                                     List bindingElements,
+                                     BindingOperation bindop,
                                      Message msg,
                                      boolean request) throws WSDLException, AxisFault
     {
@@ -1514,27 +1495,25 @@ public class Emitter {
 
             // write the input or output header parts in to the Message
             if (request && parameter.isInHeader()) {
+                // put part in message
                 partName = writePartToMessage(def, msg, request, parameter);
+                // Create a soap:header element
+                SOAPHeader hdr = writeSOAPHeader(parameter, msg.getQName(), partName);
+                // put it in the binding <input> element
+                bindop.getBindingInput().addExtensibilityElement(hdr);
+                wroteHeaderParts = true;
             }
             else if (!request && parameter.isOutHeader()) {
+                // put part in message
                 partName = writePartToMessage(def, msg, request, parameter);
+                // Create a soap:header element
+                SOAPHeader hdr = writeSOAPHeader(parameter, msg.getQName(), partName);
+                // put it in the binding <output> element
+                bindop.getBindingOutput().addExtensibilityElement(hdr);
+                wroteHeaderParts = true;
             }
             else {
-                continue;
-            }
-
-            // Fill in bindings soap:header 'message' and 'part' attributes
-            // since binding is created first, they already exist.
-            for (int j = 0; j < bindingElements.size(); j++)
-            {
-                Object ele = bindingElements.get(j);
-                // find the SOAPHeader object
-                if (ele instanceof SOAPHeaderImpl) {
-                    SOAPHeaderImpl sh = (SOAPHeaderImpl) ele;
-                    sh.setPart(partName);
-                    sh.setMessage(msg.getQName());
-                    wroteHeaderParts = true;
-                }
+                continue;   // body part
             }
         }
         return wroteHeaderParts;
@@ -1692,7 +1671,6 @@ public class Emitter {
         String partName;
         ArrayList bodyParts = new ArrayList();
         ArrayList parameters = desc.getAllOutParams();
-        List extensibilityElements = bindop.getBindingOutput().getExtensibilityElements();
 
         Message msg = def.createMessage();
         QName qName =
@@ -1702,7 +1680,7 @@ public class Emitter {
         msg.setUndefined(false);
 
         // output all the parts for headers
-        boolean headers = writeHeaderParts(def, parameters, extensibilityElements, msg, false);
+        boolean headers = writeHeaderParts(def, parameters, bindop, msg, false);
 
         if (desc.getStyle() == Style.WRAPPED) {
             partName = writeWrapperPart(def, msg, desc, false);
@@ -1749,6 +1727,7 @@ public class Emitter {
         // if not, we just leave it out (which means all parts)
         if (headers) {
             // Find soap:body in binding
+            List extensibilityElements = bindop.getBindingOutput().getExtensibilityElements();
             for (int i = 0; i < extensibilityElements.size(); i++)
             {
                 Object ele = extensibilityElements.get(i);
