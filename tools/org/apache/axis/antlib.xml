@@ -6,7 +6,7 @@
     are in the antlib directory, or a dir stated with -lib on the command line"
     Alternative, load with something like
     <typedef uri="http://ws.apache.org/axis"
-        resource="org.apache.axis.xml"
+        resource="/org/apache/axis.xml"
         classpathref="axis.classpath"
         xmlns:axis="http://ws.apache.org/axis"
     -->
