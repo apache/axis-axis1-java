@@ -377,6 +377,7 @@ public class Deserializer extends SOAPHandler
             // values for the later multiRefs just drop into the existing
             // object in place.
         }
-        valueComplete();
+        if (value != null)
+            valueComplete();
     }
 }
