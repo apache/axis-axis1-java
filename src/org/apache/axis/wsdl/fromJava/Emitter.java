@@ -624,7 +624,11 @@ public class Emitter {
             types.loadInputTypes(inputWSDL);
         }
         if (inputSchema != null) {
-            types.loadInputSchema(inputSchema);
+            StringTokenizer tokenizer = new StringTokenizer(inputSchema, ", ");
+            while (tokenizer.hasMoreTokens()) {
+                String token = tokenizer.nextToken();
+                types.loadInputSchema(token);
+            }
         }
 
         if (tm != null)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 U (http://www.xmlspy.com) by Doug Bitting (Agile Software) -->
-<xs:schema targetNamespace="urn:ImportSchemaTest" xmlns="urn:ImportSchemaTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema targetNamespace="urn:ImportSchemaTest" xmlns="urn:ImportSchemaTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:foo="urn:ImportSchemaTest" elementFormDefault="qualified" attributeFormDefault="unqualified">
   <xs:complexType name="foo">
     <xs:sequence>
       <xs:element name="bar" type="xs:string">
