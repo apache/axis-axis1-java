@@ -271,7 +271,7 @@ public class Emitter {
         while (i.hasNext ()) {
             PortType portType = (PortType) i.next ();
             HashMap portTypeInfo = writePortType (portType);
-            if(bEmitSkeleton)
+            if(bEmitSkeleton && bMessageContext)
                 writeAxisPortType(portType);
 
             portTypesInfo.put (portType, portTypeInfo);
@@ -318,8 +318,6 @@ public class Emitter {
                 new FileWriter (nameValue + ".java"));
         if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
-        if(bMessageContext)
-          interfacePW.println ("import org.apache.axis.MessageContext;");
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
 
@@ -535,19 +533,14 @@ public class Emitter {
         String axisSig = "    public " + parms.returnType + " " + name + " (";
         String skelSig = null;
 
-        String retType = "";
         if (allOuts == 0)
-            retType = "void";
-        else if (allOuts == 1)
-            retType = parms.returnType;
-        else //allOuts > 1
-            retType = "java.util.Vector";
-
-        skelSig = "    public " + retType + " " + name + " ( ";
+            skelSig = "    public void " + name + "(";
+        else
+            skelSig = "    public Object " + name + "(";
 
         if(bMessageContext){
-            skelSig = skelSig + "MessageContext ctx";
-            axisSig = axisSig + " MessageContext ctx ";
+            skelSig = skelSig + "org.apache.axis.MessageContext ctx";
+            axisSig = axisSig + "org.apache.axis.MessageContext ctx";
             if (parms.list.size() > 0){
               skelSig = skelSig + ", ";
               axisSig = axisSig + ", ";
@@ -618,18 +611,6 @@ public class Emitter {
         Parameters parms = parameters (operation);
 
         interfacePW.println (parms.signature + ";");
-
-        return parms;
-    } // writeOperation
-
-    /**
-     * This method generates the skeleton interface signatures operation.
-     */
-    private Parameters writeOperationSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName ();
-        Parameters parms = parameters (operation);
-
-        interfacePW.println (parms.skelSignature + ";");
 
         return parms;
     } // writeOperation
@@ -795,11 +776,14 @@ public class Emitter {
             skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
             if (bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelName + ".java");
-            if(bMessageContext)
-                skelPW.println ("import org.apache.axis.MessageContext;");
             skelPW.println ("public class " + skelName);
             skelPW.println ("{");
-            skelPW.println ("    private " + portTypeName + "Axis impl;");
+            if (bMessageContext) {
+                skelPW.println ("    private " + portTypeName + "Axis impl;");
+            }
+            else {
+                skelPW.println ("    private " + portTypeName + " impl;");
+            }
             skelPW.println ();
             // RJB WARNING! - is this OK?
             skelPW.println ("    public " + skelName + "()");
@@ -807,7 +791,12 @@ public class Emitter {
             skelPW.println ("        this.impl = new " + name + "Impl ();");
             skelPW.println ("    }");
             skelPW.println ();
-            skelPW.println ("    public " + skelName + " (" + portTypeName + "Axis impl)");
+            if (bMessageContext) {
+                skelPW.println ("    public " + skelName + " (" + portTypeName + "Axis impl)");
+            }
+            else {
+                skelPW.println ("    public " + skelName + " (" + portTypeName + " impl)");
+            }
             skelPW.println ("    {");
             skelPW.println ("        this.impl = impl;");
             skelPW.println ("    }");
@@ -953,20 +942,49 @@ public class Emitter {
                 }
             }
             else {
-                // There is more than 1 output, so resp is a Vector.  Pull the Objects from
-                // the Vector and put them in the appropriate place, either in a holder or
-                // as the return value.
-                pw.println ("            java.util.Vector output = (java.util.Vector)resp;");
-                int outdex = parms.outputs == 0 ? 0 : 1;
+                // There is more than 1 output.  resp is the first one.  The rest are from
+                // call.getOutputParams ().  Pull the Objects from the appropriate place -
+                // resp or call.getOutputParms - and put them in the appropriate place,
+                // either in a holder or as the return value.
+                pw.println ("            java.util.Vector output = call.getOutputParams ();");
+                int outdex = 0;
+                final int RESP = -1;
+                final int NO_OUTPUT = -2;
+                int ret = "void".equals (parms.returnType) ? NO_OUTPUT : RESP; // assume the resp is the return type.  It may not be.
+                boolean firstInoutOut = true;
+                boolean firstOut = true;
 
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
-
-                    if (p.mode != Parameter.IN)
-                        pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "output.get (" + outdex++ + ")"));
+                    if (p.mode != Parameter.IN) {
+                        if (firstInoutOut) {
+                            firstInoutOut = false;
+                            if (p.mode == Parameter.INOUT) {
+                                pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
+                            }
+                            else {
+                                firstOut = false;
+                                ret = RESP;
+                            }
+                        }
+                        else if (p.mode == Parameter.INOUT) {
+                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "output.get (" + outdex++ + ")"));
+                        }
+                        else if (firstOut) {
+                            firstOut = false;
+                            ret = outdex++;
+                        }
+                        else {
+                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "output.get (" + outdex++ + ")"));
+                        }
+                    }
                 }
-                if (parms.outputs > 0)
-                    pw.println ("            return " + getResponseString(parms.returnType, "output.get (0)"));
+                if (ret == RESP) {
+                    pw.println ("            return " + getResponseString (parms.returnType, "resp"));
+                }
+                else if (ret != NO_OUTPUT) {
+                    pw.println ("            return " + getResponseString(parms.returnType, "output.get (" + ret + ")"));
+                }
             }
             pw.println ("        }");
         }
@@ -995,7 +1013,7 @@ public class Emitter {
         if (parms.outputs == 0)
             pw.print ("        impl." + name + "(");
         else
-            pw.print ("        " + parms.returnType + " ret = impl." + name + "(");
+            pw.print ("        Object ret = impl." + name + "(");
 
         if(bMessageContext){
             pw.print("ctx");
