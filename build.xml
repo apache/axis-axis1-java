@@ -547,8 +547,6 @@ Copyright:
         value="axis" />
       <property name="checkstyle.src.dir"
         location="${axis.home}/src" />
-      <property name="checkstyle.dest.dir" 
-        location="${build.dir}/checkstyle/${project}"/>
     </ant>
     </target>
 </project>
