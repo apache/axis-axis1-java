@@ -129,7 +129,12 @@ public class LogHandler extends BasicHandler {
                    (outMsg == null ? "null" : outMsg.getSOAPPartAsString())));
             writer.println( "=======================================================" );
 
-            writer.close();
+            //START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
+            if (!writeToConsole) {
+              writer.close();
+            }
+            //END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
+            
         } catch( Exception e ) {
             log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
@@ -160,7 +165,11 @@ public class LogHandler extends BasicHandler {
             pw.println( "=====================" );
             pw.println( "= " + Messages.getMessage("fault00") );
             pw.println( "=====================" );
-            pw.close();
+            //START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
+            if (!writeToConsole) {
+              pw.close();
+            }
+            // END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
         } catch( Exception e ) {
             log.error(Messages.getMessage("exception00"), e );
         }
