@@ -323,6 +323,9 @@ public class RPCProvider extends JavaProvider
                 returnQName = new QName("", methodName + "Return");
             }
 
+            // Convert any MIME type returns into a DataHandler.
+            objRes = convertMIMEType(objRes, operation.getReturnType());
+
             // For SOAP 1.2, add a result
             if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
             {
@@ -345,29 +348,10 @@ public class RPCProvider extends JavaProvider
                 Object value = JavaUtils.getHolderValue(holder);
                 ParameterDesc paramDesc = param.getParamDesc();
 
-                // Check for a MIME attachment outputs
-                QName paramQName = paramDesc == null ? null : paramDesc.getTypeQName();
-                if (paramQName != null && paramQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
-                    // We have a potential attachment, put the parameter
-                    // into a DataHandler.
-                    String MIMEName = paramQName.getLocalPart();
-                    if ("Image".equals(MIMEName)) {
-                    }
-                    else if ("PlainText".equals(MIMEName)) {
-                        value = instantiateDataHandler(
-                            "org.apache.axis.attachments.PlainTextDataSource",
-                            "java.lang.String",
-                            value);
-                    }
-                    else if ("Multipart".equals(MIMEName)) {
-                        value = instantiateDataHandler(
-                            "org.apache.axis.attachments.MimeMultipartDataSource",
-                            "javax.mail.internet.MimeMultipart",
-                            value);
-                    }
-                    else if ("Source".equals(MIMEName)) {
-                    }
-                }
+                // Convert any MIME attachment outputs into a DataHandler.
+                value = convertMIMEType(value,
+                        paramDesc == null ? null : paramDesc.getTypeQName());
+
                 param.setValue(value);
                 resBody.addParam(param);
             }
@@ -375,6 +359,35 @@ public class RPCProvider extends JavaProvider
 
         resEnv.addBodyElement(resBody);
     }
+
+    /**
+     * If the object is a MIME type, convert it to a DataHandler.
+     * If it is not a MIME type, the input object is simply returned.
+     */
+    private Object convertMIMEType(Object object, QName qname) {
+        if (qname != null &&
+                qname.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
+            // We have a potential attachment, put the return
+            // into a DataHandler.
+            if (qname.equals(Constants.MIME_IMAGE)) {
+            }
+            else if (qname.equals(Constants.MIME_PLAINTEXT)) {
+                object = instantiateDataHandler(
+                        "org.apache.axis.attachments.PlainTextDataSource",
+                        "java.lang.String",
+                        object);
+            }
+            else if (qname.equals(Constants.MIME_MULTIPART)) {
+                object = instantiateDataHandler(
+                        "org.apache.axis.attachments.MimeMultipartDataSource",
+                        "javax.mail.internet.MimeMultipart",
+                        object);
+            }
+            else if (qname.equals(Constants.MIME_SOURCE)) {
+            }
+        }
+        return object;
+    } // convertMIMEType
 
     /**
      * This method is the same as:

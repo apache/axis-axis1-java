@@ -551,7 +551,7 @@ public class JavaStubWriter extends JavaClassWriter {
             } else {
                 pw.println("        _call.setReturnType(" + 
                            Utils.getNewQName(returnName) + 
-                           " ," + javaType + ".class);");
+                           ", " + javaType + ".class);");
             }
         }
         else {
@@ -749,8 +749,7 @@ public class JavaStubWriter extends JavaClassWriter {
         String realTarget = null;
         if (mimeType != null) {
             realTarget = target;
-            if(mimeType.equals("text/plain")
-                    || mimeType.startsWith("multipart/")) {
+            if(mimeType != null) {
                 target = "javax.activation.DataHandler _returnDH = ";
             }
         }
@@ -794,7 +793,23 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("                " + target + "(java.lang.String) _returnDH.getContent();");
         }
         else if (mimeType.startsWith("multipart/")) {
-            pw.println("                " + target + "(javax.mail.internet.MimeMultipart) _returnDH.getContent();");
+            pw.println("                javax.mail.internet.MimeMultipart _mmp = (javax.mail.internet.MimeMultipart) _returnDH.getContent();");
+            pw.println("                if (_mmp.getCount() == 0) {");
+            pw.println("                    " + target + "null;");
+            pw.println("                }");
+            pw.println("                else {");
+            pw.println("                    " + target + "(javax.mail.internet.MimeMultipart) _returnDH.getContent();");
+            pw.println("                }");
+        }
+        else if (mimeType.equals("image/jpeg") ||
+                mimeType.equals("image/gif")) {
+            pw.println("                " + target +
+                    "(java.awt.Image) _returnDH.getContent();");
+        }
+        else if (mimeType.equals("text/xml") ||
+                 mimeType.equals("applications/xml")) {
+            pw.println("                " + target +
+                    "(javax.xml.transform.Source) _returnDH.getContent();");
         }
         else {
             pw.println("                " + target +
