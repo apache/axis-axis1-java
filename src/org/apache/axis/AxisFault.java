@@ -180,14 +180,23 @@ public class AxisFault extends java.rmi.RemoteException {
         // Set the exception message (if any) as the fault string 
         setFaultString( target.toString() );
         
-        // Set the exception name and stack trace in the details
-        // TODO: we should serialize any exception data into detail also
-        Element el = XMLUtils.StringToElement(Constants.AXIS_NS, 
-                                              "exceptionName", 
-                                              target.getClass().getName());
-
         if (faultDetails == null) faultDetails = new Vector();
-        faultDetails.add(el);        
+
+        Element el;
+        
+        // If we're derived from AxisFault, then put the exception class
+        // into the "exceptionName" element in the details.  This allows
+        // us to get back a correct Java Exception class on the other side
+        // (assuming they have it available).
+        
+        if ((target instanceof AxisFault) &&
+            (target.getClass() != AxisFault.class)) {
+            el = XMLUtils.StringToElement(Constants.AXIS_NS, 
+                                                  "exceptionName", 
+                                                  target.getClass().getName());
+            
+            faultDetails.add(el);        
+        }
         
         // get the stack trace of the target exception
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

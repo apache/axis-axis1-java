@@ -421,6 +421,10 @@ public abstract class AxisEngine extends BasicHandler
         newService.setCachedService(service);
         
         Handler pivot = service.getPivotHandler();
+        if (pivot == null) {
+            throw new DeploymentException(JavaUtils.getMessage("noPivot01"));
+        }
+        
         if (pivot instanceof RPCProvider) {
             newService.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
         } else if (pivot instanceof MsgProvider) {
