@@ -2,7 +2,7 @@
 <head>
 <title>Axis Happiness Page</title>
 </head>
-<body bgcolor=#ffffff>
+<body bgcolor='#ffffff'>
 <%@ page import="java.io.InputStream,
                  java.io.IOException"
     session="false" %>
