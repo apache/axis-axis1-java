@@ -84,7 +84,7 @@ public class RPCDispatchHandler extends BasicHandler {
       /* We know we're doing a Java/RPC call so we can ask for the */
       /* SOAPBody as an RPCBody and process it accordingly.        */
       /*************************************************************/
-      int          i ;
+      int             i ;
       AxisClassLoader cl     = new AxisClassLoader();
       Class           cls    = cl.loadClass(clsName); 
       Object          obj    = cls.newInstance();
@@ -95,7 +95,7 @@ public class RPCDispatchHandler extends BasicHandler {
       SOAPEnvelope    resEnv = (outMsg == null) ?
                                 new SOAPEnvelope() :
                                 (SOAPEnvelope)outMsg.getAs("SOAPEnvelope");
-
+      
       /* Loop over each entry in the SOAPBody - each one is a different */
       /* RPC call.                                                      */
       /******************************************************************/
@@ -142,10 +142,10 @@ public class RPCDispatchHandler extends BasicHandler {
         msgContext.setResponseMessage( outMsg );
       }
     }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-      throw (AxisFault) e ;
+    catch( Exception exp ) {
+      Debug.Print( 1, exp );
+      if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
+      throw (AxisFault) exp ;
     } 
     Debug.Print( 1, "Exit: RPCDispatchHandler::invoke" );
   }
