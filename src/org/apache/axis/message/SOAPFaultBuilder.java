@@ -218,6 +218,8 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         while ((c = c.getNext()) != null) {
                             f.addFaultSubCode(c.getFaultCode());
                         }
+                    } else {
+                        f.setFaultCode(faultCode);
                     }
 
                     f.setFaultString(faultString);
