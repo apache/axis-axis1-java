@@ -8,51 +8,6 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
-BETA 3 MUST DO LIST
--------------------
-* <Glen> Update all version messages to beta 3.
-
-Bugzillas for beta 3:  must:  must fix; nice:  it would be nice to have; post:  post beta 3; pend:  pending more info, maybe beta 3.  The left column is there to give us a quick picture:  M is a must, _ is anything else, X means the bug is fixed.
-_ 7132 - nice - Glen
-_ 7407 - nice - Rich?
-_ 8419 - post
-X 8423 - pend - dims
-_ 8435 - post
-_ 8476 - must - Rich
-_ 8480 - pend - Glen
-_ 8481 - pend - Glen
-_ 8578 - post
-_ 8598 - nice - Rich
-M 8646 - must - ?
-_ 8680 - close, fixed?
-_ 9045 - pend - Glen
-X 9239 - must - dims
-_ 9393 - must - Rich
-X 9405 - must - Tom
-_ 9452 - post
-_ 9473 - post
-X 9642 - nice - Russell
-_ 9659 - pend - Glen
-_ 9665 - nice - Rich
-_ 9667 - dup of 9665
-X 9717 - must - Tom
-X 9767 - must - Russell
-_ 9773 - post
-M 9780 - must - Rick
-_ 9815 - nice - ?
-_ 9818 - nice - Rich
-X 9826 - nice - Glen
-_ 9874 - nice - dims
-X 9875 - must - Rich
-_ 9881 - post
-_ 9882 - nice - Russell
-X 9952 - must - Glyn
-_ 9966 - nice - Tom (like 9717)
-_ 9967 - nice - Tom (like 9717 and 9966)
-X 9987 - must - Glyn
-X 9992 - must - dims
-_ 10003 - post
-
 
 MESSAGE PARSING / ENCODING
 --------------------------
@@ -71,13 +26,13 @@ X <Glen> Support qualified/unqualified flags for elements
 
 JAX-RPC COMPATIBILITY
 ---------------------
+! <Russell> NEVER name the SEI after the binding.  Spec no longer allows it.  Remember to change the user's guide, too.
 ! <> Implement Service.getCalls() method. (maybe)
 ! <> Implement generated Services' getCalls() method.
 ! <> Implement Service.getHandlerRegistry() method.
 ! <> Implement ServiceFactory.createService methods.
 ! <> Implement TypeMapping and TypeMappingRegistry ala JAX-RPC 0.8
 ! <> Implement Handler code ala JAX-RPC 0.8
-! <> Once we get word that javax.xml.rpc.encoding.XMLType is a real class (it's in the JAX-RPC javadocs but not in the spec) then replace all the constants in org.apache.axis.encoding.XMLType with the JAX-RPC constants.
 ! <> Once we get word that javax.xml.rpc.namespace.NamespaceConstants is a real class (it's in the JAX-RPC javadocs but not in the spec) then use it.
 ! <> Implement javax.xml.rpc.server interfaces.
 ! <> Add some JAX-RPC compliance samples/tests.
@@ -115,20 +70,14 @@ SAMPLES
 
 WSDL2Java
 ---------
+! <Russell> When wrapped mode is used along with parameterOrder, WSDL2Java complains, wrongly, that the part listed in parameterOrder doesn't exist.  The problem is that, once we recognize wrapped mode, the parameters are now from the complexType, not from the message.
+! <Russell> If the lowest level that a WSDL contains is the portType, no SEI is generated even though it should be.  This is because we go into the binding to generate the SEI.
 * <> (ongoing) JAX-RPC compliance.  In particular:
-! <> Mapping of XML names.  We do some, not all, of what JAX-RPC specifies.
-! <> Faults - What do we handle now?  What needs to be enhanced?  JAX-RPC needs improving, first, we think.
-X <Rich> Faults - Support v1.0 mapping
-X <Rich> Derived type support. Including extending abstract complexTypes and extending simpleTypes.
 ! <> Object[] doesn't work.  If we have method(Object[] array) and we pass in an Object[], we get NullPointerExceptions.  If, however, we pass in a String[] or a Phone[] then it works.  Object[] becomes xsd:anyType[].  Since anyType doesn't work, I don't expect anyType[] to work.
 ! <> do we want xsd:anyType to work?
-X <Russell> with the --all flag, ALL types should be registered in the Stub.
-
 * <Russell> (ongoing) Need to pull everything writer-specific out of the framework(Emitter/SymbolTable/etc).  Signatures are still in there.  So are Wsdl2java options that only the writers care about.
 
-! <> Attachment support.
-
-X <Rich/Russell> Name clash resolution has to grow up.
+* <Russell> Attachment support.
 
 ! <> Automatically creating a package name from a namespace is very limited at the moment.
 
@@ -149,14 +98,13 @@ X <Rich> If a reference to a type is encountered before the definition, a RefdTy
 
 * <Russell/Tom> Grow Filegen test.  We now generate code only if it's needed, but this feature isn't well tested yet.
 
-! <> Do we need a Wsdl2java Exception?
-
 * <Rich/Tom?> Need to handle collections of objects (max occurs > 1).  Rich did the work for encoding.  Does something still need to be done for literal?
 
 X <Rich> Support for anonymous complexTypes and simpleTypes for elements and attributes.
 
 Java2WSDL
 ---------
+! <Russell> attachment support to mirror what went into WSDL2Java.
 ! <> When generating from a skeleton, ignore the skeleton meta-data methods.
 ! <Russell?/Rich?> Java2WSDL "void op(boolean b1, Boolean b2)" maps to
    <wsdl:message name="op1Request">

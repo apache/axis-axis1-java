@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    targetNamespace="urn:attachments.wsdl.test"
+    xmlns:tns="urn:attachments.wsdl.test">
+  <types>
+    <schema
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:attachments.wsdl.test">
+      <element name="GetCompanyInfo">
+        <complexType>
+          <all>
+            <element name="tickerSymbol" type="xsd:string"/>
+          </all>
+        </complexType>
+      </element>
+      <element name="GetCompanyInfo2">
+        <complexType>
+          <all>
+            <element name="result" type="xsd:float"/>
+          </all>
+        </complexType>
+      </element>
+    </schema>
+  </types>
+
+  <message name="m0"/>
+  <message name="m1">
+    <part name="body" element="tns:GetCompanyInfo"/>
+  </message>
+  <message name="m2">
+    <part name="body" element="tns:GetCompanyInfo2"/>
+    <part name="docs" type="xsd:string"/>
+    <part name="logo" type="xsd:hexBinary"/>
+  </message>
+  <message name="m3">
+    <part name="body" type="xsd:string"/>
+  </message>
+
+  <portType name="pt1">
+<!--
+    <operation name="GetCompanyInfo">
+      <input message="tns:m1"/>
+      <output message="tns:m2"/>
+    </operation>
+    <operation name="GetCompanyInfo2">
+      <input message="tns:m2"/>
+      <output message="tns:m1"/>
+    </operation>
+-->
+<!--
+    <operation name="inputPlainText">
+      <input message="tns:m3"/>
+      <output message="tns:m0"/>
+    </operation>
+-->
+    <operation name="echoPlainText">
+      <input message="tns:m3"/>
+      <output message="tns:m3"/>
+    </operation>
+  </portType>
+
+  <binding name="b1" type="tns:pt1">
+    <soap:binding style="doc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+<!--
+    <operation name="GetCompanyInfo">
+      <soap:operation soapAction="http://example.com/GetCompanyInfo"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <soap:body parts="body" use="literal"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="docs" type="text/html"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="logo" type="image/gif"/>
+            <mime:content part="logo" type="image/jpeg"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
+    <operation name="GetCompanyInfo2">
+      <soap:operation soapAction="http://example.com/GetCompanyInfo2"/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <soap:body parts="body" use="literal"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="docs" type="text/plain"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="logo" type="image/gif"/>
+            <mime:content part="logo" type="image/jpeg"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+-->
+<!--
+    <operation name="inputPlainText">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="text/plain"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+        <soap:body use="encoding"/>
+      </output>
+    </operation>
+-->
+    <operation name="echoPlainText">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="text/plain"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="text/plain"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="Attachment">
+    <port name="AttachmentPort" binding="tns:b1">
+      <soap:address location="http://localhost:8080/axis/services/AttachmentPort"/>
+    </port>
+  </service>
+
+</wsdl:definitions> 

@@ -52,59 +52,49 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.attachments;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 
-import javax.xml.namespace.QName;
+import javax.activation.DataSource;
 
-import org.apache.axis.utils.JavaUtils;
+public class PlainTextDataSource implements DataSource {
+    public static final String CONTENT_TYPE = "text/plain";
 
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+    private final String name;
+    private byte[] data;
+    private ByteArrayInputStream is;
+    private ByteArrayOutputStream os;
 
-/**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
-*/
-public class JavaHolderWriter extends JavaClassWriter {
-    private TypeEntry type;
-
-    /**
-     * Constructor.
-     */
-    protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
-        super(emitter, Utils.holder(null, type, emitter), "holder");
-        this.type = type;
+    public PlainTextDataSource(String name, String data) {
+        this.name = name;
+        this.data = data.getBytes();
+        os = new ByteArrayOutputStream();
     } // ctor
 
-    /**
-     * Return "public final ".
-     */
-    protected String getClassModifiers() {
-        return super.getClassModifiers() + "final ";
-    } // getClassModifiers
+    public String getName() {
+        return name;
+    } // getName
 
-    /**
-     * Return "implements javax.xml.rpc.holders.Holder ".
-     */
-    protected String getImplementsText() {
-        return "implements javax.xml.rpc.holders.Holder ";
-    } // getImplementsText
+    public String getContentType() {
+        return CONTENT_TYPE;
+    } // getContentType
 
-    /**
-     * Generate the holder for the given complex type.
-     */
-    protected void writeFileBody(PrintWriter pw) throws IOException {
-        String holderType = type.getName();
-        pw.println("    public " + holderType + " value;");
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this.value = value;");
-        pw.println("    }");
-        pw.println();
-    } // writeOperation
+    public InputStream getInputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+        }
+        return new ByteArrayInputStream(data);
+    } // getInputStream
 
-} // class JavaHolderWriter
+    public OutputStream getOutputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+        }
+        return new ByteArrayOutputStream();
+    } // getOutputStream
+} // class PlainTextDataSource

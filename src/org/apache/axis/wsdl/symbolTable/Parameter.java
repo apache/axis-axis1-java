@@ -72,12 +72,17 @@ public class Parameter {
     
     // The part name of this parameter, just a string.
     private String name;
+
+    // The MIME type of this parameter, null if it isn't a MIME type.
+    private String mimeType = null;
     
     private TypeEntry type;
     private byte mode = IN;
 
     public String toString() {
-        return "(" + type + ", " + getName() + ", "
+        return "(" + type
+                + (mimeType == null ? "" : "(" + mimeType + ")")
+                + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
     } // toString
 
@@ -101,6 +106,14 @@ public class Parameter {
     public void setQName(QName qname) {
         this.qname = qname;
     }
+
+    public String getMIMEType() {
+        return mimeType;
+    } // getMIMEType
+
+    public void setMIMEType(String mimeType) {
+        this.mimeType = mimeType;
+    } // setMIMEType
 
     public TypeEntry getType() {
         return type;

@@ -224,7 +224,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 String suffix = "";
 
                 if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.getType(), emitter)
+                    pw.print("new " + Utils.holder(param.getMIMEType(), param.getType(), emitter)
                             + "(");
                     suffix = ")";
                 }

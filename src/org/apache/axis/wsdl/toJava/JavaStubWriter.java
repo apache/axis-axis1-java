@@ -138,7 +138,8 @@ public class JavaStubWriter extends JavaClassWriter {
             isRPC = false;
         }
         HashSet types = getTypesInPortType(portType);
-        if (types.size() > 0) {
+        boolean hasMIME = Utils.hasMIME(bEntry);
+        if (types.size() > 0  || hasMIME) {
             pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
@@ -165,9 +166,12 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("                super.service = service;");
         pw.println("            }");
 
-        Iterator it = types.iterator();
-        while (it.hasNext()) {
-            writeSerializationInit(pw, (TypeEntry) it.next());
+        if (types.size() > 0 || hasMIME) {
+            writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
+            Iterator it = types.iterator();
+            while (it.hasNext()) {
+                writeSerializationInit(pw, (TypeEntry) it.next());
+            }
         }
 
         pw.println("        }");
@@ -208,7 +212,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("                else");
         pw.println("                    _call.setScopedProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
-        if (types.size() > 0) {
+        if (types.size() > 0 || hasMIME) {
             pw.println("            // " + JavaUtils.getMessage("typeMap00"));
             pw.println("            // " + JavaUtils.getMessage("typeMap01"));
             pw.println("            // " + JavaUtils.getMessage("typeMap02"));
@@ -377,7 +381,37 @@ public class JavaStubWriter extends JavaClassWriter {
     /**
      * In the stub constructor, write the serializer code for the complex types.
      */
-    private boolean firstSer = true ;
+
+    private void writeSerializationDecls(PrintWriter pw, boolean hasMIME,
+            String namespace) {
+        pw.println("            Class cls;" );
+        pw.println("            javax.xml.namespace.QName qName;" );
+        pw.println("            Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
+        pw.println("            Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
+        pw.println("            Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
+        pw.println("            Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
+        pw.println("            Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
+        pw.println("            Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
+        pw.println("            Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
+        pw.println("            Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
+
+        if (hasMIME) {
+            pw.println("            Class mimesf = org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory.class;");
+            pw.println("            Class mimedf = org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory.class;");
+            pw.println();
+            QName qname = new QName(namespace, "DataHandler");
+
+            pw.println("            qName = new javax.xml.namespace.QName(\""
+                       + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
+                       + "\");");
+            pw.println("            cachedSerQNames.add(qName);");
+            pw.println("            cls = javax.activation.DataHandler.class;");
+            pw.println("            cachedSerClasses.add(cls);");
+            pw.println("            cachedSerFactories.add(mimesf);");
+            pw.println("            cachedDeserFactories.add(mimedf);");
+            pw.println();
+        }
+    } // writeSerializationDecls
 
     private void writeSerializationInit(PrintWriter pw, TypeEntry type) throws IOException {
 
@@ -401,21 +435,7 @@ public class JavaStubWriter extends JavaClassWriter {
         
         if (!process) {
             return;
-        }
-        
-        if ( firstSer ) {
-            pw.println("            Class cls;" );
-            pw.println("            javax.xml.namespace.QName qName;" );
-            pw.println("            Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
-            pw.println("            Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
-            pw.println("            Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
-            pw.println("            Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
-            pw.println("            Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
-            pw.println("            Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
-            pw.println("            Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
-            pw.println("            Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
-        }
-        firstSer = false ;
+        }        
 
         QName qname = type.getQName();
 
@@ -466,7 +486,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
         writeComment(pw, operation.getDocumentationElement());
 
-        pw.println(parms.signature + "{");
+        pw.println(parms.signature + " {");
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
@@ -476,17 +496,27 @@ public class JavaStubWriter extends JavaClassWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
+            String mimeType = p.getMIMEType();
+
             // Get the QNames representing the parameter name and type
-            QName paramName = p.getQName();
+            QName paramName;
             QName paramType = Utils.getXSIType(p.getType());
 
             // Set the javaType to the name of the type
-            String javaType = p.getType().getName();
-
-            if (javaType != null) {
-                javaType += ".class, ";
-            } else {
-                javaType = "";
+            String javaType = null;
+            if (mimeType != null) {
+                javaType = "javax.activation.DataHandler.class, ";
+                paramName = new QName (binding.getQName().getNamespaceURI(),
+                        "DataHandler");
+            }
+            else {
+                javaType = p.getType().getName();
+                if (javaType != null) {
+                    javaType += ".class, ";
+                } else {
+                    javaType = "";
+                }
+                paramName = p.getQName();
             }
 
             // Get the text representing newing a QName for the name and type
@@ -559,7 +589,10 @@ public class JavaStubWriter extends JavaClassWriter {
                 styleStr = "document";
             }
         }
-        pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
+
+        if (!Utils.hasMIME(bEntry, operation)) {
+            pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
+        }
 
         // Operation name
         if (styleStr.equals("wrapped")) {
@@ -577,6 +610,27 @@ public class JavaStubWriter extends JavaClassWriter {
                         Utils.getNewQName(elementQName) + ");" );
             }
         }
+
+        // Initialize any MIME parameters
+        int numberOfInMIMES = 0;
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameter p = (Parameter) parms.list.get(i);
+            String mimeType = p.getMIMEType();
+            byte mode = p.getMode();
+            if (mode != Parameter.OUT && mimeType != null) {
+                String javifiedName = Utils.xmlNameToJava(p.getName());
+                if (mode == Parameter.INOUT) {
+                    javifiedName += ".value";
+                }
+                
+                if (mimeType.equals("text/plain")) {
+                    pw.println("        javax.activation.DataHandler _dh" + numberOfInMIMES++ +
+                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.PlainTextDataSource(\"" +
+                            javifiedName + "\", " + javifiedName + "));");
+                }
+            }
+        }
+        numberOfInMIMES = 0;
         
         // Invoke the operation
         pw.println();
@@ -588,7 +642,6 @@ public class JavaStubWriter extends JavaClassWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            String javifiedName = Utils.xmlNameToJava(p.getName());
             if (p.getMode() != Parameter.OUT) {
                 if (needComma) {
                     pw.print(", ");
@@ -596,6 +649,17 @@ public class JavaStubWriter extends JavaClassWriter {
                 else {
                     needComma = true;
                 }
+
+                String mimeType = p.getMIMEType();
+                if (mimeType != null) {
+                    if (mimeType.equals("text/plain")) {
+                        pw.print("_dh" + numberOfInMIMES++);
+                        continue;
+                    }
+                }
+
+                // If we get here, then we didn't find a MIME type
+                String javifiedName = Utils.xmlNameToJava(p.getName());
                 if (p.getMode() == Parameter.IN) {
                     pw.print(Utils.wrapPrimitiveType(p.getType(),
                             javifiedName));
@@ -618,8 +682,8 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("        else {");
             if (allOuts == 1) {
                 if (parms.returnType != null) {
-                    writeOutputAssign(pw, "return ",
-                                      parms.returnType, "_resp");
+                    writeOutputAssign(pw, "return ", parms.returnType,
+                            parms.returnMIMEType, "_resp");
                 }
                 else {
                     // The resp object must go into a holder
@@ -634,8 +698,8 @@ public class JavaStubWriter extends JavaClassWriter {
                                
                     pw.println("            java.util.Map _output;");
                     pw.println("            _output = _call.getOutputParams();");
-                    writeOutputAssign(pw, javifiedName + ".value =",
-                                      p.getType(),
+                    writeOutputAssign(pw, javifiedName + ".value = ",
+                                      p.getType(), p.getMIMEType(),
                                       "_output.get(" + qnameName + ")");
                 }
             }
@@ -648,15 +712,14 @@ public class JavaStubWriter extends JavaClassWriter {
                     String javifiedName = Utils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQName(p.getQName());
                     if (p.getMode() != Parameter.IN) {
-                        writeOutputAssign(pw, javifiedName + ".value =",
-                                          p.getType(),
+                        writeOutputAssign(pw, javifiedName + ".value = ",
+                                          p.getType(), p.getMIMEType(),
                                           "_output.get(" + qnameName + ")");
                     }
                 }
                 if (parms.returnType != null) {
-                    writeOutputAssign(pw, "return ",
-                                      parms.returnType,
-                                      "_resp");
+                    writeOutputAssign(pw, "return ", parms.returnType,
+                            parms.returnMIMEType, "_resp");
                 }
 
             }
@@ -674,24 +737,45 @@ public class JavaStubWriter extends JavaClassWriter {
      *
      */
     private void writeOutputAssign(PrintWriter pw, String target,
-                                   TypeEntry type, 
+                                   TypeEntry type, String mimeType,
                                    String source) {
+        String realTarget = null;
+        if (mimeType != null && mimeType.equals("text/plain")) {
+            realTarget = target;
+            target = "javax.activation.DataHandler _returnDH = ";
+        }
         if (type != null && type.getName() != null) {
             // Try casting the output to the expected output.
             // If that fails, use JavaUtils.convert()
             pw.println("            try {");
             pw.println("                " + target +
-                       Utils.getResponseString(type, source));
+                       Utils.getResponseString(type, mimeType, source));
+
+            if (mimeType != null) {
+                if (mimeType.equals("text/plain")) {
+                    pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
+                    pw.println("                byte[] _DHISBytes = new byte[_DHIS.available()];");
+                    pw.println("                _DHIS.read(_DHISBytes);");
+                    pw.println("                " + realTarget +
+                            Utils.getResponseString(type, null, "new String(_DHISBytes)"));
+                }
+                else {
+                    pw.println("                " + realTarget +
+                            Utils.getResponseString(type, mimeType, source));
+                }
+                target = realTarget;
+            }
+
             pw.println("            } catch (java.lang.Exception _exception) {");
             pw.println("                " + target +
-                       Utils.getResponseString(type, 
+                       Utils.getResponseString(type, null, 
                                          "org.apache.axis.utils.JavaUtils.convert(" +
                                          source + ", " + 
                                          type.getName() + ".class)"));
             pw.println("            }"); 
         } else {
             pw.println("              " + target +
-                       Utils.getResponseString(type, source));
+                       Utils.getResponseString(type, mimeType, source));
         }
     }
 } // class JavaStubWriter

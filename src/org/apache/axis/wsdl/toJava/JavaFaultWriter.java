@@ -103,7 +103,7 @@ public class JavaFaultWriter extends JavaClassWriter {
                                 fault.getMessage().getOrderedParts(null), 
                                 false, 
                                 fault.getName(), 
-                                "unknown");
+                                null);
 
         // Write data members of the exception and getter methods for them
         for (int i = 0; i < params.size(); i++) {

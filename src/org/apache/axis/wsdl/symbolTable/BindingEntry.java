@@ -56,6 +56,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
@@ -85,7 +86,8 @@ public class BindingEntry extends SymTabEntry {
     private int     bindingStyle;
     private boolean hasLiteral;
     private HashMap attributes;
-    private HashMap  parameters = new HashMap ();
+    private HashMap parameters = new HashMap();
+    private Map     mimeTypes; 
     
 
     /**
@@ -94,13 +96,19 @@ public class BindingEntry extends SymTabEntry {
      * contain the input/output/fault body type information.
      */
     public BindingEntry(Binding binding, int bindingType, int bindingStyle,
-            boolean hasLiteral, HashMap attributes) {
+            boolean hasLiteral, HashMap attributes, Map mimeTypes) {
         super(binding.getQName());
         this.binding = binding;
         this.bindingType = bindingType;
         this.bindingStyle = bindingStyle;
         this.hasLiteral = hasLiteral;
         this.attributes = attributes;
+        if (mimeTypes == null) {
+            this.mimeTypes = new HashMap();
+        }
+        else {
+            this.mimeTypes = mimeTypes;
+        }
     } // ctor
 
     /**
@@ -123,6 +131,28 @@ public class BindingEntry extends SymTabEntry {
     public void setParameters(HashMap parameters) {
         this.parameters = parameters;
     }
+
+    /**
+     * Get the mime mapping for the given parameter name.
+     * If there is none, this returns null.
+     */
+    public String getMIMEType(String parameterName) {
+        return (String) mimeTypes.get(parameterName);
+    } // getMIMEType
+
+    /**
+     * Get the MIME types map.
+     */
+    public Map getMIMETypes() {
+        return mimeTypes;
+    } // getMIMETypes
+
+    /**
+     * Set the mime mapping for the given parameter name.
+     */
+    public void setMIMEType(String parameterName, String type) {
+        mimeTypes.put(parameterName, type);
+    } // setMIMEType
 
     /**
      * Get this entry's WSDL4J Binding object.

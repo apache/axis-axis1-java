@@ -460,7 +460,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 fault.getMessage().getOrderedParts(null),
                 false,
                 fault.getName(),
-                "unknown");
+                null);
         } catch (IOException e) {}
         
         // Inspect each TypeEntry referenced in a Fault Message Part
@@ -858,10 +858,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             String javifiedName = Utils.xmlNameToJava(p.getName());
             if (p.getMode() == Parameter.IN) {
-                signature = signature + p.getType().getName() + " " + javifiedName;
+                String typeString;
+                signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;
             }
             else {
-                signature = signature + Utils.holder(p.getType(), emitter) + " "
+                signature = signature + Utils.holder(p.getMIMEType(), p.getType(), emitter) + " "
                         + javifiedName;
             }
         }

@@ -224,6 +224,7 @@ Copyright:
       <fileset dir="${test.dir}">
         <include name="**/*TestCase.java"/>
         <exclude name="**/EmptySATestCase.java"/>
+	<exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
       </fileset>
       <fileset dir="${test.dir}">
         <include name="**/Main.java"/>
@@ -236,6 +237,7 @@ Copyright:
       <fileset dir="${test.dir}/wsdl">
         <include name="**/*TestCase.java"/>
         <exclude name="**/EmptySATestCase.java"/>
+	<exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
       </fileset>
       <fileset dir="${test.dir}/wsdl">
         <include name="**/Main.java"/>

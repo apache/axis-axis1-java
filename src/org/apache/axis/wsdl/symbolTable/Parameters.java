@@ -74,6 +74,9 @@ public class Parameters {
     // Used to create the RPCParam for the return value.
     public QName returnName = null;
 
+    // The MIME type of the return, null if it doesn't exist.
+    public String returnMIMEType = null;
+
     // A map of the faults
     public Map faults = null;
 
