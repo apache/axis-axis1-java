@@ -56,7 +56,6 @@
 package org.apache.axis.utils;
 
 import org.apache.log4j.Category;
-import org.apache.axis.encoding.ArraySerializer;
 
 import java.lang.reflect.Array;
 
@@ -79,6 +78,20 @@ public class JavaUtils
     static Category category =
             Category.getInstance(JavaUtils.class.getName());
 
+    /**
+     * It the argument to the convert(...) method implements
+     * the ConvertCache interface, the convert(...) method 
+     * will use the set/get methods to store and retrieve
+     * converted values.  
+     **/
+    public interface ConvertCache {
+        /**
+         * Set/Get converted values of the convert method.
+         **/
+        public void setConvertedValue(Class cls, Object value);
+        public Object getConvertedValue(Class cls);
+    }
+
     /** Utility function to convert an Object to some desired Class.
      * 
      * Right now this only works for arrays <-> Lists, but it might be
@@ -99,8 +112,8 @@ public class JavaUtils
 
         // See if a previously converted value is stored in the argument.
         Object destValue = null;
-        if (arg instanceof ArraySerializer.ArrayListExtension) {
-            destValue = (( ArraySerializer.ArrayListExtension) arg).getConvertedValue(destClass);
+        if (arg instanceof ConvertCache) {
+            destValue = (( ConvertCache) arg).getConvertedValue(destClass);
             if (destValue != null)
                 return destValue;
         }
@@ -153,8 +166,8 @@ public class JavaUtils
         }
 
         // Store the converted value in the argument if possible.
-        if (arg instanceof ArraySerializer.ArrayListExtension) {
-            (( ArraySerializer.ArrayListExtension) arg).setConvertedValue(destClass, destValue);
+        if (arg instanceof ConvertCache) {
+            (( ConvertCache) arg).setConvertedValue(destClass, destValue);
         }
         return destValue;
     }
