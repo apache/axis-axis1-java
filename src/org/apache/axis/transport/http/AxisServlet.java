@@ -62,6 +62,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
@@ -433,7 +434,26 @@ public class AxisServlet extends HttpServlet
                         }
                     } else {
                         res.setContentType("text/html");
-                        writer.println("<h1>" + req.getRequestURI() +
+
+                        // See if we can locate the desired service.  If we
+                        // can't, return a 404 Not Found.  Otherwise, just
+                        // print the placeholder message.
+
+                        String serviceName;
+                        if (pathInfo.startsWith("/")) {
+                            serviceName = pathInfo.substring(1);
+                        } else {
+                            serviceName = pathInfo;
+                        }
+
+                        SOAPService s = engine.getService(serviceName);
+                        if (s == null) {
+                            // Outta here, no such service....
+                            res.setStatus(404);
+                            return;
+                        }
+
+                        writer.println("<h1>" + serviceName +
                                        "</h1>");
                         writer.println(
                                 "<p>" +
