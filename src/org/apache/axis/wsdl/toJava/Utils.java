@@ -120,6 +120,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             else if (mimeType.equals("text/xml") ||
                      mimeType.equals("application/xml")) {
                 return "org.apache.axis.holders.SourceHolder" + mimeDimensions;
+            } else {
+                return "org.apache.axis.holders.DataHandlerHolder" + mimeDimensions;
             }
         }
 
@@ -587,10 +589,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 return "(org.apache.axis.attachments.OctetStream" + mimeDimensions + ") " + var + ";";
             }
             else {
-                return "(" + type.getName() + ") " + var + ";";
+                return "(javax.activation.DataHandler" + mimeDimensions + ") " + var + ";";
             }
-        }
-        else {
+        } else {
             String objType = (String) TYPES.get(type.getName());
             if (objType != null) {
                 return "((" + objType + ") " + var + ")." + type.getName() + "Value();";
@@ -799,7 +800,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             return Constants.MIME_MULTIPART;
         }
         else {
-            return null;
+            return Constants.MIME_DATA_HANDLER;
         }
     } // getMIMEType
 
