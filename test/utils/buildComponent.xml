@@ -4,25 +4,28 @@
         <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
 ==================================================================== -->
 
 <project default="compile">
-
+<property name="axis.home" location="../.." />
+<property name="componentName" value="test/utils" />
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+	&targets;
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compiling test.utils.*"/>
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
@@ -31,10 +34,8 @@
   </javac>
 </target>
 
-<target name="deploy"/>
-
-<target name="run"/>
-
-<target name="undeploy"/>
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
 
 </project>

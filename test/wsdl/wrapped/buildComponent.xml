@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.wrapped"/>
     <!-- Wrapped Sample Test -->
-    <wsdl2java url="test/wsdl/wrapped/CityBBB.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/wrapped/CityBBB.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -42,7 +42,7 @@
       <include name="test/wsdl/wrapped/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/wrapped/*.java" />
     </javac>

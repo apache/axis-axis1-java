@@ -22,15 +22,15 @@
 
 <target name="clean"/>
 
-<target name="copy">
-    <ant inheritAll="true" antfile="buildTest.xml" target="filegen"/>
+<target name="copy" depends="setenv">
+    <ant inheritAll="true" antfile="${axis.home}/buildTest.xml" target="filegen"/>
 </target>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.clash"/>
     <!-- Name clash test -->
-    <wsdl2java url="test/wsdl/clash/clash.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/clash/clash.wsdl"
+               output="${axis.home}/build/work"
                testcase="yes"
                serverSide="yes">
     </wsdl2java>

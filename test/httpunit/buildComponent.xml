@@ -4,6 +4,7 @@
         <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
 <project name="httpunit" default="default" basedir=".">

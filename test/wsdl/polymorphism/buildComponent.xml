@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.polymorphism"/>
     <!-- This tests polymorphism of return values -->
-      <wsdl2java url="test/wsdl/polymorphism/polymorphism.wsdl"
-                 output="build/work"
+      <wsdl2java url="${axis.home}/test/wsdl/polymorphism/polymorphism.wsdl"
+                 output="${axis.home}/build/work"
                  serverSide="yes"
                  testcase="yes">
           <mapping namespace="http://xml.apache.org/axis/PolymorphismTest"
@@ -46,7 +46,7 @@
       <include name="test/wsdl/polymorphism/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/polymorphism/*.java" />
     </javac>

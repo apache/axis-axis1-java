@@ -22,14 +22,14 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.inheritance"/>
     <!-- Inheritance Test -->
     <!-- Bootstrap to generate Java From WSDL to get stubs/skeletons -->
-    <wsdl2java url="test/wsdl/inheritance/InheritanceTest.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/inheritance/InheritanceTest.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -53,7 +53,7 @@
       <exclude name="test/wsdl/inheritance/*Impl.java" />
     </javac>
     <!-- Now create the WSDL file specifying useInheritedMethods -->
-    <java2wsdl output="build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
                className= "test.wsdl.inheritance.InheritancePortType"
                namespace="urn:InheritanceTest2"
                useInheritedMethods="true"
@@ -63,8 +63,8 @@
     <!-- Delete the intermediate files so we recreate over a clean slate -->
     <delete dir="${build.dir}/classes/test/wsdl/inheritance"/>
     <!-- Recreate Java files from the new WSDL -->
-    <wsdl2java url="build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -84,7 +84,7 @@
     </javac>
     <!-- Generate the WSDL file that the test will validate.-->
     <!-- We do not run WSDL2Java for this test -->
-    <java2wsdl output="build/work/test/wsdl/inheritance/StopExclude.wsdl"
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/inheritance/StopExclude.wsdl"
                className= "test.wsdl.inheritance.Baby"
                namespace="urn:InheritanceTest3"
                useInheritedMethods="true"
@@ -99,8 +99,8 @@
       <classpath refid="classpath" />
       <include name="test/wsdl/inheritance/*.java" />
     </javac>
-
-    <javac srcdir="." destdir="${build.dest}"
+    
+     <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/inheritance/*.java" />

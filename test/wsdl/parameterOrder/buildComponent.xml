@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.parameterOrder"/>
     <!-- This tests parameterOrder.  -->
-    <wsdl2java url="test/wsdl/parameterOrder/parameterOrder.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/parameterOrder/parameterOrder.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                testcase="yes">
     </wsdl2java>
@@ -39,7 +39,7 @@
       <include name="test/wsdl/parameterOrder/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/parameterOrder/*.java" />
     </javac>

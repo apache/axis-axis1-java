@@ -22,14 +22,14 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.opStyles"/>
     <!-- Operation style test (oneway, request/response, -->
     <!-- solicit/response, notification -->
-    <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/opStyles/opStyles.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                skeletonDeploy="yes"
                testcase="yes">
@@ -41,7 +41,7 @@
       <include name="test/wsdl/opStyles/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/opStyles/*.java" />
     </javac>

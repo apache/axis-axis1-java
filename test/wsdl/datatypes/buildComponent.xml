@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.datatypes"/>
     <!-- DataType Structure Test -->
-    <wsdl2java url="test/wsdl/datatypes/DataTypes.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/datatypes/DataTypes.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
                testcase="yes">
@@ -41,7 +41,7 @@
       <include name="test/wsdl/datatypes/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/datatypes/*.java" />
     </javac>

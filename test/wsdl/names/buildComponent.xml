@@ -22,15 +22,15 @@
 
 <target name="clean"/>
 
-<target name="copy">
+<target name="copy" depends="setenv">
    <echo message="Copying"/>
 </target>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.names"/>
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
-    <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/names/JavaNames.wsdl"
+               output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
                noimports="no"
