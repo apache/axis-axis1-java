@@ -85,7 +85,7 @@ public class MessageElement
     protected String    href;
     protected boolean   _isRoot = true;
     protected SOAPEnvelope message = null;
-    protected boolean   isDirty = false;
+    protected boolean   _isDirty = false;
     
     protected DeserializationContext context;
     
@@ -185,6 +185,9 @@ public class MessageElement
     {
         endEventIndex = endIndex;
     }
+    
+    public boolean isDirty() { return _isDirty; }
+    public void setDirty(boolean dirty) { _isDirty = dirty; };
     
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
@@ -302,7 +305,7 @@ public class MessageElement
      */
     public final void output(SerializationContext context) throws Exception
     {
-        if ((recorder != null) && (!isDirty)) {
+        if ((recorder != null) && (!_isDirty)) {
             recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
             return;
         }
