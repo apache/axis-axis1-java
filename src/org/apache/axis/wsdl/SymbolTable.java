@@ -415,9 +415,9 @@ public class SymbolTable {
         // Use the namespace uri to get the appropriate package
         String pkg = getPackage(qName.getNamespaceURI());
         if (pkg != null) {
-            fullJavaName = pkg + "." + Utils.xmlNameToJava(qName.getLocalPart());
+            fullJavaName = pkg + "." + Utils.xmlNameToJavaClass(qName.getLocalPart());
         } else {
-            fullJavaName = Utils.xmlNameToJava(qName.getLocalPart());
+            fullJavaName = Utils.xmlNameToJavaClass(qName.getLocalPart());
         }
         return fullJavaName;
     } // getJavaName

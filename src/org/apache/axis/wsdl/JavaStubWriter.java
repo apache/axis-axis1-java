@@ -111,7 +111,7 @@ public class JavaStubWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(portType.getQName());
-        String name = Utils.xmlNameToJava(qname.getLocalPart());
+        String name = Utils.xmlNameToJavaClass(qname.getLocalPart());
         String portTypeName = ptEntry.getName();
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {

@@ -281,7 +281,8 @@ public class JavaWriterFactory implements WriterFactory {
      * Construct the signatures.  signature is used by both the interface and the stub.
      * skelSig is used by the skeleton.
      */
-    private void constructSignatures(Parameters parms, String name) {
+    private void constructSignatures(Parameters parms, String opName) {
+        String name  = Utils.xmlNameToJava(opName);
         int allOuts = parms.outputs + parms.inouts;
         String ret = parms.returnType == null ? "void" : parms.returnType.getName();
         String signature = "    public " + ret + " " + name + "(";

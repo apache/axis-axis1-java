@@ -92,18 +92,17 @@ public class JavaComplexTypeWriter extends JavaWriter {
         Node node = type.getNode();
 
         // We are only interested in the java names of the types, so replace the
-        // Types in the list with their java names.
+        // Types in the list with their java names.  
+        // Also filter element names for Java 
         for (int i=0; i < elements.size(); i+=2) {
             elements.setElementAt(((Type) elements.get(i)).getJavaName(), i);
+            elements.setElementAt( Utils.xmlNameToJava((String) elements.get(i + 1)), i + 1);
         }
 
         pw.println("public class " + className + " implements java.io.Serializable {");
 
         for (int i = 0; i < elements.size(); i += 2) {
             String variable = (String) elements.get(i + 1);
-            if (Utils.isJavaKeyword(variable)) {
-                variable = Utils.makeNonJavaKeyword(variable);
-            }
             pw.println("    private " + elements.get(i) + " " + variable + ";");
         }
 
@@ -116,17 +115,11 @@ public class JavaComplexTypeWriter extends JavaWriter {
             for (int i = 0; i < elements.size(); i += 2) {
                 if (i != 0) pw.print(", ");
                 String variable = (String) elements.get(i + 1);
-                if (Utils.isJavaKeyword(variable)) {
-                    variable = Utils.makeNonJavaKeyword(variable);
-                }
                 pw.print((String) elements.get(i) + " " + variable);
             }
             pw.println(") {");
             for (int i = 1; i < elements.size(); i += 2) {
                 String variable = (String) elements.get(i);
-                if (Utils.isJavaKeyword(variable)) {
-                    variable = Utils.makeNonJavaKeyword(variable);
-                }
                 pw.println("        this." + variable + " = " + variable + ";");
             }
             pw.println("    }");
@@ -137,9 +130,6 @@ public class JavaComplexTypeWriter extends JavaWriter {
             String name = (String) elements.get(i + 1);
             String capName = Utils.capitalizeFirstChar(name);
 
-            if (Utils.isJavaKeyword(name)) {
-                name = Utils.makeNonJavaKeyword(name);
-            }
             pw.println("    public " + typeName + " get" + capName + "() {");
             pw.println("        return " + name + ";");
             pw.println("    }");
