@@ -38,12 +38,26 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
         super(is);
     }
 
-    public int read()
+    public synchronized int read()
         throws IOException {
-        byte[] d = new byte[1];
-        int rc = read(d, 0, 1);
-
-        return rc > 0 ? (d[0] & 0xFF) : rc;
+        if (closed) {
+            return -1;
+        }
+        try {
+            if (chunkSize < 1L) {
+                if (0l == getChunked()) {
+                    return -1;
+                }
+            }
+            int rc = in.read();
+            if (rc > 0) {
+                chunkSize--;
+            }
+            return rc;
+        } catch (IOException e) {
+            closed = true;
+            throw e;
+        }
     }
 
     public int read(byte[] b)
@@ -52,11 +66,13 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
     }
 
     public synchronized int read(byte[] b,
-        int off,
-        int len)
+                                 int off,
+                                 int len)
         throws IOException {
-        if (closed) return -1;
-        int cs = (int) Math.min(Integer.MAX_VALUE, chunkSize);
+        if (closed) {
+            return -1;
+        }
+
         int totalread = 0;
         int bytesread = 0; 
 
@@ -85,7 +101,9 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
 
     public long skip(final long n)
         throws IOException {
-        if (closed) return 0;
+        if (closed) {
+            return 0;
+        }
         long skipped = 0l;
         byte[] b = new byte[1024];
         int bread = -1;
@@ -100,7 +118,9 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
 
     public int available()
         throws IOException {
-        if (closed) return 0;
+        if (closed) {
+            return 0;
+        }
         int rc = (int) Math.min(chunkSize, Integer.MAX_VALUE);
 
         return  Math.min(rc, in.available());
@@ -151,7 +171,9 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
     public void close() throws IOException {
    
         synchronized (this) {
-            if (closed) return;
+            if (closed) {
+                return;
+            }
             closed = true;
         }
 

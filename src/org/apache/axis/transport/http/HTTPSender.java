@@ -57,6 +57,53 @@ public class HTTPSender extends BasicHandler {
 
     protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
 
+    private static final String ACCEPT_HEADERS = 
+        HTTPConstants.HEADER_ACCEPT + //Limit to the types that are meaningful to us.
+        ": " +
+        HTTPConstants.HEADER_ACCEPT_APPL_SOAP +
+        ", " +
+        HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME +
+        ", " +
+        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED +
+        ", " +
+        HTTPConstants.HEADER_ACCEPT_TEXT_ALL +
+        "\r\n" +
+        HTTPConstants.HEADER_USER_AGENT +   //Tell who we are.
+        ": " +
+        Messages.getMessage("axisUserAgent") +
+        "\r\n";
+
+    private static final String CACHE_HEADERS = 
+        HTTPConstants.HEADER_CACHE_CONTROL +   //Stop caching proxies from caching SOAP reqeuest.
+        ": " +
+        HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE +
+        "\r\n" +
+        HTTPConstants.HEADER_PRAGMA +
+        ": " +
+        HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE +
+        "\r\n";
+
+    private static final String CHUNKED_HEADER =
+        HTTPConstants.HEADER_TRANSFER_ENCODING +
+        ": " +
+        HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED +
+        "\r\n";
+
+    private static final String HEADER_CONTENT_TYPE_LC =
+        HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase();
+    
+    private static final String HEADER_LOCATION_LC = 
+        HTTPConstants.HEADER_LOCATION.toLowerCase();
+    
+    private static final String HEADER_CONTENT_LOCATION_LC = 
+        HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase();
+    
+    private static final String HEADER_CONTENT_LENGTH_LC = 
+        HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase();
+    
+    private static final String HEADER_TRANSFER_ENCODING_LC = 
+        HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase();
+
     /**
      * the url; used for error reporting
      */
@@ -284,11 +331,11 @@ public class HTTPSender extends BasicHandler {
         MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
 
         if (posting) {
-        	String contentType;
+                String contentType;
             if (mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE) != null) {
-            	contentType = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0];
+                contentType = mimeHeaders.getHeader(HTTPConstants.HEADER_CONTENT_TYPE)[0];
             } else {
-            	contentType = reqMessage.getContentType(msgContext.getSOAPConstants());
+                contentType = reqMessage.getContentType(msgContext.getSOAPConstants());
             }
             header2.append(HTTPConstants.HEADER_CONTENT_TYPE)
                     .append(": ")
@@ -296,33 +343,13 @@ public class HTTPSender extends BasicHandler {
                     .append("\r\n");
         }
 
-        header2.append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
-                .append( ": ")
-                .append( HTTPConstants.HEADER_ACCEPT_APPL_SOAP)
-                .append( ", ")
-                .append( HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME)
-                .append( ", ")
-                .append( HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)
-                .append( ", ")
-                .append( HTTPConstants.HEADER_ACCEPT_TEXT_ALL)
-                .append("\r\n")
-                .append(HTTPConstants.HEADER_USER_AGENT)   //Tell who we are.
-                .append( ": ")
-                .append(Messages.getMessage("axisUserAgent"))
-                .append("\r\n")
+        header2.append(ACCEPT_HEADERS)
                 .append(HTTPConstants.HEADER_HOST)  //used for virtual connections
                 .append(": ")
                 .append(host)
                 .append((port == -1)?(""):(":" + port))
                 .append("\r\n")
-                .append(HTTPConstants.HEADER_CACHE_CONTROL)   //Stop caching proxies from caching SOAP reqeuest.
-                .append(": ")
-                .append(HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE)
-                .append("\r\n")
-                .append(HTTPConstants.HEADER_PRAGMA)
-                .append(": ")
-                .append(HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE)
-                .append("\r\n")
+                .append(CACHE_HEADERS)
                 .append(HTTPConstants.HEADER_SOAP_ACTION)  //The SOAP action.
                 .append(": \"")
                 .append(action)
@@ -337,10 +364,7 @@ public class HTTPSender extends BasicHandler {
                         .append("\r\n");
             } else {
                 //Do http chunking.
-                header2.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
-                        .append(": ")
-                        .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
-                        .append("\r\n");
+                header2.append(CHUNKED_HEADER);
             }
         }
 
@@ -351,7 +375,7 @@ public class HTTPSender extends BasicHandler {
                 String headerName = mimeHeader.getName();
                 if (headerName.equals(HTTPConstants.HEADER_CONTENT_TYPE)
                         || headerName.equals(HTTPConstants.HEADER_SOAP_ACTION)) {
-                	continue;
+                        continue;
                 }
                 header2.append(mimeHeader.getName())
                 .append(": ")
@@ -612,28 +636,24 @@ public class HTTPSender extends BasicHandler {
         }
 
         /* All HTTP headers have been read. */
-    	String contentType =
-                (String) headers
-                .get(HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+        String contentType = (String) headers.get(HEADER_CONTENT_TYPE_LC);
                         
-    	contentType = (null == contentType)
+        contentType = (null == contentType)
                 ? null
                 : contentType.trim();
                 
-    	String location =
-                (String) headers
-                .get(HTTPConstants.HEADER_LOCATION.toLowerCase());
+        String location = (String) headers.get(HEADER_LOCATION_LC);
 
-    	location = (null == location)
+        location = (null == location)
                 ? null
                 : location.trim();
                 
-    	if ((returnCode > 199) && (returnCode < 300)) {
-        	if (returnCode == 202)
-            	return inp;
+        if ((returnCode > 199) && (returnCode < 300)) {
+                if (returnCode == 202)
+                return inp;
             // SOAP return is OK - so fall through
         } else if (msgContext.getSOAPConstants() ==
-            	SOAPConstants.SOAP12_CONSTANTS) {
+                SOAPConstants.SOAP12_CONSTANTS) {
             // For now, if we're SOAP 1.2, fall through, since the range of
             // valid result codes is much greater
         } else if ((contentType != null) && !contentType.startsWith("text/html")
@@ -642,14 +662,14 @@ public class HTTPSender extends BasicHandler {
         } else if ((location != null) && (returnCode == 307)) {
             // Temporary Redirect (HTTP: 307)            
             // close old connection
-        	inp.close();
-        	socketHolder.getSocket().close();    
+                inp.close();
+                socketHolder.getSocket().close();    
             // remove former result and set new target url
-        	msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-        	msgContext.setProperty(MessageContext.TRANS_URL, location);
+                msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+                msgContext.setProperty(MessageContext.TRANS_URL, location);
             // next try
-        	invoke(msgContext);            
-        	return inp;
+                invoke(msgContext);            
+                return inp;
         } else {
             // Unknown return code - so wrap up the content into a
             // SOAP Fault.
@@ -670,36 +690,30 @@ public class HTTPSender extends BasicHandler {
             throw fault;
         }
 
-        String contentLocation =
-                (String) headers
-                .get(HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
+        String contentLocation = 
+            (String) headers.get(HEADER_CONTENT_LOCATION_LC);
 
         contentLocation = (null == contentLocation)
                 ? null
                 : contentLocation.trim();
 
-        String contentLength =
-                (String) headers
-                .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
+        String contentLength = 
+            (String) headers.get(HEADER_CONTENT_LENGTH_LC);
 
         contentLength = (null == contentLength)
                 ? null
                 : contentLength.trim();
 
         String transferEncoding =
-                (String) headers
-                .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
+            (String) headers.get(HEADER_TRANSFER_ENCODING_LC);
 
         if (null != transferEncoding) {
-            transferEncoding = transferEncoding.toLowerCase();
+            transferEncoding = transferEncoding.trim().toLowerCase();
+            if (transferEncoding.equals(
+                   HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
+                inp = new ChunkedInputStream(inp);
+            }
         }
-
-        if (null != transferEncoding
-                && transferEncoding.trim()
-                .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
-            inp = new ChunkedInputStream(inp);
-        }
-
 
         outMsg = new Message( new SocketInputStream(inp, socketHolder.getSocket()), false,
                               contentType, contentLocation);

@@ -48,7 +48,8 @@ public class ChunkedOutputStream extends FilterOutputStream {
         write(b, 0, b.length);
     }
 
-    static final byte[] crlf = "\r\n".getBytes();
+    static final byte[] CRLF = "\r\n".getBytes();
+    static final byte[] LAST_TOKEN = "0\r\n\r\n".getBytes();
 
     public void write(byte[] b,
         int off,
@@ -57,9 +58,9 @@ public class ChunkedOutputStream extends FilterOutputStream {
         if (len == 0) return;
            
         out.write((Integer.toHexString(len)).getBytes());
-        out.write(crlf);
+        out.write(CRLF);
         out.write(b, off, len);
-        out.write(crlf);
+        out.write(CRLF);
     }
 
     /*
@@ -74,7 +75,7 @@ public class ChunkedOutputStream extends FilterOutputStream {
             if (eos) return;
             eos = true;
         }
-        out.write("0\r\n\r\n".getBytes());
+        out.write(LAST_TOKEN);
         out.flush();
     }
 
