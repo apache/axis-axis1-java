@@ -73,6 +73,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
  * @author Doug Davis (dug@us.ibm.com.com)
  */
 public class GetQuote {
+    public  String symbol ;
     
   // helper function; does all the real work
     public float getQuote (String args[]) throws Exception {
@@ -88,7 +89,7 @@ public class GetQuote {
       }
 
       String action = "urn:xmltoday-delayed-quotes";
-      String   symbol = args[0] ;
+      symbol = args[0] ;
       ServiceClient call = new ServiceClient(new HTTPClient());
       call.set(HTTPClient.URL, opts.getURL());
       call.set(HTTPClient.ACTION, action);
@@ -128,9 +129,10 @@ public class GetQuote {
 
   public static void main(String args[]) {
     try {
-        float val = new GetQuote().getQuote(args);
+        GetQuote gq = new GetQuote();
+        float val = gq.getQuote(args);
         // args array gets side-effected
-        System.out.println(args[0] + ": " + val);
+        System.out.println(gq.symbol + ": " + val);
     }
     catch( Exception e ) {
       if ( e instanceof AxisFault ) ((AxisFault)e).dump();
