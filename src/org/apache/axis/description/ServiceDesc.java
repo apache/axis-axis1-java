@@ -185,7 +185,12 @@ public class ServiceDesc {
         this.implClass = implClass;
         if (Skeleton.class.isAssignableFrom(implClass)) {
             isSkeletonClass = true;
+            loadSkeletonOperations();
         }
+    }
+
+    private void loadSkeletonOperations() {
+
     }
 
     public TypeMapping getTypeMapping() {
@@ -422,6 +427,43 @@ public class ServiceDesc {
             !allowedMethods.contains(methodName))
             return;
 
+        // If we're a skeleton class, make sure we don't already have any
+        // OperationDescs for this name (as that might cause conflicts),
+        // then load them up from the Skeleton class.
+        if (isSkeletonClass) {
+            // FIXME : Check for existing ones and fault if found
+
+            if (skelMethod == null) {
+                // Grab metadata from the Skeleton for parameter info
+                try {
+                    skelMethod = implClass.getDeclaredMethod(
+                                            "getOperationDescsByName",
+                                            new Class [] { int.class });
+                } catch (NoSuchMethodException e) {
+                } catch (SecurityException e) {
+                }
+                if (skelMethod == null) {
+                    // FIXME : Throw an error?
+                    return;
+                }
+            }
+            try {
+                OperationDesc [] skelDescs =
+                        (OperationDesc [])skelMethod.invoke(implClass,
+                                            new Object [] { methodName });
+                for (int i = 0; i < skelDescs.length; i++) {
+                    OperationDesc operationDesc = skelDescs[i];
+                    addOperationDesc(operationDesc);
+                }
+            } catch (IllegalAccessException e) {
+                return;
+            } catch (IllegalArgumentException e) {
+                return;
+            } catch (InvocationTargetException e) {
+                return;
+            }
+        }
+
         // OK, go find any current OperationDescs for this method name and
         // make sure they're synced with the actual class.
         if (name2OperationsMap != null) {
@@ -477,60 +519,33 @@ public class ServiceDesc {
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
         Class [] paramTypes = method.getParameterTypes();
+        String [] paramNames =
+                JavaUtils.getParameterNamesFromDebugInfo(method);
 
-        if (isSkeletonClass) {
-            if (skelMethod == null) {
-                // Grab metadata from the Skeleton for parameter info
-                try {
-                    skelMethod = implClass.getDeclaredMethod(
-                                            "getOperationDescByName",
-                                            new Class [] { int.class });
-                } catch (NoSuchMethodException e) {
-                } catch (SecurityException e) {
-                }
-                if (skelMethod == null) {
-                    // FIXME : Throw an error?
-                    return;
-                }
+        for (int k = 0; k < paramTypes.length; k++) {
+            Class type = paramTypes[k];
+            ParameterDesc paramDesc = new ParameterDesc();
+            // If we have a name for this param, use it, otherwise call
+            // it "in*"
+            if (paramNames != null) {
+                paramDesc.setName(paramNames[k+1]);
+            } else {
+                paramDesc.setName("in" + k);
             }
-            try {
-                OperationDesc skelDesc =
-                        (OperationDesc)skelMethod.invoke(implClass,
-                                            new Object [] { method.getName() });
-            } catch (IllegalAccessException e) {
-            } catch (IllegalArgumentException e) {
-            } catch (InvocationTargetException e) {
+            paramDesc.setJavaType(type);
+
+            // If it's a Holder, mark it INOUT and set the type to the
+            // held type.  Otherwise it's IN with its own type.
+
+            Class heldClass = JavaUtils.getHolderValueType(type);
+            if (heldClass != null) {
+                paramDesc.setMode(ParameterDesc.INOUT);
+                paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+            } else {
+                paramDesc.setMode(ParameterDesc.IN);
+                paramDesc.setTypeQName(tm.getTypeQName(type));
             }
-            //operation.setParameters(skelDesc.getParameters());
-        } else {
-            String [] paramNames =
-                    JavaUtils.getParameterNamesFromDebugInfo(method);
-
-            for (int k = 0; k < paramTypes.length; k++) {
-                Class type = paramTypes[k];
-                ParameterDesc paramDesc = new ParameterDesc();
-                // If we have a name for this param, use it, otherwise call
-                // it "in*"
-                if (paramNames != null) {
-                    paramDesc.setName(paramNames[k+1]);
-                } else {
-                    paramDesc.setName("in" + k);
-                }
-                paramDesc.setJavaType(type);
-
-                // If it's a Holder, mark it INOUT and set the type to the
-                // held type.  Otherwise it's IN with its own type.
-
-                Class heldClass = JavaUtils.getHolderValueType(type);
-                if (heldClass != null) {
-                    paramDesc.setMode(ParameterDesc.INOUT);
-                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-                } else {
-                    paramDesc.setMode(ParameterDesc.IN);
-                    paramDesc.setTypeQName(tm.getTypeQName(type));
-                }
-                operation.addParameter(paramDesc);
-            }
+            operation.addParameter(paramDesc);
         }
 
         addOperationDesc(operation);
