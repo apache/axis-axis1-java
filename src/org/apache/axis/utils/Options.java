@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,11 +72,11 @@ public class Options {
   // SOASS (Start of Axis Specific Stuff)
 
   String  host ;      // -h    also -l (url)
-  String  port ;      // -o
+  String  port ;      // -p
   String  servlet ;   // -s
 
   String  user ;      // -u
-  String  passwd ;    // -p
+  String  passwd ;    // -w
 
   // EOASS
   //////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ public class Options {
   }
 
   public String getPassword() {
-    if ( passwd == null ) passwd = isValueSet( 'p' );
+    if ( passwd == null ) passwd = isValueSet( 'w' );
     return( passwd );
   }
   // EOASS
