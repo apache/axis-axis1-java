@@ -118,6 +118,7 @@ Copyright:
       <exclude name="**/org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/handlers/SOAPMonitorHandler.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/monitor/SOAPMonitorService.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/providers/ComProvider.java" unless="combridge.present"/>
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
