@@ -57,6 +57,7 @@ package org.apache.axis.message;
 import org.apache.axis.encoding.SerializationContext;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.description.ParameterDesc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +80,9 @@ public class RPCParam
     
     private QName qname;
     public Object value;
-    
+
+    private ParameterDesc paramDesc;
+
     private static Field valueField;
     static {
         Class cls = RPCParam.class;
@@ -140,7 +143,15 @@ public class RPCParam
     {
         return valueField;
     }
-    
+
+    public ParameterDesc getParamDesc() {
+        return paramDesc;
+    }
+
+    public void setParamDesc(ParameterDesc paramDesc) {
+        this.paramDesc = paramDesc;
+    }
+
     public void serialize(SerializationContext context)
         throws IOException
     {

@@ -64,6 +64,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
@@ -82,21 +84,46 @@ import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.Vector;
 
+/**
+ * This is the SOAPHandler which is called for each RPC parameter as we're
+ * deserializing the XML for a method call or return.  In other words for
+ * this XML:
+ *
+ * <methodName>
+ *   <param1 xsi:type="xsd:string">Hello!</param1>
+ *   <param2>3.14159</param2>
+ * </methodName>
+ *
+ * ...we'll get onStartChild() events for <param1> and <param2>.
+ *
+ * @author Glen Daniels (gdaniels@apache.org)
+ */
 public class RPCHandler extends SOAPHandler
 {
     protected static Log log =
         LogFactory.getLog(RPCHandler.class.getName());
     
-    private RPCElement call;
+    private RPCElement rpcElem;
     private RPCParam currentParam;
+    private boolean isResponse;
 
-    public RPCHandler(RPCElement call)
+    public RPCHandler(RPCElement rpcElem, boolean isResponse)
         throws SAXException
     {
-        this.call = call;
+        this.rpcElem = rpcElem;
+        this.isResponse = isResponse;
     }
 
 
+    /**
+     * Register the start of a parameter (child element of the method call
+     * element).
+     *
+     * Our job here is to figure out a) which parameter this is (based on
+     * the QName of the element or its position), and b) what type it is
+     * (based on the xsi:type attribute or operation metadata) so we can
+     * successfully deserialize it.
+     */
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
                                     String prefix,
@@ -104,23 +131,26 @@ public class RPCHandler extends SOAPHandler
                                     DeserializationContext context)
         throws SAXException
     {
-        /** Potential optimizations:
-         * 
-         * - Cache typeMappingRegistry
-         * - Cache service description
-         */
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "RPCHandler.onStartChild()"));
+            log.debug(JavaUtils.getMessage("enter00",
+                                           "RPCHandler.onStartChild()"));
         }
         
-        Vector params = call.getParams();
+        Vector params = rpcElem.getParams();
         
         // This is a param.
         currentParam = new RPCParam(namespace, localName, null);
-        call.addParam(currentParam);
+        rpcElem.addParam(currentParam);
         
         MessageElement curEl = context.getCurElement();
         QName type = null;
+        QName qname = new QName(namespace, localName);
+        ParameterDesc paramDesc = null;
+
+        OperationDesc operation = rpcElem.getOperation();
+
+        // Grab xsi:type attribute if present, on either this element or
+        // the referent (if it's an href).
         if (curEl.getHref() != null) {
             MessageElement ref = context.getElementByID(curEl.getHref());
             if (ref != null)
@@ -132,52 +162,50 @@ public class RPCHandler extends SOAPHandler
                                                    localName,
                                                    attributes);
         }
+
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
 
-        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,"nil");
+        // If we have an operation descriptor, try to associate this parameter
+        // with the appropriate ParameterDesc
+        if (operation != null) {
+            // Try by name first
+            if (isResponse) {
+                paramDesc = operation.getOutputParamByQName(qname);
+            } else {
+                paramDesc = operation.getInputParamByQName(qname);
+            }
+
+            // If that didn't work, try position
+            // FIXME : Do we need to be in EITHER named OR positional
+            //         mode?  I.e. will it screw us up to find something
+            //         by position if we've already looked something up
+            //         by name?  I think so...
+            if (paramDesc == null) {
+                paramDesc = operation.getParameter(params.size() - 1);
+            }
+
+            if (paramDesc != null) {
+                // Keep the association so we can use it later
+                // (see RPCProvider.processMessage())
+                currentParam.setParamDesc(paramDesc);
+
+                if (type == null) {
+                    type = paramDesc.getTypeQName();
+                }
+            }
+
+            // FIXME : We should check here to make sure any specified
+            // xsi:type jibes with the expected type in the ParamDesc!!
+        }
+
+
+        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,
+                                           "nil");
 
         if ( isNil != null && isNil.equals("true") )
           return( (SOAPHandler) new DeserializerImpl() );
-        
-        // xsi:type always overrides everything else
-        if (type == null) {
-            // check the introspected types
-            //
-            // NOTE : We don't check params.isEmpty() here because we
-            //        must have added at least one above...
-            //
-
-            // No xsi:type so in the return rpc case try to get it from
-            // the Call object
-            MessageContext msgContext = context.getMessageContext();
-            Message        msg = msgContext.getCurrentMessage();
-            if ( msg != null && msg.getMessageType() == Message.RESPONSE ) {
-                Call c = (Call) msgContext.getProperty( MessageContext.CALL );
-                if ( c != null ) {
-                    // First look for this param by name
-                    QName qname = new QName(namespace, localName);
-                    type = c.getParameterTypeByQName(qname);
-
-                    // If we can't find it by name then assume it must
-                    // be the return type - is this correct/safe????
-                    if ( type == null )
-                        type = c.getReturnType();
-                }
-            }
-
-            if (type == null && call.getJavaParamTypes() !=null &&
-                params.size() <= call.getJavaParamTypes().length) {
-
-                TypeMapping typeMap = context.getTypeMapping();
-                int index = params.size()-1;
-                type = typeMap.getTypeQName(call.getJavaParamTypes()[index]);
-                if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("typeFromParms00", "" + type));
-                }
-            }
-        }
         
         Deserializer dser;
         if (type != null) {
@@ -190,17 +218,18 @@ public class RPCHandler extends SOAPHandler
             throw new SAXException(JavaUtils.getMessage(
                     "noDeser01", localName,"" + type));
         }
-        
+
         dser.registerValueTarget(
-             new FieldTarget(currentParam, 
+             new FieldTarget(currentParam,
                  RPCParam.getValueField()));
-        
+
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));
+            log.debug(JavaUtils.getMessage("exit00",
+                                           "RPCHandler.onStartChild()"));
         }
         return (SOAPHandler) dser;
     }
-    
+
     public void endElement(String namespace, String localName,
                            DeserializationContext context)
         throws SAXException
@@ -209,6 +238,6 @@ public class RPCHandler extends SOAPHandler
             log.debug(JavaUtils.getMessage("setProp00",
                     "MessageContext", "RPCHandler.endElement()."));
         }
-        context.getMessageContext().setProperty("RPC", call);
+        context.getMessageContext().setProperty("RPC", rpcElem);
     }
 }

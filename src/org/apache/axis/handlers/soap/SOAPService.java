@@ -74,6 +74,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,6 +89,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.beans.IntrospectionException;
+import java.io.File;
+import java.io.FileInputStream;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -278,6 +281,29 @@ public class SOAPService extends SimpleTargetedChain
     public void setPropertyParent(Hashtable parent)
     {
         ((LockableHashtable)options).setParent(parent);
+    }
+
+    /**
+     * Generate WSDL.  If we have a specific file configured in the
+     * ServiceDesc, just return that.  Otherwise run through all the Handlers
+     * (including the provider) and call generateWSDL() on them via our
+     * parent's implementation.
+     */
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        if (serviceDescription == null ||
+                serviceDescription.getWSDLFile() == null) {
+            super.generateWSDL(msgContext);
+            return;
+        }
+
+        // Got a WSDL file in the service description, so try and read it
+        try {
+            Document doc = XMLUtils.newDocument(
+                    new FileInputStream(serviceDescription.getWSDLFile()));
+            msgContext.setProperty("WSDL", doc);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
     }
     /*********************************************************************
      * Administration and management APIs

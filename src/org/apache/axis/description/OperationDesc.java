@@ -56,6 +56,7 @@ package org.apache.axis.description;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * An OperationDesc is an abstract description of an operation on a service.
@@ -88,6 +89,9 @@ public class OperationDesc {
 
     /** This operation's style.  If null, we default to our parent's */
     private Integer style;
+
+    /** The number of "in" params (i.e. IN or INOUT) for this operation */
+    private int numInParams = 0;
 
     /**
      * Default constructor.
@@ -162,14 +166,77 @@ public class OperationDesc {
         return style.intValue();
     }
 
-    public void addParameter(Parameter param)
+    public void addParameter(ParameterDesc param)
     {
+        // Should we enforce adding INs then INOUTs then OUTs?
+
         parameters.add(param);
+        if ((param.getMode() == ParameterDesc.IN) ||
+            (param.getMode() == ParameterDesc.INOUT)) {
+            param.setOrder(numInParams++);
+        }
     }
 
-    public Parameter getParameter(int i)
+    public ParameterDesc getParameter(int i)
     {
-        return (Parameter)parameters.get(i);
+        return (ParameterDesc)parameters.get(i);
+    }
+
+    public ArrayList getParameters() {
+        return parameters;
+    }
+
+    public int getNumInParams() {
+        return numInParams;
+    }
+
+    public int getNumParams() {
+        return parameters.size();
+    }
+
+    public ParameterDesc getParamByQName(QName qname)
+    {
+        for (Iterator i = parameters.iterator(); i.hasNext();) {
+            ParameterDesc param = (ParameterDesc) i.next();
+            if (param.getQName().equals(qname))
+                return param;
+        }
+
+        return null;
+    }
+
+    public ParameterDesc getInputParamByQName(QName qname)
+    {
+        ParameterDesc param = null;
+
+        param = getParamByQName(qname);
+
+        if ((param == null) || (param.getMode() != ParameterDesc.IN)) {
+            param = null;
+        }
+
+        return param;
+    }
+
+    public ParameterDesc getOutputParamByQName(QName qname)
+    {
+        ParameterDesc param = null;
+
+        param = getParamByQName(qname);
+
+        if (param != null && param.getMode() == ParameterDesc.IN) {
+            param = null;
+        }
+
+        if ((param == null) || (param.getMode() == ParameterDesc.IN)) {
+            if (returnQName == null || qname.equals(returnQName)) {
+                param = new ParameterDesc();
+                param.setQName(qname);
+                param.setTypeQName(returnType);
+            }
+        }
+
+        return param;
     }
 }
 

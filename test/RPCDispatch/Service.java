@@ -22,6 +22,15 @@ public class Service {
     }
 
     /**
+     * Concatenate two strings - used to test out-of-order parameter
+     * matching.
+     */
+    public String concatenate(String a1, String a2)
+    {
+        return a1 + a2;
+    }
+
+    /**
      * Reverse the order of a struct
      */
     public Data reverseData(Data input) throws Exception {
