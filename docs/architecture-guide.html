@@ -58,7 +58,7 @@ In this section we'll give you an overview of how the core of Axis works.
 Handlers and the Message Path in Axis</h3>
 Put simply, Axis is all about processing Messages. When the central Axis
 processing logic runs, a series of <b>Handlers</b> are each invoked in
-order. The particular oder is determined by two factors - deployment configuration
+order. The particular order is determined by two factors - deployment configuration
 and whether the engine is a client or a server. The object which is passed
 to each Handler invocation is a <b>MessageContext</b>. A MessageContext
 is a structure which contains several important parts: 1) a "request" message,
@@ -75,14 +75,16 @@ As a <b>client</b>, application code (usually aided by the client programming
 model of Axis) will generate a MessageContext and invoke the Axis processing
 framework.</li>
 </ol>
+<p>
 In either case, the Axis framework's job is simply to pass the resulting
-MessageContext through a configurable set of Handlers, each of which has
+MessageContext through the configured set of Handlers, each of which has
 an opportunity to do whatever it is designed to do with the MessageContext.
 <h3>
 Message Path on the Server</h3>
 The server side message path is shown in the following diagram. The small
 cylinders represent Handlers and the larger, enclosing cylinders represent
-Chains.
+<b>Chains</b> (ordered collections of Handlers which will be described
+shortly).
 <br><img SRC="ServerMessagePath.jpg" VSPACE=30 height=282 width=602>
 <br>A message arrives (in some protocol-specific manner) at a Transport
 Listener. In this case, let's assume the Listener is a HTTP servlet. It's
@@ -102,8 +104,7 @@ request Chain exists, it will be invoked, passing the MessageContext into
 the invoke() method. This will result in calling all the Handlers specified
 in the request Chain configuration.
 <p>After the transport request Handler, the engine locates a global request
-Chain, if configured (in the &lt;requestFlow> element of the WSDD &lt;globalConfiguration>,
-as explained in the WSDD deployment section later in this document), and
+Chain, if configured, and
 then invokes any Handlers specified therein.
 <p>At some point during the processing up until now, some Handler has hopefully
 set the <b>serviceHandler</b> field of the MessageContext (this is usually
@@ -116,7 +117,7 @@ which may contain <b>request</b> and <b>response</b> Chains (similar to
 what we saw at the transport and global levels), and must contain a <b>provider</b>,
 which is simply a Handler responsible for implementing the actual back
 end logic of the service.
-<p>In typical RPC examples, the provider is the org.apache.axis.providers.java.RPCProvider
+<p>For RPC-style requests, the provider is the org.apache.axis.providers.java.RPCProvider
 class. This is just another Handler that, when invoked, attempts to call
 a backend Java object whose class is determined by the "className" parameter
 specified at deployment time. It uses the SOAP RPC convention for determining
@@ -130,7 +131,7 @@ except the order of scoping is reversed, as shown below.
 <br>The <b>service</b> Handler, if any, is called first - on the client
 side, there is no "provider" since the service is being provided by a remote
 node, but there is still the possibility of request and response Chains.
-The service request and response Chains serve to do any service-specific
+The service request and response Chains perform any service-specific
 processing of the request message on its way out of the system, and also
 of the response message on its way back to the caller.
 <p>After the service request Chain, the global request Chain, if any, is
@@ -153,6 +154,13 @@ independent, although not necessary mutually exclusive, alternatives. For
 example, the HTTP and SMTP transports are independent of each other but
 may be used together.
 <p><img SRC="subsystems.jpg">
+<p>
+In fact, the Axis source code is not as cleanly separated into subsystems
+as the above diagram might imply. Some subsystems are spread over
+several packages and some packages overlap more than one subsystem.
+Proposals to improve the code structure and make it
+conform more accurately to the notional Axis subsystems will be considered
+after v1.0 of Axis is complete.
 <h2>
 <a NAME="Message Flow"></a>Message Flow Subsystem</h2>
 
@@ -175,8 +183,8 @@ in the message path even when there isn't a response message, e.g. to stop
 timers, clean up resources, etc.
 <p>A Chain is a composite Handler, i.e. it aggregates a collection of Handlers
 as well as implementing the Handler interface as shown in the following
-diagram:
-<br><img SRC="chainclasses.jpg" height=297 width=267>
+UML diagram:
+<br><img SRC="chainclasses.jpg">
 <p>A Chain also has similarities to the Chain of Responsibility design pattern
 in which a request flows along a sequence of Handlers until it is processed.
 Although an Axis Chain may process a request in stages over a succession of
@@ -186,7 +194,7 @@ flexibility and the ease with which new function can be added.
 the appropriate Chains. A message context is used to pass the message and
 associated environment through the sequence of Handlers. The model is that
 Axis Chains are constructed offline by having Handlers added to them one
-at a time. Then they are made online and message contexts start to flow
+at a time. Then they are turned online and message contexts start to flow
 through the Chains. Multiple message contexts may flow through a single
 Chain concurrently. Handlers are never added to a Chain once it goes online.
 If a Handler needs to be added or removed, the Chain must be 'cloned',
@@ -200,7 +208,7 @@ simplification.
 and Chains can be defined to have 'per-access', 'per-request', or 'singleton'
 scope although the registry currently only distinguishes between these
 by constructing non-singleton scope objects when requested and constructing
-'singleton scope objects once and holding on to them for use on subsequent
+singleton scope objects once and holding on to them for use on subsequent
 creation requests.
 <h4>
 Targeted Chains</h4>
@@ -209,7 +217,7 @@ all of: a request Handler, a pivot Handler, and a response Handler. The
 following class diagram shows how Targeted Chains relate to Chains. Note
 that a Targeted Chain is an aggregation of Handlers by virtue of extending
 the Chain interface which is an aggregation of Handlers.
-<p><img SRC="targetedchainclasses.jpg" height=288 width=253>
+<p><img SRC="targetedchainclasses.jpg">
 <p>A service is a special kind of Targeted Chain in which the pivot Handler
 is known as a "provider".
 <h4>
@@ -227,25 +235,20 @@ The current structure of a MessageContext is shown below. Each message
 context may be associated with a request Message and/or a response Message.
 Each Message has a SOAPPart and an Attachments object, both of which implement
 the Part interface.
-<br><img SRC="messagecontext.jpg" height=140 width=597>
+<br><img SRC="messagecontext.jpg">
 <br>The typing of Message Contexts needs to be carefully considered in
 relation to the Axis architecture. Since a Message Context appears on the
 Handler interface, it should not be tied to or biassed in favour of&nbsp;
 SOAP. The current implementation is marginally biassed towards SOAP in
 that the setServiceHandler method narrows the specified Handler to a SOAPService.
-But if we were to factor out a more abstract Message Context interface,
-we would then be then faced with a problem. Some Handlers, most likely
-in the global layer, would need to accept a Message Context with a particular
-concete type (e.g. for a HTTP transport) and produce a Message Context
-of a different concrete type (e.g. for a SOAP service) and so Handler.invoke
-would need a more complex signature.
+
 <h3>
 <a NAME="Engine"></a>Engine</h3>
 Axis has an abstract AxisEngine class with two concrete subclasses: AxisClient
 drives the client side handler chains and AxisServer drives the server
 side handler chains. The relationships between these classes is fairly
 simple:
-<br><img SRC="engineclasses.jpg" height=242 width=169>
+<br><img SRC="engineclasses.jpg">
 <h4>Engine Configuration</h3>
 The EngineConfiguration interface is the means of configuring the Handler
 factories and global options of an engine instance. An instance of a
