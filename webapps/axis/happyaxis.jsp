@@ -1,5 +1,11 @@
+<html>
+<head>
+<title>Axis Happiness Page</title>
+</head>
+<body bgcolor=#ffffff>
 <%@ page import="java.io.InputStream,
-                 java.io.IOException"%>
+                 java.io.IOException"
+    session="false" %>
 <%!
 
     /*
@@ -16,6 +22,7 @@
      * TODO: make this platform aware and give specific hints
      */
     public String getInstallHints(HttpServletRequest request) {
+
         String hint=
             "<B><I>Note:</I></B> On Tomcat 4.x, you may need to put libraries that contain "
             +"java.* or javax.* packages into CATALINA_HOME/commons/lib";
@@ -25,7 +32,7 @@
     /**
      * test for a class existing
      * @param classname
-     * @return true iff present
+     * @return class iff present
      */
     Class classExists(String classname) {
         try {
@@ -79,17 +86,19 @@
                 url="<br>  See <a href="+homePage+">"+homePage+"</a>";
             }
             out.write("<p>"+category+": could not find class "+classname
-                    +" from file "+jarFile
-                    +"<br>  "+errorText
+                    +" from file <b>"+jarFile
+                    +"</b><br>  "+errorText
                     +url
                     +"<p>");
             return 1;
         } else {
             String location = getLocation(out, clazz);
-            if(location == null)
+            if(location == null) {
                 out.write("Found "+ description + " (" + classname + ")<br>");
-            else
+            }
+            else {
                 out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
+            }
             return 0;
         }
     }
@@ -225,7 +234,7 @@
             "http://jakarta.apache.org/commons/logging.html");
 
     //should we search for a javax.wsdl file here, to hint that it needs
-    //to go into an approved directoy? because we dont seem to need to do that.
+    //to go into an approved directory? because we dont seem to need to do that.
     needed+=needClass(out, "com.ibm.wsdl.factory.WSDLFactoryImpl",
             "wsdl4j.jar",
             "IBM's WSDL4Java",
@@ -264,13 +273,14 @@
     /*
      * resources on the classpath path
      */
-    wantResource(out,"server-config.wsdd",
-            "There is no a server configuration file;"
+    /* broken; this is a file, not a resource
+    wantResource(out,"/server-config.wsdd",
+            "There is no server configuration file;"
             +"run AdminClient to create one");
-
+    */
     /* add more libraries here */
 
-    out.write("<h3");
+    out.write("<h3>");
     //is everythng we need here
     if(needed==0) {
        //yes, be happy
@@ -311,15 +321,25 @@
     /** 
      * Dump the system properties
      */
-    out.write("<pre>");
-    java.util.Enumeration e = System.getProperties().propertyNames();
-    for (;e.hasMoreElements();) {
-        String key = (String) e.nextElement();
-        out.write(key + "=" + System.getProperty(key)+"\n");
+    java.util.Enumeration e;
+    try {
+        e= System.getProperties().propertyNames();
+    } catch (SecurityException se) {
+        e=null;
     }
-    out.write("</pre>");
+    if(e!=null) {
+        out.write("<pre>");
+        for (;e.hasMoreElements();) {
+            String key = (String) e.nextElement();
+            out.write(key + "=" + System.getProperty(key)+"\n");
+        }
+        out.write("</pre><p>");
+    } else {
+        out.write("System properties are not accessible<p>");
+    }
 %>
-
+    <hr>
+    Platform: <%= getServletConfig().getServletContext().getServerInfo()  %>
 </body>
 </html>
 
