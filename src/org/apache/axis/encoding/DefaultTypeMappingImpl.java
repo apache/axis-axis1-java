@@ -485,7 +485,15 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new SimpleDeserializerFactory(org.apache.axis.types.Language.class,
                                              Constants.XSD_LANGUAGE)
         );
-         
+
+        // a xml:lang
+        myRegister(Constants.XML_LANG, org.apache.axis.types.Language.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XML_LANG),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XML_LANG)
+        );
+        
         // a xsd:NmToken
         myRegister(Constants.XSD_NMTOKEN, org.apache.axis.types.NMToken.class,
                    new SimpleSerializerFactory(org.apache.axis.types.NMToken.class,
