@@ -54,7 +54,7 @@ Copyright:
 
   <!-- Give user a chance to override without editing this file
        (and without typing -D each time it compiles it) -->
-  <property file="${user.home}/build.properties"/>
+  <property file="test.properties"/>
   <property file="${user.home}/test.properties"/>
 
 <!-- =========================================================================== -->

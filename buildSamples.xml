@@ -51,10 +51,6 @@ Copyright:
         &taskdefs_post_compile;
 	&targets;
 
-  <!-- Give user a chance to override without editing this file
-       (and without typing -D each time it compiles it) -->
-  <property file="${user.home}/build.properties"/>
-
   <target name="bidbuy" depends="setenv">
     <ant inheritAll="true" antfile="samples/bidbuy/buildComponent.xml"/>
   </target>
