@@ -348,7 +348,7 @@
         	"saaj.jar",
                 "SAAJ API",
                 "Axis will not work",
-                "http://xml.apache.org/axis/");
+                "http://ws.apache.org/axis/");
     } else {
         String location = getLocation(out, clazz);
         out.write("<b>Error:</b> Invalid version of SAAJ API found in " +
@@ -361,25 +361,25 @@
             "jaxrpc.jar",
             "JAX-RPC API",
             "Axis will not work",
-            "http://xml.apache.org/axis/");
+            "http://ws.apache.org/axis/");
 
     needed+=needClass(out, "org.apache.axis.transport.http.AxisServlet",
             "axis.jar",
             "Apache-Axis",
             "Axis will not work",
-            "http://xml.apache.org/axis/");
+            "http://ws.apache.org/axis/");
 
     needed+=needClass(out, "org.apache.commons.discovery.Resource",
             "commons-discovery.jar",
             "Jakarta-Commons Discovery",
             "Axis will not work",
-            "http://jakarta.apache.org/commons/discovery.html");
+            "http://jakarta.apache.org/commons/discovery/");
 
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
             "Axis will not work",
-            "http://jakarta.apache.org/commons/logging.html");
+            "http://jakarta.apache.org/commons/logging/");
 
     needed+=needClass(out, "org.apache.log4j.Layout",
             "log4j-1.2.8.jar",
