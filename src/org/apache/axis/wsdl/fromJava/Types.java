@@ -325,7 +325,8 @@ public class Types {
      */
     private void writeWsdlTypesElement() throws Exception {
         if (wsdlTypesElem == null) {
-            wsdlTypesElem = docHolder.createElement("types");
+            wsdlTypesElem = 
+                    docHolder.createElementNS(Constants.NSPREFIX_WSDL, "types");
         }
     }
 
