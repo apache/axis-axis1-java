@@ -353,7 +353,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         Iterator iter = parent.getChildElements();
         Node nextSibling = null;
         while (iter.hasNext()) {
-            if (iter.next().equals(this)) {
+            if (iter.next() == this) {
                 if (iter.hasNext()) {
                     return (Node) iter.next();
                 } else {
@@ -385,7 +385,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         Iterator iter = parent.getChildElements();
         Node previousSibling = null;
         while (iter.hasNext()) {
-            if (iter.next().equals(this)) {
+            if (iter.next() == this) {
                 return previousSibling;
             }
         }
@@ -490,7 +490,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         final Iterator itr = children.iterator();
         while (itr.hasNext()) {
             final Node node = (Node) itr.next();
-            if (node.equals(oldChild)) {
+            if (node == oldChild) {
                 removed = true;
                 itr.remove();
             }
