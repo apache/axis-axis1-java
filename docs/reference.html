@@ -782,6 +782,14 @@ also special logs for special categories.
   <dt><b>SoapMonitorHandler</b>
   <dd>Provides the hook into the message pipeline sending the SOAP request and
   response messages to the SoapMonitor utility.
+  <dt>
+  <dt><b>DebugHandler</b>
+  <dd>Example handler that demonstrates dynamically setting the debug level based on a 
+  the value of a soap header element.
+  <dt>&nbsp;
+  <dt> 
+  <dt>ErrorHandler
+  <dd>Example handler that throws an AxisFault to stop request/response flow processing. 
   <dt>&nbsp;
   <dt> 
   <dt><b>EchoHandler</b> 
@@ -800,6 +808,10 @@ also special logs for special categories.
     (a chain called &quot;authChecks&quot; is predefined for just this combination), 
     checks to make sure that the currently authenticated user satisfies one of 
     the allowed roles for the target service. Throws a Fault if access is denied.
+  <dt>
+  <dt><b>MD5AttachHandler</b>
+  <dd>Undocumented, uncalled, untested handler that generates an MD5 hash of 
+  attachment information and adds the value as an attribute in the soap body.
   <dt>&nbsp;
   <dt><b>URLMapper</b> 
   <dd>The URLMapper, an HTTP-specific handler, usually goes on HTTP transport 
@@ -823,6 +835,9 @@ also special logs for special categories.
     <b><i>methodName</i></b> = a space-separated list of methods which are exported
     as web services. The special value &quot;*&quot; matches all public methods
     in the class.
+  <dt>
+  <dt><b>JWSHandler</b>
+  <dd>Performs drop-in deployment magic.
   <dt>
   <dt><b>JAXRPCHandler</b>
   <dd>Wrapper around JAX-RPC compliant handlers that exposes an Axis handler interface to the engine.
