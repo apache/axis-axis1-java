@@ -3,6 +3,7 @@ package test.RPCDispatch;
 import junit.framework.TestCase;
 
 import org.apache.axis.*;
+import org.apache.axis.encoding.*;
 import org.apache.axis.handlers.soap.*;
 import org.apache.axis.message.*;
 import org.apache.axis.server.*;
@@ -36,7 +37,6 @@ public class TestRPC extends TestCase {
     private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
-    private String methodNS   = SOAPAction;
 
     public TestRPC(String name) {
         super(name);
@@ -58,20 +58,26 @@ public class TestRPC extends TestCase {
         throws AxisFault
     {
 
+        // Create the message context
+        MessageContext msgContext = new MessageContext(engine);
+        DeserializationContext deserContext =
+            new DeserializationContext(null, msgContext);
+
+        // Set the dispatch either by SOAPAction or methodNS
+        String methodNS = null;
+        if (setService) {
+            msgContext.setTargetService(SOAPAction);
+        } else {
+            methodNS = SOAPAction;
+        }
+
         // Construct the soap request
         SOAPEnvelope envelope = new SOAPEnvelope();
-        RPCElement body = new RPCElement(method);
-        body.setNamespaceURI(methodNS);
+        msgContext.setRequestMessage(new Message(envelope));
+        RPCElement body = new RPCElement(methodNS, method, null, deserContext);
         envelope.addBodyElement(body);
         for (int i=0; i<parms.length; i++) {
             body.addParam(new RPCParam("arg"+i, parms[i]));
-        }
-
-        // Create a message context with the action and message
-        MessageContext msgContext = new MessageContext(engine);
-        msgContext.setRequestMessage(new Message(envelope));
-        if (setService) {
-            msgContext.setTargetService(SOAPAction);
         }
 
         // Invoke the Axis engine
