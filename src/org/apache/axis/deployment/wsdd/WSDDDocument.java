@@ -54,27 +54,20 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.encoding.*;
-import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
-
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-import javax.xml.namespace.QName;
-
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)

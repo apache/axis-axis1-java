@@ -54,33 +54,27 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
-import org.apache.axis.Constants;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.providers.java.JavaProvider;
-import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.io.IOException;
 
 
 /**

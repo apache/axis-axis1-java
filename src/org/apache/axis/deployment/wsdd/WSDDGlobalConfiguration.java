@@ -54,19 +54,14 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentException;
-import org.w3c.dom.Document;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.namespace.QName;
-
 import java.io.IOException;
 
 

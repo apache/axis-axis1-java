@@ -54,9 +54,7 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 
