@@ -77,6 +77,7 @@ public class HTTPConstants {
     public static final String HEADER_CONTENT_ID = "Content-ID";
     public static final String HEADER_SOAP_ACTION = "SOAPAction";
     public static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_PROXY_AUTHORIZATION = "Proxy-Authorization";
     
     /**
      * Cookie headers
