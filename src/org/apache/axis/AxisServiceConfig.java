@@ -65,8 +65,6 @@ public interface AxisServiceConfig
 {
     /** Get the allowed method names.
      * 
-     * (The only method right now)
-     * 
      * @return a space-delimited list of method names which may be called
      *         via SOAP.
      */

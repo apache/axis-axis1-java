@@ -287,14 +287,14 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // which is the reason that ArrayList is associated with SOAP_ARRAY.
         // In addition, handle all objects that implement the List interface
         // as a SOAP_ARRAY
-        myRegister(Constants.SOAP_ARRAY,     java.util.List.class,
+        myRegister(Constants.SOAP_ARRAY,     java.util.Collection.class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(),
                    false);
-        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory(),
-                   false);
+//        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
+//                   new ArraySerializerFactory(),
+//                   new ArrayDeserializerFactory(),
+//                   false);
         myRegister(Constants.SOAP_ARRAY,     Object[].class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(),

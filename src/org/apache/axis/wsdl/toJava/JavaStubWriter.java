@@ -54,35 +54,28 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Node;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Fault;
-import javax.wsdl.Input;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
-import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
-
-import org.w3c.dom.Node;
-
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-
-import org.apache.axis.utils.JavaUtils;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -114,7 +107,6 @@ public class JavaStubWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(portType.getQName());
-        String name = Utils.xmlNameToJavaClass(qname.getLocalPart());
 
         // If there is not literal use, the interface name is the portType name.
         // Otherwise it is the binding name.

@@ -60,34 +60,22 @@ import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
-import javax.wsdl.Message;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import javax.wsdl.QName;
-
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -154,7 +142,7 @@ public class Emitter {
     public WriterFactory getWriterFactory() { return writerFactory;}
     /**
      * Call this method if you have a uri for the WSDL document
-     * @param String wsdlURI the location of the WSDL file.
+     * @param uri wsdlURI the location of the WSDL file.
      */
     public void emit(String uri) throws IOException, WSDLException {
         if (bVerbose)
@@ -169,8 +157,8 @@ public class Emitter {
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * @param String context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
-     * @param Document doc This is the XML Document containing the WSDL.
+     * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * @param doc doc This is the XML Document containing the WSDL.
      */
     public void emit(String context, Document doc) throws IOException, WSDLException {
         currentWSDLURI = context;
@@ -294,7 +282,7 @@ public class Emitter {
 
     /**
      * Turn on/off server skeleton creation
-     * @param boolean value
+     * @param value
      */
     public void generateServerSide(boolean value) {
         this.bEmitServer = value;
@@ -309,7 +297,7 @@ public class Emitter {
 
     /**
      * Turn on/off server skeleton deploy
-     * @param boolean value
+     * @param value
      */
     public void deploySkeleton(boolean value) {
         bDeploySkeleton = value;
@@ -324,7 +312,7 @@ public class Emitter {
 
     /**
      * Turn on/off Helper class generation
-     * @param boolean value
+     * @param value
      */
     public void setHelperGeneration(boolean value) {
         bHelperGeneration = value;
@@ -339,7 +327,7 @@ public class Emitter {
 
     /**
      * Turn on/off test case creation
-     * @param boolean value
+     * @param value
      */
     public void generateTestCase(boolean value) {
         this.bEmitTestCase = value;
@@ -354,7 +342,7 @@ public class Emitter {
     
     /**
      * Turn on/off generation of elements from imported files.
-     * @param boolean generateImports
+     * @param generateImports
      */
     public void generateImports(boolean generateImports) {
         this.bGenerateImports = generateImports;
@@ -373,7 +361,7 @@ public class Emitter {
 
     /**
      * Turn on/off debug messages.
-     * @param boolean value
+     * @param value
      */
     public void debug(boolean value) {
         bDebug = value;
@@ -388,7 +376,7 @@ public class Emitter {
 
     /**
      * Turn on/off verbose messages
-     * @param boolean value
+     * @param value
      */
     public void verbose(boolean value) {
         this.bVerbose = value;
@@ -591,7 +579,6 @@ public class Emitter {
 
     public static void main(String[] args) {
         String wsdlURI = null;
-        HashMap namespaceMap = new HashMap();
         Emitter emitter = new Emitter(new NoopWriterFactory());
 
         // Parse the arguments

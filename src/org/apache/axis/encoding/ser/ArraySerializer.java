@@ -55,39 +55,21 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import java.beans.IntrospectionException;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An ArraySerializer handles serializing of arrays.
@@ -120,14 +102,14 @@ public class ArraySerializer implements Serializer
             throw new IOException(JavaUtils.getMessage("cantDoNullArray00"));
 
         Class cls = value.getClass();
-        List list = null;
+        Collection list = null;
 
         if (!cls.isArray()) {
-            if (!(value instanceof List)) {
+            if (!(value instanceof Collection)) {
                 throw new IOException(
                         JavaUtils.getMessage("cantSerialize00", cls.getName()));
             }
-            list = (List)value;
+            list = (Collection)value;
         }
 
         Class componentType;
@@ -276,15 +258,29 @@ public class ArraySerializer implements Serializer
 
         if (dim2Len < 0) {
             // Normal case, serialize each array element
-            for (int index = 0; index < len; index++) {
-                Object aValue = (list == null) ? Array.get(value, index) : list.get(index);
-                Class aClass = (aValue == null) ? null : aValue.getClass();
+            if (list == null) {
+                for (int index = 0; index < len; index++) {
+                    Object aValue = Array.get(value, index);
+                    Class aClass = (aValue == null) ? null : aValue.getClass();
 
-                // Serialize the element. 
-                context.serialize(elementName, null, aValue, aClass, 
-                                  componentQName, // prefered type QName
-                                  true,   // Send null values
-                                  false); // Don't send xsi:type if it matches preferred QName        
+                    // Serialize the element.
+                    context.serialize(elementName, null, aValue, aClass,
+                                      componentQName, // prefered type QName
+                                      true,   // Send null values
+                                      false); // Don't send xsi:type if it matches preferred QName
+                }
+            } else {
+                for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+                    Object aValue = (Object)iterator.next();
+                    Class aClass = (aValue == null) ? null : aValue.getClass();
+
+                    // Serialize the element.
+                    context.serialize(elementName, null, aValue, aClass,
+                                      componentQName, // prefered type QName
+                                      true,   // Send null values
+                                      false); // Don't send xsi:type if it matches preferred QName
+
+                }
             }
         } else {
             // Serialize as a 2 dimensional array
