@@ -504,6 +504,13 @@ public class ServiceClient {
         Debug.Print( 1, "Exit: ServiceClient::invoke(RPCElement)" );
         return( result );
     }
+
+    /**
+     * Set engine option.
+     */
+    public void addOption(String name, Object value) {
+         engine.addOption(name, value);
+    }
     
     /**
      * Invoke this ServiceClient with its established MessageContext
