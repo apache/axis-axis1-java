@@ -151,26 +151,29 @@ public class AxisClient extends AxisEngine {
                             Messages.getMessage("noTransport00", hName));
                 }
 
-                /* Process the JAXRPC Handlers */
-                invokeJAXRPCHandlers(msgContext);
+                if (!msgContext.isPropertyTrue(Call.ONE_WAY)) {
 
-                /* Process the Global Response Chain */
-                /***********************************/
-                if ((h = getGlobalResponse()) != null) {
-                    h.invoke(msgContext);
-                }
-
-                if ( service != null ) {
-                    h = service.getResponseHandler();
-                    if ( h != null ) {
+                    /* Process the JAXRPC Handlers */
+                    invokeJAXRPCHandlers(msgContext);
+                    
+                    /* Process the Global Response Chain */
+                    /***********************************/
+                    if ((h = getGlobalResponse()) != null) {
                         h.invoke(msgContext);
                     }
-                }
 
-                // Do SOAP Semantics checks here - this needs to be a call to
-                // a pluggable object/handler/something
-                if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
-                    checker.invoke(msgContext);
+                    if ( service != null ) {
+                        h = service.getResponseHandler();
+                        if ( h != null ) {
+                            h.invoke(msgContext);
+                        }
+                    }
+
+                    // Do SOAP Semantics checks here - this needs to be a call to
+                    // a pluggable object/handler/something
+                    if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
+                        checker.invoke(msgContext);
+                    }
                 }
             }
 

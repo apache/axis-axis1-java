@@ -259,6 +259,13 @@ public class Call implements javax.xml.rpc.Call {
             "axis.streaming";
     
     /**
+     * Internal property to indicate a one way call.
+     * That will disable processing of response handlers.
+     */
+    protected static final String ONE_WAY =
+        "axis.one.way";
+
+    /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
     private static Hashtable transports  = new Hashtable();
@@ -2762,12 +2769,14 @@ public class Call implements javax.xml.rpc.Call {
         //create a new class
         Runnable runnable = new Runnable(){
             public void run() {
+                msgContext.setProperty(Call.ONE_WAY, Boolean.TRUE);
                 try {
                     service.getEngine().invoke( msgContext );
                 } catch (AxisFault af){
                     //TODO: handle errors properly
                     log.debug(Messages.getMessage("exceptionPrinting"), af);
                 }
+                msgContext.removeProperty(Call.ONE_WAY);
             }
         };
         //create a thread to run it
