@@ -67,6 +67,7 @@ import org.w3c.dom.Element;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
 
 /**
  *
@@ -102,6 +103,7 @@ public class MsgProvider extends JavaProvider {
         
         Class[]         argClasses;
         Object[]        argObjects;
+        ClassLoader     clsLoader = msgContext.getClassLoader();
         
         // the document which is the contents of the first body element
         // (generated only if we are not an envelope service)
@@ -110,7 +112,11 @@ public class MsgProvider extends JavaProvider {
         
         if (bodyOnlyService) {
             // dig out just the body, and pass it with the MessageContext
-            SOAPBodyElement reqBody = reqEnv.getFirstBody();
+            Vector                bodies  = reqEnv.getBodyElements();
+            SOAPBodyElement       reqBody = reqEnv.getFirstBody();
+            NoSuchMethodException exp2 = null ;
+            Object                anElement = 
+                                    clsLoader.loadClass("org.w3c.dom.Element");
             
             doc = reqBody.getAsDOM().getOwnerDocument();
 
@@ -123,52 +129,99 @@ public class MsgProvider extends JavaProvider {
                 if ( root != null ) methodName = root.getLocalName();
             }
 
-            // Try the the simplest case first - just Document as the param 
+            // Try the "right" one first, if this fails then default back
+            // to the old ones - those should be removed eventually.
             /////////////////////////////////////////////////////////////////
             argClasses = new Class[1];
             argObjects = new Object[1];
-            argClasses[0] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
-            argObjects[0] = doc ;
+            // argClasses[0] = clsLoader.loadClass("org.w3c.dom.Element");
+            // argClasses[0] = clsLoader.loadClass(Element[].class.getName()) ;
+            argClasses[0] = Element[].class ;
+            argObjects[0] = bodies.toArray();
 
             try {
               method = jc.getJavaClass().getMethod( methodName, argClasses );
             }
-            catch( NoSuchMethodException exp ) {
+            catch( NoSuchMethodException exp ) {exp2 = exp;}
+
+            if ( method == null ) {
+              // Try again with a msgContext first
+              /////////////////////////////////////////////////////////////////
+              argClasses = new Class[2];
+              argObjects = new Object[2];
+              // argClasses[0] = clsLoader.loadClass("org.w3c.dom.Element");
+              // argClasses[0] = clsLoader.loadClass(Element[].class.getName()) ;
+              argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
+              argClasses[1] = Element[].class ;
+              argObjects[0] = msgContext ;
+              Element[] els = new Element[bodies.size()];
+              for ( int j = 0 ; j < bodies.size() ; j++ )
+                  els[j] = ((SOAPBodyElement)bodies.get(j)).getAsDOM();
+              argObjects[1] = els ;
+  
+              try {
+                method = jc.getJavaClass().getMethod( methodName, argClasses );
+                System.err.println("FOUND [Element");
+              }
+              catch( NoSuchMethodException exp ) {exp2 = exp;}
+            }
+
+            if ( method == null ) {
+              // Try the the simplest case first - just Document as the param 
+              /////////////////////////////////////////////////////////////////
+              argClasses = new Class[1];
+              argObjects = new Object[1];
+              argClasses[0] = clsLoader.loadClass("org.w3c.dom.Document");
+              argObjects[0] = doc ;
+  
+              try {
+                method = jc.getJavaClass().getMethod( methodName, argClasses );
+              }
+              catch( NoSuchMethodException exp ) {exp2 = exp;}
+            }
+
+            if ( method == null ) {
               // Ok, no match - so now add MessageContext as the first param
               // and try it again
               ///////////////////////////////////////////////////////////////
               argClasses = new Class[2];
               argObjects = new Object[2];
-              argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
-              argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
+              argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
+              argClasses[1] = clsLoader.loadClass("org.w3c.dom.Document");
               argObjects[0] = msgContext ;
               argObjects[1] = doc ;
               try {
                   method = jc.getJavaClass().getMethod( methodName, argClasses );
               }
-              catch( NoSuchMethodException exp2 ) {
-                String oldmsg= exp2.getMessage(); 
-                oldmsg= oldmsg == null ? "" : oldmsg;
-                throw new NoSuchMethodException( oldmsg + "Tried class:" +  jc.getJavaClass().getName()
-                  + " , Methodname:"+ methodName );
-              }
+              catch( NoSuchMethodException exp ) {exp2 = exp;}
             }
 
+            if ( method == null ) {
+                String oldmsg= exp2.getMessage(); 
+                oldmsg= oldmsg == null ? "" : oldmsg;
+                throw new NoSuchMethodException( oldmsg + "Tried class:" + 
+                                                 jc.getJavaClass().getName()
+                                                 + " , Methodname:"
+                                                 + methodName );
+            }
         } else {
             // pass *just* the MessageContext (maybe don't even parse!!!)
             argClasses = new Class[1];
             argObjects = new Object[1];
-            argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
+            argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
             argObjects[0] = msgContext ;
             try {
                 method = jc.getJavaClass().getMethod( methodName, argClasses );
             }    
-              catch( NoSuchMethodException exp2 ) {
+            catch( NoSuchMethodException exp2 ) {
+                // No match - just throw an error
+                ////////////////////////////////////////////
                 String oldmsg= exp2.getMessage(); 
                 oldmsg= oldmsg == null ? "" : oldmsg;
-                throw new NoSuchMethodException( oldmsg + "Tried class:" +  jc.getJavaClass().getName()
+                throw new NoSuchMethodException( oldmsg + "Tried class:" +  
+                                                 jc.getJavaClass().getName()
                   + " , Methodname:"+ methodName );
-              }
+            }
         }
         
         
