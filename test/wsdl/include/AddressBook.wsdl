@@ -76,9 +76,9 @@
   </binding>
 
   <!-- service decln -->
-  <service name="AddressBookService">
-    <port name="AddressBook" binding="tns:AddressBookSOAPBinding">
-      <soap:address location="http://localhost:8080/axis/services/AddressBook"/>
+  <service name="IncludeTest">
+    <port name="IncludeTest" binding="tns:AddressBookSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/IncludeTest"/>
     </port>
   </service>
 
