@@ -62,6 +62,7 @@ import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.Options;
 import org.apache.axis.wsdl.Emitter;
+import org.apache.axis.wsdl.Utils;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -192,7 +193,8 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 int testNum = 0;
                 while (curLine != null) {
                     curLine = curLine.trim();
-                    if ( "".equals(curLine) ) {
+                    // Skip empty lines or ones that start with #
+                    if ( "".equals(curLine) || curLine.charAt(0)=='#') {
                         curLine = reader.readLine();
                         continue;
                     }
@@ -239,10 +241,15 @@ public class Wsdl2javaTestSuite extends TestSuite {
      * testNum appended to it.  We also enablt skeleton generation and testcase generation.  We also turn on verbosity.
      */
     protected void prepareTest(String fileName, int testNum) throws Exception {
-        String packageName = fileName.replace('/', '.');
         Emitter wsdl2java = new Emitter();
-        packageName = packageName.substring(0, fileName.lastIndexOf('/'));
-        wsdl2java.setPackageName(packageName);
+        String packageName = "";
+        packageName = fileName;
+        if(packageName.indexOf(":/")!=-1){
+            packageName = packageName.substring(packageName.indexOf(":/")+2);
+        }
+        packageName = packageName.substring(0, packageName.lastIndexOf('/'));
+        packageName = packageName.replace('/', '.');
+        wsdl2java.setPackageName(Utils.makePackageName(packageName));
         wsdl2java.generatePackageName(true);
         wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
@@ -311,12 +318,12 @@ public class Wsdl2javaTestSuite extends TestSuite {
      */
     public void run(TestResult result) {
         // Get the SimpleAxisServer running--using the default port.
-        System.out.println("Starting test http server.");
         SimpleAxisServer server = new SimpleAxisServer();
 
         try {
             Options opts = new Options(new String[]{});
             int port = opts.getPort();
+            System.out.println("Starting test http server at port " + port);
             ServerSocket ss = new ServerSocket(port);
             server.setServerSocket(ss);
             Thread serverThread = new Thread(server);
@@ -336,9 +343,12 @@ public class Wsdl2javaTestSuite extends TestSuite {
                         deploy = fileName;
                     }
                 }
-                // Perform actual deployment
-                String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + deploy };
-                AdminClient.main(args);
+                
+                if(deploy != null){
+                    // Perform actual deployment
+                    String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + deploy };
+                    AdminClient.main(args);
+                }
             }
 
             //AdminClient.main(new String[] {"list"});
@@ -358,9 +368,11 @@ public class Wsdl2javaTestSuite extends TestSuite {
                         undeploy = fileName;
                     }
                 }
-                // Perform actual undeployment
-                String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + undeploy };
-                AdminClient.main(args);
+                if(undeploy != null) {
+                    // Perform actual undeployment
+                    String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + undeploy };
+                    AdminClient.main(args);
+                }
             }
 
             //AdminClient.main(new String[] {"list"});
