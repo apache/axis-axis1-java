@@ -16,7 +16,8 @@ public class GetPortTestCase extends junit.framework.TestCase {
             fail("empty.getPort(null) should have failed.");
         }
         catch (ServiceException se) {
-            assertTrue("Wrong exception!  " + se.getCause(), se.getCause() == null);
+            assertTrue("Wrong exception!  " + se.getLinkedCause(),
+                    se.getLinkedCause() == null);
         }
     } // testEmptyService
 
@@ -35,7 +36,8 @@ public class GetPortTestCase extends junit.framework.TestCase {
             fail("service.getPort(Vector.class) should have failed.");
         }
         catch (ServiceException se) {
-            assertTrue("Wrong exception!  " + se.getCause(), se.getCause() == null);
+            assertTrue("Wrong exception!  " + se.getLinkedCause(),
+                    se.getLinkedCause() == null);
         }
     } // testNormalService
 
@@ -53,7 +55,8 @@ public class GetPortTestCase extends junit.framework.TestCase {
             fail("service.getPort(Three.class) should have failed.");
         }
         catch (ServiceException se) {
-            assertTrue("Wrong exception!  " + se.getCause(), se.getCause() == null);
+            assertTrue("Wrong exception!  " + se.getLinkedCause(),
+                    se.getLinkedCause() == null);
         }
     } // testDoublePortService1
 
@@ -71,7 +74,8 @@ public class GetPortTestCase extends junit.framework.TestCase {
             fail("service.getPort(Three.class) should have failed.");
         }
         catch (ServiceException se) {
-            assertTrue("Wrong exception!  " + se.getCause(), se.getCause() == null);
+            assertTrue("Wrong exception!  " + se.getLinkedCause(),
+                    se.getLinkedCause() == null);
         }
     } // testDoublePortService2
 
