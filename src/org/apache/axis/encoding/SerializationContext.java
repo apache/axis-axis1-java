@@ -125,10 +125,15 @@ public class SerializationContext
         this.writer = writer;
         this.msgContext = msgContext;
         if (msgContext==null) throw new NullPointerException();
-        Boolean shouldSendDecl = (Boolean)msgContext.getAxisEngine().
-                                          getOption(AxisEngine.PROP_XML_DECL);
+        AxisEngine engine = msgContext.getAxisEngine();
+        Boolean shouldSendDecl = (Boolean)engine.getOption(
+                                                  AxisEngine.PROP_XML_DECL);
         if (shouldSendDecl != null)
             sendXMLDecl = shouldSendDecl.booleanValue();
+        Boolean shouldSendMultiRefs = (Boolean)engine.getOption(
+                                                  AxisEngine.PROP_DOMULTIREFS);
+        if (shouldSendMultiRefs != null)
+            doMultiRefs = shouldSendMultiRefs.booleanValue();
     }
     
     public ServiceDescription getServiceDescription()

@@ -83,6 +83,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_XML_DECL = "sendXMLDeclaration";
     public static final String PROP_DEBUG_LEVEL = "debugLevel";
     public static final String PROP_DEBUG_FILE = "debugFile";
+    public static final String PROP_DOMULTIREFS = "sendMultiRefs";
     
     
     protected String engineConfigFilename = "engine-config.xml";
@@ -157,6 +158,10 @@ public abstract class AxisEngine extends BasicHandler
         // "true".
         propVal = props.getProperty(PROP_XML_DECL, "true");
         addOption(PROP_XML_DECL, new Boolean(propVal.equals("true")));
+        
+        // Should we send multi-ref serializations in our messages?
+        propVal = props.getProperty(PROP_DOMULTIREFS, "true");
+        addOption(PROP_DOMULTIREFS, new Boolean(propVal.equals("true")));
         
         _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
         

@@ -135,13 +135,12 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             val.append(chars, start, end);
         }
         
-        public void endElement(String namespace, String localName,
+        public void onEndElement(String namespace, String localName,
                                DeserializationContext context)
             throws SAXException
         {
             try {
                 value = makeValue(val.toString().trim());
-                valueComplete();
             } catch (InvocationTargetException ite) {
                 Throwable realException = ite.getTargetException();
                 if (realException instanceof Exception)
