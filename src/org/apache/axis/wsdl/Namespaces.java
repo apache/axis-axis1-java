@@ -158,8 +158,8 @@ public class Namespaces extends HashMap {
      * Make a directory for the given package under root.
      */
     private void mkdir(String pkg) {
-        // Make sure this package's directory exists.
-        File packageDir = root == null ? new File(pkg) : new File(root, pkg);
+        String pkgDirString = toDir(pkg);
+        File packageDir = root == null ? new File(pkgDirString) : new File(root, pkgDirString);
         packageDir.mkdirs();
     } // mkdir
 } // class Namespaces
