@@ -135,7 +135,7 @@ public class Emitter {
             HashMap portTypesInfo = writePortTypes ();
             writeBindings (portTypesInfo);
             if(bEmitSkeleton)
-            	writeDeploymentXML();
+                writeDeploymentXML();
         }
         catch (WSDLException e) {
             e.printStackTrace ();
@@ -149,7 +149,7 @@ public class Emitter {
     public void generateSkeleton(boolean value) {
         this.bEmitSkeleton = value;
     }
-    
+
     /**
      * Turn on/off server Message Context parm creation in skel
      * @param boolean value
@@ -257,7 +257,7 @@ public class Emitter {
             PortType portType = (PortType) i.next ();
             HashMap portTypeInfo = writePortType (portType);
             if(bEmitSkeleton)
-            	writeAxisPortType(portType);
+                writeAxisPortType(portType);
 
             portTypesInfo.put (portType, portTypeInfo);
         }
@@ -300,12 +300,11 @@ public class Emitter {
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
         System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
-
-		if(bMessageContext)
-        	interfacePW.println ("import org.apache.axis.MessageContext;");
+        if(bMessageContext)
+          interfacePW.println ("import org.apache.axis.MessageContext;");
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
-        
+
         List operations = portType.getOperations ();
 
         for (int i = 0; i < operations.size (); ++i) {
@@ -513,7 +512,7 @@ public class Emitter {
         String axisSig = "    public " + parms.returnType + " " + name + " (";
         String skelSig = null;
 
-		String retType = "";
+        String retType = "";
         if (allOuts == 0)
             retType = "void";
         else if (allOuts == 1)
@@ -522,16 +521,15 @@ public class Emitter {
             retType = "java.util.Vector";
 
         skelSig = "    public " + retType + " " + name + " ( ";
-        
-		if(bMessageContext){
-			skelSig = skelSig + "MessageContext ctx";
-			axisSig = axisSig + " MessageContext ctx ";
-		
-			if (parms.list.size() > 0){ 
-		    	skelSig = skelSig + ", ";
-		   		axisSig = axisSig + ", ";
-			}
-		}
+
+        if(bMessageContext){
+            skelSig = skelSig + "MessageContext ctx";
+            axisSig = axisSig + " MessageContext ctx ";
+            if (parms.list.size() > 0){
+              skelSig = skelSig + ", ";
+              axisSig = axisSig + ", ";
+            }
+        }
         boolean needComma = false;
 
         for (int i = 0; i < parms.list.size (); ++i) {
@@ -547,7 +545,7 @@ public class Emitter {
                needComma = true;
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type + " " + p.name;
-                axisSig = axisSig + p.type + " " + p.name;                
+                axisSig = axisSig + p.type + " " + p.name;
                 skelSig = skelSig + p.type + " " + p.name;
             }
             else if (p.mode == Parameter.INOUT) {
@@ -600,7 +598,7 @@ public class Emitter {
 
         return parms;
     } // writeOperation
- 
+
     /**
      * This method generates the skeleton interface signatures operation.
      */
@@ -796,9 +794,9 @@ public class Emitter {
             String skelName = name + "Skeleton";
             skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
             System.out.println("Generating server-side skeleton: " + skelName + ".java");
-			if(bMessageContext)
-            	skelPW.println ("import org.apache.axis.MessageContext;");
-			skelPW.println ("public class " + skelName);
+            if(bMessageContext)
+                skelPW.println ("import org.apache.axis.MessageContext;");
+            skelPW.println ("public class " + skelName);
             skelPW.println ("{");
             skelPW.println ("    private " + portTypeName + "Axis impl;");
             skelPW.println ();
@@ -997,13 +995,13 @@ public class Emitter {
             pw.print ("        impl." + name + "(");
         else
             pw.print ("        " + parms.returnType + " ret = impl." + name + "(");
-        
+
         if(bMessageContext){
             pw.print("ctx");
             if(parms.list.size() > 0)
-        	    pw.print(", ");
+                pw.print(", ");
         }
-        
+
         boolean needComma = false;
         for (int i = 0; i < parms.list.size (); ++i) {
             if (needComma)
@@ -1050,108 +1048,103 @@ public class Emitter {
         pw.println ("    }");
         pw.println ();
     } // writeSkeletonOperation
-    
+
     /**
      * Generate the deployment descriptor and undeployment descriptor
      * for the current WSDL file
      */
     private void writeDeploymentXML(){
-    	try{
-        	PrintWriter deployPW = new PrintWriter (new FileWriter ("deploy.xml"));
-        	System.out.println("Generating deployment document: deploy.xml");
-			initializeDeploymentDoc(deployPW, "deploy");
-			
-        	PrintWriter undeployPW = new PrintWriter (new FileWriter ("undeploy.xml"));
-        	System.out.println("Generating deployment document: undeploy.xml");
-    		initializeDeploymentDoc(undeployPW, "undeploy");
-    		
-    		writeDeployServices(deployPW, undeployPW);
-    		writeDeployTypes(deployPW);
-    		
-			deployPW.println("</m:deploy>");
-			deployPW.close();
-			
-			undeployPW.println("</m:undeploy>");
-			undeployPW.close();
-		}catch (IOException e){
-        	System.err.println("Failed to write deployment documents");
-        	e.printStackTrace();
+        try{
+            PrintWriter deployPW = new PrintWriter (new FileWriter ("deploy.xml"));
+            System.out.println("Generating deployment document: deploy.xml");
+            initializeDeploymentDoc(deployPW, "deploy");
+            PrintWriter undeployPW = new PrintWriter (new FileWriter ("undeploy.xml"));
+            System.out.println("Generating deployment document: undeploy.xml");
+            initializeDeploymentDoc(undeployPW, "undeploy");
+            writeDeployServices(deployPW, undeployPW);
+            writeDeployTypes(deployPW);
+            deployPW.println("</m:deploy>");
+            deployPW.close();
+            undeployPW.println("</m:undeploy>");
+            undeployPW.close();
+        }catch (IOException e){
+            System.err.println("Failed to write deployment documents");
+            e.printStackTrace();
         }
-    	
+
     } // writeDeploymentXML
-    
+
     /**
      * Initialize the deployment document, spit out preamble comments
      * and opening tag
      */
-    private void initializeDeploymentDoc(PrintWriter pw, String deploymentOpName) throws IOException{   	
-		pw.println(
-            "<!--                                                             -->");
-    	pw.println(
-    	    "<!--Use this file to " + deploymentOpName + " some handlers/chains and services  -->");
-    	pw.println(
-            "<!--Two ways to do this:                                         -->");
-    	pw.println(
-            "<!--  java org.apache.axis.utils.Admin "+ deploymentOpName + ".xml              -->");
-    	pw.println(
-            "<!--     from the same dir that the Axis engine runs             -->");
-    	pw.println(
-            "<!--or                                                           -->");
-    	pw.println(
-            "<!--  java org.apache.axis.client.AdminClient " + deploymentOpName + ".xml       -->");
-    	pw.println(
-            "<!--     after the axis server is running                        -->");
-    	pw.println(
-            "<!--This file will be replaced by WSDD once it's ready           -->");
-		pw.println();
-		
-		pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
+    private void initializeDeploymentDoc(PrintWriter pw, String deploymentOpName) throws IOException{
+        pw.println( "<!--                                         " +
+                    "                    -->");
+        pw.println( "<!--Use this file to " + deploymentOpName +
+                    " some handlers/chains and services  -->");
+        pw.println( "<!--Two ways to do this:                     " +
+                    "                    -->");
+        pw.println( "<!--  java org.apache.axis.utils.Admin "+
+                    deploymentOpName + ".xml              -->");
+        pw.println( "<!--     from the same dir that the Axis " +
+                    "engine runs             -->");
+        pw.println( "<!--or                                     " +
+                    "                      -->");
+        pw.println( "<!--  java org.apache.axis.client.AdminClient " +
+                    deploymentOpName + ".xml       -->");
+        pw.println( "<!--     after the axis server is running    " +
+                    "                    -->");
+        pw.println( "<!--This file will be replaced by WSDD once " +
+                    "it's ready           -->");
+        pw.println();
+        pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
     } // initializeDeploymentDoc
-    
+
     /**
      * Write out bean mappings for each type
      */
     private void writeDeployTypes(PrintWriter pw) throws IOException{
         Vector types = findChildNodesByName (doc, "complexType");
 
-		if(types.isEmpty()) return;
+        if(types.isEmpty()) return;
 
-		pw.println();
-		
-		//assumes all complex type elements are under one parent
-		Node type = (Node)types.get(0);		
-		Element parent = (Element)type.getParentNode();
-		String namespaceURI = parent.getAttribute("targetNamespace");
+        pw.println();
 
-		//grab the namespace prefix from the attributes of the root (if it is there)
-		String namespacePrefix="ns";
-		NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
-		for(int i = 0; i<docAttrs.getLength();i++){
-  			Attr attr = (Attr)docAttrs.item(i);
-  			if(attr.getValue().equals(namespaceURI)){
-    			namespacePrefix = ((Attr)docAttrs.item(i)).getLocalName();
-    			break;
-    		}
-		}
+        //assumes all complex type elements are under one parent
+       Node type = (Node)types.get(0);
+                Element parent = (Element)type.getParentNode();
+                String namespaceURI = parent.getAttribute("targetNamespace");
 
-		pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
-		
+                //grab the namespace prefix from the attributes of the root (if it is there)
+                String namespacePrefix="ns";
+                NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
+                for(int i = 0; i<docAttrs.getLength();i++){
+                        Attr attr = (Attr)docAttrs.item(i);
+                        if(attr.getValue().equals(namespaceURI)){
+                        namespacePrefix = ((Attr)docAttrs.item(i)).getLocalName();
+                        break;
+                }
+                }
+
+                pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
+
         for (int i = 0; i < types.size (); ++i) {
-        	type = (Node) types.get (i);
-        	NamedNodeMap attributes = type.getAttributes ();
-        	String typeName = capitalize (attributes.getNamedItem ("name").getNodeValue ());
-			
-			pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
+                type = (Node) types.get (i);
+                NamedNodeMap attributes = type.getAttributes ();
+                String typeName = capitalize (attributes.getNamedItem ("name").getNodeValue ());
+
+                        pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
         }
         pw.println("   </beanMappings>");
-    	
+
     } //writeDeployTypes
-    
+
     /**
      * Write out deployment and undeployment instructions for each WSDL service
      */
     private void writeDeployServices(PrintWriter deployPW, PrintWriter undeployPW) throws IOException{
-    	//deploy the ports on each service
+        //deploy the ports on each service
         Map serviceMap = def.getServices();
         for ( Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
             Service myService = (Service)mapIterator.next();
@@ -1163,22 +1156,22 @@ public class Emitter {
             undeployPW.println();
             undeployPW.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
             undeployPW.println();
-             
+
             for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
                 Port myPort = (Port)portIterator.next();
                 writeDeployPort(deployPW, undeployPW, myPort);
             }
-        }    	
-	} //writeDeployServices
-	
+        }
+        } //writeDeployServices
+
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
     private void writeDeployPort(PrintWriter deployPW, PrintWriter undeployPW, Port port) throws IOException{
-    	Binding binding = port.getBinding();
-    	String serviceName = port.getName();
-    	            
-    	boolean isRPC = false;
+        Binding binding = port.getBinding();
+        String serviceName = port.getName();
+
+        boolean isRPC = false;
         Iterator operationExtensibilityIterator = binding.getExtensibilityElements().iterator();
         for ( ; operationExtensibilityIterator.hasNext(); ) {
             Object obj = operationExtensibilityIterator.next();
@@ -1187,27 +1180,27 @@ public class Emitter {
                 break;
             }
         }
-        
-		deployPW.println("   <service name=\"" + serviceName
-		                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
-		undeployPW.println("   <service name=\"" + serviceName
-		                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
-    	
-    	writeDeployBinding(deployPW, binding);
-    	
-    	deployPW.println("   </service>");
-    	undeployPW.println("   </service>");
+
+                deployPW.println("   <service name=\"" + serviceName
+                                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
+                undeployPW.println("   <service name=\"" + serviceName
+                                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">" );
+
+        writeDeployBinding(deployPW, binding);
+
+        deployPW.println("   </service>");
+        undeployPW.println("   </service>");
     } //writeDeployPort
 
     /**
      * Write out deployment instructions for given WSDL binding
      */
     private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException{
-        deployPW.println("      <option name=\"className\" value=\"" + 
+        deployPW.println("      <option name=\"className\" value=\"" +
                            binding.getQName ().getLocalPart () + "Impl" + "\"/>");
-            	
-    	String methodList = "";
-    	Iterator operationsIterator = binding.getBindingOperations().iterator();
+
+        String methodList = "";
+        Iterator operationsIterator = binding.getBindingOperations().iterator();
         for ( ; operationsIterator.hasNext(); ) {
             BindingOperation op = (BindingOperation)operationsIterator.next();
             methodList = methodList + " " + op.getName();
@@ -1216,7 +1209,7 @@ public class Emitter {
         deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
     } //writeDeployBinding
 
-	
+
     //////////////////////////////
     //
     // Methods using types (non WSDL)
@@ -1242,8 +1235,8 @@ public class Emitter {
         NamedNodeMap attributes = node.getAttributes ();
         String nameValue = capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter typePW = new PrintWriter (new FileWriter (nameValue + ".java"));
-		System.out.println("Generating Type Implementation: " + nameValue + ".java");
-		
+                System.out.println("Generating Type Implementation: " + nameValue + ".java");
+
         typePW.println ("public class " + nameValue + " implements java.io.Serializable");
         typePW.println ("{");
 
@@ -1300,8 +1293,8 @@ public class Emitter {
             capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter pw =
             new PrintWriter (new FileWriter (typeName + "Holder.java"));
-            
-		System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
+
+                System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
 
         pw.println ("public final class " + typeName + "Holder implements java.io.Serializable");
         pw.println ("{");
@@ -1388,7 +1381,7 @@ public class Emitter {
     //
     // Utility methods
     //
-	
+
     /**
      * For a given string, strip off the prefix - everything before the colon.
      */

@@ -80,11 +80,11 @@ public class Wsdl2java
             int argcount = args.length;
             int arg = 0;
             while ( arg < (args.length-1)) {
-               if( args[arg].equals("-skeleton") )	{
+               if( args[arg].equals("-skeleton") )      {
                     bSkeleton = true;
                    --argcount;
                 }
-               if( args[arg].equals("-messageContext") )	{
+               if( args[arg].equals("-messageContext") )        {
                     bMessageContext = true;
                    --argcount;
                 }
