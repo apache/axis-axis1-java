@@ -84,7 +84,7 @@ public class AxisListener implements Runnable {
     private int port;
     private ServerSocket srvSocket;
     
-    private Handler engine = null ;
+    private AxisEngine engine = null ;
     
     // becomes true when we want to quit
     private boolean done = false;
@@ -149,8 +149,8 @@ public class AxisListener implements Runnable {
                 engine = new AxisServer();
                 engine.init();
                 
-                HandlerRegistry hr = (HandlerRegistry)engine.getOption(Constants.HANDLER_REGISTRY);
-                HandlerRegistry sr = (HandlerRegistry)engine.getOption(Constants.SERVICE_REGISTRY);
+                HandlerRegistry hr = engine.getHandlerRegistry();
+                HandlerRegistry sr = engine.getServiceRegistry();
                 // add the TCPDispatchHandler
                 hr.add("TCPSender", new TCPDispatchHandler());
                 hr.add("TCPAction", new TCPActionHandler());
@@ -175,6 +175,7 @@ public class AxisListener implements Runnable {
             /* even need to be parsed.                                         */
             /*******************************************************************/
             MessageContext    msgContext = new MessageContext();
+            msgContext.setAxisEngine(engine);
             
             InputStream inp;
             try {

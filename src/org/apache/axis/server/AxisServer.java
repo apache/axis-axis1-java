@@ -86,6 +86,11 @@ public class AxisServer extends AxisEngine
     }
 
     /**
+     * Is this running on the server?
+     */
+    public boolean isOnServer() { return true; }
+
+    /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
@@ -104,8 +109,6 @@ public class AxisServer extends AxisEngine
             (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
 
         msgContext.setAxisEngine( this );
-        msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
-        msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
         msgContext.setTypeMappingRegistry(tmr);
 

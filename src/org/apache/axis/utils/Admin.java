@@ -138,8 +138,9 @@ public class Admin {
                   throws AxisFault
   {
     Debug.Print( 1, "Enter: Admin:AdminService" );
-    hr = (DefaultHandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
-    sr = (DefaultServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+    AxisEngine engine =  msgContext.getAxisEngine();
+    hr = (DefaultHandlerRegistry)engine.getHandlerRegistry();
+    sr = (DefaultServiceRegistry)engine.getServiceRegistry();
     tmr = msgContext.getTypeMappingRegistry();
     Document doc = process( msgContext, xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );

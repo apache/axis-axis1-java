@@ -58,6 +58,7 @@ package org.apache.axis.client;
 import java.util.* ;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.Handler;
 
 public abstract class Transport {
@@ -71,7 +72,7 @@ public abstract class Transport {
      * Initialize the given AxisClient with whatever transport state
      * is appropriate.
      */
-    public void init (Handler client) {
+    public void init (AxisEngine client) {
         // default is do nothing
     }
     
@@ -79,7 +80,7 @@ public abstract class Transport {
      * Initialize the given MessageContext with the correct handlers and registries.
      */
     public abstract void initMessageContext
-        (MessageContext context, ServiceClient message, Handler engine, boolean doLocal)
+        (MessageContext context, ServiceClient message, AxisEngine engine, boolean doLocal)
         throws AxisFault;
     
     /**
@@ -91,7 +92,7 @@ public abstract class Transport {
      * @throws AxisFault if service cannot be found
      */
     public abstract void setupMessageContext
-        (MessageContext context, ServiceClient message, Handler engine, boolean doLocal)
+        (MessageContext context, ServiceClient message, AxisEngine engine, boolean doLocal)
         throws AxisFault;
 }
     
