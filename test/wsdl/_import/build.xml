@@ -36,6 +36,8 @@ Copyright:
 
 <property name="axis.home" location="../../.." />
 <property name="componentName" value="test/wsdl/_import" />
+<property name="extraServices" value="work/test/import2/**" />
+<property name="extraTestCases" value="test/import2/**" />
         &properties;
         &paths;
         &taskdefs;
@@ -43,9 +45,15 @@ Copyright:
         &targets;
 
 <target name="clean">
-    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
-    <delete dir="${build.dir}/classes/${componentName}"/>
-    <delete dir="${build.dir}/work/${componentName}"/>
+    <echo message="Cleaning up directories" />
+    <delete dir="${build.dir}/classes/test/import2" />
+    <delete dir="${build.dir}/classes/test/import3" />
+    <delete dir="${build.dir}/classes/test/wsdl/_import" />
+    <delete dir="${build.dir}/classes/test/_import" />
+    <delete dir="${build.dir}/work/test/import2" />
+    <delete dir="${build.dir}/work/test/import3" />
+    <delete dir="${build.dir}/work/test/wsdl/_import" />
+    <delete dir="${build.dir}/work/test/_import" />
 </target>
 
 <target name="copy" depends="setenv">
@@ -105,7 +113,10 @@ Copyright:
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
+      <include name="test/import2/**/*.java" />
+      <include name="test/import3/**/*.java" />
       <include name="test/wsdl/_import/**/*.java" />
+      <include name="test/_import/**/*.java" />
     </javac>
 
 
