@@ -65,6 +65,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.description.OperationDesc;
@@ -76,6 +77,9 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element; 
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 import javax.wsdl.Binding;
@@ -93,11 +97,13 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Fault;
+import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
@@ -126,6 +132,7 @@ public class Emitter {
     private boolean useInheritedMethods = false;
     private String intfNS;
     private String implNS;
+    private String inputWSDL;
     private String locationUrl;
     private String importUrl;
     private String servicePortName;
@@ -142,6 +149,7 @@ public class Emitter {
     private Types types;
     private String clsName;
     private String portTypeName;
+    private String bindingName;
 
     private ServiceDesc serviceDesc;
     private ServiceDesc serviceDesc2;
@@ -162,9 +170,9 @@ public class Emitter {
      *
      * @param filename1  interface WSDL
      * @param filename2  implementation WSDL
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public void emit(String filename1, String filename2) throws Exception {
+    public void emit(String filename1, String filename2) throws IOException, WSDLException {
         // Get interface and implementation defs
         Definition intf = getIntfWSDL();
         Definition impl = getImplWSDL();
@@ -192,9 +200,9 @@ public class Emitter {
      * Generates a complete WSDL document for a given <code>Class</code>
      *
      * @param filename  WSDL
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public void emit(String filename) throws Exception {
+    public void emit(String filename) throws IOException, WSDLException {
         emit(filename, MODE_ALL);
     }
 
@@ -207,9 +215,9 @@ public class Emitter {
      *
      * @param mode generation mode - all, interface, implementation
      * @return Document
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public Document emit(int mode) throws Exception {
+    public Document emit(int mode) throws IOException, WSDLException {
         Document doc = null;
         Definition def = null;
         switch (mode) {
@@ -230,8 +238,6 @@ public class Emitter {
                 doc = WSDLFactory.newInstance().
                     newWSDLWriter().getDocument(def);
                 break;
-            default:
-                throw new Exception ("unrecognized output WSDL mode");
         }
 
         // Return the document
@@ -247,9 +253,9 @@ public class Emitter {
      *
      * @param mode generation mode - all, interface, implementation
      * @return String
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public String emitToString(int mode) throws Exception {
+    public String emitToString(int mode) throws IOException, WSDLException {
         Document doc = emit(mode);
         StringWriter sw = new StringWriter();
         XMLUtils.PrettyDocumentToWriter(doc, sw);
@@ -265,9 +271,9 @@ public class Emitter {
      *
      * @param filename  WSDL
      * @param mode generation mode - all, interface, implementation
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public void emit(String filename, int mode) throws Exception {
+    public void emit(String filename, int mode) throws IOException, WSDLException {
         Document doc = emit(mode);
 
         // Supply a reasonable file name if not supplied
@@ -294,19 +300,22 @@ public class Emitter {
      * configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public Definition getWSDL() throws Exception {
+    public Definition getWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
-        init();
+        init(MODE_ALL);
 
-        // Create a definition
-        Definition def = WSDLFactory.newInstance().newDefinition();
+        // Create a Definition for the output wsdl
+        Definition def = createDefinition();
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, tm, defaultTM, namespaces,
-                          intfNS, stopClasses);
+
+        // Create Types
+        types = createTypes(def);
+
+        // Write the WSDL constructs and return full Definition
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         writeService(def, binding);
@@ -318,19 +327,22 @@ public class Emitter {
      * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public Definition getIntfWSDL() throws Exception {
+    public Definition getIntfWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
-        init();
+        init(MODE_INTERFACE);
 
-        // Create a definition
-        Definition def = WSDLFactory.newInstance().newDefinition();
+        // Create a definition for the output wsdl
+        Definition def = createDefinition();
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, tm, defaultTM, namespaces,
-                          intfNS, stopClasses);
+
+        // Create Types
+        types = createTypes(def);
+
+        // Write the interface WSDL constructs and return the Definition
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         return def;
@@ -341,28 +353,30 @@ public class Emitter {
      * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
-     * @throws Exception
+     * @throws IOException, WSDLException
      */
-    public Definition getImplWSDL() throws Exception {
+    public Definition getImplWSDL() throws IOException, WSDLException {
         // Invoke the init() method to ensure configuration is setup
-        init();
+        init(MODE_IMPLEMENTATION);
 
-        // Create a definition
-        Definition def = WSDLFactory.newInstance().newDefinition();
+        // Create a Definition for the output wsdl
+        Definition def = createDefinition();
 
-        // Write interface header
+        // Write implementation header and import
         writeDefinitions(def, implNS);
         writeImport(def, intfNS, importUrl);
+
+        // Write the implementation WSDL constructs and return Definition
         Binding binding = writeBinding(def, false); // Don't add binding to def
         writeService(def, binding);
         return def;
     }
+
     /**
      * Invoked prior to building a definition to ensure parms
      * and data are set up.
-     * @throws Exception
      */
-    private void init() throws Exception {
+    private void init(int mode) {
 
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
@@ -432,6 +446,11 @@ public class Emitter {
                 setServicePortName(name);
             }
 
+            // Default the bindingName
+            if (getBindingName() == null) {
+                setBindingName(getServicePortName() + "SoapBinding");
+            }
+            
             encodingList = new ArrayList();
             encodingList.add(Constants.URI_DEFAULT_SOAP_ENC);
 
@@ -449,23 +468,70 @@ public class Emitter {
                 intfNS = namespaces.getCreate(
                         pkg == null ? null : pkg.getName());
             }
-            if (implNS == null)
-                implNS = intfNS + "-impl";
-
+            // Default the implementation namespace to the interface
+            // namespace if not split wsdl mode.
+            if (implNS == null) {
+                if (mode == MODE_ALL) {
+                    implNS = intfNS;
+                } else {
+                    implNS = intfNS + "-impl";
+                }
+            }
+                
             namespaces.put(cls.getName(), intfNS, "intf");
             namespaces.putPrefix(implNS, "impl");
         }
     }
+
+
+    /**
+     * Build a Definition from the input wsdl file or create
+     * a new Definition
+     *
+     * @return WSDL Definition
+     */
+    private Definition createDefinition()
+        throws WSDLException {
+        Definition def;
+        if (inputWSDL == null) {
+            def = WSDLFactory.newInstance().newDefinition();
+        } else {
+            javax.wsdl.xml.WSDLReader reader =
+                WSDLFactory.newInstance().newWSDLReader();
+            Document doc = XMLUtils.newDocument(inputWSDL);
+            def = reader.readWSDL(null, doc);
+            // The input wsdl types section is deleted.  The
+            // types will be added back in at the end of processing.
+            def.setTypes(null); 
+        }
+        return def;
+    }
+
+    /**
+     * Build a Types object and load the input wsdl types
+     * @param Corresponding wsdl Definition
+     * @return Types object
+     */
+    private Types createTypes(Definition def)
+        throws IOException, WSDLException {
+        types = new Types(def, tm, defaultTM, namespaces,
+                          intfNS, stopClasses);
+        if (inputWSDL != null) {
+            types.loadInputTypes(inputWSDL);
+        }
+        return types;
+    }
+
 
     /**
      * Create the definition header information.
      *
      * @param def  <code>Definition</code>
      * @param tns  target namespace
-     * @throws Exception
+     * @throws WSDLException
      */
     private void writeDefinitions(Definition def, String tns)
-        throws Exception {
+        throws WSDLException {
         def.setTargetNamespace(tns);
 
         def.addNamespace("intf", intfNS);
@@ -503,10 +569,10 @@ public class Emitter {
      * @param def  <code>Definition</code>
      * @param tns  target namespace
      * @param loc  target location
-     * @throws Exception
+     * @throws WSDLException
      */
     private void writeImport(Definition def, String tns, String loc)
-        throws Exception {
+        throws WSDLException {
         Import imp = def.createImport();
 
         imp.setNamespaceURI(tns);
@@ -520,14 +586,23 @@ public class Emitter {
      *
      * @param def  <code>Definition</code>
      * @param add  true if binding should be added to the def
-     * @throws Exception
+     * @throws WSDLException
      */
     private Binding writeBinding(Definition def, boolean add)
-        throws Exception {
-        Binding binding = def.createBinding();
+        throws WSDLException {
+        QName bindingQName = 
+            new QName(intfNS, getBindingName());
+
+        // If a binding already exists, don't replace it.
+        Binding binding = def.getBinding(bindingQName);
+        if (binding != null) {
+            return binding;
+        } 
+
+        // Create a binding
+        binding = def.createBinding();
         binding.setUndefined(false);
-        binding.setQName(
-          new QName(intfNS, getServicePortName() + "SoapBinding"));
+        binding.setQName(bindingQName);
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
@@ -550,17 +625,21 @@ public class Emitter {
      */
     private void writeService(Definition def, Binding binding) {
 
-        Service service = def.createService();
+        QName serviceElementQName = 
+            new QName(implNS,
+                      getServiceElementName());
+        
+        // Locate an existing service, or get a new service
+        Service service = def.getService(serviceElementQName);
+        if (service == null) {
+            service = def.createService();
+            service.setQName(serviceElementQName);
+            def.addService(service);
+        }
 
-        service.setQName(new QName(implNS,
-                                              getServiceElementName()));
-
-        def.addService(service);
-
+        // Add the port
         Port port = def.createPort();
-
         port.setBinding(binding);
-
         // Probably should use the end of the location Url
         port.setName(getServicePortName());
 
@@ -576,19 +655,28 @@ public class Emitter {
      *
      * @param def
      * @param binding
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     private void writePortType(Definition def, Binding binding)
-        throws Exception{
+        throws WSDLException, AxisFault {
 
-        PortType portType = def.createPortType();
-        portType.setUndefined(false);
+        QName portTypeQName = new QName(intfNS, getPortTypeName());
 
-        // PortType name is the name of the class being processed
-        // Split statement to isolate NPE
-        QName tempqn = new QName(intfNS, getPortTypeName());
-        portType.setQName(tempqn);
+        // Get or create a portType
+        PortType portType = def.getPortType(portTypeQName);
+        boolean newPortType = false;
+        if (portType == null) {
+            portType = def.createPortType();
+            portType.setUndefined(false);
+            portType.setQName(portTypeQName);
+            newPortType = true;
+        } else if (binding.getBindingOperations().size() > 0) {
+            // If both portType and binding already exist, 
+            // no additional processing is needed.
+            return;
+        }
 
+        // Add the port and binding operations.
         ArrayList operations = serviceDesc.getOperations();
         for (Iterator i = operations.iterator(); i.hasNext();) {
             OperationDesc thisOper = (OperationDesc)i.next();
@@ -637,10 +725,14 @@ public class Emitter {
 
             writeMessages(def, oper, messageOper, 
                           bindingOper);
-            portType.addOperation(oper);
+            if (newPortType) {
+                portType.addOperation(oper);
+            }
         }
 
-        def.addPortType(portType);
+        if (newPortType) {
+            def.addPortType(portType);
+        }
 
         binding.setPortType(portType);
     }
@@ -651,13 +743,13 @@ public class Emitter {
      * @param oper Operation, the wsdl operation
      * @param desc OperationDesc, the Operation Description
      * @param bindingOper BindingOperation, corresponding Binding Operation
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     private void writeMessages(Definition def,
                                Operation oper,
                                OperationDesc desc,
                                BindingOperation bindingOper)
-            throws Exception{
+            throws WSDLException, AxisFault {
         Input input = def.createInput();
 
         Message msg = writeRequestMessage(def, desc);
@@ -671,7 +763,6 @@ public class Emitter {
         bindingOper.getBindingInput().setName(name);
 
         oper.setInput(input);
-
         def.addMessage(msg);
 
         msg = writeResponseMessage(def, desc);
@@ -686,7 +777,6 @@ public class Emitter {
         bindingOper.getBindingOutput().setName(name);
 
         oper.setOutput(output);
-
         def.addMessage(msg);
 
         ArrayList exceptions = desc.getFaults();
@@ -824,10 +914,11 @@ public class Emitter {
     /** Create a Request Message
      *
      * @param def
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     private Message writeRequestMessage(Definition def,
-                                        OperationDesc oper) throws Exception
+                                        OperationDesc oper)
+        throws WSDLException, AxisFault
     {
         Message msg = def.createMessage();
 
@@ -848,10 +939,11 @@ public class Emitter {
     /** Create a Response Message
      *
      * @param def
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     private Message writeResponseMessage(Definition def,
-                                         OperationDesc desc) throws Exception
+                                         OperationDesc desc)
+        throws WSDLException, AxisFault
     {
         Message msg = def.createMessage();
 
@@ -885,10 +977,11 @@ public class Emitter {
      *
      * @param def
      * @param exception (an ExceptionRep object)
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     private Message writeFaultMessage(Definition def,
-                                      FaultDesc exception) throws Exception
+                                      FaultDesc exception) 
+        throws WSDLException, AxisFault
     {
 
         String pkgAndClsName = exception.getName();
@@ -935,12 +1028,12 @@ public class Emitter {
      * @param request     message is for a request
      * @param param       ParamRep object
      * @return The parameter name added or null
-     * @throws Exception
+     * @throws WSDLException, AxisFault
      */
     public String writePartToMessage(Definition def,
                                      Message msg,
                                      boolean request,
-                                     ParameterDesc param) throws Exception
+                                     ParameterDesc param) throws WSDLException, AxisFault
     {
         // Return if this is a void type
         if (param == null ||
@@ -977,7 +1070,7 @@ public class Emitter {
         if (mode != MODE_RPC)
             elemQName = param.getQName();
         QName typeQName = types.writePartType(javaType,
-                elemQName);
+                elemQName); 
         if (mode == MODE_RPC) {
             if (typeQName != null) {
                 part.setTypeName(typeQName);
@@ -1027,10 +1120,10 @@ public class Emitter {
      *
      * @param doc the Document to write
      * @param filename the name of the file to be written
-     * @throws Exception various file i/o exceptions
+     * @throws IOException various file i/o exceptions
      */
     private void prettyDocumentToFile(Document doc, String filename)
-        throws Exception {
+        throws IOException {
         FileOutputStream fos = new FileOutputStream(new File(filename));
         XMLUtils.PrettyDocumentToStream(doc, fos);
         fos.close();
@@ -1307,6 +1400,22 @@ public class Emitter {
     }
 
     /**
+     * Get the name of the input WSDL                              
+     * @return name of the input wsdl or null
+     */
+    public String getInputWSDL() {
+        return inputWSDL;
+    }
+
+    /**
+     * Set the name of the input WSDL
+     * @param inputWSDL the name of the input WSDL
+     */
+    public void setInputWSDL(String inputWSDL) {
+        this.inputWSDL = inputWSDL;
+    }
+
+    /**
      * Returns the String representation of the service endpoint URL
      * @return String representation of the service endpoint URL
      */
@@ -1386,6 +1495,22 @@ public class Emitter {
      */
     public void setPortTypeName(String portTypeName) {
         this.portTypeName = portTypeName;
+    }
+
+    /**
+     * Returns the String representation of the binding name
+     * @return String representation of the binding name
+     */
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    /**
+     * Set the String representation of the binding name
+     * @param bindingName the String representation of the binding name
+     */
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
     }
 
     /**

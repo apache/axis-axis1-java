@@ -387,8 +387,12 @@ public class Emitter extends Parser {
     } // run
 
     /**
-     * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * Call this method if your WSDL document has already been
+     * parsed as an XML DOM document.
+     * @param context context This is directory context for the Document.
+     * If the Document were from file "/x/y/z.wsdl" then the context
+     * could be "/x/y" (even "/x/y/z.wsdl" would work).  
+     * If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
     public void run(String context, Document doc) throws IOException, WSDLException {
@@ -503,8 +507,12 @@ public class Emitter extends Parser {
     } // emit
 
     /**
-     * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * Call this method if your WSDL document has already been
+     * parsed as an XML DOM document.
+     * @param context context This is directory context for the Document.
+     * If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y"
+     * (even "/x/y/z.wsdl" would work).  If context is null, then the context
+     * becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      * @deprecated Call run(context, doc) instead.
      */
