@@ -84,19 +84,12 @@ public class RPCElement extends SOAPBodyElement
         return new RPCElementFactory();
     }
     
-    class RPCContentHandler extends DefaultHandler
+    class RPCContentHandler extends DeserializerBase
     {
-        private boolean passedMyStart = false;
-        
-        public void startElement(String namespace, String name, String qName,
+        public void onStartChild(String namespace, String name, String qName,
                                  Attributes attributes)
             throws SAXException
         {
-            if (!passedMyStart) {
-                passedMyStart = true;
-                return;
-            }
-            
             // Start of an arg...
             RPCParam param = new RPCParam(namespace, name, attributes, context);
             
@@ -116,13 +109,15 @@ public class RPCElement extends SOAPBodyElement
                  */
                 
             }
-            ContentHandler handler = param.getContentHandler();
+            
+            DeserializerBase handler = param.getContentHandler(context);
             
             handler.startElement(namespace, name, qName, attributes);
+            
             context.pushElementHandler(handler);
         }
     }
-    public ContentHandler getContentHandler() { return new RPCContentHandler(); }
+    public DeserializerBase getContentHandler() { return new RPCContentHandler(); }
     
     ///////////////////////////////////////////////////////////////
     

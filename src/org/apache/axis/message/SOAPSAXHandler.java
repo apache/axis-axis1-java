@@ -58,6 +58,7 @@ package org.apache.axis.message;
 import java.io.*;
 import java.util.*;
 import org.apache.axis.*;
+import org.apache.axis.encoding.DeserializerBase;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.utils.NSStack;
@@ -115,7 +116,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     
     protected boolean parsingToEnd = false;
     
-    private ContentHandler elementHandler = null;
+    private DeserializerBase elementHandler = null;
     private int recordingDepth = 0;
 
     protected DeserializationContext context;
@@ -290,18 +291,18 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     /** A little utility class to keep track of our parsing state.
      */
     class HandlerContext {
-        public HandlerContext(int recordingDepth, ContentHandler handler)
+        public HandlerContext(int recordingDepth, DeserializerBase handler)
         {
             this.recordingDepth = recordingDepth;
             this.handler = handler;
         }
         public int recordingDepth;
-        public ContentHandler handler;
+        public DeserializerBase handler;
     }
     
     Stack handlerContexts = new Stack();
     
-    public void pushElementHandler(ContentHandler handler)
+    public void pushElementHandler(DeserializerBase handler)
     {
         // System.out.println("Pushing handler (" + recordingDepth + ") " + handler);
         
@@ -412,11 +413,10 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         if (DEBUG_LOG) {
             System.out.println("startElement ['" + namespace + "' " +
                            localName + "]");
-            namespaces.dump();
         }
         
         if (elementHandler != null) {
-            elementHandler.startElement(namespace, localName, qName, attributes);
+            elementHandler.onStartChild(namespace, localName, qName, attributes);
             
             recordingDepth++;
             
@@ -521,6 +521,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 element.setEnvelope(envelope);
                 pushElementHandler(element.getContentHandler());
                 element.setPrefix(namespaces.getPrefix(namespace));
+                elementHandler.setDeserializationContext(context);
                 elementHandler.startElement(namespace, localName, qName, attributes);
             }
         } catch (SAXException saxEx) {
@@ -545,8 +546,13 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             
             elementHandler.endElement(namespace, localName, qName);
 
-            if (recordingDepth == 0)
+            if (recordingDepth == 0) {
+                DeserializerBase oldElementHandler = elementHandler;
                 popElementHandler();
+            
+                if (elementHandler != null)
+                    elementHandler.onEndChild(localName, oldElementHandler);
+            }
 
             return;
         }

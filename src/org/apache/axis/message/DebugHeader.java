@@ -29,7 +29,7 @@ public class DebugHeader extends SOAPHeader
         return new DebugHeaderFactory();
     }
     
-    class SAXHandler extends DefaultHandler
+    class SAXHandler extends DeserializerBase
     {
         public void characters(char [] chars, int start, int end)
         {
@@ -66,7 +66,7 @@ public class DebugHeader extends SOAPHeader
     // Override the default (recording) implementation because we
     // want to parse this header ourselves as it goes by.
     
-    public ContentHandler getContentHandler()
+    public DeserializerBase getContentHandler()
     { return new SAXHandler(); }
     
     public void output(SerializationContext context)
