@@ -129,13 +129,15 @@ public class ParamSet {
             if (TYPE_DIR != type) {
                 String[] files = getFiles(base, scanner);
                 for (int j = 0; j < files.length; j++) {
-                    values.addElement(files[j]);
+                    File f = new File(base, files[j]);
+                    values.addElement(f.getAbsolutePath());
                 }
             }
             if (TYPE_FILE != type) {
                 String[] dirs = getDirs(base, scanner);
                 for (int j = 0; j < dirs.length; j++) {
-                    values.addElement(dirs[j]);
+                    File f = new File(base, dirs[j]);
+                    values.addElement(f.getAbsolutePath());
                 }
             }
         }
