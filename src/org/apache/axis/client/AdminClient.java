@@ -340,7 +340,7 @@ public class AdminClient
 
             String result = admin.process(args);
             if (result != null)
-                System.out.println(result);
+                log.info(result);
             else
                 System.exit(1);
         } catch (Exception e) {
