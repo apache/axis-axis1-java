@@ -22,10 +22,17 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            test.wsdl.nested.Out value = null;
-            value = binding.nestedSvc2(new java.lang.String("0000001000"), new java.lang.String("01"), new java.lang.String("00"), new java.lang.String(""), new java.lang.String("1000"));
-            test.wsdl.nested.PEADDRESS address = value.getPEADDRESS();
-            test.wsdl.nested.RETURN ret = value.getRETURN();
+            PEADDRESSHolder pEADDRESS = new PEADDRESSHolder();
+            RETURNHolder rETURN = new RETURNHolder();
+            binding.nestedSvc2(new java.lang.String("0000001000"),
+                               new java.lang.String("01"),
+                               new java.lang.String("00"),
+                               new java.lang.String(""),
+                               new java.lang.String("1000"),
+                               pEADDRESS,
+                               rETURN);
+            PEADDRESS address = pEADDRESS.value;
+            RETURN ret = rETURN.value;
             System.out.println("NAME:" + address.getNAME());
             assertTrue("NAME is wrong", address.getNAME().equals("Becker Berlin"));
             System.out.println("LOGMSGNO:" + ret.getLOGMSGNO());

@@ -8,8 +8,8 @@
 package test.wsdl.nested;
 
 public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
-    public test.wsdl.nested.Out nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG) throws java.rmi.RemoteException {
-        test.wsdl.nested.PEADDRESS address = new test.wsdl.nested.PEADDRESS();
+    public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PEADDRESSHolder pEADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {
+        PEADDRESS address = new PEADDRESS();
         address.setFORMOFAD("Company");
         address.setFIRSTNAME("");
         address.setNAME("Becker Berlin");
@@ -34,7 +34,7 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
         address.setCOUNTRYISO("DE");
         address.setONLYCHANGECOMADDRESS("X");
 
-        test.wsdl.nested.RETURN ret = new test.wsdl.nested.RETURN();
+        RETURN ret = new RETURN();
         ret.setTYPE("");
         ret.setCODE("");
         ret.setMESSAGE("");
@@ -45,10 +45,8 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
         ret.setMESSAGEV3("");
         ret.setMESSAGEV4("");
 
-        test.wsdl.nested.Out out = new test.wsdl.nested.Out();
-        out.setPEADDRESS(address);
-        out.setRETURN(ret);
-        return out;
+        pEADDRESS.value = address;
+        rETURN.value = ret;
     }
 
 }

@@ -13,7 +13,8 @@
             <wsdl:part name="PI_SALESORG" element="tns:PI_SALESORG"/>
     </wsdl:message>
     <wsdl:message name="NestedSvc2Output">
-	    <wsdl:part name="composite" type="tns:Out"/>
+            <wsdl:part name="PE_ADDRESS" element="tns:PE_ADDRESS"/>
+            <wsdl:part name="RETURN" element="tns:RETURN"/>
     </wsdl:message>
     <wsdl:portType name="Nested2PortType">
 	    <wsdl:operation name="NestedSvc2">
@@ -39,28 +40,11 @@
     </wsdl:service>
     <wsdl:types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:Nested">
-            <xsd:complexType name="In">
-	            <xsd:sequence>
-		            <xsd:element ref="CUSTOMERNO" minOccurs="1" maxOccurs="1"/>
-		            <xsd:element ref="PI_DISTR_CHAN" minOccurs="0" maxOccurs="1"/>
-		            <xsd:element ref="PI_DIVISION" minOccurs="0" maxOccurs="1"/>
-		            <xsd:element ref="PI_PASS_BUFFER" minOccurs="0" maxOccurs="1"/>
-		            <xsd:element ref="PI_SALESORG" minOccurs="1" maxOccurs="1"/>
-		            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-	            </xsd:sequence>
-            </xsd:complexType>
             <xsd:element name="CUSTOMERNO" type="xsd:string"/>
             <xsd:element name="PI_DISTR_CHAN" type="xsd:string"/>
             <xsd:element name="PI_DIVISION" type="xsd:string"/>
             <xsd:element name="PI_PASS_BUFFER" type="xsd:string"/>
             <xsd:element name="PI_SALESORG" type="xsd:string"/>
-            <xsd:complexType name="Out">
-	            <xsd:sequence>
-		            <xsd:element ref="PE_ADDRESS" minOccurs="1" maxOccurs="1"/>
-		            <xsd:element ref="RETURN" minOccurs="1" maxOccurs="1"/>
-		            <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-	            </xsd:sequence>
-            </xsd:complexType>
             <xsd:element name="PE_ADDRESS">
 	            <xsd:complexType>
 		            <xsd:sequence>
