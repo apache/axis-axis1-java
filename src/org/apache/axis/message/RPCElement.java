@@ -220,9 +220,11 @@ public class RPCElement extends SOAPBodyElement
                         // If no operation name and more than one
                         // parameter is expected, don't
                         // wrap the rpcHandler in an EnvelopeHandler.
-                        if ((operation.getStyle() == Style.DOCUMENT) &&
-                            operation.getNumInParams() > 0) {
-                            context.pushElementHandler(rpcHandler);
+                         if ( ( msgContext.isClient() &&
+                               operation.getStyle() == Style.DOCUMENT ) ||
+                            ( !msgContext.isClient() &&
+                               operation.getStyle() == Style.DOCUMENT &&
+                               operation.getNumInParams() > 0 ) ) {                            context.pushElementHandler(rpcHandler);
                             context.setCurElement(null);
                         } else {
                             context.pushElementHandler(
