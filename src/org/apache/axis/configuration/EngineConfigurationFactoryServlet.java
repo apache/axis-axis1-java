@@ -51,7 +51,7 @@ public class EngineConfigurationFactoryServlet
     protected static Log log =
         LogFactory.getLog(EngineConfigurationFactoryServlet.class.getName());
 
-    private ServletContext ctx;
+    private ServletConfig cfg;
     
     /**
      * Creates and returns a new EngineConfigurationFactory.
@@ -87,7 +87,7 @@ public class EngineConfigurationFactoryServlet
      */
     protected EngineConfigurationFactoryServlet(ServletConfig conf) {
         super();
-        this.ctx = conf.getServletContext();
+        this.cfg = conf;
     }
 
     /**
@@ -96,7 +96,7 @@ public class EngineConfigurationFactoryServlet
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
-        return getServerEngineConfig(ctx);
+        return getServerEngineConfig(cfg);
     }
 
     /**
@@ -106,10 +106,15 @@ public class EngineConfigurationFactoryServlet
      * @return a server EngineConfiguration
      */
     private static 
-            EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+            EngineConfiguration getServerEngineConfig(ServletConfig cfg) {
+        
+        ServletContext ctx = cfg.getServletContext();
+        
         // Respect the system property setting for a different config file
-        String configFile = 
-                AxisProperties.getProperty(OPTION_SERVER_CONFIG_FILE);
+        String configFile = cfg.getInitParameter(OPTION_SERVER_CONFIG_FILE);
+        if (configFile == null)
+                configFile = 
+                        AxisProperties.getProperty(OPTION_SERVER_CONFIG_FILE);
         if (configFile == null) {
             configFile = SERVER_CONFIG_FILE;
         }
