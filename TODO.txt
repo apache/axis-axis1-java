@@ -41,7 +41,6 @@ NR - not rated
 12246 - Someone should confirm and fix for 1.0 if it's real
 12367 - Confirm, fix if real
 12572 - Glen will take a look (w/Rich)
-12781 - If this is real, we should fix for 1.0
 
 MESSAGE PARSING / ENCODING
 --------------------------
