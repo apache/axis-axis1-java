@@ -59,8 +59,10 @@ import java.io.File;
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -88,10 +90,38 @@ public class EngineConfigurationFactoryServlet
     private ServletContext ctx;
     
     /**
+     * Creates and returns a new EngineConfigurationFactory.
+     * If a factory cannot be created, return 'null'.
+     * 
+     * The factory may return non-NULL only if:
+     *   - it knows what to do with the param (param instanceof ServletContext)
+     *   - it can find it's configuration information
+     * 
+     * @see org.apache.axis.configuration.EngineConfigurationFactoryFinder
+     */
+    public static EngineConfigurationFactory newFactory(Object param) {
+        /**
+         * Default, let this one go through if we find a ServletContext.
+         * 
+         * The REAL reason we are not trying to make any
+         * decision here is because it's impossible
+         * (without refactoring FileProvider) to determine
+         * if a *.wsdd file is present or not until the configuration
+         * is bound to an engine.
+         * 
+         * FileProvider/EngineConfiguration pretend to be independent,
+         * but they are tightly bound to an engine instance...
+         */
+        return (param instanceof ServletContext)
+               ? new EngineConfigurationFactoryServlet((ServletContext)param)
+               : null;
+    }
+
+    /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    public EngineConfigurationFactoryServlet(ServletContext ctx) {
+    protected EngineConfigurationFactoryServlet(ServletContext ctx) {
         super();
         this.ctx = ctx;
     }

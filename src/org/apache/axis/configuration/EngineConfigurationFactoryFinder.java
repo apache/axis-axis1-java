@@ -55,11 +55,16 @@
 
 package org.apache.axis.configuration;
 
-import javax.servlet.ServletContext;
-import org.apache.axis.AxisProperties;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
+
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.discovery.tools.SPInterface;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.discovery.ClassInfo;
+import org.apache.commons.discovery.ClassLoaders;
+import org.apache.commons.discovery.ServiceDiscovery;
+import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 
 
@@ -81,26 +86,139 @@ public class EngineConfigurationFactoryFinder
     protected static Log log =
         LogFactory.getLog(EngineConfigurationFactoryFinder.class.getName());
 
-    /**
-     * Create the default engine configuration and detect whether the user
-     * has overridden this with their own.
-     */
+    private static final Class mySpi = EngineConfigurationFactory.class;
+    private static final Class myFactory = EngineConfigurationFactoryFinder.class;
+
+    private static final Class[] newFactoryParamTypes =
+        new Class[] { Object.class };
+        
+    private static final String requiredMethod =
+        "public static EngineConfigurationFactory newFactory(Object)";
+
     private EngineConfigurationFactoryFinder() {
     }
 
-    public static EngineConfigurationFactory newFactory() {
-        return (EngineConfigurationFactory)AxisProperties.newInstance(
-                new SPInterface(EngineConfigurationFactory.class,
-                                EngineConfigurationFactory.SYSTEM_PROPERTY_NAME),
-                EngineConfigurationFactoryDefault.class);
+
+    /**
+     * Create the default engine configuration and detect whether the user
+     * has overridden this with their own.
+     * 
+     * The discovery mechanism will use the following logic:
+     * 
+     * - discover all available EngineConfigurationFactories
+     *   - find all META-INF/services/org.apache.axis.EngineConfigurationFactory
+     *     files available through class loaders.
+     *   - read files (see Discovery) to obtain implementation(s) of that
+     *     interface
+     * - For each impl, call 'newFactory(Object param)'
+     * - Each impl should examine the 'param' and return a new factory ONLY
+     *   - if it knows what to do with it
+     *     (i.e. it knows what to do with the 'real' type)
+     *   - it can find it's configuration information
+     * - Return first non-null factory found.
+     * - Try EngineConfigurationFactoryServlet.newFactory(obj)
+     * - Try EngineConfigurationFactoryDefault.newFactory(obj)
+     * - If zero found (all return null), throw exception
+     * 
+     * ***
+     * This needs more work: System.properties, etc.
+     * Discovery will have more tools to help with that
+     * (in the manner of use below) in the near future.
+     * ***
+     * 
+     */
+    public static EngineConfigurationFactory newFactory(Object obj) {
+        /**
+         * recreate on each call is critical to gaining
+         * the right class loaders.  Do not cache.
+         */
+        ServiceDiscovery sd =
+            new ServiceDiscovery(ClassLoaders.getAppLoaders(mySpi, myFactory, true));
+
+        Object[] params = new Object[] { obj };
+
+        /**
+         * Find and examine each service
+         */
+        EngineConfigurationFactory factory = null;
+        
+        Enumeration services = sd.find(mySpi.getName());
+        while (factory == null  &&  services.hasMoreElements()) {
+            Class service = ((ClassInfo)services.nextElement()).getResourceClass();
+            
+            factory = newFactory(service, newFactoryParamTypes, params);
+        }
+        
+        if (factory == null) {
+            try {
+                factory = EngineConfigurationFactoryServlet.newFactory(obj);
+            } catch (Exception e) {
+                log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                                              EngineConfigurationFactoryServlet.class.getName(),
+                                              requiredMethod), e);
+            }
+            
+            if (factory == null) {
+                try {
+                    // should NEVER return null.
+                    factory = EngineConfigurationFactoryDefault.newFactory(obj);
+                } catch (Exception e) {
+                    log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                                                  EngineConfigurationFactoryDefault.class.getName(),
+                                                  requiredMethod), e);
+                }
+            }
+        }
+        
+        if (factory != null) {
+            log.debug("Got EngineFactory: " + factory.getClass().getName());
+        } else {
+            String msg = JavaUtils.getMessage("engineConfigFactoryMissing");
+            log.error(msg);
+            // we should be throwing an exception here,
+            //
+            // but again, requires more refactoring than we want to swallow
+            // at this point in time.  Ifthis DOES occur, it's a coding error:
+            // factory should NEVER be null.
+            // Testing will find this, as NullPointerExceptions will be generated
+            // elsewhere.
+        }
+        
+        return factory;
     }
 
-    public static EngineConfigurationFactoryServlet newServletFactory(ServletContext ctx) {
-        return (EngineConfigurationFactoryServlet)AxisProperties.newInstance(
-                new SPInterface(EngineConfigurationFactory.class,
-                                EngineConfigurationFactory.SYSTEM_PROPERTY_NAME,
-                                new Class[] { ServletContext.class },
-                                new Object[] { ctx }),
-                EngineConfigurationFactoryServlet.class);
+    public static EngineConfigurationFactory newFactory() {
+        return newFactory(null);
+    }
+
+    private static EngineConfigurationFactory newFactory(Class service,
+                                                         Class[] paramTypes,
+                                                         Object[] param) {
+        /**
+         * Verify that service implements:
+         *  public static EngineConfigurationFactory newFactory(Object);
+         */
+        Method method =
+            ClassUtils.findPublicStaticMethod(service,
+                                              EngineConfigurationFactory.class,
+                                              "newFactory",
+                                              paramTypes);
+
+        
+        if (method == null) {
+            log.warn(JavaUtils.getMessage("engineConfigMissingNewFactory",
+                                          service.getName(),
+                                          requiredMethod));
+        } else {
+            try {
+                return (EngineConfigurationFactory)method.invoke(null, param);
+            } catch (Exception e) {
+                log.warn(JavaUtils.getMessage("engineConfigInvokeNewFactory",
+                                              service.getName(),
+                                              requiredMethod), e);
+            }
+        }
+        
+        return null;
     }
 }

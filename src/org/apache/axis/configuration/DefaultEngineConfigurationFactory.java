@@ -91,7 +91,7 @@ public class DefaultEngineConfigurationFactory
      * @return a client EngineConfiguration
      */
     public EngineConfiguration getClientEngineConfig() {
-        return factory.getClientEngineConfig();
+        return factory == null ? null : factory.getClientEngineConfig();
     }
 
     /**
@@ -100,6 +100,6 @@ public class DefaultEngineConfigurationFactory
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
-        return factory.getServerEngineConfig();
+        return factory == null ? null : factory.getServerEngineConfig();
     }
 }
