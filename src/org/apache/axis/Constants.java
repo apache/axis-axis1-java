@@ -193,4 +193,6 @@ public class Constants {
 
     public static final String SERVER_CONFIG_FILE = "server-config.xml";
     public static final String CLIENT_CONFIG_FILE = "client-config.xml";
+
+    public static final String NAMESPACE = "namespace" ;
 }

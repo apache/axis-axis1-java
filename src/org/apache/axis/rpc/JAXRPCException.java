@@ -5,4 +5,10 @@
 package org.apache.axis.rpc ;
 
 public class JAXRPCException extends Exception {
+  public JAXRPCException() {
+  }
+
+  public JAXRPCException(String exp) {
+     super( exp );
+  }
 }
