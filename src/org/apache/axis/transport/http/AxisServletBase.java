@@ -366,6 +366,12 @@ public class AxisServletBase extends HttpServlet {
 
         if (value == null)
             value = context.getInitParameter(param);
+        try {
+            AxisServer engine = getEngine(this);
+            if (value == null && engine != null)
+                value = (String) engine.getOption(param);
+        } catch (AxisFault axisFault) {
+        }
 
         return (value != null) ? value : dephault;
     }

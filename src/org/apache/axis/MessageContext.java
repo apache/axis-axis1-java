@@ -792,6 +792,9 @@ public class MessageContext implements SOAPMessageContext {
         log.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;
         if (sh != null) {
+            if(!sh.isRunning()) {
+                throw new AxisFault(Messages.getMessage("disabled00"));
+            }
             targetService = sh.getName();
             SOAPService service = sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();

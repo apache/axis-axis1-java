@@ -114,6 +114,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     static private Hashtable sessions = new Hashtable();
 
+    private boolean isRunning = true;
+    
     /** 
      * Add this passed in Session to this Service's list of sessions
      */
@@ -432,18 +434,28 @@ public class SOAPService extends SimpleTargetedChain
      *********************************************************************
      */
 
-    /** Placeholder for "enable this service" method
+    /** Placeholder for "resume this service" method
      */
     public void start()
     {
+        isRunning = true;
     }
 
-    /** Placeholder for "disable this service" method
+    /** Placeholder for "suspend this service" method
      */
     public void stop()
     {
+        isRunning = false;
     }
 
+    /**
+     * Is this service suspended?
+     * @return
+     */ 
+    public boolean isRunning() {
+        return isRunning;
+    }
+    
     /**
      * Make this service available on a particular transport
      */
