@@ -50,7 +50,7 @@ public class ClientHandler implements Handler {
 			e.printStackTrace();
 		}
 
-		return false;
+		return true;
 	}
 
 	/**

@@ -68,41 +68,37 @@ public class AxisClient extends AxisEngine {
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      *
-     * @param msgContext  the <code>MessageContext</code> to invoke relative
-     *              to
+     * @param msgContext the <code>MessageContext</code> to invoke relative
+     *                   to
      * @throws AxisFault if anything goes wrong during invocation
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("Enter: AxisClient::invoke");
         }
-
-        String  hName = null ;
-        Handler h     = null ;
-
+        String hName = null;
+        Handler h = null;
+        HandlerChain handlerImpl = null;
+        
         // save previous context
         MessageContext previousContext = getCurrentMessageContext();
-
         try {
             // set active context
             setCurrentMessageContext(msgContext);
-
-            hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
+            hName = msgContext.getStrProp(MessageContext.ENGINE_HANDLER);
             if (log.isDebugEnabled()) {
-                log.debug( "EngineHandler: " + hName );
+                log.debug("EngineHandler: " + hName);
             }
-
-            if ( hName != null ) {
-                h = getHandler( hName );
-                if ( h != null )
+            if (hName != null) {
+                h = getHandler(hName);
+                if (h != null)
                     h.invoke(msgContext);
                 else
-                    throw new AxisFault( "Client.error",
-                                         Messages.getMessage("noHandler00",
-                                                             hName),
-                                         null, null );
-            }
-            else {
+                    throw new AxisFault("Client.error",
+                            Messages.getMessage("noHandler00",
+                                    hName),
+                            null, null);
+            } else {
                 /* Now we do the 'real' work.  The flow is basically:         */
                 /*                                                            */
                 /*   Service Specific Request Chain                           */
@@ -113,60 +109,78 @@ public class AxisClient extends AxisEngine {
                 /*   Service Specific Response Chain                          */
                 /*   Protocol Specific-Handler/Checker                        */
                 /**************************************************************/
-
-                // When do we call init/cleanup??
-
-                SOAPService service = null ;
+                SOAPService service = null;
                 msgContext.setPastPivot(false);
 
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
                 service = msgContext.getService();
-                if ( service != null ) {
+                if (service != null) {
                     h = service.getRequestHandler();
-                    if ( h != null )
-                        h.invoke( msgContext );
+                    if (h != null)
+                        h.invoke(msgContext);
                 }
 
                 /* Process the Global Request Chain */
                 /**********************************/
-                if ((h = getGlobalRequest()) != null )
+                if ((h = getGlobalRequest()) != null)
                     h.invoke(msgContext);
 
-                /* Process the JAXRPC Handlers */
-                /*******************************/
-                HandlerChain handlerImpl = getJAXRPChandlerChain(msgContext);
+                /* Process the JAX-RPC Handlers  - handleRequest.
+                 * Make sure to set the pastPivot to true if this returns a
+                 * false. In that case we do not invoke the transport request
+                 * chain. Also note that if a a false was returned from the
+                 * JAX-RPC handler chain, then the chain still holds the index
+                 * of the handler that returned false. So when we invoke the
+                 * handleResponse method of the chain, it will correctly call
+                 * the handleResponse from that specific handler instance. So
+                 * do not destroy the chain at this point - the chain will be
+                 * destroyed in the finally block.
+                 */
+                handlerImpl = getJAXRPChandlerChain(msgContext);
                 if (handlerImpl != null) {
-                    handlerImpl.handleRequest(msgContext);
+                    try {
+                        if (!handlerImpl.handleRequest(msgContext)) {
+                            msgContext.setPastPivot(true);
+                        }
+                    } catch (javax.xml.rpc.JAXRPCException ex) {
+                        msgContext.setPastPivot(true);
+                        handlerImpl.handleFault(msgContext);
+                        return;
+                    }
                 }
 
                 /** Process the Transport Specific stuff
                  *
                  * NOTE: Somewhere in here there is a handler which actually
                  * sends the message and receives a response.  Generally
-                 * this is the pivot point in the Transport chain.
+                 * this is the pivot point in the Transport chain. But invoke
+                 * this only if pivot point has not been set to false. This
+                 * can be set to false if any of the JAX-RPC handler's
+                 * handleRequest returned false.
                  */
-                hName = msgContext.getTransportName();
-                if (hName != null && (h = getTransport(hName)) != null) {
-                    try {
-                        h.invoke(msgContext);
-                    } catch (AxisFault e) {
-                        // server-side processing went wrong
-                        msgContext.setPastPivot(true);
-                        if (handlerImpl != null) {
-                            // invoke handleFault on JAXRPC Handlers
-                            handlerImpl.handleFault(msgContext);
+                if (!msgContext.getPastPivot()) {
+                    hName = msgContext.getTransportName();
+                    if (hName != null && (h = getTransport(hName)) != null) {
+                        try {
+                            h.invoke(msgContext);
+                        } catch (AxisFault e) {
+                            // server-side processing went wrong
+                            msgContext.setPastPivot(true);
+                            if (handlerImpl != null) {
+                                // invoke handleFault on JAXRPC Handlers
+                                handlerImpl.handleFault(msgContext);
+                            }
+                            throw e;
                         }
-                        throw e;
+                    } else {
+                        throw new AxisFault(Messages.getMessage("noTransport00",
+                                hName));
                     }
-                } else {
-                    throw new AxisFault(Messages.getMessage("noTransport00",
-                            hName));
                 }
-
                 if (!msgContext.isPropertyTrue(Call.ONE_WAY)) {
-
-                    if ((handlerImpl != null) && !msgContext.isPropertyTrue(Call.ONE_WAY)) {
+                    if ((handlerImpl != null) &&
+                            !msgContext.isPropertyTrue(Call.ONE_WAY)) {
                         handlerImpl.handleResponse(msgContext);
                     }
 
@@ -175,7 +189,6 @@ public class AxisClient extends AxisEngine {
                     if ((h = getGlobalResponse()) != null) {
                         h.invoke(msgContext);
                     }
-
                     if (service != null) {
                         h = service.getResponseHandler();
                         if (h != null) {
@@ -185,13 +198,13 @@ public class AxisClient extends AxisEngine {
 
                     // Do SOAP Semantics checks here - this needs to be a call
                     // to a pluggable object/handler/something
-                    if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
+                    if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND,
+                            true)) {
                         checker.invoke(msgContext);
                     }
                 }
             }
-
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             // Should we even bother catching it ?
             if (e instanceof AxisFault) {
                 throw (AxisFault) e;
@@ -200,10 +213,11 @@ public class AxisClient extends AxisEngine {
                 throw AxisFault.makeFault(e);
             }
         } finally {
+            if (handlerImpl != null)
+                handlerImpl.destroy();
             // restore previous state
             setCurrentMessageContext(previousContext);
         }
-
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisClient::invoke");
         }
