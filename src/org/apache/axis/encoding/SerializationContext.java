@@ -350,4 +350,10 @@ public class SerializationContext
         writer.write(string);
         writer.flush();
     }
+
+    public void writeSafeString(String string)
+        throws IOException
+    {
+        writeString(XMLUtils.xmlEncodeString(string));
+    }
 }
