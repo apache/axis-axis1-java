@@ -11,8 +11,8 @@
 <h1>
 <img SRC="images/axis.jpg" height=96 width=176></h1></center>
 
-<h1>
-Axis User's Guide</h1>
+<h1>Axis User's Guide</h1>
+<p><i>1.1 Version</i></p>
 <h3>
 Table of Contents</h3>
 
@@ -40,8 +40,7 @@ Table of Contents</h3>
 
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
-Welcome to Axis, the third generation of Apache SOAP! This is the <b>1.1</b> 
-version. 
+Welcome to Axis, the third generation of Apache SOAP! 
 <h3>
 What is SOAP?</h3>
 SOAP is an XML<i>-</i>based communication protocol and encoding format for inter-application 
@@ -479,7 +478,7 @@ Add an option as follows:
 access to your machine. If you do this, please make sure to add security
 to your configuration!</b>
 <h3>Service Styles - RPC, Document, Wrapped, and Message</h3>
-<p>There are four &quot;styles&quot; of service in Axis 1.0. <b>RPC</b> services 
+<p>There are four &quot;styles&quot; of service in Axis. <b>RPC</b> services 
   use the SOAP RPC conventions, and also the SOAP &quot;section 5&quot; encoding. 
   <b>Document</b> services do not use any encoding (so in particular, you won't 
   see multiref object serialization or SOAP-style arrays on the wire) but DO still 
@@ -607,7 +606,7 @@ and implementations, you do need to understand the issues. There are some
 as a good starting place. 
   
 The basic mapping between Java types and WSDL/XSD/SOAP in Axis is determined by 
-The JAX-RPC specification. Read chapters 4 and 5 of the 
+the JAX-RPC specification. Read chapters 4 and 5 of the 
 <a href="http://java.sun.com/xml/jaxrpc/">
 specification</a> to fully understand how things are converted. Here are
 some of the salient points. 
@@ -682,7 +681,7 @@ According to the JAX-RPC specification, your subclass of Exception
 must have accessor methods to access all the fields in the object to be
 marshalled <i>and</i> a constructor that takes as parameters all the 
 same fields (i.e, arguments of the same name and type). This is a kind of
-immutable variant of a normal JavaBean. The fields in the object must be
+immutable variant of a normal <a href="http://java.sun.com/products/javabeans">JavaBean</a>. The fields in the object must be
 of the datatypes that can be reliably mapped into WSDL.
 
 <p>
@@ -730,8 +729,8 @@ implementations can marshall and unmarshall hash tables.
 You cannot send arbitrary Java objects over the wire and expect them to
 be understood at the far end. With RMI you can send and receive
 <tt>Serializable</tt> Java objects, but that is because you are running
-Java at both ends. Axis will only send objects for which there is a
-registered Axis serializer. This document shows below how to use
+Java at both ends. <b>Axis will only send objects for which there is a
+registered Axis serializer.</b> This document shows below how to use
 the BeanSerializer to serialize any class that follows the JavaBean
 pattern of accessor and mutator. To serve up objects you must either
 register your classes with this BeanSerializer, or there must be
@@ -750,7 +749,7 @@ string keys that can be passed over the wire.
 
 <h3>Encoding Your Beans - the BeanSerializer</h3>
 Axis includes the ability to serialize/deserialize, without writing any
-code, arbitrary Java classes which follow the standard JavaBean pattern
+code, arbitrary Java classes which follow the standard <a href="http://java.sun.com/products/javabeans">JavaBean</a> pattern
 of get/set accessors. All you need to do is tell Axis which Java classes
 map to which XML Schema types. Configuring a bean mapping looks like this:
 <pre class="xml">&lt;beanMapping qname="ns:local" xmlns:ns="someNamespace"
@@ -1492,6 +1491,13 @@ archives.</a></b>
     If you know what you want but don't know what it's called in Axis, this is 
     the best place to look. Chances are someone has wanted the same thing and 
     someone else has used (or developed) Axis long enough know the name.</li>
+	
+    <li> Consult the <A HREF="http://ws.apache.org/axis">Axis web site</a> for updated documentation and the 
+      <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">Axis Wiki</a>
+      for its Frequently Asked Questions (FAQ), installation notes,
+      interoperability issues lists, and other useful information.
+    </li>
+	
   <li> <b>WSDL2Java.</b> Point WSDL2Java at a known webservice that does some 
     of the things you want to do. See what comes out. This is useful even if
 you 
@@ -1619,6 +1625,8 @@ correct plug-in, the browser should prompt you to install one.
 The port used by the SOAP monitor service to comminicate with
 applets is configurable.  Edit the web.xml file for the Axis
 web application to change the port to be used.
+
+<b>Note: The SOAP Monitor is NOT enabled by default for security reasons.</b>
 
 <a NAME="Glossary">
 <h2>Glossary</h2></a>
