@@ -255,10 +255,10 @@ public class TypeDesc implements Serializable {
                     return parentDesc.getElementNameForField(fieldName);
                 }
             }
-        } else if (!desc.isElement()) {
-            return null;
-        }
-        return desc.getXmlName();
+        } else if (desc.isElement()) {
+            return desc.getXmlName();
+        } 
+        return null;
     }
     
     /**
@@ -276,14 +276,14 @@ public class TypeDesc implements Serializable {
                     return parentDesc.getAttributeNameForField(fieldName);
                 }
             }
-        } else if (desc.isElement()) {
-            return null;
+        } else if (!desc.isElement()) {
+            QName ret = desc.getXmlName();
+            if (ret == null) {
+                ret = new QName("", fieldName);
+            }
+            return ret;
         }
-        QName ret = desc.getXmlName();
-        if (ret == null) {
-            ret = new QName("", fieldName);
-        }
-        return ret;
+        return null;
     }
 
     /**
