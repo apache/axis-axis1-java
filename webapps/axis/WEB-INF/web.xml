@@ -25,7 +25,7 @@
 
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>servlet/AxisServlet</url-pattern>
+    <url-pattern>/servlet/AxisServlet</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
@@ -40,7 +40,7 @@
 
   <servlet-mapping>
     <servlet-name>AdminServlet</servlet-name>
-    <url-pattern>servlet/AdminServlet</url-pattern>
+    <url-pattern>/servlet/AdminServlet</url-pattern>
   </servlet-mapping>
 
   <welcome-file-list id="WelcomeFileList_1">
