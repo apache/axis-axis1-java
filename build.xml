@@ -253,10 +253,6 @@ Copyright:
     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests"/>
   </target>
 
-  <!-- Security only tests, with full dependencies -->
-  <target name="secure-tests" depends="compile, buildTest, junit, functional-tests-secure-only">
-  </target>
-
   <!-- All tests -->
   <target name="all-tests" depends="junit, functional-tests">
   </target>
