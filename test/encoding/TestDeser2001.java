@@ -1,6 +1,7 @@
 package test.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.Hex;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,6 +51,26 @@ public class TestDeser2001 extends TestDeser {
                        "1999-05-31T12:01:30.150-05:00" + 
                      "</result>",
                      date.getTime());
+    }
+
+    public void testBase64() throws Exception {
+        deserialize("<result xsi:type=\"xsd:base64Binary\">QmFzZTY0</result>",
+                    "Base64".getBytes());
+    }
+
+    public void testBase64Null() throws Exception {
+        deserialize("<result xsi:type=\"xsd:base64Binary\"></result>",
+                    new byte[0]);
+    }
+
+    public void testHex() throws Exception {
+        deserialize("<result xsi:type=\"xsd:hexBinary\">50A9</result>",
+                    new Hex("50A9"));
+    }
+
+    public void testHexNull() throws Exception {
+        deserialize("<result xsi:type=\"xsd:hexBinary\"></result>",
+                    new Hex(""));
     }
 
     public void testMapWithNils() throws Exception {

@@ -65,15 +65,29 @@ import java.io.IOException;
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/2001/PR-xmlschema-2-20010330/#base64Binary">XML Schema 3.2.16</a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
 public class Base64Serializer implements Serializer {
 
     static class Base64Deser extends Deserializer {
+        /**
+         * Handle any characters found in the data
+         */
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
             value = Base64.decode(chars, start, end);
+        }
+
+        /**
+         * Return something even if no characters were found.
+         */
+        public void onEndElement(String namespace, String localName,
+                                 DeserializationContext context)
+            throws SAXException
+        {
+            super.onEndElement(namespace,localName, context);
+            if (value == null) value = new byte[0];
         }
     }
 
