@@ -61,7 +61,6 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
 
 import java.lang.reflect.Constructor;
@@ -85,6 +84,8 @@ public class SocketFactoryFactory {
     /** secure socket factory */
     private static SocketFactory theSecureFactory = null;
 
+    private static final Class classes[] = new Class[] { Hashtable.class };
+    
     /**
      * Returns a copy of the environment's default socket factory.
      *
@@ -94,19 +95,14 @@ public class SocketFactoryFactory {
      */
     public static synchronized SocketFactory getFactory(Hashtable attributes) {
         if (theFactory == null) {
-            try {
-                Class classes[] = new Class[] { Hashtable.class };
-                Object objects[] = new Object[] { attributes };
+            Object objects[] = new Object[] { attributes };
 
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SocketFactory.class,
-                                         "axis.socketFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSocketFactory");
-            } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
-            }
+            theFactory = (SocketFactory)AxisProperties.newInstance(
+                     new SPInterface(SocketFactory.class,
+                                     "axis.socketFactory",
+                                     classes,
+                                     objects),
+                     "org.apache.axis.components.net.DefaultSocketFactory");
         }
         return theFactory;
     }
@@ -121,19 +117,14 @@ public class SocketFactoryFactory {
     public static synchronized SocketFactory getSecureFactory(
             Hashtable attributes) {
         if (theSecureFactory == null) {
-            try {
-                Class classes[] = new Class[] { Hashtable.class };
-                Object objects[] = new Object[] { attributes };
+            Object objects[] = new Object[] { attributes };
 
-                theSecureFactory = (SocketFactory)AxisProperties.newInstance(
-                        new SPInterface(SocketFactory.class,
-                                        "axis.socketSecureFactory",
-                                        classes,
-                                        objects),
-                        "org.apache.axis.components.net.JSSESocketFactory");
-            } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
-            }
+            theSecureFactory = (SocketFactory)AxisProperties.newInstance(
+                    new SPInterface(SocketFactory.class,
+                                    "axis.socketSecureFactory",
+                                    classes,
+                                    objects),
+                    "org.apache.axis.components.net.JSSESocketFactory");
         }
         return theSecureFactory;
     }

@@ -59,6 +59,8 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.commons.discovery.base.SPInterface;
+
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
@@ -74,23 +76,19 @@ public class CompilerFactory {
     protected static Log log =
         LogFactory.getLog(CompilerFactory.class.getName());
 
-        public static Compiler getCompiler()
-        {
-            String compilerClassName = AxisProperties.getProperty("axis.Compiler");
-            log.debug("axis.Compiler:" + compilerClassName);
-            if (compilerClassName != null) {
-                try {
-                    Class compilerClass = ClassUtils.forName(compilerClassName);
-                    if (Compiler.class.isAssignableFrom(compilerClass))
-                        return (Compiler)compilerClass.newInstance();
-                } catch (Exception e) {
-                    // If something goes wrong here, should we just fall
-                    // through and use the default one?
-                    log.error(JavaUtils.getMessage("exception00"), e);
-                }
-            }
+    public static Compiler getCompiler() {
+        Compiler compiler =
+            (Compiler)AxisProperties.newInstance(
+                         new SPInterface(Compiler.class, "axis.Compiler"),
+                         Javac.class);
+        
+        if (compiler == null) {
             log.debug(JavaUtils.getMessage("defaultCompiler"));
-            Compiler compiler = new Javac();
-            return compiler;
+            compiler = new Javac();
         }
+
+        log.debug("axis.Compiler:" + compiler.getClass().getName());
+
+        return compiler;
+    }
 }
