@@ -835,7 +835,7 @@ public class Admin {
             dserFactory = BeanSerializer.getFactory();
         } else {
             String typeName = elem.getAttribute("type");
-            int idx = typeName.indexOf(":");
+            int idx = typeName.indexOf(':');
             String prefix = typeName.substring(0, idx);
             String localPart = typeName.substring(idx + 1);
 
