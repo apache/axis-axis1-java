@@ -5,8 +5,7 @@
         <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
 ]>
 
-<!-- ===================================================================
-==================================================================== -->
+<!-- =================================================================== -->
 
 <project default="compile" basedir=".">
 
@@ -14,26 +13,27 @@
         &paths;
         &taskdefs;
 
-  <property name="ant.dir" value="${env.ANT_HOME}/lib" />
-
   <target name="compile">
     <mkdir dir="${build.dest}"/>
     <mkdir dir="${build.lib}"/>
 
-    <echo message="ant.dir is ${ant.dir}" />
-
     <!-- build my ForEach task -->
-    <ant inheritAll="true" antfile="test/foreachTask/build_foreach.xml" />
+    <echo message="Building ForEach" />
+    <javac srcdir="${axis.home}" destdir="${build.dest}">
+      <classpath refid="classpath"/>
+      <include name="test/foreachTask/*.java" />
+    </javac>
 
     <!-- build the RunAxisFunctionalTest task -->
-    <javac srcdir="${basedir}"
-      destdir="${ant.dir}">
-      <include name="test/functional/ant/*.java" />
+    <echo message="Building RunAxisFunctionalTest" />
+    <javac srcdir="${axis.home}" destdir="${build.dest}">
       <classpath refid="classpath"/>
+      <include name="test/functional/ant/*.java" />
     </javac>
 
     <!-- build the wsdl2java and java2wsdl tasks -->
-    <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+    <echo message="wsdl2java and java2wsdl" />
+    <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
         <pathelement location="${build.lib}/${jaxrpc}.jar"/>
