@@ -503,7 +503,8 @@ public class SerializationContext
             attributes = new AttributesImpl();
             for (int i = 0; i < attrMap.getLength(); i++) {
                 Attr attr = (Attr)attrMap.item(i);
-                if (attr.getNamespaceURI().equals(Constants.NS_URI_XMLNS))
+                String tmp = attr.getNamespaceURI();
+                if ( tmp != null && tmp.equals(Constants.NS_URI_XMLNS) )
                     continue;
 
                 attributes.addAttribute(attr.getNamespaceURI(),
