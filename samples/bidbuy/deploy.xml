@@ -10,24 +10,9 @@
 <m:deploy xmlns:m="AdminService">
   <chain   name="bid"     flow="RPCDispatcher" />
 
-  <service name="http://www.soapinterop.org/RequestForQuote" pivot="bid" >
+  <service name="http://www.soapinterop.org/Bid" pivot="bid" >
     <option name="className" value="samples.bidbuy.BidService" />
-    <option name="methodName" value="RequestForQuote" />
-  </service>
-
-  <service name="http://www.soapinterop.org/SimpleBuy" pivot="bid" >
-    <option name="className" value="samples.bidbuy.BidService" />
-    <option name="methodName" value="SimpleBuy" />
-  </service>
-
-  <service name="http://www.soapinterop.org/Buy" pivot="bid" >
-    <option name="className" value="samples.bidbuy.BidService" />
-    <option name="methodName" value="Buy" />
-  </service>
-
-  <service name="http://www.soapinterop.org/Ping" pivot="bid" >
-    <option name="className" value="samples.bidbuy.BidService" />
-    <option name="methodName" value="Ping" />
+    <option name="methodName" value="RequestForQuote SimpleBuy Buy Ping" />
   </service>
 
   <beanMappings xmlns:bid="http://www.soapinterop.org/Bid">
