@@ -20,6 +20,8 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.constants.Style;
 import org.apache.axis.constants.Use;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.StringUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
@@ -1231,17 +1233,16 @@ public class JavaStubWriter extends JavaClassWriter {
         // End catch
         // Get faults
         Map faults = parms.faults;
-        // Get fauls of signature
-        String[] throwsSig = parms.signature.split("throws");
+        // Get faults of signature
         List exceptionsThrowsList = new ArrayList();
-        if (throwsSig != null && throwsSig.length > 1) {
-            String[] thrExcep = throwsSig[1].split(",");
+        int index = parms.signature.indexOf("throws");
+        if (index != -1) {
+            String[] thrExcep = StringUtils.split(parms.signature.substring(index+6),',');
             for (int i = 0; i < thrExcep.length; i++) {
-                exceptionsThrowsList.add(thrExcep[i]);
+                exceptionsThrowsList.add(thrExcep[i].trim());
             }
         }
-        pw
-                .println("  } catch (org.apache.axis.AxisFault axisFaultException) {");
+        pw.println("  } catch (org.apache.axis.AxisFault axisFaultException) {");
         if (faults != null && faults.size() > 0) {
             pw.println("    if (axisFaultException.detail != null) {");
             for (Iterator faultIt = exceptionsThrowsList.iterator(); faultIt

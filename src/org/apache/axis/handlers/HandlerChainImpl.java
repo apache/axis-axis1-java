@@ -185,7 +185,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             msgContext.setProperty(JAXRPC_METHOD_INFO, getMessageInfo(message));
         } catch (Exception e) {
             log.debug("Exception in preInvoke : ", e);
-            throw new RuntimeException("Exception in preInvoke : ", e);
+            throw new RuntimeException("Exception in preInvoke : " + e.toString());
         }
     }
 
@@ -207,7 +207,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             }
         } catch (SOAPException e) {
             log.debug("Exception in postInvoke : ", e);
-            throw new RuntimeException("Exception in postInvoke : ", e);
+            throw new RuntimeException("Exception in postInvoke : " + e.toString());
         }
     }
 
