@@ -592,14 +592,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *         required WSDL metadata
      */
     public Iterator getPorts() throws ServiceException {
-        Map map = wsdlService.getPorts();
-
-        if ( map == null ) {
+        if (wsdlService == null || wsdlService.getPorts() == null){
             // Return an empty iterator;
             return new Vector().iterator();
         }
-
-        return map.values().iterator();
+        return wsdlService.getPorts().values().iterator();
     }
 
     /**
