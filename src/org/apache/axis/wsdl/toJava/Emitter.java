@@ -54,8 +54,14 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.avalon.excalibur.cli.CLArgsParser;
+import org.apache.avalon.excalibur.cli.CLOption;
+import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
+import org.apache.avalon.excalibur.cli.CLUtil;
+
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -66,7 +72,10 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+
+import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -117,21 +126,24 @@ public class Emitter {
 
     /**
      * Call this method if you have a uri for the WSDL document
+     * @param String wsdlURI the location of the WSDL file.
      */
     public void emit(String uri) throws IOException, WSDLException {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        emit(XMLUtils.newDocument(uri));
+        emit((String) null, XMLUtils.newDocument(uri));
     } // emit
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     * @param String context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * @param Document doc This is the XML Document containing the WSDL.
      */
-    public void emit(Document doc) throws IOException, WSDLException {
+    public void emit(String context, Document doc) throws IOException, WSDLException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setVerbose(bVerbose);
-        def = reader.readWSDL(null, doc);
+        def = reader.readWSDL(context, doc);
         this.doc = doc;
         namespaces = new Namespaces(outputDir);
 
@@ -148,7 +160,7 @@ public class Emitter {
         }
 
         symbolTable = new SymbolTable(namespaces, bGenerateImports, bDebug);
-        symbolTable.add(def, doc);
+        symbolTable.add(context, def, doc);
         writerFactory.writerPass(def, symbolTable);
         if (bDebug) {
             symbolTable.dump(System.out);
@@ -414,8 +426,137 @@ public class Emitter {
     //
     // Utility methods
     //
-
     public Namespaces getNamespaces() {
         return namespaces;
     } // getNamespaces
+
+    //
+    // Utility methods
+    //
+    ///////////////////////////////////////////////////
+
+    /**
+     * Note:  this main and its assocated stuff is only intended as a test mechanism.  I frequently
+     * want to test whether the symbol table is constructed properly without having any code
+     * generated.  Invoking this main method does that.
+     */
+    private static final int HELP_OPT = 'h';
+    private static final int VERBOSE_OPT = 'v';
+    private static final int DEBUG_OPT = 'D';
+
+    private static final CLOptionDescriptor[] options = new CLOptionDescriptor[]{
+        new CLOptionDescriptor("help",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                HELP_OPT,
+                JavaUtils.getMessage("optionHelp00")),
+        new CLOptionDescriptor("verbose",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                VERBOSE_OPT,
+                JavaUtils.getMessage("optionVerbose00")),
+        new CLOptionDescriptor("Debug",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                DEBUG_OPT,
+                JavaUtils.getMessage("optionDebug00"))
+    };
+
+    private static void printUsage() {
+        String lSep = System.getProperty("line.separator");
+        StringBuffer msg = new StringBuffer();
+        msg.append(
+                "java " + Emitter.class.getName() + " [options] WSDL-URI")
+                .append(lSep);
+        msg.append(lSep);
+        msg.append(CLUtil.describeOptions(options).toString());
+        System.out.println(msg.toString());
+        System.exit(1);
+    } // printUsage
+
+    public static void main(String[] args) {
+        String wsdlURI = null;
+        HashMap namespaceMap = new HashMap();
+        Emitter emitter = new Emitter(new NoopWriterFactory());
+
+        // Parse the arguments
+        CLArgsParser parser = new CLArgsParser(args, options);
+
+        // Print parser errors, if any
+        if (null != parser.getErrorString()) {
+            printUsage();
+        }
+
+        // Get a list of parsed options
+        List clOptions = parser.getArguments();
+        int size = clOptions.size();
+
+        try {
+            // Parse the options and configure the emitter as appropriate.
+            for (int i = 0; i < size; i++) {
+                CLOption option = (CLOption)clOptions.get(i);
+
+                switch (option.getId()) {
+                    case CLOption.TEXT_ARGUMENT:
+                        if (wsdlURI != null) {
+                            printUsage();
+                        }
+                        wsdlURI = option.getArgument();
+                        break;
+
+                    case HELP_OPT:
+                        printUsage();
+                        break;
+
+                    case VERBOSE_OPT:
+                        emitter.verbose(true);
+                        break;
+
+                    case DEBUG_OPT:
+                        emitter.debug(true);
+                        break;
+                }
+            }
+
+            // validate argument combinations
+            //
+            if (wsdlURI == null) {
+                printUsage();
+            }
+            emitter.emit(wsdlURI);
+            
+            // everything is good
+            System.exit(0);
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(1);
+        }
+    } // main
+
+    private static class NoopWriterFactory implements WriterFactory {
+        public void writerPass(Definition def, SymbolTable symbolTable) {}
+        public Writer getWriter(Message message, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public Writer getWriter(PortType portType, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public Writer getWriter(Binding binding, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public Writer getWriter(Service service, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public Writer getWriter(Definition definition, SymbolTable symbolTable) {
+            return new NoopWriter();
+        }
+
+        public void setEmitter(Emitter emitter) {}
+    }
 }

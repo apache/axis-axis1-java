@@ -294,6 +294,7 @@ public class WSDL2Java {
 
     /**
      * Call this method if you have a uri for the WSDL document
+     * @param String wsdlURI the location of the WSDL file.
      */
     public void emit(String wsdlURI)
             throws IOException, WSDLException {
@@ -302,10 +303,12 @@ public class WSDL2Java {
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     * @param String context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * @param Document doc This is the XML Document containing the WSDL.
      */
-    public void emit(Document doc)
+    public void emit(String context, Document doc)
             throws IOException, WSDLException {
-        emitter.emit(doc);
+        emitter.emit(context, doc);
     } // emit
 
     /**

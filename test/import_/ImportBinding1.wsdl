@@ -7,7 +7,7 @@
     xmlns:iface="urn:iface.import.test">
 
 <import
-    location="test/import_/ImportInterface.wsdl"
+    location="ImportInterface.wsdl"
     namespace="urn:iface.import.test">
 </import>
 

@@ -8,12 +8,12 @@
     xmlns:b2="urn:importBinding2">
 
 <import
-    location="test/import_/ImportBinding1.wsdl"
+    location="ImportBinding1.wsdl"
     namespace="urn:importBinding1">
 </import>
 
 <import
-    location="test/import_/ImportBinding2.wsdl"
+    location="ImportBinding2.wsdl"
     namespace="urn:importBinding2">
 </import>
 

@@ -5,7 +5,7 @@
     xmlns="http://www.w3.org/2001/XMLSchema/">
 
     <import
-      schemaLocation="test/import_/Phone.xsd"
+      schemaLocation="Phone.xsd"
       namespace="urn:types.import.test">
     </import>
 
