@@ -125,7 +125,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 continue;
             }
 
-            String portName = p.getName();
+            String portName = Utils.xmlNameToJava(p.getName());
 
             writeComment(pw, p.getDocumentationElement());
             writeServiceTestCode(portName, binding);

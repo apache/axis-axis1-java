@@ -134,7 +134,7 @@ public class JavaServiceImplWriter extends JavaWriter {
                 continue;
             }
 
-            String portName = p.getName();
+            String portName = Utils.xmlNameToJava(p.getName());
             String stubClass = bEntry.getName() + "Stub";
             String bindingType = ptEntry.getName();
 
