@@ -11,8 +11,8 @@
 
 
   <!-- ===================================================================
-    This is an accessory function to echo out fileNames 
-       =================================================================== --> 
+    This is an accessory function to echo out fileNames
+       =================================================================== -->
   <target name="echo-file">
     <basename property="fileName" file="${file}"/>
     <dirname property="dirName" file="${file}"/>
@@ -30,7 +30,7 @@
   </target>
 
   <!-- ===================================================================
-        This is an accessory function to exec JUST the testcase of a 
+        This is an accessory function to exec JUST the testcase of a
     component.
        =================================================================== -->
   <target name="batch-component-test">
@@ -114,10 +114,10 @@
     <available property="httpunit.present"
       classname="com.meterware.httpunit.GetMethodWebRequest"
       classpathref="classpath"/>
-      
+
     <available property="jsse.present"
       classname="javax.net.ssl.SSLSocketFactory"
-      classpathref="classpath"/> 
+      classpathref="classpath"/>
 
     <condition property="jdk14.jsse.present" >
       <and>
@@ -166,7 +166,7 @@
         <classpath>
           <pathelement location="${build.lib}/axis-ant.jar"/>
         </classpath>
-      </available>  
+      </available>
     </condition>
 
     <condition property="jimiAndAttachments.present">
@@ -200,9 +200,9 @@
     <condition property="castor.present" >
       <available classname="org.exolab.castor.xml.MarshalException" classpathref="classpath" />
     </condition>
-    
 
-    <!-- look for WSDL support on the platform -->    
+
+    <!-- look for WSDL support on the platform -->
     <condition property="wsdl.found">
       <or>
         <available file="wsdl"     filepath="${env.PATH}"/>
@@ -247,7 +247,7 @@
 
   </target>
 
-  <!-- print out the current enviroment. 
+  <!-- print out the current enviroment.
       Also, probe for javadocs being out of date and set javadoc.notrequired
       to true if they are not needed -->
   <target name="printEnv" depends="setenv" >
@@ -309,7 +309,7 @@
     <echo message="http.proxyUser = ${http.proxyUser}" />
     <echo message="http.proxyPassword = ${http.proxyPassword}" />
     <echo message="" />
-    
+
     <echo message="-- Test Environment for AXIS ---"/>
     <echo message="" />
     <echo message="test.functional.remote = ${test.functional.remote}" />
@@ -487,20 +487,30 @@
           <property name="deploy.xml.property" refid="deploy.xml.files"/>
           <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
-  
+
   <target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
     <echo message="Execing ${componentName} Test"/>
     <antcall target="component-junit-functional"/>
   </target>
 
-  <target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
-
-    <!-- FIXME - How do we prevent this from running if deploy.xml.propery is empty? -->
+  <!-- Runs the AdminClient to deploy/undeploy.   Set up the admin.file.exists property such that it is set -->
+  <!-- if there is a deploy.xml file, and the admin.file property to contain the actual file reference.     -->
+  <target name="adminClient" if="admin.file.exists">
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
-      <arg line="${deploy.xml.property}"/>
+      <arg line="${admin.file}"/>
     </java>
-   
+  </target>
+
+  <target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
+   <!-- Don't bother running AdminClient unless there's something to do -->
+   <condition property="admin.file.exists">
+       <not><equals arg1="${deploy.xml.property}" arg2=""/></not>
+   </condition>
+   <antcall target="adminClient">
+      <param name="admin.file" value="${deploy.xml.property}"/>
+   </antcall>
+
    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
@@ -515,11 +525,14 @@
       </batchtest>
    </junit>
 
-   <!-- FIXME - how do we prevent this from running if undeploy.xml.property is empty? -->
-    <java classname="org.apache.axis.client.AdminClient" fork="yes">
-      <classpath refid="classpath" />
-      <arg line="${undeploy.xml.property}"/>
-    </java>
+   <!-- Don't bother running AdminClient unless there's something to do -->
+   <condition property="admin.file.exists">
+       <not><equals arg1="${undeploy.xml.property}" arg2=""/></not>
+   </condition>
+   <antcall target="adminClient">
+      <param name="admin.file" value="${undeploy.xml.property}"/>
+   </antcall>
+
   </target>
 
   <target name="execute-Component" depends="setenv" >

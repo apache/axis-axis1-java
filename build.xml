@@ -177,7 +177,9 @@ Copyright:
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" />
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" target="test"/>
 
+     <!-- Now call any custom post-compilation people want to do -->
      <antcall target="post-compile"/>
+
      <property name="compile.built" value="yes"/>
      <echo message="Compile property set ${compile.built}"/>
   </target>
