@@ -60,6 +60,8 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistry;
 
 /**
  *
@@ -106,6 +108,18 @@ public class AxisServer extends BasicHandler
         sr.setOnServer( true );
         sr.init();
         addOption( Constants.SERVICE_REGISTRY, sr );
+
+        // Load the registry of deployed types
+        TypeMappingRegistry tmr = new TypeMappingRegistry();
+        try {
+            tmr.load("typemap-supp.reg");
+        } catch (Exception e) {
+            // ignore FileNotFoundException
+            // what to do about the rest?
+        }
+        tmr.setParent(new SOAPTypeMappingRegistry());
+        addOption( Constants.TYPEMAP_REGISTRY, tmr );
+
         Debug.Print( 1, "Exit: AxisServer::init" );
     }
 
@@ -126,10 +140,14 @@ public class AxisServer extends BasicHandler
             (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
         HandlerRegistry sr = 
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
+        TypeMappingRegistry tmr = 
+            (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
 
         msgContext.setProperty(Constants.AXIS_ENGINE, this );
         msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
+
+        msgContext.getTypeMappingRegistry().setParent(tmr);
 
         try {
           hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
