@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Session Beans as Web Services" default="deployejb" basedir=".">
+
+    <property environment="env"/>
+    <property name="deploy.dir" value="${env.JBOSS_DEPLOY}"/>
+    <property name="app.name" value="wsejbsample"/>
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" value="src"/>
+    <property name="metainf.dir" value="META-INF"/>
+
+    <taskdef resource="axis-tasks.properties"/>
+
+    <target name="prepare">
+        <delete>
+            <fileset dir="${basedir}" includes="*jar"/>
+        </delete>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <target name="compile" depends="prepare">
+         <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" 
+                                    optimize="off" deprecation="off"/>
+    </target>
+    
+    <target name="jar" depends="compile">
+        <jar destfile="${app.name}.jar">
+            <fileset dir="${build.dir}">
+                <include name="**/*.class" />
+            </fileset>
+            <metainf dir="${metainf.dir}"/>
+        </jar>	
+    </target>
+    
+    <target name="deployejb" depends="jar">
+        <copy file="${app.name}.jar" todir="${deploy.dir}"/>
+    </target>
+    
+    <target name="deployws">
+        <axis-admin xmlfile="deploy.wsdd"/>
+    </target>
+    
+    <target name="undeployws">
+        <axis-admin xmlfile="undeploy.wsdd"/>
+    </target>
+    
+    <target name="simplebean">
+        <axis-java2wsdl	classname="samples.ejb.SimpleBean"
+			methods="sayHello"
+                        output="simplebean.wsdl"
+                        location="http://localhost:8080/axis/services/SimpleBean"
+                        namespace="http://localhost:8080/axis/services/SimpleBean"
+                        namespaceImpl="http://localhost:8080/axis/services/SimpleBean"/> 
+    </target>
+    
+    <target name="nicethingsbean">
+        <axis-java2wsdl	classname="samples.ejb.NiceThingsBean"
+			methods="sayHello,findNiceThingsFor,updateNiceThingsFor"
+                        output="nicethings.wsdl"
+                        location="http://localhost:8080/axis/services/NiceThingsBean"
+                        namespace="http://localhost:8080/axis/services/NiceThingsBean"
+                        namespaceImpl=
+                            "http://localhost:8080/axis/services/NiceThingsBean">
+            <complextype classname="samples.ejb.NiceThings"
+                         namespace="urn:NiceThingsBean"/>
+<!-- You can also pass in another serializer/deserializer if you don't want to use the default 
+        BeanSerializerFactory for a particular complextype
+                 serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+                 deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"  -->
+        </axis-java2wsdl>  
+    </target>        
+</project>
