@@ -488,21 +488,23 @@ public class TypeDesc {
      * @return Map with key=propertyName, value=descriptor
      */
     public Map getPropertyDescriptorMap() {
-        // Return map if already set.
-        if (propertyMap != null) {
-            return propertyMap;
-        }
+        synchronized (this) {
+            // Return map if already set.
+            if (propertyMap != null) {
+                return propertyMap;
+            }
 
-        // Make sure properties exist
-        if (propertyDescriptors == null) {
-            getPropertyDescriptors();  
-        }
+            // Make sure properties exist
+            if (propertyDescriptors == null) {
+                getPropertyDescriptors();  
+            }
 
-        // Build the map
-        propertyMap = new HashMap();
-        for (int i = 0; i < propertyDescriptors.length; i++) {
-            BeanPropertyDescriptor descriptor = propertyDescriptors[i];
-            propertyMap.put(descriptor.getName(), descriptor);
+            // Build the map
+            propertyMap = new HashMap();
+            for (int i = 0; i < propertyDescriptors.length; i++) {
+                BeanPropertyDescriptor descriptor = propertyDescriptors[i];
+                propertyMap.put(descriptor.getName(), descriptor);
+            }
         }
         return propertyMap;
     }
