@@ -65,7 +65,7 @@ import javax.servlet.ServletContext;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
-import org.apache.axis.AxisEngine;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.ClassUtils;
@@ -210,7 +210,7 @@ public class EngineConfigurationFactoryServlet
         if (config == null) {
             log.warn(Messages.getMessage("servletEngineWebInfWarn00"));
             try {
-                InputStream is = ClassUtils.getResourceAsStream(AxisEngine.class, SERVER_CONFIG_FILE);
+                InputStream is = ClassUtils.getResourceAsStream(AxisServer.class, SERVER_CONFIG_FILE);
                 config = new FileProvider(is);
             } catch (Exception e) {
                 log.error(Messages.getMessage("servletEngineWebInfError02"), e);
