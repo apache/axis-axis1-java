@@ -83,9 +83,9 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-import javax.wsdl.QName;
 
 import org.apache.axis.utils.XMLUtils;
 
@@ -130,6 +130,9 @@ public class Emitter {
     String outputDir = null;
     byte scope = NO_EXPLICIT_SCOPE;
 
+    private TypeFactory emitFactory = null;
+
+
     /**
      * Call this method if you have a uri for the WSDL document
      */
@@ -172,6 +175,15 @@ public class Emitter {
 
             if (bVerbose && packageName != null) {
                 System.out.println("Using package name: " + packageName);
+            }
+
+            emitFactory = new TypeFactory();
+
+            emitFactory.buildTypes(doc);
+
+            if (bVerbose) {
+                System.out.println("Types:");
+                emitFactory.dump();
             }
 
             // Collect information about ports and operations
@@ -273,52 +285,56 @@ public class Emitter {
     //
 
     /**
-     * This method returns a set of all the complex types in a given PortType.
-     * The elements of the returned HashSet are Strings.
+     * This method returns a set of all the Types in a given PortType. 
+     * The elements of the returned HashSet are Types.
      */
-    private HashSet complexTypesInClass(PortType portType) {
+    private HashSet getTypesInPortType(PortType portType) {
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
 
         // Get all the types from all the operations
         List operations = portType.getOperations();
 
-        for (int i = 0; i < operations.size(); ++i)
-            firstPassTypes.addAll(typesInOperation((Operation) operations.get(i)));
+        for (int i = 0; i < operations.size(); ++i) {
+            firstPassTypes.addAll(getTypesInOperation((Operation) operations.get(i)));
+        }
 
         // Extract those types which are complex types.
         Iterator i = firstPassTypes.iterator();
 
         while (i.hasNext()) {
-            String typeName = (String) i.next();
-            Node complexType = complexType(typeName);
-
-            if (complexType != null) {
-                types.add(typeName);
-                types.addAll(complexTypesInComplexType(complexType(typeName)));
+            Type type = (Type) i.next();
+            if (!types.contains(type)) {
+                types.add(type);
+                if (type.isDefined() && type.getBaseType() == null) {
+                    types.addAll(getNestedTypes(type.getNode()));
+                }
             }
         }
         return types;
-    } // complexTypesInClass
+    } // getTypesInPortType
 
     /**
-     * This method returns a set of all the types in a given Operation.  The elements of the returned HashSet are Strings.
+     * This method returns a set of all the Types in a given Operation. 
+     * The elements of the returned HashSet are Types.
      */
-    private HashSet typesInOperation(Operation operation) {
+    private HashSet getTypesInOperation(Operation operation) {
         HashSet types = new HashSet();
         Vector v = new Vector();
 
         // Collect all the input types
         Input input = operation.getInput();
 
-        if (input != null)
-            partStrings(v, input.getMessage().getOrderedParts(null), false);
+        if (input != null) {
+            partTypes(v, input.getMessage().getOrderedParts(null));
+        }
 
         // Collect all the output types
         Output output = operation.getOutput();
 
-        if (output != null)
-            partStrings(v, output.getMessage().getOrderedParts(null), false);
+        if (output != null) {
+            partTypes(v, output.getMessage().getOrderedParts(null));
+        }
 
         // Collect all the types in faults
         Map faults = operation.getFaults();
@@ -326,40 +342,38 @@ public class Emitter {
         if (faults != null) {
             Iterator i = faults.values().iterator();
 
-            while (i.hasNext())
-                partStrings(v, ((Fault) i.next()).getMessage().getOrderedParts(null), false);
+            while (i.hasNext()) {
+                partTypes(v, ((Fault) i.next()).getMessage().getOrderedParts(null));
+            }
         }
 
         // Put all these types into a set.  This operation eliminates all duplicates.
         for (int i = 0; i < v.size(); i += 2)
-            types.add(type((String) v.get(i)));
+            types.add(v.get(i));
         return types;
-    } // typesInOperation
+    } // getTypesInOperation
 
     /**
-     * This method returns a set of all the complex types in a given complex type.  The elements of the returned HashSet are Strings.
+     * This method returns a set of all the nested Typese.
+     * The elements of the returned HashSet are Types.
      */
-    private HashSet complexTypesInComplexType(Node type) {
+    private HashSet getNestedTypes(Node type) {
         HashSet types = new HashSet();
+        if (type == null) {
+            return types;
+        }
 
-        Vector elements = findChildNodesByName(type, "element");
-
-        for (int i = 0; i < elements.size(); ++i) {
-            NamedNodeMap attributes = ((Node) elements.get(i)).getAttributes();
-
-            if (attributes != null) {
-                Node typeAttr = attributes.getNamedItem("type");
-                String typeName = type(typeAttr.getNodeValue());
-                Node complexType = complexType(typeName);
-
-                if (complexType != null && !types.contains(typeName)) {
-                    types.add(typeName);
-                    types.addAll(complexTypesInComplexType(complexType));
+        Vector v = emitFactory.getComplexElementTypesAndNames(type);
+        if (v != null) {
+            for (int i = 0; i < v.size(); i+=2) {
+                if (!types.contains(v.get(i))) {
+                    types.add(v.get(i));
+                    types.addAll(getNestedTypes(((Type) v.get(i)).getNode()));
                 }
             }
         }
         return types;
-    } // complexTypesInComplexType
+    } // getNestedTypes
 
     /**
      * Generate the bindings for all port types.
@@ -717,12 +731,12 @@ public class Emitter {
     } // constructSignatures
 
     /**
-     * This method returns a vector whose odd numbered elements are element types and whose
-     * even numbered elements are element values.
+     * This method returns a vector containing the Java types (even indices) and 
+     * names (odd indices) of the parts.
      */
     private void partStrings(Vector v, Collection parts, boolean elements) {
         Iterator i = parts.iterator();
-
+        
         while (i.hasNext()) {
             Part part = (Part) i.next();
 
@@ -730,19 +744,35 @@ public class Emitter {
                 v.add("org.w3c.dom.Element");
                 v.add(part.getName());
             } else {
-                if (part.getTypeName() != null) {
+                QName typeName = part.getTypeName();
+                if (typeName != null) {
                     // Handle the special "java" namespace for types
-                    QName typeName = part.getTypeName();
                     if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
                         v.add(typeName.getLocalPart());
                     } else {
-                        v.add(type(typeName.getLocalPart()));
+                        v.add(emitFactory.getType(typeName).getJavaName());
                     }
                     v.add(part.getName());
                 }
             }
         }
     } // partStrings
+
+    /**
+     * This method returns a vector of Types for the parts.
+     */
+    private void partTypes(Vector v, Collection parts) {
+        Iterator i = parts.iterator();
+        
+        while (i.hasNext()) {
+            Part part = (Part) i.next();
+
+            QName qType = part.getTypeName();
+            if (qType != null) {
+                v.add(emitFactory.getType(qType));
+            }
+        }
+    } // partTypes
 
     /**
      * This method generates the interface signatures for the given operation.
@@ -774,7 +804,7 @@ public class Emitter {
      * the fault.
      */
     private String fault(Fault operation) throws IOException {
-        String exceptionName = capitalize(xmlNameToJava(operation.getName()));
+        String exceptionName = Utils.capitalize(xmlNameToJava(operation.getName()));
         String fileName = exceptionName + ".java";
         PrintWriter pw = printWriter(fileName);
 
@@ -864,11 +894,11 @@ public class Emitter {
 
         stubPW.println("    public " + stubName + "() throws org.apache.axis.SerializationException {");
 
-        HashSet types = complexTypesInClass(portType);
+        HashSet types = getTypesInPortType(portType);
         Iterator it = types.iterator();
 
         while (it.hasNext())
-            writeSerializationInit(stubPW, (String) it.next());
+            writeSerializationInit(stubPW, (Type) it.next());
 
         stubPW.println("    }");
         stubPW.println();
@@ -1000,17 +1030,19 @@ public class Emitter {
     /**
      * In the stub constructor, write the serializer code for the complex types.
      */
-    private void writeSerializationInit(PrintWriter pw, String type) throws IOException {
-        Element e = (Element) complexType(type).getParentNode();
-        String namespace = e.getAttribute("targetNamespace");
+    private void writeSerializationInit(PrintWriter pw, Type type) throws IOException {
+        if (type.getBaseType() != null) {
+            return;
+        }
+        QName qname = type.getQName();
         pw.println("        try {");
-        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName(\"" + namespace + "\", \"" + type + "\");");
-        pw.println("            Class cls = " + type + ".class;");
+        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        pw.println("            Class cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn1, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println("        }");
         pw.println("        catch (Throwable t) {");
-        pw.println("            throw new org.apache.axis.SerializationException(\"" + type + "\", t);");
+        pw.println("            throw new org.apache.axis.SerializationException(\"" + qname + "\", t);");
         pw.println("        }");
         pw.println();
     } // writeSerializationInit
@@ -1394,16 +1426,16 @@ public class Emitter {
      * Write out bean mappings for each type
      */
     private void writeDeployTypes(PrintWriter pw) throws IOException {
-        Vector types = findChildNodesByName(doc, "complexType");
+        HashMap types = emitFactory.getTypes();
 
         if (types.isEmpty()) return;
 
         pw.println();
 
         //assumes all complex type elements are under one parent
-        Node type = (Node) types.get(0);
-        Element parent = (Element) type.getParentNode();
-        String namespaceURI = parent.getAttribute("targetNamespace");
+        Iterator it = types.values().iterator();
+        Node node = ((Type) it.next()).getNode();
+        String namespaceURI = Utils.getScopedAttribute(node, "targetNamespace");
 
         //grab the namespace prefix from the attributes of the root (if it is there)
         String namespacePrefix = "ns";
@@ -1418,16 +1450,19 @@ public class Emitter {
 
         pw.println("   <beanMappings xmlns:" + namespacePrefix + "=\"" + namespaceURI + "\">");
 
-        for (int i = 0; i < types.size(); ++i) {
-            type = (Node) types.get(i);
-            NamedNodeMap attributes = type.getAttributes();
-            String typeName = capitalize(attributes.getNamedItem("name").getNodeValue());
-
-            if (packageName == null) {
-                pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + typeName + "\"/>");
-            }
-            else {
-                pw.println("      <" + namespacePrefix + ":" + typeName + " classname= \"" + packageName + "." + typeName + "\"/>");
+        it = types.values().iterator();
+        while (it.hasNext()) {
+            Type type = (Type) it.next();
+            if (type.getBaseType() == null) {
+                pw.println();
+                if (packageName == null) {
+                    pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
+                           + "\" className=\"" + type.getJavaName() +"\">");
+                }
+                else {
+                    pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
+                           + "\" className=\"" + packageName + "." + type.getJavaName() +"\">");
+                }
             }
         }
         pw.println("   </beanMappings>");
@@ -1522,42 +1557,69 @@ public class Emitter {
      * If generating serverside (skeleton) spit out beanmappings
      */
     private void writeTypes() throws IOException {
-        Vector types = findChildNodesByName(doc, "complexType");
-
-        for (int i = 0; i < types.size(); ++i) {
-            writeType((Node) types.get(i));
-            writeHolder((Node) types.get(i));
+        HashMap types = emitFactory.getTypes();
+        Iterator i = types.values().iterator();
+        while (i.hasNext()) {
+            Type type = (Type) i.next();
+            if (type.isDefined() && type.getBaseType() == null) {
+                writeType(type);
+                writeHolder(type);
+            }
         }
     } // writeTypes
 
     /**
-     * Generate the binding for the given complex type.
+     * Generate the binding for the given type.
      */
-    private void writeType(Node node) throws IOException {
-        NamedNodeMap attributes = node.getAttributes();
+    private void writeType(Type type) throws IOException {
 
-        // scrounge for type name
-        String nameValue = findTypeName(node);
+        Node node = type.getNode();
 
-        String fileName = nameValue + ".java";
+        // Generate the proper class for either "complex" or "enumeration" types
+        Vector v = emitFactory.getComplexElementTypesAndNames(node);
+        if (v != null)
+            writeComplexType(type, v);
+        else {
+            v = emitFactory.getEnumerationBaseAndValues(node);
+            if (v != null) {
+                writeEnumType(type, v);
+            }
+        }
+    } // writeType
+
+   /**
+     * Generate the binding for the given complex type.
+     * The elements vector contains the Types (even indices) and 
+     * element names (odd indices) of the contained elements
+     */
+    private void writeComplexType(Type type, Vector elements) throws IOException {
+        Node node = type.getNode();
+
+        // We are only interested in the java names of the types, so replace the
+        // Types in the list with their java names.
+        for (int i=0; i < elements.size(); i+=2) {
+            elements.setElementAt(((Type) elements.get(i)).getJavaName(), i);
+        }
+
+        String javaName = type.getJavaLocalName();
+
+        String fileName = javaName + ".java";
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation: " + fileName);
 
         writeFileHeader(fileName, typePW);
-        typePW.println("public class " + nameValue + " implements java.io.Serializable {");
-
-        Vector elements = findNameValues(node, "element");
+        typePW.println("public class " + javaName + " implements java.io.Serializable {");
 
         for (int i = 0; i < elements.size(); i += 2)
             typePW.println("    private " + elements.get(i) + " " + elements.get(i + 1) + ";");
 
         typePW.println();
-        typePW.println("    public " + nameValue + "() {");
+        typePW.println("    public " + javaName + "() {");
         typePW.println("    }");
         typePW.println();
         if (elements.size() > 0) {
-            typePW.print("    public " + nameValue + "(");
+            typePW.print("    public " + javaName + "(");
             for (int i = 0; i < elements.size(); i += 2) {
                 if (i != 0) typePW.print(", ");
                 typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
@@ -1572,74 +1634,73 @@ public class Emitter {
         }
         typePW.println();
         for (int i = 0; i < elements.size(); i += 2) {
-            String type = (String) elements.get(i);
+            String typeName = (String) elements.get(i);
             String name = (String) elements.get(i + 1);
-            String capName = capitalize(name);
+            String capName = Utils.capitalize(name);
 
-            typePW.println("    public " + type + " get" + capName + "() {");
+            typePW.println("    public " + typeName + " get" + capName + "() {");
             typePW.println("        return " + name + ";");
             typePW.println("    }");
             typePW.println();
-            typePW.println("    public void set" + capName + "(" + type + " " + name + ") {");
+            typePW.println("    public void set" + capName + "(" + typeName + " " + name + ") {");
             typePW.println("        this." + name + " = " + name + ";");
             typePW.println("    }");
             typePW.println();
         }
         typePW.println("}");
         typePW.close();
-    } // writeType
+    } // writeComplexType
 
-    /**
-     * Look in the node and the parent node for type name
-     * Example:
-     *   <element name="foo">
-     *    <complexType>
-     * OR
-     *   <complexType name="foo">
-     *    ...
-     *
+   /**
+     * Generate the binding for the given enumeration type.
+     * The values vector contains the base type (first index) and 
+     * the values (subsequent Strings)
      */
-    private String findTypeName(Node node) throws IOException {
-        String nameValue = null;
+    private void writeEnumType(Type eType, Vector values) throws IOException {
 
-        Node attrNode = node.getAttributes().getNamedItem("name");
-        if (attrNode != null) {
-            nameValue = capitalize(attrNode.getNodeValue());
+        Node node = eType.getNode();
+
+        // The first index is the base type.  Get its java name.                
+        String baseType = ((Type) values.get(0)).getJavaName();
+
+        String javaName = eType.getJavaLocalName();
+
+        String fileName = javaName + ".java";
+        PrintWriter typePW = printWriter(fileName);
+        if (bVerbose)
+            System.out.println("Generating enum type implementation: " + fileName);
+
+        writeFileHeader(fileName, typePW);
+        typePW.println("public class " + javaName + " implements java.io.Serializable {");
+        for (int i=1; i < values.size(); i++) {
+            typePW.println("    public static final " + baseType + " _" + values.get(i) 
+                           + " = \"" + values.get(i) + "\";");
         }
-        else {
-            Node n1 = node.getParentNode();
-            NamedNodeMap a1 = n1.getAttributes();
-            Node parentAttrNode = node.getParentNode().getAttributes().getNamedItem("name");
-            if (parentAttrNode != null) {
-                nameValue = parentAttrNode.getNodeValue();
-            }
-        }
-        if (nameValue == null) {
-            throw new IOException("Unable to find type name for " + node.getNodeName());
-        }
-        return nameValue;
-    }
+
+        typePW.println("}");
+        typePW.close();
+    } // writeEnumType
 
     /**
      * Generate the holder for the given complex type.
      */
-    private void writeHolder(Node type) throws IOException {
-        NamedNodeMap attributes = type.getAttributes();
-        String typeName = findTypeName(type);
+    private void writeHolder(Type type) throws IOException {
+        Node node = type.getNode();
+        String javaName = type.getJavaLocalName();
 
-        String fileName = typeName + "Holder.java";
+        String fileName = javaName + "Holder.java";
         PrintWriter pw = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation holder: " + fileName);
 
         writeFileHeader(fileName, pw);
-        pw.println("public final class " + typeName + "Holder implements java.io.Serializable {");
-        pw.println("    public " + typeName + " _value;");
+        pw.println("public final class " + javaName + "Holder implements java.io.Serializable {");
+        pw.println("    public " + javaName + " _value;");
         pw.println();
-        pw.println("    public " + typeName + "Holder() {");
+        pw.println("    public " + javaName + "Holder() {");
         pw.println("    }");
         pw.println();
-        pw.println("    public " + typeName + "Holder(" + typeName + " value) {");
+        pw.println("    public " + javaName + "Holder(" + javaName + " value) {");
         pw.println("        this._value = value;");
         pw.println("    }");
         pw.println();
@@ -1648,64 +1709,6 @@ public class Emitter {
         pw.close();
     } // writeHolder
 
-    /**
-     * This method returns a vector whose odd numbered elements are element types and whose
-     * even numbered elements are element values.
-     */
-    private Vector findNameValues(Node node, String name) {
-        Vector nameValues = new Vector();
-        Vector elements = findChildNodesByName(node, name);
-
-        for (int i = 0; i < elements.size(); ++i) {
-            NamedNodeMap attributes = ((Node) elements.get(i)).getAttributes();
-
-            nameValues.add(type(attributes.getNamedItem("type").getNodeValue()));
-            nameValues.add(attributes.getNamedItem("name").getNodeValue());
-        }
-        return nameValues;
-    } // findNameValue
-
-    /**
-     * This method returns the complexType node with the given type name.
-     * If the given name does not describe a complex type, this method returns null.
-     */
-    private Node complexType(String typeName) {
-        Vector types = findChildNodesByName(doc, "complexType");
-
-        for (int i = 0; i < types.size(); ++i) {
-            Node complexType = (Node) types.get(i);
-            NamedNodeMap attributes = complexType.getAttributes();
-
-            if (attributes != null) {
-                Node name = attributes.getNamedItem("name");
-
-                if (name != null && capitalize(name.getNodeValue()).equals(typeName)) {
-                    return complexType;
-                }
-            }
-        }
-        return null;
-    } // complexType
-
-    /**
-     * Recursively find all children of this node with the given name.
-     */
-    private Vector findChildNodesByName(Node node, String name) {
-        Vector namedNodes = new Vector();
-        NodeList children = node.getChildNodes();
-
-        for (int i = 0; i < children.getLength(); ++i) {
-            if (name.equals(children.item(i).getLocalName())) {
-                namedNodes.add(children.item(i));
-            }
-        }
-        if (namedNodes.size() == 0) {
-            for (int i = 0; i < children.getLength(); ++i) {
-                namedNodes.addAll(findChildNodesByName(children.item(i), name));
-            }
-        }
-        return namedNodes;
-    } // findChildNodesByName
 
     //
     // Methods using types (non WSDL)
@@ -1779,53 +1782,10 @@ public class Emitter {
     }
 
     /**
-     * For a given string, strip off the prefix - everything before the colon.
-     */
-    private String localName(String name) {
-        int colonIndex = name.lastIndexOf(":");
-
-        return colonIndex < 0 ? name : name.substring(colonIndex + 1);
-    } // localName
-
-    /**
-     * Given a type name, return the Java mapping of that type.
-     */
-    private String type(String typeValue) {
-        String localName = localName(typeValue);
-
-        if (localName.equals("integer"))
-            return "int";
-        else if (localName.equals("string"))
-            return "String";
-        else if (localName.equals("decimal"))
-            return "java.math.BigDecimal";
-        else if (localName.equals("dateTime"))
-            return "java.util.Date";
-        else if (localName.equals("base64Binary"))
-            return "byte[]";
-        else if (localName.equals("QName"))
-            return "javax.xml.rpc.namespace.QName";
-        else if (localName.equals("date"))
-            return "java.util.Date";
-        // else others???
-        else if (localName.equals("int")
-                || localName.equals("long")
-                || localName.equals("short")
-                || localName.equals("float")
-                || localName.equals("double")
-                || localName.equals("boolean")
-                || localName.equals("byte")
-                || localName.equals("void"))
-            return localName;
-        else
-            return capitalize(localName);
-    } // type
-
-    /**
      * Given a type name, return the Java mapping of that type's holder.
      */
     private String holder(String typeValue) {
-        if (typeValue.equals("String")) {
+        if (typeValue.equals("java.lang.String")) {
             return "org.apache.axis.rpc.holders.StringHolder";
         }
         else if (typeValue.equals("java.math.BigDecimal")) {
@@ -1834,7 +1794,7 @@ public class Emitter {
         else if (typeValue.equals("java.util.Date")) {
             return "org.apache.axis.rpc.holders.DateHolder";
         }
-        else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
+        else if (typeValue.equals("org.apache.axis.rpc.namespace.QName")) {
             return "org.apache.axis.rpc.holders.QNameHolder";
         }
         else if (typeValue.equals("int")
@@ -1844,23 +1804,10 @@ public class Emitter {
                 || typeValue.equals("double")
                 || typeValue.equals("boolean")
                 || typeValue.equals("byte"))
-            return "org.apache.axis.rpc.holders." + capitalize(typeValue) + "Holder";
+            return "org.apache.axis.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
         else
             return typeValue + "Holder";
     } // holder
-
-    /**
-     * Capitalize the given name.
-     */
-    private String capitalize(String name) {
-        char start = name.charAt(0);
-
-        if (Character.isLowerCase(start)) {
-            start = Character.toUpperCase(start);
-            return start + name.substring(1);
-        }
-        return name;
-    } // capitalize
 
     /**
      * Map an XML name to a valid Java identifier
