@@ -51,6 +51,10 @@
       classname="org.apache.commons.logging.Log"
       classpathref="classpath"/>
 
+    <available property="commons-discovery.present"
+      classname="org.apache.commons.discovery.DiscoverSingleton"
+      classpathref="classpath"/>
+
     <available property="commons-httpclient.present"
       classname="org.apache.commons.httpclient.HttpConnection"
       classpathref="classpath"/>
@@ -128,6 +132,7 @@
     <echo message="=== Required Libraries ===" />
     <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="commons-discovery.present=${commons-discovery.present}" />
     <echo message="log4j.present=${log4j.present}" />
     <echo message="tt-bytecode.present=${tt-bytecode.present}" />
     <echo message="activation.present=${activation.present}" />

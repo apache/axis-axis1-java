@@ -140,6 +140,7 @@ Copyright:
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
+    <copy file="${commons-discovery.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
     <copy file="${tt-bytecode.jar}" toDir="${build.lib}"/>
 

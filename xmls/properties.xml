@@ -39,6 +39,7 @@ them.
 <property name="wsdl4j.jar" location="${lib.dir}/wsdl4j.jar"/>
 <property name="jsse.jar" location="${lib.dir}/jsse.jar"/>
 <property name="commons-logging.jar" location="${lib.dir}/commons-logging.jar"/>
+<property name="commons-discovery.jar" location="${lib.dir}/commons-discovery.jar"/>
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.4.jar"/>
 <property name="tt-bytecode.jar" location="${lib.dir}/tt-bytecode.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
