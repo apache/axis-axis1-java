@@ -91,13 +91,13 @@ public class GetQuote {
       HTTPCall call   = new HTTPCall( opts.getURL(), 
                                       "urn:xmltoday-delayed-quotes" );
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", new QName(Constants.URI_SCHEMA_XSD, "string"));
+      sd.addOutputParam("return", new QName(Constants.URI_SCHEMA_XSD, "float"));
       call.setServiceDescription(sd);
       
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
-      Object res = call.invoke( 
+      Float res = (Float) call.invoke( 
         "http://schemas.xmlsoap.org/soap/envelope/", "getQuote",
         new Object[] {symbol} );
 
