@@ -70,11 +70,13 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -96,7 +98,6 @@ import java.util.Vector;
 // Only supports String
 
 public class ServiceClient {
-    private static final boolean DEBUG_LOG = false;
     static Category category =
             Category.getInstance(ServiceClient.class.getName());
 
@@ -201,6 +202,9 @@ public class ServiceClient {
 
     // A place to store output parameters
     private Vector outParams = null;
+
+    // A place to store any client-specified headers
+    private Vector myHeaders = null;
 
     /**
      * Basic, no-argument constructor.
@@ -333,7 +337,8 @@ public class ServiceClient {
     }
 
     /**
-     * Set property in our MessageContext.
+     * Set a property which should be carried through our MessageContexts
+     * into the engine.
      *
      * @param name the property name to set.
      * @param value the value of the property.
@@ -348,7 +353,7 @@ public class ServiceClient {
     }
 
     /**
-     * Get a property from our MessageContext.
+     * Get a property from our list of persistent ones.
      *
      * @param name the property name to retrieve.
      * @return the property's value.
@@ -359,7 +364,8 @@ public class ServiceClient {
     }
 
     /**
-     * Removes the named property
+     * Removes the named property from our list of persistent ones.
+     *
      * @param name the property name to remove
      */
     public void remove(String name) {
@@ -449,6 +455,28 @@ public class ServiceClient {
     public Vector getOutputParams()
     {
         return this.outParams;
+    }
+
+    /**
+     * Add a header which should be inserted into each outgoing message
+     * we generate.
+     *
+     * @param header a SOAPHeader to be inserted into messages
+     */
+    public void addHeader(SOAPHeader header)
+    {
+        if (myHeaders == null) {
+            myHeaders = new Vector();
+        }
+        myHeaders.add(header);
+    }
+
+    /**
+     * Clear the list of headers which we insert into each message
+     */
+    public void clearHeaders()
+    {
+        myHeaders = null;
     }
 
     /**
@@ -553,6 +581,13 @@ public class ServiceClient {
         // Clear the output params
         outParams = null;
 
+        // If we have headers to insert, do so now.
+        if (myHeaders != null) {
+            for (int i = 0; i < myHeaders.size(); i++) {
+                reqEnv.addHeader((SOAPHeader)myHeaders.get(i));
+            }
+        }
+
         String uri = null;
         if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
@@ -572,19 +607,17 @@ public class ServiceClient {
         }
 
 
-        if (DEBUG_LOG) {
+        if (category.isDebugEnabled()) {
+            StringWriter writer = new StringWriter();
             try {
-                SerializationContext ctx = new SerializationContext(new PrintWriter(System.out), msgContext);
-                System.out.println("");
-                System.out.println("**DEBUG**");
+                SerializationContext ctx = new SerializationContext(writer,
+                                                                   msgContext);
                 reqEnv.output(ctx);
+                writer.close();
             } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
+                e.printStackTrace(new PrintWriter(writer));
             } finally {
-                System.out.println("");
-                System.out.println("**DEBUG**");
-                System.out.println("");
+                category.debug(writer.getBuffer().toString());
             }
         }
 
