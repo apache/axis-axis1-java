@@ -55,6 +55,8 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.Constants;
+
 import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
@@ -296,6 +298,16 @@ public class Deserializer extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
+        // If the xsi:nil attribute, set the value to null and return since
+        // there is nothing to deserialize.
+        String nil = null;
+        for (int i = 0; i < Constants.URIS_SCHEMA_XSI.length && nil == null; i++)
+            nil = attributes.getValue(Constants.URIS_SCHEMA_XSI[i], "nil");
+        if (nil != null && nil.equals("true")) {
+          value = null;
+          return;
+        }
+
         String href = attributes.getValue("href");
         if (href != null) {
             isHref = true;
