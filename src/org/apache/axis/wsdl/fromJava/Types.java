@@ -260,14 +260,21 @@ public class Types {
             if (wsdlTypesElem == null) {
                 writeWsdlTypesElement();
             }
-            return writeTypeAsElement(type, qname);
+            // If writeTypeAsElement returns null, then
+            // then no element was written due to problems.
+            // return an anytype in such situations.
+            qname = writeTypeAsElement(type, qname);
+            if (qname == null) {
+                qname = Constants.XSD_ANYTYPE;
+            }
+            return qname;
         }
     }
 
     /**
      * Create a schema element for the given type
      * @param type the class type
-     * @return the QName of the generated Element
+     * @return the QName of the generated Element or null if no element written
      */
     private QName writeTypeAsElement(Class type, QName qName) throws AxisFault {
         if (qName == null ||
@@ -492,13 +499,12 @@ public class Types {
         }
 
         // If no factory is found, use the BeanSerializerFactory
-        // if applicable, otherwise issue errors and return anyType
+        // if applicable, otherwise issue errors and treat as an anyType
         if (factory == null) {
             if (isBeanCompatible(type, true)) {
                 factory = new BeanSerializerFactory(type, qName);
             } else {
-                return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
-                    Constants.XSD_ANYTYPE.getLocalPart();
+                return null; // Don't return an element name
             }
         }
 
@@ -513,7 +519,7 @@ public class Types {
         }
 
         // Write the namespace
-       writeTypeNamespace(type, qName);
+        writeTypeNamespace(type, qName);
 
         // If an array the component type should be processed first
         String componentTypeName = null;
@@ -1017,7 +1023,19 @@ public class Types {
             superClass != org.apache.axis.AxisFault.class &&
             (stopClasses == null ||
              !(stopClasses.contains(superClass.getName()))) ) {
-            return isBeanCompatible(superClass, issueErrors);
+
+            if (!isBeanCompatible(superClass, false)) {
+
+                if (issueErrors && 
+                    !beanCompatErrs.contains(javaType)) {
+                    log.error(JavaUtils.getMessage("beanCompatExtends00",
+                                                   javaType.getName(),
+                                                   superClass.getName(),
+                                                    javaType.getName()));
+                    beanCompatErrs.add(javaType);
+                }
+                return false;
+            }
         }
         return true;
     }
