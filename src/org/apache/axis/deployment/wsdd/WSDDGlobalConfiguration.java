@@ -54,9 +54,9 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
@@ -209,7 +209,7 @@ public class WSDDGlobalConfiguration
     }
 
     public void deployToRegistry(WSDDDeployment registry)
-            throws DeploymentException {
+            throws ConfigurationException {
         if (requestFlow != null)
             requestFlow.deployToRegistry(registry);
         if (responseFlow != null)

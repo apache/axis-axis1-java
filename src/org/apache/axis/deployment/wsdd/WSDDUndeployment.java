@@ -54,7 +54,7 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
@@ -178,7 +178,7 @@ public class WSDDUndeployment
     }
 
     public void undeployFromRegistry(WSDDDeployment registry)
-        throws DeploymentException
+        throws ConfigurationException
     {
         QName qname;
         for (int n = 0; n < handlers.size(); n++) {

@@ -54,7 +54,7 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.JavaUtils;
@@ -129,7 +129,7 @@ public class WSDDDocument extends WSDDConstants
         return deployment;
     }
 
-    public Document getDOMDocument() throws DeploymentException {
+    public Document getDOMDocument() throws ConfigurationException {
         StringWriter writer = new StringWriter();
         SerializationContext context = new SerializationContextImpl(writer, null);
         context.setPretty(true);
@@ -163,7 +163,7 @@ public class WSDDDocument extends WSDDConstants
         deployment = null;
     }
 
-    public void deploy(WSDDDeployment registry) throws DeploymentException {
+    public void deploy(WSDDDeployment registry) throws ConfigurationException {
         if (deployment != null) {
             deployment.deployToRegistry(registry);
         }
