@@ -101,8 +101,9 @@ public interface Handler {
      *                and goes backward in the execution sequence.
      *             </ul>
      *
-     * @throws JAXRPCException This exception indicates handler
-     *                specific runtime error. If JAXRPCException is thrown
+     * @throws javax.xml.rpc.JAXRPCException
+     *                indicates a handler-specific
+     *                runtime error. If <code>JAXRPCException</code> is thrown
      *                by a handleRequest method, the HandlerChain
      *                terminates the further processing of this handler
      *                chain. On the server side, the HandlerChain
@@ -113,7 +114,8 @@ public interface Handler {
      *                during the processing of the message. On the
      *                client side, the exception is propagated to
      *                the client code
-     * @throws SOAPFaultException This indicates a SOAP fault. The Handler
+     * @throws javax.xml.rpc.soap.SOAPFaultException
+     *                indicates a SOAP fault. The Handler
      *                implementation class has the the responsibility
      *                of setting the SOAP fault in the SOAP message in
      *                either handleRequest and/or handleFault method.
@@ -151,7 +153,8 @@ public interface Handler {
      *                are invoked.
      *            </ul>
      *
-     * @throws JAXRPCException Indicates handler specific runtime error.
+     * @throws javax.xml.rpc.JAXRPCException
+     *                indicates a handler specific runtime error.
      *                If JAXRPCException is thrown by a handleResponse
      *                method, the HandlerChain terminates the further
      *                processing of this handler chain. On the server side,
@@ -182,8 +185,8 @@ public interface Handler {
      *                other handlers in the handler chain
      *                are invoked.
      *            </ul>
-     * @throws JAXRPCException Indicates handler specific runtime error.
-     *                If JAXRPCException is thrown by a handleFault
+     * @throws javax.xml.rpc.JAXRPCException indicates handler specific runtime
+     *                error. If JAXRPCException is thrown by a handleFault
      *                method, the HandlerChain terminates the further
      *                processing of this handler chain. On the server side,
      *                the HandlerChain generates a SOAP fault that
@@ -211,10 +214,12 @@ public interface Handler {
      * specific to the SOAP message processing performed in the
      * various handle method.
      *
-     * @param HandlerInfo Configuration for the initialization of this handler
+     * @param config HandlerInfo configuration for the initialization of this
+     *              handler
      *
      * @param config
-     * @throws JAXRPCException If initialization of the handler fails
+     * @throws javax.xml.rpc.JAXRPCException if initialization of the handler
+     *              fails
      */
     public abstract void init(HandlerInfo config);
 
@@ -223,7 +228,9 @@ public interface Handler {
      * for a Handler instance.  The Handler implementation class should
      * release its resources and perform cleanup in the implementation
      * of the <code>destroy</code> method.
-     * @throws  JAXRPCException  If any error during destroy
+     *
+     * @throws  javax.xml.rpc.JAXRPCException  if there was any error during
+     *              destroy
      */
     public abstract void destroy();
 

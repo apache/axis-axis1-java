@@ -61,6 +61,13 @@ package org.apache.axis;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface HandlerIterationStrategy {
+    /**
+     * Visit a handler with a message context.
+     *
+     * @param handler       the <code>Handler</code> to apply to the context
+     * @param msgContext    the <code>MessageContext</code> used
+     * @throws AxisFault    if this visit encountered an error
+     */
     public void visit(Handler handler, MessageContext msgContext)
         throws AxisFault;
 }

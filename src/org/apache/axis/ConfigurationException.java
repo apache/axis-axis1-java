@@ -70,17 +70,20 @@ import java.io.IOException;
 public class ConfigurationException extends IOException {
 
     /**
-     * any contained exception
+     * The contained exception if present.
      */
     private Exception containedException=null;
 
     private String stackTrace="";
 
     /**
-     * Copy the orginal exception by default
+     * Flag wether to copy the orginal exception by default.
      */
     protected static boolean copyStackByDefault= true;
 
+    /**
+     * The <code>Log</code> used by this class for logging all messages.
+     */
     protected static Log log =
         LogFactory.getLog(ConfigurationException.class.getName());
 
@@ -106,8 +109,9 @@ public class ConfigurationException extends IOException {
     }
 
     /**
-     * stringify, including stack trace.
-     * @return
+     * Stringify, including stack trace.
+     *
+     * @return a <code>String</code> view of this object
      */
     public String toString() {
         String stack;
@@ -146,7 +150,8 @@ public class ConfigurationException extends IOException {
     }
 
     /**
-     * get any contained exception
+     * Get any contained exception.
+     *
      * @return base exception or null
      * @since axis1.1
      */

@@ -67,9 +67,6 @@ import javax.activation.DataHandler;
  */
 public class AttachmentUtils {
 
-    /**
-     * Constructor AttachmentUtils
-     */
     private AttachmentUtils() {
     }
     // no one should create.

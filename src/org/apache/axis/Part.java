@@ -56,7 +56,11 @@
 package org.apache.axis;
 
 
-
+/**
+ * A part of a MIME message. Typically, in a MIME message there will be one
+ * <code>SOAPPart</code> containing the SOAP message, and 0 or more
+ * <code>AttachmentParts</code> instances containing each of the attachments.
+ */
 public interface Part extends java.io.Serializable
 {
     /**
@@ -69,50 +73,71 @@ public interface Part extends java.io.Serializable
      *     the specified header
      * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
      */
-    public abstract String[] getMimeHeader(String name);
+    public String[] getMimeHeader(String name);
 
+    // fixme: no explicit method to get the value associated with a header e.g.
+    //  String getMimeHeader(header)
     /**
      * Add the specified MIME header, as per JAXM.
+     *
+     * @param header  the MIME header name
+     * @param value   the value associated with the header
      */
     public void addMimeHeader (String header, String value);
 
+    // fixme: what do we mean by location? Is this a URL, a locator in a stream,
+    //  a place in the xml? something else?
     /**
-     * Content location.
+     * Get the content location.
+     *
+     * @return a <code>String</code> giving the location
      */
     public String getContentLocation();
 
     /**
      * Set content location.
+     *
+     * @param loc  the new location
      */
     public void setContentLocation(String loc);
 
+    // fixme: confusing docs - what's going on here?
     /**
-     * Sets Content-Id of this part. 
+     * Sets Content-Id of this part.
      *  already defined.
      * @param newCid new Content-Id
-     * @returns void
      */
     public void setContentId(String newCid);
 
     /**
-     * Content ID.
+     * Get the content ID.
+     *
+     * @return the content ID
      */
     public String getContentId();
 
+    // for these 2 methods...
+    // fixme: is this an iterator over mime header names or values?
+    // fixme: why this API rather than just exposing the header names, and
+    //  a method to fetch the value for a name?
     /**
-     * Get all headers that match
+     * Get an <code>Iterator</code> over all headers that match any item in
+     * <code>match</code>.
      */
     public java.util.Iterator getMatchingMimeHeaders( final String[] match);
 
     /**
-     * Get all headers that do not match
+     * Get all headers that do not match.
      */
     public java.util.Iterator getNonMatchingMimeHeaders( final String[] match);
 
+    // fixke: are content types MIME types or something else, or what?
     /**
-     * Content type.
+     * Get the content type.
+     *
+     * @return the content type <code>String</code>
      */
-    public abstract String getContentType();
+    public String getContentType();
 
     /**
      * Content ID.

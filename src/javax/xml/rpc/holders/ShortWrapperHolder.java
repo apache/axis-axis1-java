@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class ShortWrapperHolder
+ * Holder for <code>Short</code>s.
  *
  * @version 1.0
  */
 public final class ShortWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Short</code> contained by this holder. */
     public Short value;
 
     /**
-     * Constructor ShortWrapperHolder
+     * Make a new <code>ShortWrapperHolder</code> with a <code>null</code> value.
      */
     public ShortWrapperHolder() {}
 
     /**
-     * Constructor ShortWrapperHolder
+     * Make a new <code>ShortWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>Short</code> to hold
      */
     public ShortWrapperHolder(Short value) {
         this.value = value;

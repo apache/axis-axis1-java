@@ -60,10 +60,15 @@ package org.apache.axis;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class AxisServiceConfigImpl implements AxisServiceConfig {
+    // fixme: do we realy want these all held in a single string? should we be
+    //  splitting this here, or in code that uses the config?
     private String methods;
 
     /**
      * Set the allowed method names.
+     *
+     * @param methods  a <code>String</code> containing a list of all allowed
+     *              methods
      */
     public void setAllowedMethods(String methods)
     {

@@ -73,18 +73,31 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class FaultableHandler extends BasicHandler {
+    /**
+     * The <code>Log</code> used to log all events that would be of general
+     * interest.
+     */
     protected static Log log =
         LogFactory.getLog(FaultableHandler.class.getName());
 
-    // The enterprise category is for stuff that an enterprise product might
-    // want to track, but in a simple environment (like the AXIS build) would
-    // be nothing more than a nuisance.
+    /**
+     * The <code>Log</code> used for enterprise-centric logging.
+     *
+     * The enterprise category is for stuff that an enterprise product might
+     * want to track, but in a simple environment (like the AXIS build) would
+     * be nothing more than a nuisance.
+     */
     protected static Log entLog =
         LogFactory.getLog(Constants.ENTERPRISE_LOG_CATEGORY);
 
+    /**
+     * The <code>Handler</code> that will do the actual work of handeling the
+     * fault. 
+     */
     protected Handler    workHandler ;
 
-    /** Constructor
+    /**
+     * Create a new FaultHandler.
      *
      * @param workHandler the Handler we're going to wrap with Fault semantics.
      */
@@ -106,6 +119,9 @@ public class FaultableHandler extends BasicHandler {
      * key will be calculated and used to find the fault chain to be
      * invoked.  This assumes that the workHandler has caught the exception
      * and already done its fault processing - as needed.
+     *
+     * @param msgContext  the <code>MessageContext</code> to process
+     * @throws AxisFault  if anything goes terminally wrong
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: FaultableHandler::invoke");
@@ -158,6 +174,8 @@ public class FaultableHandler extends BasicHandler {
 
     /**
      * Some handler later on has faulted so we need to process the fault.
+     *
+     * @param msgContext  the context to process
      */
     public void onFault(MessageContext msgContext) {
         log.debug("Enter: FaultableHandler::onFault");

@@ -149,10 +149,40 @@ public interface SOAPHeader extends SOAPElement {
      * @see #examineHeaderElements(java.lang.String) examineHeaderElements(java.lang.String)
      */
     public abstract Iterator extractHeaderElements(String actor);
-    
-    public abstract Iterator examineMustUnderstandHeaderElements(String s);
-    
+
+    /**
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader</code>
+     * object that have the specified actor and that have a MustUnderstand
+     * attribute whose value is equivalent to <code>true</code>.
+     *
+     * @param actor a <code>String</code> giving the URI of the actor for which
+     *              to search
+     * @return an <code>Iterator</code> object over all the
+     *              <code>SOAPHeaderElement</code> objects that contain the
+     *              specified actor and are marked as MustUnderstand
+     */
+    public abstract Iterator examineMustUnderstandHeaderElements(String actor);
+
+    /**
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader</code>
+     * object.
+     *
+     * @return an <code>Iterator</code> object over all the
+     *              <code>SOAPHeaderElement</code> objects contained by this
+     *              <code>SOAPHeader</code>
+     */
     public abstract Iterator examineAllHeaderElements();
 
+    /**
+     * Returns an <code>Iterator</code> over all the
+     * <code>SOAPHeaderElement</code> objects in this <code>SOAPHeader </code>
+     * object and detaches them from this <code>SOAPHeader</code> object.
+     *
+     * @return an <code>Iterator</code> object over all the
+     *              <code>SOAPHeaderElement</code> objects contained by this
+     *              <code>SOAPHeader</code>
+     */
     public abstract Iterator extractAllHeaderElements();
 }

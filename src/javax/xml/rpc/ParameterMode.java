@@ -63,34 +63,29 @@ package javax.xml.rpc;
  */
 public class ParameterMode {
 
-    /** Field mode */
+    /** Mode name. */
     private final String mode;
 
-    /** Field IN */
+    /** The mode is 'IN'. */
     public static final ParameterMode IN = new ParameterMode("IN");
 
-    /** Field INOUT */
+    /** The mode is 'INOUT'. */
     public static final ParameterMode INOUT = new ParameterMode("INOUT");
 
-    /** Field OUT */
+    /** The mode is 'OUT'. */
     public static final ParameterMode OUT = new ParameterMode("OUT");
 
     /**
-     * Constructor ParameterMode
+     * Make a new mode.
      *
-     * @param mode
+     * @param mode  name for the mode
      */
     private ParameterMode(String mode) {
         this.mode = mode;
-    }    // ctor
+    }
 
-    /**
-     * Method toString
-     *
-     * @return String
-     */
     public String toString() {
         return mode;
-    }    // toString
+    }
 }
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -65,17 +65,17 @@ import java.lang.reflect.Method;
 import java.util.Properties;
 
 /**
- * This class is duplicated for each subpackage so keep it in sync.
- * It is package private and therefore is not exposed as part of the JAXRPC
- * API.
- *
  * This code is designed to implement the pluggability
  * feature and is designed to both compile and run on JDK version 1.1 and
  * later.  The code also runs both as part of an unbundled jar file and
  * when bundled as part of the JDK.
+ *
+ * This class is duplicated for each subpackage so keep it in sync.
+ * It is package private and therefore is not exposed as part of the JAXRPC
+ * API.
  */
 class FactoryFinder {
-    /** Set to true for debugging */
+    /** Set to true for debugging. */
     private static final boolean debug = false;
 
     private static void debugPrintln(String msg) {
@@ -87,7 +87,11 @@ class FactoryFinder {
     /**
      * Figure out which ClassLoader to use.  For JDK 1.2 and later use
      * the context ClassLoader.
-     */           
+     *
+     * @return the <code>ClassLoader</code>
+     * @throws ConfigurationError   if this class is unable to work with the
+     *              host JDK
+     */
     private static ClassLoader findClassLoader()
         throws ConfigurationError
     {
@@ -115,7 +119,17 @@ class FactoryFinder {
     }
 
     /**
-     * Create an instance of a class using the specified ClassLoader
+     * Create an instance of a class using the specified
+     * <code>ClassLoader</code>, or if that fails from the
+     * <code>ClassLoader</code> that loaded this class.
+     *
+     * @param className     the name of the class to instantiate
+     * @param classLoader   a <code>ClassLoader</code> to load the class from
+     *
+     * @return a new <code>Object</code> that is an instance of the class of
+     *              the given name from the given class loader
+     * @throws ConfigurationError   if the class could not be found or
+     *              instantiated
      */
     private static Object newInstance(String className,
                                       ClassLoader classLoader)
@@ -129,7 +143,7 @@ class FactoryFinder {
                       // try again
                 }
             }
-            return Class.forName(className).newInstance(); 
+            return Class.forName(className).newInstance();
         } catch (ClassNotFoundException x) {
             throw new ConfigurationError(
                 "Provider " + className + " not found", x);
@@ -198,7 +212,7 @@ class FactoryFinder {
             } else {
                 is=classLoader.getResourceAsStream( serviceId );
             }
-        
+
             if( is!=null ) {
                 debugPrintln("found " + serviceId);
 
@@ -224,7 +238,7 @@ class FactoryFinder {
                 } catch (java.io.UnsupportedEncodingException e) {
                     rd = new BufferedReader(new InputStreamReader(is));
                 }
-        
+
                 String factoryClassName = rd.readLine();
                 rd.close();
 
@@ -248,11 +262,17 @@ class FactoryFinder {
     }
 
     static class ConfigurationError extends Error {
+        // fixme: should this be refactored to use the jdk1.4 exception
+        // wrapping?
+
         private Exception exception;
 
         /**
          * Construct a new instance with the specified detail string and
          * exception.
+         *
+         * @param msg   the Message for this error
+         * @param x     an Exception that caused this failure, or null
          */
         ConfigurationError(String msg, Exception x) {
             super(msg);

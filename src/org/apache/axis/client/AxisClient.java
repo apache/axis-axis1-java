@@ -83,47 +83,51 @@ import javax.xml.namespace.QName;
 public class AxisClient extends AxisEngine {
     protected static Log log =
             LogFactory.getLog(AxisClient.class.getName());
-    
+
     public AxisClient(EngineConfiguration config) {
         super(config);
     }
-    
+
     public AxisClient() {
         this(EngineConfigurationFactoryFinder.newFactory().
                 getClientEngineConfig());
     }
-    
+
     /**
-     * this *is* the client engine!
+     * @return this instance, as this is the client engine
      */
     public AxisEngine getClientEngine () {
         return this;
     }
-    
+
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
+     *
+     * @param msgContext  the <code>MessageContext</code> to invoke relative
+     *              to
+     * @throws AxisFault if anything goes wrong during invocation
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug("Enter: AxisClient::invoke");
         }
-        
+
         String  hName = null ;
         Handler h     = null ;
-        
+
         // save previous context
         MessageContext previousContext = getCurrentMessageContext();
-        
+
         try {
             // set active context
             setCurrentMessageContext(msgContext);
-            
+
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if (log.isDebugEnabled()) {
                 log.debug( "EngineHandler: " + hName );
             }
-            
+
             if ( hName != null ) {
                 h = getHandler( hName );
                 if ( h != null )
@@ -145,12 +149,12 @@ public class AxisClient extends AxisEngine {
                 /*   Service Specific Response Chain                          */
                 /*   Protocol Specific-Handler/Checker                        */
                 /**************************************************************/
-                
+
                 // When do we call init/cleanup??
-                
+
                 SOAPService service = null ;
                 msgContext.setPastPivot(false);
-                
+
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
                 service = msgContext.getService();
@@ -159,15 +163,15 @@ public class AxisClient extends AxisEngine {
                     if ( h != null )
                         h.invoke( msgContext );
                 }
-                
+
                 /* Process the Global Request Chain */
                 /**********************************/
                 if ((h = getGlobalRequest()) != null )
                     h.invoke(msgContext);
-                
+
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
-                
+
                 /** Process the Transport Specific stuff
                  *
                  * NOTE: Somewhere in here there is a handler which actually
@@ -182,58 +186,58 @@ public class AxisClient extends AxisEngine {
                     throw new AxisFault(
                             Messages.getMessage("noTransport00", hName));
                 }
-                
+
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
-                
+
                 /* Process the Global Response Chain */
                 /***********************************/
                 if ((h = getGlobalResponse()) != null) {
                     h.invoke(msgContext);
                 }
-                
+
                 if ( service != null ) {
                     h = service.getResponseHandler();
                     if ( h != null ) {
                         h.invoke(msgContext);
                     }
                 }
-                
+
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
             }
-            
+
         } catch ( Exception e ) {
             // Should we even bother catching it ?
             log.debug(Messages.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
-            
+
         } finally {
             // restore previous state
             setCurrentMessageContext(previousContext);
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisClient::invoke");
         }
     }
-    
+
     protected void invokeJAXRPCHandlers(MessageContext context){
         java.util.List chain = null;
         HandlerInfoChainFactory hiChainFactory = null;
         boolean clientSpecified = false;
-        
+
         Service service
                 = (Service)context.getProperty(Call.WSDL_SERVICE);
         if(service == null) {
             return;
         }
-        
+
         QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
         if(portName == null) {
             return;
         }
-        
+
         javax.xml.rpc.handler.HandlerRegistry registry;
         registry = service.getHandlerRegistry();
         if(registry != null) {
@@ -243,25 +247,25 @@ public class AxisClient extends AxisEngine {
                 clientSpecified = true;
             }
         }
-        
+
         // Otherwise, use the container support
         if (!clientSpecified) {
             SOAPService soapService = context.getService();
             if (soapService != null) {
                 // A client configuration exists for this service.  Check
                 // to see if there is a HandlerInfoChain configured on it.
-                hiChainFactory = (HandlerInfoChainFactory) 
+                hiChainFactory = (HandlerInfoChainFactory)
                         soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN);
             }
         }
-        
+
         if (hiChainFactory == null) {
             return;
         }
-        
-        HandlerChainImpl impl = 
+
+        HandlerChainImpl impl =
                 (HandlerChainImpl) hiChainFactory.createHandlerChain();
-        
+
         if(!context.getPastPivot()) {
             impl.handleRequest(context);
         }

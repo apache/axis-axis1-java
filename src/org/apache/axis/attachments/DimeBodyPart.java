@@ -54,7 +54,7 @@
  */
 
 /**
- * @author Rick Rineholt 
+ * @author Rick Rineholt
  */
 
 package org.apache.axis.attachments;
@@ -71,7 +71,7 @@ import java.io.IOException;
 
 
 /**
- * This class is a single part for DIME mulitpart message. 
+ * This class is a single part for DIME mulitpart message.
 <pre>
  DIME 1.0 format
  0                   1                   2                   3
@@ -109,10 +109,10 @@ public class DimeBodyPart {
     protected static Log log =
         LogFactory.getLog(DimeBodyPart.class.getName());
 
-    protected Object data = null;  
-    protected DimeTypeNameFormat dtnf = null; 
-    protected byte[] type = null; 
-    protected byte[] id = null; 
+    protected Object data = null;
+    protected DimeTypeNameFormat dtnf = null;
+    protected byte[] type = null;
+    protected byte[] id = null;
     static final byte POSITION_FIRST = (byte) 0x04;
     static final  byte POSITION_LAST = (byte) 0x02;
     private static final byte CHUNK = 0x01; //Means set the chunk bit
@@ -122,6 +122,8 @@ public class DimeBodyPart {
 
     static final long MAX_DWORD = 0xffffffffL;
 
+    // fixme: don't use? is this for inheritance only? I can't find any
+    //  classes that extend this
     protected DimeBodyPart() {} //do not use.
 
     /**
@@ -132,13 +134,13 @@ public class DimeBodyPart {
      * @param id  the ID for the DIME part.
      *
      */
-    public DimeBodyPart(byte[] data, DimeTypeNameFormat format, 
+    public DimeBodyPart(byte[] data, DimeTypeNameFormat format,
       String type, String id) {
         System.arraycopy(data, 0, this.data = new byte[ data.length], 0, data.length);
-        this.dtnf = format; 
+        this.dtnf = format;
         this.type = type.getBytes();
         if (this.type.length > MAX_TYPE_LENGTH)
-            throw new IllegalArgumentException(Messages.getMessage 
+            throw new IllegalArgumentException(Messages.getMessage
                     ("attach.dimetypeexceedsmax",
                     "" + this.type.length, "" + MAX_TYPE_LENGTH));
         this.id = id.getBytes();
@@ -150,7 +152,7 @@ public class DimeBodyPart {
 
     /**
      * Create a DIME Attachment Part.
-     * @param dh the data for the attachment as a JAF datahadler. 
+     * @param dh the data for the attachment as a JAF datahadler.
      * @param format the type format for the data.
      * @param type the type of the data
      * @param id  the ID for the DIME part.
@@ -159,24 +161,24 @@ public class DimeBodyPart {
     public DimeBodyPart(DataHandler dh,
     DimeTypeNameFormat format, String type, String id) {
         this.data = dh;
-        this.dtnf = format; 
+        this.dtnf = format;
         if (type == null || type.length() == 0)
             type = "application/octet-stream";
         this.type = type.getBytes();
         if (this.type.length > MAX_TYPE_LENGTH)
             throw new IllegalArgumentException(Messages.getMessage(
-                        "attach.dimetypeexceedsmax", 
+                        "attach.dimetypeexceedsmax",
                         "" + this.type.length, "" + MAX_TYPE_LENGTH));
-        this.id = id.getBytes(); 
+        this.id = id.getBytes();
         if (this.id.length > MAX_ID_LENGTH)
             throw new IllegalArgumentException(Messages.getMessage(
-            "attach.dimelengthexceedsmax", 
+            "attach.dimelengthexceedsmax",
             "" + this.id.length, "" + MAX_ID_LENGTH));
     }
 
     /**
      * Create a DIME Attachment Part.
-     * @param dh the data for the attachment as a JAF datahadler. 
+     * @param dh the data for the attachment as a JAF datahadler.
      *    The type and foramt is derived from the DataHandler.
      * @param id  the ID for the DIME part.
      *
@@ -233,7 +235,7 @@ public class DimeBodyPart {
                                     this.type = t.getBytes();
                                     this.dtnf = DimeTypeNameFormat.URI;
                                     return;
-                      
+
                                 }
                             }
                         }
@@ -244,15 +246,19 @@ public class DimeBodyPart {
     }
 
     /**
-     * Write to stream the data using maxchunk for the largest junk. 
+     * Write to stream the data using maxchunk for the largest junk.
      *
+     * @param os        the <code>OutputStream</code> to write to
+     * @param position  the position to write
+     * @param maxchunk  the maximum length of any one chunk
+     * @throws IOException if there was a problem writing data to the stream
      */
     void write(java.io.OutputStream os, byte position, long maxchunk)
       throws java.io.IOException {
         if (maxchunk < 1) throw new IllegalArgumentException(
-                    Messages.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk)); 
+                    Messages.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk));
         if (maxchunk > MAX_DWORD) throw new IllegalArgumentException(
-                    Messages.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk)); 
+                    Messages.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk));
         if (data instanceof byte[]) send(os, position, (byte[]) data,
           maxchunk);
         if (data instanceof DataHandler) send(os, position,
@@ -260,8 +266,11 @@ public class DimeBodyPart {
     }
 
     /**
-     * Write to stream the data.
+     * Write to stream the data using the default largest chunk size.
      *
+     * @param os  the <code>OutputStream</code> to write to
+     * @param position  the position to write
+     * @throws IOException if there was a problem writing data to the stream
      */
     void write(java.io.OutputStream os, byte position)
       throws java.io.IOException {
@@ -275,7 +284,7 @@ public class DimeBodyPart {
         send(os, position, data, 0, data.length, maxchunk);
     }
 
-    void send(java.io.OutputStream os, byte position, byte[] data, 
+    void send(java.io.OutputStream os, byte position, byte[] data,
         int offset, final int length, final long maxchunk)
         throws java.io.IOException {
 
@@ -299,15 +308,15 @@ public class DimeBodyPart {
         java.io.InputStream in = null;
         try {
             byte chunknext = 0;
-    
+
             long dataSize = getDataSize();
             in = dh.getInputStream();
             byte[] readbuf = new byte[64 * 1024];
             int bytesread;
-    
+
             sendHeader(os, position, dataSize, (byte) 0);
             long totalsent = 0;
-    
+
             do {
                 bytesread = in.read(readbuf);
                 if (bytesread > 0) {
@@ -332,9 +341,9 @@ public class DimeBodyPart {
     }
 
     protected void sendChunk(java.io.OutputStream os,
-    final byte position, 
+    final byte position,
         byte[] data, byte chunk) throws java.io.IOException {
-      
+
         sendChunk(os, position, data, 0, data.length, chunk);
     }
 
@@ -349,7 +358,7 @@ public class DimeBodyPart {
 
     static final  byte CURRENT_OPT_T = (byte) 0;
 
-    protected void sendHeader(java.io.OutputStream os, 
+    protected void sendHeader(java.io.OutputStream os,
     final byte position,
         long length, byte chunk) throws java.io.IOException {
         byte[] fixedHeader = new byte[12];
@@ -359,38 +368,38 @@ public class DimeBodyPart {
 
         // B, E, and C
         fixedHeader[0] |= (byte) ((position & (byte) 0x6)
-         & ((chunk & CHUNK) != 0 ? ~POSITION_LAST : ~0) &  
+         & ((chunk & CHUNK) != 0 ? ~POSITION_LAST : ~0) &
                     ((chunk & CHUNK_NEXT) != 0 ? ~POSITION_FIRST : ~0));
         fixedHeader[0] |= (chunk & CHUNK);
 
-        //TYPE_T 
+        //TYPE_T
         if ((chunk & CHUNK_NEXT) == 0) //If this is a follow on chunk dont send id again.
             fixedHeader[1] = (byte) ((dtnf.toByte() << 4) & 0xf0);
 
-        //OPT_T 
+        //OPT_T
         fixedHeader[1] |= (byte) (CURRENT_OPT_T & 0xf);
-      
+
         //OPTION_LENGTH
         fixedHeader[2] = (byte) 0;
         fixedHeader[3] = (byte) 0;
 
         //ID_LENGTH
         if ((chunk & CHUNK_NEXT) == 0) { //If this is a follow on chunk dont send id again.
-            fixedHeader[4] = (byte) ((id.length >>> 8) & 0xff);  
-            fixedHeader[5] = (byte) ((id.length) & 0xff);  
+            fixedHeader[4] = (byte) ((id.length >>> 8) & 0xff);
+            fixedHeader[5] = (byte) ((id.length) & 0xff);
         }
 
         //TYPE_LENGTH
         if ((chunk & CHUNK_NEXT) == 0) {
-            fixedHeader[6] = (byte) ((type.length >>> 8) & 0xff);  
-            fixedHeader[7] = (byte) ((type.length) & 0xff);  
+            fixedHeader[6] = (byte) ((type.length >>> 8) & 0xff);
+            fixedHeader[7] = (byte) ((type.length) & 0xff);
         }
 
         //DATA_LENGTH
         fixedHeader[8] = (byte) ((length >>> 24) & 0xff);
-        fixedHeader[9] = (byte) ((length >>> 16) & 0xff);  
-        fixedHeader[10] = (byte) ((length >>> 8) & 0xff);  
-        fixedHeader[11] = (byte) (length & 0xff);  
+        fixedHeader[9] = (byte) ((length >>> 16) & 0xff);
+        fixedHeader[10] = (byte) ((length >>> 8) & 0xff);
+        fixedHeader[11] = (byte) (length & 0xff);
 
         os.write(fixedHeader);
 
@@ -445,7 +454,7 @@ public class DimeBodyPart {
 
     protected long getDataSize() {
         if (data instanceof byte[]) return ((byte[]) (data)).length;
-        if (data instanceof DataHandler) 
+        if (data instanceof DataHandler)
           return getDataSize((DataHandler) data);
         return -1;
     }
@@ -459,13 +468,13 @@ public class DimeBodyPart {
             //Do files our selfs since this is costly to read in. Ask the file system.
             // This is 90% of the use of attachments.
             if (ds instanceof javax.activation.FileDataSource) {
-                javax.activation.FileDataSource fdh = 
+                javax.activation.FileDataSource fdh =
                     (javax.activation.FileDataSource) ds;
                 java.io.File df = fdh.getFile();
 
                 if (!df.exists()) {
                     throw new RuntimeException(
-                            Messages.getMessage("noFile", 
+                            Messages.getMessage("noFile",
                                 df.getAbsolutePath()));
                 }
                 dataSize = df.length();
@@ -484,9 +493,9 @@ public class DimeBodyPart {
                 if (in.markSupported()) {
                     //Leave the stream open for future reading
                     // and reset the stream pointer to the first byte
-                    in.reset();            
+                    in.reset();
                 } else {
-                    in.close();                    
+                    in.close();
                 }
             }
         } catch (Exception e) {

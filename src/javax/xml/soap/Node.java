@@ -114,5 +114,18 @@ public interface Node extends org.w3c.dom.Node {
      */
     public abstract void recycleNode();
 
-    public abstract void setValue(String s);
+    /**
+     * If this is a Text node then this method will set its value, otherwise it
+     * sets the value of the immediate (Text) child of this node. The value of
+     * the immediate child of this node can be set only if, there is one child
+     * node and that node is a Text node, or if there are no children in which
+     * case a child Text node will be created.
+     *
+     * @param value the text to set
+     * @throws IllegalStateException   if the node is not a Text  node and
+     *              either has more than one child node or has a child node that
+     *              is not a Text node
+     */
+
+    public abstract void setValue(String value);
 }

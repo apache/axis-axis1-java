@@ -114,6 +114,7 @@ import java.util.Properties;
  * @author Richard A. Sitze
  */
 public class AxisProperties {
+    /** The <code>Log</code> for all interesting events in this class. */
     protected static Log log =
         LogFactory.getLog(AxisProperties.class.getName());
 
@@ -126,7 +127,7 @@ public class AxisProperties {
         getAlternatePropertyNameDiscoverer()
             .addClassToPropertyNameMapping(clazz.getName(), propertyName);
     }
-    
+
     public static void setClassDefault(Class clazz, String defaultName) {
         getMappedNames().map(clazz.getName(), defaultName);
     }
@@ -145,7 +146,7 @@ public class AxisProperties {
         }
         return nameDiscoverer;
     }
-    
+
     public static ResourceClassIterator getResourceClassIterator(Class spi) {
         ResourceNameIterator it = getNameDiscoverer().findResourceNames(spi.getName());
         return new DiscoverClasses(loaders).findResourceClasses(it);
@@ -164,30 +165,35 @@ public class AxisProperties {
         }
         return mappedNames;
     }
-    
+
     private static DiscoverNamesInAlternateManagedProperties getAlternatePropertyNameDiscoverer() {
         if (altNameDiscoverer == null) {
             altNameDiscoverer = new DiscoverNamesInAlternateManagedProperties();
         }
-        
+
         return altNameDiscoverer;
     }
 
     /**
+     * Create a new instance of a service provider class.
+     *
      * !WARNING!
      * SECURITY issue.
-     * 
+     *
      * See bug 11874
-     * 
+     *
      * The solution to both is to move doPrivilege UP within AXIS to a
      * class that is either private (cannot be reached by code outside
      * AXIS) or that represents a secure public interface...
-     * 
+     *
      * This is going to require analysis and (probably) rearchitecting.
      * So, I'm taking taking the easy way out until we are at a point
      * where we can reasonably rearchitect for security.
+     *
+     * @param spiClass  the service provider class to instantiate
+     * @return a new instance of this class
      */
-    
+
     public static Object newInstance(Class spiClass)
     {
         return newInstance(spiClass, null, null);
@@ -200,11 +206,11 @@ public class AxisProperties {
             new PrivilegedAction() {
                 public Object run() {
                     ResourceClassIterator services = getResourceClassIterator(spiClass);
-            
+
                     Object obj = null;
                     while (obj == null  &&  services.hasNext()) {
                         Class service = services.nextResourceClass().loadClass();
-            
+
                         /* service == null
                          * if class resource wasn't loadable
                          */
@@ -225,13 +231,13 @@ public class AxisProperties {
                             }
                         }
                     }
-            
+
                     return obj;
                 }
             });
     }
 
-        
+
     /**
      * Get value for property bound to the current thread context class loader.
      *
@@ -303,14 +309,14 @@ public class AxisProperties {
         ManagedProperties.setProperties(newProperties, isDefault);
     }
 
-    
+
     public static Enumeration propertyNames() {
         return ManagedProperties.propertyNames();
     }
-    
+
     /**
      * This is an expensive operation.
-     * 
+     *
      * @return Returns a <code>java.util.Properties</code> instance
      * that is equivalent to the current state of the scoped
      * properties, in that getProperty() will return the same value.
@@ -330,13 +336,13 @@ public class AxisProperties {
     /**
      * !WARNING!
      * SECURITY issue.
-     * 
+     *
      * See bug 11874
-     * 
+     *
      * The solution to both is to move doPrivilege UP within AXIS to a
      * class that is either private (cannot be reached by code outside
      * AXIS) or that represents a secure public interface...
-     * 
+     *
      * This is going to require analysis and (probably) rearchitecting.
      * So, I'm taking taking the easy way out until we are at a point
      * where we can reasonably rearchitect for security.

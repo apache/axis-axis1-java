@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class StringHolder
+ * Holder for <code>String</code>s.
  *
  * @version 1.0
  */
 public final class StringHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>String</code> contained by this holder. */
     public String value;
 
     /**
-     * Constructor StringHolder
+     * Make a new <code>StringHolder</code> with a <code>null</code> value.
      */
     public StringHolder() {}
 
     /**
-     * Constructor StringHolder
+     * Make a new <code>StringHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>String</code> to hold
      */
     public StringHolder(String value) {
         this.value = value;

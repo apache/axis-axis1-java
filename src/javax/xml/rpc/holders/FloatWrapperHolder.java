@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class FloatWrapperHolder
+ * Holder for <code>Float</code>s.
  *
  * @version 1.0
  */
 public final class FloatWrapperHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>Float</code> contained by this holder. */
     public Float value;
 
     /**
-     * Constructor FloatWrapperHolder
+     * Make a new <code>FloatWrapperHolder</code> with a <code>null</code> value.
      */
     public FloatWrapperHolder() {}
 
     /**
-     * Constructor FloatWrapperHolder
+     * Make a new <code>FloatWrapperHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>Float</code> to hold
      */
     public FloatWrapperHolder(Float value) {
         this.value = value;

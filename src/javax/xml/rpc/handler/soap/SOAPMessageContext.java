@@ -70,18 +70,21 @@ import javax.xml.soap.SOAPMessage;
 public interface SOAPMessageContext extends MessageContext {
 
     /**
-     *  Gets the SOAPMessage from this message context
-     *  @return Returns the SOAPMessage; returns null if no request
-     *          SOAPMessage is present in this SOAPMessageContext
+     *  Gets the SOAPMessage from this message context.
+     *
+     *  @return the <code>SOAPMessage</code>; <code>null</code> if no request
+     *          <code>SOAPMessage</code> is present in this
+     *          <code>SOAPMessageContext</code>
      */
     public abstract SOAPMessage getMessage();
 
     /**
-     *  Sets the SOAPMessage for this message context
+     *  Sets the <code>SOAPMessage</code> for this message context.
+     *
      *  @param   message  SOAP message
-     *  @throws  JAXRPCException  If any error during the setting
+     *  @throws  javax.xml.rpc.JAXRPCException  if any error during the setting
      *     of the SOAPMessage in this message context
-     *  @throws java.lang.UnsupportedOperationException If this
+     *  @throws java.lang.UnsupportedOperationException if this
      *     operation is not supported
      */
     public abstract void setMessage(SOAPMessage message);

@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class ByteArrayHolder
+ * Holder for <code>byte[]</code>s.
  *
  * @version 1.0
  */
 public final class ByteArrayHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>byte[]</code> contained by this holder. */
     public byte[] value;
 
     /**
-     * Constructor ByteArrayHolder
+     * Make a new <code>ByteArrayHolder</code> with a <code>null</code> value.
      */
     public ByteArrayHolder() {}
 
     /**
-     * Constructor ByteArrayHolder
+     * Make a new <code>ByteArrayHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>byte[]</code> to hold
      */
     public ByteArrayHolder(byte[] value) {
         this.value = value;

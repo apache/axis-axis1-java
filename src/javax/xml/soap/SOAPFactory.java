@@ -71,7 +71,6 @@ package javax.xml.soap;
  */
 public abstract class SOAPFactory {
 
-    /** */
     public SOAPFactory() {}
 
     /**
@@ -180,10 +179,8 @@ public abstract class SOAPFactory {
         }
     }
 
-    /** Field SF_PROPERTY           */
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";
 
-    /** Field DEFAULT_SF           */
     private static final String DEFAULT_SF =
         "org.apache.axis.soap.SOAPFactoryImpl";
 }

@@ -285,7 +285,7 @@ public class Call implements javax.xml.rpc.Call {
                                             ParameterMode.IN,
                                             ParameterMode.OUT,
                                             ParameterMode.INOUT };
-    
+
     /** This is true when someone has called setEncodingStyle() */
     private boolean encodingStyleExplicitlySet = false;
     /** This is true when someone has called setOperationUse() */
@@ -307,6 +307,9 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Default constructor - not much else to say.
+     *
+     * @param service  the <code>Service</code> this <code>Call</code> will
+     *              work with
      */
     public Call(Service service) {
         this.service = service ;
@@ -315,8 +318,9 @@ public class Call implements javax.xml.rpc.Call {
         initialize();
     }
 
+    // fixme: why have this if we have Call(URL) ?
     /**
-     * Build a call from a URL string
+     * Build a call from a URL string.
      *
      * @param url the target endpoint URL
      * @exception MalformedURLException
@@ -327,7 +331,7 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Build a call from a URL
+     * Build a call from a URL.
      *
      * @param url the target endpoint URL
      */
@@ -497,8 +501,9 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Returns the value associated with the named property
+     * Returns the value associated with the named property.
      *
+     * @param name the name of the property
      * @return Object value of the property or null if the property is not set
      * @throws JAXRPCException if the requested property is not a supported property
      */
@@ -554,13 +559,17 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Set the username.
+     *
+     * @param username  the new user name
      */
     public void setUsername(String username) {
         this.username = username;
     } // setUsername
 
     /**
-     * Get the user name
+     * Get the user name.
+     *
+     * @return the user name
      */
     public String getUsername() {
         return username;
@@ -568,13 +577,17 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Set the password.
+     *
+     * @param password  plain-text copy of the password
      */
     public void setPassword(String password) {
         this.password = password;
     } // setPassword
 
     /**
-     * Get the password
+     * Get the password.
+     *
+     * @return a plain-text copy of the password
      */
     public String getPassword() {
         return password;
@@ -594,6 +607,8 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get the value of maintainSession flag.
+     *
+     * @return true if session is maintained, false otherwise
      */
     public boolean getMaintainSession() {
         return maintainSession;
@@ -607,19 +622,19 @@ public class Call implements javax.xml.rpc.Call {
         Style style = Style.getStyle(operationStyle, Style.DEFAULT);
         setOperationStyle(style);
     } // setOperationStyle
-    
+
     /**
      * Set the operation style
-     * 
+     *
      * @param operationStyle
-     */ 
+     */
     public void setOperationStyle(Style operationStyle) {
         if (operation == null) {
             operation = new OperationDesc();
         }
-        
+
         operation.setStyle(operationStyle);
-        
+
         // If no one has explicitly set the use, we should track
         // the style.  If it's non-RPC, default to LITERAL.
         if (!useExplicitlySet) {
@@ -627,7 +642,7 @@ public class Call implements javax.xml.rpc.Call {
                 operation.setUse(Use.LITERAL);
             }
         }
-        
+
         // If no one has explicitly set the encodingStyle, we should
         // track the style.  If it's RPC, default to SOAP-ENC, otherwise
         // default to "".
@@ -643,6 +658,8 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get the operation style.
+     *
+     * @return the <code>Style</code> of the operation
      */
     public Style getOperationStyle() {
         if (operation != null) {
@@ -659,19 +676,19 @@ public class Call implements javax.xml.rpc.Call {
         Use use = Use.getUse(operationUse, Use.DEFAULT);
         setOperationUse(use);
     } // setOperationUse
-    
+
     /**
      * Set the operation use
      * @param operationUse
-     */ 
+     */
     public void setOperationUse(Use operationUse) {
         useExplicitlySet = true;
-        
+
         if (operation == null) {
             operation = new OperationDesc();
         }
-        
-        operation.setUse(operationUse);        
+
+        operation.setUse(operationUse);
         if (!encodingStyleExplicitlySet) {
             String encStyle = "";
             if (operationUse == Use.ENCODED) {
@@ -684,6 +701,8 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get the operation use.
+     *
+     * @return the <code>Use</code> of the operation
      */
     public Use getOperationUse() {
         if (operation != null) {
@@ -693,21 +712,30 @@ public class Call implements javax.xml.rpc.Call {
     } // getOperationStyle
 
     /**
-     * Should soapAction be used?
+     * Flag to indicate if soapAction should be used.
+     *
+     * @param useSOAPAction  true if the soapAction header is to be used to
+     *              help find the method to invoke, false otherwise
      */
     public void setUseSOAPAction(boolean useSOAPAction) {
         this.useSOAPAction = useSOAPAction;
     } // setUseSOAPAction
 
     /**
-     * Are we using soapAction?
+     * Discover if soapAction is being used.
+     *
+     * @return true if it is, false otherwise
      */
     public boolean useSOAPAction() {
         return useSOAPAction;
     } // useSOAPAction
 
+    // fixme: this never throws IllegalArgumentException
     /**
      * Set the soapAction URI.
+     *
+     * @param SOAPActionURI  the new SOAP action URI
+     * @throws IllegalArgumentException if the URI is inapropreate
      */
     public void setSOAPActionURI(String SOAPActionURI)
             throws IllegalArgumentException {
@@ -717,6 +745,8 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get the soapAction URI.
+     *
+     * @return the curretn SOAP action URI
      */
     public String getSOAPActionURI() {
         return SOAPActionURI;
@@ -1225,19 +1255,19 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Prefill as much info from the WSDL as it can.  
-     * Right now it's SOAPAction, operation qname, parameter types 
+     * Prefill as much info from the WSDL as it can.
+     * Right now it's SOAPAction, operation qname, parameter types
      * and return type of the Web Service.
      *
      * This methods considers that port name and target endpoint address have
-     * already been set. This is useful when you want to use the same Call 
+     * already been set. This is useful when you want to use the same Call
      * instance for several calls on the same Port
      *
      * Note: Not part of JAX-RPC specification.
-     * 
+     *
      * @param  opName          Operation(method) that's going to be invoked
      * @throws JAXRPCException
-     */     
+     */
     public void setOperation(String opName) {
         if ( service == null ) {
             throw new JAXRPCException( Messages.getMessage("noService04") );
@@ -1370,7 +1400,7 @@ public class Call implements javax.xml.rpc.Call {
             QName paramType = Utils.getXSIType(p);
             this.addParameter( p.getQName(), paramType, modes[p.getMode()]);
         }
-        
+
         Map faultMap = bEntry.getFaults();
         // Get the list of faults for this operation
         ArrayList faults = (ArrayList) faultMap.get(bop);
@@ -1436,7 +1466,7 @@ public class Call implements javax.xml.rpc.Call {
         else {
             this.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
         }
-        
+
         boolean hasMIME = Utils.hasMIME(bEntry, bop);
         Use use = bEntry.getInputBodyType(bop.getOperation());
         Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
@@ -1480,20 +1510,20 @@ public class Call implements javax.xml.rpc.Call {
         // need to be specified with addParameter calls.
         parmAndRetReq = false;
         return;
-     
+
     }
 
 
     /**
-     * prefill as much info from the WSDL as it can.  
+     * prefill as much info from the WSDL as it can.
      * Right now it's target URL, SOAPAction, Parameter types,
      * and return type of the Web Service.
-     * 
+     *
      * If wsdl is not present, this function set port name and operation name
      * and does not modify target endpoint address.
      *
      * Note: Not part of JAX-RPC specification.
-     * 
+     *
      * @param  portName        PortName in the WSDL doc to search for
      * @param  opName          Operation(method) that's going to be invoked
      */
@@ -1787,12 +1817,15 @@ public class Call implements javax.xml.rpc.Call {
     /* End of core JAX-RPC stuff                                            */
     /************************************************************************/
 
-    /** Invoke the service with a custom SOAPEnvelope.
-     *
+    // fixme: can this throw RemoteException? Is AxisFault hoovering up all the
+    //  faults?
+    /**
+     * Invoke the service with a custom SOAPEnvelope.
+     * <p>
      * Note: Not part of JAX-RPC specification.
      *
-     * @param env a SOAPEnvelope to send.
-     * @exception AxisFault
+     * @param env a SOAPEnvelope to send
+     * @throws AxisFault if there is any failure
      */
     public SOAPEnvelope invoke(SOAPEnvelope env)
                                   throws java.rmi.RemoteException {
@@ -2340,7 +2373,7 @@ public class Call implements javax.xml.rpc.Call {
         if (bodyEl == null) {
             return null;
         }
-        
+
         if (bodyEl instanceof RPCElement) {
             try {
                 resArgs = ((RPCElement) bodyEl).getParams();
@@ -2484,6 +2517,8 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Get the javaType for a given parameter.
      *
+     * @param name  the QName of the parameter
+     * @return the class associated with that parameter
      */
     private Class getJavaTypeForQName(QName name) {
         if (operation == null) {
@@ -2638,10 +2673,10 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * invoke the message on the current engine
-     * @param msgContext
-     * @throws AxisFault if the invocation raised a fault, or there was no
-     * reponse
+     * Invoke the message on the current engine and do not wait for a response.
+     *
+     * @param msgContext  the <code>MessageContext</code> to use
+     * @throws AxisFault if the invocation raised a fault
      */
     private void invokeEngine(MessageContext msgContext) throws AxisFault {
         service.getEngine().invoke( msgContext );
@@ -2671,7 +2706,7 @@ public class Call implements javax.xml.rpc.Call {
             //we got a fault
             if(operation == null ||
                     operation.getReturnClass() == null ||
-                    operation.getReturnClass() != 
+                    operation.getReturnClass() !=
                         javax.xml.soap.SOAPMessage.class) {
                 //unless we don't care about the return value or we want
                 //a raw message back
@@ -2778,9 +2813,11 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * This method adds an attachment.
-     *
+     * <p>
      * Note: Not part of JAX-RPC specification.
-     * @exception RuntimeException if there is no support for attachments.
+     *
+     * @param attachment the <code>Object</code> to attach
+     * @exception RuntimeException if there is no support for attachments
      *
      */
      public void addAttachmentPart( Object attachment){
@@ -2788,9 +2825,14 @@ public class Call implements javax.xml.rpc.Call {
      }
 
     /**
-     * Add a fault for this operation
+     * Add a fault for this operation.
+     * <p>
+     * Note: Not part of JAX-RPC specificaion.
      *
-     * Note: Not part of JAX-RPC specificaion
+     * @param qname     qname of the fault
+     * @param cls       class of the fault
+     * @param xmlType   XML type of the fault
+     * @param isComplex true if xmlType is a complex type, false otherwise
      */
     public void addFault(QName qname, Class cls,
                          QName xmlType, boolean isComplex) {
@@ -2822,10 +2864,10 @@ public class Call implements javax.xml.rpc.Call {
         this.operation = operation;
         operationSetManually = true;
     }
-    
+
     public OperationDesc getOperation()
     {
-        return operation;  
+        return operation;
     }
 
     public void clearOperation() {

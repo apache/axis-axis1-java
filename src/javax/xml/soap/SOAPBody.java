@@ -107,9 +107,58 @@ public interface SOAPBody extends SOAPElement {
     public abstract SOAPBodyElement addBodyElement(Name name)
         throws SOAPException;
 
-    public abstract SOAPFault addFault(Name name, String s, Locale locale) throws SOAPException;
+    /**
+     * Creates a new <code>SOAPFault</code> object and adds it to this
+     * <code>SOAPBody</code> object. The new <code>SOAPFault</code> will have a
+     * <code>faultcode</code> element that is set to the <code>faultCode</code>
+     * parameter and a <code>faultstring</code> set to <code>faultstring</code>
+     * and localized to <code>locale</code>.
+     *
+     * @param faultCode a <code>Name</code> object giving the fault code to be
+     *              set; must be one of the fault codes defined in the SOAP 1.1
+     *              specification and of type QName
+     * @param faultString a <code>String</code> giving an explanation of the
+     *              fault
+     * @param locale a <code>Locale</code> object indicating the native language
+     *              of the <ocde>faultString</code>
+     * @return the new <code>SOAPFault</code> object
+     * @throws SOAPException  if there is a SOAP error
+     */
+    public abstract SOAPFault addFault(Name faultCode,
+                                       String faultString,
+                                       Locale locale) throws SOAPException;
 
-    public abstract SOAPFault addFault(Name name, String s) throws SOAPException;
+    /**
+     * Creates a new <code>SOAPFault</code> object and adds it to this
+     * <code>SOAPBody</code> object. The new <code>SOAPFault</code> will have a
+     * <code>faultcode</code> element that is set to the <code>faultCode</code>
+     * parameter and a <code>faultstring</code> set to <code>faultstring</code>.
+     *
+     * @param faultCode a <code>Name</code> object giving the fault code to be
+     *              set; must be one of the fault codes defined in the SOAP 1.1
+     *              specification and of type QName
+     * @param faultString a <code>String</code> giving an explanation of the
+     *              fault
+     * @return the new <code>SOAPFault</code> object
+     * @throws SOAPException  if there is a SOAP error
+     */
+    public abstract SOAPFault addFault(Name faultCode, String faultString) throws SOAPException;
 
+    /**
+     * Adds the root node of the DOM <code>Document</code> to this
+     * <code>SOAPBody</code> object.
+     * <p>
+     * Calling this method invalidates the <code>document</code> parameter. The
+     * client application should discard all references to this
+     * <code>Document</code> and its contents upon calling
+     * <code>addDocument</code>. The behavior of an application that continues
+     * to use such references is undefined.
+     *
+     * @param document the <code>Document</code> object whose root node will be
+     *              added to this <code>SOAPBody</code>
+     * @return the <code>SOAPBodyElement</code> that represents the root node
+     *              that was added
+     * @throws SOAPException if the <code>Document</code> cannot be added
+     */
     public abstract SOAPBodyElement addDocument(Document document) throws SOAPException;
     }

@@ -86,8 +86,8 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     protected Vector handlers = new Vector();
     protected boolean invoked = false;
-    
-    private String CAUGHTFAULT_PROPERTY = 
+
+    private String CAUGHTFAULT_PROPERTY =
             "org.apache.axis.SimpleChain.caughtFaultInResponse";
 
     public void init() {
@@ -110,6 +110,8 @@ public class SimpleChain extends BasicHandler implements Chain {
      * Iterate over the chain invoking each handler.  If there's a fault
      * then call 'onFault' for each completed handler in reverse order, then
      * rethrow the exception.
+     *
+     * @throws AxisFault if there was a fault with any of the handlers
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
@@ -127,6 +129,10 @@ public class SimpleChain extends BasicHandler implements Chain {
     /**
      * Iterate over the chain letting each handler have a crack at
      * contributing to a WSDL description.
+     *
+     * @param msgContext  the <code>MessageContext</code> to write the WSDL
+     *              out to
+     * @throws AxisFault  if there was a problem writing the WSDL
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
@@ -175,6 +181,8 @@ public class SimpleChain extends BasicHandler implements Chain {
      * later on has faulted - in reverse order. If any handlers
      * have been added since we visited the chain, they will get
      * notified too!
+     *
+     * @param msgContext the context to process
      */
     public void onFault(MessageContext msgContext) {
         if (log.isDebugEnabled()) {

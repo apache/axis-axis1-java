@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -60,23 +60,30 @@ import org.apache.axis.utils.Messages;
 
 /**
  * Little utility to get the version and build date of the axis.jar.
- * 
+ *
  * The messages referenced here are automatically kept up-to-date by the
  * build.xml.
- * 
+ *
  * @author Glen Daniels (gdaniels@apache.org)
- */ 
+ */
 public class Version {
+    /**
+     * Get the version of this AXIS.
+     *
+     * @return the version of this axis
+     */
     public static String getVersion()
     {
         return Messages.getMessage("axisVersion") + "\n" +
                Messages.getMessage("builtOn");
     }
-    
+
     /**
      *  Returns the Axis Version number and build date.
-     *
+     *  <p>
      *  Example output: 1.1 Jul 08, 2003 (09:00:12 EDT)
+     *
+     * @return the full version of this axis
      **/
     public static String getVersionText()
     {
@@ -85,18 +92,18 @@ public class Version {
 
     /**
      * Entry point.
-     * 
+     * <p>
      * Calling this with no arguments returns the version of the client-side
      * axis.jar.  Passing a URL which points to a remote Axis server will
      * attempt to retrieve the version of the server via a SOAP call.
-     */ 
+     */
     public static void main(String[] args) {
         if (args.length != 1)
             System.out.println(getVersion());
         else
             try {
                 Call call = new Call(args[0]);
-                String result = (String)call.invoke("Version", "getVersion", 
+                String result = (String)call.invoke("Version", "getVersion",
                                                     null);
                 System.out.println(result);
             } catch (Exception e) {

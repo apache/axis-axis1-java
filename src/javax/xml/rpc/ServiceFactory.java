@@ -73,7 +73,7 @@ import java.net.URL;
  */
 public abstract class ServiceFactory {
 
-    /**  */
+    /** Protected constructor. */
     protected ServiceFactory() {}
 
     /**

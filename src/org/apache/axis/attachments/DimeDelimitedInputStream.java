@@ -72,7 +72,7 @@ import java.io.IOException;
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  ---
  | VERSION |B|E|C| TYPE_T| OPT_T |         OPTIONS_LENGTH        |   A
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |          ID_LENGTH          |             TYPE_LENGTH         |   Always present 12 bytes 
+ |          ID_LENGTH          |             TYPE_LENGTH         |   Always present 12 bytes
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+   even on chunked data.
  |                          DATA_LENGTH                          |   V
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+  ---
@@ -93,6 +93,8 @@ import java.io.IOException;
  /                                                               |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </pre>
+ * This implementation of input stream does not support marking operations.
+ *
  * @author Rick Rineholt
  */
 public class DimeDelimitedInputStream extends java.io.FilterInputStream {
@@ -121,20 +123,24 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         log.debug(Messages.getMessage("streamNo", "" + (streamCount + 1)));
         return ++streamCount;
     }
-      
+
     static boolean isDebugEnabled = false;
 
     /**
      * Gets the next stream. From the previous using  new buffer reading size.
-     * @return the dime delmited stream. Null if there are no more streams.
+     *
+     * @return the dime delmited stream, null if there are no more streams
+     * @throws IOException if there was an error loading the data for the next
+     *              stream
      */
-    synchronized DimeDelimitedInputStream getNextStream() 
-     throws IOException {
+    synchronized DimeDelimitedInputStream getNextStream()
+            throws IOException
+    {
         if (null != streamInError) throw streamInError;
         if (theEnd) return null;
-        if (bytesRead < recordLength || moreChunks) //Stream must be read in succession 
+        if (bytesRead < recordLength || moreChunks) //Stream must be read in succession
             throw new RuntimeException(Messages.getMessage(
-             "attach.dimeReadFullyError")); 
+             "attach.dimeReadFullyError"));
         dataPadLength -= readPad(dataPadLength);
 
         //Create an new dime stream  that comes after this one.
@@ -142,7 +148,10 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     }
 
     /**
-     * Create a new dime stream;
+     * Create a new dime stream.
+     *
+     * @param is  the <code>InputStream</code> to wrap
+     * @throws IOException if anything goes wrong
      */
     DimeDelimitedInputStream(java.io.InputStream is) throws IOException {
         super(null); //we handle everything so this is not necessary, don't won't to hang on to a reference.
@@ -159,7 +168,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
         if (size != read) {
             streamInError = new IOException(Messages.getMessage(
-            "attach.dimeNotPaddedCorrectly")); 
+            "attach.dimeNotPaddedCorrectly"));
             throw streamInError;
         }
         return read;
@@ -170,7 +179,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     }
 
     private final int readFromStream(final byte[] b,
-        final int start, final int length) 
+        final int start, final int length)
         throws IOException {
         if (length == 0) return 0;
 
@@ -192,28 +201,21 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     }
 
     /**
-     * Get the id for this stream part. 
-     * @return the id; 
+     * Get the id for this stream part.
+     * @return the id;
      */
     public String getContentId() {
         return id;
     }
 
-    /**
-     * Read from the boundary delimited stream.
-     * @param b is the array to read into.
-     * @param off is the offset 
-     * @return the number of bytes read. -1 if endof stream.
-     */
     public DimeTypeNameFormat getDimeTypeNameFormat() {
         return tnf;
     }
 
     /**
-     * get type. 
-     * @param b is the array to read into.
-     * @param off is the offset 
-     * @return the number of bytes read. -1 if endof stream.
+     * Get the type, as read from the header.
+     *
+     * @return the type of this dime
      */
 
     public String getType() {
@@ -222,9 +224,11 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
     /**
      * Read from the DIME stream.
+     *
      * @param b is the array to read into.
-     * @param off is the offset 
-     * @return the number of bytes read. -1 if endof stream.
+     * @param off is the offset
+     * @return the number of bytes read. -1 if endof stream
+     * @throws IOException if data could not be read from the stream
      */
     public synchronized int read(byte[] b, final int off,
         final int len) throws IOException {
@@ -235,23 +239,23 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         }
         return _read(b, off, len);
     }
-     
+
     protected int _read(byte[] b, final int off, final int len)
         throws IOException {
         if (len < 0) throw new IllegalArgumentException
-                (Messages.getMessage("attach.readLengthError", 
-                 "" + len)); 
+                (Messages.getMessage("attach.readLengthError",
+                 "" + len));
 
         if (off < 0) throw new IllegalArgumentException
-                (Messages.getMessage("attach.readOffsetError", 
-                 "" + off)); 
+                (Messages.getMessage("attach.readOffsetError",
+                 "" + off));
         if (b == null) throw new IllegalArgumentException
-                (Messages.getMessage("attach.readArrayNullError")); 
+                (Messages.getMessage("attach.readArrayNullError"));
         if (b.length < off + len) throw new IllegalArgumentException
                 (Messages.getMessage("attach.readArraySizeError",
-                        "" + b.length, "" + len, "" + off)); 
+                        "" + b.length, "" + len, "" + off));
 
-        if (null != streamInError) throw streamInError; 
+        if (null != streamInError) throw streamInError;
 
         if (0 == len) return 0; //quick.
 
@@ -259,18 +263,18 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
           ++bytesRead; //odd case no data to read -- give back 0 next time -1;
           if(ME){
               finalClose();
-          }    
+          }
           return 0;
         }
         if (bytesRead >= recordLength && !moreChunks) {
             dataPadLength -= readPad(dataPadLength);
             if(ME){
               finalClose();
-            }    
+            }
             return -1;
         }
 
-        int totalbytesread = 0;                                        
+        int totalbytesread = 0;
         int bytes2read = 0;
 
         do {
@@ -287,7 +291,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             } catch (IOException e) {
                 streamInError = e;
                 throw e;
-            } 
+            }
 
             if (0 < bytes2read) {
                 totalbytesread += bytes2read;
@@ -303,32 +307,32 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
                 streamInError = new IOException(Messages.getMessage(
                                 "attach.DimeStreamError0"));
                 throw streamInError;
-            }  
+            }
             if (bytesRead < recordLength) {
                 streamInError = new IOException(Messages.getMessage
-                            ("attach.DimeStreamError1", 
+                            ("attach.DimeStreamError1",
                               "" + (recordLength - bytesRead)));
                 throw streamInError;
-            }  
+            }
             if (!ME) {
                 streamInError = new IOException(Messages.getMessage(
                                 "attach.DimeStreamError0"));
                 throw streamInError;
-            }  
+            }
             //in theory the last chunk of data should also have been padded, but lets be tolerant of that.
             dataPadLength = 0;
 
         } else if (bytesRead >= recordLength) {
-            //get rid of pading. 
+            //get rid of pading.
             try {
                 dataPadLength -= readPad(dataPadLength);
             } catch (IOException e) {
                 //in theory the last chunk of data should also have been padded, but lets be tolerant of that.
                 if (!ME) throw e;
                 else {
-                    dataPadLength = 0; 
+                    dataPadLength = 0;
                     streamInError = null;
-                }  
+                }
             }
         }
 
@@ -342,7 +346,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     void readHeader(boolean isChunk) throws IOException {
 
         bytesRead = 0; //How many bytes of the record have been read.
-        if (isChunk) { 
+        if (isChunk) {
             if (!moreChunks) throw new RuntimeException(
                         Messages.getMessage("attach.DimeStreamError2"));
             dataPadLength -= readPad(dataPadLength); //Just incase it was left over.
@@ -376,19 +380,19 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         if (!isChunk)
             tnf = DimeTypeNameFormat.parseByte((byte) ((header[1] >>> 4) & (byte) 0xf));
 
-        //OPTIONS_LENGTH        
+        //OPTIONS_LENGTH
         int optionsLength =
-            ((((int) header[2]) << 8) & 0xff00) | ((int) header[3]); 
+            ((((int) header[2]) << 8) & 0xff00) | ((int) header[3]);
 
-        //ID_LENGTH          
-        int idLength = 
-            ((((int) header[4]) << 8) & 0xff00) | ((int) header[5]); 
+        //ID_LENGTH
+        int idLength =
+            ((((int) header[4]) << 8) & 0xff00) | ((int) header[5]);
 
-        //TYPE_LENGTH         
+        //TYPE_LENGTH
         int typeLength = ((((int) header[6]) << 8) & 0xff00)
-          | ((int) header[7]); 
+          | ((int) header[7]);
 
-        //DATA_LENGTH                          
+        //DATA_LENGTH
         recordLength = ((((long) header[8]) << 24) & 0xff000000L) |
                 ((((long) header[9]) << 16) & 0xff0000L) |
                 ((((long) header[10]) << 8) & 0xff00L) |
@@ -397,17 +401,17 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         //OPTIONS + PADDING
 
         if (0 != optionsLength) {
-            byte[] optBytes = new byte[optionsLength]; 
+            byte[] optBytes = new byte[optionsLength];
 
             if (optionsLength != readFromStream(optBytes)) {
                 streamInError = new IOException(Messages.getMessage(
                                 "attach.DimeStreamError5",
                                  "" + optionsLength));
                 throw streamInError;
-            } 
+            }
             optBytes = null; //Yup throw it away, don't know anything about options.
 
-            int pad = DimeBodyPart.dimePadding(optionsLength); 
+            int pad = DimeBodyPart.dimePadding(optionsLength);
 
             if (pad != readFromStream(header, 0, pad)) {
                 streamInError = new IOException(
@@ -416,19 +420,19 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             }
         }
 
-        // ID + PADDING 
+        // ID + PADDING
         if (0 < idLength) {
-            byte[] idBytes = new byte[ idLength]; 
+            byte[] idBytes = new byte[ idLength];
 
             if (idLength != readFromStream(idBytes)) {
                 streamInError = new IOException(
                 Messages.getMessage("attach.DimeStreamError8"));
                 throw streamInError;
-            } 
+            }
             if (idLength != 0 && !isChunk) {
                 id = new String(idBytes);
             }
-            int pad = DimeBodyPart.dimePadding(idLength); 
+            int pad = DimeBodyPart.dimePadding(idLength);
 
             if (pad != readFromStream(header, 0, pad)) {
                 streamInError = new IOException(Messages.getMessage(
@@ -439,17 +443,17 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
         //TYPE + PADDING
         if (0 < typeLength) {
-            byte[] typeBytes = new byte[typeLength]; 
+            byte[] typeBytes = new byte[typeLength];
 
             if (typeLength != readFromStream(typeBytes)) {
                 streamInError = new IOException(Messages.getMessage(
                 "attach.DimeStreamError10"));
                 throw streamInError;
-            } 
+            }
             if (typeLength != 0 && !isChunk) {
                 type = new String(typeBytes);
             }
-            int pad = DimeBodyPart.dimePadding(typeLength); 
+            int pad = DimeBodyPart.dimePadding(typeLength);
 
             if (pad != readFromStream(header, 0, pad)) {
                 streamInError = new IOException(Messages.getMessage(
@@ -471,29 +475,39 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
 
     /**
      * Read from the delimited stream.
-     * @param b is the array to read into. Read as much as possible 
+     * @param b is the array to read into. Read as much as possible
      *   into the size of this array.
-     * @return the number of bytes read. -1 if endof stream.
+     * @return the number of bytes read. -1 if endof stream
+     * @throws IOException if data could not be read from the stream
      */
     public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
+    // fixme: this seems a bit inefficient
     /**
      * Read from the boundary delimited stream.
-     * @return The byte read, or -1 if endof stream.
+     *
+     * @return the byte read, or -1 if endof stream
+     * @throws IOException if there was an error reading the data
      */
-
     public int read() throws IOException {
-        byte[] b = new byte[1]; 
+        byte[] b = new byte[1];
         int read = read(b, 0, 1);
 
-        if (read < 0) return -1;
+        if (read < 0) return -1; // fixme: should we also check for read != 1?
         else return b[0];
     }
 
     /**
      * Closes the stream.
+     * <p>
+     * This will take care of flushing any remaining data to the strea.
+     * <p>
+     * Multiple calls to this method will result in the stream being closed once
+     * and then all subsequent calls being ignored.
+     *
+     * @throws IOException if the stream could not be closed
      */
     public void close() throws IOException {
         synchronized(this){
@@ -515,27 +529,20 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         dataPadLength -= readPad(dataPadLength);
     }
 
+    // fixme: if mark is not supported, do we throw an exception here?
     /**
-     * mark the stream.
+     * Mark the stream.
      * This is not supported.
      */
     public void mark(int readlimit) {//do nothing
     }
 
-    /**
-     * reset the stream.
-     * This is not supported.
-     */
     public void reset() throws IOException {
         streamInError = new IOException(Messages.getMessage(
         "attach.bounday.mns"));
         throw streamInError;
     }
 
-    /**
-     * markSupported
-     * return false; 
-     */
     public boolean markSupported() {
         return false;
     }
@@ -560,7 +567,7 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
             readHeader(true);
             return available();
         }
-        return  Math.min(streamAvail, chunkAvail); 
+        return  Math.min(streamAvail, chunkAvail);
     }
 
     protected void finalClose() throws IOException {

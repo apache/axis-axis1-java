@@ -66,12 +66,9 @@ import javax.activation.DataHandler;
 
 
 /**
+ * This simulates the multipart stream.
  *
- * @author Rick Rineholt 
- */
-
-/** This simulates the multipart stream 
- *
+ * @author Rick Rineholt
  */
 public class MultiPartDimeInputStream extends  MultiPartInputStream {
     protected static Log log =
@@ -88,11 +85,13 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     protected byte[] boundary = null;
     protected java.io.ByteArrayInputStream cachedSOAPEnvelope = null; //Caches the soap stream if it is
     //Still open and a reference to read data in a later attachment occurs.
-    protected String contentId = null; 
-              
+    protected String contentId = null;
+
     /**
-     * Multipart stream.
-     * @param is the true input stream from where the source.
+     * Create a new Multipart stream from an input stream.
+     *
+     * @param is the true input stream that is read from
+     * @throws java.io.IOException if it was not possible to build the Multipart
      */
     public MultiPartDimeInputStream (java.io.InputStream is)
       throws java.io.IOException {
@@ -102,9 +101,9 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     }
 
     public Part getAttachmentByReference(final String[] id)
-      throws org.apache.axis.AxisFault { 
+      throws org.apache.axis.AxisFault {
         //First see if we have read it in yet.
-        Part ret = null; 
+        Part ret = null;
 
         try {
             for (int i = id.length - 1; ret == null && i > -1; --i) {
@@ -129,7 +128,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
      //For DIME streams Content-Location is ignored.
         if (contentId != null && contentId.trim().length() != 0)
           parts.put(contentId, ap);
-        orderedParts.add(ap); 
+        orderedParts.add(ap);
     }
 
     //Shouldn't never match
@@ -143,19 +142,19 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
         }
     }
 
-    public java.util.Collection getAttachments() 
+    public java.util.Collection getAttachments()
       throws org.apache.axis.AxisFault {
         readAll();
-        return new java.util.LinkedList(orderedParts); 
+        return new java.util.LinkedList(orderedParts);
     }
 
-    /** 
+    /**
      * This will read streams in till the one that is needed is found.
-     * @param id is the stream being sought.
-     *         
+     *
+     * @param id is the stream being sought
+     * @return a <code>Part</code> matching the ids
      */
-
-    protected Part readTillFound(final String[] id) 
+    protected Part readTillFound(final String[] id)
       throws java.io.IOException {
         if (dimeDelimitedStream == null) {
             //The whole stream has been consumed already
@@ -215,9 +214,9 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
                         if (contentId != null && id[i].equals(contentId)) { //This is the part being sought
                             ret = ap;
                         }
-                    }     
+                    }
 
-                    dimeDelimitedStream = 
+                    dimeDelimitedStream =
                      dimeDelimitedStream.getNextStream();
 
                 }
@@ -231,7 +230,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     }
 
     /**
-     * Return the content location. 
+     * Return the content location.
      * @return the Content-Location of the stream.
      *   Null if no content-location specified.
      */
@@ -240,17 +239,14 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     }
 
     /**
-     * Return the content id of the stream 
+     * Return the content id of the stream.
+     *
      * @return the Content-Location of the stream.
      *   Null if no content-location specified.
      */
     public String getContentId() {
         return contentId;
     }
-
-    /**
-     * Read the root stream. 
-     */
 
     public int read(byte[] b, int off, int len)
       throws java.io.IOException {

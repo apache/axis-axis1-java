@@ -57,24 +57,25 @@ package javax.xml.rpc.holders;
 import java.math.BigDecimal;
 
 /**
- * Class BigDecimalHolder
+ * Holder for <code>BigDecimal</code>s.
  *
  * @version 1.0
  */
 public final class BigDecimalHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>BigDecimal</code> contained by this holder. */
     public BigDecimal value;
 
     /**
-     * Constructor BigDecimalHolder
+     * Make a new <code>BigDecimalHolder</code> with a <code>null</code> value.
      */
     public BigDecimalHolder() {}
 
     /**
-     * Constructor BigDecimalHolder
+     * Make a new <code>BigDecimalHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value  the <code>BigDecimal</code> to hold
      */
     public BigDecimalHolder(BigDecimal value) {
         this.value = value;

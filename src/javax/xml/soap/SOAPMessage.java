@@ -125,7 +125,6 @@ import java.util.Iterator;
  */
 public abstract class SOAPMessage {
 
-    /**  */
     public SOAPMessage() {}
 
     /**
@@ -339,14 +338,72 @@ public abstract class SOAPMessage {
     public abstract void writeTo(OutputStream out)
         throws SOAPException, IOException;
 
+    /**
+     * Gets the SOAP Body contained in this <code>SOAPMessage</code> object.
+     *
+     * @return the <code>SOAPBody</code> object contained by this
+     *              <code>SOAPMessage</code> object
+     * @throws SOAPException if the SOAP Body does not exist or cannot be
+     *              retrieved
+     */
     public abstract SOAPBody getSOAPBody() throws SOAPException;
 
+    /**
+     * Gets the SOAP Header contained in this <code>SOAPMessage</code> object.
+     *
+     * @return the <code>SOAPHeader</code> object contained by this
+     *              <code>SOAPMessage</code> object
+     * @throws SOAPException  if the SOAP Header does not exist or cannot be
+     *              retrieved
+     */
     public abstract SOAPHeader getSOAPHeader() throws SOAPException;
 
-    public abstract void setProperty(String s, Object obj) throws SOAPException;
+    /**
+     * Associates the specified value with the specified property. If there was
+     * already a value associated with this property, the old value is replaced.
+     * <p>
+     * The valid property names include <code>WRITE_XML_DECLARATION</code> and
+     * <code>CHARACTER_SET_ENCODING</code>. All of these standard SAAJ
+     * properties are prefixed by "javax.xml.soap". Vendors may also add
+     * implementation specific properties. These properties must be prefixed
+     * with package names that are unique to the vendor.
+     * <p>
+     * Setting the property <code>WRITE_XML_DECLARATION</code> to
+     * <code>"true"</code> will cause an XML Declaration to be written out at
+     * the start of the SOAP message. The default value of "false" suppresses
+     * this declaration.
+     * <p>
+     * The property <code>CHARACTER_SET_ENCODING</code> defaults to the value
+     * <code>"utf-8"</code> which causes the SOAP message to be encoded using
+     * UTF-8. Setting <code>CHARACTER_SET_ENCODING</code> to
+     * <code>"utf-16"</code> causes the SOAP message to be encoded using UTF-16.
+     * <p>
+     * Some implementations may allow encodings in addition to UTF-8 and UTF-16.
+     * Refer to your vendor's documentation for details.
+     *
+     * @param property the property with which the specified value is to be
+     *              associated
+     * @param value the value to be associated with the specified property
+     * @throws SOAPException if the property name is not recognized
+     */
+    public abstract void setProperty(String property, Object value)
+            throws SOAPException;
 
-    public abstract Object getProperty(String s) throws SOAPException;
+    /**
+     * Retrieves value of the specified property.
+     *
+     * @param property the name of the property to retrieve
+     * @return the value of the property or <code>null</code> if no such
+     *              property exists
+     * @throws SOAPException  if the property name is not recognized
+     */
+    public abstract Object getProperty(String property) throws SOAPException;
 
-    public static final String CHARACTER_SET_ENCODING = "javax.xml.soap.character-set-encoding";
-    public static final String WRITE_XML_DECLARATION = "javax.xml.soap.write-xml-declaration";
+    /** Specifies the character type encoding for the SOAP Message. */
+    public static final String CHARACTER_SET_ENCODING
+            = "javax.xml.soap.character-set-encoding";
+
+    /** Specifies whether the SOAP Message should contain an XML declaration. */
+    public static final String WRITE_XML_DECLARATION
+            = "javax.xml.soap.write-xml-declaration";
 }

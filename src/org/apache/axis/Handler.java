@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -64,6 +64,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
+ * An AXIS handler.
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
@@ -88,56 +89,94 @@ public interface Handler extends Serializable {
      * is thrown, this classes 'onFault' method will be called.
      * Invoke should rethrow any exceptions it catches, wrapped in
      * an AxisFault.
+     *
+     * @param msgContext    the <code>MessageContext</code> to process with this
+     *              <code>Handler</code>.
+     * @throws AxisFault if the handler encounters an error
      */
     public void invoke(MessageContext msgContext) throws AxisFault ;
 
     /**
      * Called when a subsequent handler throws a fault.
+     *
+     * @param msgContext    the <code>MessageContext</code> to process the fault
+     *              to
      */
     public void onFault(MessageContext msgContext);
 
     /**
-     * Can this Handler process this QName?
+     * Indicate if this handler can process <code>qname</code>.
+     *
+     * @param qname  the <code>QName</code> to check
+     * @return true if this <code>Handler</code> can handle <code>qname<code>,
+     *              false otherwise
      */
     public boolean canHandleBlock(QName qname);
 
+    // fixme: will modifications to this List be reflected in the state of this
+    //  handler?
     /**
      * Return a list of QNames which this Handler understands.  By returning
      * a particular QName here, we are committing to fulfilling any contracts
      * defined in the specification of the SOAP header with that QName.
+     *
+     * @return a List of <code>QName</code> instances
      */
     public List getUnderstoodHeaders();
 
+    // fixme: doesn't specify what happens when an option is re-defined
     /**
-     * Add the given option (name/value) to this handler's bag of options
+     * Add the given option (name/value) to this handler's bag of options.
+     *
+     * @param name  the name of the option
+     * @param value the new value of the option
      */
     public void setOption(String name, Object value);
-    
+
     /**
-     * Returns the option corresponding to the 'name' given
+     * Returns the option corresponding to the 'name' given.
+     *
+     * @param name  the name of the option
+     * @return the value of the option
      */
     public Object getOption(String name);
-    
+
     /**
-     * Set the name (i.e. registry key) of this Handler
+     * Set the name (i.e. registry key) of this Handler.
+     *
+     * @param name  the new name
      */
     public void setName(String name);
-    
+
     /**
-     * Return the name (i.e. registry key) for this Handler
+     * Return the name (i.e. registry key) for this <code>Handler</code>.
+     *
+     * @return the name for this <code>Handler</code>
      */
     public String getName();
 
+    // fixme: doesn't tell us if modifying this Hashset will modify this Handler
+    // fixme: do we mean to use a Hahset, or will Map do?
     /**
-     * Return the entire list of options
+     * Return the entire list of options.
+     *
+     * @return a <code>Hashset</code> containing all name/value pairs
      */
     public Hashtable getOptions();
 
+    // fixme: this doesn't indicate if opts becomes the new value of
+    //  getOptions(), or if it is merged into it. Also doesn't specify if
+    //  modifications to opts after calling this method will affect this handler
     /**
-     * Sets a whole list of options
+     * Sets a whole list of options.
+     *
+     * @param opts  a <code>Hashtable</code> of name-value pairs to use
      */
     public void setOptions(Hashtable opts);
 
+    // fixme: presumably doc is used as the factory & host for Element, and
+    //  Element should not be grafted into doc by getDeploymentData, but will
+    //  potentially be grafted in by code calling this - could we clarify this?
     /**
      * This will return the root element of an XML doc that describes the
      * deployment information about this handler.  This is NOT the WSDL,
@@ -145,6 +184,10 @@ public interface Handler extends Serializable {
      * account run-time information (like which service we're talking about)
      * this is just the data that's stored in the registry.  Used by the
      * 'list' Admin function.
+     *
+     * @param doc  a <code>Document</code> within which to build the deployment
+     *              data
+     * @return an Element representing the deployment data
      */
     public Element getDeploymentData(Document doc);
 
@@ -154,6 +197,9 @@ public interface Handler extends Serializable {
      * will take responsibility for doing the "real work" of generating
      * WSDL for a given service.
      *
+     * @param msgContext the <code>MessageContext</code> to generate the WSDL
+     *              to
+     * @throws AxisFault  if there was a problem generating the WSDL
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault;
 };

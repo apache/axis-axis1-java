@@ -69,6 +69,9 @@ import org.apache.commons.logging.Log;
  */
 public class InternalException extends RuntimeException {
 
+    /**
+     * The <code>Log</code> used by this class to log messages.
+     */
     protected static Log log =
             LogFactory.getLog(InternalException.class.getName());
 
@@ -81,14 +84,18 @@ public class InternalException extends RuntimeException {
     private static boolean shouldLog = true;
 
     /**
-     * Setter for logging.
+     * Enable or dissable logging.
+     *
+     * @param logging  true if you wish logging to be enabled, false otherwise
      */
     public static void setLogging(boolean logging) {
         shouldLog = logging;
     }
-    
+
     /**
-     * Getter for logging property.
+     * Discover whether the logging flag is set.
+     *
+     * @return true if we are logging, false otherwise
      */
     public static boolean getLogging() {
         return shouldLog;
@@ -105,7 +112,8 @@ public class InternalException extends RuntimeException {
 
     /**
      * Construct an Internal Exception from an Exception.
-     * @param exception original exception which was unexpected
+     *
+     * @param e original exception which was unexpected
      */
     public InternalException(Exception e) {
         super(e.toString());

@@ -101,7 +101,7 @@ public class AdminClient
         defaultConfiguration.set(config);
     }
 
-    private static String getUsageInfo() 
+    private static String getUsageInfo()
     {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
@@ -140,7 +140,7 @@ public class AdminClient
     protected Call call;
 
     /**
-     * Construct an admin client w/o a logger
+     * Construct an admin client w/o a logger.
      */
     public AdminClient()
     {
@@ -164,40 +164,42 @@ public class AdminClient
     }
 
     /**
-     * External access to our Call object
+     * External access to our <code>Call</code< object.
+     *
+     * @return the <code>Call</code> object this instance uses
      */
     public Call getCall()
     {
         return call;
     }
 
-    public String list(Options opts) throws Exception { 
+    public String list(Options opts) throws Exception {
         processOpts( opts );
         return list();
     }
 
-    public String list() throws Exception { 
+    public String list() throws Exception {
         log.debug( Messages.getMessage("doList00") );
         String               str   = "<m:list xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
-    public String quit(Options opts) throws Exception { 
+    public String quit(Options opts) throws Exception {
         processOpts( opts );
         return quit();
     }
 
-    protected static final String ROOT_UNDEPLOY= WSDDConstants.QNAME_UNDEPLOY.getLocalPart(); 
+    protected static final String ROOT_UNDEPLOY= WSDDConstants.QNAME_UNDEPLOY.getLocalPart();
 
-    public String quit() throws Exception { 
+    public String quit() throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
-    public String undeployHandler(String handlerName) throws Exception { 
+    public String undeployHandler(String handlerName) throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
@@ -206,7 +208,7 @@ public class AdminClient
         return process(input);
     }
 
-    public String undeployService(String serviceName) throws Exception { 
+    public String undeployService(String serviceName) throws Exception {
         log.debug(Messages.getMessage("doQuit00"));
         String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.URI_WSDD + "\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
@@ -269,9 +271,9 @@ public class AdminClient
         for ( int i = 0 ; i < args.length ; i++ ) {
             InputStream input = null;
 
-            if ( args[i].equals("list") ) 
+            if ( args[i].equals("list") )
               sb.append( list(opts) );
-            else if (args[i].equals("quit")) 
+            else if (args[i].equals("quit"))
               sb.append( quit(opts) );
             else if (args[i].equals("passwd")) {
                 System.out.println(Messages.getMessage("changePwd00"));
@@ -309,7 +311,7 @@ public class AdminClient
     }
 
     public void processOpts(Options opts) throws Exception {
-        if (call == null) 
+        if (call == null)
             throw new Exception(Messages.getMessage("nullCall00"));
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
@@ -321,15 +323,15 @@ public class AdminClient
             call.setProperty( Call.TRANSPORT_NAME, tName );
     }
 
-    public String  process(InputStream input) throws Exception { 
+    public String  process(InputStream input) throws Exception {
         return process(null, input );
     }
 
-    public String process(URL xmlURL) throws Exception { 
+    public String process(URL xmlURL) throws Exception {
         return process(null, xmlURL.openStream() );
     }
 
-    public String process(String xmlFile) throws Exception { 
+    public String process(String xmlFile) throws Exception {
         FileInputStream in     = new FileInputStream(xmlFile);
         String          result =  process(null, in );
         in.close();
@@ -342,11 +344,11 @@ public class AdminClient
     }
 
     public String process(Options opts, InputStream input)  throws Exception {
-        if (call == null) 
+        if (call == null)
             throw new Exception(Messages.getMessage("nullCall00"));
 
         if ( opts != null ) processOpts( opts );
-        
+
         call.setUseSOAPAction( true);
         call.setSOAPActionURI( "AdminService");
 
@@ -356,7 +358,7 @@ public class AdminClient
 
         input.close();
 
-        if (result == null || result.isEmpty()) 
+        if (result == null || result.isEmpty())
             throw new AxisFault(Messages.getMessage("nullResponse00"));
 
         SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);

@@ -203,9 +203,9 @@ public interface Call {
                              ParameterMode parameterMode);
 
     /**
-     * Gets the XML type of a parameter by name
+     * Gets the XML type of a parameter by name.
      *
-     * @param paramName Name of the parameter.
+     * @param paramName name of the parameter
      *
      * @return Returns XML type for the specified parameter
      */
@@ -247,9 +247,9 @@ public interface Call {
     public void setReturnType(QName xmlType, Class javaType);
 
     /**
-     * Gets the return type for a specific operation
+     * Gets the return type for a specific operation.
      *
-     * @return  Returns the XML type for the return value
+     * @return  the XML type for the return value
      */
     public QName getReturnType();
 

@@ -55,24 +55,25 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class FloatHolder
+ * Holder for <code>float</code>s.
  *
  * @version 1.0
  */
 public final class FloatHolder implements Holder {
 
-    /** Field _value */
+    /** The <code>byte</code> contained by this holder. */
     public float value;
 
     /**
-     * Constructor FloatHolder
+     * Make a new <code>FloatHolder</code> with a <code>null</code> value.
      */
     public FloatHolder() {}
 
     /**
-     * Constructor FloatHolder
+     * Make a new <code>FloatHolder</code> with <code>value</code> as
+     * the value.
      *
-     * @param value
+     * @param value the <code>float</code> to hold
      */
     public FloatHolder(float value) {
         this.value = value;
