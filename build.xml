@@ -561,7 +561,7 @@ Copyright:
            out="${axis.home}/docs/cvslog.html" 
            style="${axis.home}/tools/changelog.xsl">
       <param name="title" expression="Apache Axis 1.2 Beta ChangeLog (Changes after 1.2 Alpha)"/>
-      <param name="module" expression="ant"/>
+      <param name="module" expression="ws-axis/java"/>
       <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
     </style>
   </target>
