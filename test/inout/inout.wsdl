@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 
-<definitions targetNamespace="http://www.ibm.com/inout"
-	     xmlns:tns="http://www.ibm.com/inout"
+<definitions name="http://www.ibm.com/inout"
+             targetNamespace="http://www.ibm.com/inout"
+	         xmlns:tns="http://www.ibm.com/inout"
              xmlns:typens="urn:xml-soap-address-demo"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
@@ -265,12 +266,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -280,12 +281,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -295,12 +296,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -310,12 +311,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -325,12 +326,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -340,12 +341,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -355,12 +356,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -370,12 +371,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -385,12 +386,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -400,12 +401,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -415,12 +416,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -430,12 +431,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -445,12 +446,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -460,12 +461,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -475,12 +476,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -490,12 +491,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -505,12 +506,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -520,12 +521,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -535,12 +536,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -550,12 +551,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -565,12 +566,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -580,12 +581,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -595,12 +596,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -610,12 +611,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -625,12 +626,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -640,12 +641,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -655,12 +656,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2" 
+                   namespace="http://www.ibm.com/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="urn:AddressFetcher2"
+                   namespace="http://www.ibm.com/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -670,8 +671,8 @@
 
   <!-- service decln -->
   <service name="InoutService">
-    <port name="SOAPPort" binding="tns:InoutSOAPBinding">
-      <soap:address location="http://localhost:8080/axis/services/Inout"/>
+    <port name="InoutService" binding="tns:InoutSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/InoutService"/>
     </port>
   </service>
 

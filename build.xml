@@ -264,6 +264,7 @@ Copyright:
     <delete file="samples/addr/PhoneHolder.java" />
     <delete file="samples/addr/deploy.xml" />
     <delete file="samples/addr/undeploy.xml" />
+    <delete dir="samples/addr/xml_soap_address_demo"/>
   </target>
 
   <target name="cleanInout">
@@ -278,6 +279,7 @@ Copyright:
     <delete file="test/inout/TestFailed.java"/>
     <delete file="test/inout/deploy.xml"/>
     <delete file="test/inout/undeploy.xml"/>
+    <delete dir="test/inout/xml_soap_address_demo"/>
   </target>
 
   <!-- =================================================================== -->
