@@ -94,7 +94,7 @@ Copyright:
   <!-- cleanup target -->
   <target name="clean" description="cleanup"/>
 
-  <target name="all" depends="compile,run-test" 
+  <target name="all" depends="compile,test" 
     description="compile and run the tests"/>
   
   <!-- init configures things -->
