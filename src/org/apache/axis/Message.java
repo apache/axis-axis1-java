@@ -227,7 +227,7 @@ public class Message {
             e.printStackTrace();
             return null;
         }
-        currentMessage = writer.getBuffer().toString();
+        setCurrentMessage(writer.getBuffer().toString(), "String");
         return (String)currentMessage;
     }
 
