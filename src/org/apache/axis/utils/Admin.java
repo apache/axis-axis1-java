@@ -57,6 +57,7 @@ package org.apache.axis.utils ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
@@ -70,7 +71,6 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.server.AxisServer;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -93,7 +93,7 @@ import java.util.Vector;
 public class Admin
 {
     protected static Log log =
-        LogFactory.getLog(Admin.class.getName());
+        AxisInternalServices.getLog(Admin.class.getName());
 
     /**
      * Process a given XML document - needs cleanup.

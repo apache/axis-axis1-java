@@ -55,6 +55,7 @@
 
 package samples.echo;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.handlers.BasicHandler;
@@ -64,7 +65,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 /** This handler processes the SOAP header "echoMeStruct" defined in the 
@@ -78,7 +78,7 @@ import javax.xml.namespace.QName;
 public class echoHeaderStructHandler extends BasicHandler
 {
     static Log log =
-            LogFactory.getLog(echoHeaderStringHandler.class.getName());
+            AxisInternalServices.getLog(echoHeaderStringHandler.class.getName());
 
     public static final String ECHOHEADER_STRUCT_ID = "echoHeaderStructHandler.id";
     public static final String HEADER_NS = "http://soapinterop.org/echoheader/";

@@ -54,6 +54,7 @@
  */
 package org.apache.axis.message;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -61,7 +62,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
@@ -74,8 +74,8 @@ import java.io.InputStream;
 public class SOAPBodyElement extends MessageElement
     implements javax.xml.soap.SOAPBodyElement
 {
-    private static Log log = LogFactory.getLog(SOAPBodyElement.class.
-                                               getName());
+    private static Log log =
+        AxisInternalServices.getLog(SOAPBodyElement.class.getName());
 
     public SOAPBodyElement(String namespace,
                            String localPart,

@@ -57,14 +57,14 @@ package samples.addr;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /** Test the address book sample code.
  */
 public class AddressBookTestCase extends TestCase {
     static Log log =
-            LogFactory.getLog(AddressBookTestCase.class.getName());
+            AxisInternalServices.getLog(AddressBookTestCase.class.getName());
 
     public AddressBookTestCase(String name) {
         super(name);

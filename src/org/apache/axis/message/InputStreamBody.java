@@ -55,11 +55,11 @@
 
 package org.apache.axis.message;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +67,7 @@ import java.io.InputStream;
 public class InputStreamBody extends SOAPBodyElement
 {
     protected static Log log =
-        LogFactory.getLog(InputStreamBody.class.getName());
+        AxisInternalServices.getLog(InputStreamBody.class.getName());
 
     protected InputStream inputStream;
     

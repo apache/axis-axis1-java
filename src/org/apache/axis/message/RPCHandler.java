@@ -60,6 +60,7 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -70,7 +71,6 @@ import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -95,7 +95,7 @@ import java.util.Vector;
 public class RPCHandler extends SOAPHandler
 {
     protected static Log log =
-        LogFactory.getLog(RPCHandler.class.getName());
+        AxisInternalServices.getLog(RPCHandler.class.getName());
     
     private RPCElement rpcElem;
     private RPCParam currentParam;

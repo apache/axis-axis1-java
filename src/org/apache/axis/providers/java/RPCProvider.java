@@ -56,6 +56,7 @@
 package org.apache.axis.providers.java ;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
@@ -69,7 +70,6 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
@@ -88,7 +88,7 @@ import java.util.ArrayList;
 public class RPCProvider extends JavaProvider
 {
     protected static Log log =
-        LogFactory.getLog(RPCProvider.class.getName());
+        AxisInternalServices.getLog(RPCProvider.class.getName());
 
    /**
      * Process the current message. 

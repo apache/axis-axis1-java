@@ -55,11 +55,11 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -93,7 +93,7 @@ import java.util.HashMap;
 public class TypeMappingImpl implements TypeMapping
 {
     protected static Log log =
-        LogFactory.getLog(TypeMappingImpl.class.getName());
+        AxisInternalServices.getLog(TypeMappingImpl.class.getName());
 
     public class Pair {
         public Class javaType;

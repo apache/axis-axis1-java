@@ -54,9 +54,9 @@
  */
 package org.apache.axis.attachments;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class takes the input stream and turns it multiple streams.
@@ -67,7 +67,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
     /** Field log           */
     protected static Log log =
-            LogFactory.getLog(BoundaryDelimitedStream.class.getName());
+            AxisInternalServices.getLog(BoundaryDelimitedStream.class.getName());
 
     /** Field boundary           */
     protected byte[] boundary = null;

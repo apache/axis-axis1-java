@@ -56,6 +56,7 @@
 package org.apache.axis.attachments;
 
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.transport.http.HTTPConstants; 
 import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
@@ -63,7 +64,6 @@ import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
 import javax.mail.internet.MimeUtility;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -76,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MultiPartDimeInputStream extends  MultiPartInputStream {
     protected static Log log =
-        LogFactory.getLog(MultiPartDimeInputStream.class.getName());
+        AxisInternalServices.getLog(MultiPartDimeInputStream.class.getName());
 
     protected java.util.HashMap parts = new java.util.HashMap();
     protected java.util.LinkedList orderedParts = new java.util.LinkedList();

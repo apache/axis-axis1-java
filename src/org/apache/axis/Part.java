@@ -57,9 +57,6 @@ package org.apache.axis;
 
 import org.apache.axis.utils.JavaUtils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;

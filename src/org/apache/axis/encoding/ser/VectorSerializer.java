@@ -62,6 +62,7 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
@@ -79,7 +80,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -95,7 +95,7 @@ import org.w3c.dom.Document;
 public class VectorSerializer implements Serializer
 {
     protected static Log log =
-        LogFactory.getLog(VectorSerializer.class.getName());
+        AxisInternalServices.getLog(VectorSerializer.class.getName());
 
     /** Serialize a Vector
      *

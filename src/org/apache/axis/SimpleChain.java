@@ -55,13 +55,13 @@
 
 package org.apache.axis ;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,7 +85,7 @@ import java.util.Vector;
  */
 public class SimpleChain extends BasicHandler implements Chain {
     protected static Log log =
-        LogFactory.getLog(SimpleChain.class.getName());
+        AxisInternalServices.getLog(SimpleChain.class.getName());
 
     protected Vector handlers = new Vector();
     protected boolean invoked = false;

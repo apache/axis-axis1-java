@@ -56,6 +56,7 @@
 package org.apache.axis.client ;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
@@ -68,7 +69,6 @@ import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.handler.*;
 import javax.xml.namespace.*;
@@ -84,7 +84,7 @@ import javax.xml.namespace.*;
  */
 public class AxisClient extends AxisEngine {
     protected static Log log =
-        LogFactory.getLog(AxisClient.class.getName());
+        AxisInternalServices.getLog(AxisClient.class.getName());
 
     public AxisClient(EngineConfiguration config) {
         super(config);
