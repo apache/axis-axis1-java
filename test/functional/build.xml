@@ -45,7 +45,7 @@ Copyright:
 <target name="clean"/>
 
 <target name="copy" depends="setenv">
-<ant antfile="${axis.home}/build.xml" target="samples"/>
+<ant antfile="${axis.home}/build.xml" dir="${axis.home}" target="samples"/>
 </target>
 
 <target name="compile" depends="copy">
