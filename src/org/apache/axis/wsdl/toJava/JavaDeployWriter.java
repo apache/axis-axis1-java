@@ -173,37 +173,55 @@ public class JavaDeployWriter extends JavaWriter {
             }
 
             if (process) {
-                pw.println("      <typeMapping");
-                pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
-                pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
-                pw.println("        type=\"java:" + type.getName() + '"');
-                if (type.getName().endsWith("[]")) {
-                    pw.println("        serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
-                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"");
+                String namespaceURI = type.getQName().getNamespaceURI();
+                String localPart = type.getQName().getLocalPart();
+                String javaType = type.getName();
+                String serializerFactory;
+                String deserializerFactory;
+                String encodingStyle = "";
+                if (!hasLiteral) {
+                    encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+                }
+
+                if (javaType.endsWith("[]")) {
+                    serializerFactory = "org.apache.axis.encoding.ser.ArraySerializerFactory";
+                    deserializerFactory = "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
                 } else if (type.getNode() != null &&
                    SchemaUtils.getEnumerationBaseAndValues(
                      type.getNode(), emitter.getSymbolTable()) != null) {
-                    pw.println("        serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
-                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
+                    serializerFactory = "org.apache.axis.encoding.ser.EnumSerializerFactory";
+                    deserializerFactory = "org.apache.axis.encoding.ser.EnumDeserializerFactory";
                 } else if (type.isSimpleType()) {
-                    pw.println("        serializer=\"org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory\"");
-                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.SimpleDeserializerFactory\"");
+                    serializerFactory = "org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory";
+                    deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
                 } else if (type.getBaseType() != null) {
-                    // Serializers are already defined for the simple types
-                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.SimpleDeserializerFactory\"");
+                    serializerFactory = "org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory";
+                    deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
                 } else {
-                    pw.println("        serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
-                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
+                    serializerFactory = "org.apache.axis.encoding.ser.BeanSerializerFactory";
+                    deserializerFactory = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
                 }
-                if (hasLiteral)
-                    pw.println("        encodingStyle=\"\"");
-                else
-                    pw.println("        encodingStyle=\"" + Constants.URI_CURRENT_SOAP_ENC + "\"");
-
-                pw.println("      />");
+                writeTypeMapping(namespaceURI, localPart, javaType, serializerFactory,
+                                 deserializerFactory, encodingStyle);
             }
         }
     } //writeDeployTypes
+
+    /**
+     * Raw routine that writes out the typeMapping.
+     */
+    protected void writeTypeMapping(String namespaceURI, String localPart, String javaType,
+                                    String serializerFactory, String deserializerFactory,
+                                    String encodingStyle) throws IOException {
+        pw.println("      <typeMapping");
+        pw.println("        xmlns:ns=\"" + namespaceURI + "\"");
+        pw.println("        qname=\"ns:" + localPart + '"');
+        pw.println("        type=\"java:" + javaType + '"');
+        pw.println("        serializer=\"" + serializerFactory + "\"");
+        pw.println("        deserializer=\"" + deserializerFactory + "\"");
+        pw.println("        encodingStyle=\"" + encodingStyle + "\"");
+        pw.println("      />");
+    }
 
     /**
      * Write out deployment and undeployment instructions for given WSDL port
@@ -273,10 +291,13 @@ public class JavaDeployWriter extends JavaWriter {
                 Parameters params =
                         symbolTable.getOperationParameters(operation, "", bEntry);
                 if (params != null) {
-
-                    pw.print("      <operation name=\"" + javaOperName + "\"");
-
                     QName elementQName = null;
+                    QName returnQName = null;
+                    Vector paramQNames = new Vector();
+                    Vector paramTypes = new Vector();
+                    Vector paramModes = new Vector();
+
+                    // Get the operation qname 
                     Input input = operation.getInput();
                     if (input != null) {
                         Map parts = input.getMessage().getParts();
@@ -290,53 +311,46 @@ public class JavaDeployWriter extends JavaWriter {
                             elementQName = new QName("", operationName);
                         }
                         QName defaultQName = new QName("", javaOperName);
-                        if (! defaultQName.equals(elementQName)) {
-                            pw.print(" qname=\"" +
-                                    Utils.genQNameAttributeString(elementQName, "operNS") +
-                                    "\"");
+                        if (defaultQName.equals(elementQName)) {
+                            elementQName = null;
                         }
                     }
-                    QName returnQName = null;
+                    // Get the operation's return QName
                     if (params.returnName != null)
                         returnQName = Utils.getWSDLQName(params.returnName);
-                    if (returnQName != null) {
-                        pw.print(" returnQName=\"" +
-                                Utils.genQNameAttributeString(returnQName, "retNS") +
-                                "\"");
-                    }
-                    pw.println(">");
 
                     Vector paramList = params.list;
                     for (int i = 0; i < paramList.size(); i++) {
                         Parameter param = (Parameter) paramList.elementAt(i);
-                        QName paramQName = param.getQName();
                         TypeEntry typeEntry = param.getType();
-                        QName paramType;
+
+                        QName paramQName = null;
+                        QName paramType = null;
+                        String paramMode = null;
+
+                        // Get the parameter type QName
                         if (typeEntry instanceof DefinedElement) {
                             paramType = typeEntry.getRefType().getQName();
                         } else {
                             paramType = typeEntry.getQName();
                         }
-                        pw.print("        <parameter");
+                        
+                        // Get the parameter name QName
+                        paramQName = param.getQName();
                         if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
-                            pw.print(" name=\"" + param.getName() + "\"" );
-                        } else {
-                            pw.print(" qname=\"" +
-                                    Utils.genQNameAttributeString(paramQName,
-                                            "pns") + "\"");
-                        }
-                        pw.print(" type=\"" +
-                                Utils.genQNameAttributeString(paramType,
-                                        "tns") + "\"");
+                            paramQName = new QName("", param.getName());
+                        } 
+
+                        // Get the parameter mode
                         if (param.getMode() != Parameter.IN) {
-                            String mode = getModeString(param.getMode());
-                            pw.print(" mode=\"" + mode + "\"");
+                            paramMode = getModeString(param.getMode());
                         }
-
-                        pw.println("/>");
+                        paramQNames.add(paramQName);
+                        paramTypes.add(paramType);
+                        paramModes.add(paramMode);
                     }
-
-                    pw.println("      </operation>");
+                    writeOperation(javaOperName, elementQName, returnQName,
+                                   paramQNames, paramTypes, paramModes);
                 }
             }
         }
@@ -359,6 +373,47 @@ public class JavaDeployWriter extends JavaWriter {
             pw.println("      <parameter name=\"scope\" value=\"Session\"/>");
         }
     } //writeDeployBinding
+
+    /**
+     * Raw routine that writes out the operation and parameters.
+     */
+    protected void writeOperation(String javaOperName, 
+                                  QName elementQName,
+                                  QName returnQName,
+                                  Vector paramQNames,
+                                  Vector paramTypes,
+                                  Vector paramModes) {
+        pw.print("      <operation name=\"" + javaOperName + "\"");
+        if (elementQName != null) {
+            pw.print(" qname=\"" + Utils.genQNameAttributeString(elementQName, "operNS") + "\"");
+        }
+        if (returnQName != null) {
+            pw.print(" returnQName=\"" + Utils.genQNameAttributeString(returnQName, "retNS") + "\"");
+        }
+        pw.println(" >");
+        for (int i=0; i < paramQNames.size(); i++) {
+            QName paramQName = (QName) paramQNames.elementAt(i);
+            QName paramType = (QName) paramTypes.elementAt(i);
+            String paramMode = (String) paramModes.elementAt(i);
+            pw.print("        <parameter");
+            if (paramQName == null || paramQName.getNamespaceURI().equals("")) {
+                pw.print(" name=\"" + paramQName.getLocalPart() + "\"" );
+            } else {
+                pw.print(" qname=\"" +
+                         Utils.genQNameAttributeString(paramQName,
+                                                       "pns") + "\"");
+            }
+            pw.print(" type=\"" +
+                     Utils.genQNameAttributeString(paramType,
+                                                   "tns") + "\"");
+            if (paramMode != null) {
+                pw.print(" mode=\"" + paramMode + "\"");
+            }            
+            pw.println("/>");
+                
+        }
+        pw.println("      </operation>");
+    }
 
     public String getModeString(byte mode)
     {
