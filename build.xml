@@ -435,9 +435,7 @@ Copyright:
     <copy todir="${dist.dir}/webapps/axis/WEB-INF/classes/samples">
       <fileset dir="${build.samples}"/>
     </copy>
-    <!--
-    <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
-    -->
+    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
     <copy file="release-notes.html" tofile="${dist.dir}/release-notes.html"/>
     <copy todir="${dist.dir}/xmls">
@@ -470,7 +468,7 @@ Copyright:
     <copy todir="${dist.dir}/docs/apiDocs">
       <fileset dir="${build.javadocs}"/>
     </copy>
-    <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
+    <copy file="LICENSE" tofile="${dist.dir}/LICENSE"/>
   </target>
 
   <!-- =================================================================== -->
