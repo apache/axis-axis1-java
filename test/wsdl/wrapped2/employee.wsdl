@@ -1,6 +1,16 @@
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.sun.com/JSR172UseCases" xmlns:xsd1="http://www.sun.com/JSR172AppendixA.xsd" targetNamespace="http://www.sun.com/JSR172UseCases" name="JSR172AppendixA">
 	<types>
 		<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.sun.com/JSR172AppendixA.xsd" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://www.sun.com/JSR172AppendixA.xsd">
+			<xsd:complexType name="IntType">
+				<xsd:sequence>
+					<xsd:element name="IntVal" type="xsd:int"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="BooleanType">
+				<xsd:sequence>
+					<xsd:element name="RetVal" type="xsd:boolean"/>
+				</xsd:sequence>
+			</xsd:complexType>
 			<xsd:complexType name="NameType">
 				<xsd:sequence>
 					<xsd:element name="firstName" type="xsd:string"/>
@@ -23,8 +33,8 @@
 					<xsd:element name="Employee" maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd1:EmployeeType"/>
 				</xsd:sequence>
 			</xsd:complexType>
-			<xsd:element name="EmployeeArray" type="xsd1:EmployeeArrayType"/>
-			<xsd:element name="getEmployeeCount" type="xsd:int"/>
+			<xsd:element name="getEmployeeCount" type="xsd1:IntType"/>
+			<xsd:element name="getEmployeeCountResponse" type="xsd1:IntType"/>
 			<xsd:element name="addGroups">
 				<xsd:complexType>
 					<xsd:sequence>
@@ -32,49 +42,52 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="addGroupsResponse" type="xsd1:BooleanType"/>
 			<xsd:element name="isManager" type="xsd1:NameType"/>
+			<xsd:element name="isManagerResponse" type="xsd1:BooleanType"/>
 			<xsd:element name="promoteEmployee" type="xsd1:EmployeeType"/>
+			<xsd:element name="promoteEmployeeResponse" type="xsd1:BooleanType"/>
 			<xsd:element name="getEmployees" type="xsd1:NameArrayType"/>
+			<xsd:element name="getEmployeesResponse" type="xsd1:EmployeeArrayType"/>
 			<xsd:element name="scheduleMtg" type="xsd1:EmployeeArrayType"/>
-			<xsd:element name="EmpCount" type="xsd:int"/>
-			<xsd:element name="RetVal" type="xsd:boolean"/>
+			<xsd:element name="scheduleMtgResponse" type="xsd1:BooleanType"/>
 		</xsd:schema>
 	</types>
 	<message name="getEmployeeCountReq">
 		<part name="EmpCountReq" element="xsd1:getEmployeeCount"/>
 	</message>
 	<message name="getEmployeeCountRes">
-		<part name="EmpCountRes" element="xsd1:EmpCount"/>
+		<part name="EmpCountRes" element="xsd1:getEmployeeCountResponse"/>
 	</message>
 	<message name="addGroupsReq">
 		<part name="AddGroupReq" element="xsd1:addGroups"/>
 	</message>
 	<message name="addGroupsRes">
-		<part name="AddGroupRes" element="xsd1:RetVal"/>
+		<part name="AddGroupRes" element="xsd1:addGroupsResponse"/>
 	</message>
 	<message name="isManagerReq">
 		<part name="ManagerReq" element="xsd1:isManager"/>
 	</message>
 	<message name="isManagerRes">
-		<part name="ManagerRes" element="xsd1:RetVal"/>
+		<part name="ManagerRes" element="xsd1:isManagerResponse"/>
 	</message>
 	<message name="promoteEmployeeReq">
 		<part name="promoteReq" element="xsd1:promoteEmployee"/>
 	</message>
 	<message name="promoteEmployeeRes">
-		<part name="promoteRes" element="xsd1:RetVal"/>
+		<part name="promoteRes" element="xsd1:promoteEmployeeResponse"/>
 	</message>
 	<message name="getEmployeesReq">
 		<part name="employeesReq" element="xsd1:getEmployees"/>
 	</message>
 	<message name="getEmployeesRes">
-		<part name="employeesRes" element="xsd1:EmployeeArray"/>
+		<part name="employeesRes" element="xsd1:getEmployeesResponse"/>
 	</message>
 	<message name="scheduleMtgReq">
 		<part name="scheduleReq" element="xsd1:scheduleMtg"/>
 	</message>
 	<message name="scheduleMtgRes">
-		<part name="scheduleRes" element="xsd1:RetVal"/>
+		<part name="scheduleRes" element="xsd1:scheduleMtgResponse"/>
 	</message>
 	<portType name="EmployeeDBPort">
 		<operation name="getEmployeeCount">
