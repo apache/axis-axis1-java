@@ -115,7 +115,7 @@ public class AxisClientProxy implements InvocationHandler {
         }
         
         Vector paramsCall = new Vector();
-        for (int i = 0; i < proxyParams.length;i++)
+        for (int i = 0; proxyParams != null && i < proxyParams.length;i++)
         {
             Object param = proxyParams[i];
             ParameterDesc paramDesc = operationDesc.getParameter(i);            
