@@ -230,8 +230,8 @@ public class AxisFault extends java.rmi.RemoteException {
     private void initFromException(Exception target)
     {
         //look for old stack trace
-        Element oldStackTrace=lookupFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE);
-        if(oldStackTrace!=null) {
+        Element oldStackTrace = lookupFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE);
+        if (oldStackTrace != null) {
             // todo: Should we replace it or just let it be?
             return;
         }

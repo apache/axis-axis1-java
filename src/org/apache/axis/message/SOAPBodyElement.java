@@ -28,6 +28,7 @@ import org.xml.sax.Attributes;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.namespace.QName;
 import java.io.InputStream;
 
 /** 
@@ -53,7 +54,12 @@ public class SOAPBodyElement extends MessageElement
     {
         super(name);
     }
-    
+
+    public SOAPBodyElement(QName qname)
+    {
+        super(qname);
+    }
+
     public SOAPBodyElement(Element elem)
     {
         super(elem);

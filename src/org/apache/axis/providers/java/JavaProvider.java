@@ -78,8 +78,7 @@ public abstract class JavaProvider extends BasicProvider
     {
         String serviceName = msgContext.getService().getName();
 
-        // scope can be "Request", "Session", "Application"
-        // (as with Apache SOAP)
+        // scope can be "Request", "Session", "Application", "Factory"
         Scope scope = Scope.getScope((String)service.getOption(OPTION_SCOPE), Scope.DEFAULT);
 
         scopeHolder.value = scope.getValue();

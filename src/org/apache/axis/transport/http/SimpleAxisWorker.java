@@ -472,12 +472,6 @@ public class SimpleAxisWorker implements Runnable {
             OutputStream out = socket.getOutputStream();
             out.write(HTTP);
             out.write(status);
-            //out.write(XML_MIME_STUFF);
-            out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType(msgContext.getSOAPConstants())).getBytes());
-            // Writing the length causes the entire message to be decoded twice.
-            //out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes());
-            // putInt(out, response.length);
-
             if (server.isSessionUsed() && null != cooky && 0 != cooky.trim().length()) {
                 // write cookie headers, if any
                 // don't sweat efficiency *too* badly
@@ -490,20 +484,29 @@ public class SimpleAxisWorker implements Runnable {
                 // OH, THE HUMILITY!  yes this is inefficient.
                 out.write(cookieOut.toString().getBytes());
             }
-            
-            // Transfer MIME headers to HTTP headers for response message.
-            for (Iterator i = responseMsg.getMimeHeaders().getAllHeaders(); i.hasNext(); ) {
-                MimeHeader responseHeader = (MimeHeader) i.next();
-                out.write('\r');
-                out.write('\n');
-                out.write(responseHeader.getName().getBytes());
-                out.write(headerEnder);
-                out.write(responseHeader.getValue().getBytes());
+
+            if (responseMsg != null) {
+
+                //out.write(XML_MIME_STUFF);
+                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType(msgContext.getSOAPConstants())).getBytes());
+                // Writing the length causes the entire message to be decoded twice.
+                //out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes());
+                // putInt(out, response.length);
+
+                // Transfer MIME headers to HTTP headers for response message.
+                for (Iterator i = responseMsg.getMimeHeaders().getAllHeaders(); i.hasNext(); ) {
+                    MimeHeader responseHeader = (MimeHeader) i.next();
+                    out.write('\r');
+                    out.write('\n');
+                    out.write(responseHeader.getName().getBytes());
+                    out.write(headerEnder);
+                    out.write(responseHeader.getValue().getBytes());
+                }
+
+                out.write(SEPARATOR);
+                responseMsg.writeTo(out);
             }
 
-            out.write(SEPARATOR);
-            if (responseMsg != null)
-                responseMsg.writeTo(out);
             // out.write(response);
             out.flush();
         } catch (Exception e) {

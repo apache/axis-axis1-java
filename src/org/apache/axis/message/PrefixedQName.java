@@ -32,7 +32,12 @@ public class PrefixedQName implements Name {
                             ? emptyString
                             : pre.intern();
     }
-    
+
+    public PrefixedQName(QName qname) {
+        this.qName = qname;
+        prefix = emptyString;
+    }
+
     public String getLocalName() {
         return qName.getLocalPart();
     }

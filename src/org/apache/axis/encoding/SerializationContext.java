@@ -275,6 +275,13 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      */
     public QName getCurrentXMLType();
 
+    /**
+     * Set the XML type we're going to write the next time we hit
+     * a startElement()
+     * 
+     * @param type
+     */
+    public void setWriteXMLType(QName type);
 }
 
 

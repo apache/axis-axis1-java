@@ -17,6 +17,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.Messages;
@@ -45,9 +46,15 @@ public class ElementSerializer implements Serializer {
         if (!(value instanceof Element))
             throw new IOException(Messages.getMessage("cantSerialize01"));
 
-        context.startElement(name, attributes);
+        MessageContext mc = context.getMessageContext();
+        context.setWriteXMLType(null);
+        boolean writeWrapper = (mc == null) ||
+                mc.isPropertyTrue("writeWrapperForElements", true);
+        if (writeWrapper)
+            context.startElement(name, attributes);
         context.writeDOMElement((Element)value);
-        context.endElement();
+        if (writeWrapper)
+            context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
