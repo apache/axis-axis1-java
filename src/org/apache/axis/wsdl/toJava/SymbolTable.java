@@ -481,7 +481,9 @@ public class SymbolTable {
                         throw new FileNotFoundException(url.toString());
                     }
                 }
-                throw new FileNotFoundException(url.toString());
+                else {
+                    throw new FileNotFoundException(url.toString());
+                }
             }
         }
         return url;
