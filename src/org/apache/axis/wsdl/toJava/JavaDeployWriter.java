@@ -69,6 +69,8 @@ import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
+import javax.wsdl.Part;
+
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
@@ -217,11 +219,13 @@ public class JavaDeployWriter extends JavaWriter {
                          + className + "\"/>");
 
         String methodList = "";
+        HashMap opMap = new HashMap();
         Iterator operationsIterator = binding.getBindingOperations().iterator();
         for (; operationsIterator.hasNext();) {
             BindingOperation op = (BindingOperation) operationsIterator.next();
             Operation ptOperation = op.getOperation();
             OperationType type = ptOperation.getStyle();
+            
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
@@ -229,11 +233,35 @@ public class JavaDeployWriter extends JavaWriter {
                     && type != OperationType.SOLICIT_RESPONSE) {
                 methodList = methodList + " " + op.getName();
             }
+            
+            // map doc/lit elements to operation
+            if (bEntry.getInputBodyType(ptOperation) == BindingEntry.USE_LITERAL) {
+                Map parts = ptOperation.getInput().getMessage().getParts();
+                if (!parts.isEmpty()) {
+                    Iterator i = parts.values().iterator();
+                    Part p = (Part) i.next();
+                    QName elementQName = p.getElementName();
+                    if (elementQName != null) {
+                        opMap.put(elementQName, op.getName());
+                    }
+                }
+            }
         }
 
         pw.println("      <parameter name=\"allowedMethods\" value=\""
                 + methodList.substring(1) + "\"/>");
 
+        if (!opMap.isEmpty()) {
+            Iterator i = opMap.keySet().iterator();
+            while (i.hasNext()) {
+                QName qn = (QName) i.next();
+                String ns = qn.getNamespaceURI();
+                pw.println("      <elementMapping xmlns:ns=\"" + 
+                        ns + "\" element=\"ns:" + qn.getLocalPart() + "\" " +
+                        "method=\"" + opMap.get(qn) + "\">");
+            }
+        }
+        
         if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
             pw.println("      <parameter name=\"scope\" value=\"Application\"/>");
         }
