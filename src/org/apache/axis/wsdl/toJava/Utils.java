@@ -121,7 +121,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
 
         // byte[] has a reserved holders
-        if (typeValue.equals("byte[]")) {
+        if (typeValue.equals("byte[]") && type.isBaseType()) {
             return "javax.xml.rpc.holders.ByteArrayHolder";
         }
 
