@@ -449,10 +449,9 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                 cachediskstream = null;
             }
 
-            for (java.util.Iterator i = readers.keySet().iterator();
-                 i.hasNext();) {
-                Instream stream = (Instream) i.next();
-
+            Object[] array = readers.keySet().toArray();
+            for (int i = 0; i < array.length; i++) {
+                Instream stream = (Instream) array[i];
                 if (null != stream) {
                     try {
                         stream.close();
@@ -460,7 +459,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                     }
                 }
             }
-
             readers.clear();
 
             try {
