@@ -1362,7 +1362,12 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
                 if (typedesc != null) {
                     QName qname = typedesc.getXmlType();
-                    if (shouldSendType && qname != null) {
+		    // Send the xmlType if indicated or if
+		    // the actual xmlType is different than the
+		    // prefered xmlType
+                    if (shouldSendType ||
+		        (xmlType != null && qname != null &&
+			 (!xmlType.equals(qname)))) {
                         writeXMLType = qname;
                     }
                 }
