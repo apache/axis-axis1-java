@@ -1,56 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// PLEASE DO NOT ADD MORE METHODS TO THIS FILE - IT IS GOING AWAY
-// ADD NEW METHODS/LOGIC TO Call.java INSTEAD !!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 * The Apache Software License, Version 1.1
 *
@@ -144,6 +91,9 @@ import java.util.Vector;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * 
+ * @deprecated To be replaced by the Call class before the 1.0 release
+ * @see org.apache.axis.client.Call
  */
 
 
@@ -157,18 +107,6 @@ public class ServiceClient {
     /***************************************************************
      * Static stuff
      */
-
-    public static final String TRANSPORT_PROPERTY =
-            "java.protocol.handler.pkgs";
-
-    /**
-     * A Hashtable mapping protocols (Strings) to Transports (classes)
-     */
-    private static Hashtable transports = new Hashtable();
-    private static boolean initialized = false;
-
-    private static FileProvider configProvider = new FileProvider("client-config.xml");
-
     /** Register a Transport that should be used for URLs of the specified
      * protocol.
      *
@@ -179,10 +117,7 @@ public class ServiceClient {
     public static void setTransportForProtocol(String protocol,
                                                Class transportClass)
     {
-        if (Transport.class.isAssignableFrom(transportClass))
-            transports.put(protocol, transportClass);
-        else
-            throw new NullPointerException();
+        Call.setTransportForProtocol(protocol, transportClass);
     }
 
     /**
@@ -192,17 +127,9 @@ public class ServiceClient {
      * want the system to accept a "local:" URL).  This is why the Options class
      * calls it before parsing the command-line URL argument.
      */
-    public static synchronized void initialize()
+    public static void initialize()
     {
-        if (!initialized) {
-            addTransportPackage("org.apache.axis.transport");
-
-            setTransportForProtocol("local", org.apache.axis.transport.local.LocalTransport.class);
-            setTransportForProtocol("http", HTTPTransport.class);
-            setTransportForProtocol("https", HTTPTransport.class);
-
-            initialized = true;
-        }
+        Call.initialize();
     }
 
     /** Add a package to the system protocol handler search path.  This
@@ -216,64 +143,26 @@ public class ServiceClient {
      *
      * @param packageName the package in which to search for protocol names.
      */
-    public static synchronized void addTransportPackage(String packageName)
+    public static void addTransportPackage(String packageName)
     {
-        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
-        if (currentPackages == null) {
-            currentPackages = "";
-        } else {
-            currentPackages += "|";
-        }
-        currentPackages += packageName;
-
-        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
+        Call.addTransportPackage(packageName);
     }
 
-    /*****************************************************************************
-     * END STATICS
-     */
-
-    // Our AxisClient
-    private AxisEngine engine;
-
-    // The description of our service
-    private ServiceDescription serviceDesc;
-
-    // The message context we use across invocations
-    private MessageContext msgContext;
-
-    // Collection of properties to store and put in MessageContext at
-    // invoke() time
-    private Hashtable myProperties = null;
-
-    private int timeout;
-    private boolean maintainSession;
-
-    // Our Transport, if any
-    private Transport transport;
-    private String    transportName;
-
-    // A place to store output parameters
-    private Vector outParams = null;
-
-    // A place to store any client-specified headers
-    private Vector myHeaders = null;
-
+    private Call call;
+    
     /**
      * Basic, no-argument constructor.
      */
     public ServiceClient () {
-        this(new AxisClient(configProvider));
+        call = new Call();
     }
 
     /**
      * Construct a ServiceClient with just an AxisEngine.
      */
     public ServiceClient (AxisEngine engine) {
-        this.engine = engine;
-        msgContext = new MessageContext(engine);
-        if (!initialized)
-            initialize();
+        call = new Call();
+        call.setEngine(engine);
     }
 
 
@@ -286,7 +175,11 @@ public class ServiceClient {
     public ServiceClient(String endpointURL)
             throws AxisFault
     {
-        this(endpointURL, new AxisClient(configProvider));
+        try {
+            call = new Call(endpointURL);
+        } catch (MalformedURLException e) {
+            throw new AxisFault(e);
+        }
     }
 
     /**
@@ -295,8 +188,12 @@ public class ServiceClient {
     public ServiceClient(String endpointURL, AxisEngine engine)
             throws AxisFault
     {
-        this(engine);
-        this.setURL(endpointURL);
+        try {
+            call = new Call(endpointURL);
+            call.setEngine(engine);
+        } catch (MalformedURLException e) {
+            throw new AxisFault(e);
+        }
     }
 
     /**
@@ -307,7 +204,8 @@ public class ServiceClient {
      *                  request
      */
     public ServiceClient (Transport transport) {
-        this(transport, new AxisClient(configProvider));
+        call = new Call();
+        call.setTransport(transport);
     }
 
     /**
@@ -315,7 +213,7 @@ public class ServiceClient {
      */
     public ServiceClient (Transport transport, AxisEngine engine) {
         this(engine);
-        setTransport(transport);
+        call.setTransport(transport);
     }
 
     /**
@@ -325,9 +223,7 @@ public class ServiceClient {
      *                  MessageContext properties.
      */
     public void setTransport(Transport transport) {
-        this.transport = transport;
-        if (category.isInfoEnabled())
-            category.info("Transport is " + transport);
+        call.setTransport(transport);
     }
 
     /**
@@ -338,14 +234,7 @@ public class ServiceClient {
     {
         try {
             URL url = new URL(endpointURL);
-            String protocol = url.getProtocol();
-            Transport transport = getTransportForProtocol(protocol);
-            if (transport == null)
-                throw new AxisFault("ServiceClient.setURL",
-                        "No transport mapping for protocol: " + protocol,
-                        null, null);
-            transport.setUrl(endpointURL);
-            setTransport(transport);
+            
         } catch (MalformedURLException e) {
             throw new AxisFault("ServiceClient.setURL",
                     "Malformed URL Exception: " + e.getMessage(), null, null);
@@ -356,17 +245,10 @@ public class ServiceClient {
      * Returns the URL of the transport
      */
     public String getURL() {
-      if ( transport == null ) return( null );
-      return( transport.getUrl() );
-    }
-
-    /**
-     * Set the name of the transport chain to use.
-     */
-    public void setTransportName(String name) {
-        transportName = name ;
-        if ( transport != null )
-            transport.setTransportName( name );
+        URL url = call.getTargetEndpointAddress();
+        if (url == null)
+            return null;
+        return url.toString();
     }
 
     /** Get the Transport registered for the given protocol.
@@ -377,16 +259,7 @@ public class ServiceClient {
      */
     public Transport getTransportForProtocol(String protocol)
     {
-        Class transportClass = (Class)transports.get(protocol);
-        Transport ret = null;
-        if (transportClass != null) {
-            try {
-                ret = (Transport)transportClass.newInstance();
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            }
-        }
-        return ret;
+        return call.getTransportForProtocol(protocol);
     }
 
     /**
@@ -397,12 +270,7 @@ public class ServiceClient {
      * @param value the value of the property.
      */
     public void set (String name, Object value) {
-        if (name == null || value == null)
-            return;
-        if (myProperties == null) {
-            myProperties = new Hashtable();
-        }
-        myProperties.put(name, value);
+        call.setProperty(name, value);
     }
 
     /**
@@ -412,8 +280,7 @@ public class ServiceClient {
      * @return the property's value.
      */
     public Object get (String name) {
-        return (name == null || myProperties == null) ? null :
-                                                        myProperties.get(name);
+        return call.getProperty(name);
     }
 
     /**
@@ -422,8 +289,7 @@ public class ServiceClient {
      * @param name the property name to remove
      */
     public void remove(String name) {
-        if ( name == null || myProperties == null ) return ;
-        myProperties.remove( name );
+        call.removeProperty(name);
     }
 
     /**
@@ -432,7 +298,7 @@ public class ServiceClient {
      * @param value the maximum amount of time, in milliseconds
      */
     public void setTimeout (int value) {
-        timeout = value;
+        call.setProperty(Call.TIMEOUT,  new Integer(value));
     }
 
     /**
@@ -441,7 +307,10 @@ public class ServiceClient {
      * @return value the maximum amount of time, in milliseconds
      */
     public int getTimeout () {
-        return timeout;
+        Integer timeout = (Integer)call.getProperty(Call.TIMEOUT);
+        if (timeout == null) return -1;
+        
+        return timeout.intValue();
     }
 
     /**
@@ -452,7 +321,7 @@ public class ServiceClient {
      * @param msg the new request message.
      */
     public void setRequestMessage(Message msg) {
-        msgContext.setRequestMessage(msg);
+        call.setRequestMessage(msg);
     }
 
     /**
@@ -463,7 +332,7 @@ public class ServiceClient {
      * @return the response Message object in the msgContext
      */
     public Message getResponseMessage() {
-        return msgContext.getResponseMessage();
+        return call.getResponseMessage();
     }
 
     /**
@@ -474,7 +343,7 @@ public class ServiceClient {
      * @param yesno true if session state is desired, false if not.
      */
     public void setMaintainSession (boolean yesno) {
-        maintainSession = yesno;
+        call.setMaintainSession(yesno);
     }
 
     /**
@@ -483,7 +352,7 @@ public class ServiceClient {
      * @return the ServiceClient's MessageContext.
      */
     public MessageContext getMessageContext () {
-        return msgContext;
+        return call.getMessageContext();
     }
 
     /**
@@ -493,7 +362,8 @@ public class ServiceClient {
      */
     public void setServiceDescription(ServiceDescription serviceDesc)
     {
-        this.serviceDesc = serviceDesc;
+        // !!! MEN WORKING - go through the SD and set parameters, etc.
+        //     as appropriate
     }
 
     /**
@@ -507,7 +377,7 @@ public class ServiceClient {
      */
     public Vector getOutputParams()
     {
-        return this.outParams;
+        return call.getOutputParams();
     }
 
     /**
@@ -518,10 +388,7 @@ public class ServiceClient {
      */
     public void addHeader(SOAPHeader header)
     {
-        if (myHeaders == null) {
-            myHeaders = new Vector();
-        }
-        myHeaders.add(header);
+        call.addHeader(header);
     }
 
     /**
@@ -529,7 +396,7 @@ public class ServiceClient {
      */
     public void clearHeaders()
     {
-        myHeaders = null;
+        call.clearHeaders();
     }
 
     /**
@@ -539,9 +406,10 @@ public class ServiceClient {
      * @param qName the xsi:type QName of the associated XML type.
      * @param serializer a Serializer which will be used to write the XML.
      */
-    public void addSerializer(Class _class, QName qName, Serializer serializer) {
-        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
-        typeMap.addSerializer(_class, qName, serializer);
+    public void addSerializer(Class _class,
+                              QName qName,
+                              Serializer serializer) {
+        call.addSerializer(_class, qName, serializer);
     }
 
     /**
@@ -552,10 +420,11 @@ public class ServiceClient {
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
      */
-    public void addDeserializerFactory(QName qName, Class _class,
-                                       DeserializerFactory deserializerFactory) {
-        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
-        typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
+    public void addDeserializerFactory(QName qName,
+                                       Class _class,
+                                       DeserializerFactory deserializerFactory)
+    {
+        call.addDeserializerFactory(qName, _class, deserializerFactory);
     }
 
     /************************************************
@@ -569,10 +438,11 @@ public class ServiceClient {
      */
     public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
     {
-        msgContext.reset();
-        msgContext.setRequestMessage(new Message(env));
-        invoke();
-        return msgContext.getResponseMessage().getAsSOAPEnvelope();
+        try {
+            return call.invoke(env);
+        } catch (java.rmi.RemoteException e) {
+            throw new AxisFault(e);
+        }
     }
 
     /** Invoke an RPC service with a method name and arguments.
@@ -590,12 +460,9 @@ public class ServiceClient {
      * @return a deserialized Java Object containing the return value
      * @exception AxisFault
      */
-    public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
-        category.debug("Enter: ServiceClient::invoke(ns, meth, args)" );
-        RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
-        Object ret = invoke( body );
-        category.debug("Exit: ServiceClient::invoke(ns, meth, args)" );
-        return ret;
+    public Object invoke( String namespace, String method, Object[] args ) 
+            throws AxisFault {
+        return call.invoke(namespace, method, args);
     }
 
     /** Convenience method to invoke a method with a default (empty)
@@ -623,112 +490,14 @@ public class ServiceClient {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        category.debug("Enter: ServiceClient::invoke(RPCElement)" );
-        SOAPEnvelope         reqEnv = new SOAPEnvelope();
-        SOAPEnvelope         resEnv = null ;
-        Message              reqMsg = new Message( reqEnv );
-        Message              resMsg = null ;
-        Vector               resArgs = null ;
-        Object               result = null ;
-
-        // Clear the output params
-        outParams = null;
-
-        // If we have headers to insert, do so now.
-        if (myHeaders != null) {
-            for (int i = 0; i < myHeaders.size(); i++) {
-                reqEnv.addHeader((SOAPHeader)myHeaders.get(i));
-            }
-        }
-
-        String uri = null;
-        if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
-        if (uri != null) reqEnv.setEncodingStyleURI(uri);
-
-        if (serviceDesc != null && serviceDesc.isRPC()) 
-            msgContext.setProperty(MessageContext.ISRPC, "true" );
-
-        msgContext.setRequestMessage(reqMsg);
-        msgContext.setResponseMessage(resMsg);
-
-        reqEnv.addBodyElement(body);
-        reqEnv.setMessageType(Message.REQUEST);
-
-        if ( body.getPrefix() == null )       body.setPrefix( "m" );
-        if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("ServiceClient.invoke", "Cannot invoke ServiceClient with null namespace URI for method "+body.getMethodName(),
-                    null, null);
-        } else if (msgContext.getServiceHandler() == null) {
-            msgContext.setTargetService(body.getNamespaceURI());
-        }
-
-
-        if (category.isDebugEnabled()) {
-            StringWriter writer = new StringWriter();
-            try {
-                SerializationContext ctx = new SerializationContext(writer,
-                                                                   msgContext);
-                reqEnv.output(ctx);
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace(new PrintWriter(writer));
-            } finally {
-                category.debug(writer.getBuffer().toString());
-            }
-        }
-
-        try {
-            invoke();
-        }
-        catch( Exception e ) {
-            category.error( e );
-            if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
-        }
-
-        resMsg = msgContext.getResponseMessage();
-
-        if (resMsg == null)
-            throw new AxisFault(new Exception("Null response message!"));
-
-        /** This must happen before deserialization...
-         */
-        resMsg.setMessageType(Message.RESPONSE);
-
-        resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
-
-        SOAPBodyElement respBody = resEnv.getFirstBody();
-        if (respBody instanceof SOAPFaultElement) {
-            throw ((SOAPFaultElement)respBody).getAxisFault();
-        }
-
-        body = (RPCElement)resEnv.getFirstBody();
-        resArgs = body.getParams();
-
-        if (resArgs != null && resArgs.size() > 0) {
-            RPCParam param = (RPCParam)resArgs.get(0);
-            result = param.getValue();
-
-            /**
-             * Are there out-params?  If so, return a Vector instead.
-             */
-            if (resArgs.size() > 1) {
-                outParams = new Vector();
-                for (int i = 1; i < resArgs.size(); i++) {
-                    outParams.add(resArgs.get(i));
-                }
-            }
-        }
-
-        category.debug("Exit: ServiceClient::invoke(RPCElement)" );
-        return( result );
+        return call.invoke(body);
     }
 
     /**
      * Set engine option.
      */
     public void addOption(String name, Object value) {
-        engine.addOption(name, value);
+        call.addOption(name, value);
     }
 
     /**
@@ -738,43 +507,7 @@ public class ServiceClient {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        category.debug("Enter: Service::invoke()" );
-
-        msgContext.reset();
-
-        msgContext.setTimeout(timeout);
-
-        if (myProperties != null) {
-            Enumeration enum = myProperties.keys();
-            while (enum.hasMoreElements()) {
-                String name = (String) enum.nextElement();
-                Object value = myProperties.get(name);
-                msgContext.setProperty(name, value);
-            }
-        }
-
-        msgContext.setMaintainSession(maintainSession);
-
-        // set up message context if there is a transport
-        if (transport != null) {
-// Temporary - this class will soon become a shell for Call
-            transport.setupMessageContext(msgContext, new Call(), this.engine);
-        }
-        else
-            msgContext.setTransportName( transportName );
-
-        try {
-            engine.invoke( msgContext );
-
-            if (transport != null)
-                transport.processReturnedMessageContext(msgContext);
-        }
-        catch( AxisFault fault ) {
-            category.error( fault );
-            throw fault ;
-        }
-
-        category.debug("Exit: Service::invoke()" );
+        call.invoke();
     }
 
 }
