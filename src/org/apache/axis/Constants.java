@@ -179,6 +179,12 @@ public class Constants {
     //////////////////////////////////////////////////////////////////////////
     public static final String URI_DEBUG = "http://xml.apache.org/axis/debug";
 
+    // Absolute path of our home directory (if we can determine one)
+    public static final String MC_HOME_DIR = "homeDir" ;
+
+    // Relative path of the request URL (ie. http://.../axis/a.jws = /a.jws
+    public static final String MC_RELATIVE_PATH = "path";
+
     // MessageContext param for the engine's path
     public static final String MC_REALPATH = "realpath";
     // MessageContext param for the location of config files
