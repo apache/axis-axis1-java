@@ -72,6 +72,16 @@ import java.io.ByteArrayInputStream;
  *
  * This provider does not write configuration to persistent storage.
  *
+ * Example of usage:
+ *    new XMLStringProvider("<engineConfig><handlers><handler name=" +
+ *        "\"MsgDispatcher\" class=\"org.apache.axis.providers.java" +
+ *        ".MsgProvider\"/></handlers><services><service name=\"Adm" +
+ *        "inService\" pivot=\"MsgDispatcher\"><option name=\"class" +
+ *        "Name\" value=\"org.apache.axis.utils.Admin\"/><option na" +
+ *        "me=\"allowedMethods\" value=\"AdminService\"/><option na" +
+ *        "me=\"enableRemoteAdmin\" value=\"false\"/></service></se" +
+ *        "rvices></engineConfig>");
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class XMLStringProvider extends FileProvider

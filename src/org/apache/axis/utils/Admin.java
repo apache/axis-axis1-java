@@ -765,9 +765,9 @@ public class Admin {
 
         AxisEngine engine;
         if ( args[0].equals("client") )
-            engine = new AxisClient(new FileProvider(Constants.CLIENT_CONFIG_FILE));
+            engine = new AxisClient();
         else
-            engine = new AxisServer(new FileProvider(Constants.SERVER_CONFIG_FILE));
+            engine = new AxisServer();
         engine.setShouldSaveConfig(true);
         engine.init();
         MessageContext msgContext = new MessageContext(engine);

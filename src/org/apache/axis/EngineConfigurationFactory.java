@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,43 +53,57 @@
  * <http://www.apache.org/>.
  */
 
-package samples.transport.tcp ;
-
-import org.apache.axis.client.Call;
-import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+package org.apache.axis;
 
 import javax.xml.rpc.namespace.QName;
 
 /**
- * An admin client object, which will work with the TCP transport.
+ * EngineConfigurationFactory is an interface used to construct
+ * concrete EngineConfiguration instances.
  *
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glyn Normington (glyn@apache.org)
  */
+public interface EngineConfigurationFactory {
+    /**
+     * Property name used for setting an EngineConfiguration to be used
+     * in creating engines.
+     */
+    public static final String SYSTEM_PROPERTY_NAME = "engineConfigFactory";
 
-public class AdminClient extends org.apache.axis.client.AdminClient {
-    public static void main(String args[]) {
+     /**
+     * Get a default client engine configuration.
+     *
+     * @return a client EngineConfiguration
+     */
+    public EngineConfiguration getClientEngineConfig();
 
-        Call.addTransportPackage("samples.transport");
-        Call.setTransportForProtocol("tcp", TCPTransport.class);
+    /**
+     * Get a default server engine configuration.
+     *
+     * @return a server EngineConfiguration
+     */
+    public EngineConfiguration getServerEngineConfig();
+   
+    /**
+     * Get a default client engine configuration plus the specified
+     * transport Handler. This method is particularly useful for testcases.
+     *
+     * @param name a QName that identifies the transport
+     * @param transport a Handler for the transport
+     * @return a client EngineConfiguration
+     */
+    public EngineConfiguration getClientEngineConfigWithTransport(QName qname,
+                                                                  Handler transport);
+   
 
-        SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-
-        AdminClient.setDefaultConfiguration((new DefaultEngineConfigurationFactory())
-            .getClientEngineConfigWithTransport(new QName(null, "tcp"), c));
-
-        try {
-            org.apache.axis.client.AdminClient client =
-                new org.apache.axis.client.AdminClient(System.err);
-
-            System.out.println(client.process(args));
-        }
-        catch( Exception e ) {
-            System.err.println( e );
-            e.printStackTrace( System.err );
-        }
-    }
+    /**
+     * Get a default server engine configuration plus the specified
+     * service Handler. This method is particularly useful for testcases.
+     *
+     * @param name a QName that identifies the service
+     * @param service a Handler for the service
+     * @return a server EngineConfiguration
+     */
+    public EngineConfiguration getServerEngineConfigWithService(QName qname,
+                                                                Handler service);
 }
-
