@@ -101,7 +101,6 @@ public class SOAPElementFactory {
      *     SOAPElementFactory</CODE>
      * @throws  SOAPException if there was an error creating
      *     the default <CODE>SOAPElementFactory
-     * @deprecated
      */
     public static SOAPElementFactory newInstance() throws SOAPException {
 

@@ -142,7 +142,7 @@ public class QName implements Serializable {
      * @return <code>true</code> if the given object is identical to this
      *      QName: <code>false</code> otherwise.
      */
-    public final boolean equals(Object obj) {
+    public boolean equals(Object obj) {
 
         if (obj == this) {
             return true;
@@ -207,7 +207,7 @@ public class QName implements Serializable {
      *
      * @return a hash code value for this Qname object
      */
-    public final int hashCode() {
+    public int hashCode() {
         return namespaceURI.hashCode() ^ localPart.hashCode();
     }
 

@@ -307,7 +307,9 @@ public abstract class SOAPMessage {
      * @throws SOAPException if the SOAP Body does not exist or cannot be
      *              retrieved
      */
-    public abstract SOAPBody getSOAPBody() throws SOAPException;
+    public SOAPBody getSOAPBody() throws SOAPException {
+        throw new UnsupportedOperationException("getSOAPBody must be overridden in subclasses of SOAPMessage");        
+    }
 
     /**
      * Gets the SOAP Header contained in this <code>SOAPMessage</code> object.
@@ -317,7 +319,9 @@ public abstract class SOAPMessage {
      * @throws SOAPException  if the SOAP Header does not exist or cannot be
      *              retrieved
      */
-    public abstract SOAPHeader getSOAPHeader() throws SOAPException;
+    public SOAPHeader getSOAPHeader() throws SOAPException {
+        throw new UnsupportedOperationException("getSOAPHeader must be overridden in subclasses of SOAPMessage");        
+    }
 
     /**
      * Associates the specified value with the specified property. If there was
@@ -347,8 +351,10 @@ public abstract class SOAPMessage {
      * @param value the value to be associated with the specified property
      * @throws SOAPException if the property name is not recognized
      */
-    public abstract void setProperty(String property, Object value)
-            throws SOAPException;
+    public void setProperty(String property, Object value)
+            throws SOAPException  {
+        throw new UnsupportedOperationException("setProperty must be overridden in subclasses of SOAPMessage");        
+    }
 
     /**
      * Retrieves value of the specified property.
@@ -358,7 +364,9 @@ public abstract class SOAPMessage {
      *              property exists
      * @throws SOAPException  if the property name is not recognized
      */
-    public abstract Object getProperty(String property) throws SOAPException;
+    public Object getProperty(String property) throws SOAPException {
+        throw new UnsupportedOperationException("getProperty must be overridden in subclasses of SOAPMessage");        
+    }
 
     /** Specifies the character type encoding for the SOAP Message. */
     public static final String CHARACTER_SET_ENCODING

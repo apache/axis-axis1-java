@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Helper class for obtaining Services from JNDI.
@@ -208,4 +209,19 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
             throws ServiceException {
         return new Service(serviceName);
     } // createService
+
+    public javax.xml.rpc.Service loadService(Class class1) throws ServiceException {
+        // TODO: Not yet implemented
+        return null;  
+    }
+
+    public javax.xml.rpc.Service loadService(URL url, Class class1, Properties properties) throws ServiceException {
+        // TODO: Not yet implemented
+        return null;  
+    }
+
+    public javax.xml.rpc.Service loadService(URL url, QName qname, Properties properties) throws ServiceException {
+        // TODO: Not yet implemented
+        return null;  
+    }
 }

@@ -91,5 +91,18 @@ public abstract class ServiceFactory {
      */
     public abstract Service createService(QName serviceName)
         throws ServiceException;
+    
+    public abstract Service loadService(java.lang.Class class1)
+                             throws ServiceException;
+    
+    public abstract Service loadService(java.net.URL url,
+                                    java.lang.Class class1,
+                                    java.util.Properties properties)
+                             throws ServiceException;
+    
+    public abstract Service loadService(java.net.URL url,
+                                    QName qname,
+                                    java.util.Properties properties)
+                             throws ServiceException;
 }
 
