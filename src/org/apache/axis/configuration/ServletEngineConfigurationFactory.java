@@ -124,9 +124,12 @@ public class ServletEngineConfigurationFactory extends DefaultEngineConfiguratio
                 InputStream is = ctx.getResourceAsStream("/WEB-INF/"+
                                                          SERVER_CONFIG_FILE);
                 if (is == null) {
-                    // !!! THROW EXCEPTION
+                    log.error(JavaUtils.getMessage
+                              ("servletEngineWebInfError01", 
+                               webInfPath + "/" + SERVER_CONFIG_FILE));
+                } else {
+                    config = new FileProvider(is);
                 }
-                config = new FileProvider(is);
             }
             if ( config == null ) {
                 try {
