@@ -100,6 +100,8 @@ X <> Plug new framework into autogen mechanism
 
 ! <> Support generation of deploy.wsdd from Java2WSDL
 
+! <> Support wildcards in stop object classes (i.e. "javax.*")
+
 
 GENERAL / UNCATEGORIZED
 -----------------------
@@ -107,3 +109,10 @@ GENERAL / UNCATEGORIZED
 ! <> Remove search-for-first-MessageContext-arg code
 ! <> Remove ServiceClient
 ! <> Before each release, make sure there aren't any English-language strings in the code.  Folks aren't very good about putting these strings into resources.properties!
+! <> Refactor AxisServiceConfig so it doesn't require object instantiation (static metadata)
+
+FUTURE ENHANCEMENTS (not necessary for current release)
+-------------------------------------------------------
+! <> Some kind of support for deployment / metadata in source file (xdoclet?)
+
+
