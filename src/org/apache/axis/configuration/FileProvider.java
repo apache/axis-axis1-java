@@ -55,6 +55,16 @@
 
 package org.apache.axis.configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Handler;
@@ -71,16 +81,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.util.Hashtable;
-import java.util.Iterator;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to read +
