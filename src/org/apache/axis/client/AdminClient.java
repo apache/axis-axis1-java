@@ -59,110 +59,207 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.axis.AxisEngine ;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.encoding.SerializationContext ;
-import org.apache.axis.message.SOAPEnvelope ;
-import org.apache.axis.message.SOAPBodyElement ;
-import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.Transport;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.Message ;
 import org.apache.axis.MessageContext ;
-import org.apache.axis.utils.Debug ;
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Transport;
+import org.apache.axis.encoding.SerializationContext ;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.SOAPBodyElement ;
+import org.apache.axis.message.SOAPEnvelope ;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.utils.Debug ;
 import org.apache.axis.transport.http.HTTPConstants;
 
 /**
- * An admin client object, generic, overridable by transport-specific subclasses.
+ * An admin client object that can be used both from the command line
+ * and programmatically. The admin client supports simple logging that
+ * allows the output of its operations to be inspected in environments
+ * where <code>System.out</code> and <code>System.err</code> should
+ * not be used.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Simeon Simeonov (simeons@macromedia.com)
  */
 
-public abstract class AdminClient {
+public class AdminClient
+{
+    protected PrintWriter _log;
+    
+    /**
+     * Construct an admin client w/o a logger
+     */
+    public AdminClient()
+    {
+    }
+    
+    /**
+     * Construct an admin client with a logger
+     */
+    public AdminClient(PrintWriter log)
+    {
+        _log = log;
+    }
+    
+    /**
+     * Construct an admin client with a logger
+     */
+    public AdminClient(OutputStream out)
+    {
+        _log = new PrintWriter(out);
+    }
+    
+    /**
+     * Logs a message if a logger has been provided
+     */
+    protected void log(String msg) throws IOException
+    {
+        if (_log != null)
+        {
+            _log.println(msg);
+            _log.flush();
+        }
+    }
+    
+    /**
+     * <p>Processes a set of administration commands.</p>
+     * <p>The following commands are available:</p>
+     * <ul>
+     *   <li><code>-l<i>url</i></code> sets the AxisServlet URL</li>
+     *   <li><code>-h<i>hostName</i></code> sets the AxisServlet host</li>
+     *   <li><code>-p<i>portNumber</i></code> sets the AxisServlet port</li>
+     *   <li><code>-s<i>servletPath</i></code> sets the path to the
+     *              AxisServlet</li>
+     *   <li><code>-f<i>fileName</i></code> specifies that a simple file
+     *              protocol should be used</li>
+     *   <li><code>-u<i>username</i></code> sets the username</li>
+     *   <li><code>-p<i>password</i></code> sets the password</li>
+     *   <li><code>-d</code> sets the debug flag (for instance, -ddd would
+     *      set it to 3)</li>
+     *   <li><code>list</code> will list the currently deployed services</li>
+     *   <li><code>quit</code> will quit (???)</li>
+     *   <li><code>passwd <i>value</i></code> changes the admin password</li>
+     *   <li><code><i>xmlConfigFile</i></code> deploys or undeploys
+     *       Axis components and web services</li>
+     * </ul>
+     * <p>If <code>-l</code> or <code>-h -p -s</code> are not set, the
+     * AdminClient will invoke
+     * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.</p>
+     * 
+     * @param args Commands to process
+     * @return XML result or null in case of failure. In the case of multiple
+     * commands, the XML results will be concatenated, separated by \n
+     * @exception Exception Could be an IO exception, an AxisFault or something else
+     */
+    public String process (String[] args) throws Exception
+    {
+        StringBuffer sb = new StringBuffer();
+        
+        Options opts = new Options( args );
+        
+        if (opts.isFlagSet('d') > 0) {
+            Debug.setDebugLevel( opts.isFlagSet('d') );
+        }
+        
+        args = opts.getRemainingArgs();
+        
+        if ( args == null ) {
+            log( "Usage: AdminClient xml-files | list" );
+            return null;
+        }
+        
+        for ( int i = 0 ; i < args.length ; i++ )
+        {
+            InputStream input = null;
+            
+            if ( args[i].equals("list") ) {
+                log( "Doing a list" );
+                String str = "<m:list xmlns:m=\"AdminService\"/>" ;
+                input = new ByteArrayInputStream( str.getBytes() );
+            } else if (args[i].equals("quit")) {
+                log("Doing a quit");
+                String str = "<m:quit xmlns:m=\"AdminService\"/>";
+                input = new ByteArrayInputStream(str.getBytes());
+            } else if (args[i].equals("passwd")) {
+                log("Changing admin password");
+                if (args[i + 1] == null) {
+                    log("Must specify a password!");
+                    return null;
+                }
+                String str = "<m:passwd xmlns:m=\"AdminService\">";
+                str += args[i + 1];
+                str += "</m:passwd>";
+                input = new ByteArrayInputStream(str.getBytes());
+                i++;
+            }
+            else {
+                log( "Processing file: " + args[i] );
+                input = new FileInputStream( args[i] );
+            }
+            
+            ServiceClient client = new ServiceClient(opts.getURL());
+            
+            /** Unfortunately, this is transport-specific.  However, no one
+            * but the HTTP transport should pick this property up.
+            */
+            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
+            
+            Message         inMsg      = new Message( input, true );
+            
+            client.setRequestMessage( inMsg );
+            
+            client.set( Transport.USER, opts.getUser() );
+            client.set( Transport.PASSWORD, opts.getPassword() );
+            
+            client.invoke();
+            
+            Message outMsg = client.getMessageContext().
+                                                        getResponseMessage();
+            if (outMsg == null) {
+                log("Null response message!");
+                return null;
+            }
+            
+            client
+              .getMessageContext()
+               .setServiceDescription(new ServiceDescription("Admin", false));
+            
+            input.close();
+            SOAPEnvelope envelope =
+                                   (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
+            SOAPBodyElement body = envelope.getFirstBody();
+            StringWriter writer = new StringWriter();
+            client.addOption(AxisEngine.PROP_XML_DECL, new Boolean(false));
+            SerializationContext ctx = new SerializationContext(writer,
+                                                  client.getMessageContext());
+            body.output(ctx);
+            sb.append(writer.toString());
+            sb.append('\n');
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
+     * Creates in instance of <code>AdminClient</code> and
+     * invokes <code>process(args)</code>.
+     * <p>Diagnostic output goes to <code>System.out</code>.</p>
+     * @param args Commands to process
+     */
     public static void main (String[] args)
     {
         try {
-            Options opts = new Options( args );
-            
-            if (opts.isFlagSet('d') > 0) {
-                Debug.setDebugLevel( opts.isFlagSet('d') );
-            }
-            
-            args = opts.getRemainingArgs();
-            
-            if ( args == null ) {
-                System.err.println( "Usage: AdminClient xml-files | list" );
+            AdminClient admin = new AdminClient(System.err);
+            String result = admin.process(args);
+            if (result != null)
+                System.out.println(result);
+            else
                 System.exit(1);
-            }
-            
-            for ( int i = 0 ; i < args.length ; i++ ) {
-                InputStream input = null ;
-                
-                if ( args[i].equals("list") ) {
-                    System.err.println( "Doing a list" );
-                    String str = "<m:list xmlns:m=\"AdminService\"/>" ;
-                    input = new ByteArrayInputStream( str.getBytes() );
-                } else if (args[i].equals("quit")) {
-                    System.out.println("Doing a quit");
-                    String str = "<m:quit xmlns:m=\"AdminService\"/>";
-                    input = new ByteArrayInputStream(str.getBytes());
-                } else if (args[i].equals("passwd")) {
-                    System.out.println("Changing admin password");
-                    if (args[i + 1] == null) {
-                        System.err.println("Must specify a password!");
-                        return;
-                    }
-                    String str = "<m:passwd xmlns:m=\"AdminService\">";
-                    str += args[i + 1];
-                    str += "</m:passwd>";
-                    input = new ByteArrayInputStream(str.getBytes());
-                    i++;
-                }
-                else {
-                    System.out.println( "Processing file: " + args[i] );
-                    input = new FileInputStream( args[i] );
-                }
-                
-                ServiceClient client = new ServiceClient(opts.getURL());
-                
-                /** Unfortunately, this is transport-specific.  However, no one
-                * but the HTTP transport should pick this property up.
-                */
-                client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");            
-                
-                Message         inMsg      = new Message( input, true );
-                
-                client.setRequestMessage( inMsg );
-                
-                client.set( Transport.USER, opts.getUser() );
-                client.set( Transport.PASSWORD, opts.getPassword() );
-                
-                client.invoke();
-                
-                Message outMsg = client.getMessageContext().
-                                                     getResponseMessage();
-                if (outMsg == null) {
-                    System.err.println("Null response message!");
-                    return;
-                }
-                
-                client.getMessageContext().setServiceDescription(
-                                      new ServiceDescription("Admin", false));
-                input.close();
-                SOAPEnvelope envelope =
-                                    (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
-                SOAPBodyElement body = envelope.getFirstBody();
-                StringWriter writer = new StringWriter();
-                client.addOption(AxisEngine.PROP_XML_DECL, 
-                    new Boolean("false"));
-                SerializationContext ctx = new SerializationContext(writer,
-                                                  client.getMessageContext());
-                body.output(ctx);
-                System.out.println(writer.toString());
-            }
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 }
