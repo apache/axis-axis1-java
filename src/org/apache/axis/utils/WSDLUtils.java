@@ -84,6 +84,7 @@ public class WSDLUtils {
     {
         TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
         String name = cls.getName();
+        name = name.substring(name.lastIndexOf('.') + 1);
         String serviceName = msgContext.getTargetService();
         if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
             serviceName = "";
