@@ -133,7 +133,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
         } catch (Exception e) {
             throw new JAXRPCException(
                 Messages.getMessage("CantGetSerializer", 
-                                     serClass.getName()),
+                                    serClass.getName()),
                 e);
         }
         return serializer;
@@ -158,14 +158,16 @@ public abstract class BaseSerializerFactory extends BaseFactory
         }
         return null;
     }
+
+
+    private static final Class[] CLASS_QNAME_CLASS = new Class[] { Class.class, QName.class };
     
-   /**
-    * return constructor for class if any
-    */ 
+    /**
+     * return constructor for class if any
+     */ 
     private Constructor getConstructor(Class clazz) {
         try {
-           return clazz.getConstructor(
-                   new Class[] {Class.class, QName.class});
+            return clazz.getConstructor(CLASS_QNAME_CLASS);
         } catch (NoSuchMethodException e) {}
         return null;
     }
@@ -180,10 +182,10 @@ public abstract class BaseSerializerFactory extends BaseFactory
                 try {
                     return (Serializer) 
                         getSerializer.invoke(
-                                             null,
-                                             new Object[] {mechanismType, 
-                                                           javaType, 
-                                                           xmlType});
+                            null,
+                            new Object[] {mechanismType, 
+                                          javaType, 
+                                          xmlType});
                 } catch (IllegalAccessException e) {
                 } catch (InvocationTargetException e) {}
             }
@@ -239,9 +241,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
         SerializerFactory sf = null;
         try {
             Method method = 
-                factory.getMethod(
-                    "create",
-                    new Class[] {Class.class, QName.class});
+                factory.getMethod("create", CLASS_QNAME_CLASS);
             sf = (SerializerFactory) 
                 method.invoke(null, 
                               new Object[] {javaType, xmlType});
@@ -252,8 +252,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
         if (sf == null) {
             try {
                 Constructor constructor =  
-                    factory.getConstructor(
-                        new Class[] {Class.class, QName.class});
+                    factory.getConstructor(CLASS_QNAME_CLASS);
                 sf = (SerializerFactory) 
                     constructor.newInstance(
                         new Object[] {javaType, xmlType});

@@ -153,13 +153,14 @@ public abstract class BaseDeserializerFactory extends BaseFactory
         return null;
     }
 
+    private static final Class[] CLASS_QNAME_CLASS = new Class[] {Class.class, QName.class};
+    
     /**
      * return constructor for class if any
      */ 
      private Constructor getConstructor(Class clazz) {
         try {
-           return clazz.getConstructor(
-                   new Class[] {Class.class, QName.class});
+            return clazz.getConstructor(CLASS_QNAME_CLASS);
         } catch (NoSuchMethodException e) {}
         return null;
      }
@@ -212,9 +213,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
         DeserializerFactory df = null;
         try {
             Method method = 
-                factory.getMethod(
-                    "create", 
-                    new Class[] {Class.class, QName.class});
+                factory.getMethod("create", CLASS_QNAME_CLASS);
             df = (DeserializerFactory) 
                 method.invoke(null, 
                               new Object[] {javaType, xmlType});
@@ -225,8 +224,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
         if (df == null) {
             try {
                 Constructor constructor =  
-                    factory.getConstructor(
-                        new Class[] {Class.class, QName.class});
+                    factory.getConstructor(CLASS_QNAME_CLASS);
                 df = (DeserializerFactory) 
                     constructor.newInstance(
                         new Object[] {javaType, xmlType});
