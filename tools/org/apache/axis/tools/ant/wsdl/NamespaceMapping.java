@@ -68,6 +68,7 @@ import java.io.IOException;
 
 /**
  * Used for nested package definitions.
+ * The file format used for storing mappings is a list of package=namespace
  */
 public class NamespaceMapping implements Mapper {
 
@@ -101,7 +102,7 @@ public class NamespaceMapping implements Mapper {
     /**
      * name of a property file that contains mappings in
      * package=namespace format
-     * @param file
+     * @param file file to load
      */
     public void setFile(File file) {
         mappingFile = file;
@@ -113,14 +114,21 @@ public class NamespaceMapping implements Mapper {
      * @param map map to assign to
      * @param packName package name
      * @param nspace namespace
+     * @param packageIsKey if the package is to be the key for the map
      */
     protected void map(ProjectComponent owner,
                        HashMap map,
                        String packName,
-                       String nspace) {
+                       String nspace,
+                       boolean packageIsKey) {
         owner.log("mapping "+nspace+" to "+packName, Project.MSG_VERBOSE);
-        map.put(nspace, packName);
+        if(packageIsKey) {
+            map.put(packName,nspace);
+        } else {
+            map.put(nspace, packName);
+        }
     }
+
     /**
      * validate the option set
      */
@@ -144,15 +152,16 @@ public class NamespaceMapping implements Mapper {
      * Load a mapping file and save it to the map
      * @param owner owner component
      * @param map target map file
+     * @param packageIsKey if the package is to be the key for the map
      * @throws BuildException if an IOException needed swallowing
      */
-    protected void mapFile(ProjectComponent owner, HashMap map) throws BuildException {
+    protected void mapFile(ProjectComponent owner, HashMap map, boolean packageIsKey) throws BuildException {
         Properties props = loadMappingPropertiesFile();
         Enumeration keys = props.keys();
         while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            String uri = props.getProperty(key);
-            map(owner, map, key, uri);
+            String packageName = (String) keys.nextElement();
+            String namespace = props.getProperty(packageName);
+            map(owner, map, packageName, namespace, packageIsKey);
         }
     }
 
@@ -185,14 +194,15 @@ public class NamespaceMapping implements Mapper {
      * execute the mapping
      * @param owner owner object
      * @param map map to map to
+     * @param packageIsKey if the package is to be the key for the map
      * @throws BuildException in case of emergency
      */
-    public void execute(ProjectComponent owner, HashMap map) throws BuildException {
+    public void execute(ProjectComponent owner, HashMap map, boolean packageIsKey) throws BuildException {
         validate();
         if (mappingFile != null) {
-            mapFile(owner, map);
+            mapFile(owner, map,packageIsKey);
         } else {
-            map(owner, map, packageName, namespace);
+            map(owner, map, packageName, namespace, packageIsKey);
         }
     }
 

@@ -79,7 +79,7 @@ import java.io.File;
  * 4. check in the changes in docs/ant
  */
 /**
- * Generates a WSDL description from a Java class. 
+ * Generates a WSDL description from a Java class.
  * @author Rich Scheuerle (scheu@us.ibm.com)
  * @author Steve Loughran
  * @ant.task category="axis" name="axis-java2wsdl"
@@ -166,8 +166,8 @@ public class Java2WsdlAntTask extends Task
             validate();
             // Instantiate the emitter
             Emitter emitter = new Emitter();
-            //do the mappings
-            mappings.execute(this,namespaceMap);
+            //do the mappings, packages are the key for this map
+            mappings.execute(this,namespaceMap, true);
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
@@ -426,14 +426,14 @@ public class Java2WsdlAntTask extends Task
     public void setMethods(String methods) {
         this.methods = methods;
     }
-    
+
     /**
      * Set the use option
      */
     public void setUse(String use) {
         this.use = use;
     }
-    
+
     /**
      * the name of the service element.
      * If not specified, the service element is the <tt>portTypeName</tt>Service.

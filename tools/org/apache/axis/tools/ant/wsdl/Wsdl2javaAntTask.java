@@ -143,8 +143,8 @@ public class Wsdl2javaAntTask extends Task
     /**
      * validation code
      * @throws  BuildException  if validation failed
-     */ 
-    protected void validate() 
+     */
+    protected void validate()
             throws BuildException {
         if(url==null || url.length()==0) {
             throw new BuildException("No url specified");
@@ -156,9 +156,9 @@ public class Wsdl2javaAntTask extends Task
         if(!outdir.isDirectory() || !outdir.exists()) {
             throw new BuildException("output directory is not valid");
         }
-            
+
     }
-    
+
     /**
      * trace out parameters
      * @param logLevel to log at
@@ -189,7 +189,7 @@ public class Wsdl2javaAntTask extends Task
     /**
      * The method executing the task
      * @throws  BuildException  if validation or execution failed
-     */ 
+     */
     public void execute() throws BuildException {
         //before we get any further, if the user didnt spec a namespace mapping
         //file, we load in the default
@@ -212,17 +212,17 @@ public class Wsdl2javaAntTask extends Task
             } else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
             }
-            
-            //do the mappings
-            mappings.execute(this, namespaceMap);
+
+            //do the mappings, with namespaces mapped as the key
+            mappings.execute(this, namespaceMap, false);
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
             emitter.setTestCaseWanted(testCase);
-            emitter.setHelperWanted(helperGen);    
+            emitter.setHelperWanted(helperGen);
             if (factory != null) {
                 emitter.setFactory(factory);
-            }   
+            }
             emitter.setImports(!noImports);
             emitter.setAllWanted(all);
             emitter.setOutputDir(output);
@@ -266,7 +266,7 @@ public class Wsdl2javaAntTask extends Task
                 traceParams(Project.MSG_INFO);
                 t.printStackTrace();
             }
-            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for "+url,t); 
+            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for "+url,t);
         }
 
     }
@@ -275,7 +275,7 @@ public class Wsdl2javaAntTask extends Task
      *  flag for verbose output; default=false
      *
      *@param  verbose  The new verbose value
-     */   
+     */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
@@ -284,10 +284,10 @@ public class Wsdl2javaAntTask extends Task
      *  flag for debug output; default=false
      *
      *@param  debug  The new debug value
-     */   
+     */
     public void setDebug(boolean debug) {
         this.debug = debug;
-    } 
+    }
 
     /**
      *  emit server-side bindings for web service; default=false
@@ -297,8 +297,8 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
-     * deploy skeleton (true) or implementation (false) in deploy.wsdd. 
-     * Default is false.  Assumes server-side="true".     
+     * deploy skeleton (true) or implementation (false) in deploy.wsdd.
+     * Default is false.  Assumes server-side="true".
      */
     public void setSkeletonDeploy(boolean parameter) {
         this.skeletonDeploy = parameter;
@@ -321,7 +321,7 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
-     * name of the Java2WSDLFactory class for 
+     * name of the Java2WSDLFactory class for
      * extending WSDL generation functions
      */
     public void setFactory(String parameter) {
@@ -337,7 +337,7 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
-     * output directory for emitted files 
+     * output directory for emitted files
      */
     public void setOutput(File parameter) throws BuildException {
         try {
@@ -348,8 +348,8 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
-     * add scope to deploy.xml: "Application", "Request", "Session" 
-     * optional; 
+     * add scope to deploy.xml: "Application", "Request", "Session"
+     * optional;
      */
     public void setDeployScope(String scope) {
         this.deployScope = scope;
