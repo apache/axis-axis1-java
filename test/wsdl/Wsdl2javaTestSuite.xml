@@ -333,6 +333,13 @@
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
 
+    <!-- This is (OK, "will be") a comprehensive test of XML schema types -->
+    <wsdl2java url="test/wsdl/types/ComprehensiveTypes.wsdl"
+               output="build/work"
+               skeleton="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!--
     <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
                output="build/work"

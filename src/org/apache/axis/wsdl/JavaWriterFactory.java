@@ -305,17 +305,21 @@ public class JavaWriterFactory implements WriterFactory {
             }
             else
                 needComma = true;
+
+            String javifiedName = Utils.xmlNameToJava(p.name);
             if (p.mode == Parameter.IN) {
-                signature = signature + p.type.getName() + " " + p.name;
-                skelSig = skelSig + p.type.getName() + " " + p.name;
+                signature = signature + p.type.getName() + " " + javifiedName;
+                skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else if (p.mode == Parameter.INOUT) {
-                signature = signature + Utils.holder(p.type) + " " + p.name;
-                skelSig = skelSig + p.type.getName() + " " + p.name;
+                signature = signature + Utils.holder(p.type) + " " +
+                        javifiedName;
+                skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else// (p.mode == Parameter.OUT)
             {
-                signature = signature + Utils.holder(p.type) + " " + p.name;
+                signature = signature + Utils.holder(p.type) + " " +
+                        javifiedName;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
