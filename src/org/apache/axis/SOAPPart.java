@@ -355,6 +355,11 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
           currentMessageAsEnvelope= (org.apache.axis.message.SOAPEnvelope )currMsg;
     }
 
+    
+    public int getCurrentForm() {
+        return currentForm;
+    }
+    
     /**
      * Get the contents of this Part (not the headers!), as a byte
      * array.  This will force buffering of the message.
@@ -623,7 +628,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
-            String encoding = XMLUtils.getEncoding(msgObject, null);
+            String encoding = XMLUtils.getEncoding(msgObject, null, null);
             if (encoding != null) {
                 is.setEncoding(encoding);
             }
@@ -1209,6 +1214,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     public boolean hasAttributes(){
         return document.hasAttributes();
+    }
+    
+    public boolean isBodyStream() {
+        return (currentForm == SOAPPart.FORM_INPUTSTREAM || currentForm == SOAPPart.FORM_BODYINSTREAM);        
     }
 }
 
