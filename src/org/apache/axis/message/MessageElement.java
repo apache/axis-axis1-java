@@ -1040,5 +1040,4 @@ public class MessageElement implements SOAPElement, Serializable
     // setEncodingStyle implemented above
 
     // getEncodingStyle() implemented above
-
 }

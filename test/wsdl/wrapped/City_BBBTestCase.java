@@ -76,5 +76,52 @@ public class City_BBBTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
+
+    public void test4CityBBBPortGetAttractions() {
+        City_BBBPortType binding;
+        try {
+            binding = new City_BBBLocator().getCity_BBBPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            // Invoke getAttractions with one input
+            String[] attName = new String[] {"Christmas", null};
+            Attraction[] value = binding.getAttractions(attName);
+            assertEquals("Expected returned Attraction length of 2", value.length, 2);
+            assertEquals("OID value was wrong for first attraction", value[0].get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
+            assertEquals("Attracton[1] should be null", value[1], null);
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+    public void test5CityBBBPortGetAttractions() {
+        City_BBBPortType binding;
+        try {
+            binding = new City_BBBLocator().getCity_BBBPort();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            // Invoke getAttractions with one input
+            String[] attName = new String[] {"Christmas", ""};
+            Attraction[] value = binding.getAttractions(attName);
+            assertEquals("Expected returned Attraction length of 2", value.length, 2);
+            assertEquals("OID value was wrong for first attraction", value[0].get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
+            assertEquals("Attracton[1] should be null", value[1], null);
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
 }
 

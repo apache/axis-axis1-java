@@ -14,6 +14,13 @@ public class City_BBBBindingImpl implements City_BBBPortType {
     public static final String OID_STRING = "Attraction@cityCF::1028:1028";
 
     public Attraction getAttraction(String attname) throws java.rmi.RemoteException {
+        // The only acceptable attNames are Christmas and Xmas
+        // Apparently no one ones to go to New Orleans for Mardi Gras. :-)
+        if (attname == null ||
+            !(attname.equals("Christmas") ||
+              attname.equals("Xmas"))) {
+            return null;
+        }
         Attraction attraction = new Attraction();
         attraction.set_OID(OID_STRING);
         attraction.setFacts("New Orleans at Christmastime is a city with the best food in the world, the best music" +

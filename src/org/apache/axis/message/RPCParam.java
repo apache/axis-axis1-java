@@ -65,7 +65,8 @@ import org.apache.commons.logging.Log;
 import javax.xml.namespace.QName;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /** An RPC parameter
  *
@@ -80,17 +81,18 @@ public class RPCParam
     RPCElement myCall;
     
     private QName qname;
-    public Object value;
+    private Object value = null;
+    private int countSetCalls = 0; // counts number of calls to set
 
     private ParameterDesc paramDesc;
     private boolean wantXSIType = true;
 
-    private static Field valueField;
+    private static Method valueSetMethod;
     static {
         Class cls = RPCParam.class;
         try {
-            valueField = cls.getField("value");
-        } catch (NoSuchFieldException e) {
+            valueSetMethod = cls.getMethod("set", new Class[] {Object.class});
+        } catch (NoSuchMethodException e) {
             log.error(JavaUtils.getMessage("noValue00", "" + e));
             System.exit(-1);
         }
@@ -130,7 +132,34 @@ public class RPCParam
     {
         this.value = value;
     }
-    
+
+    /**
+     * This set method is registered during deserialization
+     * to set the deserialized value.
+     * If the method is called multiple times, the 
+     * value is automatically changed into a container to 
+     * hold all of the values.
+     * @param newValue is the deserialized object
+     */
+    public void set(Object newValue) {
+        countSetCalls++;
+        // If this is the first call,
+        // simply set the value.
+        if (countSetCalls==1) {
+            this.value = newValue;
+            return;
+        }
+        // If this is the second call, create an
+        // ArrayList to hold all the values
+        else if (countSetCalls==2) {
+            ArrayList list = new ArrayList();
+            list.add(this.value);
+            this.value = list;
+        } 
+        // Add the new value to the list
+        ((ArrayList) this.value).add(newValue);
+    }
+
     public String getName()
     {
         return this.qname.getLocalPart();
@@ -141,9 +170,9 @@ public class RPCParam
         return this.qname;
     }
     
-    public static Field getValueField()
+    public static Method getValueSetMethod()
     {
-        return valueField;
+        return valueSetMethod;
     }
 
     public ParameterDesc getParamDesc() {
