@@ -106,7 +106,7 @@ public class Deserializer extends SOAPHandler
     //  Reflection-based insertion of values into target objects
     //  once deserialization is complete.
     //
-    interface Target {
+    public interface Target {
         public void set(Object value) throws SAXException;
 
     }
