@@ -169,7 +169,8 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        log.info(JavaUtils.getMessage("start00", "SimpleAxisServer"));
+        log.info(JavaUtils.getMessage("start00", "SimpleAxisServer", 
+                  new Integer(getServerSocket().getLocalPort()).toString()));
 
         // create an Axis server
         AxisServer engine = getAxisServer();
