@@ -89,7 +89,7 @@ public class Main {
         // Test for simple tree
         int rc = remoteTest.testSimpleTree(holder);
         if (rc == 0) {
-            System.err.println("Passed testSimpleTree 1");
+            // System.err.println("Passed testSimpleTree 1");
         } else {
             System.err.println("Failed testSimpleTree 1");
             throw new Exception("Failed testSimpleTree 1 with "+rc);
@@ -98,7 +98,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testSimpleTree(holder);
         if (rc == 0) {
-            System.err.println("Passed testSimpleTree 2");
+            // System.err.println("Passed testSimpleTree 2");
         } else {
             System.err.println("Failed testSimpleTree 2");
             throw new Exception("Failed testSimpleTree 2 with "+rc);
@@ -115,7 +115,7 @@ public class Main {
         // Test for a diamond
         rc = remoteTest.testDiamond(holder);
         if (rc == 0) {
-            System.err.println("Passed testDiamond 1");
+            // System.err.println("Passed testDiamond 1");
         } else {
             System.err.println("Failed testDiamond 1");
             throw new Exception("Failed testDiamond 1 with "+rc);
@@ -124,7 +124,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testDiamond(holder);
         if (rc == 0) {
-            System.err.println("Passed testDiamond 2");
+            // System.err.println("Passed testDiamond 2");
         } else {
             System.err.println("Failed testDiamond 2");
             throw new Exception("Failed testDiamond 2 with "+rc);
@@ -140,7 +140,7 @@ public class Main {
         // Test for loops
         rc = remoteTest.testLoop(holder);
         if (rc == 0) {
-            System.err.println("Passed testLoop 1");
+            // System.err.println("Passed testLoop 1");
         } else {
             System.err.println("Failed testLoop 1");
             throw new Exception("Failed testLoop 1 with "+rc);
@@ -149,7 +149,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testLoop(holder);
         if (rc == 0) {
-            System.err.println("Passed testLoop 2");
+            // System.err.println("Passed testLoop 2");
         } else {
             System.err.println("Failed testLoop 2");
             throw new Exception("Failed testLoop 2 with "+rc);
@@ -164,7 +164,7 @@ public class Main {
         // Test
         rc = remoteTest.testSameArgs(holder1, holder2);
         if (rc == 0) {
-            System.err.println("Passed testSameArgs 1");
+            // System.err.println("Passed testSameArgs 1");
         } else {
             System.err.println("Failed testSameArgs 1");
             throw new Exception("Failed testSameArgs 1 with "+rc);
@@ -173,7 +173,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testSameArgs(holder1,holder2);
         if (rc == 0) {
-            System.err.println("Passed testSameArgs 2");
+            // System.err.println("Passed testSameArgs 2");
         } else {
             System.err.println("Failed testSameArgs 2");
             throw new Exception("Failed testSameArgs 2 with "+rc);
@@ -192,7 +192,7 @@ public class Main {
         // Test
         rc = remoteTest.testArgsRefSameNode(holder1, holder2);
         if (rc == 0) {
-            System.err.println("Passed testArgsRefSameNode 1");
+            // System.err.println("Passed testArgsRefSameNode 1");
         } else {
             System.err.println("Failed testArgsRefSameNode 1");
             throw new Exception("Failed testArgsRefSameNode 1 with "+rc);
@@ -201,7 +201,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testArgsRefSameNode(holder1,holder2);
         if (rc == 0) {
-            System.err.println("Passed testArgsRefSameNode 2");
+            // System.err.println("Passed testArgsRefSameNode 2");
         } else {
             System.err.println("Failed testArgsRefSameNode 2");
             throw new Exception("Failed testArgsRefSameNode 2 with "+rc);
@@ -218,7 +218,7 @@ public class Main {
         // Test
         rc = remoteTest.testArgsRefEachOther(holder1, holder2);
         if (rc == 0) {
-            System.err.println("Passed testArgsRefEachOther 1");
+            // System.err.println("Passed testArgsRefEachOther 1");
         } else {
             System.err.println("Failed testArgsRefEachOther 1");
             throw new Exception("Failed testArgsRefEachOther 1 with "+rc);
@@ -227,7 +227,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testArgsRefEachOther(holder1,holder2);
         if (rc == 0) {
-            System.err.println("Passed testArgsRefEachOther 2");
+            // System.err.println("Passed testArgsRefEachOther 2");
         } else {
             System.err.println("Failed testArgsRefEachOther 2");
             throw new Exception("Failed testArgsRefEachOther 2 with "+rc);
@@ -243,7 +243,7 @@ public class Main {
         // Self-Ref Test
         rc = remoteTest.testSelfRef(holder);
         if (rc == 0) {
-            System.err.println("Passed testSelfRef 1");
+            // System.err.println("Passed testSelfRef 1");
         } else {
             System.err.println("Failed testSelfRef 1");
             throw new Exception("Failed testSelfRef 1 with "+rc);
@@ -252,7 +252,7 @@ public class Main {
         // invoke the test again!
         rc = remoteTest.testSelfRef(holder);
         if (rc == 0) {
-            System.err.println("Passed testSelfRef 2");
+            // System.err.println("Passed testSelfRef 2");
         } else {
             System.err.println("Failed testSelfRef 2");
             throw new Exception("Failed testSelfRef 2 with "+rc);
