@@ -523,6 +523,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             uniqueNum = javifyTypeEntryName(symbolTable, base, anonQNames, uniqueNum);
 
             if (Utils.getEnumerationBaseAndValues(te.getNode(), symbolTable) == null
+                    &&SchemaUtils.getComplexElementExtensionBase(te.getNode(), symbolTable) == null
                     &&SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
                 if(!SchemaUtils.isSimpleTypeWithUnion(te.getNode())) {
                     if (base.isSimpleType()) {
