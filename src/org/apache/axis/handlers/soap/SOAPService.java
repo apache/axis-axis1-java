@@ -200,11 +200,11 @@ public class SOAPService extends SimpleTargetedChain
         
         // This needs to be set to the merged list of service-specific and
         // enigne-wide actors we should be acting as.
-        ArrayList actors = null;
+        ArrayList actors = msgContext.getAxisEngine().getActorURIs();
         
         // 1. Check mustUnderstands
         SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
-        Vector headers = env.getHeaders();
+        Vector headers = env.getHeadersByActor(actors);
         Vector misunderstoodHeaders = null;
         Enumeration enum = headers.elements();
         while (enum.hasMoreElements()) {
