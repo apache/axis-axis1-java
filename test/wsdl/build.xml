@@ -48,7 +48,7 @@ Copyright:
 <target name="compile" depends="copy">
   <echo message="Compiling test.wsdl"/>
 <!--
-  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

@@ -69,7 +69,7 @@ Copyright:
       </fileset>
     </copy>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/wrapped/*.java" />

@@ -56,7 +56,7 @@ Copyright:
     </wsdl2java>
 
     <!-- Compile the echo sample generated java files -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="samples/addr/**.java" />
       <include name="samples/jaxrpc/address/**.java" />
@@ -83,7 +83,7 @@ Copyright:
     </copy>
 
     <!-- Compile the echo sample generated java files -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="samples/jaxrpc/**/*.java" />
       <include name="samples/jaxrpc/*.java" />

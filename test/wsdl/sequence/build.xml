@@ -74,7 +74,7 @@ Copyright:
     </copy>
 
     <!-- Compile Java -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="test/wsdl/sequence/**.java" />
     </javac>

@@ -112,6 +112,7 @@ Copyright:
     <javac destdir="${test.classes.dir}"
            debug="${build.debug}"
            includeAntRuntime="false"
+           fork="${javac.fork}"
            srcdir="${axis.home}/${componentName}/src">
       <classpath refid="test.compile.classpath"/>
     </javac>
