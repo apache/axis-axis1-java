@@ -278,8 +278,8 @@ public class WSDDService
                 if (mapping.getEncodingStyle() == null) {
                     namespace = Constants.URI_CURRENT_SOAP_ENC;
                 }
-                tm.setSupportedEncodings(new String[] {namespace});
-                tmr.register(tm, new String[] {namespace});
+                tm.setSupportedNamespaces(new String[] {namespace});
+                tmr.register(namespace, tm);
             }
             
             SerializerFactory   ser   = null;

@@ -36,7 +36,7 @@
   </message>
 
   <message name="testSequenceResponse">
-    <part name="rc" type="xsd:int"/>
+    <part name="rc" type="soapenc:int"/>
   </message>
 
   <!-- port type declns -->

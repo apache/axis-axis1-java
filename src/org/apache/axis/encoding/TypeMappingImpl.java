@@ -80,9 +80,10 @@ import java.util.HashMap;
  * information for each of these will be accessed via the TypeMapping.
  *
  * Because every web service uses the soap, schema, wsdl primitives, we could 
- * pre-populate the TypeMapping with these standard tuples.  Instead, if requested
- * namespace/class matches is not found in the TypeMapping but matches one these
- * known primitives, the request is delegated to the Default TypeMapping or another TypeMapping
+ * pre-populate the TypeMapping with these standard tuples.  Instead, 
+ * if the namespace/class matches is not found in the TypeMapping 
+ * the request is delegated to the 
+ * Default TypeMapping or another TypeMapping
  * 
  */
 public class TypeMappingImpl implements TypeMapping { 
@@ -141,6 +142,13 @@ public class TypeMappingImpl implements TypeMapping {
         this.delegate = delegate;
     }
 
+    /**
+     * getDelegate gets the new Delegate TypeMapping
+     */
+    public TypeMapping getDelegate() {
+        return delegate;
+    }
+
     /********* JAX-RPC Compliant Method Definitions *****************/
     
     /**
@@ -149,7 +157,7 @@ public class TypeMappingImpl implements TypeMapping {
      * @return  String[] of namespace URIs for the supported encoding 
      * styles and XML schema namespaces.
      */
-    public String[] getSupportedEncodings() {
+    public String[] getSupportedNamespaces() {
         return (String[]) namespaces.toArray();
     }
 
@@ -160,13 +168,40 @@ public class TypeMappingImpl implements TypeMapping {
      *
      * @param namespaceURIs String[] of namespace URI's                
      */
-    public void setSupportedEncodings(String[] namespaceURIs) {
+    public void setSupportedNamespaces(String[] namespaceURIs) {
         namespaces.clear();
         for (int i =0; i< namespaceURIs.length; i++) {
             if (!namespaces.contains(namespaceURIs[i])) {
                 namespaces.add(namespaceURIs[i]);
             }
         }
+    }
+
+    /**
+     * isRegistered returns true if the [javaType, xmlType]
+     * pair is registered.
+     * @param javaType - Class of the Java type
+     * @param xmlType - Qualified name of the XML data type
+     * @return: false if either javaType or xmlType is null
+     * or if the pair is not specifically registered.
+     * For example if called with (java.lang.String[], soapenc:Array)
+     * this routine will return false because this pair is
+     * probably not specifically registered.
+     * However if getSerializer is called with the same pair,
+     * the default TypeMapping will use extra logic to find
+     * a serializer (i.e. array serializer)
+     */
+    public boolean isRegistered(Class javaType, QName xmlType) {
+        if (javaType == null || xmlType == null) {
+            return false;
+        }
+        if (pair2SF.keySet().contains(new Pair(javaType, xmlType))) {
+            return true;
+        }
+        if (delegate != null) {
+            return delegate.isRegistered(javaType, xmlType);
+        }
+        return false;
     }
     
     /**
@@ -182,7 +217,8 @@ public class TypeMappingImpl implements TypeMapping {
      */
     public void register(Class javaType, QName xmlType, 
                          javax.xml.rpc.encoding.SerializerFactory sf,
-                         javax.xml.rpc.encoding.DeserializerFactory dsf) throws JAXRPCException {        
+                         javax.xml.rpc.encoding.DeserializerFactory dsf) 
+        throws JAXRPCException {        
 
         //if (xmlType.getNamespaceURI() == null ||
         //    xmlType.getNamespaceURI().equals("") ||
@@ -218,9 +254,11 @@ public class TypeMappingImpl implements TypeMapping {
      *
      * @throws JAXRPCException - If there is no registered SerializerFactory 
      * for this pair of Java type and XML data type 
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * java.lang.IllegalArgumentException -
+     * If invalid or unsupported XML/Java type is specified
      */
-    public javax.xml.rpc.encoding.SerializerFactory getSerializer(Class javaType, QName xmlType)
+    public javax.xml.rpc.encoding.SerializerFactory 
+        getSerializer(Class javaType, QName xmlType)
         throws JAXRPCException
     {
         SerializerFactory sf = null;
@@ -245,11 +283,13 @@ public class TypeMappingImpl implements TypeMapping {
             }
         }
         if (sf == null && delegate != null) {
-            sf = (SerializerFactory) delegate.getSerializer(javaType, xmlType);
+            sf = (SerializerFactory) 
+                delegate.getSerializer(javaType, xmlType);
         }
         return sf;
     }
-    public javax.xml.rpc.encoding.SerializerFactory getSerializer(Class javaType) 
+    public javax.xml.rpc.encoding.SerializerFactory 
+        getSerializer(Class javaType) 
         throws JAXRPCException 
     {
         return getSerializer(javaType, null);
@@ -266,9 +306,11 @@ public class TypeMappingImpl implements TypeMapping {
      *
      * @throws JAXRPCException - If there is no registered DeserializerFactory
      * for this pair of Java type and  XML data type 
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * java.lang.IllegalArgumentException - 
+     * If invalid or unsupported XML/Java type is specified
      */
-    public javax.xml.rpc.encoding.DeserializerFactory getDeserializer(Class javaType, QName xmlType)
+    public javax.xml.rpc.encoding.DeserializerFactory
+        getDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         DeserializerFactory df = null;
         Pair pair = new Pair(javaType, xmlType);
@@ -279,11 +321,13 @@ public class TypeMappingImpl implements TypeMapping {
             df = (DeserializerFactory) pair2DF.get(pair);
         } 
         if (df == null && delegate != null) {
-            df = (DeserializerFactory) delegate.getDeserializer(javaType, xmlType);
+            df = (DeserializerFactory) 
+                delegate.getDeserializer(javaType, xmlType);
         }
         return df;
     }
-    public javax.xml.rpc.encoding.DeserializerFactory getDeserializer(QName xmlType)
+    public javax.xml.rpc.encoding.DeserializerFactory 
+        getDeserializer(QName xmlType)
         throws JAXRPCException {
         return getDeserializer(null, xmlType);
     }
@@ -295,8 +339,10 @@ public class TypeMappingImpl implements TypeMapping {
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error in removing the registered SerializerFactory 
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * @throws JAXRPCException - If there is error in 
+     * removing the registered SerializerFactory 
+     * java.lang.IllegalArgumentException - 
+     * If invalid or unsupported XML/Java type is specified
      */
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
@@ -311,8 +357,10 @@ public class TypeMappingImpl implements TypeMapping {
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error in removing the registered DeserializerFactory
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * @throws JAXRPCException - If there is error in 
+     * removing the registered DeserializerFactory
+     * java.lang.IllegalArgumentException - 
+     * If invalid or unsupported XML/Java type is specified
      */
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {

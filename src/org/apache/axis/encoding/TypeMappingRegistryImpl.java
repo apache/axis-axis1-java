@@ -72,18 +72,114 @@ import java.util.HashMap;
  * @author Sam Ruby (rubys@us.ibm.com)
  * Re-written for JAX-RPC Compliance by
  * @author Rich Scheuerle (scheu@us.ibm.com
+ *
+ * The TypeMappingRegistry keeps track of the individual TypeMappings.
+ * 
+ * The TypeMappingRegistry for axis contains a default type mapping
+ * that is set for either SOAP 1.1 or SOAP 1.2
+ * The default type mapping is a singleton used for the entire
+ * runtime and should not have anything new registered in it.
+ *
+ * Instead the new TypeMappings for the deploy and service are
+ * made in a separate TypeMapping which is identified by
+ * the soap encoding.  These new TypeMappings delegate back to 
+ * the default type mapping when information is not found.
+ *
+ * So logically we have:
+ *
+ *         TMR
+ *         | |  
+ *         | +---------------> DefaultTM 
+ *         |                      ^
+ *         |                      |
+ *         +----> TM --delegate---+
+ *
+ *
+ * But in the implementation, the TMR references
+ * "delegate" TypeMappings (TM') which then reference the actual TM's
+ *
+ * So the picture is really:
+ *         TMR
+ *         | |  
+ *         | +-----------TM'------> DefaultTM 
+ *         |              ^
+ *         |              |
+ *         +-TM'-> TM ----+
+ *
+ * This extra indirection is necessary because the user may want to 
+ * change the default type mapping.  In such cases, the TMR
+ * just needs to adjust the TM' for the DefaultTM, and all of the
+ * other TMs will properly delegate to the new one.  Here's the picture:
+ *
+ *         TMR
+ *         | |  
+ *         | +-----------TM'--+     DefaultTM 
+ *         |              ^   |
+ *         |              |   +---> New User Defined Default TM
+ *         +-TM'-> TM ----+
+ *
+ * The other reason that it is necessary is when a deploy
+ * has a TMR, and then TMR's are defined for the individual services
+ * in such cases the delegate() method is invoked on the service
+ * to delegate to the deploy TMR
+ *
+ *       Deploy TMR
+ *         | |  
+ *         | +-----------TM'------> DefaultTM 
+ *         |              ^
+ *         |              |
+ *         +-TM'-> TM ----+
+ *
+ *       Service TMR
+ *         | |  
+ *         | +-----------TM'------> DefaultTM 
+ *         |              ^
+ *         |              |
+ *         +-TM'-> TM ----+
+ *
+ *    ServiceTMR.delegate(DeployTMR)
+ *
+ *       Deploy TMR
+ *         | |  
+ *         | +------------TM'------> DefaultTM 
+ *         |              ^ ^ 
+ *         |              | |
+ *         +-TM'-> TM ----+ |
+ *           ^              |
+ *   +-------+              |
+ *   |                      |
+ *   |   Service TMR        |
+ *   |     | |              |
+ *   |     | +----------TM'-+               
+ *   |     |              
+ *   |     |              
+ *   |     +-TM'-> TM +
+ *   |                |
+ *   +----------------+
+ *
+ * So now the service uses the DefaultTM of the Deploy TMR, and
+ * the Service TM properly delegates to the deploy's TM.  And
+ * if either the deploy defaultTM or TMs change, the links are not broken.
  */
 public class TypeMappingRegistryImpl implements TypeMappingRegistry { 
     
-    private HashMap mapTM;          // Type Mappings keyed by the Web Service Namespace URI
-    private TypeMapping defaultTM;  // Default Type Mapping 
-    
+    private HashMap mapTM;          // Type Mappings keyed with Namespace URI
+    private TypeMapping defaultDelTM;  // Delegate to default Type Mapping 
+
+
+
     /**
      * Construct TypeMappingRegistry
      */
     public TypeMappingRegistryImpl() {
         mapTM = new HashMap();
-        defaultTM = DefaultTypeMappingImpl.create();
+        if (Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP_ENC)) {
+            defaultDelTM = 
+                new TypeMappingImpl(DefaultTypeMappingImpl.create()); 
+        } else {
+            defaultDelTM = 
+                new TypeMappingImpl(DefaultSOAP12TypeMappingImpl.create()); 
+        }
     }
     
     /**
@@ -93,31 +189,39 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * their corresponding types in the secondary TMR.
      */
     public void delegate(TypeMappingRegistry secondaryTMR) {
-        if (secondaryTMR != null && secondaryTMR != this) {
-            if (defaultTM != null) {
-                defaultTM = (TypeMapping) secondaryTMR.getDefaultTypeMapping();
-            }
+
+        if (secondaryTMR == null || secondaryTMR == this) {
+            return;
         }
-        String[]  keys = secondaryTMR.getSupportedNamespaces();
+        String[]  keys = secondaryTMR.getRegisteredNamespaces();
         if (keys != null) {
             for(int i=0; i < keys.length; i++) {
                 try {
                     String nsURI = keys[i];
-                    TypeMapping tm = (TypeMapping) mapTM.get(nsURI);
-                    if (tm == null) {
+                    TypeMapping tm = (TypeMapping) getTypeMapping(nsURI);
+                    if (tm == null || tm == getDefaultTypeMapping() ) {
                         tm = (TypeMapping) createTypeMapping();
-                        tm.setSupportedEncodings(new String[] { nsURI });
-                        mapTM.put(nsURI, tm);
+                        tm.setSupportedNamespaces(new String[] { nsURI });
+                        register(nsURI, tm);
                     }
                     
                     if (tm != null) {
-                        TypeMapping del = (TypeMapping) secondaryTMR.getTypeMapping(nsURI);
+                        // Get the secondaryTMR's TM'
+                        TypeMapping del = (TypeMapping)
+                            ((TypeMappingRegistryImpl)
+                             secondaryTMR).mapTM.get(nsURI);
                         tm.setDelegate(del);
                     }
                     
                 } catch (Exception e) {
                 }
             }
+        }
+        // Change our defaultDelTM to delegate to the one in 
+        // the secondaryTMR
+        if (defaultDelTM != null) {
+            defaultDelTM.setDelegate(
+            ((TypeMappingRegistryImpl)secondaryTMR).defaultDelTM);
         }
         
     }            
@@ -130,25 +234,34 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * The method register adds a TypeMapping instance for a specific 
      * namespace                 
      *
+     * @param namespaceURI 
      * @param mapping - TypeMapping for specific namespaces
-     * @param namespaceURIs 
      *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
-     * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
+     * java.lang.IllegalArgumentException -
+     * if an invalid namespace URI is specified
      */
-    public void register(javax.xml.rpc.encoding.TypeMapping mapping, String[] namespaceURIs)
+    public void register(String namespaceURI,
+                         javax.xml.rpc.encoding.TypeMapping mapping)
         throws JAXRPCException {
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
             throw new IllegalArgumentException();
         } 
-        for (int i = 0; i < namespaceURIs.length; i++) {
-            if (namespaceURIs[i] == null) {
-                throw new java.lang.IllegalArgumentException();
-            }
-            mapTM.put(namespaceURIs[i], mapping);
-        }            
+        if (namespaceURI == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        // Get or create a TypeMappingDelegate and set it to 
+        // delegate to the new mapping.
+        TypeMappingDelegate del = (TypeMappingDelegate)
+            mapTM.get(namespaceURI);
+        if (del == null) {
+            del = new TypeMappingDelegate((TypeMapping) mapping);
+            mapTM.put(namespaceURI, del);
+        } else {
+            del.setDelegate((TypeMapping) mapping);
+        }
     }
     
     /**
@@ -157,27 +270,55 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      *
      * @param mapping - TypeMapping for specific type namespaces
      *
-     * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
+     * java.lang.IllegalArgumentException - 
+     * if an invalid namespace URI is specified
      */
     public void registerDefault(javax.xml.rpc.encoding.TypeMapping mapping) {
         if (mapping == null || 
-            !(mapping instanceof TypeMapping)) {
+            !(mapping instanceof TypeMapping) ||
+            // Don't allow this call after the delegate() method since
+            // the TMR's TypeMappings will be using the default type mapping
+            // of the secondary TMR.
+            defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
             throw new IllegalArgumentException();
         }
-        defaultTM = (TypeMapping) mapping;
+        defaultDelTM.setDelegate((TypeMapping) mapping);
     }
         
     /**
-     * Gets the TypeMapping for the namespace.  If not found, the default TypeMapping 
-     * is returned.
+     * Gets the TypeMapping for the namespace.  If not found, the default
+     * TypeMapping is returned.
      *
      * @param namespaceURI - The namespace URI of a Web Service
-     * @return The registered TypeMapping (which may be the default TypeMapping) or null.
+     * @return The registered TypeMapping 
+     * (which may be the default TypeMapping) or null.
      */
-    public javax.xml.rpc.encoding.TypeMapping getTypeMapping(String namespaceURI) {
-        TypeMapping tm = (TypeMapping) mapTM.get(namespaceURI);
+    public javax.xml.rpc.encoding.TypeMapping 
+        getTypeMapping(String namespaceURI) {
+        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
+        TypeMapping tm = null;
+        if (del != null) {
+            tm = del.getDelegate();
+        }
         if (tm == null) {
-            tm = defaultTM;
+            tm = (TypeMapping)getDefaultTypeMapping();
+        }
+        return tm;
+    }
+
+    /**
+     * Unregisters the TypeMapping for the namespace.
+     *
+     * @param namespaceURI - The namespace URI
+     * @return The registered TypeMapping .
+     */
+    public javax.xml.rpc.encoding.TypeMapping 
+        unregisterTypeMapping(String namespaceURI) {
+        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
+        TypeMapping tm = null;
+        if (del != null) {
+            tm = del.getDelegate();
+            del.setDelegate(null);
         }
         return tm;
     }
@@ -185,22 +326,30 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     /**
      * Removes the TypeMapping for the namespace.
      *
-     * @param namespaceURI - The namespace URI
-     * @return The registered TypeMapping .
+     * @param typeMapping- The type mapping   to remove
+     * @return true if found and removed
      */
-    public javax.xml.rpc.encoding.TypeMapping removeTypeMapping(String namespaceURI) {
-        TypeMapping tm = (TypeMapping) mapTM.remove(namespaceURI);
-        return tm;
+    public boolean removeTypeMapping(
+                                     javax.xml.rpc.encoding.TypeMapping mapping) {
+        String[] ns = getRegisteredNamespaces();
+        boolean rc = false;
+        for (int i=0; i < ns.length; i++) {
+            if (getTypeMapping(ns[i]) == mapping) {
+                rc = true;
+                unregisterTypeMapping(ns[i]);
+            }
+        }
+        return rc;
     }
 
-
     /**
-     * Creates a new empty TypeMapping object for the specified encoding style or XML schema namespace.
+     * Creates a new empty TypeMapping object for the specified
+     * encoding style or XML schema namespace.
      *
      * @return An empty generic TypeMapping object
      */
     public javax.xml.rpc.encoding.TypeMapping createTypeMapping() {
-        return new TypeMappingImpl(defaultTM);
+        return new TypeMappingImpl(defaultDelTM);
     }
         
 
@@ -209,7 +358,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      *
      * @return String[] containing names of all registered namespace URIs
      */
-    public String[] getSupportedNamespaces() {
+    public String[] getRegisteredNamespaces() {
         java.util.Set s = mapTM.keySet(); 
         if (s != null) { 
             String[] rc = new String[s.size()];
@@ -231,13 +380,15 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         mapTM.clear();
     }
 
-     /********* End JAX-RPC Compliant Method Definitions *****************/
-
     /**
      * Return the default TypeMapping
      * @return TypeMapping or null
      **/
     public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping() {
+        TypeMapping defaultTM = defaultDelTM;
+        while(defaultTM != null && defaultTM instanceof TypeMappingDelegate) {
+            defaultTM = defaultTM.getDelegate();
+        }
         return defaultTM;
     }
 

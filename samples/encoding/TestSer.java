@@ -58,7 +58,7 @@ public class TestSer
                 TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP_ENC);
                 if (tm == null) {
                     tm = (TypeMapping) reg.createTypeMapping();
-                    reg.register(tm, new String[] {Constants.URI_SOAP_ENC});
+                    reg.register(Constants.URI_CURRENT_SOAP_ENC, tm);
                 }
                 tm.register(Data.class, dataQName, new DataSerFactory(), new DataDeserFactory());
 

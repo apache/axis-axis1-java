@@ -1095,10 +1095,10 @@ public class Call implements javax.xml.rpc.Call {
         try {
             if (tm == null || tm == defaultTM ) {
                 tm = (TypeMapping) tmr.createTypeMapping();
-                tm.setSupportedEncodings(new String[] {Constants.URI_CURRENT_SOAP_ENC});
-                tmr.register(tm, new String[] {Constants.URI_CURRENT_SOAP_ENC});
+                tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+                tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
             }
-            if (!force && tm.getClassForQName(xmlType) != null) 
+            if (!force && tm.isRegistered(javaType, xmlType)) 
                 return;
 
             // Register the information

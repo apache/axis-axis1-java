@@ -91,6 +91,7 @@ import java.util.Vector;
  *
  * @author Russell Butek (butek@us.ibm.com)
  * @author Tom Jordahl (tjordahl@macromedia.com)
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter {
