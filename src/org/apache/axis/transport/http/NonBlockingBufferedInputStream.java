@@ -99,13 +99,13 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @return the byte read
      */
     private void refillBuffer() throws IOException {
-        if (remainingContent == 0 || in == null) return;
+        if (remainingContent <= 0 || in == null) return;
 
         // determine number of bytes to read
         numbytes = in.available();
-        if (numbytes <= 0) numbytes = 1;
         if (numbytes > remainingContent) numbytes=remainingContent;
         if (numbytes > buffer.length) numbytes=buffer.length;
+        if (numbytes <= 0) numbytes = 1;
 
         // actually attempt to read those bytes
         numbytes = in.read(buffer, 0, numbytes);
