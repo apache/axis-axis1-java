@@ -147,6 +147,13 @@ public class LocalSender extends BasicHandler {
             }
         }
 
+        // If we've been given an explicit "remote" service to invoke,
+        // use it. (Note that right now this overrides the setting above;
+        // is this the correct precedence?)
+        String remoteService = clientContext.getStrProp(LocalTransport.REMOTE_SERVICE);
+        if (remoteService != null)
+            serverContext.setTargetService(remoteService);
+
         // invoke the request
         try {
             targetServer.invoke(serverContext);

@@ -23,6 +23,7 @@ public class PackageTests extends TestCase {
         suite.addTestSuite(TestUndeployment.class);
         suite.addTestSuite(TestStructure.class);
         suite.addTestSuite(TestBadWSDD.class);
+        suite.addTestSuite(TestAdminService.class);
 
         return suite;
     }

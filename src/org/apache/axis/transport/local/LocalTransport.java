@@ -79,9 +79,13 @@ import org.apache.axis.server.AxisServer;
 public class LocalTransport extends Transport
 {
     public static final String LOCAL_SERVER = "LocalTransport.AxisServer";
-    
+    public static final String REMOTE_SERVICE = "LocalTransport.RemoteService";
+
     private AxisServer server;
-    
+
+    /** The name of a particular remote service to invoke.  */
+    private String remoteServiceName;
+
     /** No-arg constructor, which will use an AxisServer constructed
      * by the LocalSender (see LocalSender.java).
      * 
@@ -102,7 +106,18 @@ public class LocalTransport extends Transport
         transportName = "local";
         this.server = server;
     }
-    
+
+    /**
+     * Use this to indicate a particular "remote" service which should be
+     * invoked on the target AxisServer.  This can be used programatically
+     * in place of a service-specific URL.
+     *
+     * @param remoteServiceName the name of the remote service to invoke
+     */
+    public void setRemoteService(String remoteServiceName) {
+        this.remoteServiceName = remoteServiceName;
+    }
+
     /**
      * Set up any transport-specific derived properties in the message context.
      * @param context the context to set up
@@ -115,6 +130,8 @@ public class LocalTransport extends Transport
     {
         if (server != null)
             mc.setProperty(LOCAL_SERVER, server);
+        if (remoteServiceName != null)
+            mc.setProperty(REMOTE_SERVICE, remoteServiceName);
     }
 }
 
