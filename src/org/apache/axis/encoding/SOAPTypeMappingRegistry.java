@@ -78,6 +78,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
     public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName XSD_HEXBIN = new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary");
     public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
     public static final QName SOAP_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
 
@@ -191,6 +192,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     private DeserializerFactory factory = new BasicDeserializerFactory();
     private DeserializerFactory base64Ser = 
        new Base64Serializer.Base64DeserializerFactory();
+    private DeserializerFactory hexSer =
+      new HexSerializer.HexDeserializerFactory();
 
     /**
      * Alias common DeserializerFactories across the various popular schemas
@@ -249,6 +252,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Byte.TYPE, XSD_BYTE, se);
         addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
         addSerializer(byte[].class, XSD_BASE64, new Base64Serializer());
+//        addSerializer(byte[].class, XSD_HEXBIN, new HexSerializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
@@ -284,6 +288,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         // handle the various base64 QNames...
         addDeserializerFactory(SOAP_BASE64, byte[].class, base64Ser);
         addDeserializerFactory(XSD_BASE64, byte[].class, base64Ser);
+
+        // handle the hexBinary QName...
+        addDeserializerFactory(XSD_HEXBIN, byte[].class, hexSer);
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);

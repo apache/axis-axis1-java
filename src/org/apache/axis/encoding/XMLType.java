@@ -77,6 +77,7 @@ public class XMLType implements org.apache.axis.rpc.encoding.XMLType {
     public static final XMLType XSD_BYTE = new XMLType(new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte"));
     public static final XMLType XSD_DECIMAL = new XMLType(new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal"));
     public static final XMLType XSD_BASE64 = new XMLType(new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary"));
+//    public static final XMLType XSD_HEXBIN = new XMLType(new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary"));
     public static final XMLType XSD_ANYTYPE = new XMLType(new QName(Constants.URI_2001_SCHEMA_XSD, "anyType"));
     public static final XMLType SOAP_BASE64 = new XMLType(new QName(Constants.URI_SOAP_ENC, "base64"));
 
