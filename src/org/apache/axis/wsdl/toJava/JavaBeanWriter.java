@@ -373,37 +373,38 @@ public class JavaBeanWriter extends JavaWriter {
 
         
         // Now write the constructor signature
-        pw.println("    public " + className + "(");
-        for (int i=0; i<paramTypes.size(); i++) {
-            pw.print("           " + paramTypes.elementAt(i) + 
-                     " " + paramNames.elementAt(i));
-            if ((i+1) < paramTypes.size()) {
-                pw.println(","); 
-            } else {
-                pw.println(") {"); 
-            }
-        }
-
-        // Call the extended constructor to set inherited fields
-        if (extendType != null) {
-            pw.println("        super(");
-            for (int j=0; j<localParams; j++) {
-                pw.print("            " + paramNames.elementAt(j));
-                if ((j+1) < localParams) {
+        if (paramTypes.size() > 0) {
+            pw.println("    public " + className + "(");
+            for (int i=0; i<paramTypes.size(); i++) {
+                pw.print("           " + paramTypes.elementAt(i) + 
+                         " " + paramNames.elementAt(i));
+                if ((i+1) < paramTypes.size()) {
                     pw.println(","); 
                 } else {
-                    pw.println(");");
+                    pw.println(") {"); 
                 }
-            }            
+            }
+            
+            // Call the extended constructor to set inherited fields
+            if (extendType != null) {
+                pw.println("        super(");
+                for (int j=0; j<localParams; j++) {
+                    pw.print("            " + paramNames.elementAt(j));
+                    if ((j+1) < localParams) {
+                        pw.println(","); 
+                    } else {
+                        pw.println(");");
+                    }
+                }            
+            }
+            // Set local fields directly
+            for (int j=localParams; j<paramNames.size(); j++) {
+                pw.println("        this." + paramNames.elementAt(j) +
+                           " = " + paramNames.elementAt(j)+ ";");
+            } 
+            pw.println("    }");
+            pw.println();
         }
-        // Set local fields directly
-        for (int j=localParams; j<paramNames.size(); j++) {
-            pw.println("        this." + paramNames.elementAt(j) +
-                       " = " + paramNames.elementAt(j)+ ";");
-        } 
-        pw.println("    }");
-        pw.println();
-
     }
 
     /**

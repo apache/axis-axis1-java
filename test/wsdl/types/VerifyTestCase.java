@@ -50,6 +50,9 @@ import test.wsdl.types.comprehensive_types.ComplexWComplex;
 import test.wsdl.types.comprehensive_types.ComplexWComplexHolder;
 import test.wsdl.types.comprehensive_types.ElemWComplex;
 import test.wsdl.types.comprehensive_types.ElemWComplexHolder;
+import test.wsdl.types.comprehensive_types.EmptyComplexType;
+import test.wsdl.types.comprehensive_types.EmptyComplexTypeHolder;
+import test.wsdl.types.comprehensive_types.EmptyFault;
 import test.wsdl.types.comprehensive_types.Enum;
 import test.wsdl.types.comprehensive_types.EnumHolder;
 import test.wsdl.types.comprehensive_types.EnumByte;
@@ -363,6 +366,30 @@ public class VerifyTestCase extends junit.framework.TestCase {
         try {
             ComplexWComplex value = null;
             value = binding.complexWComplexReturn();
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            EmptyComplexType value = new EmptyComplexType();
+            binding.emptyComplexTypeIn(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            EmptyComplexTypeHolder value = new EmptyComplexTypeHolder( new EmptyComplexType());
+            binding.emptyComplexTypeInout(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            EmptyComplexTypeHolder value = new EmptyComplexTypeHolder();
+            binding.emptyComplexTypeOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            EmptyComplexType value = null;
+            value = binding.emptyComplexTypeReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
