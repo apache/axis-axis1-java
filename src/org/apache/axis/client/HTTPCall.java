@@ -212,6 +212,7 @@ public class HTTPCall {
     catch( Exception e ) {
       Debug.Print( 1, e );
       if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
+      Debug.Print( 0, e.toString() );
       throw (AxisFault) e ;
     }
 

@@ -170,12 +170,16 @@ public class HTTPMessage {
 
     // For testing - skip HTTP layer
     if ( doLocal ) {
+      msgContext.setTargetService( action );
       if ( localServer == null ) {
         localServer = new org.apache.axis.server.AxisServer();
+        if ( url.endsWith( ".jws") ) {
+          msgContext.setProperty( "JWSFileName", url.substring(11) );
+          msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET );
+        }
         localServer.init();
       }
       client = localServer;
-      msgContext.setTargetService( action );
     }
     else {
       /* Ok, this might seem strange, but here it is...                    */
