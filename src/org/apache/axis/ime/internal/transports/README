@@ -1,0 +1,5 @@
+
+  This package is here temporarily while we are developing the 
+  MessageExchange based Transports.  Once they are more fully
+  developed, we'll move them out to the appropriate locations
+  in the main Axis source tree.

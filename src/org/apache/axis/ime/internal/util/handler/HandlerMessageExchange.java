@@ -98,17 +98,17 @@ public class HandlerMessageExchange
         return new FirstComeFirstServeDispatchPolicy(RECEIVE, RECEIVE_REQUESTS);
     }
 
-    protected Handler getSendHandler() {
-      Handler h = null;
-      if (handler instanceof TargetedChain) {
+    public Handler getSendHandler() {
+      Handler h = super.getSendHandler();
+      if (h == null && handler instanceof TargetedChain) {
         h = ((TargetedChain)handler).getRequestHandler();
       }
       return h;
     }
     
-    protected Handler getReceiveHandler() {
-      Handler h = null;
-      if (handler instanceof TargetedChain) {
+    public Handler getReceiveHandler() {
+      Handler h = super.getReceiveHandler();
+      if (h == null && handler instanceof TargetedChain) {
         h = ((TargetedChain)handler).getResponseHandler();
       }
       return h;

@@ -89,15 +89,25 @@ public abstract class MessageExchangeProvider
     protected final KeyedBuffer SEND = new NonPersistentKeyedBuffer(WORKERS);
     protected final KeyedBuffer RECEIVE = new NonPersistentKeyedBuffer(WORKERS);
     protected final KeyedBuffer RECEIVE_REQUESTS = new NonPersistentKeyedBuffer(WORKERS);
+    protected Handler sendHandler = null;
+    protected Handler receiveHandler = null; 
 
     protected boolean initialized = false;
 
-    protected Handler getSendHandler() {
-      return null;
+    public Handler getSendHandler() {
+      return sendHandler;
     }
     
-    protected Handler getReceiveHandler() {
-      return null;
+    public Handler getReceiveHandler() {
+      return receiveHandler;
+    }
+
+    public void setSendHandler(Handler handler) {
+      this.sendHandler = handler;
+    }
+    
+    public void setReceiveHandler(Handler handler) {
+      this.receiveHandler = handler;
     }
 
     protected abstract MessageExchangeEventListener getMessageExchangeEventListener();
