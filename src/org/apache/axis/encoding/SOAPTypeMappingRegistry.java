@@ -134,12 +134,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     class StringDeserializerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() { return new StringDeser(); }
     }
-    class BooleanDeser extends BasicDeser {
-        Object makeValue(String source) { return new Boolean(source); }
-    }
-    class BooleanDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new BooleanDeser(); }
-    }
     class DoubleDeser extends BasicDeser {
         Object makeValue(String source) { return new Double(source); }
     }
