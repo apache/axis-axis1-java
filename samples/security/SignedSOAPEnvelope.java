@@ -96,7 +96,15 @@ public class SignedSOAPEnvelope extends SOAPEnvelope
         org.apache.xml.security.Init.init();
     }
 
+    public SignedSOAPEnvelope (SOAPEnvelope env, String baseURI, String keystoreFile) {
+        init(env, baseURI, keystoreFile);
+    }
+
     public SignedSOAPEnvelope (SOAPEnvelope env, String baseURI) {
+            init(env, baseURI, keystoreFile);
+    }
+
+    private void init (SOAPEnvelope env, String baseURI, String keystoreFile) {
         try {
             env.addMapping(new Mapping(SOAPSECNS,SOAPSECprefix));
             env.addAttribute(Constants.URI_SOAP_ENV,"actor","some-uri");
@@ -145,4 +153,5 @@ public class SignedSOAPEnvelope extends SOAPEnvelope
             throw new RuntimeException( e.toString() );
         }
     }
+
 }
