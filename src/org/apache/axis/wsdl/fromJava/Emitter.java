@@ -1147,8 +1147,12 @@ public class Emitter {
                                               param.getName(),
                                               typeQName)) {
                     // If wrapper element is written
-                    // add <part name="body" element=wrapper_elem />
-                    part.setName("body");
+                    // add <part name="body/return" element=wrapper_elem />
+                    if (request) {
+                        part.setName("body");
+                    } else {
+                        part.setName("return");
+                    }
                     part.setElementName(wrapperQName);
                     msg.addPart(part);
                 }
