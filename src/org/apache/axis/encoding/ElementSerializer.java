@@ -61,6 +61,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
 
+import org.apache.axis.message.MessageElement ;
+import org.apache.axis.message.SOAPHandler ;
+
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
@@ -69,7 +72,7 @@ import java.io.IOException;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class ElementSerializer implements Serializer {
+public class ElementSerializer extends Deserializer implements Serializer {
     /** 
      * Serialize a DOM Element
      */
@@ -81,5 +84,25 @@ public class ElementSerializer implements Serializer {
             throw new IOException(JavaUtils.getMessage("cantSerialize01"));
         
         context.writeDOMElement((Element)value);
+    }
+
+    // Our static deserializer factory
+    public static class Factory implements DeserializerFactory {
+        public Deserializer getDeserializer(Class cls) {
+            return new ElementSerializer();
+        }
+    }
+    public static DeserializerFactory factory = new Factory();
+
+    public final void onEndElement(String namespace, String localName,
+                           DeserializationContext context)
+                               throws SAXException
+    {
+        try {
+            value = context.getCurElement().getAsDOM();
+        }
+        catch( Exception exp ) {
+            throw new SAXException( exp );
+        }
     }
 }
