@@ -392,6 +392,7 @@ Copyright:
     <copy todir="${build.webapp}/WEB-INF/lib">
       <fileset dir="${lib.dir}">
         <include name="*.jar"/>
+        <exclude name="*servlet*.jar"/>
       </fileset>
       <fileset dir="${build.lib}">
         <include name="*.jar"/>
