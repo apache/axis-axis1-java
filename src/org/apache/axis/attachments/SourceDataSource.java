@@ -61,6 +61,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.net.URL;
 
 public class SourceDataSource implements DataSource {
     public static final String CONTENT_TYPE = "text/xml";
@@ -81,15 +85,40 @@ public class SourceDataSource implements DataSource {
         os = new ByteArrayOutputStream();
         try {
             if (data != null) {
-                InputStream is = data.getInputStream();
-                if (is != null && is.available() > 0) {
-                    byte[] bytes = new byte[is.available()];
-                    is.read(bytes);
-                    os.write(bytes);
+                // Try the Reader first
+                Reader reader = data.getReader();
+                if (reader != null) {
+                    reader = new BufferedReader(reader);
+                    int ch;
+                    while ((ch = reader.read())!=-1) {
+                        os.write(ch);
+                    }
+                } else {
+                    // Try the InputStream
+                    InputStream is = data.getInputStream();
+                    if (is == null) {
+                        // Try the URL
+                        String id = data.getSystemId();
+                        if (id != null) {
+                            URL url = new URL(id);
+                            is = url.openStream();
+                        }
+                    }
+                    if (is != null) {
+                        is = new BufferedInputStream(is);
+                        // If reading from a socket or URL, we could get a partial read.
+                        byte[] bytes = null;
+                        int avail;
+                        while ((avail = is.available()) > 0) {
+                            if (bytes == null || avail > bytes.length)
+                                bytes = new byte[avail];
+                            is.read(bytes, 0, avail);
+                            os.write(bytes, 0, avail);
+                        }
+                    }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Is this sufficient?
         }
     } // ctor
