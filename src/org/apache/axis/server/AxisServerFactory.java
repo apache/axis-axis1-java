@@ -39,6 +39,12 @@ public class AxisServerFactory {
         AxisServer server = null;
         InitialContext context = null;
 
+        // First, and foremost, if a configProvider is passed in
+        //  ALWAYS use that...
+        if (configProvider != null) {
+            return createNewServer(configProvider);
+        }
+
         // First check to see if JNDI works
         // !!! Might we need to set up context parameters here?
         try {
