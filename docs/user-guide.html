@@ -124,19 +124,32 @@ h1 {  margin-left: -30px}
 <p>Let's take a look at an example Web Service client that will call the <b>echoString</b> 
   method on the public Axis server at Apache.</p>
 <div class="example">
-  <pre>1   import org.apache.axis.client.ServiceClient;
-2   public class TestClient {
-3     public static void main(String [] args) {
-4       String endpoint = "http://nagoya.apache.org:5049/axis/servlet/AxisServlet";
-5 
-6       ServiceClient client = new ServiceClient(endpoint);
-7       String ret = (String)client.invoke("http://soapinterop.org/",
-8                                          "echoString",
-9                                          new Object [] { "Hello!" });
-10   
-11      System.out.println("Sent 'Hello!', got '" + ret + "'");
-12    }
-13  }
+<pre>
+1   import org.apache.axis.client.Call;
+2   import org.apache.axis.client.Service;
+3   
+4   public class TestClient
+5   {
+6      public static void main(String [] args) {
+7          try {
+8              String endpoint =
+9                       "http://nagoya.apache.org:5049/axis/servlet/AxisServlet";
+10  
+11             Service  service = new Service();
+12             Call     call    = (Call) service.createCall();
+13  
+14             call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+15             call.setOperationName( "echoString" );
+16             call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
+17  
+18             String ret = (String) call.invoke( new Object[] { "Hello!" } );
+19  
+20             System.out.println("Sent 'Hello!', got '" + ret + "'");
+21         } catch (Exception e) {
+22             System.err.println(e.toString());
+23         }
+24     }
+25  }
 </pre>
 </div>
 <p>(You'll find this file in <a href="../samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)</p>
@@ -144,15 +157,16 @@ h1 {  margin-left: -30px}
 <pre>% java samples.userguide.example1.TestClient
 Sent 'Hello!', got 'Hello!'
 % </pre>
-<p>So what's happening here? On line 4, we set up our endpoint URL - this is the 
-  destination for our SOAP message. On line 6, we initialize a new ServiceClient 
-  instance with our URL. The ServiceClient class is the center of the Axis client 
-  API - we'll cover the very basics here, but take a look at the JavaDoc for this 
-  class to see what it can do.</p>
-<p>We're all set to go, so on line 7 we invoke the remote service. The invoke() 
-  API takes several arguments - first, the XML namespace of the desired service. 
-  Second, the method name which should be invoked. Finally, we pass an Object 
-  array containing the arguments to the method.</p>
+<p>
+  So what's happening here? On lines 11 and 12 we create new Service and Call
+  objects.  These are the standard JAX-RPC objects that are used to store
+  metadata about the service to invoke.  On line 14, we set up our endpoint 
+  URL - this is the destination for our SOAP message.  On line 15 we define
+  the operation (method) name of the Web Service. Line 16 defines the 
+  namespace to use on the Body of the SOAP message.  And on line 18 we 
+  actually invoke the desired service, passing in an array of parameters - 
+  in this case just one String.
+  
 <p>You can see what happens to the arguments by looking at the SOAP request that 
   goes out on the wire (look at the colored sections, and notice they match the 
   values in the call above):</p>
@@ -179,12 +193,17 @@ Sent 'Hello!', got 'Hello!'
 <p>In the above example, the parameters are in the order in which we sent them, 
   but since we only passed the objects themselves, Axis automatically named the 
   XML-encoded arguments in the SOAP message "arg0", "arg1", etc. If you want to 
-  change this, it's easy! Instead of passing the actual Object value of your argument 
-  in the arguments array, simply wrap the argument in an RPCParam class like so:</p>
-<div class="example"><pre>  String ret = (String)client.invoke("http://soapinterop.org",
-                                     "echoString",
-                                     new Object [] { new RPCParam("testParam", "Hello!") };
-</pre></div>
+  change this, it's easy! Before calling <code>invoke()</code> you need to 
+  call <code>addParameter</code> for each parameter, like so:
+
+<div class="example">
+<pre>  call.addParameter( "testParam", org.apache.axis.encoding.XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+</div><p>
+
+This will assign the name <b>testParam</b> to the 1st (and only) parameter
+on the invoke call.  This will also define the type of the parameter 
+(<code>org.apache.axis.encoding.XMLType.XSD_STRING</code>) and whether it is 
+an input, output or inout parameter - in this case its an input parameter.
 Now when you run the program you'll get a message that looks like this: 
 <div class="xml">
   <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -240,16 +259,13 @@ Now when you run the program you'll get a message that looks like this:
   tells us what to expect as the return type. Here's how to do it on the client 
   side in Axis:</p>
 <div class="example">
-  <pre>  ServiceDescription sd = new ServiceDescription(&quot;name&quot;, true);
-  sd.setOutputType(new QName(Constants.URI_2001_SCHEMA_XSD, &quot;string&quot;));
-  client.setServiceDescription(sd);</pre>
+  <pre>  call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING ); </pre>
 </div>
-<p>The ServiceDescription constructor takes a name (can be anything) and a boolean 
-  as arguments; the boolean indicates whether the service is RPC or not. In this 
-  case it is, so we use &quot;true&quot;. Then we call &quot;setOutputType()&quot;, 
-  which tells the ServiceDescription that if the return element is not typed, 
-  act as if the return value has an xsi:type attribute set to the QName which 
-  we supply. (You can see an example of this in action in the interop echo-test 
+<p>
+  This method will tell the Axis client that if the return element is not typed
+  then it should act as if the return value has an xsi:type attribute set to
+  the predefined SOAP String type.
+  (You can see an example of this in action in the interop echo-test 
   client - samples/echo/TestClient.java.)</p>
 <p>OK - so now you know the basics of accessing SOAP services as a client. But 
   how do you publish your own services?</p>
@@ -478,7 +494,8 @@ If this had been a real order processing system, we'd probably have charged you 
   Service. It stands in as a <b>proxy</b> (another term for the same idea) for 
   the remote service, letting you call it exactly as if it were a local object. 
   In other words, you don't need to deal with the endpoint URL, namespace, or 
-  parameter arrays which are involved in dynamic invocation via the ServiceClient. 
+  parameter arrays which are involved in dynamic invocation via the Service
+  and Call objects. 
   The stub hides all that work for you.</p>
 <p>You can try an example, assuming you've deployed the service in <a href="#descriptors">example 
   3</a> above and have your Axis server up and running. Type the following at 
@@ -495,7 +512,8 @@ If this had been a real order processing system, we'd probably have charged you 
     as they contain the operations described in the WSDL. For the example, above, 
     the generated interface is called MyServicePortType.</li>
   <li>The Stub classes implement the interface, and contain the code which turns 
-    the method invocations into SOAP calls using the Axis ServiceClient. For the 
+    the method invocations into SOAP calls using the Axis Service and Call
+    objects. For the 
     example, this is MyServiceSoapBindingStub. The stubs themselves also have 
     a few additional methods for getting a little more control over the SOAP invocations 
     - in this version of Axis we won't go into more detail about these, though 

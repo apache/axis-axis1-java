@@ -57,7 +57,6 @@ package samples.userguide.example1;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
 
 public class TestClient
 {
@@ -71,7 +70,6 @@ public class TestClient
 
            call.setTargetEndpointAddress( new java.net.URL(endpoint) );
            call.setOperationName( "echoString" );
-           call.addParameter( "string", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
            call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
 
            String ret = (String) call.invoke( new Object[] { "Hello!" } );

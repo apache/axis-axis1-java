@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -14,7 +13,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * Verify that shutting off xsi:types in the ServiceDescription works
+ * Verify that shutting off xsi:types in the Message Context works
  * as expected.
  */
 public class TestXsiType extends TestCase {
@@ -31,12 +30,9 @@ public class TestXsiType extends TestCase {
        throws Exception
     {
         MessageContext msgContext = new MessageContext(new AxisServer());
-        ServiceDescription sd = new ServiceDescription("testXsiType", true);
 
         // Don't serialize xsi:type attributes
         msgContext.setProperty(Call.SEND_TYPE_ATTR, "false" );
-
-        msgContext.setProperty(MessageContext.SERVICE_DESCRIPTION, sd);
 
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace",
