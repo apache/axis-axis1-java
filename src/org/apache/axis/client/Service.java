@@ -531,7 +531,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             throws ServiceException {
 
         Call call = (org.apache.axis.client.Call) createCall();
-        call.setOperation(portName, operationName.getLocalPart());
+        call.setOperation(portName, operationName);
         return (call);
     }
 

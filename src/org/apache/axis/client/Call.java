@@ -134,6 +134,7 @@ public class Call implements javax.xml.rpc.Call {
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
     private QName              portName        = null;
+    private QName              portTypeName    = null;
     private QName              operationName   = null ;
 
     private MessageContext     msgContext      = null ;
@@ -1300,7 +1301,8 @@ public class Call implements javax.xml.rpc.Call {
             throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
                                                            portName) );
         }
-
+        this.setPortTypeName(portType.getQName());
+        
         List operations = portType.getOperations();
         if ( operations == null ) {
             throw new JAXRPCException( Messages.getMessage("noOperation01",
@@ -1532,6 +1534,24 @@ public class Call implements javax.xml.rpc.Call {
      * @param  opName          Operation(method) that's going to be invoked
      */
     public void setOperation(QName portName, String opName) {
+    	setOperation(portName, new QName(opName));
+    }
+
+    
+    /**
+     * prefill as much info from the WSDL as it can.
+     * Right now it's target URL, SOAPAction, Parameter types,
+     * and return type of the Web Service.
+     *
+     * If wsdl is not present, this function set port name and operation name
+     * and does not modify target endpoint address.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  opName          Operation(method) that's going to be invoked
+     */
+    public void setOperation(QName portName, QName opName) {
         if ( service == null )
             throw new JAXRPCException( Messages.getMessage("noService04") );
 
@@ -1557,13 +1577,6 @@ public class Call implements javax.xml.rpc.Call {
                                                            portName) );
         }
 
-        Binding   binding  = port.getBinding();
-        PortType  portType = binding.getPortType();
-        if ( portType == null ) {
-            throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
-                                                           portName) );
-        }
-
         // Get the URL
         ////////////////////////////////////////////////////////////////////
         List list = port.getExtensibilityElements();
@@ -1582,32 +1595,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        // Get the SOAPAction
-        ////////////////////////////////////////////////////////////////////
-        BindingOperation bop = binding.getBindingOperation(opName,
-                                                           null, null);
-        if ( bop == null ) {
-            throw new JAXRPCException( Messages.getMessage("noOperation02",
-                                                            opName ));
-        }
-        list = bop.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-            Object obj = list.get(i);
-            if ( obj instanceof SOAPOperation ) {
-                SOAPOperation sop = (SOAPOperation) obj ;
-                String action = sop.getSoapActionURI();
-                if ( action != null ) {
-                    setUseSOAPAction(true);
-                    setSOAPActionURI(action);
-                }
-                else {
-                    setUseSOAPAction(false);
-                    setSOAPActionURI(null);
-                }
-                break ;
-            }
-        }
-        setOperation(opName);
+        setOperation(opName.getLocalPart());
     }
 
     /**
@@ -1632,30 +1620,24 @@ public class Call implements javax.xml.rpc.Call {
     } // setPortName
 
     /**
-     * Returns the fully qualified name of the port for this Call object
+     * Returns the fully qualified name of the port type for this Call object
      * (if there is one).
      *
-     * @return QName Fully qualified name of the port
-     *
-     * @deprecated This is really the service's port name, not portType name.
-     *            Use getPortName instead.
+     * @return QName Fully qualified name of the port type
      */
     public QName getPortTypeName() {
-        return portName == null ? new QName("") : portName;
+        return portTypeName == null ? new QName("") : portTypeName;
     }
 
     /**
-     * Sets the port name of this Call object.  This call will not set
+     * Sets the port type name of this Call object.  This call will not set
      * any additional fields, nor will it do any checking to verify that
      * this port type is actually defined in the WSDL - for now anyway.
      *
      * @param portType Fully qualified name of the portType
-     *
-     * @deprecated This is really the service's port name, not portType name.
-     *            Use setPortName instead.
      */
     public void setPortTypeName(QName portType) {
-        setPortName(portType);
+        this.portTypeName = portType;
     }
 
     /**
