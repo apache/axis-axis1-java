@@ -923,7 +923,7 @@ public class SOAPMonitor extends JFrame implements ActionListener, ChangeListene
             if (e.getSource() == ok_button) {
                 loginState = true;
                 SOAPMonitor.axisUser = user.getText();
-                SOAPMonitor.axisPass = pass.getText();
+                SOAPMonitor.axisPass = new String(pass.getPassword());
                 this.hide();
             } else if (e.getSource() == cancel_button) {
                 this.dispose();
