@@ -109,7 +109,7 @@ public class ServiceDescription
         this.serviceIsRPC = isRPC;
 
         // For RPC, default to section 5 encoding
-        if (isRPC) encodingStyleURI = Constants.URI_SOAP_ENC;
+        if (isRPC) encodingStyleURI = Constants.URI_CURRENT_SOAP_ENC;
     }
     
     public boolean isRPC()

@@ -56,16 +56,60 @@
 
 package org.apache.axis.encoding;
 
+import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.encoding.SerializerFactory;
+import javax.xml.rpc.encoding.DeserializerFactory;
+
+
+
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * This interface describes the AXIS TypeMapping.
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
+public interface TypeMapping extends javax.xml.rpc.encoding.TypeMapping {
+
     /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+     * Gets the SerializerFactory registered for the specified pair
+     * of Java type and XML data type.
+     *
+     * @param javaType - Class of the Java type
+     *
+     * @return Registered SerializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered SerializerFactory 
+     * for this pair of Java type and XML data type 
+     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     */
+    public SerializerFactory getSerializer(Class javaType)  throws JAXRPCException;
+
+    /**
+     * Gets the DeserializerFactory registered for the specified pair 
+     * of Java type and XML data type.
+     *
+     * @param javaType - Class of the Java type
+     * @param xmlType - Qualified name of the XML data type
+     *
+     * @return Registered DeserializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered DeserializerFactory
+     * for this pair of Java type and  XML data type 
+     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     */
+    public DeserializerFactory getDeserializer(QName xmlType)  throws JAXRPCException;
+
+    /**
+     * Gets the QName for the type mapped to Class.
+     * @param javaType class or type
+     * @return xmlType qname or null
+     */
+    public QName getTypeQName(Class javaType);
+
+    /**
+     * Gets the Class mapped to QName.
+     * @param xmlType qname or null
+     * @return javaType class or type
+     */
+    public Class getClassForQName(QName xmlType);
 }
 
 

@@ -53,19 +53,54 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+
+import org.apache.axis.message.MessageElement ;
+import org.apache.axis.message.SOAPHandler ;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * Deserializer for DOM elements
+ *
+ * @author Glen Daniels (gdaniels@macromedia.com)
+ * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class ElementDeserializer extends DeserializerImpl implements Deserializer  {
+
+    public final void onEndElement(String namespace, String localName,
+                                   DeserializationContext context)
+        throws SAXException
+    {
+        try {
+            MessageElement msgElem = context.getCurElement();
+            if ( msgElem != null ) {
+                ArrayList children = msgElem.getChildren();
+                if ( children != null ) {
+                    msgElem = (MessageElement) children.get(0);
+                    if ( msgElem != null )
+                        value = msgElem.getAsDOM();
+                }
+            }
+        }
+        catch( Exception exp ) {
+            exp.printStackTrace();
+            throw new SAXException( exp );
+        }
+    }
 }
-
-

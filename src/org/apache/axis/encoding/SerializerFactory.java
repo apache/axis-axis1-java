@@ -57,15 +57,20 @@
 package org.apache.axis.encoding;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * This interface describes the AXIS SerializerFactory.
+ *
+ * An Axis compliant Serializer Factory must provide one or more 
+ * of the following methods:
+ *
+ * public static create(Class javaType, QName xmlType)
+ * public <constructor>(Class javaType, QName xmlType)
+ * public <constructor>()
+ *
+ * The deployment code will attempt to invoke these methods in the above order.
+ * The xmlType, javaType arguments are filled in with the values supplied during the
+ * deployment registration of the factory.
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public interface SerializerFactory extends javax.xml.rpc.encoding.SerializerFactory {
 }
 
 

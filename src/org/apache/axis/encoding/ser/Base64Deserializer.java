@@ -53,19 +53,49 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.Base64;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * Deserializer for Base64
+ *
+ * @author Sam Ruby <rubys@us.ibm.com>
+ * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
+public class Base64Deserializer extends DeserializerImpl implements Deserializer  {
+
     /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+     * Handle any characters found in the data
+     */
+    public void characters(char [] chars, int start, int end)
+        throws SAXException
+    {
+        value = Base64.decode(chars, start, end);
+    }
+    
+    /**
+     * Return something even if no characters were found.
+     */
+    public void onEndElement(String namespace, String localName,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        super.onEndElement(namespace,localName, context);
+        if (value == null) value = new byte[0];
+    }
 }
-
-

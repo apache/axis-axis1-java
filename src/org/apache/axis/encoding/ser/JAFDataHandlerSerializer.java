@@ -53,19 +53,79 @@
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.encoding.ser;
 
-package org.apache.axis.encoding;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.utils.JavaUtils;
+
+import javax.activation.DataHandler;
+import org.apache.axis.Part;
+import org.apache.axis.attachments.Attachments;
+import org.apache.axis.Constants;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.log4j.Category;
 
 /**
- * This interface describes the AXIS TypeMappingRegistry.
+ * JAFDataHandler Serializer
+ * @author Rick Rineholt 
+ * Modified by Rich Scheuerle <scheu@us.ibm.com>
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
-    /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+public class JAFDataHandlerSerializer implements Serializer {
+
+    static Category category =
+            Category.getInstance(JAFDataHandlerSerializer.class.getName());
+
+    /** 
+     * Serialize a JAF DataHandler quantity.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        DataHandler dh= (DataHandler)value;
+        //Add the attachment content to the message.
+        Attachments attachments= context.getCurrentMessage().getAttachments();
+        Part attachmentPart= attachments.createAttachmentPart(dh);
+        String href= attachmentPart.getContentId();
+
+        AttributesImpl attrs = new AttributesImpl();
+        if (attributes != null)
+            attrs.setAttributes(attributes); //copy the existing ones.
+
+        int typeIndex=-1;
+        if((typeIndex = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                "type")) != -1){
+
+            //Found a xsi:type which should not be there for attachments.                        
+            attrs.removeAttribute(typeIndex);
+        }                        
+
+        attrs.addAttribute("", Constants.ATTR_HREF, "href",
+                               "CDATA", href);
+
+        context.startElement(name, attrs);
+        context.endElement(); //There is no data to so end the element.
+    }
+
+    public String getMechanismType() { return Constants.AXIS_SAX; }
 }
-
-

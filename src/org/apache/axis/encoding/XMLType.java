@@ -66,45 +66,44 @@ import javax.xml.rpc.namespace.QName;
 
 
 public class XMLType {
-    public static final QName XSD_STRING = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string");
-    public static final QName XSD_BOOLEAN = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "boolean");
-    public static final QName XSD_DOUBLE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "double");
-    public static final QName XSD_FLOAT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "float");
-    public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
-    public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
-    public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
-    public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
-    public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
-    public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
-//    public static final QName XSD_HEXBIN = new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary");
-    public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
-    public static final QName SOAP_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
+    // Rich Scheuerle Note:  Shouldn't this class be phased out...The constants in Constants
+    // should be used.
+    public static final QName XSD_STRING = Constants.XSD_STRING;
+    public static final QName XSD_BOOLEAN = Constants.XSD_BOOLEAN;
+    public static final QName XSD_DOUBLE = Constants.XSD_DOUBLE;
+    public static final QName XSD_FLOAT = Constants.XSD_FLOAT;
+    public static final QName XSD_INT = Constants.XSD_INT;
+    public static final QName XSD_LONG = Constants.XSD_LONG;
+    public static final QName XSD_SHORT = Constants.XSD_SHORT;
+    public static final QName XSD_BYTE = Constants.XSD_BYTE;
+    public static final QName XSD_DECIMAL = Constants.XSD_DECIMAL;
+    public static final QName XSD_BASE64 = Constants.XSD_BASE64;
+    public static final QName XSD_ANYTYPE = Constants.XSD_ANYTYPE;
+    public static final QName SOAP_BASE64 = Constants.SOAP_BASE64;
 
-    public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
-    public static final QName SOAP_BOOLEAN = new QName(Constants.URI_SOAP_ENC, "boolean");
-    public static final QName SOAP_DOUBLE = new QName(Constants.URI_SOAP_ENC, "double");
-    public static final QName SOAP_FLOAT = new QName(Constants.URI_SOAP_ENC, "float");
-    public static final QName SOAP_INT = new QName(Constants.URI_SOAP_ENC, "int");
-    public static final QName SOAP_LONG = new QName(Constants.URI_SOAP_ENC, "long");
-    public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
-    public static final QName SOAP_BYTE = new QName(Constants.URI_SOAP_ENC, "byte");
-    public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
+    public static final QName SOAP_STRING = Constants.SOAP_STRING;
+    public static final QName SOAP_BOOLEAN = Constants.SOAP_BOOLEAN;
+    public static final QName SOAP_DOUBLE = Constants.SOAP_DOUBLE;
+    public static final QName SOAP_FLOAT = Constants.SOAP_FLOAT;
+    public static final QName SOAP_INT = Constants.SOAP_INT;
+    public static final QName SOAP_LONG = Constants.SOAP_LONG;
+    public static final QName SOAP_SHORT = Constants.SOAP_SHORT;
+    public static final QName SOAP_BYTE = Constants.SOAP_BYTE;
+    public static final QName SOAP_ARRAY = Constants.SOAP_ARRAY;
 
-    public static final QName TYPE_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
-    public static final QName TYPE_ELEMENT = new QName("http://xml.apache.org/xml-soap", "Element");
+    public static final QName SOAP_MAP = Constants.SOAP_MAP;
+    public static final QName SOAP_ELEMENT = Constants.SOAP_ELEMENT;                                
 
     public static       QName XSD_DATE;
     
     static {
         if (Constants.URI_CURRENT_SCHEMA_XSD.equals(
                 Constants.URI_1999_SCHEMA_XSD))
-            XSD_DATE =
-                    new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
+            XSD_DATE = Constants.XSD_DATE2;
         else if (Constants.URI_CURRENT_SCHEMA_XSD.equals(
                 Constants.URI_2000_SCHEMA_XSD))
-            XSD_DATE =
-                    new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
+            XSD_DATE = Constants.XSD_DATE3;
         else
-            XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
+            XSD_DATE = Constants.XSD_DATE;
     }
 }
