@@ -292,6 +292,23 @@ Copyright:
     </java>
   </target>
 
+  <target name="junit-functional-secure" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+    <!-- now, run the actual test -->
+    <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dest}">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+              <include name="**/TestBidBuySample.class" />
+              <exclude name="**/Interop3TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+
   <!-- =================================================================== -->
   <!-- Start Signature Signing and Verification -->
   <!-- =================================================================== -->
