@@ -137,7 +137,7 @@ public abstract class JavaWriter implements Generator {
     public void generate() throws IOException {
         String file = getFileName();
         if (isFileGenerated(file)) {
-            throw new IOException(Messages.getMessage("duplicateFile00", file));
+            throw new DuplicateFileException(Messages.getMessage("duplicateFile00", file), file);
         }
         registerFile(file);
         if (emitter.isVerbose()) {
