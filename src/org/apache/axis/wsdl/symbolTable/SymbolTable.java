@@ -462,19 +462,35 @@ public class SymbolTable {
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.get(i);
 
-                // Check for a undefined XSD Schema Type and throw
-                // an unsupported message instead of undefined
-                if (entry instanceof UndefinedType && 
-                    SchemaUtils.isSimpleSchemaType(entry.getQName())) {
-                    throw new IOException(
-                            JavaUtils.getMessage("unsupportedSchemaType00",
-                                              entry.getQName().getLocalPart()));
-                }
-                if (entry instanceof Undefined) {
+                // Report undefined types
+                if (entry instanceof UndefinedType) {
+                    QName qn = entry.getQName();
+                 
+                    // Special case dateTime/timeInstant that changed 
+                    // from version to version.
+                    if ((qn.getLocalPart().equals("dateTime") &&
+                         !qn.getNamespaceURI().equals(Constants.URI_2001_SCHEMA_XSD)) ||
+                    (qn.getLocalPart().equals("timeInstant") &&
+                     qn.getNamespaceURI().equals(Constants.URI_2001_SCHEMA_XSD))) {
+                        throw new IOException(
+                                JavaUtils.getMessage("wrongNamespace00",
+                                                     qn.getLocalPart(),
+                                                     qn.getNamespaceURI()));
+                    } 
+                    
+                    // Check for a undefined XSD Schema Type and throw
+                    // an unsupported message instead of undefined
+                    if (SchemaUtils.isSimpleSchemaType(entry.getQName())) {
+                        throw new IOException(
+                                JavaUtils.getMessage("unsupportedSchemaType00",
+                                                     qn.getLocalPart()));
+                    }
+                    
+                    // last case, its some other undefined thing
                     throw new IOException(
                             JavaUtils.getMessage("undefined00",
                                                  entry.getQName().toString()));
-                }
+                } // if undefined
             }
         }
     } // checkForUndefined

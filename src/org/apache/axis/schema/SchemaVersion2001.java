@@ -56,6 +56,9 @@
 package org.apache.axis.schema;
 
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.ser.CalendarSerializerFactory;
+import org.apache.axis.encoding.ser.CalendarDeserializerFactory;
 
 import javax.xml.namespace.QName;
 
@@ -98,5 +101,31 @@ public class SchemaVersion2001 implements SchemaVersion {
      */
     public String getXsdURI() {
         return Constants.URI_2001_SCHEMA_XSD;
+    }
+
+    /**
+     * Register the schema specific type mappings
+     */
+    public void registerSchemaSpecificTypes(TypeMapping tm) {
+        
+        // This mapping will convert a Java 'Date' type to a dateTime
+        tm.register(java.util.Date.class,
+                    Constants.XSD_DATETIME,
+                   new CalendarSerializerFactory(java.util.Date.class,
+                                             Constants.XSD_DATETIME),
+                   new CalendarDeserializerFactory(java.util.Date.class,
+                                               Constants.XSD_DATETIME)
+                   );
+        
+        // This is the preferred mapping per JAX-RPC.
+        // Last one registered take priority
+        tm.register(java.util.Calendar.class,
+                    Constants.XSD_DATETIME,
+                   new CalendarSerializerFactory(java.util.Calendar.class,
+                                             Constants.XSD_DATETIME),
+                   new CalendarDeserializerFactory(java.util.Calendar.class,
+                                               Constants.XSD_DATETIME)
+                   );
+        
     }
 }
