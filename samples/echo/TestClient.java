@@ -186,8 +186,8 @@ public abstract class TestClient {
           new SOAPStruct(2, "two", 2.2F),
           new SOAPStruct(3, "three", 3.3F)});
         test("Void", null);
-        test("Date", new Date());
         test("Base64", "Base64".getBytes());
+        test("Date", new Date());
         test("Decimal", new BigDecimal("3.14159"));
         test("Boolean", Boolean.TRUE);
     }
