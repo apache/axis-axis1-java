@@ -206,8 +206,6 @@ public class JavaImplWriter extends JavaWriter {
                 } else {
                     pw.println("-3;");
                 }
-            } else if (parms.returnType.getName().equals("java.lang.Object")) {
-                pw.println("(java.lang.String) null;");
             } else {
                 pw.println("null;");
             }
