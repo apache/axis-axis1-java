@@ -82,14 +82,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpUtils;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 
+import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.ArrayList;
 
@@ -116,7 +117,7 @@ public class AxisServlet extends HttpServlet
 
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
-    private boolean isDebug= false;
+    private static boolean isDebug = false;
 
     // Cached path to our WEB-INF directory
     private String webInfPath = null;
@@ -136,6 +137,7 @@ public class AxisServlet extends HttpServlet
         
         isDebug= log.isDebugEnabled();
         if(isDebug) log.debug("In servlet init");
+
         String param = getInitParameter("transport.name");
 
         if (param == null)
@@ -159,7 +161,7 @@ public class AxisServlet extends HttpServlet
         if (param != null) {
             jwsClassDir = homeDir + param;
         } else {
-            jwsClassDir = webInfPath + File.separator +  "jwsClasses";
+            jwsClassDir = getDefaultJWSClassDir();
         }
     }
 
@@ -182,15 +184,17 @@ public class AxisServlet extends HttpServlet
      * This is a uniform method of initializing AxisServer in a servlet
      * context.
      */
-    static public AxisServer getEngine(HttpServlet servlet) throws AxisFault {
+    static public AxisServer getEngine(HttpServlet servlet) throws AxisFault
+    {
+        if (isDebug)
+            log.debug("Enter: getEngine()");
+
         ServletContext context = servlet.getServletContext();
-        
+
         if (context.getAttribute("AxisEngine") == null) {
             String webInfPath = context.getRealPath("/WEB-INF");
 
-            EngineConfiguration config =
-                (new ServletEngineConfigurationFactory(context)).
-                getServerEngineConfig();
+            EngineConfiguration config = getEngineConfig(context);
 
             Map environment = new HashMap();
             environment.put(AxisEngine.ENV_SERVLET_CONTEXT, context);
@@ -215,235 +219,253 @@ public class AxisServlet extends HttpServlet
             context.setAttribute("AxisEngine", 
                                  AxisServer.getServer(environment));
         }
+
+        if (isDebug) 
+            log.debug("Exit: getEngine()");
+
         return (AxisServer)context.getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
-        if(isDebug) log.debug("In doGet");
+        throws ServletException, IOException
+    {
+        if (isDebug) 
+            log.debug("Enter: doGet()");
+
         PrintWriter writer = res.getWriter();
 
-        if (engine == null) {
-            try {
-                engine = getEngine();
-            } catch (AxisFault fault) {
+        try
+        {
+            if (engine == null) {
+                try {
+                    engine = getEngine();
+                } catch (AxisFault fault) {
+                    res.setContentType("text/html");
+                    writer.println("<h2>" +
+                                   JavaUtils.getMessage("error00") + "</h2>");
+                    writer.println("<p>" +
+                                   JavaUtils.getMessage("somethingWrong00") + "</p>");
+                    writer.println("<pre>" + fault.toString() + " </pre>");
+                    return;
+                }
+            }
+
+            ServletContext context = getServletConfig().getServletContext();
+            MessageContext msgContext = new MessageContext(engine);
+
+            msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
+                                   jwsClassDir);
+            msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
+
+            String pathInfo = req.getPathInfo();
+            String realpath = context.getRealPath(req.getServletPath());
+            if ((pathInfo == null || pathInfo.equals("")) &&
+                !realpath.endsWith(".jws")) {
                 res.setContentType("text/html");
-                writer.println("<h2>" +
-                        JavaUtils.getMessage("error00") + "</h2>");
-                writer.println("<p>" +
-                        JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>" + fault.toString() + " </pre>");
+                writer.println("<h2>And now... Some Services</h2>");
+                Iterator i = engine.getConfig().getDeployedServices();
+                writer.println("<ul>");
+                while (i.hasNext()) {
+                    ServiceDesc sd = (ServiceDesc)i.next();
+                    writer.println("<li>" + sd.getName());
+                    ArrayList operations = sd.getOperations();
+                    if (!operations.isEmpty()) {
+                        writer.println("<ul>");
+                        for (Iterator it = operations.iterator(); it.hasNext();) {
+                            OperationDesc desc = (OperationDesc) it.next();
+                            writer.println("<li>" + desc.getName());
+                        }
+                        writer.println("</ul>");
+                    }
+                }
+                writer.println("</ul>");
                 return;
             }
-        }
 
-        ServletContext context = getServletConfig().getServletContext();
-        MessageContext msgContext = new MessageContext(engine);
+            String configPath = webInfPath;
+            if (realpath != null) {
+                msgContext.setProperty(Constants.MC_RELATIVE_PATH,
+                                       req.getServletPath());
+                msgContext.setProperty(Constants.MC_REALPATH, realpath);
+                msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
 
-        msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
-                               jwsClassDir);
-        msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
+                /* Set the Transport */
+                /*********************/
+                msgContext.setTransportName(transportName);
 
-        String pathInfo = req.getPathInfo();
-        String realpath = context.getRealPath(req.getServletPath());
-        if ((pathInfo == null || pathInfo.equals("")) &&
-            !realpath.endsWith(".jws")) {
-            res.setContentType("text/html");
-            writer.println("<h2>And now... Some Services</h2>");
-            Iterator i = engine.getConfig().getDeployedServices();
-            writer.println("<ul>");
-            while (i.hasNext()) {
-                ServiceDesc sd = (ServiceDesc)i.next();
-                writer.println("<li>" + sd.getName());
-                ArrayList operations = sd.getOperations();
-                if (!operations.isEmpty()) {
-                    writer.println("<ul>");
-                    for (Iterator it = operations.iterator(); it.hasNext();) {
-                        OperationDesc desc = (OperationDesc) it.next();
-                        writer.println("<li>" + desc.getName());
+                /* Save some HTTP specific info in the bag in case we need it */
+                /**************************************************************/
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res);
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
+                                       webInfPath);
+                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
+                                       req.getPathInfo() );
+                msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
+                                       req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
+                msgContext.setProperty(Constants.MC_REMOTE_ADDR,
+                                       req.getRemoteAddr());
+
+                try {
+                    // NOTE:  HttpUtils.getRequestURL has been deprecated.
+                    // This line SHOULD be:
+                    //    String url = req.getRequestURL().toString()
+                    // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
+                    // req.getRequestURL that is not in HttpUtils.getRequestURL
+                    // req.getRequestURL returns"localhost" in the remote
+                    // scenario rather than the actual host name.
+                    String url = HttpUtils.getRequestURL(req).toString();
+
+                    msgContext.setProperty(MessageContext.TRANS_URL, url);
+
+                    boolean wsdlRequested = false;
+                    boolean listRequested = false;
+
+                    String queryString = req.getQueryString();
+                    if (queryString != null) {
+                        if (queryString.equalsIgnoreCase("wsdl")) {
+                            wsdlRequested = true;
+                        } else if (queryString.equalsIgnoreCase("list")) {
+                            listRequested = true;
+                        }
                     }
-                    writer.println("</ul>");
-                }
-            }
-            writer.println("</ul>");
-            return;
-        }
 
-        String configPath = webInfPath;
-        if (realpath != null) {
-            msgContext.setProperty(Constants.MC_RELATIVE_PATH,
-                                   req.getServletPath());
-            msgContext.setProperty(Constants.MC_REALPATH, realpath);
-            msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
-
-            /* Set the Transport */
-            /*********************/
-            msgContext.setTransportName(transportName);
-
-            /* Save some HTTP specific info in the bag in case we need it */
-            /**************************************************************/
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res);
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
-                                   webInfPath);
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
-                                   req.getPathInfo() );
-            msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
-                            req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
-            msgContext.setProperty(Constants.MC_REMOTE_ADDR,
-                                   req.getRemoteAddr());
-
-            try {
-
-                // NOTE:  HttpUtils.getRequestURL has been deprecated.  This line SHOULD
-                // be:  String url = req.getRequestURL().toString()
-                // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in req.getRequestURL
-                // that is not in HttpUtils.getRequestURL.  req.getRequestURL returns
-                // "localhost" in the remote scenario rather than the actual host name.
-                String url = HttpUtils.getRequestURL(req).toString();
-
-                msgContext.setProperty(MessageContext.TRANS_URL, url);
-
-                boolean wsdlRequested = false;
-                boolean listRequested = false;
-
-                String queryString = req.getQueryString();
-                if (queryString != null) {
-                    if (queryString.equalsIgnoreCase("wsdl")) {
-                        wsdlRequested = true;
-                    } else if (queryString.equalsIgnoreCase("list")) {
-                        listRequested = true;
-                    }
-                }
-
-                if (wsdlRequested) {
-                    engine.generateWSDL(msgContext);
-                    Document doc = (Document) msgContext.getProperty("WSDL");
-                    if (doc != null) {
-                        res.setContentType("text/xml");
-                        XMLUtils.DocumentToWriter(doc, writer);
-                    } else {
-                        res.setContentType("text/html");
-                        writer.println("<h2>" +
-                                JavaUtils.getMessage("error00") + "</h2>");
-                        writer.println("<p>" +
-                                JavaUtils.getMessage("noWSDL00") + "</p>");
-                    }
-                } else if (listRequested) {
-                    if (enableList) {
-                        Document doc = Admin.listConfig(engine);
+                    if (wsdlRequested) {
+                        engine.generateWSDL(msgContext);
+                        Document doc = (Document) msgContext.getProperty("WSDL");
                         if (doc != null) {
                             res.setContentType("text/xml");
                             XMLUtils.DocumentToWriter(doc, writer);
                         } else {
                             res.setContentType("text/html");
                             writer.println("<h2>" +
-                                    JavaUtils.getMessage("error00") + "</h2>");
+                                           JavaUtils.getMessage("error00") + "</h2>");
                             writer.println("<p>" +
-                                           JavaUtils.getMessage("noDeploy00") +
+                                           JavaUtils.getMessage("noWSDL00") + "</p>");
+                        }
+                    } else if (listRequested) {
+                        if (enableList) {
+                            Document doc = Admin.listConfig(engine);
+                            if (doc != null) {
+                                res.setContentType("text/xml");
+                                XMLUtils.DocumentToWriter(doc, writer);
+                            } else {
+                                res.setContentType("text/html");
+                                writer.println("<h2>" +
+                                               JavaUtils.getMessage("error00") + "</h2>");
+                                writer.println("<p>" +
+                                               JavaUtils.getMessage("noDeploy00") +
+                                               "</p>");
+                            }
+                        } else {
+                            res.setContentType("text/html");
+                            writer.println("<h2>" +
+                                           JavaUtils.getMessage("error00") + "</h2>");
+                            writer.println("<p><i>?list</i>" +
+                                           JavaUtils.getMessage("disabled00") + "</p>");
+                        }
+                    } else if (req.getParameterNames().hasMoreElements()) {
+                        res.setContentType("text/html");
+                        Enumeration enum = req.getParameterNames();
+                        String method = null;
+                        String args = "";
+                        while (enum.hasMoreElements()) {
+                            String param = (String) enum.nextElement();
+                            if (param.equalsIgnoreCase("method")) {
+                                method = req.getParameter(param);
+                            } else {
+                                args += "<" + param + ">" +
+                                    req.getParameter(param) +
+                                    "</" + param + ">";
+                            }
+                        }
+                        if (method == null) {
+                            writer.println("<h2>" +
+                                           JavaUtils.getMessage("error00") +
+                                           ":  " +
+                                           JavaUtils.getMessage("invokeGet00") +
+                                           "</h2>");
+                            writer.println("<p>" +
+                                           JavaUtils.getMessage("noMethod01") + "</p>");
+                            return;
+                        }
+                        String body = "<" + method + ">" + args +
+                            "</" + method + ">";
+                        String msgtxt = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
+                            "</SOAP-ENV:Envelope>";
+                        ByteArrayInputStream istream = new ByteArrayInputStream(
+                                msgtxt.getBytes());
+                        Message msg = new Message(istream, false);
+                        msgContext.setRequestMessage(msg);
+                        //                    if (msg != null) {
+                        //                        writer.println(msg.getAsString());
+                        //                        return;
+                        //                    }
+                        engine.invoke(msgContext);
+                        Message respMsg = msgContext.getResponseMessage();
+                        if (respMsg != null) {
+                            writer.println("<p>" +
+                                           JavaUtils.getMessage("gotResponse00") +
                                            "</p>");
+                            writer.println(respMsg.getSOAPPart().getAsString());
+                        } else {
+                            writer.println("<p>" +
+                                           JavaUtils.getMessage("noResponse01") + "</p>");
                         }
                     } else {
                         res.setContentType("text/html");
-                        writer.println("<h2>" +
-                                JavaUtils.getMessage("error00") + "</h2>");
-                        writer.println("<p><i>?list</i>" +
-                                JavaUtils.getMessage("disabled00") + "</p>");
+                        writer.println("<h1>" + req.getRequestURI() +
+                                       "</h1>");
+                        writer.println(
+                                "<p>" +
+                                JavaUtils.getMessage("axisService00") + "</p>");
+                        writer.println(
+                                "<i>" + JavaUtils.getMessage("perhaps00") + "</i>");
                     }
-                } else if (req.getParameterNames().hasMoreElements()) {
+                } catch (AxisFault fault) {
                     res.setContentType("text/html");
-                    Enumeration enum = req.getParameterNames();
-                    String method = null;
-                    String args = "";
-                    while (enum.hasMoreElements()) {
-                        String param = (String) enum.nextElement();
-                        if (param.equalsIgnoreCase("method")) {
-                            method = req.getParameter(param);
-                        } else {
-                            args += "<" + param + ">" +
-                                    req.getParameter(param) +
-                                    "</" + param + ">";
-                        }
-                    }
-                    if (method == null) {
-                        writer.println("<h2>" +
-                                       JavaUtils.getMessage("error00") +
-                                       ":  " +
-                                       JavaUtils.getMessage("invokeGet00") +
-                                       "</h2>");
-                        writer.println("<p>" +
-                                JavaUtils.getMessage("noMethod01") + "</p>");
-                        return;
-                    }
-                    String body = "<" + method + ">" + args +
-                                  "</" + method + ">";
-                    String msgtxt = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                                 "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
-                                 "</SOAP-ENV:Envelope>";
-                    ByteArrayInputStream istream = new ByteArrayInputStream(
-                        msgtxt.getBytes());
-                    Message msg = new Message(istream, false);
-                    msgContext.setRequestMessage(msg);
-//                    if (msg != null) {
-//                        writer.println(msg.getAsString());
-//                        return;
-//                    }
-                    engine.invoke(msgContext);
-                    Message respMsg = msgContext.getResponseMessage();
-                    if (respMsg != null) {
-                        writer.println("<p>" +
-                                       JavaUtils.getMessage("gotResponse00") +
-                                       "</p>");
-                        writer.println(respMsg.getSOAPPart().getAsString());
-                    } else {
-                        writer.println("<p>" +
-                                JavaUtils.getMessage("noResponse01") + "</p>");
-                    }
-                } else {
+                    writer.println("<h2>" +
+                                   JavaUtils.getMessage("error00") + "</h2>");
+                    writer.println("<p>" +
+                                   JavaUtils.getMessage("somethingWrong00") + "</p>");
+                    writer.println("<pre>" + fault.toString() + " </pre>");
+                } catch (Exception e) {
                     res.setContentType("text/html");
-                    writer.println("<h1>" + req.getRequestURI() +
-                            "</h1>");
-                    writer.println(
-                            "<p>" +
-                            JavaUtils.getMessage("axisService00") + "</p>");
-                    writer.println(
-                           "<i>" + JavaUtils.getMessage("perhaps00") + "</i>");
+                    writer.println("<h2>" +
+                                   JavaUtils.getMessage("error00") + "</h2>");
+                    writer.println("<p>" +
+                                   JavaUtils.getMessage("somethingWrong00") + "</p>");
+                    writer.println("<pre>Exception - " + e + "<br>");
+                    e.printStackTrace(res.getWriter());
+                    writer.println("</pre>");
                 }
-            } catch (AxisFault fault) {
-                res.setContentType("text/html");
-                writer.println("<h2>" +
-                        JavaUtils.getMessage("error00") + "</h2>");
-                writer.println("<p>" +
-                        JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>" + fault.toString() + " </pre>");
-            } catch (Exception e) {
-                res.setContentType("text/html");
-                writer.println("<h2>" +
-                        JavaUtils.getMessage("error00") + "</h2>");
-                writer.println("<p>" +
-                        JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>Exception - " + e + "<br>");
-                e.printStackTrace(res.getWriter());
-                writer.println("</pre>");
-            } finally {
-                writer.close();
-                return;
             }
+            else
+            {
+                res.setContentType("text/html");
+                writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
+                writer.println( JavaUtils.getMessage("reachedServlet00"));
+
+                writer.println("<p>" + JavaUtils.getMessage("transportName00",
+                                                            "<b>" + transportName + "</b>"));
+                writer.println("</html>");
+            }
+        } finally {
+            writer.close();
         }
 
-        res.setContentType("text/html");
-        writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
-        writer.println( JavaUtils.getMessage("reachedServlet00"));
-
-        writer.println("<p>" + JavaUtils.getMessage("transportName00",
-                "<b>" + transportName + "</b>"));
-        writer.println("</html>");
+        if (isDebug) 
+            log.debug("Exit: doGet()");
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
-        if(isDebug) log.debug("In doPost");
+        throws ServletException, IOException
+    {
+        if (isDebug) 
+            log.debug("Enter: doPost()");
+
         if (engine == null) {
             try {
                 engine = getEngine();
@@ -468,7 +490,7 @@ public class AxisServlet extends HttpServlet
             // !!! should return a SOAP fault...
             ServletException se =
                     new ServletException(JavaUtils.getMessage("noEngine00"));
-            log.debug(se);
+            log.debug("No Engine!", se);
             throw se; 
         }
 
@@ -595,9 +617,8 @@ public class AxisServlet extends HttpServlet
             if ( e instanceof AxisFault ) {
                 AxisFault  af = (AxisFault) e ;
                 // Should really be doing this with explicit AxisFault
-                // sublcasses... --Glen
-                if ( "Server.Unauthorized".equals(
-                        af.getFaultCode().getLocalPart() ) )
+                // subclasses... --Glen
+                if ( "Server.Unauthorized".equals(af.getFaultCode().getLocalPart() ) )
                     res.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
                 else
                     res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
@@ -644,6 +665,27 @@ public class AxisServlet extends HttpServlet
         if(!res.isCommitted()) {
             res.flushBuffer(); //Force it right now.
         }
-        if(isDebug) log.debug("Response sent.");
+
+        if (isDebug) {
+            log.debug("Response sent.");
+            log.debug("Exit: doPost()");
+        }
+    }
+
+    /**
+     * Provided to allow overload of default JWSClassDir
+     * by derived class.
+     */
+    protected String getDefaultJWSClassDir() {
+        return webInfPath + File.separator +  "jwsClasses";
+    }
+
+    /**
+     * Provided to allow overload of default engine config
+     * by derived class.
+     */
+    protected static EngineConfiguration getEngineConfig(ServletContext context) {
+        return (new ServletEngineConfigurationFactory(context)).
+            getServerEngineConfig();
     }
 }
