@@ -65,6 +65,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import samples.attachments.EchoAttachment;
+import samples.attachments.TestRef;
 
 
 /** Test the attachments sample code.
@@ -78,8 +79,8 @@ public class TestAttachmentsSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/attachments/attachdeploy.wsdd" };
-        AdminClient.main(args);
+        AdminClient.main(new String[]{"samples/attachments/attachdeploy.wsdd" });
+        AdminClient.main(new String[]{"samples/attachments/testref.wsdd"});
     }
     
     public void doTestAttachments1() throws Exception {
@@ -105,10 +106,16 @@ public class TestAttachmentsSample extends TestCase {
         boolean res = new EchoAttachment(opts).echoDir(true, "samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
+
+    public void doTestAttachmentsTestRef() throws Exception {
+        Options opts = new Options( new String[]{});
+        boolean res = new TestRef(opts).testit();
+        assertEquals("Didn't process attachments correctly", res, true);
+    }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/attachments/attachundeploy.wsdd" };
-        AdminClient.main(args);
+        AdminClient.main(new String[]{ "samples/attachments/attachundeploy.wsdd" });
+        AdminClient.main(new String[]{ "samples/attachments/testrefundeploy.wsdd" });
     }
 
     public static void main(String args[]) throws Exception {
@@ -128,6 +135,8 @@ public class TestAttachmentsSample extends TestCase {
             doTestAttachmentsD1();
             log.info("Testing multiple file DIME attachments...");
             doTestAttachmentsD2();
+            log.info("Testing attachment references...");
+            doTestAttachmentsTestRef();
             log.info("Testing undeployment...");
             doTestUndeploy();
             log.info("Test complete.");
