@@ -96,7 +96,7 @@ import java.util.Vector;
 public class Emitter {
 
     /** Field log */
-    protected static Log log = LogFactory.getLog(Types.class.getName());
+    protected static Log log = LogFactory.getLog(Emitter.class.getName());
     // Generated WSDL Modes
 
     /** Field MODE_ALL */
