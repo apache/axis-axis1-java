@@ -532,10 +532,14 @@ public class rfq extends JPanel {
       String url = null ;
       int total = tableModel.getRowCount();
       String name = (String) buyList.getSelectedItem();
+      double price = 0 ;
       for ( int i = 0 ; i < total ; i++ ) {
         String val = (String) tableModel.getValueAt(i, NAME_COLUMN) ;
+        Double dval ;
         if ( val.equals(name) ) {
           url = (String) tableModel.getValueAt(i, URL_COLUMN);
+          dval = (Double) tableModel.getValueAt(i, QUOTE_COLUMN);
+          price = dval.doubleValue();
           break ;
         }
       }
@@ -545,7 +549,7 @@ public class rfq extends JPanel {
       int numItems = Integer.parseInt((String) tNumItems.getSelectedItem());
       String value = null ;
 
-      value = vv.buy( url, quantity, numItems );
+      value = vv.buy( url, quantity, numItems, price );
 
       JOptionPane.showMessageDialog(this, value, "Receipt",
                                     JOptionPane.INFORMATION_MESSAGE );
