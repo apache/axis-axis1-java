@@ -24,10 +24,6 @@ public class DataSer extends DeserializerBase implements Serializer
     
     private Hashtable typesByMemberName = new Hashtable();  
     
-    /** Have I received the startelement event for the top-level element?
-     */
-    private boolean gotMyStart = false;
-    
     public DataSer()
     {
         typesByMemberName.put(STRINGMEMBER, SOAPTypeMappingRegistry.XSD_STRING);
@@ -38,15 +34,10 @@ public class DataSer extends DeserializerBase implements Serializer
     /** DESERIALIZER STUFF - event handlers
      */
     
-    public void startElement(String namespace, String localName,
+    public void onStartChild(String namespace, String localName,
                              String qName, Attributes attributes)
         throws SAXException
     {
-        if (!gotMyStart) {
-            gotMyStart = true;
-            return;
-        }
-        
         QName typeQName = (QName)typesByMemberName.get(localName);
         if (typeQName == null)
             throw new SAXException("Invalid element in Data struct - " + localName);
@@ -56,8 +47,6 @@ public class DataSer extends DeserializerBase implements Serializer
         
         if (dSer == null)
             throw new SAXException("No deserializer for a " + typeQName + "???");
-
-        dSer.setParent(this);
         
         context.pushElementHandler(dSer);
     }
