@@ -345,10 +345,12 @@ public class JavaDeployWriter extends JavaWriter {
 
                 // These operation types are not supported.  The signature
                 // will be a string stating that fact.
-                if (type != OperationType.NOTIFICATION
-                        && type != OperationType.SOLICIT_RESPONSE) {
-                    methodList = methodList + " " + javaOperName;
+                if (type == OperationType.NOTIFICATION
+                        || type == OperationType.SOLICIT_RESPONSE) {
+                    continue;
                 }
+
+                methodList = methodList + " " + javaOperName;
 
                 // We pass "" as the namespace argument because we're just
                 // interested in the return type for now.

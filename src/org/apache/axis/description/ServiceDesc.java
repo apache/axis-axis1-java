@@ -720,6 +720,18 @@ public class ServiceDesc {
         }
 
         loadServiceDescByIntrospectionRecursive(implClass);
+        
+        // All operations should now be synchronized.  Check it.
+        for (Iterator iterator = operations.iterator(); iterator.hasNext();) {
+            OperationDesc operation = (OperationDesc) iterator.next();
+            if (operation.getMethod() == null) {
+                throw new InternalException(
+                        Messages.getMessage("badWSDDOperation",
+                                            operation.getName(),
+                                            "" + operation.getNumParams()));
+            }
+        }
+        
         introspectionComplete = true;
     }
 
