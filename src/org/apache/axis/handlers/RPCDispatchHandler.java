@@ -133,7 +133,6 @@ public class RPCDispatchHandler extends BasicHandler {
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
             argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
-              System.out.println("  value: " + argValues[i] );
 
             if (DEBUG_LOG) {
               System.out.println("  value: " + argValues[i] );
