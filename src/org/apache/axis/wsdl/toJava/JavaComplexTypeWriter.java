@@ -121,8 +121,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 if (elementMappings == null)
                     elementMappings = new HashMap();
 
-                elementMappings.put(Utils.capitalizeFirstChar(javaName),
-                                    new QName("", elemName));
+                elementMappings.put(javaName, new QName("", elemName));
             }
             names.add(type.getName());
             names.add(javaName);
@@ -186,9 +185,9 @@ public class JavaComplexTypeWriter extends JavaWriter {
             String capName = Utils.capitalizeFirstChar(name);
 
             String get = "get";
-            //if (typeName.equals("boolean") ||
-            //    typeName.startsWith("boolean["))
-            //    get = "is"
+            if (typeName.equals("boolean") ||
+                typeName.startsWith("boolean["))
+                get = "is";
 
             pw.println("    public " + typeName + " " + get + capName + "() {");
             pw.println("        return " + name + ";");
@@ -240,12 +239,6 @@ public class JavaComplexTypeWriter extends JavaWriter {
         // if we have attributes, create metadata function which returns the
         // list of properties that are attributes instead of elements
 
-        // Glen 3/7/02 : This is now using the type metadata model which
-        // provides for arbitrary mapping of XML elements or attributes
-        // <-> Java fields.  We need to generalize this to support element
-        // mappings as well, but right now this is just to keep the attribute
-        // mechanism working.
-
         if (attributes != null || elementMappings != null) {
             boolean wroteFieldType = false;
             pw.println("    // " + JavaUtils.getMessage("typeMeta"));
@@ -257,9 +250,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i += 2) {
                     String attrName = (String) attributes.get(i + 1);
-                    String fieldName =
-                            Utils.capitalizeFirstChar(
-                                    Utils.xmlNameToJava(attrName));
+                    String fieldName = Utils.xmlNameToJava(attrName);
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -326,6 +317,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
         pw.println("    public boolean equals(Object obj) {");
         pw.println("        // compare elements");
         pw.println("        " +  className + " other = (" + className + ") obj;");
+        pw.println("        if (obj == null) return false;");
         pw.println("        if (this == obj) return true;");
         pw.println("        if (! (obj instanceof " + className + ")) return false;");
         if (names.size() == 0) {
@@ -335,7 +327,11 @@ public class JavaComplexTypeWriter extends JavaWriter {
             for (int i = 0; i < names.size(); i += 2) {
                 String variableType = (String) names.get(i);
                 String variable = (String) names.get(i + 1);
-                
+                String get = "get";
+
+                if (variableType.equals("boolean"))
+                    get = "is";
+
                 if (variableType.equals("int") ||
                         variableType.equals("long") ||
                         variableType.equals("short") ||
@@ -343,13 +339,15 @@ public class JavaComplexTypeWriter extends JavaWriter {
                         variableType.equals("double") ||
                         variableType.equals("boolean") ||
                         variableType.equals("byte")) {
-                    pw.print("            " + variable + " == other.get" + 
+                    pw.print("            " + variable + " == other." + get +
                             Utils.capitalizeFirstChar(variable) + "()");
                 } else {
-                    pw.println("            ((" + variable + "==null && other.get" +
+                    pw.println("            ((" + variable +
+                               "==null && other." + get +
                                Utils.capitalizeFirstChar(variable) + "()==null) || ");
                     pw.println("             (" + variable + "!=null &&");
-                    pw.print("              " + variable + ".equals(other.get" + 
+                    pw.print("              " + variable +
+                             ".equals(other." + get +
                              Utils.capitalizeFirstChar(variable) + "())))");
                 }
                 if (i == (names.size() - 2))
