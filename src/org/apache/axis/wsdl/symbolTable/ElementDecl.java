@@ -25,13 +25,8 @@ import javax.xml.namespace.QName;
  * @author Glen Daniels (gdaniels@apache.org)
  * @author Tom Jordahl (tomj@apache.org)
  */
-public class ElementDecl {
+public class ElementDecl extends ContainedEntry {
 
-    /** Field name */
-    private QName name;
-
-    /** Field type */
-    private TypeEntry type;
     
     /** Field documentation */
     private String documentation;
@@ -54,11 +49,6 @@ public class ElementDecl {
     /** Field anyElement */
     private boolean anyElement = false;
 
-    /**
-     * Constructor ElementDecl
-     */
-    public ElementDecl() {
-    }
 
     /**
      * Constructor ElementDecl
@@ -67,45 +57,8 @@ public class ElementDecl {
      * @param name 
      */
     public ElementDecl(TypeEntry type, QName name) {
-        this.type = type;
-        this.name = name;
-    }
-
-    /**
-     * Method getType
-     * 
-     * @return 
-     */
-    public TypeEntry getType() {
-        return type;
-    }
-
-    /**
-     * Method setType
-     * 
-     * @param type 
-     */
-    public void setType(TypeEntry type) {
-        this.type = type;
-    }
-
-    /**
-     * Method getName
-     * 
-     * @return 
-     */
-    public QName getName() {
-        return name;
-    }
-
-    /**
-     * Method setName
-     * 
-     * @param name 
-     */
-    public void setName(QName name) {
-        this.name = name;
-    }
+        super(type, name);
+    }    
 
     /**
      * Method getMinOccursIs0

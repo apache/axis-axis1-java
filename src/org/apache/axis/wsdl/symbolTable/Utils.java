@@ -640,12 +640,13 @@ public class Utils {
         v = SchemaUtils.getContainedAttributeTypes(node, symbolTable);
 
         if (v != null) {
-            for (int i = 0; i < v.size(); i += 2) {
-                if (!types.contains(v.get(i))) {
-                    types.add(v.get(i));
-                    getNestedTypes(((TypeEntry) v.get(i)), types, symbolTable,
-                            derivedFlag);
-                }
+            for (int i = 0; i < v.size(); i++) {
+                ContainedAttribute attr = (ContainedAttribute) v.get(i);
+                TypeEntry te = attr.getType();
+                if (!types.contains(te)) {
+                    types.add(te);
+                    getNestedTypes(te, types, symbolTable, derivedFlag);
+                }                
             }
         }
 

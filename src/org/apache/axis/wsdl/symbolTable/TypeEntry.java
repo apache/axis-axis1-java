@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Vector;
 
 /**
  * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.
@@ -104,6 +105,12 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     
     /** Field types */
     protected HashSet types = null;
+    
+    /** contained elements in the schema's type definition */
+    protected Vector containedElements;
+
+    /** contained attributes in the schema's type definition */
+    protected Vector containedAttributes;
 
     // whether this type is only referenced
     // via a binding's literal use.
@@ -391,12 +398,15 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
                     + "\n";
         }
 
-        return super.toString(indent) + indent + "Class:         "
-                + this.getClass().getName() + "\n" + indent + "Base?:         "
-                + isBaseType + "\n" + indent + "Undefined?:    " + undefined
-                + "\n" + indent + "isSimpleType?  " + isSimpleType + "\n"
-                + indent + "Node:          " + getNode() + "\n" + indent
-                + "Dims:          " + dims + "\n" + refString;
+        return super.toString(indent) 
+                + indent + "Class:         " + this.getClass().getName() + "\n" 
+                + indent + "Base?:         " + isBaseType + "\n" 
+                + indent + "Undefined?:    " + undefined + "\n" 
+                + indent + "isSimpleType?  " + isSimpleType + "\n"
+                + indent + "Node:          " + getNode() + "\n" 
+                + indent + "Dims:          " + dims + "\n"              
+                + indent + "isOnlyLiteralReferenced: " + onlyLiteralReference + "\n"
+                + refString;
     }
 
     /**
@@ -417,4 +427,29 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
         }
         return types;
     }    // getNestedTypes
+
+    /**
+     * @return Returns the containedAttributes.
+     */
+    public Vector getContainedAttributes() {
+        return containedAttributes;
+    }
+    /**
+     * @param containedAttributes The containedAttributes to set.
+     */
+    public void setContainedAttributes(Vector containedAttributes) {
+        this.containedAttributes = containedAttributes;
+    }
+    /**
+     * @return Returns the containedElements.
+     */
+    public Vector getContainedElements() {
+        return containedElements;
+    }
+    /**
+     * @param containedElements The containedElements to set.
+     */
+    public void setContainedElements(Vector containedElements) {
+        this.containedElements = containedElements;
+    }
 }

@@ -18,6 +18,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -266,8 +267,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                     variableName = Constants.ANYCONTENT;
                     isAny = true;
                 } else {
-                    String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
-                    variableName = Utils.xmlNameToJava(elemName);
+                    variableName = elem.getName();
                     
                     if (elem.getMinOccursIs0() || elem.getNillable()) {
                         typeName = Utils.getWrapperType(typeName);
@@ -303,14 +303,11 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // Add attribute names
         if (attributes != null) {
-            for (int i = 0; i < attributes.size(); i += 2) {
-                TypeEntry attr = (TypeEntry) attributes.get(i);
-                String typeName = attr.getName();
-                QName xmlName = (QName) attributes.get(i + 1);
-                String attrName = Utils.getLastLocalPart(xmlName.getLocalPart());
-                String variableName =
-                        Utils.xmlNameToJava(attrName);
 
+            for (int i = 0; i < attributes.size(); i += 1) {
+                ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
+                String typeName = attr.getType().getName(); 
+                String variableName = attr.getName();
                 names.add(typeName);
                 names.add(variableName);
 
@@ -323,7 +320,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 // bug 19069: need to generate code that access member variables that
                 // are enum types through the class interface, not the constructor
                 // this util method returns non-null if the type at node is an enum
-                if (null != Utils.getEnumerationBaseAndValues(attr.getNode(),
+                if (null != Utils.getEnumerationBaseAndValues(attr.getType().getNode(),
                         emitter.getSymbolTable())) {
                     enumerationTypes.add(typeName);
                 }
@@ -566,31 +563,25 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
 
             // Process the attributes
-            Vector attributes = SchemaUtils.getContainedAttributeTypes(
-                    te.getNode(), emitter.getSymbolTable());
-
+            Vector attributes = te.getContainedAttributes();
             if (attributes != null) {
-                for (int j = 0; j < attributes.size(); j += 2) {
-                    paramTypes.add(((TypeEntry) attributes.get(j)).getName());
-                    String name = Utils.getLastLocalPart(
-                            ((QName) attributes.get(j + 1)).getLocalPart());
-                    paramNames.add(mangle + Utils.xmlNameToJava(name));
+                for (int j = 0; j < attributes.size(); j += 1) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
+                    paramTypes.add(attr.getType().getName());
+                    paramNames.add(attr.getName());
+                            
                 }
             }
 
             // Process the elements
-            Vector elements =
-                    SchemaUtils.getContainedElementDeclarations(te.getNode(),
-                            emitter.getSymbolTable());
+            Vector elements = te.getContainedElements();
 
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-                    String name = Utils.getLastLocalPart(elem.getName().getLocalPart());
+
                     paramTypes.add(elem.getType().getName());
-                    paramNames.add(
-                            mangle
-                            + Utils.xmlNameToJava(name));
+                    paramNames.add(elem.getName());
                 }
             }
         }

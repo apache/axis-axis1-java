@@ -273,12 +273,7 @@ public class SchemaUtils {
                         // Return an element declaration with a fixed name
                         // ("value") and the correct type.
                         Vector v = new Vector();
-                        ElementDecl elem = new ElementDecl();
-
-                        elem.setType(
-                                symbolTable.getTypeEntry(
-                                        extendsOrRestrictsType, false));
-                        elem.setName(VALUE_QNAME);
+                        ElementDecl elem = new ElementDecl(symbolTable.getTypeEntry(extendsOrRestrictsType, false), VALUE_QNAME);
                         v.add(elem);
 
                         return v;
@@ -348,28 +343,21 @@ public class SchemaUtils {
 
                 for (int i = 0; i < simpleQName.length; i++) {
 
-                    TypeEntry simpleType = symbolTable.getType(simpleQName[i]);
+                    Type simpleType = symbolTable.getType(simpleQName[i]);
 
                     if (simpleType != null) {
                         if (v == null) {
                             v = new Vector();
                         }
 
-                        ElementDecl elem = new ElementDecl();
-
-                        elem.setType(simpleType);
-
+                        QName qname = null;
                         if (simpleQName.length > 1) {
-                            elem.setName(
-                                    new javax.xml.namespace.QName(
-                                            "",
-                                            simpleQName[i].getLocalPart() + "Value"));
+                            qname = new QName("", simpleQName[i].getLocalPart() + "Value");
                         } else {
-                            elem.setName(
-                                    new javax.xml.namespace.QName("", "value"));
+                            qname = new QName("", "value");
                         }
 
-                        v.add(elem);
+                        v.add(new ElementDecl(simpleType, qname));
                     }
                 }
 
@@ -557,7 +545,7 @@ public class SchemaUtils {
                     // Represent this as an element named any of type any type.
                     // This will cause it to be serialized with the element
                     // serializer.
-                    TypeEntry type = symbolTable.getType(Constants.XSD_ANY);
+                    Type type = symbolTable.getType(Constants.XSD_ANY);
                     ElementDecl elem = new ElementDecl(type,
                             Utils.findQName("",
                                     "any"));
@@ -614,7 +602,7 @@ public class SchemaUtils {
             // The value of the second argument is 'false' since global model group
             // definitions are always represented by objects whose type is
             // assignment compatible with 'org.apache.axis.wsdl.symbolTable.Type'.
-            TypeEntry type = symbolTable.getTypeEntry(nodeType, false);
+            Type type = (Type) symbolTable.getTypeEntry(nodeType, false);
 
             if (type != null) {
                 v.add(new ElementDecl(type, nodeName));
@@ -1579,8 +1567,7 @@ public class SchemaUtils {
         // add type and name to vector, skip it if we couldn't parse it
         // XXX - this may need to be revisited.
         if ((type != null) && (attributeName != null)) {
-            v.add(type);
-            v.add(attributeName);
+            v.add(new ContainedAttribute(type, attributeName));
         }
     }
 
@@ -1600,8 +1587,7 @@ public class SchemaUtils {
 
         if (typeEnt != null)    // better not be null
         {
-            v.add(typeEnt);
-            v.add(name);
+            v.add(new ContainedAttribute(typeEnt, name));
         }
     }
 

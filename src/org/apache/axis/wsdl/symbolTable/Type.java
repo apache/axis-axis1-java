@@ -25,7 +25,8 @@ import javax.xml.namespace.QName;
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public abstract class Type extends TypeEntry {
-
+    private boolean generated;	// true if java class is generated during WSDL->Java processing
+    
     /**
      * Create a Type object for an xml construct name that represents a base type
      * 
@@ -56,5 +57,12 @@ public abstract class Type extends TypeEntry {
      */
     protected Type(QName pqName, Node pNode) {
         super(pqName, pNode);
+    }
+    public void setGenerated(boolean b) {
+        generated = true;        
+    }
+    
+    public boolean isGenerated() {
+        return generated;
     }
 }

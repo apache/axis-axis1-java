@@ -25,7 +25,9 @@ import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -524,7 +526,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             if (Utils.getEnumerationBaseAndValues(te.getNode(), symbolTable) == null
                     &&SchemaUtils.getComplexElementExtensionBase(te.getNode(), symbolTable) == null
-                    &&SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
+					&& te.getContainedAttributes() == null) {
                 if(!SchemaUtils.isSimpleTypeWithUnion(te.getNode())) {
                     if (base.isSimpleType()) {
                         // Case 1:
@@ -632,7 +634,26 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 // Now set the name with the constructed qname
                 tEntry.setName(emitter.getJavaName(typeQName));
             }
+        
+            Vector elements = tEntry.getContainedElements();
+            if (elements != null) {
+                for (int i = 0; i < elements.size(); i++) {
+                    ElementDecl elem = (ElementDecl) elements.get(i);
+                    String varName = emitter.getJavaVariableName(typeQName, elem.getQName(), true);
+                    elem.setName(varName);
+                }
+            }
+            
+            Vector attributes = tEntry.getContainedAttributes();
+            if (attributes != null) {
+                for (int i = 0; i < attributes.size(); i++) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
+                    String varName = emitter.getJavaVariableName(typeQName, attr.getQName(), false);
+                    attr.setName(varName);
+                }
+            }
         }
+
         // Set the entry with the same name as the ref'd entry
         // but add the appropriate amount of dimensions
         entry.setName(tEntry.getName() + dims);

@@ -16,6 +16,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
@@ -270,14 +271,12 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             if (attributes != null) {
                 boolean wroteAttrDecl = false;
 
-                for (int i = 0; i < attributes.size(); i += 2) {
-                    TypeEntry te = (TypeEntry) attributes.get(i);
-                    QName attrName = (QName) attributes.get(i + 1);
-                    String attrLocalName = Utils.getLastLocalPart(attrName.getLocalPart());
-                    String fieldName =
-                            Utils.xmlNameToJava(attrLocalName);
+                for (int i = 0; i < attributes.size(); i += 1) {
+                    ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
+                    TypeEntry te = attr.getType();
+                    QName attrName = attr.getQName();
 
-                    fieldName = getAsFieldName(fieldName);
+                    String fieldName = getAsFieldName(attr.getName());
 
                     QName attrXmlType = te.getQName();
 
@@ -316,12 +315,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         continue;
                     }
 
-                    String elemLocalName = Utils.getLastLocalPart(elem.getName().getLocalPart());
-                    String fieldName = Utils.xmlNameToJava(elemLocalName);
+                    String fieldName = getAsFieldName(elem.getName());  // jongjin.
 
-                    fieldName = getAsFieldName(fieldName);
-
-                    QName xmlName = elem.getName();
+                    QName xmlName = elem.getQName();
 
                     // Some special handling for arrays.
                     TypeEntry elemType = elem.getType();

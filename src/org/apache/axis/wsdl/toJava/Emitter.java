@@ -504,6 +504,10 @@ public class Emitter extends Parser {
             return fullJavaName;
         }
 
+        fullJavaName = getJavaNameHook(qName);
+        if (fullJavaName != null) {
+            return fullJavaName;
+        }
         // Use the namespace uri to get the appropriate package
         String pkg = getPackage(qName.getNamespaceURI());
 
@@ -516,6 +520,32 @@ public class Emitter extends Parser {
 
         return fullJavaName;
     }    // getJavaName
+    
+    protected String getJavaNameHook(QName qname) { return null; }
+    
+    
+    /**
+     * @param typeQName QName for containing xml type
+     * @param xmlName QName for element
+     * @return
+     */
+    protected String getJavaVariableName(QName typeQName, QName xmlName, boolean isElement) {
+        String javaName = null;
+        
+        
+        javaName = getJavaVariableNameHook(typeQName, xmlName, isElement);        
+        if (javaName == null) {
+            String elemName = Utils.getLastLocalPart(xmlName.getLocalPart());            
+            javaName = Utils.xmlNameToJava(elemName);
+        }
+        return javaName;
+    }
+        
+    protected String getJavaVariableNameHook(QName typeQName, QName xmlName, boolean isElement) {
+        return null;
+    }
+        
+    
 
     /**
      * Emit appropriate Java files for a WSDL at a given URL.

@@ -19,6 +19,7 @@ import org.apache.axis.wsdl.gen.Generator;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Node;
 
@@ -84,12 +85,7 @@ public class JavaTypeWriter implements Generator {
                         }
                     }
 
-                    typeWriter = getBeanWriter(
-                            emitter, type,
-                            SchemaUtils.getContainedElementDeclarations(
-                                    node, symbolTable), base,
-                            SchemaUtils.getContainedAttributeTypes(
-                                    node, symbolTable));
+                    typeWriter = getBeanWriter(emitter, type, base);
                 }
             }
 
@@ -97,6 +93,10 @@ public class JavaTypeWriter implements Generator {
             // parameter), instantiate the holder writer.
             if (holderIsNeeded(type)) {
                 holderWriter = getHolderWriter(emitter, type);
+            }
+            
+            if (typeWriter != null) {
+                ((Type)type).setGenerated(true);
             }
         }
     }    // ctor
@@ -154,10 +154,10 @@ public class JavaTypeWriter implements Generator {
      * @param attributes 
      * @return 
      */
-    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type,
-                                       Vector elements, TypeEntry base,
-                                       Vector attributes) {
-
+    protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type, TypeEntry base) {   // CONTAINED_ELEM_AND_ATTR
+        Vector elements = type.getContainedElements();
+        Vector attributes = type.getContainedAttributes();
+        
         JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements,
                 base, attributes);
 

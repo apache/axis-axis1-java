@@ -697,6 +697,7 @@ public class SymbolTable {
                 lookForImports(context, doc);
             }
         }
+        processTypes();
 
         if (def != null) {
             checkForUndefined(def, filename);
@@ -2082,6 +2083,7 @@ public class SymbolTable {
             // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
             Node node = null;
+            TypeEntry typeEntry = null;
 
             if ((typeName != null)
                     && (bindingEntry == null || bindingEntry.getMIMETypes().size() == 0)) {
@@ -2109,7 +2111,8 @@ public class SymbolTable {
             // ...
             // <schema targetNamespace="foo">
             // <element name="bar"...>  <--- This one
-            node = getTypeEntry(elementName, true).getNode();
+            typeEntry = getTypeEntry(elementName, true);
+            node = typeEntry.getNode();
 
             // Check if this element is of the form:
             // <element name="foo" type="tns:foo_type"/>
@@ -2121,7 +2124,8 @@ public class SymbolTable {
 
                 // If in fact we have such a type, go get the node that
                 // corresponds to THAT definition.
-                node = getTypeEntry(type, false).getNode();
+                typeEntry = getTypeEntry(type, false);
+                node = typeEntry.getNode();
             }
 
             Vector vTypes = null;
@@ -2134,11 +2138,7 @@ public class SymbolTable {
             } else {
 
                 // check for attributes
-                Vector vAttrs = SchemaUtils.getContainedAttributeTypes(node,
-                        this);
-
-                if (vAttrs != null) {
-
+                if (typeEntry.getContainedAttributes() != null) {
                     // can't do wrapped mode
                     wrapped = false;
                 }
@@ -2151,8 +2151,7 @@ public class SymbolTable {
                 // TODO - If we are unable to represent any of the types in the
                 // element, we need to use SOAPElement/SOAPBodyElement.
                 // I don't believe getContainedElementDecl does the right thing yet.
-                vTypes = SchemaUtils.getContainedElementDeclarations(node,
-                        this);
+                vTypes = typeEntry.getContainedElements();
             }
 
             // IF we got the type entries and we didn't find attributes
@@ -2164,7 +2163,7 @@ public class SymbolTable {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                     Parameter p = new Parameter();
 
-                    p.setQName(elem.getName());
+                    p.setQName(elem.getQName());
                     p.setType(elem.getType());
                     p.setOmittable(elem.getMinOccursIs0());
                     fillParamInfo(p, bindingEntry, opName, partName);
@@ -3683,5 +3682,28 @@ public class SymbolTable {
         }
 
         return null;
+    }
+    
+    protected void processTypes() {
+        for (Iterator i = typeTypeEntries.values().iterator(); i.hasNext(); ) {
+            Type type = (Type) i.next();
+            Node node = type.getNode();            
+            
+            // Process the attributes
+            Vector attributes = 
+                    SchemaUtils.getContainedAttributeTypes(node, this);
+
+            if (attributes != null) {
+                type.setContainedAttributes(attributes);
+            }
+
+            // Process the elements
+            Vector elements =
+                    SchemaUtils.getContainedElementDeclarations(node, this);
+
+            if (elements != null) {
+                type.setContainedElements(elements);
+            }
+        }
     }
 }    // class SymbolTable
