@@ -73,11 +73,12 @@ import org.w3c.dom.* ;
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  *
+ * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class TCPDispatchHandler extends BasicHandler {
+public class TCPSender extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: TCPDispatchHandler::invoke" );
+    Debug.Print( 1, "Enter: TCPSender::invoke" );
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
     String   targetURL = null ;
@@ -302,11 +303,11 @@ System.out.println(targetURL);
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     }
-    Debug.Print( 1, "Exit: TCPDispatchHandler::invoke" );
+    Debug.Print( 1, "Exit: TCPSender::invoke" );
   }
 
   public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: TCPDispatchHandler::undo" );
-    Debug.Print( 1, "Exit: TCPDispatchHandler::undo" );
+    Debug.Print( 1, "Enter: TCPSender::undo" );
+    Debug.Print( 1, "Exit: TCPSender::undo" );
   }
 };

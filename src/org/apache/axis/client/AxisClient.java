@@ -134,41 +134,41 @@ public class AxisClient extends AxisEngine
                 if ( hName != null && (h = sr.find( hName )) != null ) {
                     if ( h instanceof SimpleTargetedChain ) {
                         service = (SimpleTargetedChain) h ;
-                        h = service.getInputChain();
+                        h = service.getRequestChain();
                     }
                     if ( h != null ) h.invoke( msgContext );
                 }
                 
-                /* Process the Global Input Chain */
+                /* Process the Global Request Chain */
                 /**********************************/
-                hName = Constants.GLOBAL_INPUT ;
+                hName = Constants.GLOBAL_REQUEST ;
                 if ( hName != null  && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
                 
-                /* Process the Transport Specific Input Chain */
+                /* Process the Transport Specific Request Chain */
                 /**********************************************/
-                hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
+                hName = msgContext.getStrProp(MessageContext.TRANS_REQUEST);
                 if ( hName != null && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
                 
-                /* Note: at the end of the transport specific input chain should */
+                /* Note: at the end of the transport specific request chain should */
                 /* have been a handler that called the server.                   */
                 /*****************************************************************/
                 
-                /* Process the Transport Specific Output Chain */
+                /* Process the Transport Specific Response Chain */
                 /***********************************************/
-                hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
+                hName = msgContext.getStrProp(MessageContext.TRANS_RESPONSE);
                 if ( hName != null  && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
                 
-                /* Process the Global Output Chain */
+                /* Process the Global Response Chain */
                 /***********************************/
-                hName = Constants.GLOBAL_OUTPUT ;
+                hName = Constants.GLOBAL_RECEIVE ;
                 if ( hName != null && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
                 
                 if ( service != null ) {
-                    h = service.getOutputChain();
+                    h = service.getResponseChain();
                     if ( h != null )
                         h.invoke(msgContext);
                 }

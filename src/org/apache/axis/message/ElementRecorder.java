@@ -188,7 +188,7 @@ public class ElementRecorder extends DeserializerBase
     }
 
     /** 
-      * Output the the full stream to a context.
+      * Response the the full stream to a context.
       */
     public void output(SerializationContext context) 
         throws IOException

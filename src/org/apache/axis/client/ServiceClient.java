@@ -63,7 +63,7 @@ import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.transport.http.HTTPDispatchHandler;
+import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
@@ -193,11 +193,11 @@ public class ServiceClient {
     }
     
     public void setTransportInput(String handlerName) {
-      msgContext.setProperty( MessageContext.TRANS_INPUT, handlerName );
+      msgContext.setProperty( MessageContext.TRANS_REQUEST, handlerName );
     }
   
     public void setTransportOutput(String handlerName) {
-      msgContext.setProperty( MessageContext.TRANS_OUTPUT, handlerName );
+      msgContext.setProperty( MessageContext.TRANS_RESPONSE, handlerName );
     }
     
     public void setRequestMessage(Message msg) {
@@ -334,8 +334,8 @@ public class ServiceClient {
         // handler, we might want to consider removing this code and doLocal
         // entirely.
         if (doLocal) {
-            msgContext.setProperty(MessageContext.TRANS_INPUT, "LocalSender");
-            msgContext.clearProperty(MessageContext.TRANS_OUTPUT);
+            msgContext.setProperty(MessageContext.TRANS_REQUEST, "LocalSender");
+            msgContext.clearProperty(MessageContext.TRANS_RESPONSE);
         }
 
         // set up message context if there is a transport

@@ -76,8 +76,8 @@ import java.net.*;
  */
 public class AxisListener implements Runnable {
     // These have default values.
-    private String transportInName = "TCP.input";
-    private String transportOutName = "TCP.output";
+    private String transportReqName = "TCP.request";
+    private String transportRespName = "TCP.response";
     
     private static final String AXIS_ENGINE = "AxisEngine" ;
     
@@ -151,13 +151,13 @@ public class AxisListener implements Runnable {
                 
                 HandlerRegistry hr = engine.getHandlerRegistry();
                 HandlerRegistry sr = engine.getServiceRegistry();
-                // add the TCPDispatchHandler
-                hr.add("TCPSender", new TCPDispatchHandler());
+                // add the TCPSender
+                hr.add("TCPSender", new TCPSender());
                 hr.add("TCPAction", new TCPActionHandler());
                 
                 SimpleChain c = new SimpleChain();
                 c.addHandler( hr.find( "TCPAction" ) );
-                hr.add( transportInName, c );
+                hr.add( transportReqName, c );
                 
                 // self-register the PseudoStockQuoteService, for testing purposes
                 SOAPService service = new SOAPService();
@@ -242,10 +242,10 @@ public class AxisListener implements Runnable {
             /**********************************************************/
             msgContext.setRequestMessage( msg );
             
-            /* Set the Transport Specific Input/Output chains IDs */
+            /* Set the Transport Specific Request/Response chains IDs */
             /******************************************************/
-            msgContext.setProperty(MessageContext.TRANS_INPUT , transportInName );
-            msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName );
+            msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName );
+            msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName );
             
             try {
                 /* Invoke the Axis engine... */

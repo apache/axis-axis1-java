@@ -75,9 +75,9 @@ import org.w3c.dom.* ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class HTTPDispatchHandler extends BasicHandler {
+public class HTTPSender extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: HTTPDispatchHandler::invoke" );
+    Debug.Print( 1, "Enter: HTTPSender::invoke" );
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
     String   targetURL = null ;

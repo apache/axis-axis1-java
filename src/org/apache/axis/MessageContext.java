@@ -285,7 +285,7 @@ public class MessageContext {
 
     /** ServiceHandler is the handler that is the "service".  This handler
      * can (and probably will actually be a chain that contains the
-     * service specific input/output/pivot point handlers
+     * service specific request/response/pivot point handlers
      */
     private Handler          serviceHandler ;
     public Handler getServiceHandler() {
@@ -314,9 +314,9 @@ public class MessageContext {
      */
     public static String TRANS_URL           = "transport.url";
 
-    /** The transport specific input/output chains  */
-    public static String TRANS_INPUT         = "transport.input";
-    public static String TRANS_OUTPUT        = "transport.output";
+    /** The transport specific request/response chains  */
+    public static String TRANS_REQUEST         = "transport.request";
+    public static String TRANS_RESPONSE        = "transport.response";
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";

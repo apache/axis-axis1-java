@@ -60,14 +60,14 @@ package org.apache.axis;
 public interface TargetedChain extends Handler { 
    
     /**
-     * Returns the Input Chain
+     * Returns the Request Chain
      */
-    public Chain   getInputChain();
+    public Chain   getRequestChain();
     
     /**
-     * Sets the Input Chain
+     * Sets the Request Chain
      */
-    public void    setInputChain(Chain inChain);
+    public void    setRequestChain(Chain reqChain);
     
     /**
      * Returns the Pivot Handler
@@ -80,14 +80,14 @@ public interface TargetedChain extends Handler {
     public void    setPivotHandler(Handler handler);
     
     /**
-     * Returns the Output Chain
+     * Returns the Response Chain
      */
-    public Chain   getOutputChain();
+    public Chain   getResponseChain();
     
     /**
-     * Sets the Output Chain
+     * Sets the Response Chain
      */
-    public void    setOutputChain(Chain outChain);
+    public void    setResponseChain(Chain respChain);
     
     /**
      * Clears the Chains and the Pivot Handler

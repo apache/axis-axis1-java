@@ -100,7 +100,7 @@ public class LocalDispatchHandler extends BasicHandler {
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
     if (action != null) {
        serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action); 
-       serverContext.setProperty(MessageContext.TRANS_INPUT , "HTTPAction");
+       serverContext.setProperty(MessageContext.TRANS_REQUEST , "HTTPAction");
     }
 
     // set the realpath if possible

@@ -111,9 +111,9 @@ public class WSDDTransport extends WSDDDeployableItem implements DeployableItem 
     public Handler newInstance(Handler pivot, DeploymentRegistry registry) throws Exception {
         Handler h = super.makeNewInstance(registry);
         TargetedChain c = (TargetedChain)h;
-        c.setInputChain((Chain)getRequestFlow().newInstance(registry));
+        c.setRequestChain((Chain)getRequestFlow().newInstance(registry));
         c.setPivotHandler(pivot);
-        c.setOutputChain((Chain)getResponseFlow().newInstance(registry));
+        c.setResponseChain((Chain)getResponseFlow().newInstance(registry));
         return c;
     }
 }

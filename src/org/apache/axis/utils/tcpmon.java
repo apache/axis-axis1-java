@@ -581,7 +581,7 @@ public class tcpmon extends JFrame {
       add( top, BorderLayout.NORTH );
 
       // 2nd component is a split pane with a table on the top
-      // and the input/output text areas on the bottom
+      // and the request/response text areas on the bottom
       /////////////////////////////////////////////////////////////////////
 
       tableModel = new DefaultTableModel(new String[] {"State",
@@ -670,7 +670,7 @@ public class tcpmon extends JFrame {
           };
         });
 
-      // Add Output Section
+      // Add Response Section
       /////////////////////////////////////////////////////////////////////
       JPanel     pane2     = new JPanel();
       pane2.setLayout( new BorderLayout() );
@@ -678,12 +678,12 @@ public class tcpmon extends JFrame {
       leftPanel = new JPanel();
       leftPanel.setAlignmentX( Component.LEFT_ALIGNMENT );
       leftPanel.setLayout( new BoxLayout(leftPanel, BoxLayout.Y_AXIS) );
-      leftPanel.add( new JLabel("  Input") );
+      leftPanel.add( new JLabel("  Request") );
       leftPanel.add( new JLabel(" Waiting for connection" ));
 
       rightPanel = new JPanel();
       rightPanel.setLayout( new BoxLayout(rightPanel, BoxLayout.Y_AXIS) );
-      rightPanel.add( new JLabel("  Output") );
+      rightPanel.add( new JLabel("  Response") );
       rightPanel.add( new JLabel("") );
 
       outPane = new JSplitPane(0, leftPanel, rightPanel );
@@ -835,10 +835,10 @@ public class tcpmon extends JFrame {
           rc = Integer.parseInt( tPortField.getText() );
           out.write( (new String("Target Port: " + rc + "\n" )).getBytes() );
   
-          out.write( (new String("==== Input ====\n" )).getBytes() );
+          out.write( (new String("==== Request ====\n" )).getBytes() );
           out.write( conn.inputText.getText().getBytes() );
   
-          out.write( (new String("==== Output ====\n" )).getBytes() );
+          out.write( (new String("==== Response ====\n" )).getBytes() );
           out.write( conn.outputText.getText().getBytes() );
   
           out.close();
