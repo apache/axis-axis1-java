@@ -98,6 +98,9 @@ public class Constants {
      * The size of the buffer size for.
      */
     public static final int HTTP_TXR_BUFFER_SIZE = 8 * 1024;
+    
+    /** Basic Profile 1.1 compatibility flag */
+    public static final String WSIBP11_COMPAT_PROPERTY = "axis.ws-i.bp11.compatibility";
 
     /**
      * Returns true if the string is the SOAP_ENV Namespace.

@@ -54,8 +54,11 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
     private void registerXSDTypes() {
         // Table 4-1 of the JAXRPC 1.1 spec
         myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);
+        myRegisterSimple(Constants.XSD_UNSIGNEDINT, Long.class);
         myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);
+        myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, Integer.class);
         myRegisterSimple(Constants.XSD_UNSIGNEDBYTE, short.class);
+        myRegisterSimple(Constants.XSD_UNSIGNEDBYTE, Short.class);
         myRegister(Constants.XSD_DATETIME, java.util.Calendar.class,
                 new DateSerializerFactory(java.util.Calendar.class,
                         Constants.XSD_DATE),

@@ -18,6 +18,7 @@ package org.apache.axis.description;
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.*;
 import org.apache.axis.enum.Style;
@@ -389,6 +390,10 @@ public class JavaServiceDesc implements ServiceDesc {
         if (overloads == null) {
             overloads = new ArrayList();
             name2OperationsMap.put(name, overloads);
+        } else if (JavaUtils.isTrue(
+                AxisProperties.getProperty(Constants.WSIBP11_COMPAT_PROPERTY)) &&
+                overloads.size() > 0) {
+            throw new RuntimeException(Messages.getMessage("noOverloadedOperations", name));
         }
         overloads.add(operation);
     }
@@ -1173,9 +1178,21 @@ public class JavaServiceDesc implements ServiceDesc {
             }
         }
 
+        boolean isWSICompliant = JavaUtils.isTrue(
+                AxisProperties.getProperty(Constants.WSIBP11_COMPAT_PROPERTY));
+        
         // Make an OperationDesc, fill in common stuff
         OperationDesc operation = new OperationDesc();
-        operation.setName(method.getName());
+        
+        // If we're WS-I compliant, we can't have overloaded operation names.
+        // If we find duplicates, we generate unique names for them and map
+        // those names to the correct Method.
+        String name = method.getName();
+        if (isWSICompliant && name2OperationsMap != null) {
+            Collection methodNames = name2OperationsMap.keySet();
+            name = JavaUtils.getUniqueValue(methodNames, name);
+        }
+        operation.setName(name);
         String defaultNS = "";
         if (namespaceMappings != null && !namespaceMappings.isEmpty()) {
             // If we have a default namespace mapping, require callers to
@@ -1185,7 +1202,7 @@ public class JavaServiceDesc implements ServiceDesc {
         if(defaultNS.length() == 0) {
             defaultNS = Namespaces.makeNamespace(method.getDeclaringClass().getName());
         }
-        operation.setElementQName(new QName(defaultNS, method.getName()));
+        operation.setElementQName(new QName(defaultNS, name));
         operation.setMethod(method);
 
         // If this is a MESSAGE style service, set up the OperationDesc
