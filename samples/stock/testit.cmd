@@ -4,7 +4,7 @@ echo First test the StockQuoteService.jws file
 java samples.stock.GetQuote -uuser1 -wpass1 XXX -s/axis/StockQuoteService.jws
 
 echo Deploy everything first
-java org.apache.axis.client.http.AdminClient deploy.xml
+java org.apache.axis.client.AdminClient deploy.xml
 
 echo These next 2 should work...
 java samples.stock.GetQuote -uuser1 -wpass1 XXX
@@ -19,4 +19,4 @@ echo This should work but print debug info on the client and server
 java samples.stock.GetQuote -d -uuser1 -wpass1 XXX
 
 echo Now undeploy everything
-java org.apache.axis.client.http.AdminClient undeploy.xml
+java org.apache.axis.client.AdminClient undeploy.xml
