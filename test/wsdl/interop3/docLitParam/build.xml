@@ -22,6 +22,9 @@
 
     <mkdir dir="${root.dir}/${build.dest}"/>
 
+    <copy file="WSDLInteropTestDocLitPortBindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/interop3/docLitParam"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">

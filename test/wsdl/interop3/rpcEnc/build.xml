@@ -22,6 +22,9 @@
 
     <mkdir dir="${root.dir}/${build.dest}"/>
 
+    <copy file="WSDLInteropTestRpcEncPortBindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/rpcEnc/import1"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
