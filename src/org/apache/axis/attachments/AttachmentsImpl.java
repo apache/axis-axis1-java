@@ -456,7 +456,7 @@ public class AttachmentsImpl implements Attachments {
 
         try {
               if(sendtype == SEND_TYPE_MIME)
-                 return (int)org.apache.axis.attachments.MimeUtils.getContentLength(
+                 return org.apache.axis.attachments.MimeUtils.getContentLength(
                                 multipart != null ? multipart : (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
               else if (sendtype == SEND_TYPE_DIME)return createDimeMessage().getTransmissionSize();
         } catch (Exception e) {
