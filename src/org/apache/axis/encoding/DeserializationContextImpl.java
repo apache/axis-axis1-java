@@ -100,7 +100,7 @@ import java.util.Stack;
 public class DeserializationContextImpl extends DefaultHandler implements DeserializationContext
 {
     protected static Log log =
-        LogFactory.getLog(DeserializationContextImpl.class.getName());
+            LogFactory.getLog(DeserializationContextImpl.class.getName());
     
     
     private NSStack namespaces = new NSStack();
@@ -415,6 +415,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
         return (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        /* 
+         * TODO: This code doesn't yet work, but we aren't looking up the right
+         * TypeMapping by just using SOAP_ENC.
+         
+        String encStyle = curElement == null ? Constants.URI_CURRENT_SOAP_ENC :
+                                               curElement.getEncodingStyle();
+        return (TypeMapping) tmr.getTypeMapping(encStyle);
+        */
     }
     
     /**

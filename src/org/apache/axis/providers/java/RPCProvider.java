@@ -290,7 +290,7 @@ public class RPCProvider extends JavaProvider
             RPCElement resBody = new RPCElement(mName + "Response");
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
-            resBody.setEncodingStyle(body.getEncodingStyle());
+            resBody.setEncodingStyle(msgContext.getEncodingStyle());
             if ( objRes != null ) {
                 // In the old skeleton a param list was returned, which 
                 // contained the RPC params.  Preserve this for now.
