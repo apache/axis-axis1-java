@@ -451,7 +451,8 @@ public class SimpleAxisWorker implements Runnable {
             out.write(status);
             //out.write(XML_MIME_STUFF);
             out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType(msgContext.getSOAPConstants())).getBytes());
-            out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes());
+            // Writing the length causes the entire message to be decoded twice.
+            //out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes());
             // putInt(out, response.length);
 
             if (server.isSessionUsed() && null != cooky && 0 != cooky.trim().length()) {
