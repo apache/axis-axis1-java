@@ -75,7 +75,7 @@ import java.io.Serializable;
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public abstract class BaseSerializerFactory 
+public abstract class BaseSerializerFactory extends BaseFactory
     implements SerializerFactory {
 
     transient static Vector mechanisms = null;
@@ -192,34 +192,6 @@ public abstract class BaseSerializerFactory
     }
 
     /**
-     * Returns the "getSerializer" method if any.
-     */
-    private Method getSerializerMethod(Class clazz) {
-        Method method = null;
-        try {
-            method = 
-                clazz.getMethod("getSerializer",
-                                   new Class[] {String.class, 
-                                                Class.class, 
-                                                QName.class});
-        } catch (NoSuchMethodException e) {}
-        
-        if (method == null) {
-            try {
-                Class helper = ClassUtils.forName(
-                    clazz.getName() + "_Helper");
-                method =
-                    helper.getMethod("getSerializer", 
-                                     new Class[] {String.class, 
-                                                  Class.class, 
-                                                  QName.class});
-            } catch (NoSuchMethodException e) {
-            } catch (ClassNotFoundException e) {}
-        }
-        return method;
-    }
-
-    /**
      * Returns a list of all XML processing mechanism types supported
      * by this SerializerFactory.
      *
@@ -305,7 +277,7 @@ public abstract class BaseSerializerFactory
 	 */
 	protected Method getGetSerializer() {
 		if (getSerializer == null) {
-            getSerializer = getSerializerMethod(javaType);
+            getSerializer = getMethod(javaType, "getSerializer");
 		}
 		return getSerializer;
 	}

@@ -77,7 +77,7 @@ import org.apache.axis.utils.ClassUtils;
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public abstract class BaseDeserializerFactory 
+public abstract class BaseDeserializerFactory extends BaseFactory 
     implements DeserializerFactory {
 
     transient static Vector mechanisms = null;
@@ -88,7 +88,6 @@ public abstract class BaseDeserializerFactory
     
     transient protected Constructor deserClassConstructor = null;
     transient protected Method getDeserializer = null;
-    transient protected ThreadLocal methodCache = new ThreadLocal();
 
     /**
      * Constructor
@@ -188,56 +187,6 @@ public abstract class BaseDeserializerFactory
     }
 
     /**
-     * Returns the per thread hashmap (for method caching)  
-     */
-    private Map getMethodCache() {
-        Map map = (Map)methodCache.get();
-        if(map == null) {
-            map = new HashMap();
-            methodCache.set(map);
-        }
-        return map;
-    }
-    
-    /**
-     * Returns the "getDeserializer" method if any.
-     */
-    private Method getDeserializerMethod(Class clazz) {
-        String className = clazz.getName();
-        Map cache = getMethodCache();
-        Method method = null;
-        
-        // Check the cache first.
-        if(cache.containsKey(className)) {
-            method = (Method) cache.get(clazz);
-            return method;
-        }
-        
-        try {
-            method = 
-                clazz.getMethod("getDeserializer",
-                                   new Class[] {String.class, 
-                                                Class.class, 
-                                                QName.class});
-        } catch (NoSuchMethodException e) {}
-        if (method == null) {
-            try {
-                Class helper = ClassUtils.forName(
-                    clazz.getName() + "_Helper");
-                method =
-                    helper.getMethod("getDeserializer", 
-                                     new Class[] {String.class, 
-                                                  Class.class, 
-                                                  QName.class});
-            } catch (NoSuchMethodException e) {
-            } catch (ClassNotFoundException e) {}
-        }
-        
-        cache.put(className, method);
-        return method;
-    }
-    
-    /**
      * Returns a list of all XML processing mechanism types supported by this DeserializerFactory.
      *
      * @return List of unique identifiers for the supported XML processing mechanism types
@@ -312,7 +261,7 @@ public abstract class BaseDeserializerFactory
 	 */
 	protected Method getGetDeserializer() {
 		if (getDeserializer == null) {
-            getDeserializer = getDeserializerMethod(javaType);    
+            getDeserializer = getMethod(javaType,"getDeserializer");    
 		}
 		return getDeserializer;
 	}
