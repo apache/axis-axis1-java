@@ -404,6 +404,20 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                 throw new java.lang.IllegalArgumentException(Messages.getMessage
                         ("illegalArgumentException00"));
             }
+        } else if (object instanceof StreamSource) {
+            try {
+                source = new ManagedMemoryDataSource(((StreamSource)object).getInputStream(),
+                        ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED,
+                        contentType, true);
+                extractFilename(source);
+                datahandler = new DataHandler(source);
+                contentObject = object;
+                return;
+            } catch (java.io.IOException io) {
+                log.error(Messages.getMessage("javaIOException00"), io);
+                throw new java.lang.IllegalArgumentException(Messages.getMessage
+                        ("illegalArgumentException00"));
+            }
         } else {
             throw new java.lang.IllegalArgumentException(
                     Messages.getMessage("illegalArgumentException00"));
