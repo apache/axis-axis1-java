@@ -1,15 +1,1357 @@
 <HTML>
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=US-ASCII">
-<TITLE>Apache Axis 1.2 RC ChangeLog (Changes after 1.2 Beta)</TITLE>
+<TITLE>Apache Axis 1.2 RC2 ChangeLog (Changes after 1.2 RC1)</TITLE>
 <link type="text/css" rel="stylesheet" href="axis.css">
 </HEAD>
 <BODY text="#000000" vlink="#000000" alink="#000000" link="#000000">
 <h1>
-<a name="top">Apache Axis 1.2 RC ChangeLog (Changes after 1.2 Beta)</a>
+<a name="top">Apache Axis 1.2 RC2 ChangeLog (Changes after 1.2 RC1)</a>
 </h1>
 <p align="right">Designed for use with <a href="http://jakarta.apache.org">Ant</a>.</p>
 <hr size="2">
-<TABLE CELLSPACING="1" CELLPADDING="3" WIDTH="100%" BORDER="0"></TABLE>
+<TABLE CELLSPACING="1" CELLPADDING="3" WIDTH="100%" BORDER="0">
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-01 15:08 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1629 - WSDL2java generates prohibited package names
+
+Notes:
+- Getting rid of java.lang from any package prefix.
+- In this specific case we now generate "org\w3\www\_2001\XMLSchema\holders\StringArrayHolder.java" instead of "org\w3\www\_2001\XMLSchema\java\lang\holders\StringArrayHolder.java"</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/Utils.java?rev=1.89&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/Utils.java (1.89)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-01 14:25 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1573 - No error message when attachment temporary file cannot be created
+from Alex Karshakevich (alexk@thoughtspeed.biz)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/attachments/ManagedMemoryDataSource.java?r1=1.36&r2=1.35">src/org/apache/axis/attachments/ManagedMemoryDataSource.java (1.36)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-01 14:07 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1632 - NPE Using DeserializationContext
+from Steve Green (steve.green@epok.net)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DeserializationContext.java?rev=1.60&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/DeserializationContext.java (1.60)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BeanDeserializer.java?rev=1.70&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/BeanDeserializer.java (1.70)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-29 21:03 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>- Extract Classpath utility methods
+- Make it easier to subclass JAXRPCHandler
+
+Notes:
+- This is part of an effort working with Beehive WSM folks.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/handlers/JAXRPCHandler.java?r1=1.13&r2=1.12">src/org/apache/axis/handlers/JAXRPCHandler.java (1.13)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/handlers/JWSHandler.java?rev=1.43&content-type=text/x-cvsweb-markup">src/org/apache/axis/handlers/JWSHandler.java (1.43)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/ClasspathUtils.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/utils/ClasspathUtils.java (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-29 20:25 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Add a -j switch to WSDL2Java along with an API and an enhancement to the
+ant task.
+
+This turns on the JAX-RPC 1.1 compatible default type mapping, which generally
+avoids the Axis custom types to prefer mapping to standard Java types.
+For instance, the XML Schema types Month, Day and Year are mapped to String
+and NonPositiveInteger is mapped to BigInteger.
+
+NOTE: I can't seem to verify that the ant task will work with this syntax:
+&lt;wsdl2java url="jaxrpc11types.wsdl" jaxrpc11mappings="yes"&gt;
+
+Can someone with ant mojo double check that I updated the task correctly?
+
+TODO: Add a test for the new switch.  Update the WSDL2Java test
+case generator to emit the right code when this switch is on.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DefaultSOAP12TypeMappingImpl.java?rev=1.9&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/DefaultSOAP12TypeMappingImpl.java (1.9)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DefaultSOAPEncodingTypeMappingImpl.java?rev=1.5&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/DefaultSOAPEncodingTypeMappingImpl.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DefaultTypeMappingImpl.java?r1=1.81&r2=1.80">src/org/apache/axis/encoding/DefaultTypeMappingImpl.java (1.81)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/i18n/resource.properties?r1=1.96&r2=1.95">src/org/apache/axis/i18n/resource.properties (1.96)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/WSDL2Java.java?rev=1.50&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/WSDL2Java.java (1.50)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/Emitter.java?rev=1.72&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/Emitter.java (1.72)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/tools/org/apache/axis/tools/ant/wsdl/Wsdl2javaAntTask.java?rev=1.21&content-type=text/x-cvsweb-markup">tools/org/apache/axis/tools/ant/wsdl/Wsdl2javaAntTask.java (1.21)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-29 08:40 ias</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Additional patch on AXIS-1614 thanks to Jongjin.
+It removes duplicate adding of namespace-package maaping.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/Namespaces.java?r1=1.12&r2=1.11">src/org/apache/axis/wsdl/toJava/Namespaces.java (1.12)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-28 14:04 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1602 - Stub file from wsdl2java makes something wrong in J2SE5.0
+
+Notes:
+- The new package org.apache.axis.constants is used instead of org.apache.axis.enum in the generated code.
+- All classes in org.apache.axis.constants are just simple wrappers ("extends") around the ones in org.apache.axis.enum</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/constants/Scope.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/constants/Scope.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/constants/Style.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/constants/Style.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/constants/Use.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/constants/Use.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/enum/Scope.java?rev=1.11&content-type=text/x-cvsweb-markup">src/org/apache/axis/enum/Scope.java (1.11)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/enum/Style.java?rev=1.11&content-type=text/x-cvsweb-markup">src/org/apache/axis/enum/Style.java (1.11)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/enum/Use.java?rev=1.8&content-type=text/x-cvsweb-markup">src/org/apache/axis/enum/Use.java (1.8)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java?r1=1.138&r2=1.137">src/org/apache/axis/wsdl/toJava/JavaStubWriter.java (1.138)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-27 21:41 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Have to have strings in the message file,
+otherwise functional tests don't pass.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/i18n/resource.properties?r1=1.95&r2=1.94">src/org/apache/axis/i18n/resource.properties (1.95)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/Registrar.java?r1=1.5&r2=1.4">src/org/apache/axis/management/Registrar.java (1.5)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-27 19:56 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix to Patch from Jonathan Colwell [jcolwell@bea.com]:
+
+As I looked over the update to Emitter I noticed my original patch was
+inserting the return name instead of the param name if the default
+namespace was the same as the parameter's namespace.
+Here's a fix for my original patch with yet more null checks.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/fromJava/Emitter.java?r1=1.131&r2=1.130">src/org/apache/axis/wsdl/fromJava/Emitter.java (1.131)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-27 19:50 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Silently ignore the case where commons-modeler.jar isn't around.
+Change the errors to warnings and include a bit of explainitory text.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/Registrar.java?rev=1.4&content-type=text/x-cvsweb-markup">src/org/apache/axis/management/Registrar.java (1.4)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-27 04:25 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Patch from Jonathan Colwell - "parameter and result namespaces"
+</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/fromJava/Emitter.java?rev=1.130&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/fromJava/Emitter.java (1.130)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/fromJava/Types.java?rev=1.100&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/fromJava/Types.java (1.100)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-27 03:21 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Explicitly check for both.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/SerializationContext.java?r1=1.93&r2=1.92">src/org/apache/axis/encoding/SerializationContext.java (1.93)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-26 02:37 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Make sub-classing easier.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/handlers/JAXRPCHandler.java?rev=1.12&content-type=text/x-cvsweb-markup">src/org/apache/axis/handlers/JAXRPCHandler.java (1.12)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-25 15:45 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1526 - RPCProvider debug logging causes ArrayIndexOutOfBoundsException
+from Phil McCarthy (apache-bugs@chimpen.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/providers/java/RPCProvider.java?rev=1.119&content-type=text/x-cvsweb-markup">src/org/apache/axis/providers/java/RPCProvider.java (1.119)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-25 14:48 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1577 - EJBProvider doesn't handle java.rmi.ServerException
+from David Green (david.green@maketechnologies.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/providers/java/EJBProvider.java?rev=1.44&content-type=text/x-cvsweb-markup">src/org/apache/axis/providers/java/EJBProvider.java (1.44)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-25 14:42 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1570 - Should provide automatic URL update in the WSDL when using &lt;wsdlFile&gt;
+from Ian P. Springer (ian.springer@hp.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/QSWSDLHandler.java?rev=1.9&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/QSWSDLHandler.java (1.9)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-25 14:32 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1617 - WSDL2Java throw NullPointerException instead of useful error message when doesn't find Part
+from S&eacute;bastien Tardif</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/i18n/resource.properties?rev=1.94&content-type=text/x-cvsweb-markup">src/org/apache/axis/i18n/resource.properties (1.94)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java?r1=1.108&r2=1.107">src/org/apache/axis/wsdl/symbolTable/SymbolTable.java (1.108)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-24 19:12 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1614 - Name collision of generated code caused by AXIS-1598
+from Jongjin Choi</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java?r1=1.60&r2=1.59">src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java (1.60)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/Namespaces.java?rev=1.11&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/Namespaces.java (1.11)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/wsrf/build.xml?r1=1.2&r2=1.1">test/wsdl/wsrf/build.xml (1.2)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-21 18:29 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>_Port ==&gt; _PortType.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/samples/perf/PerfPortSoapBindingImpl.java?rev=1.2&content-type=text/x-cvsweb-markup">samples/perf/PerfPortSoapBindingImpl.java (1.2)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-20 20:54 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Enable JMX support for SimpleAxisServer as well...If you are using JDK1.5, all you have to do is drop commons-modeler jar into class path and JMX stuff is automatically done. (You can set -Dcom.sun.management.jmxremote in the java options when starting simple axis server and then use jconsole command to view the JMX stuff)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/AxisServlet.java?r1=1.183&r2=1.182">src/org/apache/axis/transport/http/AxisServlet.java (1.183)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/SimpleAxisServer.java?r1=1.85&r2=1.84">src/org/apache/axis/transport/http/SimpleAxisServer.java (1.85)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-20 20:54 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Enable JMX support for SimpleAxisServer as well...If you are using JDK1.5, all you have to do is drop commons-modeler jar into class path and JMX stuff is automatically done. (You can set -Dcom.sun.management.jmxremote in the java options when starting simple axis server and then use jconsole command to view the JMX stuff)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/ServiceAdmin.java?r1=1.3&r2=1.2">src/org/apache/axis/management/ServiceAdmin.java (1.3)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-20 13:49 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Possible fix for AXIS-1614 - Name collision of generated code caused by AXIS-1598
+from Jongjin Choi</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java?r1=1.107&r2=1.106">src/org/apache/axis/wsdl/symbolTable/SymbolTable.java (1.107)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java?r1=1.59&r2=1.58">src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java (1.59)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/clash/VerifyFilesTestCase.java?rev=1.10&content-type=text/x-cvsweb-markup">test/wsdl/clash/VerifyFilesTestCase.java (1.10)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/datatypes/DataTypesTestCase.java?rev=1.7&content-type=text/x-cvsweb-markup">test/wsdl/datatypes/DataTypesTestCase.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/datatypes/DataTypes_BindingImpl.java?rev=1.5&content-type=text/x-cvsweb-markup">test/wsdl/datatypes/DataTypes_BindingImpl.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/extensibility/server-deploy.wsdd?rev=1.12&content-type=text/x-cvsweb-markup">test/wsdl/extensibility/server-deploy.wsdd (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/polymorphism/PolymorphismTestSoapImpl.java?rev=1.3&content-type=text/x-cvsweb-markup">test/wsdl/polymorphism/PolymorphismTestSoapImpl.java (1.3)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/polymorphism/PolymorphismTest_ServiceTestCase.java?rev=1.4&content-type=text/x-cvsweb-markup">test/wsdl/polymorphism/PolymorphismTest_ServiceTestCase.java (1.4)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/primitiveWrappers/TypeWrapper_BindingImpl.java?rev=1.2&content-type=text/x-cvsweb-markup">test/wsdl/primitiveWrappers/TypeWrapper_BindingImpl.java (1.2)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify/Qualify_BindingImpl.java?r1=1.12&r2=1.11">test/wsdl/qualify/Qualify_BindingImpl.java (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify/Qualify_ServiceTestCase.java?r1=1.12&r2=1.11">test/wsdl/qualify/Qualify_ServiceTestCase.java (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify2/AttributeQualify_BindingImpl.java?rev=1.4&content-type=text/x-cvsweb-markup">test/wsdl/qualify2/AttributeQualify_BindingImpl.java (1.4)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify2/AttributeQualify_ServiceTestCase.java?rev=1.5&content-type=text/x-cvsweb-markup">test/wsdl/qualify2/AttributeQualify_ServiceTestCase.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/wsrf/build.xml?rev=1.1&content-type=text/x-cvsweb-markup">test/wsdl/wsrf/build.xml (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/wsrf/wsrf-WS-ResourceProperties-1.2-draft-01-impl.wsdl?rev=1.1&content-type=text/x-cvsweb-markup">test/wsdl/wsrf/wsrf-WS-ResourceProperties-1.2-draft-01-impl.wsdl (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-20 13:48 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Changing listServices to return a ArrayList of service names</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/ServiceAdmin.java?r1=1.2&r2=1.1">src/org/apache/axis/management/ServiceAdmin.java (1.2)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/jmx/ServiceAdministrator.java?r1=1.2&r2=1.1">src/org/apache/axis/management/jmx/ServiceAdministrator.java (1.2)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/jmx/ServiceAdministratorMBean.java?r1=1.2&r2=1.1">src/org/apache/axis/management/jmx/ServiceAdministratorMBean.java (1.2)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/SimpleAxisServer.java?rev=1.84&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/SimpleAxisServer.java (1.84)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-20 13:46 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>ignore servlet jar when building war</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/build.xml?r1=1.254&r2=1.253">build.xml (1.254)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-19 15:11 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for (AXIS-1424) Ability to Start/Stop Services via JMX
+from Brian Dillon (brian.dillon@fineos.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/ServiceAdmin.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/management/ServiceAdmin.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/jmx/ServiceAdministrator.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/management/jmx/ServiceAdministrator.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/management/jmx/ServiceAdministratorMBean.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/management/jmx/ServiceAdministratorMBean.java (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-19 15:11 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for (AXIS-1424) Ability to Start/Stop Services via JMX
+from Brian Dillon (brian.dillon@fineos.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/AxisServlet.java?r1=1.182&r2=1.181">src/org/apache/axis/transport/http/AxisServlet.java (1.182)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 16:42 ias</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Apply patch for AXIS-1598 thanks to Jongjin Choi.
+Note that anonymous XML schema types are mapped to Java classes of which names are fully compliant with Java naming convention.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/addrNoImplSEI/AddressBookDynamicProxyTestCase.java?rev=1.5&content-type=text/x-cvsweb-markup">test/wsdl/addrNoImplSEI/AddressBookDynamicProxyTestCase.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/addrNoImplSEI/Main.java?rev=1.10&content-type=text/x-cvsweb-markup">test/wsdl/addrNoImplSEI/Main.java (1.10)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/dataset/DataServiceTestCase.java?rev=1.7&content-type=text/x-cvsweb-markup">test/wsdl/dataset/DataServiceTestCase.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/extensibility/ExtensibilityQueryTestCase.java?rev=1.25&content-type=text/x-cvsweb-markup">test/wsdl/extensibility/ExtensibilityQueryTestCase.java (1.25)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupH/complexDocLit/ComplexDocLitBindingImpl.java?rev=1.4&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupH/complexDocLit/ComplexDocLitBindingImpl.java (1.4)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupH/complexDocLit/ComplexDocLitServiceTestCase.java?rev=1.7&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupH/complexDocLit/ComplexDocLitServiceTestCase.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/nested/Nested2BindingImpl.java?rev=1.9&content-type=text/x-cvsweb-markup">test/wsdl/nested/Nested2BindingImpl.java (1.9)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/nested/Nested2ServiceTestCase.java?rev=1.12&content-type=text/x-cvsweb-markup">test/wsdl/nested/Nested2ServiceTestCase.java (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/types/VerifyTestCase.java?rev=1.45&content-type=text/x-cvsweb-markup">test/wsdl/types/VerifyTestCase.java (1.45)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/wrapperHolder/ExampleSoapTestCase.java?rev=1.2&content-type=text/x-cvsweb-markup">test/wsdl/wrapperHolder/ExampleSoapTestCase.java (1.2)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 16:42 ias</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Apply patch for AXIS-1598 thanks to Jongjin Choi.
+Note that anonymous XML schema types are mapped to Java classes of which names are fully compliant with Java naming convention.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/attrGroup/AttrGroupServiceTestCase.java?rev=1.2&content-type=text/x-cvsweb-markup">test/wsdl/attrGroup/AttrGroupServiceTestCase.java (1.2)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/extensibility/ExtensibilityQueryBindingImpl.java?rev=1.23&content-type=text/x-cvsweb-markup">test/wsdl/extensibility/ExtensibilityQueryBindingImpl.java (1.23)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupH/simpleDocLit/SimpleDocLitBindingImpl.java?rev=1.4&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupH/simpleDocLit/SimpleDocLitBindingImpl.java (1.4)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupH/simpleDocLit/SimpleDocLitServiceTestCase.java?rev=1.7&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupH/simpleDocLit/SimpleDocLitServiceTestCase.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupi/Round4XSDTestSoapImpl.java?rev=1.7&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupi/Round4XSDTestSoapImpl.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop4/groupi/Round4XSDTestTestCase.java?rev=1.9&content-type=text/x-cvsweb-markup">test/wsdl/interop4/groupi/Round4XSDTestTestCase.java (1.9)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/omit/OmitImpl.java?rev=1.5&content-type=text/x-cvsweb-markup">test/wsdl/omit/OmitImpl.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/omit/OmitTestCase.java?rev=1.6&content-type=text/x-cvsweb-markup">test/wsdl/omit/OmitTestCase.java (1.6)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify/Qualify_BindingImpl.java?rev=1.11&content-type=text/x-cvsweb-markup">test/wsdl/qualify/Qualify_BindingImpl.java (1.11)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/qualify/Qualify_ServiceTestCase.java?rev=1.11&content-type=text/x-cvsweb-markup">test/wsdl/qualify/Qualify_ServiceTestCase.java (1.11)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 16:37 ias</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Apply patch for AXIS-1598 thanks to Jongjin Choi.
+Note that anonymous XML schema types are mapped to Java classes of which names are fully compliant with Java naming convention.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java?r1=1.58&r2=1.57">src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java (1.58)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 16:34 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1578 - Cannot customize configuration as wsdl2java generates serviceLocator classes without constructor
+slightly modified version of patch from Ashutosh Shahi (ashutosh.shahi@gmail.com )</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaServiceImplWriter.java?rev=1.40&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/JavaServiceImplWriter.java (1.40)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 16:01 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1611 - CommonsHTTPSender does not add HTTP error code to fault details
+from Robert H. Pollack (robert_h_pollack@yahoo.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/CommonsHTTPSender.java?rev=1.26&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/CommonsHTTPSender.java (1.26)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 15:27 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Jetty based SimpleAxisServer for testing purposes</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/build.xml?r1=1.253&r2=1.252">build.xml (1.253)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/JettyAxisServer.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/JettyAxisServer.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/xmls/targets.xml?r1=1.74&r2=1.73">xmls/targets.xml (1.74)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 14:44 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1556 - better castor serializer/deserializer
+from Fabien Nisol (fabien.nisol@advalvas.be)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/castor/AxisContentHandler.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/castor/AxisContentHandler.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/castor/CastorSerializer.java?rev=1.7&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/castor/CastorSerializer.java (1.7)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 14:38 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1584 - ConcurrentModificationException in ManagedMemoryDataSource class</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/attachments/ManagedMemoryDataSource.java?rev=1.35&content-type=text/x-cvsweb-markup">src/org/apache/axis/attachments/ManagedMemoryDataSource.java (1.35)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-15 14:07 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1568 - NPE from wsdl2java if message element in WSDL file is wrong
+reported by Ian Dickinson (ian.dickinson@hp.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java?r1=1.106&r2=1.105">src/org/apache/axis/wsdl/symbolTable/SymbolTable.java (1.106)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 23:44 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1522 - JavaGeneratorFactory should not perform collision protection for types that are in excluded namespaces
+from Ian P. Springer (ian.springer@hp.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java?rev=1.57&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/JavaGeneratorFactory.java (1.57)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 23:37 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1532 - NodeImpl#setValue() does not behave according to SAAJ Node API
+from Ian P. Springer (ian.springer@hp.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?r1=1.185&r2=1.184">src/org/apache/axis/message/MessageElement.java (1.185)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeImpl.java?r1=1.6&r2=1.5">src/org/apache/axis/message/NodeImpl.java (1.6)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/message/TestMessageElement.java?rev=1.17&content-type=text/x-cvsweb-markup">test/message/TestMessageElement.java (1.17)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 23:11 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Additional check for ibm jsse presence.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/xmls/targets.xml?rev=1.73&content-type=text/x-cvsweb-markup">xmls/targets.xml (1.73)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 21:10 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix bug 1594
+  http://nagoya.apache.org/jira/browse/AXIS-1594
+
+Support Servlet 2.2 API by not calling HttpServletRequest.getRequestURL()
+This is important for the WebSphere 4 app server.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/AxisServlet.java?r1=1.181&r2=1.180">src/org/apache/axis/transport/http/AxisServlet.java (1.181)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 20:53 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1574 - build,xml always ignores ibm.jsse dependent sources
+from Venkat (vreddyp@gmail.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/build.xml?r1=1.252&r2=1.251">build.xml (1.252)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 20:28 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1585 - npe after using SerializationContext one-arg constructor</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/SerializationContext.java?rev=1.92&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/SerializationContext.java (1.92)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BeanSerializer.java?rev=1.77&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/BeanSerializer.java (1.77)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 18:50 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>2 patches from nishant kumar (knishant@postmark.net) as part of
+AXIS-1497 - AXIS2: performance improvements</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?r1=1.184&r2=1.183">src/org/apache/axis/message/MessageElement.java (1.184)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 18:50 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>2 patches from nishant kumar (knishant@postmark.net) as part of
+AXIS-1497 - AXIS2: performance improvements</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeImpl.java?rev=1.5&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/NodeImpl.java (1.5)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 18:12 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Oops!! - remove extra release</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/XMLUtils.java?r1=1.98&r2=1.97">src/org/apache/axis/utils/XMLUtils.java (1.98)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 15:32 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1597 - Reponse time increases with load for axis
+from gunsnroz@hotmail.com and peters@fast.fujitsu.com.au</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/XMLUtils.java?rev=1.97&content-type=text/x-cvsweb-markup">src/org/apache/axis/utils/XMLUtils.java (1.97)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-14 14:26 stevel</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Update for 1.2.
+Note we need an endpoint with echo working, otherwise the tutorial is broken!</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/docs/user-guide.html?rev=1.93&content-type=text/x-cvsweb-markup">docs/user-guide.html (1.93)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-13 03:21 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Patch for AXIS-1583 - BeanDeserializerFactory incorrectly handles "JAX-RPC Enum" classes
+from John Major (jmajor@realmsys.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BeanDeserializerFactory.java?rev=1.9&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/BeanDeserializerFactory.java (1.9)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-12 23:15 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1606 - in WSDL generated clients make createCall() protected</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaStubWriter.java?rev=1.137&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/JavaStubWriter.java (1.137)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-12 21:51 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Keep backwards compatibility (via aslom)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/JavaWriter.java?rev=1.31&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/toJava/JavaWriter.java (1.31)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-12 13:52 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Add some defensive code to copyNode().  The XML parser classes don't
+like a null namespace for an attribute.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?rev=1.183&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/MessageElement.java (1.183)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-11 19:23 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Put back the send xsi:type setting back to use the configuration setting.
+Changing this was not necessary to fix axis 1.1 regressions.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/ArraySerializer.java?r1=1.58&r2=1.57">src/org/apache/axis/encoding/ser/ArraySerializer.java (1.58)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-11 18:58 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix more regressions from Axis 1.1.
+
+- Always register the xmlType and javaType in the type mapping, even
+if they already existed.  This goes along with the "last one wins" phillosophy
+of the type mapping registry.  Otherwise only the first entry for java.lang.Object
+goes in to the class2Pair map, which means that the 1999 Schema is emitted
+in WSDL for this type.
+
+- As a side effect of this, the Map type for HashMap needs to be registered
+last in the default type mapping, so it is the preferred class to implement Map.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DefaultTypeMappingImpl.java?rev=1.80&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/DefaultTypeMappingImpl.java (1.80)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/TypeMappingImpl.java?rev=1.51&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/TypeMappingImpl.java (1.51)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-11 14:15 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix regression problems with SOAP encoded arrays:
+
+- Don't use "currentXMLType" from context if we are encoded, get the
+  type of the array from the componentType.
+- Always set the xsi:type attribute of encoded arrays to soapenc:Array
+- If we are doing encoded arrays, don't send xsi:type for each element</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/ArraySerializer.java?rev=1.57&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/ArraySerializer.java (1.57)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-09 03:50 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Unwrap the InvocationTargetException that are thrown by invoking the
+plugin methods (for instance for WSDL processing) so the actual error
+message will appear.
+
+NOTE: Had to change the logexception() method to take Throwable instead of
+Exception.
+
+Return TRUE from the method to prevent further processing of the request
+after we print out the exception from the handler.  This prevents the "And now
+some Services..." message when there is an error in WSDL generation.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/AxisServlet.java?r1=1.180&r2=1.179">src/org/apache/axis/transport/http/AxisServlet.java (1.180)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-08 18:11 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Add _getService() function.
+
+Provide an accessor for the service object that is held in the Stub.
+The service object contains the Call object for the last request, which
+in fact has several things (headers, request XML, response XML) that are
+very useful to have access to.
+
+Use a leading underscore to avoid conflicting with any Stub functions that
+may be emitted.  All of the other Axis specific methods should probably be
+named with underscores too.  Ooops.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/client/Stub.java?rev=1.40&content-type=text/x-cvsweb-markup">src/org/apache/axis/client/Stub.java (1.40)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-07 11:19 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1592 - support multiple resource bundles in build.xml
+from Peter Smith &lt;peters@fast.fujitsu.com.au&gt;</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/build.xml?rev=1.251&content-type=text/x-cvsweb-markup">build.xml (1.251)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-05 14:25 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for AXIS-1385 - Defined endpointUrl will not be used inlist of deployed services
+from Jayachandra Sekhara Rao Sunkara &lt;jayachandra@gmail.com&gt;</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/AxisServlet.java?rev=1.179&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/AxisServlet.java (1.179)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-05 13:33 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix from Peter Smith (http://marc.theaimsgroup.com/?l=axis-user&amp;m=109659451512391&amp;w=2) for DelayedStockQuote failure.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/samples/jaxm/DelayedStockQuote.java?rev=1.6&content-type=text/x-cvsweb-markup">samples/jaxm/DelayedStockQuote.java (1.6)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-05 00:10 gdaniels</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Prevent IndexOutOfBoundsException.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SOAPBody.java?rev=1.55&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/SOAPBody.java (1.55)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-05 00:08 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Check to make sure we can get the file list of
+a directory and fail the test if we can't.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/filegen/FileGenTestCase.java?rev=1.10&content-type=text/x-cvsweb-markup">test/wsdl/filegen/FileGenTestCase.java (1.10)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-10-04 23:22 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix a problem with the argument names for doc/lit wrapped.
+They were being created from "&gt;myOp&gt;argument" and thus were named
+myOpArgument in the stubs.  The parameter name should be "argument"
+in this case, so make sure the name of the parameter doesn't include the
+anonymous inner type character.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java?rev=1.105&content-type=text/x-cvsweb-markup">src/org/apache/axis/wsdl/symbolTable/SymbolTable.java (1.105)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+</TABLE>
 </BODY>
 </HTML>
