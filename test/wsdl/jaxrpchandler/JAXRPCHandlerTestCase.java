@@ -16,9 +16,16 @@ import java.net.URL;
 public class JAXRPCHandlerTestCase extends TestCase {
 
 	private static boolean _roundtrip = false;
+	private static int _faultRoundtrip = 0;
+
 	public static void completeRoundtrip() {
 		_roundtrip = true;
 	}
+
+	public static void setFaultRoundtrip(int faultCount) {
+		_faultRoundtrip = faultCount;
+	}
+
 
 	/**
 	 * Default constructor for use as service
@@ -34,6 +41,11 @@ public class JAXRPCHandlerTestCase extends TestCase {
 	public void testStockQuote() throws Exception {
 	    String[] args = {};
 	    goStockQuote(args);
+	}
+
+	public void testHandleFail() throws Exception {
+	    String[] args = {};
+	    goFail(args);
 	}
 
 	public void goStockQuote(String[] args) throws Exception {
@@ -59,12 +71,40 @@ public class JAXRPCHandlerTestCase extends TestCase {
 
 	}
 
+	public void goFail(String[] args) throws Exception {
+		Options opts = new Options( args );
+		args = opts.getRemainingArgs();
+
+		URL url = new URL(opts.getURL());
+		String user = opts.getUser();
+		String passwd = opts.getPassword();
+		System.out.println("Fail URL is " + url);
+
+		_faultRoundtrip = 0;
+		doTestDeploy();
+		try {
+			float val = getQuoteFail(url, true);
+		} catch (Exception e) {
+			// catch and ignore the exception
+		}
+
+		assertTrue("Expected setting for config-based handlers should be 3"
+			  + " (1 Request Client Handler increment, passed in header to Server Handler "
+			  + " 1 Fault Server Handler increment, passed back in header to Response Client Handler "
+			  + " 1 Response Client Handler increment)",
+			  _faultRoundtrip == 3);
+
+		doTestClientUndeploy();
+		doTestServerUndeploy();
+
+	}
+
 	public float getQuote (URL url, boolean runJAXRPCHandler) throws Exception {
 		StockQuoteService  service = new StockQuoteServiceLocator();
 		if (runJAXRPCHandler) {
 			HandlerRegistry hr = service.getHandlerRegistry();
 			java.util.List lhi = new java.util.Vector();
-			test.wsdl.jaxrpchandler.ClientHandler mh = new test.wsdl.jaxrpchandler.ClientHandler(); 
+			test.wsdl.jaxrpchandler.ClientHandler mh = new test.wsdl.jaxrpchandler.ClientHandler();
 			Class myhandler = mh.getClass();
 			HandlerInfo hi = new HandlerInfo(myhandler,null,null);
 			lhi.add(hi);
@@ -79,9 +119,30 @@ public class JAXRPCHandlerTestCase extends TestCase {
 		return res;
 	}
 
+	public float getQuoteFail (URL url, boolean runJAXRPCHandler) throws Exception {
+		StockQuoteService  service = new StockQuoteServiceLocator();
+		if (runJAXRPCHandler) {
+			HandlerRegistry hr = service.getHandlerRegistry();
+			java.util.List lhi = new java.util.Vector();
+			test.wsdl.jaxrpchandler.ClientHandler mh = new test.wsdl.jaxrpchandler.ClientHandler();
+			Class myhandler = mh.getClass();
+			HandlerInfo hi = new HandlerInfo(myhandler,null,null);
+			lhi.add(hi);
+			hr.setHandlerChain(new QName("","jaxrpchandler"),lhi);
+		}
+
+		float res;
+
+		StockQuote sq = service.getjaxrpchandler(url);
+		res = sq.getQuote("fail");
+
+		return res;
+	}
+
 	public static void main(String[] args) throws Exception {
 		JAXRPCHandlerTestCase test = new JAXRPCHandlerTestCase("test");
 		test.goStockQuote(args);
+		test.goFail(args);
 	}
 
 	public void doTestClientUndeploy() throws Exception {

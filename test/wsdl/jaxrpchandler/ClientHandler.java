@@ -8,6 +8,7 @@ import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
@@ -44,6 +45,7 @@ public class ClientHandler implements Handler {
 			SOAPHeaderElement she = sh.addHeaderElement(name);
 			she.setActor(_actorURI);
 			she.addAttribute(se.createName("counter", "", ""), "1");
+			she.addAttribute(se.createName("faultCounter", "", ""), "1");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -58,11 +60,14 @@ public class ClientHandler implements Handler {
 		System.out.println("Hey - in Handle response");
 		try {
 			String counter = null;
+			String faultCounter = null;
+
 			SOAPMessageContext smc = (SOAPMessageContext) context;
 			SOAPMessage msg = smc.getMessage();
 			SOAPPart sp = msg.getSOAPPart();
 			SOAPEnvelope se = sp.getEnvelope();
 			SOAPHeader sh = se.getHeader();
+			SOAPBody sb = se.getBody();
 			Name name =
 			se.createName(
 						 "HeaderTest",
@@ -75,10 +80,23 @@ public class ClientHandler implements Handler {
 				she.getAttributeValue(se.createName("counter", "", ""));
 				System.out.println(
 								  "The counter in the element sent back is " + counter);
+
+				faultCounter =
+				she.getAttributeValue(se.createName("faultCounter", "", ""));
+				System.out.println(
+								  "The faultCounter in the element sent back is " + faultCounter);
+
 			}
 
-			if (counter.equals("3"))
+			if ((counter != null) && (counter.equals("3")) && (!sb.hasFault())) {
 				JAXRPCHandlerTestCase.completeRoundtrip();
+			}
+
+			if ((faultCounter != null) && (faultCounter.equals("3")) && (sb.hasFault())) {
+				JAXRPCHandlerTestCase.setFaultRoundtrip(Integer.parseInt(faultCounter));
+			}
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,3 +131,4 @@ public class ClientHandler implements Handler {
 	}
 
 }
+
