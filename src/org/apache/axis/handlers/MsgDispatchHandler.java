@@ -115,8 +115,8 @@ public class MsgDispatchHandler extends BasicHandler {
       StringWriter writer = new StringWriter();
       reqBody.output(new SerializationContext(writer));
       
-      InputStream inStream = new StringBufferInputStream(writer.getBuffer().toString());
-      Document doc = XMLUtils.newDocument(inStream);
+      Reader reader = new StringReader(writer.getBuffer().toString());
+      Document doc = XMLUtils.newDocument(new InputSource(reader));
       
       // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
       //     want DOM, but our examples should mostly lean towards the
