@@ -75,9 +75,5 @@ package org.apache.axis.components.uuid;
  * @since   JDK1.2.2
  */
 public interface UUIDGen {
-    public void init();
-
-    public void destroy();
-
     public String nextUUID();
 }

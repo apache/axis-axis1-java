@@ -88,7 +88,7 @@ import java.util.Properties;
 public class MailSender extends BasicHandler {
 
     protected static Log log = LogFactory.getLog(MailSender.class.getName());
-    private UUIDGen uuidGen = UUIDGenFactory.getUUIDGen(null);
+    private UUIDGen uuidGen = UUIDGenFactory.getUUIDGen();
 
     Properties prop = new Properties();
     Session session = Session.getDefaultInstance(prop, null);
