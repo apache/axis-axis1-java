@@ -106,14 +106,14 @@ public class AxisServlet extends AxisServletBase {
      * this log is for timing
      */
     private static Log tlog =
-        LogFactory.getLog("org.apache.axis.TIME");
+        LogFactory.getLog(Constants.TIME_LOG_CATEGORY);
 
     /**
      * a separate log for exceptions lets users route them
      * differently from general low level debug info
      */
     private static Log exceptionLog =
-            LogFactory.getLog("org.apache.axis.EXCEPTIONS");
+            LogFactory.getLog(Constants.EXCEPTION_LOG_CATEGORY);
 
     public static final String INIT_PROPERTY_TRANSPORT_NAME =
         "transport.name";
@@ -477,7 +477,8 @@ public class AxisServlet extends AxisServletBase {
             if(axisFault.getFaultCode() .equals(Constants.QNAME_NO_SERVICE_FAULT_CODE)) {
                 //which we log
                 processAxisFault(axisFault);
-                //then report
+                //then report under a 404 error
+                response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
                 reportNoWSDL(response, writer, "noWSDL01", axisFault);
             } else {
                 //all other faults get thrown
@@ -488,20 +489,21 @@ public class AxisServlet extends AxisServletBase {
 
     /**
      * invoke an endpoint from a get request by building an XML request and
-     * handing it down
+     * handing it down. If anything goes wrong, we generate an XML formatted
+     * axis fault
      * @param msgContext current message
      * @param response to return data
      * @param writer output stream
      * @param method method to invoke (may be null)
      * @param args argument list in XML form
-     * @throws AxisFault
+     * @throws AxisFault iff something goes wrong when turning the response message
+     * into a SOAP string.
      */
     protected void invokeEndpointFromGet(MessageContext msgContext,
                                        HttpServletResponse response,
                                        PrintWriter writer,
                                        String method,
                                        String args) throws AxisFault {
-        AxisEngine engine = getEngine();
         String body =
             "<" + method + ">" + args + "</" + method + ">";
 
@@ -514,20 +516,34 @@ public class AxisServlet extends AxisServletBase {
         ByteArrayInputStream istream =
             new ByteArrayInputStream(msgtxt.getBytes());
 
-        Message msg = new Message(istream, false);
-        msgContext.setRequestMessage(msg);
-        engine.invoke(msgContext);
-        Message respMsg = msgContext.getResponseMessage();
-        if (respMsg != null) {
-            response.setContentType("text/xml");
-            writer.println(respMsg.getSOAPPartAsString());
-        } else {
-            //tell the caller that something is wrong
+        Message responseMsg=null;
+        try {
+            AxisEngine engine = getEngine();
+            Message msg = new Message(istream, false);
+            msgContext.setRequestMessage(msg);
+            engine.invoke(msgContext);
+            responseMsg = msgContext.getResponseMessage();
+            //turn off caching for GET requests
+            response.setHeader("Cache-Control", "no-cache");
+            response.setHeader("Pragma", "no-cache");
+            if (responseMsg == null) {
+                //tell everyone that something is wrong
+                throw new Exception(Messages.getMessage("noResponse01"));
+            }
+        } catch (AxisFault fault) {
+            processAxisFault(fault);
+            configureResponseFromAxisFault(response, fault);
+            if (responseMsg == null) {
+                responseMsg = new Message(fault);
+            }
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            writer.println("<p>" +
-                   Messages.getMessage("noResponse01") +
-                           "</p>");
+            responseMsg = convertExceptionToAxisFault(e,responseMsg);
         }
+        //this call could throw an AxisFault. We delegate it up, because
+        //if we cant write the message there is not a lot we can do in pure SOAP terms.
+        response.setContentType("text/xml");
+        writer.println(responseMsg.getSOAPPartAsString());
     }
 
     /**
@@ -697,20 +713,29 @@ public class AxisServlet extends AxisServletBase {
     }
 
     /**
-     * indicate that there may be a JWS page, and that the user should look
-     * at the WSDL to se
+     * probe for a JWS page and report 'no service' if one is not found there
      * @param request the request that didnt have an edpoint
      * @param response response we are generating
      * @param writer open writer for the request
      */
     protected void reportCantGetJWSService(HttpServletRequest request, HttpServletResponse response, PrintWriter writer) {
-        // no such service....
-        response.setStatus(HttpURLConnection.HTTP_OK);
+        //first look to see if there is a service
+        String realpath =
+                getServletConfig().getServletContext()
+                .getRealPath(request.getServletPath());
+        boolean foundJWSFile=(new File(realpath).exists()) &&
+                (realpath.endsWith(Constants.JWS_DEFAULT_FILE_EXTENSION));
         response.setContentType("text/html");
-        String urltext= Messages.getMessage("noService08");
-        String url=request.getRequestURI();
-        writer.println(Messages.getMessage("noService07") + "<p>");
-        writer.println("<a href='"+url+"?wsdl'>"+urltext+"</a>");
+        if(foundJWSFile) {
+            response.setStatus(HttpURLConnection.HTTP_OK);
+            writer.println(Messages.getMessage("foundJWS00") + "<p>");
+            String url = request.getRequestURI();
+            String urltext = Messages.getMessage("foundJWS01");
+            writer.println("<a href='"+url+"?wsdl'>"+urltext+"</a>");
+        } else {
+            response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+            writer.println(Messages.getMessage("noService06") );
+        }
     }
 
 
@@ -813,36 +838,23 @@ public class AxisServlet extends AxisServletBase {
                     t2=System.currentTimeMillis();
                 }
                 responseMsg = msgContext.getResponseMessage();
-            } catch (AxisFault e) {
+            } catch (AxisFault fault) {
                 //log and sanitize
-                processAxisFault(e);
-                // then get the status code
-                // It's been suggested that a lack of SOAPAction
-                // should produce some other error code (in the 400s)...
-                int status = getHttpServletResponseStatus(e);
-                if (status == HttpServletResponse.SC_UNAUTHORIZED) {
-                    // unauth access results in authentication request
-                    // TODO: less generic realm choice?
-                  res.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
-                }
-                res.setStatus(status);
+                processAxisFault(fault);
+                configureResponseFromAxisFault(res,fault);
                 responseMsg = msgContext.getResponseMessage();
                 if (responseMsg == null) {
-                    responseMsg = new Message(e);
+                    responseMsg = new Message(fault);
                 }
             } catch (Exception e) {
                 //other exceptions are internal trouble
-                logException(e);
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null) {
-                    AxisFault fault=AxisFault.makeFault(e);
-                    processAxisFault(fault);
-                    responseMsg = new Message(fault);
-                }
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                responseMsg = convertExceptionToAxisFault(e, responseMsg);
             }
         } catch (AxisFault fault) {
             processAxisFault(fault);
+            configureResponseFromAxisFault(res, fault);
             responseMsg = msgContext.getResponseMessage();
             if (responseMsg == null) {
                 responseMsg = new Message(fault);
@@ -877,6 +889,47 @@ public class AxisServlet extends AxisServletBase {
                         "" : msgContext.getOperation().getName()) );
         }
 
+    }
+
+    /**
+     * Configure the servlet response status code and maybe other headers
+     * from the fault info.
+     * @param response response to configure
+     * @param fault what went wrong
+     */
+    private void configureResponseFromAxisFault(HttpServletResponse response,
+                                                AxisFault fault) {
+        // then get the status code
+        // It's been suggested that a lack of SOAPAction
+        // should produce some other error code (in the 400s)...
+        int status = getHttpServletResponseStatus(fault);
+        if (status == HttpServletResponse.SC_UNAUTHORIZED) {
+            // unauth access results in authentication request
+            // TODO: less generic realm choice?
+          response.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
+        }
+        response.setStatus(status);
+    }
+
+    /**
+ * turn any Exception into an AxisFault, log it, set the response
+ * status code according to what the specifications say and
+ * return a response message for posting. This will be the response
+ * message passed in if non-null; one generated from the fault otherwise.
+ *
+ * @param exception what went wrong
+ * @param responseMsg what response we have (if any)
+ * @return a response message to send to the user
+ */
+    private Message convertExceptionToAxisFault(Exception exception,
+                                                Message responseMsg) {
+        logException(exception);
+        if (responseMsg == null) {
+            AxisFault fault=AxisFault.makeFault(exception);
+            processAxisFault(fault);
+            responseMsg = new Message(fault);
+        }
+        return responseMsg;
     }
 
     /**
@@ -1033,8 +1086,7 @@ public class AxisServlet extends AxisServletBase {
     private String getSoapAction(HttpServletRequest req)
         throws AxisFault
     {
-        String soapAction =
-            (String)req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+        String soapAction =req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
         if(isDebug) log.debug("HEADER_SOAP_ACTION:" + soapAction);
 
