@@ -1182,13 +1182,14 @@ public class Call implements javax.xml.rpc.Call {
         
         transportPackages.add(packageName);
         
-        String currentPackages = "";
+        StringBuffer currentPackages = new StringBuffer();
         for (Iterator i = transportPackages.iterator(); i.hasNext();) {
             String thisPackage = (String) i.next();
-            currentPackages += thisPackage;            
+            currentPackages.append(thisPackage);
+            currentPackages.append('|');
         }
 
-        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
+        System.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
     }
 
     /**
