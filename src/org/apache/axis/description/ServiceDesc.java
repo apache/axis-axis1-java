@@ -85,6 +85,8 @@ public interface ServiceDesc {
      */
     void setDocumentation(String documentation);
 
+    void removeOperationDesc(OperationDesc operation);
+
     void addOperationDesc(OperationDesc operation);
 
     /**
