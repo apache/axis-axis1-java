@@ -62,7 +62,8 @@ import java.util.*;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
-import org.apache.axis.client.http.HTTPTransport ;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.message.RPCParam ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -89,22 +90,21 @@ public class GetQuote {
         System.exit(1);
       }
 
-      String service = "urn:xmltoday-delayed-quotes";
-      String action = service;
+      String namespace = "urn:xmltoday-delayed-quotes";
       symbol = args[0] ;
 
+      ServiceClient call = new ServiceClient(opts.getURL());
+      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
+      sd.addInputParam("symbol", SOAPTypeMappingRegistry.XSD_STRING);
+      sd.setOutputParam(SOAPTypeMappingRegistry.XSD_FLOAT);
+      call.setServiceDescription(sd);
+      
       // TESTING HACK BY ROBJ
       if (symbol.equals("XXX_noaction")) {
           symbol = "XXX";
-          action = "";
+          call.set(HTTPConstants.MC_HTTP_SOAPACTION, "");
       }
 
-      ServiceClient call = new ServiceClient
-            (new HTTPTransport(opts.getURL(), action));
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-      
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
 
       call.set( Transport.USER, opts.getUser() );
@@ -121,10 +121,8 @@ public class GetQuote {
 
       Float res = new Float(0.0F);
       for (int i=0; i<count; i++) {
-        // the namespace of the call should be the service.
-        // ...according to Glen... -- RobJ
           Object ret = call.invoke(
-          service, "getQuote", new Object[] {symbol} );
+          namespace, "getQuote", new Object[] {symbol} );
           if (ret instanceof String) {
               System.out.println("Received problem response from server: "+ret);
               throw new AxisFault("", (String)ret, null, null);
