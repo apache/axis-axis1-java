@@ -360,8 +360,8 @@ public class OperationDesc {
 
         for (Iterator i = parameters.iterator(); i.hasNext();) {
             ParameterDesc pnext = (ParameterDesc)i.next();
-            if (param.getQName().equals(qname) &&
-                    param.getMode() != ParameterDesc.IN) {
+            if (pnext.getQName().equals(qname) &&
+                    pnext.getMode() != ParameterDesc.IN) {
                 param = pnext;
                 break;
             }
