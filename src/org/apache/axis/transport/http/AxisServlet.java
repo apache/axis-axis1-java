@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.transport.http ;
+package org.apache.axis.transport.http;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,16 +65,16 @@ import org.w3c.dom.Element;
  * @web.servlet-mapping url-pattern="/servlet/AxisServlet"
  * @web.servlet-mapping url-pattern="*.jws"
  * @web.servlet-mapping url-pattern="/services/*"
- */
+  */
 public class AxisServlet extends AxisServletBase {
     protected static Log log =
-        LogFactory.getLog(AxisServlet.class.getName());
+            LogFactory.getLog(AxisServlet.class.getName());
 
     /**
      * this log is for timing
      */
     private static Log tlog =
-        LogFactory.getLog(Constants.TIME_LOG_CATEGORY);
+            LogFactory.getLog(Constants.TIME_LOG_CATEGORY);
 
     /**
      * a separate log for exceptions lets users route them
@@ -84,19 +84,19 @@ public class AxisServlet extends AxisServletBase {
             LogFactory.getLog(Constants.EXCEPTION_LOG_CATEGORY);
 
     public static final String INIT_PROPERTY_TRANSPORT_NAME =
-        "transport.name";
+            "transport.name";
 
     public static final String INIT_PROPERTY_USE_SECURITY =
-        "use-servlet-security";
+            "use-servlet-security";
     public static final String INIT_PROPERTY_ENABLE_LIST =
-        "axis.enableListQuery";
+            "axis.enableListQuery";
 
     public static final String INIT_PROPERTY_JWS_CLASS_DIR =
-        "axis.jws.servletClassDir";
+            "axis.jws.servletClassDir";
 
     // This will turn off the list of available services
     public static final String INIT_PROPERTY_DISABLE_SERVICES_LIST =
-        "axis.disableServiceList";
+            "axis.disableServiceList";
 
     // These have default values.
     private String transportName;
@@ -109,7 +109,7 @@ public class AxisServlet extends AxisServletBase {
      * cache of logging debug option; only evaluated at init time.
      * So no dynamic switching of logging options with this servlet.
      */
-     private static boolean isDebug = false;
+    private static boolean isDebug = false;
 
     /**
      * Should we enable the "?list" functionality on GETs?  (off by
@@ -128,9 +128,8 @@ public class AxisServlet extends AxisServletBase {
      * Cached path to JWS output directory
      */
     private String jwsClassDir = null;
-    protected String getJWSClassDir() { return jwsClassDir; }
-
-
+    protected String getJWSClassDir() {return jwsClassDir;
+    }
 
 
     /**
@@ -146,24 +145,28 @@ public class AxisServlet extends AxisServletBase {
         super.init();
         ServletContext context = getServletConfig().getServletContext();
 
-
-        isDebug= log.isDebugEnabled();
-        if(isDebug) log.debug("In servlet init");
+        isDebug = log.isDebugEnabled();
+        if (isDebug) {
+            log.debug("In servlet init");
+        }
         transportName = getOption(context,
                                   INIT_PROPERTY_TRANSPORT_NAME,
                                   HTTPTransport.DEFAULT_TRANSPORT_NAME);
 
-        if (JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
+        if (JavaUtils.isTrueExplicitly(getOption(context,
+                                                 INIT_PROPERTY_USE_SECURITY, null))) {
             securityProvider = new ServletSecurityProvider();
         }
 
         enableList =
-            JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
+                JavaUtils.isTrueExplicitly(getOption(context,
+                INIT_PROPERTY_ENABLE_LIST, null));
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
 
         // Should we list services?
-        disableServicesList = JavaUtils.isTrue(getOption(context, INIT_PROPERTY_DISABLE_SERVICES_LIST, "false"));
+        disableServicesList = JavaUtils.isTrue(getOption(context,
+                INIT_PROPERTY_DISABLE_SERVICES_LIST, "false"));
 
         /**
          * There are DEFINATE problems here if
@@ -187,8 +190,8 @@ public class AxisServlet extends AxisServletBase {
             ServiceAdmin.setEngine(this.getEngine(), context.getServerInfo());
         } catch (AxisFault af) {
             exceptionLog.info("Exception setting AxisEngine on ServiceAdmin " +
-                    af);
-        } 
+                              af);
+        }
     }
 
 
@@ -200,19 +203,18 @@ public class AxisServlet extends AxisServletBase {
      * @throws ServletException
      * @throws IOException
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException
-    {
-        if (isDebug)
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws
+            ServletException, IOException {
+        if (isDebug) {
             log.debug("Enter: doGet()");
 
+        }
         PrintWriter writer = new FilterPrintWriter(response);
 
-        try
-        {
+        try {
             AxisEngine engine = getEngine();
             ServletContext servletContext =
-                getServletConfig().getServletContext();
+                    getServletConfig().getServletContext();
 
             String pathInfo = request.getPathInfo();
             String realpath = servletContext.getRealPath(request.getServletPath());
@@ -224,14 +226,14 @@ public class AxisServlet extends AxisServletBase {
             //is no pathinfo...we map the pathinfo to the servlet path to keep
             //it happy
             boolean isJWSPage = request.getRequestURI().endsWith(".jws");
-            if(isJWSPage) {
-                pathInfo= request.getServletPath();
+            if (isJWSPage) {
+                pathInfo = request.getServletPath();
             }
 
             // Try to execute a query string plugin and return upon success.
 
-            if (processQuery (request, response, writer) == true) {
-                 return;
+            if (processQuery(request, response, writer) == true) {
+                return;
             }
 
             boolean hasNoPath = (pathInfo == null || pathInfo.equals(""));
@@ -245,7 +247,8 @@ public class AxisServlet extends AxisServletBase {
                 // We have a pathname, so now we perform WSDL or list operations
 
                 // get message context w/ various properties set
-                MessageContext msgContext = createMessageContext(engine, request, response);
+                MessageContext msgContext = createMessageContext(engine,
+                        request, response);
 
                 // NOTE:  HttpUtils.getRequestURL has been deprecated.
                 // This line SHOULD be:
@@ -277,7 +280,7 @@ public class AxisServlet extends AxisServletBase {
                 SOAPService s = engine.getService(serviceName);
                 if (s == null) {
                     //no service: report it
-                    if(isJWSPage) {
+                    if (isJWSPage) {
                         reportCantGetJWSService(request, response, writer);
                     } else {
                         reportCantGetAxisService(request, response, writer);
@@ -293,12 +296,12 @@ public class AxisServlet extends AxisServletBase {
                 // the servlet.
 
                 response.setContentType("text/html");
-                writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
-                writer.println( Messages.getMessage("reachedServlet00"));
+                writer.println("<html><h1>Axis HTTP Servlet</h1>");
+                writer.println(Messages.getMessage("reachedServlet00"));
 
                 writer.println("<p>" +
                                Messages.getMessage("transportName00",
-                                         "<b>" + transportName + "</b>"));
+                        "<b>" + transportName + "</b>"));
                 writer.println("</html>");
             }
         } catch (AxisFault fault) {
@@ -307,8 +310,9 @@ public class AxisServlet extends AxisServletBase {
             reportTroubleInGet(e, response, writer);
         } finally {
             writer.close();
-            if (isDebug)
+            if (isDebug) {
                 log.debug("Exit: doGet()");
+            }
         }
     }
 
@@ -321,7 +325,9 @@ public class AxisServlet extends AxisServletBase {
      * @param response current response
      * @param writer open writer to response
      */
-    private void reportTroubleInGet(Throwable exception, HttpServletResponse response, PrintWriter writer) {
+    private void reportTroubleInGet(Throwable exception,
+                                    HttpServletResponse response,
+                                    PrintWriter writer) {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         writer.println("<h2>" +
@@ -330,8 +336,8 @@ public class AxisServlet extends AxisServletBase {
         writer.println("<p>" +
                        Messages.getMessage("somethingWrong00") +
                        "</p>");
-        if(exception instanceof AxisFault) {
-            AxisFault fault=(AxisFault)exception;
+        if (exception instanceof AxisFault) {
+            AxisFault fault = (AxisFault) exception;
             processAxisFault(fault);
             writeFault(writer, fault);
         } else {
@@ -358,7 +364,8 @@ public class AxisServlet extends AxisServletBase {
         if (runtimeException != null) {
             exceptionLog.info(Messages.getMessage("axisFault00"), fault);
             //strip runtime details
-            fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
+            fault.removeFaultDetail(Constants.
+                                    QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
         } else if (exceptionLog.isDebugEnabled()) {
             exceptionLog.debug(Messages.getMessage("axisFault00"), fault);
         }
@@ -384,7 +391,8 @@ public class AxisServlet extends AxisServletBase {
      * @param axisFault
      */
     private void writeFault(PrintWriter writer, AxisFault axisFault) {
-        String localizedMessage = XMLUtils.xmlEncodeString(axisFault.getLocalizedMessage());
+        String localizedMessage = XMLUtils.xmlEncodeString(axisFault.
+                getLocalizedMessage());
         writer.println("<pre>Fault - " + localizedMessage + "<br>");
         writer.println(axisFault.dumpToString());
         writer.println("</pre>");
@@ -397,12 +405,14 @@ public class AxisServlet extends AxisServletBase {
      * @param serviceName where to put stuff
      */
 
-    protected  void reportServiceInfo(HttpServletResponse response, PrintWriter writer, SOAPService service, String serviceName) {
+    protected void reportServiceInfo(HttpServletResponse response,
+                                     PrintWriter writer, SOAPService service,
+                                     String serviceName) {
         response.setContentType("text/html");
 
         writer.println("<h1>"
-                + service.getName()
-                +"</h1>");
+                       + service.getName()
+                       + "</h1>");
         writer.println(
                 "<p>" +
                 Messages.getMessage("axisService00") +
@@ -443,10 +453,9 @@ public class AxisServlet extends AxisServletBase {
      * @throws AxisFault
      */
     protected void reportAvailableServices(HttpServletResponse response,
-                                       PrintWriter writer,
-                                       HttpServletRequest request)
-            throws  ConfigurationException, AxisFault
-    {
+                                           PrintWriter writer,
+                                           HttpServletRequest request) throws
+            ConfigurationException, AxisFault {
         AxisEngine engine = getEngine();
 
         response.setContentType("text/html");
@@ -458,25 +467,26 @@ public class AxisServlet extends AxisServletBase {
         } catch (ConfigurationException configException) {
             //turn any internal configuration exceptions back into axis faults
             //if that is what they are
-            if(configException.getContainedException() instanceof AxisFault) {
+            if (configException.getContainedException() instanceof AxisFault) {
                 throw (AxisFault) configException.getContainedException();
             } else {
                 throw configException;
             }
         }
-        // baseURL may change if <endpointURL> tag is used for 
+        // baseURL may change if <endpointURL> tag is used for
         // custom deployment at a different location
-        String defaultBaseURL = getWebappBase(request)+"/services/"; 
+        String defaultBaseURL = getWebappBase(request) + "/services/";
         writer.println("<ul>");
         while (i.hasNext()) {
-            ServiceDesc sd = (ServiceDesc)i.next();
+            ServiceDesc sd = (ServiceDesc) i.next();
             StringBuffer sb = new StringBuffer();
             sb.append("<li>");
             String name = sd.getName();
             sb.append(name);
             sb.append(" <a href=\"");
-            String endpointURL = sd.getEndpointURL(); 
-            String baseURL = (endpointURL==null)? defaultBaseURL : endpointURL;
+            String endpointURL = sd.getEndpointURL();
+            String baseURL = (endpointURL == null) ? defaultBaseURL :
+                             endpointURL;
             sb.append(baseURL);
             sb.append(name);
             sb.append("?wsdl\"><i>(wsdl)</i></a></li>");
@@ -484,7 +494,7 @@ public class AxisServlet extends AxisServletBase {
             ArrayList operations = sd.getOperations();
             if (!operations.isEmpty()) {
                 writer.println("<ul>");
-                for (Iterator it = operations.iterator(); it.hasNext();) {
+                for (Iterator it = operations.iterator(); it.hasNext(); ) {
                     OperationDesc desc = (OperationDesc) it.next();
                     writer.println("<li>" + desc.getName());
                 }
@@ -500,15 +510,17 @@ public class AxisServlet extends AxisServletBase {
      * @param response response we are generating
      * @param writer open writer for the request
      */
-    protected void reportCantGetAxisService(HttpServletRequest request, HttpServletResponse response, PrintWriter writer) {
+    protected void reportCantGetAxisService(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            PrintWriter writer) {
         // no such service....
         response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         response.setContentType("text/html");
         writer.println("<h2>" +
-                Messages.getMessage("error00") + "</h2>");
+                       Messages.getMessage("error00") + "</h2>");
         writer.println("<p>" +
-                Messages.getMessage("noService06") +
-                "</p>");
+                       Messages.getMessage("noService06") +
+                       "</p>");
     }
 
     /**
@@ -517,23 +529,30 @@ public class AxisServlet extends AxisServletBase {
      * @param response response we are generating
      * @param writer open writer for the request
      */
-    protected void reportCantGetJWSService(HttpServletRequest request, HttpServletResponse response, PrintWriter writer) {
-        //first look to see if there is a service
-        String realpath =
-                getServletConfig().getServletContext()
-                .getRealPath(request.getServletPath());
-        boolean foundJWSFile=(new File(realpath).exists()) &&
-                (realpath.endsWith(Constants.JWS_DEFAULT_FILE_EXTENSION));
+    protected void reportCantGetJWSService(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           PrintWriter writer) {
+        // first look to see if there is a service
+        // requestPath is a work around to support serving .jws web services
+        // from services URL - see AXIS-843 for more information
+        String requestPath = request.getServletPath() + ((request.getPathInfo() != null) ?
+                request.getPathInfo() : "");
+        String realpath = getServletConfig().getServletContext()
+                          .getRealPath(requestPath);
+        log.debug("JWS real path: " + realpath);
+        boolean foundJWSFile = (new File(realpath).exists()) &&
+                               (realpath.endsWith(Constants.
+                                                  JWS_DEFAULT_FILE_EXTENSION));
         response.setContentType("text/html");
-        if(foundJWSFile) {
+        if (foundJWSFile) {
             response.setStatus(HttpURLConnection.HTTP_OK);
             writer.println(Messages.getMessage("foundJWS00") + "<p>");
             String url = request.getRequestURI();
             String urltext = Messages.getMessage("foundJWS01");
-            writer.println("<a href='"+url+"?wsdl'>"+urltext+"</a>");
+            writer.println("<a href='" + url + "?wsdl'>" + urltext + "</a>");
         } else {
             response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-            writer.println(Messages.getMessage("noService06") );
+            writer.println(Messages.getMessage("noService06"));
         }
     }
 
@@ -546,20 +565,20 @@ public class AxisServlet extends AxisServletBase {
      * @throws ServletException trouble
      * @throws IOException different trouble
      */
-     public void doPost(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
-    {
-        long t0=0, t1=0, t2=0, t3=0, t4=0;
-        String soapAction=null;
-        MessageContext msgContext=null;
-        if (isDebug)
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws
+            ServletException, IOException {
+        long t0 = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+        String soapAction = null;
+        MessageContext msgContext = null;
+        if (isDebug) {
             log.debug("Enter: doPost()");
-        if( tlog.isDebugEnabled() ) {
-            t0=System.currentTimeMillis();
+        }
+        if (tlog.isDebugEnabled()) {
+            t0 = System.currentTimeMillis();
         }
 
         Message responseMsg = null;
-        String  contentType = null;
+        String contentType = null;
 
         try {
             AxisEngine engine = getEngine();
@@ -567,7 +586,7 @@ public class AxisServlet extends AxisServletBase {
             if (engine == null) {
                 // !!! should return a SOAP fault...
                 ServletException se =
-                    new ServletException(Messages.getMessage("noEngine00"));
+                        new ServletException(Messages.getMessage("noEngine00"));
                 log.debug("No Engine!", se);
                 throw se;
             }
@@ -581,41 +600,50 @@ public class AxisServlet extends AxisServletBase {
             // ? OK to move this to 'getMessageContext',
             // ? where it would also be picked up for 'doGet()' ?
             if (securityProvider != null) {
-                if (isDebug) log.debug("securityProvider:" + securityProvider);
-                msgContext.setProperty(MessageContext.SECURITY_PROVIDER, securityProvider);
+                if (isDebug) {
+                    log.debug("securityProvider:" + securityProvider);
+                }
+                msgContext.setProperty(MessageContext.SECURITY_PROVIDER,
+                                       securityProvider);
             }
 
             /* Get request message
              */
             Message requestMsg =
-                new Message(req.getInputStream(),
-                            false,
-                            req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE),
-                            req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION));
+                    new Message(req.getInputStream(),
+                                false,
+                                req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE),
+                                req.getHeader(HTTPConstants.
+                                              HEADER_CONTENT_LOCATION));
             // Transfer HTTP headers to MIME headers for request message.
             MimeHeaders requestMimeHeaders = requestMsg.getMimeHeaders();
             for (Enumeration e = req.getHeaderNames(); e.hasMoreElements(); ) {
                 String headerName = (String) e.nextElement();
-                for (Enumeration f = req.getHeaders(headerName); f.hasMoreElements(); ) {
+                for (Enumeration f = req.getHeaders(headerName);
+                                     f.hasMoreElements(); ) {
                     String headerValue = (String) f.nextElement();
                     requestMimeHeaders.addHeader(headerName, headerValue);
                 }
             }
 
-            if(isDebug) log.debug("Request Message:" + requestMsg);
+            if (isDebug) {
+                log.debug("Request Message:" + requestMsg);
 
-            /* Set the request(incoming) message field in the context */
-            /**********************************************************/
+                /* Set the request(incoming) message field in the context */
+                /**********************************************************/
+            }
             msgContext.setRequestMessage(requestMsg);
             String url = HttpUtils.getRequestURL(req).toString();
             msgContext.setProperty(MessageContext.TRANS_URL, url);
             // put character encoding of request to message context
-            // in order to reuse it during the whole process.   
+            // in order to reuse it during the whole process.
             String requestEncoding;
             try {
-                requestEncoding = (String) requestMsg.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                requestEncoding = (String) requestMsg.getProperty(SOAPMessage.
+                        CHARACTER_SET_ENCODING);
                 if (requestEncoding != null) {
-                    msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
+                    msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING,
+                                           requestEncoding);
                 }
             } catch (SOAPException e1) {
             }
@@ -643,17 +671,21 @@ public class AxisServlet extends AxisServletBase {
                 // (Sam is Watching! :-)
                 msgContext.setSession(new AxisHttpSession(req));
 
-                if( tlog.isDebugEnabled() ) {
-                    t1=System.currentTimeMillis();
+                if (tlog.isDebugEnabled()) {
+                    t1 = System.currentTimeMillis();
                 }
                 /* Invoke the Axis engine... */
                 /*****************************/
-                if(isDebug) log.debug("Invoking Axis Engine.");
-                //here we run the message by the engine
+                if (isDebug) {
+                    log.debug("Invoking Axis Engine.");
+                    //here we run the message by the engine
+                }
                 engine.invoke(msgContext);
-                if(isDebug) log.debug("Return from Axis Engine.");
-                if( tlog.isDebugEnabled() ) {
-                    t2=System.currentTimeMillis();
+                if (isDebug) {
+                    log.debug("Return from Axis Engine.");
+                }
+                if (tlog.isDebugEnabled()) {
+                    t2 = System.currentTimeMillis();
                 }
                 responseMsg = msgContext.getResponseMessage();
 
@@ -665,18 +697,20 @@ public class AxisServlet extends AxisServletBase {
             } catch (AxisFault fault) {
                 //log and sanitize
                 processAxisFault(fault);
-                configureResponseFromAxisFault(res,fault);
+                configureResponseFromAxisFault(res, fault);
                 responseMsg = msgContext.getResponseMessage();
                 if (responseMsg == null) {
                     responseMsg = new Message(fault);
-                    ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
+                    ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).
+                            getMessage().setMessageContext(msgContext);
                 }
             } catch (Exception e) {
                 //other exceptions are internal trouble
                 responseMsg = msgContext.getResponseMessage();
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = convertExceptionToAxisFault(e, responseMsg);
-                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
+                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).
+                        getMessage().setMessageContext(msgContext);
             }
         } catch (AxisFault fault) {
             processAxisFault(fault);
@@ -684,12 +718,13 @@ public class AxisServlet extends AxisServletBase {
             responseMsg = msgContext.getResponseMessage();
             if (responseMsg == null) {
                 responseMsg = new Message(fault);
-                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
+                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).
+                        getMessage().setMessageContext(msgContext);
             }
         }
 
-        if( tlog.isDebugEnabled() ) {
-            t3=System.currentTimeMillis();
+        if (tlog.isDebugEnabled()) {
+            t3 = System.currentTimeMillis();
         }
 
         /* Send response back along the wire...  */
@@ -699,18 +734,22 @@ public class AxisServlet extends AxisServletBase {
             MimeHeaders responseMimeHeaders = responseMsg.getMimeHeaders();
             for (Iterator i = responseMimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader responseMimeHeader = (MimeHeader) i.next();
-                res.addHeader(responseMimeHeader.getName(), responseMimeHeader.getValue());
+                res.addHeader(responseMimeHeader.getName(),
+                              responseMimeHeader.getValue());
             }
             // synchronize the character encoding of request and response
-            String responseEncoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            String responseEncoding = (String) msgContext.getProperty(
+                    SOAPMessage.CHARACTER_SET_ENCODING);
             if (responseEncoding != null) {
                 try {
-                    responseMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, responseEncoding);
+                    responseMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING,
+                                            responseEncoding);
                 } catch (SOAPException e) {
                 }
             }
             //determine content type from message response
-            contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
+            contentType = responseMsg.getContentType(msgContext.
+                    getSOAPConstants());
             sendResponse(contentType, res, responseMsg);
         } else {
             // No content, so just indicate accepted
@@ -721,16 +760,16 @@ public class AxisServlet extends AxisServletBase {
             log.debug("Response sent.");
             log.debug("Exit: doPost()");
         }
-        if( tlog.isDebugEnabled() ) {
-            t4=System.currentTimeMillis();
+        if (tlog.isDebugEnabled()) {
+            t4 = System.currentTimeMillis();
             tlog.debug("axisServlet.doPost: " + soapAction +
-                       " pre=" + (t1-t0) +
-                       " invoke=" + (t2-t1) +
-                       " post=" + (t3-t2) +
-                       " send=" + (t4-t3) +
+                       " pre=" + (t1 - t0) +
+                       " invoke=" + (t2 - t1) +
+                       " post=" + (t3 - t2) +
+                       " send=" + (t4 - t3) +
                        " " + msgContext.getTargetService() + "." +
-                        ((msgContext.getOperation( ) == null) ?
-                        "" : msgContext.getOperation().getName()) );
+                       ((msgContext.getOperation() == null) ?
+                        "" : msgContext.getOperation().getName()));
         }
 
     }
@@ -750,26 +789,26 @@ public class AxisServlet extends AxisServletBase {
         if (status == HttpServletResponse.SC_UNAUTHORIZED) {
             // unauth access results in authentication request
             // TODO: less generic realm choice?
-          response.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
+            response.setHeader("WWW-Authenticate", "Basic realm=\"AXIS\"");
         }
         response.setStatus(status);
     }
 
     /**
- * turn any Exception into an AxisFault, log it, set the response
- * status code according to what the specifications say and
- * return a response message for posting. This will be the response
- * message passed in if non-null; one generated from the fault otherwise.
- *
- * @param exception what went wrong
- * @param responseMsg what response we have (if any)
- * @return a response message to send to the user
- */
+     * turn any Exception into an AxisFault, log it, set the response
+     * status code according to what the specifications say and
+     * return a response message for posting. This will be the response
+     * message passed in if non-null; one generated from the fault otherwise.
+     *
+     * @param exception what went wrong
+     * @param responseMsg what response we have (if any)
+     * @return a response message to send to the user
+     */
     private Message convertExceptionToAxisFault(Exception exception,
                                                 Message responseMsg) {
         logException(exception);
         if (responseMsg == null) {
-            AxisFault fault=AxisFault.makeFault(exception);
+            AxisFault fault = AxisFault.makeFault(exception);
             processAxisFault(fault);
             responseMsg = new Message(fault);
         }
@@ -785,11 +824,11 @@ public class AxisServlet extends AxisServletBase {
     protected int getHttpServletResponseStatus(AxisFault af) {
         // TODO: Should really be doing this with explicit AxisFault
         // subclasses... --Glen
-                return af.getFaultCode().getLocalPart().startsWith("Server.Unauth")
-                         ? HttpServletResponse.SC_UNAUTHORIZED
-                         : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-               // This will raise a 401 for both
-               // "Unauthenticated" & "Unauthorized"...
+        return af.getFaultCode().getLocalPart().startsWith("Server.Unauth")
+                ? HttpServletResponse.SC_UNAUTHORIZED
+                : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        // This will raise a 401 for both
+        // "Unauthenticated" & "Unauthorized"...
     }
 
     /**
@@ -802,19 +841,20 @@ public class AxisServlet extends AxisServletBase {
      */
     private void sendResponse(String contentType,
                               HttpServletResponse res,
-                              Message responseMsg)
-        throws AxisFault, IOException
-    {
+                              Message responseMsg) throws AxisFault,
+            IOException {
         if (responseMsg == null) {
             res.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
-            //String resp = Messages.getMessage("noData00");
-            //res.setContentLength((int) resp.getBytes().length);
-            //res.getWriter().print(resp);
+            if (isDebug) {
+                log.debug("NO AXIS MESSAGE TO RETURN!");
+                //String resp = Messages.getMessage("noData00");
+                //res.setContentLength((int) resp.getBytes().length);
+                //res.getWriter().print(resp);
+            }
         } else {
-            if(isDebug) {
+            if (isDebug) {
                 log.debug("Returned Content-Type:" +
-                    contentType);
+                          contentType);
                 // log.debug("Returned Content-Length:" +
                 //          responseMsg.getContentLength());
             }
@@ -836,7 +876,7 @@ public class AxisServlet extends AxisServletBase {
                 //     res.setContentLength(responseMsg.getContentLength());
 
                 responseMsg.writeTo(res.getOutputStream());
-            } catch (SOAPException e){
+            } catch (SOAPException e) {
                 logException(e);
             }
         }
@@ -856,25 +896,26 @@ public class AxisServlet extends AxisServletBase {
      */
     private MessageContext createMessageContext(AxisEngine engine,
                                                 HttpServletRequest req,
-                                                HttpServletResponse res)
-    {
+                                                HttpServletResponse res) {
         MessageContext msgContext = new MessageContext(engine);
 
-        if(isDebug) {
+        String requestPath = getRequestPath(req);
+
+        if (isDebug) {
             log.debug("MessageContext:" + msgContext);
             log.debug("HEADER_CONTENT_TYPE:" +
-                      req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
+                      req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE));
             log.debug("HEADER_CONTENT_LOCATION:" +
-                      req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
+                      req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION));
             log.debug("Constants.MC_HOME_DIR:" + String.valueOf(getHomeDir()));
-            log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
-
-            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ String.valueOf(getWebInfPath()));
+            log.debug("Constants.MC_RELATIVE_PATH:" + requestPath);
+            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:" +
+                      String.valueOf(getWebInfPath()));
             log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" +
-                      req.getPathInfo() );
+                      req.getPathInfo());
             log.debug("HTTPConstants.HEADER_AUTHORIZATION:" +
                       req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
-            log.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
+            log.debug("Constants.MC_REMOTE_ADDR:" + req.getRemoteAddr());
             log.debug("configPath:" + String.valueOf(getWebInfPath()));
         }
 
@@ -886,15 +927,14 @@ public class AxisServlet extends AxisServletBase {
         /********************************************************************/
         msgContext.setProperty(Constants.MC_JWS_CLASSDIR, jwsClassDir);
         msgContext.setProperty(Constants.MC_HOME_DIR, getHomeDir());
-        msgContext.setProperty(Constants.MC_RELATIVE_PATH,
-                               req.getServletPath());
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+        msgContext.setProperty(Constants.MC_RELATIVE_PATH, requestPath);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
-                               getWebInfPath() );
+                               getWebInfPath());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
-                               req.getPathInfo() );
+                               req.getPathInfo());
         msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
                                req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
@@ -905,9 +945,8 @@ public class AxisServlet extends AxisServletBase {
         msgContext.setProperty(Constants.MC_SERVLET_ENDPOINT_CONTEXT, sec);
         /* Save the real path */
         /**********************/
-        String realpath =
-            getServletConfig().getServletContext()
-            .getRealPath(req.getServletPath());
+        String realpath = getServletConfig().getServletContext()
+                          .getRealPath(requestPath);
 
         if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
@@ -926,21 +965,21 @@ public class AxisServlet extends AxisServletBase {
      * @return the action
      * @throws AxisFault
      */
-    private String getSoapAction(HttpServletRequest req)
-        throws AxisFault
-    {
-        String soapAction =req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+    private String getSoapAction(HttpServletRequest req) throws AxisFault {
+        String soapAction = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
-        if(isDebug) log.debug("HEADER_SOAP_ACTION:" + soapAction);
+        if (isDebug) {
+            log.debug("HEADER_SOAP_ACTION:" + soapAction);
 
-        /**
-         * Technically, if we don't find this header, we should probably fault.
-         * It's required in the SOAP HTTP binding.
-         */
+            /**
+             * Technically, if we don't find this header, we should probably fault.
+             * It's required in the SOAP HTTP binding.
+             */
+        }
         if (soapAction == null) {
             AxisFault af = new AxisFault("Client.NoSOAPAction",
                                          Messages.getMessage("noHeader00",
-                                                              "SOAPAction"),
+                    "SOAPAction"),
                                          null, null);
 
             exceptionLog.error(Messages.getMessage("genFault00"), af);
@@ -952,14 +991,15 @@ public class AxisServlet extends AxisServletBase {
         // some implementations leave off the quotes
         // we strip them if they are present
         if (soapAction.startsWith("\"") && soapAction.endsWith("\"")
-                && soapAction.length()>=2) {
+            && soapAction.length() >= 2) {
             int end = soapAction.length() - 1;
             soapAction = soapAction.substring(1, end);
         }
 
-        if (soapAction.length()==0)
+        if (soapAction.length() == 0) {
             soapAction = req.getContextPath(); // Is this right?
 
+        }
         return soapAction;
     }
 
@@ -970,8 +1010,8 @@ public class AxisServlet extends AxisServletBase {
      */
     protected String getDefaultJWSClassDir() {
         return (getWebInfPath() == null)
-               ? null  // ??? what is a good FINAL default for WebLogic?
-               : getWebInfPath() + File.separator +  "jwsClasses";
+                ? null // ??? what is a good FINAL default for WebLogic?
+                : getWebInfPath() + File.separator + "jwsClasses";
     }
 
     /**
@@ -979,55 +1019,66 @@ public class AxisServlet extends AxisServletBase {
      * This includes optionally filling in query string handlers.
      */
 
-    public void initQueryStringHandlers () {
-          try {
-               this.transport = getEngine().getTransport (this.transportName);
+    public void initQueryStringHandlers() {
+        try {
+            this.transport = getEngine().getTransport(this.transportName);
 
-               if (this.transport == null) {
-                    // No transport by this name is defined.  Therefore, fill in default
-                    // query string handlers.
+            if (this.transport == null) {
+                // No transport by this name is defined.  Therefore, fill in default
+                // query string handlers.
 
-                    this.transport = new SimpleTargetedChain();
+                this.transport = new SimpleTargetedChain();
 
-                    this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
-                    this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
-                    this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
+                this.transport.setOption("qs.list",
+                                         "org.apache.axis.transport.http.QSListHandler");
+                this.transport.setOption("qs.method",
+                                         "org.apache.axis.transport.http.QSMethodHandler");
+                this.transport.setOption("qs.wsdl",
+                                         "org.apache.axis.transport.http.QSWSDLHandler");
 
-                    return;
-               }
+                return;
+            }
 
-               else {
-                    // See if we should use the default query string handlers.
-                    // By default, set this to true (for backwards compatibility).
+            else {
+                // See if we should use the default query string handlers.
+                // By default, set this to true (for backwards compatibility).
 
-                    boolean defaultQueryStrings = true;
-                    String useDefaults = (String) this.transport.getOption ("useDefaultQueryStrings");
+                boolean defaultQueryStrings = true;
+                String useDefaults = (String)this.transport.getOption(
+                        "useDefaultQueryStrings");
 
-                    if ((useDefaults != null) && useDefaults.toLowerCase().equals ("false")) {
-                         defaultQueryStrings = false;
-                    }
+                if ((useDefaults != null) &&
+                    useDefaults.toLowerCase().equals("false")) {
+                    defaultQueryStrings = false;
+                }
 
-                    if (defaultQueryStrings == true) {
-                         // We should use defaults, so fill them in.
+                if (defaultQueryStrings == true) {
+                    // We should use defaults, so fill them in.
 
-                         this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
-                         this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
-                         this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
-                    }
-               }
-          }
+                    this.transport.setOption("qs.list",
+                                             "org.apache.axis.transport.http.QSListHandler");
+                    this.transport.setOption("qs.method",
+                                             "org.apache.axis.transport.http.QSMethodHandler");
+                    this.transport.setOption("qs.wsdl",
+                                             "org.apache.axis.transport.http.QSWSDLHandler");
+                }
+            }
+        }
 
-          catch (AxisFault e) {
-               // Some sort of problem occurred, let's just make a default transport.
+        catch (AxisFault e) {
+            // Some sort of problem occurred, let's just make a default transport.
 
-               this.transport = new SimpleTargetedChain();
+            this.transport = new SimpleTargetedChain();
 
-               this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
-               this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
-               this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
+            this.transport.setOption("qs.list",
+                                     "org.apache.axis.transport.http.QSListHandler");
+            this.transport.setOption("qs.method",
+                                     "org.apache.axis.transport.http.QSMethodHandler");
+            this.transport.setOption("qs.wsdl",
+                                     "org.apache.axis.transport.http.QSWSDLHandler");
 
-               return;
-          }
+            return;
+        }
     }
 
     /**
@@ -1038,117 +1089,141 @@ public class AxisServlet extends AxisServletBase {
      * @param writer the servlet's PrintWriter object.
      */
 
-    private boolean processQuery (HttpServletRequest request, HttpServletResponse response,
-          PrintWriter writer) throws AxisFault {
-          // Attempt to instantiate a plug-in handler class for the query string
-          // handler classes defined in the HTTP transport.
+    private boolean processQuery(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 PrintWriter writer) throws AxisFault {
+        // Attempt to instantiate a plug-in handler class for the query string
+        // handler classes defined in the HTTP transport.
 
-          String path = request.getServletPath();
-          String queryString = request.getQueryString();
-          String serviceName;
-          AxisEngine engine = getEngine();
-          Iterator i = this.transport.getOptions().keySet().iterator();
+        String path = request.getServletPath();
+        String queryString = request.getQueryString();
+        String serviceName;
+        AxisEngine engine = getEngine();
+        Iterator i = this.transport.getOptions().keySet().iterator();
 
-          if (queryString == null) {
-               return false;
-          }
+        if (queryString == null) {
+            return false;
+        }
 
         String servletURI = request.getContextPath() + path;
         String reqURI = request.getRequestURI();
         // chop off '/'.
         if (servletURI.length() + 1 < reqURI.length()) {
             serviceName = reqURI.substring(servletURI.length() + 1);
-        }
-        else {
+        } else {
             serviceName = "";
+        } while (i.hasNext() == true) {
+            String queryHandler = (String) i.next();
+
+            if (queryHandler.startsWith("qs.") == true) {
+                // Only attempt to match the query string with transport
+                // parameters prefixed with "qs:".
+
+                String handlerName = queryHandler.substring
+                                     (queryHandler.indexOf(".") + 1).
+                                     toLowerCase();
+
+                // Determine the name of the plugin to invoke by using all text
+                // in the query string up to the first occurence of &, =, or the
+                // whole string if neither is present.
+
+                int length = 0;
+                boolean firstParamFound = false;
+
+                while (firstParamFound == false && length < queryString.length()) {
+                    char ch = queryString.charAt(length++);
+
+                    if (ch == '&' || ch == '=') {
+                        firstParamFound = true;
+
+                        --length;
+                    }
+                }
+
+                if (length < queryString.length()) {
+                    queryString = queryString.substring(0, length);
+                }
+
+                if (queryString.toLowerCase().equals(handlerName) == true) {
+                    // Query string matches a defined query string handler name.
+
+                    // If the defined class name for this query string handler is blank,
+                    // just return (the handler is "turned off" in effect).
+
+                    if (this.transport.getOption(queryHandler).equals("")) {
+                        return false;
+                    }
+
+                    try {
+                        // Attempt to dynamically load the query string handler
+                        // and its "invoke" method.
+
+                        MessageContext msgContext = createMessageContext(engine,
+                                request, response);
+                        Class plugin = Class.forName((String)this.transport.
+                                getOption(queryHandler));
+                        Method pluginMethod = plugin.getDeclaredMethod("invoke",
+                                new Class[] {msgContext.getClass()});
+                        String url = HttpUtils.getRequestURL(request).toString();
+
+                        // Place various useful servlet-related objects in
+                        // the MessageContext object being delivered to the
+                        // plugin.
+                        msgContext.setProperty(MessageContext.TRANS_URL, url);
+                        msgContext.setProperty(HTTPConstants.
+                                               PLUGIN_SERVICE_NAME, serviceName);
+                        msgContext.setProperty(HTTPConstants.PLUGIN_NAME,
+                                               handlerName);
+                        msgContext.setProperty(HTTPConstants.
+                                               PLUGIN_IS_DEVELOPMENT,
+                                               new Boolean(isDevelopment()));
+                        msgContext.setProperty(HTTPConstants.PLUGIN_ENABLE_LIST,
+                                               new Boolean(enableList));
+                        msgContext.setProperty(HTTPConstants.PLUGIN_ENGINE,
+                                               engine);
+                        msgContext.setProperty(HTTPConstants.PLUGIN_WRITER,
+                                               writer);
+                        msgContext.setProperty(HTTPConstants.PLUGIN_LOG, log);
+                        msgContext.setProperty(HTTPConstants.
+                                               PLUGIN_EXCEPTION_LOG,
+                                               exceptionLog);
+
+                        // Invoke the plugin.
+
+                        pluginMethod.invoke(plugin.newInstance(),
+                                            new Object[] {msgContext});
+
+                        writer.close();
+
+                        return true;
+                    } catch (InvocationTargetException ie) {
+                        reportTroubleInGet(ie.getTargetException(), response,
+                                           writer);
+                        // return true to prevent any further processing
+                        return true;
+                    } catch (Exception e) {
+                        reportTroubleInGet(e, response, writer);
+                        // return true to prevent any further processing
+                        return true;
+                    }
+                }
+            }
         }
-          while (i.hasNext() == true) {
-               String queryHandler = (String) i.next();
 
-               if (queryHandler.startsWith ("qs.") == true) {
-                    // Only attempt to match the query string with transport
-                    // parameters prefixed with "qs:".
+        return false;
+    }
 
-                    String handlerName = queryHandler.substring
-                         (queryHandler.indexOf (".") + 1).toLowerCase();
-
-                    // Determine the name of the plugin to invoke by using all text
-                    // in the query string up to the first occurence of &, =, or the
-                    // whole string if neither is present.
-
-                    int length = 0;
-                    boolean firstParamFound = false;
-
-                    while (firstParamFound == false && length < queryString.length()) {
-                         char ch = queryString.charAt (length++);
-
-                         if (ch == '&' || ch == '=') {
-                              firstParamFound = true;
-
-                              --length;
-                         }
-                    }
-
-                    if (length < queryString.length()) {
-                         queryString = queryString.substring (0, length);
-                    }
-
-                    if (queryString.toLowerCase().equals (handlerName) == true) {
-                         // Query string matches a defined query string handler name.
-
-                         // If the defined class name for this query string handler is blank,
-                         // just return (the handler is "turned off" in effect).
-
-                         if (this.transport.getOption (queryHandler).equals ("")) {
-                              return false;
-                         }
-
-                         try {
-                              // Attempt to dynamically load the query string handler
-                              // and its "invoke" method.
-
-                              MessageContext msgContext = createMessageContext (engine, request, response);
-                              Class plugin = Class.forName ((String) this.transport.getOption (queryHandler));
-                              Method pluginMethod = plugin.getDeclaredMethod ("invoke",
-                                new Class[] { msgContext.getClass() });
-                              String url = HttpUtils.getRequestURL(request).toString();
-
-                              // Place various useful servlet-related objects in
-                              // the MessageContext object being delivered to the
-                              // plugin.
-
-                              msgContext.setProperty (MessageContext.TRANS_URL, url);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_SERVICE_NAME, serviceName);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_NAME, handlerName);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_IS_DEVELOPMENT, new Boolean (isDevelopment()));
-                              msgContext.setProperty (HTTPConstants.PLUGIN_ENABLE_LIST, new Boolean (enableList));
-                              msgContext.setProperty (HTTPConstants.PLUGIN_ENGINE, engine);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_WRITER, writer);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_LOG, log);
-                              msgContext.setProperty (HTTPConstants.PLUGIN_EXCEPTION_LOG, exceptionLog);
-
-                              // Invoke the plugin.
-
-                              pluginMethod.invoke (plugin.newInstance(), new Object[] { msgContext });
-
-                              writer.close();
-
-                              return true;
-                         }
-                         catch (InvocationTargetException ie) {
-                             reportTroubleInGet (ie.getTargetException(), response, writer);
-                             // return true to prevent any further processing
-                             return true;
-                         }
-                         catch (Exception e) {
-                              reportTroubleInGet (e, response, writer);
-                             // return true to prevent any further processing
-                             return true;
-                         }
-                    }
-               }
-          }
-
-          return false;
-     }
+    /**
+     * getRequestPath a returns request path for web service padded with
+     * request.getPathInfo for web services served from /services directory.
+     * This is a required to support serving .jws web services from /services
+     * URL. See AXIS-843 for more information.
+     *
+     * @param request HttpServletRequest
+     * @return String
+     */
+    private static String getRequestPath(HttpServletRequest request) {
+        return request.getServletPath() + ((request.getPathInfo() != null) ?
+                                           request.getPathInfo() : "");
+    }
 }
