@@ -129,6 +129,7 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
+            pw.println("    private boolean firstCall = true;");
         }
         pw.println();
 
@@ -180,15 +181,23 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("                call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
-            pw.println("            for (int i = 0; i < cachedSerFactories.size(); ++i) {");
-            pw.println("                Class cls = (Class) cachedSerClasses.get(i);");
-            pw.println("                javax.xml.rpc.namespace.QName qname =");
-            pw.println("                        (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
-            pw.println("                Class sf = (Class)");
-            pw.println("                         cachedSerFactories.get(i);");
-            pw.println("                Class df = (Class)");
-            pw.println("                         cachedDeserFactories.get(i);");
-            pw.println("                call.registerTypeMapping(cls, qname, sf, df, false);");
+            pw.println("            // All the type mapping information is registered");
+            pw.println("            // when the first call is made.");
+            pw.println("            // The type mapping information is actually registered in");
+            pw.println("            // the TypeMappingRegistry of the service, which");
+            pw.println("            // is the reason why registration is only needed for the first call.");
+            pw.println("            if (firstCall) {");
+            pw.println("                firstCall = false;");
+            pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");
+            pw.println("                    Class cls = (Class) cachedSerClasses.get(i);");
+            pw.println("                    javax.xml.rpc.namespace.QName qName =");
+            pw.println("                            (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
+            pw.println("                    Class sf = (Class)");
+            pw.println("                             cachedSerFactories.get(i);");
+            pw.println("                    Class df = (Class)");
+            pw.println("                             cachedDeserFactories.get(i);");
+            pw.println("                    call.registerTypeMapping(cls, qName, sf, df, false);");
+            pw.println("                }");
             pw.println("            }");
         }
         pw.println("            return call;");
@@ -365,14 +374,21 @@ public class JavaStubWriter extends JavaWriter {
     private boolean firstSer = true ;
 
     private void writeSerializationInit(TypeEntry type) throws IOException {
-        if (type.getBaseType() != null || type.getName().endsWith("[]")) {
+        // Don't need to register base types or
+        // our special collection types for indexed properties
+        if (type.getBaseType() != null ||
+            type instanceof CollectionType) {
             return;
         }
         if ( firstSer ) {
             pw.println("            Class cls;" );
             pw.println("            javax.xml.rpc.namespace.QName qName;" );
-            pw.println("            Class sf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
-            pw.println("            Class df = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
+            pw.println("            Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
+            pw.println("            Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
+            pw.println("            Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
+            pw.println("            Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
+            pw.println("            Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
+            pw.println("            Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
         }
         firstSer = false ;
 
@@ -383,8 +399,18 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("            cachedSerQNames.add(qName);");
         pw.println("            cls = " + type.getName() + ".class;");
         pw.println("            cachedSerClasses.add(cls);");
-        pw.println("            cachedSerFactories.add(sf);");
-        pw.println("            cachedDeserFactories.add(df);");
+        if (type.getName().endsWith("[]")) {
+            pw.println("            cachedSerFactories.add(arraysf);");
+            pw.println("            cachedDeserFactories.add(arraydf);");
+        } else if (type.getNode() != null && 
+                   SchemaUtils.getEnumerationBaseAndValues(
+                     type.getNode(), emitter.getSymbolTable()) != null) {
+            pw.println("            cachedSerFactories.add(enumsf);");
+            pw.println("            cachedDeserFactories.add(enumdf);");
+        } else {
+            pw.println("            cachedSerFactories.add(beansf);");
+            pw.println("            cachedDeserFactories.add(beandf);");
+        }
         pw.println();
     } // writeSerializationInit
 
