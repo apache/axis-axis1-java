@@ -542,7 +542,7 @@ public class XMLUtils {
      * Return a string for a particular QName, mapping a new prefix
      * if necessary.
      */
-    public String getStringForQName(QName qname, Element e)
+    public static String getStringForQName(QName qname, Element e)
     {
         String uri = qname.getNamespaceURI();
         String prefix = getPrefix(uri, e);
