@@ -65,6 +65,14 @@ xmlns:tns="urn:QueryTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
           <xsd:enumeration value="LESS"/>
         </xsd:restriction>
       </xsd:simpleType>
+
+     <xsd:complexType name="AttributedURI">
+       <xsd:simpleContent>
+        <xsd:extension base="xsd:anyURI">
+         <xsd:anyAttribute namespace="##other" processContents="lax"/>
+        </xsd:extension>
+       </xsd:simpleContent>
+     </xsd:complexType>
       
     </xsd:schema>
   </types>

@@ -195,6 +195,12 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         MixedType3 t3 = new MixedType3();
         assertFalse(t3 instanceof org.apache.axis.encoding.MixedContentType);
     }
-    
+
+    public void testAnyAttribute() {
+        // if everything is right the AttributedURI class should be generated
+        AttributedURI uri = new AttributedURI();
+        assertTrue(uri instanceof org.apache.axis.encoding.SimpleType);
+    }
+
 }
 

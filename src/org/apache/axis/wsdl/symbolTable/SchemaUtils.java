@@ -1769,8 +1769,9 @@ public class SchemaUtils {
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
 
-                if (!isXSDNode(child, "attribute")
-                        && !isXSDNode(child, "attributeGroup")) {
+                if (!isXSDNode(child, "attribute") &&
+                    !isXSDNode(child, "anyAttribute") &&
+                    !isXSDNode(child, "attributeGroup")) {
                     continue;
                 }
 
@@ -1781,8 +1782,9 @@ public class SchemaUtils {
 
                 if (isXSDNode(child, "attributeGroup")) {
                     addAttributeGroupToVector(v, child, symbolTable);
+                } else if (isXSDNode(child, "anyAttribute")) {
+                    // do nothing right now
                 } else {
-
                     // we have an attribute
                     addAttributeToVector(v, child, symbolTable);
                 }
