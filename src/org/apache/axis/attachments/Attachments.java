@@ -72,9 +72,7 @@ public interface Attachments extends java.io.Serializable {
      * Adds an existing attachment to this list.
      * Note: Passed part will be bound to this message.
      * @param newPart new part to add
-     * @returns Part old attachment with the same Content-ID, or null.
-     *
-     * @return
+     * @return Part old attachment with the same Content-ID, or null.
      * @throws org.apache.axis.AxisFault
      */
     public Part addAttachmentPart(Part newPart)
@@ -146,7 +144,7 @@ public interface Attachments extends java.io.Serializable {
      *
      * @param part
      *
-     * @return
+     * @return a new attachment part
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -157,7 +155,7 @@ public interface Attachments extends java.io.Serializable {
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
      *
-     * @return
+     * @return a new attachment part
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -190,7 +188,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Get the content length of the stream.
      *
-     * @return
+     * @return the content length of the stream
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -209,7 +207,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Write the content to the stream.
      *
-     * @return
+     * @return the content type
      *
      * @throws org.apache.axis.AxisFault
      */

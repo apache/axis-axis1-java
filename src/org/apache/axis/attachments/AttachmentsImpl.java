@@ -235,8 +235,6 @@ public class AttachmentsImpl implements Attachments {
      * @param newPart new part to add
      * @return Part old attachment with the same Content-ID, or null.
      *
-     * @return
-     *
      * @throws org.apache.axis.AxisFault
      */
     public Part addAttachmentPart(Part newPart)
@@ -430,7 +428,7 @@ public class AttachmentsImpl implements Attachments {
     /**
      * Get the content length of the stream.
      *
-     * @return
+     * @return the content length of the stream
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -454,7 +452,7 @@ public class AttachmentsImpl implements Attachments {
     /**
      * Creates the DIME message 
      *
-     * @return
+     * @return a DIME part
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -522,7 +520,7 @@ public class AttachmentsImpl implements Attachments {
     /**
      * Gets the content type for the whole stream.
      *
-     * @return
+     * @return the content type for the whole stream
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -620,7 +618,7 @@ public class AttachmentsImpl implements Attachments {
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
      *
-     * @return
+     * @return a new attachment Part
      *
      * @throws org.apache.axis.AxisFault
      */
