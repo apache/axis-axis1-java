@@ -491,6 +491,10 @@ public class Emitter {
     private HashMap writePortType(PortType portType) throws IOException {
         String nameValue = xmlNameToJava(portType.getQName().getLocalPart());
         String fileName = nameValue + ".java";
+
+        this.fileList.add(fileName);
+        this.classList.add(nameValue);
+
         PrintWriter interfacePW = printWriter (fileName);
         if (bVerbose)
             System.out.println("Generating portType interface: " + fileName);
@@ -520,6 +524,10 @@ public class Emitter {
     private void writeAxisPortType(PortType portType) throws IOException {
         String nameValue = xmlNameToJava(portType.getQName().getLocalPart()) + "Axis";
         String fileName = nameValue + ".java";
+
+        this.classList.add(nameValue);
+        this.fileList.add(fileName);
+
         PrintWriter interfacePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + fileName);
@@ -894,6 +902,10 @@ public class Emitter {
     private String fault(Fault operation) throws IOException {
         String exceptionName = Utils.capitalize(xmlNameToJava(operation.getName()));
         String fileName = exceptionName + ".java";
+
+        this.classList.add(exceptionName);
+        this.fileList.add(fileName);
+
         PrintWriter pw = printWriter(fileName);
 
         if (bVerbose)
@@ -970,6 +982,10 @@ public class Emitter {
 
         String stubName = name + "Stub";
         String stubFileName = stubName + ".java";
+
+        this.classList.add(stubName);
+        this.fileList.add(stubFileName);
+
         PrintWriter stubPW = printWriter(stubFileName);
         if (bVerbose)
             System.out.println("Generating client-side stub: " + stubFileName);
@@ -1036,6 +1052,10 @@ public class Emitter {
         if (bEmitSkeleton) {
             String skelName = name + "Skeleton";
             String skelFileName = skelName + ".java";
+
+            this.classList.add(skelName);
+            this.fileList.add(skelFileName);
+
             skelPW = printWriter(skelFileName);
             String implType = portTypeName + " impl";
             String implName = name + "Impl";
@@ -1060,6 +1080,10 @@ public class Emitter {
             skelPW.println();
 
             String implFileName = implName + ".java";
+
+            this.classList.add(implName);
+            this.fileList.add(implFileName);
+
             if (!fileExists (implFileName)) {
                 implPW = printWriter(implFileName);
                 if (bVerbose)
@@ -1407,6 +1431,10 @@ public class Emitter {
     private void writeService(Service service) throws IOException {
         String serviceName = xmlNameToJava(service.getQName().getLocalPart());
         String fileName = serviceName + ".java";
+
+        this.classList.add(serviceName);
+        this.fileList.add(fileName);
+
         PrintWriter servicePW = printWriter(fileName);
         TestCaseFactory testFactory = null;
 
@@ -1415,9 +1443,15 @@ public class Emitter {
         }
 
         if (this.bEmitTestCase) {
-            testFactory = new TestCaseFactory(this.printWriter(serviceName + "TestCase.java"),
+            String testCase = serviceName + "TestCase";
+            String testCaseFileName = testCase + ".java";
+
+            this.classList.add(testCase);
+            this.fileList.add(testCaseFileName);
+
+            testFactory = new TestCaseFactory(this.printWriter(testCaseFileName),
                                               this.packageName,
-                                              serviceName + "TestCase",
+                                              testCase,
                                               this);
 
             if (this.bVerbose) {
@@ -1535,11 +1569,15 @@ public class Emitter {
     private void writeDeploymentXML() {
         try {
             PrintWriter deployPW = printWriter("deploy.xml");
+            this.fileList.add("deploy.xml");
+
             if (bVerbose) {
                 System.out.println("Generating deployment document: deploy.xml");
             }
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = printWriter("undeploy.xml");
+            this.fileList.add("undeploy.xml");
+
             if (bVerbose) {
                 System.out.println("Generating deployment document: undeploy.xml");
             }
@@ -1767,6 +1805,10 @@ public class Emitter {
         String javaName = type.getJavaLocalName();
 
         String fileName = javaName + ".java";
+
+        this.classList.add(javaName);
+        this.fileList.add(fileName);
+
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation: " + fileName);
@@ -1829,6 +1871,10 @@ public class Emitter {
         String javaName = eType.getJavaLocalName();
 
         String fileName = javaName + ".java";
+
+        this.classList.add(javaName);
+        this.fileList.add(fileName);
+
         PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating enum type implementation: " + fileName);
@@ -1852,6 +1898,10 @@ public class Emitter {
         String javaName = type.getJavaLocalName();
 
         String fileName = javaName + "Holder.java";
+
+        this.classList.add(javaName);
+        this.fileList.add(fileName);
+
         PrintWriter pw = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation holder: " + fileName);
