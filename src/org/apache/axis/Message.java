@@ -484,7 +484,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         SOAPEnvelope envelope = getSOAPEnvelope();
         if (envelope != null) {
             if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
-                ret = "application/soap+xml; charset=" + encoding;
+                ret = HTTPConstants.HEADER_ACCEPT_APPL_SOAP +"; charset=" + encoding;
             }
         }
 
