@@ -71,6 +71,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
 import javax.wsdl.Service;
 
 import org.apache.axis.encoding.TypeMapping;
@@ -356,38 +357,60 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         dims += tEntry.getDimensions();
                         refType = tEntry.getRefType();
                     }
-                    
-                    // Get the QName to javify
-                    QName typeQName = tEntry.getQName();
-                    if ((typeQName.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0) &&
-                            (tEntry.getName() == null)) {
-                        // This is an anonymous type name.
-                        // Axis uses '>' as a nesting token to generate
-                        // unique qnames for anonymous types.
-                        // Only consider the localName after the last '>' when
-                        // generating the java name
-                        String localName = typeQName.getLocalPart();
-                        localName = 
-                            localName.substring(
-                                localName.lastIndexOf(SymbolTable.ANON_TOKEN)+1);
-                        typeQName = new QName(typeQName.getNamespaceURI(), localName);
-                        // If there is already an existing type, there will be a 
-                        // collision.  If there is an existing anon type, there will be a 
-                        // collision.  In both cases, the java type name should be mangled.
-                        symbolTable.getType(typeQName);
-                        if (anonQNames.get(typeQName) != null) {
-                            localName += "Type" + uniqueNum++;
-                            typeQName = new QName(typeQName.getNamespaceURI(), localName);
+
+
+                    // Need to javify the ref'd TypeEntry if it was not
+                    // already processed
+                    if (tEntry.getName() == null) {
+                        // Get the QName of the ref'd TypeEntry, which
+                        // is will be used to javify the name
+                        QName typeQName = tEntry.getQName();
+                        if ((typeQName.getLocalPart().
+                             indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+                            // Normal Case: The ref'd type is not anonymous
+                            // Simply construct the java name from
+                            // the qName
+                            tEntry.setName(emitter.getJavaName(typeQName));
+                        } else {
+                            // This is an anonymous type name.
+                            // Axis uses '>' as a nesting token to generate
+                            // unique qnames for anonymous types.
+                            // Only consider the localName after the last '>' 
+                            // when generating the java name
+                            String localName = typeQName.getLocalPart();
+                            localName = 
+                                localName.substring(
+                                    localName.lastIndexOf(
+                                        SymbolTable.ANON_TOKEN)+1);
+                            typeQName = new QName(typeQName.getNamespaceURI(), 
+                                                  localName);
+                            // If there is already an existing type,
+                            // there will be a collision.  
+                            // If there is an existing anon type, 
+                            // there will be a  collision.  
+                            // In both cases, mangle the name.
+                            symbolTable.getType(typeQName);
+                            if (anonQNames.get(typeQName) != null) {
+                                localName += "Type" + uniqueNum++;
+                                typeQName = 
+                                    new QName(typeQName.getNamespaceURI(),
+                                              localName);
+                            } 
+                            anonQNames.put(typeQName, typeQName);
+
+                            // Now set the name with the constructed qname
+                            tEntry.setName(emitter.getJavaName(typeQName));
                         } 
-                        anonQNames.put(typeQName, typeQName);
-                        tEntry.setName(emitter.getJavaName(typeQName) + dims);
                     }
-                    entry.setName(emitter.getJavaName(typeQName) + dims);
+                    // Set the entry with the same name as the ref'd entry
+                    // but add the appropriate amount of dimensions
+                    entry.setName(tEntry.getName() + dims);
                 }
 
-                // If it is not a type, then use this entry's QName to generate its name.
+                // If it is not a type, then use this entry's QName to 
+                // generate its name.
                 else {
-                    entry.setName(emitter.getJavaName(entry.getQName()));
+                    entry.setName(emitter.getJavaName(entry.getQName()));   
                 }
             }
         }
@@ -575,7 +598,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 boolean resolve = true;
                 // Common Special Case:
                 // If a Type and Element have the same QName, and the Element
-                // uses type= to reference the Type, then they are the same class so 
+                // references the Type, then they are the same class so 
                 // don't bother mangling.
                 if (v.size() == 2 &&
                     ((v.elementAt(0) instanceof Element &&
@@ -588,8 +611,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     } else {
                         e = (Element)v.elementAt(1);
                     }
-                    QName eType = Utils.getNodeTypeRefQName(e.getNode(), "type");
-                    if (eType != null && eType.equals(e.getQName()))
+                    BooleanHolder forElement = new BooleanHolder();
+                    QName eType = Utils.getTypeQName(e.getNode(), forElement, false);
+                    if (eType != null && 
+                        eType.equals(e.getQName()) &&
+                        !forElement.value)
                         resolve = false;
                 }
 

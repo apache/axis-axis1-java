@@ -149,10 +149,9 @@ public class SchemaUtils {
                         extensionKind.getLocalPart().equals("extension") &&
                         Constants.isSchemaXSD(extensionKind.getNamespaceURI())) {
                         
-                        // get the type of the extension
+                        // get the type of the extension from the "base" attribute
                         QName extendsType =
-                                Utils.getNodeTypeRefQName(children.item(j), 
-                                                          "base");
+                            Utils.getTypeQName(children.item(j), new BooleanHolder(), false);
                         
                         // Return an element declaration with a fixed name
                         // ("value") and the correct type.                        
@@ -342,12 +341,8 @@ public class SchemaUtils {
 
         // The type qname is used to locate the TypeEntry, which is then
         // used to retrieve the proper java name of the type.
-        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
+        QName nodeType = Utils.getTypeQName(elementNode, forElement, false);
 
-        if (nodeType == null) {
-            nodeType = getElementAnonQName(elementNode);            
-            forElement.value = false;
-        }        
         TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
                                                              forElement.value);
 
@@ -564,7 +559,7 @@ public class SchemaUtils {
             }
 
             // Get the QName of the extension base
-            QName extendsType = Utils.getNodeTypeRefQName(extension, "base");
+            QName extendsType = Utils.getTypeQName(extension, new BooleanHolder(), false);
             if (extendsType == null) {
                 return null; // No extension base
             }
@@ -624,7 +619,7 @@ public class SchemaUtils {
             // (the base attribute contains this type).
             
             if (restrictionNode != null) {
-                baseQName = Utils.getNodeTypeRefQName(restrictionNode, "base");
+                baseQName = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
             }
             
             // Look for enumeration elements underneath the restriction node
@@ -751,19 +746,15 @@ public class SchemaUtils {
             nodeKind.getLocalPart().equals("element") &&
             Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
-            // Get the qName of just the type or just the ref
-            // The compare it against the full type of the node, which
-            // takes into account maxOccurs and could return a collection type.
-            // If different, return just the type (which is the collection component).
-            QName componentQName = Utils.getNodeTypeRefQName(node, "type");
-            if (componentQName == null) {
-                componentQName = Utils.getNodeTypeRefQName(node, "ref");
-            }
-
+            // Compare the componentQName with the name of the
+            // full name.  If different, return componentQName
+            BooleanHolder forElement = new BooleanHolder();
+            QName componentQName = Utils.getTypeQName(node, forElement, true);
             if (componentQName != null) {
-                QName fullTypeQName = Utils.getNodeTypeRefQName(node, new BooleanHolder());
-                if (componentQName != fullTypeQName)
+                QName fullQName = Utils.getTypeQName(node, forElement, false);
+                if (!componentQName.equals(fullQName)) {
                     return componentQName;
+                }
             }
         }
         return null;
@@ -854,10 +845,10 @@ public class SchemaUtils {
                 }
             }
 
-            // The restriction node must have a base of soapenc:Array.  
+            // The restriction node must have a base of soapenc:Array.              
             QName baseType = null;
             if (restrictionNode != null) {
-                baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
+                baseType = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
                 if (baseType != null &&
                     baseType.getLocalPart().equals("Array") &&
                     Constants.isSOAP_ENC(baseType.getNamespaceURI()))
@@ -888,8 +879,10 @@ public class SchemaUtils {
                         Constants.isSchemaXSD(kind.getNamespaceURI())) {
                         // If the attribute node does not have ref="soapenc:arrayType"
                         // then keep looking.
-                        QName refQName = Utils.getNodeTypeRefQName(children.item(j), "ref");
+                        BooleanHolder isRef = new BooleanHolder();
+                        QName refQName = Utils.getTypeQName(children.item(j), isRef, false);
                         if (refQName != null &&
+                            isRef.value &&
                             refQName.getLocalPart().equals("arrayType") &&
                             Constants.isSOAP_ENC(refQName.getNamespaceURI())) {
                             attributeNode = children.item(j);
@@ -950,9 +943,9 @@ public class SchemaUtils {
                     String maxOccursValue = Utils.getAttribute(elementNode, "maxOccurs");
                     if (maxOccursValue != null &&
                         maxOccursValue.equalsIgnoreCase("unbounded")) {
-                        // Get the QName of just the type
+                        // Get the QName of the type without considering maxOccurs
                         dims.value = 1;
-                        return Utils.getNodeTypeRefQName(elementNode, "type");
+                        return Utils.getTypeQName(elementNode, new BooleanHolder(), true);
                     }
                 }
             }
@@ -1061,7 +1054,7 @@ public class SchemaUtils {
                 // used to retrieve the proper java name of the type.
                 QName attributeName = Utils.getNodeNameQName(child);
                 BooleanHolder forElement = new BooleanHolder();
-                QName attributeType = Utils.getNodeTypeRefQName(child, forElement);
+                QName attributeType = Utils.getTypeQName(child, forElement, false);
 
                 // An attribute is either qualified or unqualified.
                 // If the ref= attribute is used, the name of the ref'd element is used
@@ -1086,10 +1079,6 @@ public class SchemaUtils {
                     }
                 } else {
                     attributeName = attributeType;
-                }
-                if (attributeType == null) {
-                    attributeType = getAttributeAnonQName(child);            
-                    forElement.value = false;
                 }
                 
                 // Get the corresponding TypeEntry from the symbol table
