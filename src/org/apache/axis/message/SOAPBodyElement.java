@@ -65,6 +65,7 @@ import java.io.InputStream;
  * 
  */
 public class SOAPBodyElement extends MessageElement
+    implements javax.xml.soap.SOAPBodyElement
 {
     public SOAPBodyElement(String namespace,
                            String localPart,
