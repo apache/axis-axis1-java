@@ -58,13 +58,14 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.handlers.*;
 import org.jdom.Element ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class SimpleChain implements Chain {
+public class SimpleChain extends BasicHandler implements Chain {
   protected Vector     handlers ;
   protected Hashtable  options ;
 
@@ -118,33 +119,6 @@ public class SimpleChain implements Chain {
       if ( ((Handler) handlers.elementAt( i )).canHandleBlock(qname) )
         return( true );
     return( false );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
   }
 
   public void addHandler(Handler handler) {
