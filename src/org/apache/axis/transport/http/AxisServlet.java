@@ -65,6 +65,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.server.AxisServerFactory;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -122,27 +123,54 @@ public class AxisServlet extends HttpServlet {
         }
     }
 
-    public AxisServer getEngine() {
+    public AxisServer getEngine() throws AxisFault {
         if (getServletContext().getAttribute("AxisEngine") == null) {
+            String webInfPath = getServletContext().getRealPath("/WEB-INF");
             // Set the base path for the AxisServer to our WEB-INF directory
             // (so the config files can't get snooped by a browser)
             FileProvider provider =
-                    new FileProvider(getServletContext().getRealPath("/WEB-INF"),
+                    new FileProvider(webInfPath,
                                      Constants.SERVER_CONFIG_FILE);
 
-            getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
+            // Obtain an AxisServer using the AxisServerFactory.  This will
+            // first check JNDI to see if there's a server at the specified
+            // name, which in this case is our WEB-INF path plus "/AxisServer".
+            // (servlet 2.3 has a getServletContextName() API which might be
+            // better used here)
+            //
+            // The point of doing this rather than just creating the server
+            // manually with the provider above is that we will then support
+            // configurations where the server instance is managed by the
+            // container, and pre-registered in JNDI at deployment time.  It
+            // also means we put the standard configuration pattern in one
+            // place.
+            getServletContext().setAttribute("AxisEngine",
+                        AxisServerFactory.getServer(webInfPath + "/AxisServer",
+                                                    provider));
         }
         return (AxisServer)getServletContext().getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
-        if (engine == null)
-            engine = getEngine();
+        PrintWriter writer = res.getWriter();
+
+        if (engine == null) {
+            try {
+                engine = getEngine();
+            } catch (AxisFault fault) {
+                res.setContentType("text/html");
+                writer.println("<h2>" +
+                        JavaUtils.getMessage("error00") + "</h2>");
+                writer.println("<p>" +
+                        JavaUtils.getMessage("somethingWrong00") + "</p>");
+                writer.println("<pre>Fault - " + fault + " </pre>");
+                return;
+            }
+        }
 
         ServletContext context = getServletConfig().getServletContext();
         MessageContext msgContext = new MessageContext(engine);
-        PrintWriter writer = res.getWriter();
 
         msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));
 
@@ -308,8 +336,17 @@ public class AxisServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
-        if (engine == null)
-            engine = getEngine();
+        if (engine == null) {
+            try {
+                engine = getEngine();
+            } catch (AxisFault fault) {
+                Message msg = new Message(fault);
+                res.setContentType( msg.getContentType() );
+                res.setContentLength( msg.getContentLength() );
+                msg.writeContentToStream(res.getOutputStream());
+                return;
+            }
+        }
 
         ServletConfig  config  = getServletConfig();
         ServletContext context = config.getServletContext();
@@ -438,7 +475,7 @@ public class AxisServlet extends HttpServlet {
           String resp= JavaUtils.getMessage("noData00");
           res.setContentLength( resp.getBytes().length );
           res.getWriter().print(resp);
-        }else{
+        } else {
           res.setContentType( msg.getContentType() );
           res.setContentLength( msg.getContentLength() );
           msg.writeContentToStream(res.getOutputStream());

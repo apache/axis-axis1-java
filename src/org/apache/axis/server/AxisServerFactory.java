@@ -1,4 +1,4 @@
-package org.apache.axis.client;
+package org.apache.axis.server;
 
 import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisFault;
@@ -9,7 +9,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * Helper class for obtaining AxisClients, which hides the complexity
+ * Helper class for obtaining AxisServers, which hides the complexity
  * of JNDI accesses, etc.
  *
  * !!! QUESTION : Does this class need to play any ClassLoader tricks?
@@ -17,12 +17,12 @@ import javax.naming.NamingException;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */ 
 
-public class AxisClientFactory {
+public class AxisServerFactory {
     private static FileProvider defaultConfigProvider =
-                           new FileProvider(Constants.CLIENT_CONFIG_FILE);
+                           new FileProvider(Constants.SERVER_CONFIG_FILE);
 
     /**
-     * Obtain an AxisClient reference, using JNDI if possible, otherwise
+     * Obtain an AxisServer reference, using JNDI if possible, otherwise
      * creating one using the standard Axis configuration pattern.  If we
      * end up creating one and do have JNDI access, bind it to the passed
      * name so we find it next time.
@@ -32,11 +32,11 @@ public class AxisClientFactory {
      *                       to configure any engine we end up creating, or
      *                       null to use the default configuration pattern.
      */
-    static public AxisClient getClient(String name,
+    static public AxisServer getServer(String name,
                                        ConfigurationProvider configProvider)
         throws AxisFault
     {
-        AxisClient client = null;
+        AxisServer server = null;
         InitialContext context = null;
 
         // First check to see if JNDI works
@@ -47,38 +47,38 @@ public class AxisClientFactory {
         }
         
         if (context != null) {
-            // We've got JNDI, so try to find an AxisClient at the
+            // We've got JNDI, so try to find an AxisServer at the
             // specified name.
             try {
-                client = (AxisClient)context.lookup(name);
+                server = (AxisServer)context.lookup(name);
             } catch (NamingException e) {
                 // Didn't find it.
-                client = createNewClient(configProvider);
+                server = createNewServer(configProvider);
                 try {
-                    context.bind(name, client);
+                    context.bind(name, server);
                 } catch (NamingException e1) {
                     // !!! Couldn't do it, what should we do here?
                 }
             }
         } else {
-            client = createNewClient(configProvider);
+            server = createNewServer(configProvider);
         }
 
-        return client;
+        return server;
     }
 
     /**
-     * Do the actual work of creating a new AxisClient, using the passed
+     * Do the actual work of creating a new AxisServer, using the passed
      * configuration provider, or going through the default configuration
      * steps if null is passed.
      *
-     * @return a shiny new AxisClient, ready for use.
+     * @return a shiny new AxisServer, ready for use.
      */
-    static private AxisClient createNewClient(ConfigurationProvider provider)
+    static private AxisServer createNewServer(ConfigurationProvider provider)
     {
         // Just use the passed provider if there is one.
         if (provider != null) {
-            return new AxisClient(provider);
+            return new AxisServer(provider);
         }
 
         // Default configuration steps...
@@ -109,7 +109,7 @@ public class AxisClientFactory {
             provider = defaultConfigProvider;
         }
 
-        // 3. Create an AxisClient using the appropriate provider
-        return new AxisClient(provider);
+        // 3. Create an AxisServer using the appropriate provider
+        return new AxisServer(provider);
     }
 }
