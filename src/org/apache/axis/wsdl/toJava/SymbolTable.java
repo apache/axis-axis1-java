@@ -569,10 +569,10 @@ public class SymbolTable {
                         symbolTablePut(new BaseJavaType(qName));
                     }
                     else if (isElement) {
-                        symbolTablePut(new DefinedElement(qName, getJavaName(qName), node));
+                        symbolTablePut(new DefinedElement(qName, node));
                     }
                     else {
-                        symbolTablePut(new DefinedType(qName, getJavaName(qName), node));
+                        symbolTablePut(new DefinedType(qName, node));
                     }
                 }
             }

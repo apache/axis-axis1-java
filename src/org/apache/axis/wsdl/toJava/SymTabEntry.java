@@ -80,13 +80,11 @@ public abstract class SymTabEntry {
 
     private HashMap dynamicVars = new HashMap();
 
+    /**
+     * Construct a symbol table entry with the given QName.
+     */
     protected SymTabEntry(QName qname) {
         this.qname = qname;
-    } // ctor
-
-    protected SymTabEntry(QName qname, String name) {
-        this.qname = qname;
-        this.name = name;
     } // ctor
 
     /**

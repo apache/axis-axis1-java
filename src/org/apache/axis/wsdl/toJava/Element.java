@@ -77,7 +77,7 @@ public abstract class Element extends TypeEntry {
     /**
      * Create a Element object for an xml construct that is not a base java type
      */  
-    protected Element(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName, pNode);
+    protected Element(QName pqName, Node pNode) {
+        super(pqName, pNode);
     }
 };

@@ -73,7 +73,7 @@ public class UndefinedElement extends Element implements Undefined {
      * Construct a referenced (but as of yet undefined) element
      */
     public UndefinedElement(QName pqName) {
-        super(pqName, "", null);
+        super(pqName, null);
         undefined = true;
         delegate = new UndefinedDelegate(this);
     }
