@@ -71,7 +71,7 @@ import java.io.Writer;
 import java.util.Stack;
 
 public class XMLUtils {
-    private static DocumentBuilderFactory dbf = init();
+    private static DocumentBuilderFactory dbf = initDOMFactory();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
     
@@ -141,9 +141,7 @@ public class XMLUtils {
         saxFactory.setValidating(validating);
     }
 
-    public static DocumentBuilderFactory init() {
-        Document               doc = null ;
-
+    public static DocumentBuilderFactory initDOMFactory() {
         try {
             dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
