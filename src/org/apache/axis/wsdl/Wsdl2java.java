@@ -153,7 +153,9 @@ public class Wsdl2java {
         try {
 
             // Instantiate the emitter
-            Emitter emitter = new Emitter();
+            JavaWriterFactory writerFactory = new JavaWriterFactory();
+            Emitter emitter = new Emitter(writerFactory);
+            writerFactory.setEmitter(emitter);
 
             // Parse the options and configure the emitter as appropriate.
             for (int i = 0; i < size; i++) {

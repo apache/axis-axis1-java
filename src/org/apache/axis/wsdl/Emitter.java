@@ -117,15 +117,16 @@ public class Emitter {
     private boolean bEmitSkeleton = false;
     private boolean bMessageContext = false;
     private boolean bEmitTestCase = false;
-    private boolean bVerbose = false;
+    protected boolean bVerbose = false;
     private boolean bGenerateImports = true;
     private String outputDir = null;
     private byte scope = NO_EXPLICIT_SCOPE;
-    private ArrayList classList = new ArrayList();
-    private ArrayList fileList = new ArrayList();
+    protected ArrayList classList = new ArrayList();
+    protected ArrayList fileList = new ArrayList();
     private Namespaces namespaces = null;
     private HashMap delaySetMap = null;
     private TypeFactory emitFactory = null;
+    private WriterFactory writerFactory = null;
 
     // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a
     // Hashmap of <Operation, Parameters> pairs.
@@ -134,7 +135,8 @@ public class Emitter {
     /**
      * Default constructor.
      */
-    public Emitter() {
+    public Emitter(WriterFactory writerFactory) {
+        this.writerFactory = writerFactory;
         portTypesInfo = new HashMap();
     } // ctor
 
@@ -152,6 +154,7 @@ public class Emitter {
         this.namespaces           = that.namespaces;
         this.emitFactory          = that.emitFactory;
         this.portTypesInfo        = that.portTypesInfo;
+        this.writerFactory        = that.writerFactory;
     } // ctor
 
     /**
@@ -509,25 +512,9 @@ public class Emitter {
      * Generate the interface for the given port type.
      */
     private void writePortType(PortType portType) throws IOException {
-        QName portTypeQName = portType.getQName();
-        PrintWriter interfacePW = printWriter(portTypeQName, null, "java", "Generating portType interface:  ");
-        String nameValue = xmlNameToJava(portTypeQName.getLocalPart());
-
-        writeFileHeader(nameValue + ".java", namespaces.getCreate(portTypeQName.getNamespaceURI()), interfacePW);
-        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
-
-        // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
-        // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
-        // TODO: Remove this patch...
-        // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
-        Iterator operations = (new HashSet(portType.getOperations())).iterator();
-        while(operations.hasNext()) {
-            Operation operation = (Operation) operations.next();
-            writeOperation(portType, operation, portType.getQName().getNamespaceURI(), interfacePW);
-        }
-
-        interfacePW.println("}");
-        interfacePW.close();
+        HashMap operationParameters = (HashMap) portTypesInfo.get(portType);
+        Writer writer = writerFactory.getWriter(portType, operationParameters);
+        writer.write();
     } // writePortType
 
     /**
@@ -536,7 +523,7 @@ public class Emitter {
     private void writeAxisPortType(PortType portType) throws IOException {
         QName portTypeQName = portType.getQName();
         PrintWriter interfacePW = printWriter(portTypeQName, "Axis", "java", "Generating server-side PortType interface:  ");
-        String nameValue = xmlNameToJava(portTypeQName.getLocalPart()) + "Axis";
+        String nameValue = Utils.xmlNameToJava(portTypeQName.getLocalPart()) + "Axis";
 
         writeFileHeader(nameValue + ".java", namespaces.getCreate(portTypeQName.getNamespaceURI()), interfacePW);
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
@@ -904,15 +891,6 @@ public class Emitter {
     } // partTypes
 
     /**
-     * This method generates the interface signatures for the given operation.
-     */
-    private void writeOperation(PortType portType, Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
-        writeComment(interfacePW, operation.getDocumentationElement());
-        Parameters parms = (Parameters) ((HashMap) portTypesInfo.get(portType)).get(operation);
-        interfacePW.println(parms.signature + ";");
-    } // writeOperation
-
-    /**
      * This method generates the axis server side impl interface signatures operation.
      */
     private void writeOperationAxisSkelSignatures(PortType portType, Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
@@ -925,7 +903,7 @@ public class Emitter {
      * the fault.
      */
     private String fault(Fault operation, String namespace) throws IOException {
-        String exceptionName = Utils.capitalize(xmlNameToJava(operation.getName()));
+        String exceptionName = Utils.capitalize(Utils.xmlNameToJava(operation.getName()));
         QName qname = new QName(namespace, exceptionName);
         PrintWriter pw = printWriter(qname, null, "java", "Generating Fault class:  ");
 
@@ -992,7 +970,7 @@ public class Emitter {
             throw new IOException("Emitter failure.  Can't find interal classes for portType for binding " + bindingQName);
 
         PortType portType = binding.getPortType();
-        String name = xmlNameToJava(bindingQName.getLocalPart());
+        String name = Utils.xmlNameToJava(bindingQName.getLocalPart());
         String portTypeName = emitFactory.getJavaName(portType.getQName());
         boolean isRPC = true;
         if (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
@@ -1453,7 +1431,7 @@ public class Emitter {
      */
     private void writeService(Service service) throws IOException {
         QName serviceQName = service.getQName();
-        String serviceName = Utils.capitalize(xmlNameToJava(serviceQName.getLocalPart()));
+        String serviceName = Utils.capitalize(Utils.xmlNameToJava(serviceQName.getLocalPart()));
         String servicePackage = namespaces.getCreate(serviceQName.getNamespaceURI());
         PrintWriter servicePW = printWriter(serviceQName, null, "java", "Generating service class:  ");
 
@@ -1946,7 +1924,7 @@ public class Emitter {
         String name = qname.getLocalPart();
         // Don't capitalize for deploy.xml and undeploy.xml
         if(name.indexOf("deploy")==-1)
-            name = Utils.capitalize(xmlNameToJava(name));
+            name = Utils.capitalize(Utils.xmlNameToJava(name));
         String fileName = name + (suffix == null ? "" : suffix) + '.' + extension;
         String packageName = namespaces.getCreate(qname.getNamespaceURI());
         String packageDirName = namespaces.toDir(packageName);
@@ -1958,6 +1936,7 @@ public class Emitter {
         }
         return new PrintWriter(new FileWriter(file));
     } // printWriter
+
 
     /**
      * output documentation element as a Java comment
@@ -2023,20 +2002,6 @@ public class Emitter {
         else
             return typeValue + "Holder";
     } // holder
-
-    /**
-     * Map an XML name to a valid Java identifier
-     */
-    private String xmlNameToJava(String name)
-    {
-        char[] nameArray = name.toCharArray();
-        for(int j = 0, len = name.length(); j < len; ++j) {
-            char c = nameArray[j];
-            if( !Character.isLetterOrDigit(c) && c != '_' )
-                nameArray[j] = '_';
-        }
-        return new String(nameArray);
-    }
 
     /**
      * A simple map of the primitive types and their holder objects
