@@ -14,12 +14,12 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Alpha Release Notes</h2>
+<h2>Axis Alpha 2 Release Notes</h2>
 
-<p>This is the <a href="http://xml.apache.org/axis/releases.html"> 
-alpha release</a> of the <a href="http://xml.apache.org/axis">
-Axis SOAP library</a>.  (Wondering what Axis is?  Please see our
-<a href="http://xml.apache.org/axis/faq.html">FAQ</a>.)</p>
+<p>This is the <a href="http://xml.apache.org/axis/releases.html"> alpha 2 release</a> 
+  of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>. (Wondering 
+  what Axis is? Please see our <a href="http://xml.apache.org/axis/faq.html">FAQ</a>.)</p>
+<h3>General Alpha Information</h3>
 
 <p>This is an alpha release, and hence is not feature complete.  The main
 missing features include:</p>
@@ -29,8 +29,8 @@ missing features include:</p>
 <li>Deployment syntax not finalized
 <li>Incomplete Apache SOAP 2.2 deployment descriptor support
 <li>Minimal testing in EJB / application server frameworks
-<li>No support for WSDL, XML-RPC, SMTP
-<li>Limited documentation
+  <li>No support for XML-RPC, SMTP 
+  <li>Limited documentation
 </ul>
 
 <p>The Axis team is working on all of these missing features.</p>
@@ -48,12 +48,24 @@ missing features include:</p>
 <li>An extensive package and functional test suite
 </ul>
 
-<p>Early adopters and advanced SOAP developers will find this release to be of
-interest.  Most Apache SOAP users, and those who need a fully featured
-next-version replacement for Apache SOAP 2.2, should hold off at least
-until Axis's beta release.  Progress towards that beta release may be
-viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html">
-requirements and status page</a>.</p>
+<p>Early adopters and advanced SOAP developers will find this release to be of 
+  interest. Most Apache SOAP users, and those who need a fully featured next-version 
+  replacement for Apache SOAP 2.2, should hold off at least until Axis's beta 
+  release. Progress towards that beta release may be viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html"> 
+  requirements and status page</a>.</p>
+<h3>What's New?</h3>
+<p>Changes since alpha-1:</p>
+<ul>
+  <li>Added support for auto-generating WSDL from any URL-accessible service (i.e. 
+    JWS services)!</li>
+  <li>Added a Wsdl2java tool for building Axis stubs and skeletons from WSDL files!</li>
+  <li>SimpleAxisServer now supports HTTP basic authentication</li>
+  <li>Revamp authentication handlers to use an extensible &quot;security provider&quot; 
+    interface, which should allow easy integration with existing security providers 
+    such as those provided by application servers. A basic version and a version 
+    which uses servlet 2.2 authentication are both provided.</li>
+  <li></li>
+</ul>
 </body>
 </html>
 

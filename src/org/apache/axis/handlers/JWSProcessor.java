@@ -202,7 +202,7 @@ public class JWSProcessor extends BasicHandler
 
                 AxisClassLoader.removeClassLoader( clsName );
             }
-            AxisClassLoader cl = msgContext.getClassLoader( clsName );
+            AxisClassLoader cl = msgContext.getClassLoader();
             if ( !cl.isClassRegistered(clsName) )
                 cl.registerClass( clsName, cFile );
             msgContext.setClassLoader( cl );
