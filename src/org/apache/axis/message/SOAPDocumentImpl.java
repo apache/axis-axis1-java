@@ -55,13 +55,13 @@ public class SOAPDocumentImpl
 implements org.w3c.dom.Document, java.io.Serializable {
 
     // Depending on the user's parser preference
-    org.w3c.dom.Document delegate = null;
-    SOAPPart soapPart = null;
+    protected Document delegate = null;
+    protected SOAPPart soapPart = null;
 
     /**
      * Construct the Document
      * 
-     * @param soapPart
+     * @param sp the soap part
      */
     public SOAPDocumentImpl(SOAPPart sp) {
         try {
