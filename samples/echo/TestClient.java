@@ -181,7 +181,7 @@ public abstract class TestClient {
             verify(method, toSend, got);
 
         } catch (AxisFault af) {
-            verify(method, toSend, af.getFaultString());
+            verify(method, toSend, af);
         } catch (Exception e) {
             verify(method, toSend, e);
         }
@@ -276,10 +276,17 @@ public abstract class TestClient {
                 if (this.equals(sent, gotBack)) {
                     System.out.println(method + "\t OK");
                 } else {
-                    System.out.println(method + "\t Fail: " + gotBack);
-                    if (gotBack instanceof Exception)
-                        if (!(gotBack instanceof AxisFault))
+                    String message = "Fail: ";
+                    if (gotBack instanceof Exception) {
+                        if (gotBack instanceof AxisFault) {
+                            message = "Fault: ";
+                            gotBack = ((AxisFault)gotBack).getFaultString();
+                        } else {
+                            message = "Exception: ";
                             ((Exception)gotBack).printStackTrace();
+                        }
+                    }
+                    System.out.println(method + "\t " + message + gotBack);
                 }
             }
         };
