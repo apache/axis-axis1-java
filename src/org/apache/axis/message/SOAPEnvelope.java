@@ -261,6 +261,9 @@ public class SOAPEnvelope extends MessageElement
     public void outputImpl(SerializationContext context)
         throws Exception
     {
+        boolean oldPretty = context.getPretty();
+        context.setPretty(true);
+
         // Register namespace prefixes.
         if (namespaces != null) {
             for (Iterator i = namespaces.iterator(); i.hasNext(); ) {
@@ -331,5 +334,7 @@ public class SOAPEnvelope extends MessageElement
         
         // Output </SOAP-ENV:Envelope>
         context.endElement();
+
+        context.setPretty(oldPretty);
     }
 }
