@@ -975,10 +975,6 @@ public class SymbolTable {
                     if (vTypes != null) {
                         // add the elements in this list
                         v.addAll(vTypes);
-                        // turn off generation of the element type
-                        // XXX is there a better way to do this?
-                        symbolTable.remove(elementName);
-                        types.remove(e);
                     } else {
                         // XXX - This should be a SOAPElement/SOAPBodyElement
                         v.add(getElement(elementName));
@@ -1130,7 +1126,7 @@ public class SymbolTable {
                     if (stuff.isEmpty()) {
                         for (int i = 0; i < types.size(); ++i) {
                             TypeEntry type = (TypeEntry) types.get(i);
-                            setTypeReferences(type, doc);
+                            setTypeReferences(type, doc, false);
                         }
                     }
                     else {
@@ -1139,7 +1135,7 @@ public class SymbolTable {
                             Message message = (Message) i.next();
                             MessageEntry mEntry =
                                     getMessageEntry(message.getQName());
-                            setMessageReferences(mEntry, def, doc);
+                            setMessageReferences(mEntry, def, doc, false);
                         }
                     }
                 }
@@ -1149,7 +1145,7 @@ public class SymbolTable {
                         PortType portType = (PortType) i.next();
                         PortTypeEntry ptEntry =
                                 getPortTypeEntry(portType.getQName());
-                        setPortTypeReferences(ptEntry, def, doc);
+                        setPortTypeReferences(ptEntry, null, def, doc);
                     }
                 }
             }
@@ -1172,7 +1168,21 @@ public class SymbolTable {
         }
     } // setReferences
 
-    private void setTypeReferences(TypeEntry entry, Document doc) {
+    private void setTypeReferences(TypeEntry entry, Document doc,
+            boolean literal) {
+
+        // If this type is ONLY referenced from a literal usage in a binding,
+        // then isOnlyLiteralReferenced should return true.
+        if (!entry.isReferenced() && literal) {
+            entry.setOnlyLiteralReference(true);
+        }
+        // If this type was previously only referenced as a literal type,
+        // but now it is referenced in a non-literal manner, turn off the
+        // onlyLiteralReference flag.
+        else if (entry.isOnlyLiteralReferenced() && !literal) {
+            entry.setOnlyLiteralReference(false);
+        }
+
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Node node = entry.getNode();
@@ -1184,7 +1194,7 @@ public class SymbolTable {
                 if (referentName != null) {
                     TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
-                        setTypeReferences(referent, doc);
+                        setTypeReferences(referent, doc, false);
                     }
                 }
             }
@@ -1195,7 +1205,7 @@ public class SymbolTable {
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
             if (!nestedType.isReferenced()) {
-                setTypeReferences(nestedType, doc);
+                setTypeReferences(nestedType, doc, false);
             }
         }
     } // setTypeReferences
@@ -1204,7 +1214,7 @@ public class SymbolTable {
      * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
      */
     private void setMessageReferences(
-            MessageEntry entry, Definition def, Document doc) {
+            MessageEntry entry, Definition def, Document doc, boolean literal) {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         Message message = entry.getMessage();
@@ -1227,11 +1237,11 @@ public class SymbolTable {
             Part part = (Part) parts.next();
             TypeEntry type = getType(part.getTypeName());
             if (type != null) {
-                setTypeReferences(type, doc);
+                setTypeReferences(type, doc, literal);
             }
             type = getElement(part.getElementName());
             if (type != null) {
-                setTypeReferences(type, doc);
+                setTypeReferences(type, doc, literal);
             }
         }
     } // setMessageReference
@@ -1240,7 +1250,8 @@ public class SymbolTable {
      * Set the isReferenced flag to true on all SymTabEntries that the given PortType refers to.
      */
     private void setPortTypeReferences(
-            PortTypeEntry entry, Definition def, Document doc) {
+            PortTypeEntry entry, BindingEntry bEntry,
+            Definition def, Document doc) {
         // If we don't want to emit stuff from imported files, only set the
         // isReferenced flag if this entry exists in the immediate WSDL file.
         PortType portType = entry.getPortType();
@@ -1264,26 +1275,37 @@ public class SymbolTable {
         while (operations.hasNext()) {
             Operation operation = (Operation) operations.next();
 
-            // Query the input message
             Input input = operation.getInput();
+            Output output = operation.getOutput();
+
+            // Find out if this reference is a literal reference or not.
+            boolean literalInput = false;
+            boolean literalOutput = false;
+            if (bEntry != null) {
+                literalInput = bEntry.getInputBodyType(operation) ==
+                        BindingEntry.USE_LITERAL;
+                literalOutput = bEntry.getOutputBodyType(operation) ==
+                        BindingEntry.USE_LITERAL;
+            }
+
+            // Query the input message
             if (input != null) {
                 Message message = input.getMessage();
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, literalInput);
                     }
                 }
             }
 
             // Query the output message
-            Output output = operation.getOutput();
             if (output != null) {
                 Message message = output.getMessage();
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, literalOutput);
                     }
                 }
             }
@@ -1296,7 +1318,7 @@ public class SymbolTable {
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        setMessageReferences(mEntry, def, doc);
+                        setMessageReferences(mEntry, def, doc, false);
                     }
                 }
             }
@@ -1328,7 +1350,7 @@ public class SymbolTable {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
         if (ptEntry != null) {
-            setPortTypeReferences(ptEntry, def, doc);
+            setPortTypeReferences(ptEntry, entry, def, doc);
         }
     } // setBindingReferences
 

@@ -125,6 +125,9 @@ public abstract class TypeEntry extends SymTabEntry {
                                  // until the Undefined type is found.
     protected boolean isBaseType;// Indicates if represented by a 
                                  // java primitive or util class
+    protected boolean onlyLiteralReference = false; // Indicates
+                                 // whether this type is only referenced
+                                 // via a binding's literal use.
 
     /**
      * Create a TypeEntry object for an xml construct that references another type. 
@@ -199,6 +202,26 @@ public abstract class TypeEntry extends SymTabEntry {
             return null;
         }
     }
+
+    /**
+     * Is this type references ONLY as a literal type?  If a binding's
+     * message's soapBody says:  use="literal", then a type is referenced
+     * literally.  Note that that type's contained types (ie., an address
+     * contains a phone#) are not referenced literally.  Since a type
+     * that is ONLY referenced as a literal may cause a generator to act
+     * differently (like WSDL2Java), this extra reference distinction is
+     * needed.
+     */
+    public boolean isOnlyLiteralReferenced() {
+        return onlyLiteralReference;
+    } // isOnlyLiteralReferenced
+
+    /**
+     * Set the isOnlyLiteralReference flag.
+     */
+    public void setOnlyLiteralReference(boolean set) {
+        onlyLiteralReference = set;
+    } // setOnlyLiteralRefeerence
 
     /**
      * getUndefinedTypeRef returns the Undefined TypeEntry that this entry depends on or NULL.
