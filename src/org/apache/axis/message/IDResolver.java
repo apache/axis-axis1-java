@@ -62,5 +62,12 @@ package org.apache.axis.message;
 
 public interface IDResolver
 {
+    /** 
+     * Get the object refereced by the href
+     */ 
     public Object getReferencedObject(String href);
+    /** 
+     * Store the object associated with id
+     */ 
+    public void   addReferencedObject(String id, Object referent);
 }

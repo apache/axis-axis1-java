@@ -331,7 +331,7 @@ public class MessageElement
         attributes.addAttribute(namespace, localName, "", "CDATA",
                                 value);
     }
-    
+
     public String getAttributeValue(String localName)
     {
         if (attributes == null) {
@@ -339,7 +339,6 @@ public class MessageElement
         }
         return attributes.getValue(localName);
     }
-
 
     public void setEnvelope(SOAPEnvelope env)
     {

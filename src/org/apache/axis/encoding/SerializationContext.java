@@ -151,13 +151,18 @@ public class SerializationContext
     private int multiRefIndex = -1;
 
     /**
-     * These two let us deal with multi-level object graphs for multi-ref
-     * serialization.  Each time around the serialization loop, we'll fill
-     * in any new objects into the secondLevelObjects vector, and then write
-     * those out the same way the next time around.
+     * These three variables are necessary to process multi-level object graphs for multi-ref
+     * serialization. 
+     * While writing out nested multi-ref objects (via outputMultiRef), we 
+     * will fill the secondLevelObjects vector with any new objects encountered.
+     * The outputMultiRefsFlag indicates whether we are currently within the
+     * outputMultiRef() method (so that serialization() knows to update the 
+     * secondLevelObjects vector).
+     * The forceSer variable is the trigger to force actual serialization of the indicated object.
      */
-    private Object currentSer = null;
     private HashSet secondLevelObjects = null;
+    private Object forceSer = null;
+    private boolean outputMultiRefsFlag = false;
 
     public SerializationContext(Writer writer, MessageContext msgContext)
     {
@@ -292,7 +297,11 @@ public class SerializationContext
             endElement();
         }
 
-        if (doMultiRefs && (value != currentSer) && !isPrimitive(value)) {
+        // If multi-reference is enabled and this object value is not a primitive
+        // and we are not forcing serialization of the object, then generate
+        // an element href (and store the object for subsequent outputMultiRef 
+        // processing.
+        if (doMultiRefs && (value != forceSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
 
@@ -309,7 +318,7 @@ public class SerializationContext
                  * which we'll check each time we're done with
                  * outputMultiRefs().
                  */
-                if (currentSer != null) {
+                if (outputMultiRefsFlag) {
                     if (secondLevelObjects == null)
                         secondLevelObjects = new HashSet();
                     secondLevelObjects.add(value);
@@ -327,6 +336,14 @@ public class SerializationContext
             return;
         }
 
+        // The forceSer variable is set by outputMultiRefs to force
+        // serialization of this object via the serialize(...) call
+        // below.  However, if the forced object contains a self-refence, we
+        // get into an infinite loop..which is why it is set back to null
+        // before the actual serialization.
+        if (value == forceSer)
+            forceSer = null;
+
         getTypeMappingRegistry().serialize(qName, attributes, value, this);
     }
 
@@ -334,7 +351,7 @@ public class SerializationContext
     {
         if (!doMultiRefs || (multiRefValues == null))
             return;
-
+        outputMultiRefsFlag = true;
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("","","","","");
 
@@ -345,7 +362,7 @@ public class SerializationContext
                 String id = (String)multiRefValues.get(val);
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    id);
-                currentSer = val;
+                forceSer = val;
                 serialize(new QName("","multiRef"), attrs, val);
             }
 
@@ -354,7 +371,8 @@ public class SerializationContext
                 secondLevelObjects = null;
             }
         }
-        currentSer = null;
+        forceSer = null;
+        outputMultiRefsFlag = false;
     }
 
     public void startElement(QName qName, Attributes attributes)
