@@ -343,17 +343,13 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
 <pre class="example">% java org.apache.axis.client.AdminClient -llocal:// deploy.xml
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;Admin&gt;Done processing&lt;/Admin&gt;
 
-
 % java Client -llocal:// -n "Glen"
 Hi, Glen!
 
-
 You seem to have ordered the following:
-
 
 1 of item : mp3jukebox
 4 of item : 1600mahBattery
-
 
 If this had been a real order processing system, we'd probably have charged you about now.
 %<br>
@@ -375,14 +371,63 @@ If this had been a real order processing system, we'd probably have charged you 
 alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
 become a format called WSDD (Web Service Deployment Descriptor). You can find 
 information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i> 
-<p>&lt;deploy&gt;</p>
-<p>&lt;undeploy&gt;</p>
-<p>&lt;handler&gt;</p>
-<p>&lt;service&gt;</p>
-<p>&lt;chain&gt;</p>
-<p>&lt;transport&gt;</p>
-<p>&lt;typeMappings&gt;</p>
-<p>&lt;beanMappings&gt;</p>
+<dl> 
+  <dt><b><font face="Courier New, Courier, mono">&lt;m:deploy xmlns:m=&quot;AdminService&quot;&gt;</font></b></dt>
+  <dd>The root element of the deployment document which tells the Axis engine 
+    that this is a deployment. Must be in the &quot;AdminService&quot; namespace.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;m:undeploy xmlns:m=&quot;AdminService&quot;&gt;</font></b></dt>
+  <dd>The root element of the deployment document which tells Axis that this is 
+    an undeployment. Must be in the &quot;AdminService&quot; namespace.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;handler name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    class=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font></b></dt>
+  <dd>Belongs inside a deploy or undeploy. Names a Handler, and indicates the 
+    class which corresponds to the name. May contain an arbitrary number of <b><font face="Courier New, Courier, mono">&lt;option 
+    name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    value=&quot;</font></b><font face="Courier New, Courier, mono"><i>value</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b> 
+    elements, each of which will supply an option to the deployed Handler.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;service name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    request=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    response=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    pivot=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    &gt;</font></b></dt>
+  <dd>Deploys/undeploys an Axis Service. </dd>
+  <dt><b><br>
+    <font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    flow=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler handler...</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
+  <dd>Defines a chain. Each <i>handler</i> (i.e. deployed handler name) in the 
+    list will be invoked() in turn when the chain is invoked. This enables you 
+    to build up &quot;modules&quot; of commonly used functionality.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;transport name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
+  <dd>Defines a transport.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;typeMappings&gt;</font></b></dt>
+  <dd>Contains an abitrary number of <b>&lt;typeMapping&gt;</b> elements:<br>
+    <br>
+    <b><font face="Courier New, Courier, mono">&lt;typeMapping qname=&quot;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    classname=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    serializer=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    deserializerFactory=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font><br>
+    <br>
+    </b>Each typeMapping maps an XML qualified name to/from a Java class, using 
+    a specified Serializer and DeserializerFactory. (note: the reason we specify 
+    the Serializer directly, and the Deserializer as a factory, is because Deserializers 
+    are stateful, and are tied to a particular element. Serializers, on the other 
+    hand, are stateless and may be freely shared, so we only need one)</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;beanMappings&gt;</font></b></dt>
+  <dd>Contains an arbitrary number of elements, each of which represents a mapping 
+    of an XML QName to a Java class.<br>
+    <br>
+    <b><font face="Courier New, Courier, mono">&lt;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono"> 
+    classname=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font><br>
+    <br>
+    </b>The class named by &quot;classname&quot; must follow the JavaBean standard 
+    pattern of get/set accessors.</dd>
+</dl>
 <p> </p>
 <h2>Pre-Configured Axis Components Reference</h2>
 <h3>On the server:</h3>
