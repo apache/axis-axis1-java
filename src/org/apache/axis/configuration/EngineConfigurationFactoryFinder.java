@@ -64,7 +64,6 @@ public class EngineConfigurationFactoryFinder
         AxisProperties.setClassDefaults(EngineConfigurationFactory.class,
                             new String[] {
                                 "org.apache.axis.configuration.EngineConfigurationFactoryServlet",
-                                "org.apache.axis.configuration.EngineConfigurationFactoryEJB",
                                 "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
                                 });
     }
