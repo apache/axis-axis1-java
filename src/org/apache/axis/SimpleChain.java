@@ -89,7 +89,7 @@ public class SimpleChain extends BasicHandler implements Chain {
     Debug.Print( 1, "Enter: SimpleChain::invoke" );
     int i = 0 ;
     try {
-      for ( i = 0 ; i < handlers.size() ; i++ )
+      for ( i = 0 ; handlers!= null && i<handlers.size() ; i++ )
         ((Handler) handlers.elementAt( i )).invoke( msgContext );
     }
     catch( Exception e ) {
