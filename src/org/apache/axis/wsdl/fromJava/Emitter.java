@@ -127,7 +127,8 @@ public class Emitter {
     private String implNS;
     private String locationUrl;
     private String importUrl;
-    private String serviceName;
+    private String servicePortName;
+    private String serviceElementName;
     private String targetService = null;
     private String description;
     private TypeMapping tm = null;        // Registered type mapping
@@ -135,9 +136,10 @@ public class Emitter {
     private Namespaces namespaces;
 
     private ArrayList encodingList;
-    private Types types;
+    private Types types; 
     private String clsName;
-    
+    private String portTypeName;
+   
     private Java2WSDLFactory factory;  // Factory for obtaining user extensions
 
     /**
@@ -164,10 +166,10 @@ public class Emitter {
 
         // Supply reasonable file names if not supplied
         if (filename1 == null) {
-            filename1 = getServiceName() + "_interface.wsdl";
+            filename1 = getServicePortName() + "_interface.wsdl";
         }
         if (filename2 == null) {
-            filename2 = getServiceName() + "_implementation.wsdl";
+            filename2 = getServicePortName() + "_implementation.wsdl";
         }
 
         // Write out the interface def      
@@ -265,7 +267,7 @@ public class Emitter {
 
         // Supply a reasonable file name if not supplied
         if (filename == null) {
-            filename = getServiceName();
+            filename = getServicePortName();
             switch (mode) {
             case MODE_ALL:
                 filename +=".wsdl";
@@ -360,8 +362,18 @@ public class Emitter {
             clsName = cls.getName();
             clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
 
-            // If service name is null, construct it from location or className
-            if (getServiceName() == null) {
+            // Default the portType name
+            if (getPortTypeName() == null) {
+                setPortTypeName(clsName);
+            }
+
+            // Default the serviceElementName
+            if (getServiceElementName() == null) {
+                setServiceElementName(getPortTypeName() + "Service");
+            }
+
+            // If service port name is null, construct it from location or className
+            if (getServicePortName() == null) {
                 String name = getLocationUrl();
                 if (name != null) {
                     if (name.lastIndexOf('/') > 0) {
@@ -380,7 +392,7 @@ public class Emitter {
                 if (name == null || name.equals("")) {
                     name = clsName;
                 }
-                setServiceName(name);
+                setServicePortName(name);
             }
             
             encodingList = new ArrayList();
@@ -470,7 +482,7 @@ public class Emitter {
         Binding binding = def.createBinding();
         binding.setUndefined(false);
         binding.setQName(
-          new javax.wsdl.QName(intfNS, getServiceName() + "SoapBinding"));
+          new javax.wsdl.QName(intfNS, getServicePortName() + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         soapBinding.setStyle("rpc");
@@ -495,13 +507,9 @@ public class Emitter {
 
         Service service = def.createService();
 
-        if (getServiceName().equals(clsName)) {
-            service.setQName(
-                new javax.wsdl.QName(implNS, getServiceName() + "Service"));
-        } else {
-            service.setQName(
-                new javax.wsdl.QName(implNS, getServiceName()));
-        }
+        service.setQName(new javax.wsdl.QName(implNS, 
+                                              getServiceElementName()));
+
         def.addService(service);
 
         Port port = def.createPort();
@@ -509,7 +517,7 @@ public class Emitter {
         port.setBinding(binding);
 
         // Probably should use the end of the location Url
-        port.setName(getServiceName());
+        port.setName(getServicePortName());
 
         SOAPAddress addr = new SOAPAddressImpl();
         addr.setLocationURI(locationUrl);
@@ -532,7 +540,7 @@ public class Emitter {
         portType.setUndefined(false);
 
         // PortType name is the name of the class being processed
-        portType.setQName(new javax.wsdl.QName(intfNS, clsName));
+        portType.setQName(new javax.wsdl.QName(intfNS, getPortTypeName()));
 
         // Get a ClassRep representing the portType class,
         // and get the list of MethodRep
@@ -820,20 +828,20 @@ public class Emitter {
     /**
      * Sets the <code>Class</code> to export.
      * @param cls the <code>Class</code> to export
-     * @param name service name
+     * @param name service location
      */
-    public void setClsSmart(Class cls, String serviceName) {
+    public void setClsSmart(Class cls, String location) {
 
-        if (cls == null || serviceName == null)
+        if (cls == null || location == null)
             return;
 
-        // Strip off \ and / from serviceName
-        if (serviceName.lastIndexOf('/') > 0) {
-            serviceName = 
-              serviceName.substring(serviceName.lastIndexOf('/') + 1);
-        } else if (serviceName.lastIndexOf('\\') > 0) {
-            serviceName = 
-              serviceName.substring(serviceName.lastIndexOf('\\') + 1);
+        // Strip off \ and / from location
+        if (location.lastIndexOf('/') > 0) {
+            location = 
+              location.substring(location.lastIndexOf('/') + 1);
+        } else if (location.lastIndexOf('\\') > 0) {
+            location = 
+              location.substring(location.lastIndexOf('\\') + 1);
         } 
 
         // Get the constructors of the class
@@ -844,12 +852,12 @@ public class Emitter {
             Class[] parms = constructors[i].getParameterTypes();
             // If the constructor has a single parameter 
             // that is an interface which
-            // matches the serviceName, then use this as the interface class.
+            // matches the location, then use this as the interface class.
             if (parms.length == 1 &&
                 parms[0].isInterface() &&
                 parms[0].getName() != null &&
                 Types.getLocalNameFromFullName(
-                    parms[0].getName()).equals(serviceName)) {
+                    parms[0].getName()).equals(location)) {
                 intf = parms[0];
             }
         }
@@ -1125,19 +1133,51 @@ public class Emitter {
     }
 
     /**
-     * Returns the String representation of the service URN
-     * @return String representation of the service URN
+     * Returns the String representation of the service port name
+     * @return String representation of the service port name
      */
-    public String getServiceName() {
-        return serviceName;
+    public String getServicePortName() {
+        return servicePortName;
     }
 
     /**
-     * Set the String representation of the service URN
-     * @param serviceUrn the String representation of the service URN
+     * Set the String representation of the service port name
+     * @param serviceUrn the String representation of the service port name
      */
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setServicePortName(String servicePortName) {
+        this.servicePortName = servicePortName;
+    }
+
+    /**
+     * Returns the String representation of the service element name
+     * @return String representation of the service element name
+     */
+    public String getServiceElementName() {
+        return serviceElementName;
+    }
+
+    /**
+     * Set the String representation of the service element name
+     * @param serviceUrn the String representation of the service element name
+     */
+    public void setServiceElementName(String serviceElementName) {
+        this.serviceElementName = serviceElementName;
+    }
+
+    /**
+     * Returns the String representation of the portType name       
+     * @return String representation of the portType name
+     */
+    public String getPortTypeName() {
+        return portTypeName;
+    }
+
+    /**
+     * Set the String representation of the portType name       
+     * @param serviceUrn the String representation of the portType name
+     */
+    public void setPortTypeName(String portTypeName) {
+        this.portTypeName = portTypeName;
     }
 
     /**
