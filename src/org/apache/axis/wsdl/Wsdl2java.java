@@ -75,6 +75,7 @@ public class Wsdl2java {
     protected static final int PACKAGE_OPT = 'p';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
+    protected static final int TEST_OPT = 't';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -113,7 +114,11 @@ public class Wsdl2java {
         new CLOptionDescriptor("deployScope",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SCOPE_OPT,
-                "add scope to deploy.xml: \"Application\", \"Request\", \"Session\"")
+                "add scope to deploy.xml: \"Application\", \"Request\", \"Session\""),
+        new CLOptionDescriptor("testCase",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                TEST_OPT,
+                "emit junit testcase class for web service")
     };
 
     /**
@@ -122,6 +127,7 @@ public class Wsdl2java {
     public static void main(String args[]) {
         boolean bSkeleton = false;
         boolean bMessageContext = false;
+        boolean bTestClass = false;
         String wsdlURI = null;
 
         // Parse the arguments
@@ -198,6 +204,10 @@ public class Wsdl2java {
                         else {
                             System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
                         }
+                        break;
+                    case TEST_OPT:
+                        bTestClass = true;
+                        emitter.generateTestCase(true);
                         break;
                 }
             }
