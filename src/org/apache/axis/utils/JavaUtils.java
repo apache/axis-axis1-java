@@ -223,25 +223,6 @@ public class JavaUtils
             log.debug( Messages.getMessage("convert00", clsName, destClass.getName()));
         }
 
-        
-        if (arg instanceof java.util.HashMap &&
-            java.util.Map.class.isAssignableFrom(destClass)) {
-              if (java.util.HashMap.class.isAssignableFrom(destClass)) return arg;
-              try {
-                java.util.Map newMap = (java.util.Map)destClass.newInstance();
-                for (java.util.Iterator i = ((java.util.Map)arg).keySet().iterator();
-                     i.hasNext();) {
-                    Object key = i.next();
-                    Object value = ((java.util.Map)arg).get(key);
-                    newMap.put(key,value);
-                }
-                return newMap;
-              } catch (Exception e) {
-                return arg;
-              }
-        }
-
-
         // See if a previously converted value is stored in the argument.
         Object destValue = null;
         if (arg instanceof ConvertCache) {
@@ -833,7 +814,6 @@ public class JavaUtils
             // identifier character, capitalize the next character.
             // For example:  "22hi" becomes "22Hi"
             wordStart = !Character.isLetter(c);
-            //wordStart = !Character.isJavaIdentifierPart(c)
         }
 
         // covert back to a String

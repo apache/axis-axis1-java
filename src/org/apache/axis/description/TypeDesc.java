@@ -308,8 +308,8 @@ public class TypeDesc {
      */
     public String getFieldNameForElement(QName qname, boolean ignoreNS)
     {
-//        if (fields == null)
-//            return null;
+        if (fields == null)
+            return null;
 
         // have we already computed the answer to this question?
         if (fieldElementMap != null) {
@@ -361,8 +361,8 @@ public class TypeDesc {
      */
     public String getFieldNameForAttribute(QName qname)
     {
-//        if (fields == null)
-//            return null;
+        if (fields == null)
+            return null;
 
         String possibleMatch = null;
 
