@@ -89,6 +89,7 @@ public class JavaWriterFactory implements WriterFactory {
     public void writerPass(Definition def, SymbolTable symbolTable) {
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
+        ignoreNonSOAPBindingPortTypes(def, symbolTable);
         constructSignatures(def, symbolTable);
     } // writerPass
 
@@ -193,6 +194,58 @@ public class JavaWriterFactory implements WriterFactory {
             }
         }
     } // resolveNameClashes
+
+    /**
+     * If a binding's type is not TYPE_SOAP, then we don't use that binding's portType.
+     */
+    private void ignoreNonSOAPBindingPortTypes(
+            Definition def,
+            SymbolTable symbolTable) {
+
+        // Look at all uses of the portTypes.  If none of the portType's bindings are of type
+        // TYPE_SOAP, then turn off that portType's isReferenced flag.
+
+        Vector unusedPortTypes = new Vector();
+        Vector usedPortTypes = new Vector();
+        Map bindings = def.getBindings();
+        Iterator it = bindings.values().iterator();
+
+        // loop through each binding
+        while (it.hasNext()) {
+            Binding binding = (Binding) it.next();
+            BindingEntry bEntry =
+                   symbolTable.getBindingEntry(binding.getQName());
+            PortType portType = binding.getPortType();
+            PortTypeEntry ptEntry =
+                    symbolTable.getPortTypeEntry(portType.getQName());
+
+            if (bEntry.getBindingType() == BindingEntry.TYPE_SOAP) {
+
+                // If a binding is of type TYPE_SOAP, then mark its portType used (ie., add it
+                // to the usedPortTypes list.  If the portType was previously marked as unused,
+                // unmark it (in other words, remove it from the unusedPortTypes list).
+                usedPortTypes.add(ptEntry);
+                if (unusedPortTypes.contains(ptEntry)) {
+                    unusedPortTypes.remove(ptEntry);
+                }
+            }
+            else {
+
+                // If a binding is not of type TYPE_SOAP, then mark its portType as unused ONLY
+                // if it hasn't already been marked as used.
+                if (!usedPortTypes.contains(ptEntry)) {
+                    unusedPortTypes.add(ptEntry);
+                }
+            }
+        }
+
+        // Go through all the portTypes that are marked as unused and set their isReferenced flags
+        // to false.
+        for (int i = 0; i < unusedPortTypes.size(); ++i) {
+            PortTypeEntry ptEntry = (PortTypeEntry) unusedPortTypes.get(i);
+            ptEntry.setIsReferenced(false);
+        }
+    } // ignoreNonSOAPBindingPortTypes
 
     private void constructSignatures(Definition def, SymbolTable symbolTable) {
         Map portTypes = def.getPortTypes();
