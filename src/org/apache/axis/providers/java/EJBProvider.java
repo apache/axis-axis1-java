@@ -130,7 +130,7 @@ public class EJBProvider extends RPCProvider
         // Get the Home class name from the configuration file
         // NOTE: Do we really need to have this in the config file
         // since we can get it from ejbHome.getClass()???
-        String homeName = (String) getStrOption(OPTION_HOMEINTERFACENAME, 
+        String homeName = getStrOption(OPTION_HOMEINTERFACENAME, 
                                                 msgContext.getService());
         if (homeName == null) 
             throw new AxisFault(

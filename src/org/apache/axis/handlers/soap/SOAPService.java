@@ -283,8 +283,7 @@ public class SOAPService extends SimpleTargetedChain
     {
         if (validTransports != null) {
             for (int i = 0; i < validTransports.size(); i++) {
-                if (((String)validTransports.elementAt(i)).
-                                                 equals(transportName))
+                if (validTransports.elementAt(i).equals(transportName))
                     return true;
             }
             return false;

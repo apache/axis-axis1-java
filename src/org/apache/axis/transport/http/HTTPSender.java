@@ -55,7 +55,6 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAP12Constants;
@@ -665,7 +664,7 @@ public class HTTPSender extends BasicHandler {
             }
             log.debug("\n" + Messages.getMessage("xmlRecd00"));
             log.debug("-----------------------------------------------");
-            log.debug((String) outMsg.getSOAPPartAsString());
+            log.debug(outMsg.getSOAPPartAsString());
         }
 
         // if we are maintaining session state,
