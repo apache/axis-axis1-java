@@ -320,19 +320,16 @@ public class DeserializationContext extends DefaultHandler
      */ 
     public MessageElement getElementByID(String id)
     {
-        MessageElement ret = null;
-        if((idMap !=  null)){
+        if((idMap !=  null)) {
             IDResolver resolver = (IDResolver)idMap.get(id);
             if(resolver != null) {
-                try {
-                    ret = (MessageElement)resolver.getReferencedObject(id);
-                } catch (ClassCastException e) {
-                    // No can do.
-                }
+                Object ret = resolver.getReferencedObject(id);
+                if (ret instanceof MessageElement)
+                    return (MessageElement)ret;
             }
         }
         
-        return ret;
+        return null;
     }
     
     /**
@@ -346,7 +343,7 @@ public class DeserializationContext extends DefaultHandler
             if((idMap !=  null)){
                 IDResolver resolver = (IDResolver)idMap.get(href);
                 if(resolver != null)
-                   ret= resolver.getReferencedObject(href);
+                   ret = resolver.getReferencedObject(href);
             }
             if( null == ret && !href.startsWith("#")){
                 //Could this be an attachment?
