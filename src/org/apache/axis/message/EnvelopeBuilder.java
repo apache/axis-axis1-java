@@ -120,7 +120,8 @@ public class EnvelopeBuilder extends SOAPHandler
 
         // Indicate what version of SOAP we're using to anyone else involved
         // in processing this message.
-        context.getMessageContext().setSOAPConstants(soapConstants);
+        if(context.getMessageContext() != null)
+            context.getMessageContext().setSOAPConstants(soapConstants);
 
         envelope.setPrefix(prefix);
         envelope.setNamespaceURI(namespace);

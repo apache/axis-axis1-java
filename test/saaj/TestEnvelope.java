@@ -13,12 +13,44 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.Node;
 import javax.xml.soap.Text;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPPart;
 import java.util.Iterator;
+import java.io.ByteArrayInputStream;
 
 public class TestEnvelope extends junit.framework.TestCase {
 
     public TestEnvelope(String name) {
         super(name);
+    }
+
+
+    String xmlString =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+            "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+            "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+            " <soapenv:Header>\n" +
+            "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+            "    <shw:Myname>Tony</shw:Myname>\n" +
+            "  </shw:Hello>\n" +
+            " </soapenv:Header>\n" +
+            " <soapenv:Body>\n" +
+            "  <shw:Address xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+            "    <shw:City>GENT</shw:City>\n" +
+            "  </shw:Address>\n" +
+            " </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
+
+    // Test JAXM methods...
+    public void testEnvelope() throws Exception {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage smsg =
+                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
+        SOAPPart sp = smsg.getSOAPPart();
+        SOAPEnvelope se = (SOAPEnvelope)sp.getEnvelope();
+        //smsg.writeTo(System.out);
+        assertTrue(se != null);
     }
 
     private SOAPEnvelope getSOAPEnvelope() throws Exception {
@@ -143,6 +175,7 @@ public class TestEnvelope extends junit.framework.TestCase {
 
     public static void main(String[] args) throws Exception {
         test.saaj.TestEnvelope tester = new test.saaj.TestEnvelope("TestEnvelope");
+        tester.testEnvelope();
         tester.testText3();
         tester.testText2();
         tester.testText1();
