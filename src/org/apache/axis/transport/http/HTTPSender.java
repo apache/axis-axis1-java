@@ -330,7 +330,7 @@ public class HTTPSender extends BasicHandler {
                         String val = me.getValue().toString();
                         if (null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_EXPECT_100_Continue))
                             httpContinueExpected = true;
-                    }        
+                    }
 
                     otherHeaders.append(key).append(": ").append(me.getValue()).append("\r\n");
                 }
@@ -360,7 +360,7 @@ public class HTTPSender extends BasicHandler {
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_USER_AGENT)   //Tell who we are.
                 .append( ": ")
-                .append("Axis/beta3")
+                .append("Axis/RC1")
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_HOST)  //used for virtual connections
                 .append(": ")
@@ -415,7 +415,7 @@ public class HTTPSender extends BasicHandler {
             if(httpContinueExpected ){ //We need to get a reply from the server as to whether
                                       // it wants us send anything more.
                 out.flush();
-                Hashtable cheaders= new Hashtable (); 
+                Hashtable cheaders= new Hashtable ();
                 inp=readFromSocket(sock, msgContext, null, cheaders);
                 int returnCode= -1;
                 Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
@@ -426,7 +426,7 @@ public class HTTPSender extends BasicHandler {
                     msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
                 }
                 else{ //If no 100 Continue then we must not send anything!
-                    String statusMessage= (String) 
+                    String statusMessage= (String)
                         msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
 
                     AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
@@ -452,7 +452,7 @@ public class HTTPSender extends BasicHandler {
             if(httpContinueExpected ){ //We need to get a reply from the server as to whether
                                       // it wants us send anything more.
                 out.flush();
-                Hashtable cheaders= new Hashtable (); 
+                Hashtable cheaders= new Hashtable ();
                 inp=readFromSocket(sock, msgContext, null, cheaders);
                 int returnCode= -1;
                 Integer Irc=  (Integer) msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
