@@ -231,17 +231,26 @@ public class MessageContext {
     private Handler          serviceHandler ;
 
     public Handler getServiceHandler() {
-      if ((serviceHandler == null) && (targetService != null)) {
-        try {
-          /** This is a bit kludgey for now - what might have happened is
-           * that someone set the target service name before the registry
-           * was set, or before the service was registered.  So just to
-           * make sure, we set it again here and see if that causes the
-           * serviceHandler to be set correctly.
-           */
-          setTargetService(targetService);
-        } catch (AxisFault f) {
-        }
+        if (serviceHandler == null) {
+            if (targetService != null) {
+                try {
+                    /** This is a bit kludgey for now - what might have
+                     *  happened is that someone set the target service name
+                     *  before the registry was set, or before the service
+                     *  was registered.  So just to make sure, we set it
+                     *  again here and see if that causes the serviceHandler
+                     *  to be set correctly.
+                     */
+                    setTargetService(targetService);
+                } catch (AxisFault f) {
+                }
+            } else {
+                // No target service was set.  So here's where we want to
+                // potentially try to dispatch off the QName of the first
+                // appropriate <Body> element.  Might also hook this to
+                // another configurable piece of code to avoid SOAP specifics
+                // in this class.
+            }
       }
       return( serviceHandler );
     }
@@ -271,14 +280,11 @@ public class MessageContext {
     public static String TRANS_INPUT         = "transport.input";
     public static String TRANS_OUTPUT        = "transport.output";
 
-    /** The protocol specific handler (ie. SOAP) */
-    public static String PROTOCOL_HANDLER    = "procotol.handler";
-    
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
   
-  /** Property name for session context */
-  public static String SESSION_CONTEXT = "session.context";
+    /** Property name for session context */
+    public static String SESSION_CONTEXT = "session.context";
 
     /** A String with the user's ID (if available)
      */
