@@ -57,6 +57,7 @@ package org.apache.axis.providers.java ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
+import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
@@ -67,6 +68,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 
@@ -311,6 +313,15 @@ public class RPCProvider extends JavaProvider
             if (returnQName == null) {
                 returnQName = new QName("", methodName + "Return");
             }
+
+            // For SOAP 1.2, add a result
+            if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
+            {
+                RPCParam result = new RPCParam
+                   (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
+                resBody.addParam(result);
+            }
+
             RPCParam param = new RPCParam(returnQName, objRes);
             param.setParamDesc(operation.getReturnParamDesc());
             resBody.addParam(param);
