@@ -240,14 +240,28 @@ public class WSDDDeployment
 
         elements = getChildElements(e, ELEM_WSDD_SERVICE);
         for (i = 0; i < elements.length; i++) {
-            WSDDService service = new WSDDService(elements[i]);
-            deployService(service);
+            try {
+                WSDDService service = new WSDDService(elements[i]);
+                deployService(service);
+            } catch (WSDDNonFatalException ex) {
+                // If it's non-fatal, just keep on going
+            } catch (WSDDException ex) {
+                // otherwise throw it upwards
+                throw ex;
+            }
         }
 
         elements = getChildElements(e, ELEM_WSDD_TYPEMAPPING);
         for (i = 0; i < elements.length; i++) {
-            WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
-            deployTypeMapping(mapping);
+            try {
+                WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
+                deployTypeMapping(mapping);
+            } catch (WSDDNonFatalException ex) {
+                // If it's non-fatal, just keep on going
+            } catch (WSDDException ex) {
+                // otherwise throw it upwards
+                throw ex;
+            }
         }
 
         elements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
@@ -347,8 +361,8 @@ public class WSDDDeployment
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
             //log.debug("registered");
         } catch (ClassNotFoundException e) {
-            log.info(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
-            throw new WSDDException(e);
+            log.error(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
+            throw new WSDDNonFatalException(e);
         } catch (Exception e) {
             throw new WSDDException(e);
         }
