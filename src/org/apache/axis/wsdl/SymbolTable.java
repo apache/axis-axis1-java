@@ -1204,9 +1204,12 @@ public class SymbolTable {
     }
 
     /**
-     * For debugging purposes only.
+     * Dump the contents of the symbol table.  For debugging purposes only.
      */
     public void dump(java.io.PrintStream out) {
+        out.println();
+        out.println(JavaUtils.getMessage("symbolTable00"));
+        out.println("-----------------------");
         Iterator it = symbolTable.values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -1216,6 +1219,7 @@ public class SymbolTable {
                 out.println(v.elementAt(i));
             }
         }
+        out.println("-----------------------");
     } // dump
 
 } // class SymbolTable

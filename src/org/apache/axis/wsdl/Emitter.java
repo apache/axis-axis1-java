@@ -93,6 +93,7 @@ public class Emitter {
 
     protected Document doc = null;
     protected Definition def = null;
+    protected boolean bDebug = false;
     protected boolean bEmitSkeleton = false;
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
@@ -149,6 +150,9 @@ public class Emitter {
         symbolTable = new SymbolTable(namespaces, bGenerateImports);
         symbolTable.add(def, doc);
         writerFactory.writerPass(def, symbolTable);
+        if (bDebug) {
+            symbolTable.dump(System.out);
+        }
         emit(def, doc);
 
         // Output extra stuff (deployment files and faults) 
@@ -158,10 +162,6 @@ public class Emitter {
     } // emit
 
     private void emit(Definition def, Document doc) throws IOException, WSDLException {
-        if (bVerbose) {
-            System.out.println(JavaUtils.getMessage("types00"));
-            dumpTypes();
-        }
         // Output Java classes for types
         writeTypes();
 
@@ -210,18 +210,6 @@ public class Emitter {
             }
         }
     } // emit
-
-    /**
-     * Dump Types for debugging
-     */
-    public void dumpTypes() {
-        Vector types = symbolTable.getTypes();
-        for (int i = 0; i < types.size(); ++i) {
-            Type et = (Type) types.elementAt(i);
-            System.out.println();
-            System.out.println(et);
-        }
-    } // dumpTypes
 
     /**
      * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
@@ -287,6 +275,21 @@ public class Emitter {
     public void generateImports(boolean generateImports) {
         this.bGenerateImports = generateImports;
     } // generateImports
+
+    /**
+     * Turn on/off debug messages.
+     * @param boolean value
+     */
+    public void debug(boolean value) {
+        bDebug = value;
+    } // debug
+
+    /**
+     * Return the status of the debug switch.
+     */
+    public boolean getDebug() {
+        return bDebug;
+    } // getDebug
 
     /**
      * Turn on/off verbose messages
