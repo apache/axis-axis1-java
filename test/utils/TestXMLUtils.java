@@ -258,4 +258,33 @@ public class TestXMLUtils extends TestCase
         }
         else return null;
     }
+
+    public void testDOM2Writer()
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<xsd:schema targetNamespace=\"http://tempuri.org\"");
+        sb.append("            xmlns=\"http://tempuri.org\"");
+        sb.append("            xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">");
+        sb.append("  <xsd:annotation>");
+        sb.append("    <xsd:documentation xml:lang=\"en\">");
+        sb.append("      Purchase order schema for Example.com.");
+        sb.append("      Copyright 2000 Example.com. All rights reserved.");
+        sb.append("    </xsd:documentation>");
+        sb.append("  </xsd:annotation>");
+        sb.append("</xsd:schema>");
+
+        StringReader strReader = new StringReader(sb.toString());
+        InputSource inputsrc = new InputSource(strReader);
+        Document doc = XMLUtils.newDocument(inputsrc);
+
+        String output = org.apache.axis.utils.DOM2Writer.nodeToString(doc,false);
+        assertTrue(output.indexOf("http://www.w3.org/XML/1998/namespace")==-1);
+    }
+
+    public static void main(String[] args)
+    {
+        TestXMLUtils test = new TestXMLUtils("TestXMLUtils");
+        test.testDOM2Writer();
+    }
 }
