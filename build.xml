@@ -360,6 +360,7 @@ Copyright:
     <mkdir dir="${dist.dir}/lib"/>
     <mkdir dir="${dist.dir}/samples"/>
     <mkdir dir="${dist.dir}/webapps/axis"/>
+    <mkdir dir="${dist.dir}/xmls"/>
 
     <copy todir="${dist.dir}/lib">
       <fileset dir="${build.lib}"/>
@@ -392,6 +393,9 @@ Copyright:
     -->
     <copy file="README" tofile="${dist.dir}/README"/>
     <copy file="release-notes.html" tofile="${dist.dir}/release-notes.html"/>
+    <copy todir="${dist.dir}/xmls">
+      <fileset dir="xmls"/>
+    </copy>
   </target>
 
   <!-- =================================================================== -->
