@@ -507,19 +507,37 @@ public class XMLUtils {
         return null;
     }
 
-    public static String getNamespace(String prefix, Node e) {
+    /**
+     * Searches for the namespace URI of the given prefix in the given DOM range.
+     * 
+     * The namespace is not searched in parent of the "greaterancestor". This is
+     * usefull to get all the needed namespaces when you need to ouput only a
+     * subtree of a DOM document. 
+     * 
+     * @param prefix the prefix to find
+     * @param e the starting node
+     * @param greaterancestor null to search in all the document or a parent node where the search must stop.
+     * @return null if no namespace is found, or the namespace URI. 
+     */
+    public static String getNamespace(String prefix, Node e, Node greaterancestor) {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
             Attr attr = null;
             if (prefix == null) {
-                attr = ((Element)e).getAttributeNode("xmlns");
+                attr = ((Element) e).getAttributeNode("xmlns");
             } else {
-                attr = ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, 
-                                                       prefix);
+                attr = ((Element) e).getAttributeNodeNS(Constants.NS_URI_XMLNS,
+                        prefix);
             }
             if (attr != null) return attr.getValue();
+            if (e == greaterancestor)
+                return null;
             e = e.getParentNode();
         }
         return null;
+    }
+
+    public static String getNamespace(String prefix, Node e) {
+        return getNamespace(prefix, e, null);
     }
 
     /**
