@@ -1,18 +1,14 @@
 package test.encoding;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
-import org.apache.axis.Constants;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.TypeMapping;
+
 import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-
-import javax.xml.namespace.QName;
+import org.apache.axis.wsdl.fromJava.Namespaces;
+import org.apache.axis.wsdl.fromJava.Types;
 
 /**
  * Test auto-typing.
@@ -38,5 +34,18 @@ public class TestAutoTypes extends TestCase {
         
         assertTrue( tm.getDeserializer(qname) != null );
         assertTrue( tm.getSerializer(AttributeBean.class) != null );
+
+        assertEquals(
+            "http://encoding.test",
+            Namespaces.makeNamespace(AttributeBean[].class.getName()));
+        assertEquals(
+            "AttributeBean[]",
+            Types.getLocalNameFromFullName(AttributeBean[].class.getName()));
+
+        qname = tm.getTypeQName( AttributeBean[].class );
+        assertEquals( "http://encoding.test", 
+                      qname.getNamespaceURI() );
+        assertEquals( "AttributeBean[]", qname.getLocalPart() );
+
     }
 }

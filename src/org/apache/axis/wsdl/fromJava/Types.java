@@ -647,10 +647,17 @@ public class Types {
      * @return package name
      */
     public static String getLocalNameFromFullName(String full) {
+        String end = "";
+        if ( full.startsWith("[L") )
+        {
+            end = "[]";
+            full = full.substring( 3, full.length() - 1 );
+        }
+        
         if (full.lastIndexOf('.') < 0)
-            return full;
+            return full + end;
         else
-            return full.substring(full.lastIndexOf('.')+1);
+            return full.substring(full.lastIndexOf('.')+1) + end;
     }
 
     /**
