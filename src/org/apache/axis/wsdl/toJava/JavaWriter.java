@@ -67,6 +67,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
 * All of Wsdl2java's Writer implementations do some common stuff.  All this
@@ -194,10 +195,16 @@ public abstract class JavaWriter implements Writer {
         // This controls how many characters per line
         final int LINE_LENGTH = 65;
 
-        if (element == null)
+        if (element == null) {
             return;
+        }
 
-        String comment = element.getFirstChild().getNodeValue();
+        Node child = element.getFirstChild();
+        if (child == null) {
+            return;
+        }
+
+        String comment = child.getNodeValue();
 
         // Strip out stuff that will really mess up our comments
         comment = comment.replace('\r', ' ');
