@@ -246,7 +246,7 @@ public class Java2WSDL {
     boolean locationSet = false;
 
     /** Field typeMappingVersion */
-    protected String typeMappingVersion = "1.2";
+    protected String typeMappingVersion = "1.3";
     
     /**
      * Instantiate a Java2WSDL emitter.
