@@ -52,6 +52,10 @@ public class FunctionalTests extends TestCase
         // Message service test.
         suite.addTestSuite(TestMessageSample.class);
 
+        // Attachments service test.
+        // Commented out for now since SimpleAxisServer doesn't support this
+        // suite.addTestSuite(TestAttachmentsSample.class);
+
         return suite;
     }
 }
