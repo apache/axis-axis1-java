@@ -27,7 +27,7 @@
     <property name="test-classpath.property" refid="test-classpath"/>
     <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
     -->
-    
+    <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
     <!-- AddressBook Sample -->
     <wsdl2java url="samples/addr/AddressBook.wsdl"
                output="build/work"

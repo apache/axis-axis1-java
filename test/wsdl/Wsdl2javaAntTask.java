@@ -124,6 +124,7 @@ public class Wsdl2javaAntTask extends Task
 
             Document doc;
 
+            log("WSDL2Java " + url, Project.MSG_INFO);
             try {
                 doc = XMLUtils.newDocument(url);
                 doc.getDocumentElement().getTagName();
