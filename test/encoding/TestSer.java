@@ -28,14 +28,23 @@ public class TestSer extends TestCase {
     public static void main(String [] args) throws Exception
     {
         TestSer tester = new TestSer("TestSer");
-        tester.testData();
+        tester.testDataNoHrefs();
+        tester.testDataWithHrefs();
     }
     
     public TestSer(String name) {
         super(name);
     }
+    
+    public void testDataNoHrefs () throws Exception {
+        doTestData(false);
+    }
+        
+    public void testDataWithHrefs () throws Exception {
+        doTestData(true);
+    }        
 
-    public void testData() throws Exception {
+    public void doTestData (boolean multiref) throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer());
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
@@ -50,6 +59,7 @@ public class TestSer extends TestCase {
         
         Writer stringWriter = new StringWriter();
         SerializationContext context = new SerializationContext(stringWriter, msgContext);
+        context.setDoMultiRefs(multiref);
         
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         QName dataQName = new QName("typeNS", "Data");

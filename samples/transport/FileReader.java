@@ -96,7 +96,7 @@ public class FileReader extends Thread {
         int thisNum = nextNum++; // increment early to avoid infinite loops
         
         Message msg = new Message( fis );
-        msg.getAsBytes();
+        msg.getSOAPPart().getAsBytes();
 
         fis.close();
         file.delete();
@@ -115,7 +115,7 @@ public class FileReader extends Thread {
             msg.setMessageContext(msgContext);
         }
         
-        byte[] buf = (byte[]) msg.getAsBytes();
+        byte[] buf = (byte[]) msg.getSOAPPart().getAsBytes();
         FileOutputStream fos = new FileOutputStream( "xml" + thisNum + ".res" );
         fos.write( buf );
         fos.close();

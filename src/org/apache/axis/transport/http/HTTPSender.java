@@ -107,7 +107,7 @@ public class HTTPSender extends BasicHandler {
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
             if (action == null) {
                 Message rm = msgContext.getRequestMessage();
-                MessageElement body = rm.getAsSOAPEnvelope().getFirstBody();
+                MessageElement body = rm.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
                 action = body.getNamespaceURI();
                 if (action == null) action = "";
                 if (!action.endsWith("/")) action += "/";
@@ -205,7 +205,8 @@ public class HTTPSender extends BasicHandler {
                 sock.setSoTimeout(msgContext.getTimeout());
             }
 
-            reqEnv  = (String) msgContext.getRequestMessage().getAsString();
+            // ROBJDO must be stream-oriented here
+            reqEnv  = (String) msgContext.getRequestMessage().getSOAPPart().getAsString();
 
             //System.out.println("Msg: " + reqEnv);
 
@@ -251,6 +252,7 @@ public class HTTPSender extends BasicHandler {
             }
 
             StringBuffer header = new StringBuffer();
+            // ROBJDO envelope API needs to change???  to avoid getting all the bytes
             byte[] request = reqEnv.getBytes();
 
             header.append( HTTPConstants.HEADER_POST )
@@ -354,7 +356,7 @@ public class HTTPSender extends BasicHandler {
                                                 statusMessage,
                                                 null,
                                                 null);
-                fault.setFaultDetailsString("return code:" + returnCode + "\n"+ 
+                fault.setFaultDetailsString("return code:" + returnCode + "\n"+
                                             new String(buf, 0, len));
                 throw fault;
             }
@@ -380,7 +382,7 @@ public class HTTPSender extends BasicHandler {
                         category.debug( "\nNo Content-Length" );
                         category.debug( "\nXML received:" );
                         category.debug( "-----------------------------------------------");
-                        category.debug( (String) outMsg.getAsString() );
+                        category.debug( (String) outMsg.getSOAPPart().getAsString() );
                     }
                 } else {
                     outMsg = new Message( inp );

@@ -82,7 +82,7 @@ public class TestRPC extends TestCase {
 
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
-        envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
+        envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
         assertNotNull("SOAP envelope was null", envelope);
 
         // Extract the body from the envelope

@@ -181,6 +181,14 @@ public class SerializationContext
                 sendXSIType = false ;
         }
     }
+    
+    /**
+     * Set whether we are doing multirefs, overriding property setting.
+     */ 
+    public void setDoMultiRefs (boolean shouldDo)
+    {
+        doMultiRefs = shouldDo;
+    }
 
     public void setSendDecl(boolean sendDecl)
     {

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-/** 
+/**
  * Test deserialization of SOAP responses
  */
 public class TestDeser extends TestCase {
@@ -28,7 +28,7 @@ public class TestDeser extends TestCase {
     private AxisServer server = new AxisServer();
 
     public TestDeser(String name) {
-        this(name, Constants.URI_CURRENT_SCHEMA_XSI, 
+        this(name, Constants.URI_CURRENT_SCHEMA_XSI,
                    Constants.URI_CURRENT_SCHEMA_XSD);
     }
 
@@ -99,7 +99,7 @@ public class TestDeser extends TestCase {
        Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(server));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
        assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();
@@ -157,7 +157,7 @@ public class TestDeser extends TestCase {
         v.addElement("def");
         deserialize("<result xsi:type=\"soapenc:Array\" " +
                             "soapenc:arrayType=\"xsd:string[2]\"> " +
-                       "<item xsi:type=\"xsd:string\">abc</item>" + 
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
                     v);
@@ -172,7 +172,7 @@ public class TestDeser extends TestCase {
         deserialize("<result xsi:type=\"soapenc:Array\" " +
                             "soapenc:arrayType=\"xsd:string[4]\" " +
                             "soapenc:offset=\"[2]\"> " +
-                       "<item xsi:type=\"xsd:string\">abc</item>" + 
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
                     list);
@@ -186,8 +186,8 @@ public class TestDeser extends TestCase {
         list.add(null);
         deserialize("<result xsi:type=\"soapenc:Array\" " +
                             "soapenc:arrayType=\"xsd:string[4]\"> " +
-      "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" + 
-      "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" + 
+      "<item soapenc:position=\"[0]\" xsi:type=\"xsd:string\">abc</item>" +
+      "<item soapenc:position=\"[2]\" xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
                     list);
     }
@@ -199,8 +199,8 @@ public class TestDeser extends TestCase {
         deserialize("<result xsi:type=\"xmlsoap:Map\" " +
                     "xmlns:xmlsoap=\"http://xml.apache.org/xml-soap\"> " +
                       "<item>" +
-                       "<key xsi:type=\"xsd:string\">abcKey</key>" + 
-                       "<value xsi:type=\"xsd:string\">abcVal</value>" + 
+                       "<key xsi:type=\"xsd:string\">abcKey</key>" +
+                       "<value xsi:type=\"xsd:string\">abcVal</value>" +
                       "</item><item>" +
                        "<key xsi:type=\"xsd:string\">defKey</key>" +
                        "<value xsi:type=\"xsd:string\">defVal</value>" +

@@ -72,7 +72,7 @@ public class LocalResponder extends BasicHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug("Enter: LocalResponder::invoke" );
-        msgContext.getResponseMessage().getAsString();
+        msgContext.getResponseMessage().getSOAPPart().getAsString();
         category.debug("Enter: LocalResponder::invoke" );
     }
 

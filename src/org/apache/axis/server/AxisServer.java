@@ -239,7 +239,7 @@ public class AxisServer extends AxisEngine
                     // some kind of declarative "parse point" on the handler
                     // chain instead....
                     Message rm = msgContext.getRequestMessage();
-                    rm.getAsSOAPEnvelope().getFirstBody();
+                    rm.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
                     h = msgContext.getServiceHandler();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
@@ -380,7 +380,7 @@ public class AxisServer extends AxisEngine
                     // chain instead....
                     Message rm = msgContext.getRequestMessage();
                     if (rm != null) {
-                        rm.getAsSOAPEnvelope().getFirstBody();
+                        rm.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
                         h = msgContext.getServiceHandler();
                     }
                     if (h == null)

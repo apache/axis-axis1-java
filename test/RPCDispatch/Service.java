@@ -46,7 +46,7 @@ public class Service {
 
        // get the first parameter
        Message message = mc.getRequestMessage();
-       RPCElement body = (RPCElement)message.getAsSOAPEnvelope().getFirstBody();
+       RPCElement body = (RPCElement)message.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
        NodeList parms = body.getAsDOM().getChildNodes();
        Node parm1 = null;
        for (int i=0; i<parms.getLength(); i++) {
