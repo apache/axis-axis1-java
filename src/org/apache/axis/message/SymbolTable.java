@@ -16,10 +16,20 @@ public class SymbolTable {
     public ArrayList list = new ArrayList();
     
     public String getSymbol(int bucket) {
+        return (String)list.get(bucket);
+        /*
         return fBuckets[bucket].symbol;
+        */
     }
     
     public int addSymbol(String symbol) {
+        int ret = list.indexOf(symbol);
+        if (ret == -1) {
+            list.add(symbol);
+            ret = list.size() - 1;
+        }
+        return ret;
+        /*
         int bucket = hash(symbol) % TABLE_SIZE;
         int n = 0;
         OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
@@ -36,9 +46,13 @@ public class SymbolTable {
         }
         Entry entry = new Entry(symbol, fBuckets[bucket]);
         fBuckets[bucket] = entry;
+        System.out.println("Symbol '" + symbol + "' is index " + bucket);
         return bucket;
+        */
     }
     public int addSymbol(char[] buffer, int offset, int length) {
+        return addSymbol(new String(buffer, offset, length));
+        /*
         int bucket = hash(buffer, offset, length) % TABLE_SIZE;
         int n = 0;
         OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
@@ -54,7 +68,9 @@ public class SymbolTable {
         }
         Entry entry = new Entry(buffer, offset, length, fBuckets[bucket]);
         fBuckets[bucket] = entry;
+        System.out.println("Symbol '" + entry.symbol + "' is index " + bucket);
         return bucket;
+        */
     }
     public int hash(String symbol) {
         int code = 0;
