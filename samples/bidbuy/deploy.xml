@@ -1,0 +1,33 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- Two ways to do this:                                       -->
+<!--   java org.apache.axis.utils.Admin deploy.xml              -->
+<!--      from the same dir that the Axis engine runs           -->
+<!-- or                                                         -->
+<!--   java org.apache.axis.client.AdminClient deploy.xml       -->
+<!--      after the axis server is running                      -->
+<!-- This file will be replaced by WSDD once it's ready         -->
+
+<deploy>
+  <chain   name="rpc"     flow="RPCDispatcher" />
+
+  <service name="http://www.soapinterop.org/RequestForQuote" pivot="rpc" >
+    <option name="className" value="samples.bidbuy.BidService" />
+    <option name="methodName" value="RequestForQuote" />
+  </service>
+
+  <service name="http://www.soapinterop.org/SimpleBuy" pivot="rpc" >
+    <option name="className" value="samples.bidbuy.BidService" />
+    <option name="methodName" value="SimpleBuy" />
+  </service>
+
+  <service name="http://www.soapinterop.org/Buy" pivot="rpc" >
+    <option name="className" value="samples.bidbuy.BidService" />
+    <option name="methodName" value="Buy" />
+    <option name="typemap" value="BuyTypeMap" />
+  </service>
+
+  <service name="http://www.soapinterop.org/Ping" pivot="rpc" >
+    <option name="className" value="samples.bidbuy.BidService" />
+    <option name="methodName" value="Ping" />
+  </service>
+</deploy>
