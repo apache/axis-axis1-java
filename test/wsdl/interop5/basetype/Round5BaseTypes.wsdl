@@ -1,0 +1,775 @@
+<?xml version="1.0"?>
+<definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+	xmlns:ns0="http://soapinterop.org/xsd" 
+	xmlns:tns="services.wsdl" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	targetNamespace="services.wsdl" 
+	name="BaseTypesInteropTests">
+	
+	<message name="echoDoubleRequest">
+		<part name="inputDouble" type="xsd:double"/>
+	</message>
+	<message name="echoDoubleResponse">
+		<part name="return" type="xsd:double"/>
+	</message>
+
+	<message name="echoDurationRequest">
+		<part name="inputDuration" type="xsd:duration"/>
+	</message>
+	<message name="echoDurationResponse">
+		<part name="return" type="xsd:duration"/>
+	</message>
+
+	<message name="echoDateTimeRequest">
+		<part name="inputDateTime" type="xsd:dateTime"/>
+	</message>
+	<message name="echoDateTimeResponse">
+		<part name="return" type="xsd:dateTime"/>
+	</message>
+
+	<message name="echoTimeRequest">
+		<part name="inputTime" type="xsd:time"/>
+	</message>
+	<message name="echoTimeResponse">
+		<part name="return" type="xsd:time"/>
+	</message>
+
+	<message name="echoGYearMonthRequest">
+		<part name="inputGYearMonth" type="xsd:gYearMonth"/>
+	</message>
+	<message name="echoGYearMonthResponse">
+		<part name="return" type="xsd:gYearMonth"/>
+	</message>
+
+	<message name="echoGYearRequest">
+		<part name="inputGYear" type="xsd:gYear"/>
+	</message>
+	<message name="echoGYearResponse">
+		<part name="return" type="xsd:gYear"/>
+	</message>
+
+	<message name="echoGMonthDayRequest">
+		<part name="inputGMonthDay" type="xsd:gMonthDay"/>
+	</message>
+	<message name="echoGMonthDayResponse">
+		<part name="return" type="xsd:gMonthDay"/>
+	</message>
+
+	<message name="echoGDayRequest">
+		<part name="inputGDay" type="xsd:gDay"/>
+	</message>
+	<message name="echoGDayResponse">
+		<part name="return" type="xsd:gDay"/>
+	</message>
+
+	<message name="echoGMonthRequest">
+		<part name="inputGMonth" type="xsd:gMonth"/>
+	</message>
+	<message name="echoGMonthResponse">
+		<part name="return" type="xsd:gMonth"/>
+	</message>
+
+	<message name="echoAnyURIRequest">
+		<part name="inputAnyURI" type="xsd:anyURI"/>
+	</message>
+	<message name="echoAnyURIResponse">
+		<part name="return" type="xsd:anyURI"/>
+	</message>
+
+	<message name="echoQNameRequest">
+		<part name="inputQName" type="xsd:QName"/>
+	</message>
+	<message name="echoQNameResponse">
+		<part name="return" type="xsd:QName"/>
+	</message>
+
+	<message name="echoNotationRequest">
+		<part name="inputNotation" type="xsd:NOTATION"/>
+	</message>
+	<message name="echoNotationResponse">
+		<part name="return" type="xsd:NOTATION"/>
+	</message>
+
+	<message name="echoLanguageRequest">
+		<part name="inputLanguage" type="xsd:language"/>
+	</message>
+	<message name="echoLanguageResponse">
+		<part name="return" type="xsd:language"/>
+	</message>
+
+	<message name="echoNMTokenRequest">
+		<part name="inputNMToken" type="xsd:NMTOKEN"/>
+	</message>
+	<message name="echoNMTokenResponse">
+		<part name="return" type="xsd:NMTOKEN"/>
+	</message>
+
+	<message name="echoNMTokensRequest">
+		<part name="inputNMTokens" type="xsd:NMTOKENS"/>
+	</message>
+	<message name="echoNMTokensResponse">
+		<part name="return" type="xsd:NMTOKENS"/>
+	</message>
+
+	<message name="echoNameRequest">
+		<part name="inputName" type="xsd:Name"/>
+	</message>
+	<message name="echoNameResponse">
+		<part name="return" type="xsd:Name"/>
+	</message>
+
+	<message name="echoNCNameRequest">
+		<part name="inputNCName" type="xsd:NCName"/>
+	</message>
+	<message name="echoNCNameResponse">
+		<part name="return" type="xsd:NCName"/>
+	</message>
+
+	<message name="echoIDRequest">
+		<part name="inputID" type="xsd:ID"/>
+	</message>
+	<message name="echoIDResponse">
+		<part name="return" type="xsd:ID"/>
+	</message>
+
+	<message name="echoIDREFRequest">
+		<part name="inputIDREF" type="xsd:IDREF"/>
+	</message>
+	<message name="echoIDREFResponse">
+		<part name="return" type="xsd:IDREF"/>
+	</message>
+
+	<message name="echoIDREFSRequest">
+		<part name="inputIDREFS" type="xsd:IDREFS"/>
+	</message>
+	<message name="echoIDREFSResponse">
+		<part name="return" type="xsd:IDREFS"/>
+	</message>
+
+	<message name="echoEntityRequest">
+		<part name="inputEntity" type="xsd:ENTITY"/>
+	</message>
+	<message name="echoEntityResponse">
+		<part name="return" type="xsd:ENTITY"/>
+	</message>
+
+	<message name="echoEntitiesRequest">
+		<part name="inputEntities" type="xsd:ENTITIES"/>
+	</message>
+	<message name="echoEntitiesResponse">
+		<part name="return" type="xsd:ENTITIES"/>
+	</message>
+
+	<message name="echoNonPositiveIntegerRequest">
+		<part name="inputNonPositiveInteger" type="xsd:nonPositiveInteger"/>
+	</message>
+	<message name="echoNonPositiveIntegerResponse">
+		<part name="return" type="xsd:nonPositiveInteger"/>
+	</message>
+
+	<message name="echoNegativeIntegerRequest">
+		<part name="inputNegativeInteger" type="xsd:negativeInteger"/>
+	</message>
+	<message name="echoNegativeIntegerResponse">
+		<part name="return" type="xsd:negativeInteger"/>
+	</message>
+
+	<message name="echoLongRequest">
+		<part name="inputLong" type="xsd:long"/>
+	</message>
+	<message name="echoLongResponse">
+		<part name="return" type="xsd:long"/>
+	</message>
+
+	<message name="echoIntRequest">
+		<part name="inputInt" type="xsd:int"/>
+	</message>
+	<message name="echoIntResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+
+	<message name="echoShortRequest">
+		<part name="inputShort" type="xsd:short"/>
+	</message>
+	<message name="echoShortResponse">
+		<part name="return" type="xsd:short"/>
+	</message>
+
+	<message name="echoByteRequest">
+		<part name="inputByte" type="xsd:byte"/>
+	</message>
+	<message name="echoByteResponse">
+		<part name="return" type="xsd:byte"/>
+	</message>
+
+	<message name="echoNonNegativeIntegerRequest">
+		<part name="inputNonNegativeInteger" type="xsd:nonNegativeInteger"/>
+	</message>
+	<message name="echoNonNegativeIntegerResponse">
+		<part name="return" type="xsd:nonNegativeInteger"/>
+	</message>
+
+	<message name="echoUnsignedLongRequest">
+		<part name="inputUnsignedLong" type="xsd:unsignedLong"/>
+	</message>
+	<message name="echoUnsignedLongResponse">
+		<part name="return" type="xsd:unsignedLong"/>
+	</message>
+
+	<message name="echoUnsignedIntRequest">
+		<part name="inputUnsignedInt" type="xsd:unsignedInt"/>
+	</message>
+	<message name="echoUnsignedIntResponse">
+		<part name="return" type="xsd:unsignedInt"/>
+	</message>
+
+	<message name="echoUnsignedShortRequest">
+		<part name="inputUnsignedShort" type="xsd:unsignedShort"/>
+	</message>
+	<message name="echoUnsignedShortResponse">
+		<part name="return" type="xsd:unsignedShort"/>
+	</message>
+
+	<message name="echoUnsignedByteRequest">
+		<part name="inputUnsignedByte" type="xsd:unsignedByte"/>
+	</message>
+	<message name="echoUnsignedByteResponse">
+		<part name="return" type="xsd:unsignedByte"/>
+	</message>
+
+	<message name="echoPositiveIntegerRequest">
+		<part name="inputPositiveInteger" type="xsd:positiveInteger"/>
+	</message>
+	<message name="echoPositiveIntegerResponse">
+		<part name="return" type="xsd:positiveInteger"/>
+	</message>
+
+	<portType name="InteropTestsExpType">
+		<operation name="echoDouble" parameterOrder="inputDouble">
+			<input message="tns:echoDoubleRequest"/>
+			<output message="tns:echoDoubleResponse"/>
+		</operation>
+
+		<operation name="echoDuration" parameterOrder="inputDuration">
+			<input message="tns:echoDurationRequest"/>
+			<output message="tns:echoDurationResponse"/>
+		</operation>
+
+		<operation name="echoDateTime" parameterOrder="inputDateTime">
+			<input message="tns:echoDateTimeRequest"/>
+			<output message="tns:echoDateTimeResponse"/>
+		</operation>
+
+		<operation name="echoTime" parameterOrder="inputTime">
+			<input message="tns:echoTimeRequest"/>
+			<output message="tns:echoTimeResponse"/>
+		</operation>
+
+		<operation name="echoGYearMonth" parameterOrder="inputGYearMonth">
+			<input message="tns:echoGYearMonthRequest"/>
+			<output message="tns:echoGYearMonthResponse"/>
+		</operation>
+
+		<operation name="echoGYear" parameterOrder="inputGYear">
+			<input message="tns:echoGYearRequest"/>
+			<output message="tns:echoGYearResponse"/>
+		</operation>
+
+		<operation name="echoGMonthDay" parameterOrder="inputGMonthDay">
+			<input message="tns:echoGMonthDayRequest"/>
+			<output message="tns:echoGMonthDayResponse"/>
+		</operation>
+
+		<operation name="echoGDay" parameterOrder="inputGDay">
+			<input message="tns:echoGDayRequest"/>
+			<output message="tns:echoGDayResponse"/>
+		</operation>
+
+		<operation name="echoGMonth" parameterOrder="inputGMonth">
+			<input message="tns:echoGMonthRequest"/>
+			<output message="tns:echoGMonthResponse"/>
+		</operation>
+
+		<operation name="echoAnyURI" parameterOrder="inputAnyURI">
+			<input message="tns:echoAnyURIRequest"/>
+			<output message="tns:echoAnyURIResponse"/>
+		</operation>
+
+		<operation name="echoQName" parameterOrder="inputQName">
+			<input message="tns:echoQNameRequest"/>
+			<output message="tns:echoQNameResponse"/>
+		</operation>
+
+		<operation name="echoNotation" parameterOrder="inputNotation">
+			<input message="tns:echoNotationRequest"/>
+			<output message="tns:echoNotationResponse"/>
+		</operation>
+
+		<operation name="echoLanguage" parameterOrder="inputLanguage">
+			<input message="tns:echoLanguageRequest"/>
+			<output message="tns:echoLanguageResponse"/>
+		</operation>
+
+		<operation name="echoNMToken" parameterOrder="inputNMToken">
+			<input message="tns:echoNMTokenRequest"/>
+			<output message="tns:echoNMTokenResponse"/>
+		</operation>
+
+		<operation name="echoNMTokens" parameterOrder="inputNMTokens">
+			<input message="tns:echoNMTokensRequest"/>
+			<output message="tns:echoNMTokensResponse"/>
+		</operation>
+
+		<operation name="echoName" parameterOrder="inputName">
+			<input message="tns:echoNameRequest"/>
+			<output message="tns:echoNameResponse"/>
+		</operation>
+
+		<operation name="echoNCName" parameterOrder="inputNCName">
+			<input message="tns:echoNCNameRequest"/>
+			<output message="tns:echoNCNameResponse"/>
+		</operation>
+
+		<operation name="echoID" parameterOrder="inputID">
+			<input message="tns:echoIDRequest"/>
+			<output message="tns:echoIDResponse"/>
+		</operation>
+
+		<operation name="echoIDREF" parameterOrder="inputIDREF">
+			<input message="tns:echoIDREFRequest"/>
+			<output message="tns:echoIDREFResponse"/>
+		</operation>
+
+		<operation name="echoIDREFS" parameterOrder="inputIDREFS">
+			<input message="tns:echoIDREFSRequest"/>
+			<output message="tns:echoIDREFSResponse"/>
+		</operation>
+
+		<operation name="echoEntity" parameterOrder="inputEntity">
+			<input message="tns:echoEntityRequest"/>
+			<output message="tns:echoEntityResponse"/>
+		</operation>
+
+		<operation name="echoEntities" parameterOrder="inputEntities">
+			<input message="tns:echoEntitiesRequest"/>
+			<output message="tns:echoEntitiesResponse"/>
+		</operation>
+
+		<operation name="echoNonPositiveInteger" parameterOrder="inputNonPositiveInteger">
+			<input message="tns:echoNonPositiveIntegerRequest"/>
+			<output message="tns:echoNonPositiveIntegerResponse"/>
+		</operation>
+
+		<operation name="echoNegativeInteger" parameterOrder="inputNegativeInteger">
+			<input message="tns:echoNegativeIntegerRequest"/>
+			<output message="tns:echoNegativeIntegerResponse"/>
+		</operation>
+
+		<operation name="echoLong" parameterOrder="inputLong">
+			<input message="tns:echoLongRequest"/>
+			<output message="tns:echoLongResponse"/>
+		</operation>
+
+		<operation name="echoInt" parameterOrder="inputInt">
+			<input message="tns:echoIntRequest"/>
+			<output message="tns:echoIntResponse"/>
+		</operation>
+
+		<operation name="echoShort" parameterOrder="inputShort">
+			<input message="tns:echoShortRequest"/>
+			<output message="tns:echoShortResponse"/>
+		</operation>
+
+		<operation name="echoByte" parameterOrder="inputByte">
+			<input message="tns:echoByteRequest"/>
+			<output message="tns:echoByteResponse"/>
+		</operation>
+
+		<operation name="echoNonNegativeInteger" parameterOrder="inputNonNegativeInteger">
+			<input message="tns:echoNonNegativeIntegerRequest"/>
+			<output message="tns:echoNonNegativeIntegerResponse"/>
+		</operation>
+
+		<operation name="echoUnsignedLong" parameterOrder="inputUnsignedLong">
+			<input message="tns:echoUnsignedLongRequest"/>
+			<output message="tns:echoUnsignedLongResponse"/>
+		</operation>
+
+		<operation name="echoUnsignedInt" parameterOrder="inputUnsignedInt">
+			<input message="tns:echoUnsignedIntRequest"/>
+			<output message="tns:echoUnsignedIntResponse"/>
+		</operation>
+
+		<operation name="echoUnsignedShort" parameterOrder="inputUnsignedShort">
+			<input message="tns:echoUnsignedShortRequest"/>
+			<output message="tns:echoUnsignedShortResponse"/>
+		</operation>
+
+		<operation name="echoUnsignedByte" parameterOrder="inputUnsignedByte">
+			<input message="tns:echoUnsignedByteRequest"/>
+			<output message="tns:echoUnsignedByteResponse"/>
+		</operation>
+
+		<operation name="echoPositiveInteger" parameterOrder="inputPositiveInteger">
+			<input message="tns:echoPositiveIntegerRequest"/>
+			<output message="tns:echoPositiveIntegerResponse"/>
+		</operation>
+
+	</portType>
+
+	<binding name="InteropTestsBinding" type="tns:InteropTestsExpType">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="echoDouble">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoDuration">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoDateTime">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoTime">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoGYearMonth">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoGYear">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoGMonthDay">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoGDay">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoGMonth">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoAnyURI">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoQName">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNotation">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoLanguage">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNMToken">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNMTokens">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoName">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNCName">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoID">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoIDREF">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoIDREFS">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoEntity">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoEntities">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNonPositiveInteger">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNegativeInteger">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoLong">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoInt">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoShort">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoByte">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoNonNegativeInteger">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoUnsignedLong">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoUnsignedInt">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoUnsignedShort">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoUnsignedByte">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+		<operation name="echoPositiveInteger">
+			<soap:operation soapAction="http://soapinterop.org/"/>
+			<input>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>
+
+	</binding>
+	<service name="BaseTypesInteropTests">
+		<documentation>BaseTypes SOAP services</documentation>
+		<port name="InteropTestsPort" binding="tns:InteropTestsBinding">
+            <!--
+			<soap:address location="http://ewsdemo.webMethods.com:80/soap/rpc"/>
+            -->
+            <soap:address location="http://localhost:8080/axis/services/InteropTestsPort" />
+		</port>
+	</service>
+</definitions>

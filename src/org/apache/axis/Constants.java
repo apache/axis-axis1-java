@@ -495,6 +495,12 @@ public class Constants {
     public static final QName XSD_NAME = new QName(URI_2001_SCHEMA_XSD, "Name");
     public static final QName XSD_NCNAME = new QName(URI_2001_SCHEMA_XSD, "NCName");
     public static final QName XSD_NMTOKEN = new QName(URI_2001_SCHEMA_XSD, "NMTOKEN");
+    public static final QName XSD_NMTOKENS = new QName(URI_2001_SCHEMA_XSD, "NMTOKENS");
+    public static final QName XSD_NOTATION = new QName(URI_2001_SCHEMA_XSD, "NOTATION");
+    public static final QName XSD_ENTITY = new QName(URI_2001_SCHEMA_XSD, "ENTITY");
+    public static final QName XSD_ENTITIES = new QName(URI_2001_SCHEMA_XSD, "ENTITIES");
+    public static final QName XSD_IDREF = new QName(URI_2001_SCHEMA_XSD, "IDREF");
+    public static final QName XSD_IDREFS = new QName(URI_2001_SCHEMA_XSD, "IDREFS");
     public static final QName XSD_ANYURI = new QName(URI_2001_SCHEMA_XSD, "anyURI");
     public static final QName XSD_LANGUAGE = new QName(URI_2001_SCHEMA_XSD, "language");
     public static final QName XSD_ID = new QName(URI_2001_SCHEMA_XSD, "ID");
