@@ -328,7 +328,7 @@
     </wsdl:binding>
     <wsdl:service name="Schema2Service">
         <wsdl:port name="Schema2Service" binding="impl:Schema2ServiceSoapBinding">
-            <wsdlsoap:address location="http://srida01l:8080/axis/services/Schema2Service"/>
+            <wsdlsoap:address location="http://localhost:8080/axis/services/Schema2Service"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
