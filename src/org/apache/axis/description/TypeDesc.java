@@ -57,7 +57,6 @@ package org.apache.axis.description;
 
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.MethodCache;
 
@@ -86,6 +85,7 @@ public class TypeDesc {
 
     /** Can this instance search for metadata in parents of the type it describes? */
     private boolean canSearchParents = true;
+    private boolean hasSearchedParents = false;
 
     /**
      * Creates a new <code>TypeDesc</code> instance.  The type desc can search
@@ -196,7 +196,7 @@ public class TypeDesc {
         // complete description of their content model in their own
         // metadata, per the XML schema rules for
         // derivation-by-restriction
-        if (canSearchParents && searchParents) {
+        if (canSearchParents && searchParents && !hasSearchedParents) {
             // check superclasses if they exist
             Class cls = javaClass.getSuperclass();
             if (cls != null && !cls.getName().startsWith("java.")) {
@@ -219,6 +219,8 @@ public class TypeDesc {
 // END FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
                 }
             }
+            
+            hasSearchedParents = true;
         }
 
         return fields;
@@ -465,13 +467,20 @@ public class TypeDesc {
         // may be a faster way to set the property descriptions than
         // using BeanUtils.getPd.  But for now calling getPd is sufficient.
         if (propertyDescriptors == null) {
-            propertyDescriptors = BeanUtils.getPd(javaClass, this);
-            if (!lookedForAny) {
-                anyDesc = BeanUtils.getAnyContentPD(javaClass);
-                lookedForAny = true;
-            }
+            makePropertyDescriptors();
         }
         return propertyDescriptors;
+    }
+    
+    private synchronized void makePropertyDescriptors() {
+        if (propertyDescriptors != null)
+            return;
+
+        propertyDescriptors = BeanUtils.getPd(javaClass, this);
+        if (!lookedForAny) {
+            anyDesc = BeanUtils.getAnyContentPD(javaClass);
+            lookedForAny = true;
+        }
     }
 
     public BeanPropertyDescriptor getAnyContentDescriptor() {
