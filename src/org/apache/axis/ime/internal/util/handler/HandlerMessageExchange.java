@@ -53,38 +53,77 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.internal.util.handler;
 
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-
-import java.util.Hashtable;
+import org.apache.axis.ime.MessageContextListener;
+import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.internal.MessageExchangeProvider;
+import org.apache.axis.ime.internal.MessageExchangeSendContext;
+import org.apache.axis.ime.internal.MessageExchangeSendListener;
+import org.apache.axis.ime.internal.ReceivedMessageDispatchPolicy;
+import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
 
 /**
+ * Used to wrap synchronous handlers (e.g. Axis 1.0 transports)
+ * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class NonPersistentMessageExchangeCorrelatorService
-        implements MessageExchangeCorrelatorService {
+public class HandlerMessageExchange
+        extends MessageExchangeProvider {
 
-    Hashtable contexts = new Hashtable();
+    private Handler handler;
 
-    /**
-     * @see org.apache.axis.ime.MessageExchangeCorrelatorService#put(MessageExchangeCorrelator, MessageExchangeContext)
-     */
-    public void put(
-            MessageExchangeCorrelator correlator,
-            Object context) {
-        synchronized (contexts) {
-            contexts.put(correlator, context);
-        }
+    public HandlerMessageExchange(Handler handler) {
+        this.handler = handler;
     }
 
     /**
-     * @see org.apache.axis.ime.MessageExchangeCorrelatorService#get(MessageExchangeCorrelator)
+     * @see org.apache.axis.ime.internal.MessageExchangeProvider1#createSendMessageContextListener()
      */
-    public Object get(MessageExchangeCorrelator correlator) {
-        synchronized (contexts) {
-            return contexts.remove(correlator);
-        }
+    protected MessageExchangeSendListener getMessageExchangeSendListener() {
+        return new Listener(handler);
     }
 
+    protected ReceivedMessageDispatchPolicy getReceivedMessageDispatchPolicy() {
+        return new FirstComeFirstServeDispatchPolicy(RECEIVE, RECEIVE_REQUESTS);
+    }
+
+    public class Listener
+            implements MessageExchangeSendListener {
+
+        private Handler handler;
+
+        public Listener(Handler handler) {
+            this.handler = handler;
+        }
+
+        /**
+         * @see org.apache.axis.ime.MessageExchangeContextListener#onMessageExchangeContext(MessageExchangeContext)
+         */
+        public void onSend(
+                MessageExchangeSendContext context) {
+            MessageExchangeFaultListener listener = 
+                context.getMessageExchangeFaultListener();
+            try {
+                MessageContext msgContext =
+                        context.getMessageContext();
+                MessageExchangeCorrelator correlator =
+                        context.getMessageExchangeCorrelator();
+            
+                // should I do init's and cleanup's in here?  
+                handler.invoke(msgContext);
+
+
+                RECEIVE.put(correlator, context);
+            } catch (Exception exception) {
+                if (listener != null)
+                    listener.onFault(
+                            context.getMessageExchangeCorrelator(),
+                            exception);
+            }
+        }
+    }
 }
