@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.getPort"/>
+    <!-- This tests the getPort method in generated services.  -->
+    <wsdl2java url="test/wsdl/getPort/getPort.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/getPort/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/getPort/*.java" />
+    </javac>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"  depends="compile" />
+
+<target name="undeploy"/>
+
+</project>

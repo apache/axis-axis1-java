@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.extensibility"/>
+    <!-- Extensibility Sample Test -->
+    <wsdl2java url="test/wsdl/extensibility/QueryTypes.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="no"
+               skeletonDeploy="no"
+               testcase="no">
+        <mapping namespace="urn:QueryTypes" package="test.wsdl.extensibility"/>
+    </wsdl2java>
+    <wsdl2java url="test/wsdl/extensibility/ExtensibilityQuery.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+        <mapping namespace="urn:ExtensibilityQuery" package="test.wsdl.extensibility"/>
+    </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/extensibility/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/extensibility/*.java" />
+    </javac>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"  depends="compile" />
+
+<target name="undeploy"/>
+
+</project>
