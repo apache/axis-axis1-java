@@ -77,7 +77,7 @@ public class AttachmentUtils {
     /**
      * Obtain the DataHandler from the part.
      * @param part the part containing the Java Activiation Framework data source.
-     * @return The Java activiation data handler.
+     * @return The Java activation data handler.
      *
      * @throws AxisFault
      */

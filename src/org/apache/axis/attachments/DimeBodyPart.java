@@ -71,7 +71,7 @@ import java.util.StringTokenizer;
 
 /**
  * This class is a single part for DIME mulitpart message. 
-
+<pre>
  DIME 1.0 format
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -98,6 +98,7 @@ import java.util.StringTokenizer;
  /                        DATA + PADDING                         /
  /                                                               |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ </pre>
  */
 
 /**

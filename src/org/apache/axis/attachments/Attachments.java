@@ -82,9 +82,8 @@ public interface Attachments extends java.io.Serializable {
      * This method uses getAttacmentByReference() to look for attachment.
      * If attachment has been found, it will be removed from the list, and
      * returned to the user.
-     * @param  The reference that referers to an attachment.
      *
-     * @param reference
+     * @param reference The reference that referers to an attachment.
      * @return The part associated with the removed attachment, or null.
      *
      * @throws org.apache.axis.AxisFault
@@ -103,9 +102,8 @@ public interface Attachments extends java.io.Serializable {
     /**
      * This method should look at a refernce and determine if it is a CID: or url
      * to look for attachment.
-     * @param  The reference in the xml that referers to an attachment.
      *
-     * @param reference
+     * @param reference The reference in the xml that referers to an attachment.
      * @return The part associated with the attachment.
      *
      * @throws org.apache.axis.AxisFault
@@ -140,9 +138,8 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
-     * @param The part that is referenced
      *
-     * @param part
+     * @param part The part that is referenced
      *
      * @return a new attachment part
      *
@@ -188,7 +185,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Get the content length of the stream.
      *
-     * @return the content length of the stream
+     * @return the content length of
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -197,7 +194,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Write the content to the stream.
      *
-     * @param os
+     * @param os the stream
      *
      * @throws org.apache.axis.AxisFault
      */
@@ -254,7 +251,7 @@ public interface Attachments extends java.io.Serializable {
     /**
      * Set the format for attachments. 
      *
-     * @param the format to send.
+     * @param sendtype the format to send.
      *      SEND_TYPE_MIME for Multipart Releated Mail type attachments. 
      *      SEND_TYPE_DIME for DIME type attachments. 
      */
