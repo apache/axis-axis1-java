@@ -205,7 +205,7 @@ public class AxisServlet extends HttpServlet {
         } else {
             response = (String)msg.getAsString();
         }
-        res.setContentLength( response.length() );
+        res.setContentLength( response.getBytes().length );
         res.getWriter().print( response );
     }
 }
