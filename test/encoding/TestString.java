@@ -63,6 +63,10 @@ public class TestString extends TestCase {
     }
 
     public void testStringWithEntities() throws Exception {
-        runtest("&amp;&lt;&gt;&apos;&quot;", "&<>'\"");
+        runtest("&amp;&lt;&gt;&apos;&quot;", "&amp;&lt;&gt;&apos;&quot;");
+    }
+    
+    public void testStringWithRawEntities() throws Exception {
+        runtest("&<>'\"", "&<>'\"");
     }
 }
