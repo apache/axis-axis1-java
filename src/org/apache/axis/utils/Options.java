@@ -261,6 +261,10 @@ public class Options {
     Debug.Print( 3, "getURL returned: " + tmp );
     return( tmp );
   }
+  
+  public int getPort() {
+      return Integer.parseInt(port);
+  }
 
   public String getUser() {
     if ( user == null ) user = isValueSet( 'u' );
