@@ -478,7 +478,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println("        if (portName == null) {");
         pw.println("            return getPort(serviceEndpointInterface);");
         pw.println("        }");
-        pw.println("        String inputPortName = portName.getLocalPart();");
+        pw.println("        java.lang.String inputPortName = portName.getLocalPart();");
         pw.print("        ");
 
         for (int i = 0; i < getPortPortNames.size(); ++i) {
