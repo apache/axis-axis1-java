@@ -56,7 +56,6 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.attachments.Attachments; 
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
@@ -805,6 +804,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (!doneParsing && (recorder != null))
             recorder.setDocumentLocator(locator);
         this.locator = locator;
+    }
+
+    public Locator getDocumentLocator() {
+        return locator;
     }
 
     public void characters(char[] p1, int p2, int p3) throws SAXException {
