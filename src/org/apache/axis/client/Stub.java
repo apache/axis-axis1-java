@@ -61,6 +61,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
 
+import javax.xml.namespace.QName;
+
 import javax.xml.rpc.Service;
 
 import org.apache.axis.AxisFault;
@@ -89,6 +91,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected String     cachedPassword     = null;
     protected URL        cachedEndpoint     = null;
     protected Integer    cachedTimeout      = null;
+    protected QName      cachedPortName     = null;
 
     // Flag to determine whether this is the first call to register type mappings.
     // This need not be synchronized because firstCall is ONLY called from within
@@ -247,6 +250,20 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public void setTimeout(int timeout) {
         cachedTimeout = new Integer(timeout);
     } // setTimeout
+
+    /**
+     * Get the port name.
+     */
+    public QName getPortName() {
+        return cachedPortName;
+    } // getPortName
+
+    /**
+     * Set the port name.
+     */
+    public void setPortName(QName portName) {
+        cachedPortName = portName;
+    } // setPortName
 
     /**
      * If set to true, session is maintained; if false, it is not.

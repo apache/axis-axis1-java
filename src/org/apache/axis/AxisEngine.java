@@ -405,19 +405,20 @@ public abstract class AxisEngine extends BasicHandler
     }
     
     protected void invokeJAXRPCHandlers(MessageContext context){
-        org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.JAXRPC_SERVICE);
+        org.apache.axis.client.Service service = (org.apache.axis.client.Service) context.getProperty(org.apache.axis.client.Call.WSDL_SERVICE);
         if(service == null)
             return;
 
-        QName operationName = (QName) context.getProperty(org.apache.axis.client.Call.JAXRPC_PORTTYPE_NAME);
-        if(operationName == null)
+        QName portName = (QName) context.getProperty(org.apache.axis.client.Call.WSDL_PORT_NAME);
+        if(portName == null)
             return;
 
         javax.xml.rpc.handler.HandlerRegistry registry = service.getHandlerRegistry();
         if(registry == null)
             return;
 
-        java.util.List chain = registry.getHandlerChain(operationName);
+        java.util.List chain = registry.getHandlerChain(portName);
+
         if(chain == null || chain.isEmpty())
             return;
 

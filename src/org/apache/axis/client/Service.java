@@ -341,6 +341,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                 stub._setProperty(
                         Stub.ENDPOINT_ADDRESS_PROPERTY,
                         WSDLUtils.getAddressFromPort(port));
+                stub.setPortName(portName);
                 return (Remote) stub;
             }
             else {
