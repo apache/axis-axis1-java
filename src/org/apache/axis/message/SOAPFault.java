@@ -57,6 +57,7 @@ package org.apache.axis.message;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.description.FaultDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
@@ -180,9 +181,13 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             Class cls = fault.getClass();
             QName qname = null;
             if (! cls.equals(AxisFault.class)) {
-                FaultDesc faultDesc = 
-                        context.getMessageContext().getOperation().getFaultByClass(cls);
-		if (faultDesc != null) {
+				FaultDesc faultDesc = null;
+                OperationDesc op = context.getMessageContext().getOperation();
+                if(op != null) {
+					faultDesc = op.getFaultByClass(cls);
+                }
+                
+				if (faultDesc != null) {
                     qname = faultDesc.getQName();
                 }
             }
