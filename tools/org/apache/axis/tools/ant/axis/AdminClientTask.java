@@ -54,13 +54,15 @@
 
 package org.apache.axis.tools.ant.axis;
 
-import org.apache.tools.ant.*;
-import org.apache.axis.client.AdminClient;
 import org.apache.axis.AxisFault;
+import org.apache.axis.client.AdminClient;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
-import java.util.LinkedList;
-import java.util.Iterator;
 import java.io.File;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Task to administer a local or remote Axis server. Remember, for remote admin,

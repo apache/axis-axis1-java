@@ -55,12 +55,11 @@ package org.apache.axis.tools.ant.foreach;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.Commandline;
-import org.apache.tools.ant.taskdefs.CallTarget;
-import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Java;
+import org.apache.tools.ant.taskdefs.Property;
+import org.apache.tools.ant.types.Commandline;
+import org.apache.tools.ant.types.Path;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
