@@ -109,7 +109,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoStringArray",
                  new String[] {
                      "return",
@@ -118,7 +118,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoInteger",
                  new String[] {
                      "return",
@@ -127,7 +127,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoIntegerArray",
                  new String[] {
                      "return",
@@ -136,7 +136,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoFloat",
                  new String[] {
                      "return",
@@ -145,7 +145,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoFloatArray",
                  new String[] {
                      "return",
@@ -154,7 +154,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoStruct",
                  new String[] {
                      "return",
@@ -163,7 +163,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoStructArray",
                  new String[] {
                      "return",
@@ -172,11 +172,11 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoVoid",
                  new String[] {
                  },
-                 new ParameterMode[] {});
+                 new ParameterMode[] {}, null, null, null);
         skel.add("echoBase64",
                  new String[] {
                      "return",
@@ -185,7 +185,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoHexBinary",
                  new String[] {
                      "return",
@@ -194,7 +194,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoDate",
                  new String[] {
                      "return",
@@ -203,7 +203,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoDecimal",
                  new String[] {
                      "return",
@@ -212,7 +212,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoBoolean",
                  new String[] {
                      "return",
@@ -221,7 +221,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoMap",
                  new String[] {
                      "return",
@@ -230,7 +230,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoMapArray",
                  new String[] {
                      "return",
@@ -239,7 +239,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoStructAsSimpleTypes",
                  new String[] {
                  null,
@@ -254,7 +254,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_OUT,
-                 });
+                 }, null, null, null);
         skel.add("echoSimpleTypesAsStruct",
                  new String[] {
                  "return",
@@ -267,7 +267,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      ParameterMode.PARAM_MODE_IN,                     
                      ParameterMode.PARAM_MODE_IN,                     
                      ParameterMode.PARAM_MODE_IN,                     
-                 });
+                 }, null, null, null);
         skel.add("echo2DStringArray",
                  new String[] {
                  "return",
@@ -276,7 +276,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoNestedStruct",
                  new String[] {
                  "return",
@@ -285,7 +285,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
         skel.add("echoNestedArray",
                  new String[] {
                  "return",
@@ -294,7 +294,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  new ParameterMode[] {
                      ParameterMode.PARAM_MODE_OUT,
                      ParameterMode.PARAM_MODE_IN                     
-                 });
+                 }, null, null, null);
     }
     
     /**
