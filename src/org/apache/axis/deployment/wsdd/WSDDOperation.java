@@ -152,7 +152,7 @@ public class WSDDOperation extends WSDDElement
             WSDDDocumentation documentation = new WSDDDocumentation(desc.getDocumentation());
             documentation.writeToContext(context);
         }
-		
+        
         ArrayList params = desc.getParameters();
         for (Iterator i = params.iterator(); i.hasNext();) {
             ParameterDesc parameterDesc = (ParameterDesc) i.next();

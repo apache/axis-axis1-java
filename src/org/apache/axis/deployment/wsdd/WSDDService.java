@@ -205,7 +205,7 @@ public class WSDDService
             }
         }
 
-	// Add in JAX-RPC support for HandlerInfo chains
+    // Add in JAX-RPC support for HandlerInfo chains
         Element hcEl = getChildElement(e, ELEM_WSDD_JAXRPC_CHAIN);
         if (hcEl != null) {
             _wsddHIchain = new WSDDJAXRPCHandlerInfoChain(hcEl);
@@ -449,12 +449,12 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
-	// Set handlerInfoChain
+    // Set handlerInfoChain
 	if (_wsddHIchain != null) {
             HandlerInfoChainFactory hiChainFactory = _wsddHIchain.getHandlerChainFactory();
 
-	    service.setOption(Constants.ATTR_HANDLERINFOCHAIN, hiChainFactory);
-	}
+        service.setOption(Constants.ATTR_HANDLERINFOCHAIN, hiChainFactory);
+    }
 
         AxisEngine.normaliseOptions(service);
         tmr.delegate(registry.getTypeMappingRegistry());
@@ -607,10 +607,10 @@ public class WSDDService
             context.endElement();
         }
 
-		if (_wsddHIchain != null) {
-			_wsddHIchain.writeToContext(context);
+    	if (_wsddHIchain != null) {
+        	_wsddHIchain.writeToContext(context);
 
-		}
+        }
 
         context.endElement();
 

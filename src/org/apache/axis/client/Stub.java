@@ -390,7 +390,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         attachments.clear();
     }
 
-    protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {		
+    protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {        
         SOAPHeaderElement[] headers = getHeaders();
         for(int i=0;i<headers.length;i++){
             call.addHeader(headers[i]);

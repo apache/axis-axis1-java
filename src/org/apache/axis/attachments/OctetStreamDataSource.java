@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class OctetStreamDataSource implements DataSource {
-    public static final String CONTENT_TYPE = "application/octetstream";
+    public static final String CONTENT_TYPE = "application/octet-stream";
 
     private final String name;
     private byte[] data;

@@ -257,7 +257,7 @@ public abstract class JavaWriter implements Generator {
         if (st.hasMoreTokens()) {
             String token = st.nextToken();
             boolean startLine = Character.isWhitespace(token.charAt(token.length() - 1))
-            	&& (token.charAt(token.length() - 1) != '\n');
+                && (token.charAt(token.length() - 1) != '\n');
             newComments = new StringBuffer(token);
             
             while (st.hasMoreTokens()) {
@@ -268,7 +268,7 @@ public abstract class JavaWriter implements Generator {
                 }
                 newComments.append('@');
                 startLine = Character.isWhitespace(token.charAt(token.length() - 1))
-		    & (token.charAt(token.length() - 1) != '\n');
+            & (token.charAt(token.length() - 1) != '\n');
 
                 newComments.append(token);
             }

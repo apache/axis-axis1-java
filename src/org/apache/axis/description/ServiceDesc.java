@@ -76,13 +76,13 @@ public interface ServiceDesc {
     void setName(String name);
 
     /**
-	 * get the documentation for the service
-	 */
+     * get the documentation for the service
+     */
     String getDocumentation();
 
     /**
-	 * set the documentation for the service
-	 */
+     * set the documentation for the service
+     */
     void setDocumentation(String documentation);
 
     void addOperationDesc(OperationDesc operation);

@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
- * application/octetstream DataHandler Serializer
+ * application/octet-stream DataHandler Serializer
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class OctetStreamDataHandlerSerializer extends JAFDataHandlerSerializer {

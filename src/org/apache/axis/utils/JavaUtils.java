@@ -1144,7 +1144,8 @@ public class JavaUtils
         else if ("text/xml".equals(mime) || "application/xml".equals(mime)) {
             return "javax.xml.transform.Source";
         }
-        else if ("application/octetstream".equals(mime)) {
+        else if ("application/octet-stream".equals(mime)||
+                 "application/octetstream".equals(mime)) {
             return "org.apache.axis.attachments.OctetStream";
         }
         else if (mime != null && mime.startsWith("multipart/")) {

@@ -2318,7 +2318,7 @@ public class SymbolTable {
                 } else if (Constants.MIME_SOURCE.equals(mimeQName)) {
                     mimeInfo = new MimeInfo("text/xml", "");
                 } else if (Constants.MIME_OCTETSTREAM.equals(mimeQName)) {
-                    mimeInfo = new MimeInfo("application/octetstream", "");
+                    mimeInfo = new MimeInfo("application/octet-stream", "");
                 }
             }
         }

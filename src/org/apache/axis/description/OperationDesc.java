@@ -86,7 +86,7 @@ public class OperationDesc {
     /** If we're a message-style operation, what's our signature? */
     private int messageOperationStyle = -1;
 
-	/** The documentation for the operation */
+    /** The documentation for the operation */
 	private String documentation = null;
 
     /**
@@ -124,19 +124,19 @@ public class OperationDesc {
         this.name = name;
     }
 
-	/**
-	 * get the documentation for the operation
-	 */
+    /**
+     * get the documentation for the operation
+     */
 	public String getDocumentation() {
-		return documentation; 
-	}
+    	return documentation; 
+    }
 
-	/**
-	 * set the documentation for the operation
-	 */
+    /**
+     * set the documentation for the operation
+     */
 	public void setDocumentation(String documentation) {
-		this.documentation = documentation;
-	}
+    	this.documentation = documentation;
+    }
 
     public QName getReturnQName() {
         return returnDesc.getQName();

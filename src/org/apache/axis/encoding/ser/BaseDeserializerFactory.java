@@ -253,26 +253,26 @@ public abstract class BaseDeserializerFactory extends BaseFactory
         }
         return df;
     }
-	/**
-	 * Returns the deserClassConstructor.
-	 * @return Constructor
-	 */
+    /**
+     * Returns the deserClassConstructor.
+     * @return Constructor
+     */
 	protected Constructor getDeserClassConstructor() {
-		if (deserClassConstructor == null) { 
-		    deserClassConstructor = getConstructor(deserClass);
-		} 
-		return deserClassConstructor;
-	}
+    	if (deserClassConstructor == null) { 
+            deserClassConstructor = getConstructor(deserClass);
+        } 
+    	return deserClassConstructor;
+    }
 
-	/**
-	 * Returns the getDeserializer.
-	 * @return Method
-	 */
+    /**
+     * Returns the getDeserializer.
+     * @return Method
+     */
 	protected Method getGetDeserializer() {
-		if (getDeserializer == null) {
+    	if (getDeserializer == null) {
             getDeserializer = getMethod(javaType,"getDeserializer");    
-		}
-		return getDeserializer;
-	}
+        }
+    	return getDeserializer;
+    }
 
 }

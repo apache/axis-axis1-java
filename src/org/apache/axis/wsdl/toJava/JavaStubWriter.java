@@ -728,21 +728,21 @@ public class JavaStubWriter extends JavaClassWriter {
             }
         }
 
- 		if(emitter.isAllWanted()) {
- 			HashMap rawSymbolTable = symbolTable.getHashMap();
- 			for(Iterator j = rawSymbolTable.values().iterator(); j.hasNext(); ) {
- 				Vector typeVector = (Vector)j.next();
- 				for(Iterator k = typeVector.iterator(); k.hasNext(); ) {
- 					Object symbol = k.next();
- 					if(symbol instanceof DefinedType) {
- 						TypeEntry type = (TypeEntry)symbol;
- 						if(!types.contains(type)) {
- 							types.add(type);
- 						}
- 					}
- 				}
- 			}
- 		}        
+         if(emitter.isAllWanted()) {
+             HashMap rawSymbolTable = symbolTable.getHashMap();
+             for(Iterator j = rawSymbolTable.values().iterator(); j.hasNext(); ) {
+                 Vector typeVector = (Vector)j.next();
+                 for(Iterator k = typeVector.iterator(); k.hasNext(); ) {
+                     Object symbol = k.next();
+                     if(symbol instanceof DefinedType) {
+                         TypeEntry type = (TypeEntry)symbol;
+                         if(!types.contains(type)) {
+                             types.add(type);
+                         }
+                     }
+                 }
+             }
+         }        
         return types;
     }    // getTypesInPortType
 

@@ -444,10 +444,10 @@ public class JWSHandler extends BasicHandler
      * directories.
      *
      * @param dirPaths The string containing the directory path or list of
-     * 		directory paths.
+     *     	directory paths.
      * @return The file paths of the jar files in the directories. This is an
-     *		empty string if no files were found, and is terminated by an
-     *		additional pathSeparator in all other cases.
+     *    	empty string if no files were found, and is terminated by an
+     *    	additional pathSeparator in all other cases.
      */
     private String expandDirs(String dirPaths) {
         StringTokenizer st = new StringTokenizer(dirPaths, File.pathSeparator);
