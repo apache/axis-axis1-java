@@ -101,6 +101,7 @@ public class JavaFaultWriter extends JavaClassWriter {
         this.literal = faultInfo.getUse().equals(Use.LITERAL);
         this.faultMessage = faultInfo.getMessage();
         this.symbolTable = symbolTable;
+        this.faultName = faultInfo.getName();
     }    // ctor
 
     /**
