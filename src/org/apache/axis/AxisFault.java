@@ -137,7 +137,10 @@ public class AxisFault extends java.rmi.RemoteException {
         } else {
             setFaultCode( Constants.FAULT_SERVER_GENERAL );
 
-            // put the stack trace in the FaultString
+            // put the exception message in the FaultString
+            setFaultString(e.getMessage());
+            
+            // put the stack trace in the FaultDetail
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream( stream );
             e.printStackTrace(ps);
