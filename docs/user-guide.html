@@ -17,7 +17,7 @@ h1 {  margin-left: -30px}
 <body bgcolor="#ffffff" text="#000000">
 <h1 align="center"><IMG height=96 src="axis.jpg" width=176></h1>
 <h1>Axis User's Guide</h1>
-<p><i>Alpha 1 Version</i></p>
+<p><i>Alpha 2 Version</i></p>
 <h3>Table of Contents</h3>
 <p><A href="#Introduction">Introduction</a><br>
   <A href="#Installation">Installing Axis</a><br>
@@ -30,7 +30,7 @@ h1 {  margin-left: -30px}
   <A href="#Glossary">Glossary</a></p>
 <h2><a name="Introduction"></a>Introduction</h2>
 <p>Welcome to Axis, the third generation of Apache SOAP! This is the <b>alpha 
-  1</b> version, our first publically announced milestone. Please note that Axis 
+  2 </b> version, our first publically announced milestone. Please note that Axis 
   is a work in progress, and although the basic functionality is there, there 
   are still a lot of unfinished areas and rough edges. That said, we're very psyched 
   about the package so far and would love to get your take on how we can make 
@@ -82,16 +82,16 @@ h1 {  margin-left: -30px}
 <ul>
   <li>SOAP 1.1 compliant engine 
   <li>Flexible configuration / deployment system 
-  <li>Support for "drop-in" deployment of SOAP services 
-  (JWS) 
-  <li>Support for all basic types, and a type mapping 
-  system for defining new serializers/deserializers 
+  <li>Support for "drop-in" deployment of SOAP services (JWS) 
+  <li>Support for all basic types, and a type mapping system for defining new 
+    serializers/deserializers 
   <li>Automatic serialization/deserialization of Java Beans 
-
-  <li>Automatic two-way conversions between Java "List" 
-  collections and SOAP Arrays 
+  <li>Automatic two-way conversions between Java "List" collections and SOAP Arrays 
   <li>Providers for RPC and message based SOAP services 
-  <li>Preliminary security extensions 
+  <li>Automatic WSDL generation from deployed services
+  <li>Wsdl2java tool for building Java proxies and skeletons from WSDL documents
+  <li>Preliminary security extensions, which can integrate with Servlet 2.2 security/roles
+  <li>An EJB provider for accessing EJB's as Web Services
   <li>HTTP servlet-based transport 
   <li>Standalone version of the server (with HTTP support) 
   <li>Examples, including a client and server for the soapbuilders community interoperability 
@@ -101,9 +101,8 @@ h1 {  margin-left: -30px}
 <ul>
   <li>Support for the SOAP with Attachments specification 
   <li>Supprt for multi-dimensional arrays 
-  <li>Support for the SOAP actor attribute
+  <li>Support for the SOAP actor attribute 
   <li>A final deployment descriptor syntax (WSDD)</li>
-  <li>WSDL tooling</li>
 </ul>
 <p>All of these items are on the list for the final release.</p>
 <h2><a name="Installation"></a>Installing Axis and Using this Guide</h2>
@@ -437,6 +436,16 @@ If this had been a real order processing system, we'd probably have charged you 
   For now, take a look at the ArraySerializer, the BeanSerializer (both in org.apache.axis.encoding), 
   and the DataSer example (in samples/encoding) to see how custom serializers 
   work. </font></i></p>
+<h2>Using WSDL with Axis</h2>
+<p>The Web Service Description Language is a specification authored by IBM and 
+  Microsoft, and supported by many other organizations. WSDL serves to describe 
+  Web Services in a structured way.</p>
+<p>Axis supports WSDL in two ways: first, when you deploy a service in Axis, users 
+  may then access your service's URL with a standard web browser and by appending 
+  &quot;?WSDL&quot; to the end of the URL, they will obtain an automatically-generated 
+  WSDL document which describes your service. Second, </p>
+<h3></h3>
+<p>&nbsp;</p>
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
 <i>Note: this reference reflects the state of the deploy.xml structure as of the 
 alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
