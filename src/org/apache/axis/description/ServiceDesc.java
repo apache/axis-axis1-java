@@ -78,6 +78,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -443,6 +445,21 @@ public class ServiceDesc {
 
         getSyncedOperationsForName(implClass,
                                    ((OperationDesc)overloads.get(0)).getName());
+
+        // Sort the overloads by number of arguments - prevents us calling methods
+        // with more parameters than supplied in the request (with missing parameters
+        // defaulted to null) when a perfectly good method exists with exactly the
+        // supplied parameters.
+        Collections.sort(overloads,
+            new Comparator() {
+                public int compare(Object o1, Object o2)
+                {
+                    Method meth1 = ((OperationDesc)o1).getMethod();
+                    Method meth2 = ((OperationDesc)o2).getMethod();
+                    return (meth1.getParameterTypes().length -
+                                         meth2.getParameterTypes().length);
+                }
+            });
 
         OperationDesc [] array = new OperationDesc [overloads.size()];
         return (OperationDesc[])overloads.toArray(array);

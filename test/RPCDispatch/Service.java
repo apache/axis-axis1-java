@@ -74,22 +74,46 @@ public class Service {
     public Integer echoInt(Integer value) throws Exception {
        return value;
     }
-    
+
+    /**
+     * Return the boolean and String arguments concatenated
+     */
+    public String overloaded(boolean b, String s)
+    {
+        return b + s;
+    }
+
+    /**
+     * Return the String and boolean arguments concatenated
+     */
+    public String overloaded(String s, boolean b)
+    {
+        return s + b;
+    }
+
     /**
      * Return the boolean value passed in
-     */ 
+     */
     public boolean overloaded(boolean b)
     {
         return b;
     }
-    
+
     /**
      * Return the int passed in (this and the function above test overloaded
      * method dispatch)
-     */ 
+     */
     public int overloaded(int i)
     {
         return i;
+    }
+
+    /**
+     * Return the int and String arguments concatenated
+     */
+    public String overloaded(int i, String s)
+    {
+        return i + s;
     }
 
     /**
