@@ -210,8 +210,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // try and see if this is an xsd:any namespace="##any" element before
         // reporting a problem
-        QName qn = null;
-        Deserializer dSer = null;
         if (propDesc == null) {
             // try to put unknown elements into a SOAPElement property, if
             // appropriate
@@ -248,19 +246,14 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                          localName));
         }
 
-        // Determine the QName for this child element.
         // Look at the type attribute specified.  If this fails,
         // use the javaType of the property to get the type qname.
-        if (qn == null) {
-            qn = context.getTypeFromAttributes(namespace, localName,
-                                               attributes);
-        }
-        
+        QName qn = context.getTypeFromAttributes(namespace, localName,
+                                                 attributes);
+
         // get the deserializer
-        if (dSer == null) {
-            dSer = context.getDeserializerForType(qn);
-        }
-        
+        Deserializer dSer = context.getDeserializerForType(qn);
+
         // If no deserializer, use the base DeserializerImpl.
         // There may not be enough information yet to choose the
         // specific deserializer.
