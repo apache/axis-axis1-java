@@ -196,59 +196,69 @@ public class Types {
     }
 
     /**
-     * Return the QName of the type
-     * @param type input class
+     * Return the QName of the specified javaType
+     * @param javaType input javaType Class
      * @return QName
      */
-    private javax.xml.rpc.namespace.QName getTypeQName(Class type) {
+    private javax.xml.rpc.namespace.QName getTypeQName(Class javaType) {
         javax.xml.rpc.namespace.QName qName = null;
-        String typeName = null;
-        if (type.isArray()) {
-            Class componentType = type.getComponentType();
 
-            // Check for Byte[], byte[] and Object[]
-            if (componentType == java.lang.Byte.class) {
-                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SOAP_ENC, "base64");
-            } else if (componentType == java.lang.Byte.TYPE) {
-                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SCHEMA_XSD, "base64Binary");
-            } else if (componentType == java.lang.Object.class) {
-                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
-            } else {
-                // Construct ArrayOf in targetNamespace
-                javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
-                String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
-                String localPart = "ArrayOf_" + pre + "_" + cqName.getLocalPart();
-                qName = new javax.xml.rpc.namespace.QName(targetNamespace,
-                                                          localPart);
-            }
-        } else {
-            // Get the QName from the type mapping or create our own.
-            javax.xml.rpc.namespace.QName dQName = null;
-            if (defaultTM != null) {
-                dQName = defaultTM.getTypeQName(type);
-            }
-            if (tm != null) {
-                qName = tm.getTypeQName(type);
-            }
-            if (qName == null) {
+        // Use the typeMapping information to lookup the qName.        
+        javax.xml.rpc.namespace.QName dQName = null;
+        if (defaultTM != null) {
+            dQName = defaultTM.getTypeQName(javaType);
+        }
+        if (tm != null) {
+            qName = tm.getTypeQName(javaType);
+        }
+        if (qName == null) {
+            qName = dQName;
+        } else if (qName != null && qName != dQName) {
+            // If the TM and default TM resulted in different
+            // names, choose qName unless it is a schema namespace.
+            // (i.e. prefer soapenc primitives over schema primitives)
+            if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
                 qName = dQName;
-            } else if (qName != null && qName != dQName) {
-                // If the TM and default TM resulted in different
-                // names, choose qName unless it is a schema namespace.
-                // (i.e. prefer soapenc primitives over schema primitives)
-                if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-                    qName = dQName;
+            }
+        }
+
+        // If the javaType is an array and the qName is 
+        // SOAP_ARRAY, construct the QName using the 
+        // QName of the component type
+        if (javaType.isArray() &&
+            qName != null &&
+            Constants.equals(Constants.SOAP_ARRAY, qName)) {
+            Class componentType = javaType.getComponentType();
+            if (componentType != java.lang.Object.class) {
+                // If component namespace uri == targetNamespace
+                // Construct ArrayOf<componentLocalPart>
+                // Else
+                // Construct ArrayOf_<componentPrefix>_<componentLocalPart>
+                javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
+                if (targetNamespace.equals(cqName.getNamespaceURI())) {
+                    qName = new javax.xml.rpc.namespace.QName(
+                         targetNamespace,
+                         "ArrayOf" + cqName.getLocalPart());
+                } else {                                     
+                    String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
+                    qName = new javax.xml.rpc.namespace.QName(
+                         targetNamespace,
+                        "ArrayOf_" + pre + "_" + cqName.getLocalPart());
                 }
             }
-            if (qName == null) {
-                String pkg = getPackageNameFromFullName(type.getName());
-                String lcl = getLocalNameFromFullName(type.getName());
+            return qName;
+        }
 
-                String ns = namespaces.getCreate(pkg);
-                String pre = namespaces.getCreatePrefix(ns);
-                String localPart = lcl.replace('$', '_');
-                qName = new javax.xml.rpc.namespace.QName(ns, localPart);
-            }
+        // If a qName was not found construct one using the 
+        // class name information.
+        if (qName == null) {
+            String pkg = getPackageNameFromFullName(javaType.getName());
+            String lcl = getLocalNameFromFullName(javaType.getName());
+            
+            String ns = namespaces.getCreate(pkg);
+            String pre = namespaces.getCreatePrefix(ns);
+            String localPart = lcl.replace('$', '_');
+            qName = new javax.xml.rpc.namespace.QName(ns, localPart);
         }
 
         return qName;
@@ -736,13 +746,18 @@ public class Types {
 
 
     /**
-     * Determines if the field is nullable. All non-primitives are Nullable
+     * Determines if the field is nullable. All non-primitives except 
+     * for byte[] are nillable.
      *
      * @param type input Class
      * @return true if nullable
      */
     private boolean isNullable(Class type) {
-        return !type.isPrimitive();
+        if (type.isPrimitive() ||
+            (type.isArray() && type.getComponentType() == byte.class))
+            return false;
+        else 
+            return true;
     }
 
 
