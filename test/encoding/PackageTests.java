@@ -33,6 +33,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestOutputter.class);
         suite.addTestSuite(TestAttributes.class);
         suite.addTestSuite(TestBeanDeser.class);
+        suite.addTestSuite(TestRoundTrip.class);
 
         return suite;
     }
