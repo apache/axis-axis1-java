@@ -112,7 +112,7 @@ public class AxisFault extends java.rmi.RemoteException {
      * AxisFault.  If the Exception is an InvocationTargetException (which
      * already wraps another Exception), get the wrapped Exception out from
      * there and use that instead of the passed one.
-     */ 
+     */
     public static AxisFault makeFault(Exception e)
     {
         if (e instanceof InvocationTargetException) {
@@ -121,11 +121,11 @@ public class AxisFault extends java.rmi.RemoteException {
                 e = (Exception)t;
             }
         }
-        
+
         if (e instanceof AxisFault) {
             return (AxisFault)e;
         }
-        
+
         return new AxisFault(e);
     }
 
@@ -195,12 +195,12 @@ public class AxisFault extends java.rmi.RemoteException {
     /**
      * Wrap an AxisFault around an existing Exception - this is private
      * to force everyone to use makeFault() above, which sanity-checks us.
-     */ 
+     */
     protected AxisFault(Exception target) {
         super ("", target);
         // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
-        
+
         initFromException(target);
     }
 
@@ -223,7 +223,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault()
     {
         super();
-        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);     
+        setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         initFromException(this);
     }
 
@@ -261,21 +261,23 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString( target.toString() );
 
 
-        // If we're derived from AxisFault, then put the exception class
-        // into the "exceptionName" element in the details.  This allows
+        // Put the exception class into the AXIS SPECIFIC HACK
+        //  "exceptionName" element in the details.  This allows
         // us to get back a correct Java Exception class on the other side
         // (assuming they have it available).
-        
+        // NOTE: This hack is obsolete!  We now serialize exception data
+        // and the other side uses *that* QName to figure out what exception
+        // to use, because the class name may be completly different on the
+        // client.
         if ((target instanceof AxisFault) &&
             (target.getClass() != AxisFault.class)) {
-            addFaultDetail(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,
+          addFaultDetail(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,
                     target.getClass().getName());
         }
+
         //add stack trace
         addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
                 JavaUtils.stackToString(target));
-
-
     }
 
     /**
@@ -306,8 +308,8 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * turn the fault and details into a string, with XML escaping.
-     * subclassers: for security (cross-site-scripting) reasons, 
-     * escape everything that could contain caller-supplied data. 
+     * subclassers: for security (cross-site-scripting) reasons,
+     * escape everything that could contain caller-supplied data.
      * @return stringified fault details
      */
     public String dumpToString()
@@ -364,18 +366,18 @@ public class AxisFault extends java.rmi.RemoteException {
     public void setFaultCode(QName code) {
         faultCode = code ;
     }
-    
+
     /**
      * Set the fault code (as a String).
-     * 
+     *
      * @deprecated expect to see this go away after 1.1, use
      *             setFaultCodeAsString instead!
-     */ 
+     */
 
     public void setFaultCode(String code) {
         setFaultCodeAsString(code);
     }
-    
+
     /**
      * set a fault code string that is turned into a qname
      * in the SOAP 1.1 or 1.2 namespace, depending on the current context
@@ -385,7 +387,7 @@ public class AxisFault extends java.rmi.RemoteException {
         SOAPConstants soapConstants = MessageContext.getCurrentContext() == null ?
                                         SOAPConstants.SOAP11_CONSTANTS :
                                         MessageContext.getCurrentContext().getSOAPConstants();
-        
+
         faultCode = new QName(soapConstants.getEnvelopeURI(), code);
     }
 
@@ -731,10 +733,10 @@ public class AxisFault extends java.rmi.RemoteException {
         }
         faultHeaders.add(header);
     }
-    
+
     /**
      * Get the SOAP headers associated with this fault.
-     * 
+     *
      * @return an ArrayList containing any headers associated with this fault
      */
     public ArrayList getHeaders() {
@@ -747,13 +749,31 @@ public class AxisFault extends java.rmi.RemoteException {
     public void clearHeaders() {
         faultHeaders = null;
     }
-    
+
+
     /**
-     *  Writes any exception data to the faultDetails
-     * This is for overriding; it is empty in the base AxisFault
+     * Writes any exception data to the faultDetails
+     * This can be overrided (and is) by emitted exception clases.
+     * The base implementation will attempt to serialize exception data
+     * the fault was created from an Exception and a type mapping is found for it.
      */
     public void writeDetails(QName qname, SerializationContext context) throws java.io.IOException {
-        // no data in default Axis fault
+        Object detailObject = this.detail;
+        if (detailObject == null)
+            return;
+
+        boolean haveSerializer = false;
+        try {
+            if (context.getTypeMapping().getSerializer(detailObject.getClass()) != null) {
+                haveSerializer = true;
+            }
+        } catch (Exception e) {
+            // swallow this exception, it means that we don't know how to serialize
+            // the details.
+        }
+        if (haveSerializer) {
+            context.serialize(qname, null, detailObject);
+        }
     }
 
 };
