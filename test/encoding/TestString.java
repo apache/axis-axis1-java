@@ -72,4 +72,12 @@ public class TestString extends TestCase {
     public void testStringWithRawEntities() throws Exception {
         runtest("&<>'\"", "&<>'\"");
     }
+    
+    public void testStringWithLeadingAndTrailingSpaces() throws Exception {
+        runtest("          centered          ");
+    }
+    
+    public void testWhitespace() throws Exception {
+        runtest(" \n \t "); // note: \r fails
+    }
 }
