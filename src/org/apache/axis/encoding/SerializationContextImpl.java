@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.toJava.SymbolTable;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -113,6 +114,10 @@ public class SerializationContextImpl implements SerializationContext
     private Writer writer;
     private int lastPrefixIndex = 1;
     private MessageContext msgContext;
+
+    /** The SOAP context we're using */
+    private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+
     private boolean pretty = false;
     private static QName multirefQName = new QName("","multiRef");
 
@@ -284,7 +289,7 @@ public class SerializationContextImpl implements SerializationContext
 
         String encodingStyle = msgContext.getEncodingStyle();
         if (encodingStyle == null)
-            encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+            encodingStyle = soapConstants.getEncodingURI();
         return (TypeMapping) msgContext.
                         getTypeMappingRegistry().getTypeMapping(encodingStyle);
     }
@@ -326,7 +331,7 @@ public class SerializationContextImpl implements SerializationContext
 
         String prefix = nsStack.getPrefix(uri);
 
-        if (prefix == null && uri.equals(Constants.URI_CURRENT_SOAP_ENC)) {
+        if (prefix == null && uri.equals(soapConstants.getEncodingURI())) {
             prefix = Constants.NSPREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
         }
@@ -641,11 +646,28 @@ public class SerializationContextImpl implements SerializationContext
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("","","","","");
 
+        String encodingURI = soapConstants.getEncodingURI();
         // explicitly state that this attribute is not a root
-        String prefix = getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
+        String prefix = getPrefixForURI(encodingURI);
         String root = prefix + ":root";
-        attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT, root,
+        attrs.addAttribute(encodingURI, Constants.ATTR_ROOT, root,
                            "CDATA", "0");
+
+        // Make sure we put the encodingStyle on each multiref element we
+        // output.
+        String encodingStyle;
+        if (msgContext == null) {
+            encodingStyle = msgContext.getEncodingStyle();
+        } else {
+            encodingStyle = soapConstants.getEncodingURI();
+        }
+        String encStyle = getPrefixForURI(soapConstants.getEnvelopeURI() +
+                                          ":" + Constants.ATTR_ENCODING_STYLE);
+        attrs.addAttribute(soapConstants.getEnvelopeURI(),
+                           Constants.ATTR_ENCODING_STYLE,
+                           encStyle,
+                           "CDATA",
+                           encodingStyle);
 
         Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
         while (i.hasNext()) {
