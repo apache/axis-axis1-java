@@ -79,6 +79,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
@@ -420,7 +421,7 @@ public class SOAPService extends SimpleTargetedChain
                 instream = new FileInputStream(filename);
             } else {
                 //else load a named resource in our classloader. 
-                instream = this.getClass().getResourceAsStream(filename);
+                instream = ClassUtils.getResourceAsStream(this.getClass(),filename);
                 if (instream == null) {
                     String errorText=Messages.getMessage("wsdlFileMissing",filename);
                     throw new AxisFault(errorText);
