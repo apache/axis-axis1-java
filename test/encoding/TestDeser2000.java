@@ -24,7 +24,7 @@ public class TestDeser2000 extends TestDeser {
                        "<key xsi:null=\"true\"/>" +
                        "<value xsi:type=\"xsd:boolean\">false</value>" + 
                       "</item><item>" +
-                       "<key xsi:type=\"string\">hi</key>" +
+                       "<key xsi:type=\"xsd:string\">hi</key>" +
                        "<value xsi:null=\"true\"/>" +
                       "</item>" +
                     "</result>",

@@ -328,15 +328,12 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
 
         // OK, this is a QName, so look up the prefix in our current mappings.
         int i = qNameStr.indexOf(':');
-        if (i == -1)
-            return null;
-
-        String nsURI = getNamespaceURI(qNameStr.substring(0, i));
-
-        //log.debug("namespace = " + nsURI);
-
-        if (nsURI == null)
-            return null;
+        String nsURI;
+        if (i == -1) {
+            nsURI = getNamespaceURI("");
+        } else {
+            nsURI = getNamespaceURI(qNameStr.substring(0, i));
+        }
 
         return new QName(nsURI, qNameStr.substring(i + 1));
     }
