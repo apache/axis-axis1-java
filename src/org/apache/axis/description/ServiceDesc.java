@@ -980,7 +980,7 @@ public class ServiceDesc {
             // Ignore java and javax package exceptions.
             Class ex = exceptionTypes[i];
             if (ex != java.rmi.RemoteException.class &&
-				ex != org.apache.axis.AxisFault.class &&
+                ex != org.apache.axis.AxisFault.class &&
                 !ex.getName().startsWith("java.") &&
                 !ex.getName().startsWith("javax.")) {
 
