@@ -343,10 +343,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
      * undo introspection.
      */
     protected void writeSerializer(PrintWriter pw) throws IOException {
-        String typeDesc = null;
-        if (attributes != null || elementMetaData != null) {
-            typeDesc = "typeDesc";
-        }
+        String typeDesc = "typeDesc";
         String ser = " org.apache.axis.encoding.ser.BeanSerializer";
         if (type.isSimpleType()) {
             ser = " org.apache.axis.encoding.ser.SimpleSerializer";
@@ -370,10 +367,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
      * undo introspection.
      */
     protected void writeDeserializer(PrintWriter pw)  throws IOException {
-        String typeDesc = null;
-        if (attributes != null || elementMetaData != null) {
-            typeDesc = "typeDesc";
-        }
+        String typeDesc = "typeDesc";
         String dser = " org.apache.axis.encoding.ser.BeanDeserializer";
         if (type.isSimpleType()) {
             dser = " org.apache.axis.encoding.ser.SimpleDeserializer";

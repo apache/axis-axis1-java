@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://tempuri.org/" 
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+targetNamespace="http://tempuri.org/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" 
+targetNamespace="http://tempuri.org/">
+      <s:element name="GetPlan">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetPlanResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPlanResult" 
+type="s0:Plan" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Plan">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Disposition" 
+type="s0:Disposition" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Disposition">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:Status" />
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="Status">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Code" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" 
+type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Plan" nillable="true" type="s0:Plan" />
+    </s:schema>
+  </types>
+  <message name="GetPlanSoapIn">
+    <part name="parameters" element="s0:GetPlan" />
+  </message>
+  <message name="GetPlanSoapOut">
+    <part name="parameters" element="s0:GetPlanResponse" />
+  </message>
+  <message name="GetPlanHttpGetIn" />
+  <message name="GetPlanHttpGetOut">
+    <part name="Body" element="s0:Plan" />
+  </message>
+  <message name="GetPlanHttpPostIn" />
+  <message name="GetPlanHttpPostOut">
+    <part name="Body" element="s0:Plan" />
+  </message>
+  <portType name="PlanWSSoap">
+    <operation name="GetPlan">
+      <input message="s0:GetPlanSoapIn" />
+      <output message="s0:GetPlanSoapOut" />
+    </operation>
+  </portType>
+  <portType name="PlanWSHttpGet">
+    <operation name="GetPlan">
+      <input message="s0:GetPlanHttpGetIn" />
+      <output message="s0:GetPlanHttpGetOut" />
+    </operation>
+  </portType>
+  <portType name="PlanWSHttpPost">
+    <operation name="GetPlan">
+      <input message="s0:GetPlanHttpPostIn" />
+      <output message="s0:GetPlanHttpPostOut" />
+    </operation>
+  </portType>
+  <binding name="PlanWSSoap" type="s0:PlanWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+style="document" />
+    <operation name="GetPlan">
+      <soap:operation soapAction="http://tempuri.org/GetPlan" 
+style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="PlanWSHttpGet" type="s0:PlanWSHttpGet">
+    <http:binding verb="GET" />
+    <operation name="GetPlan">
+      <http:operation location="/GetPlan" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="PlanWSHttpPost" type="s0:PlanWSHttpPost">
+    <http:binding verb="POST" />
+    <operation name="GetPlan">
+      <http:operation location="/GetPlan" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <service name="PlanWS">
+    <port name="PlanWSSoap" binding="s0:PlanWSSoap">
+      <soap:address location="http://localhost:8080/axis/services/PlanWSSoap" />
+    </port>
+    <port name="PlanWSHttpGet" binding="s0:PlanWSHttpGet">
+      <http:address location="http://localhost:8080/axis/services/PlanWSSoap" />
+    </port>
+    <port name="PlanWSHttpPost" binding="s0:PlanWSHttpPost">
+      <http:address location="http://localhost:8080/axis/services/PlanWSSoap" />
+    </port>
+  </service>
+</definitions>
