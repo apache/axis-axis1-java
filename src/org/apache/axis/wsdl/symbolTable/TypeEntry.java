@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
@@ -110,7 +111,7 @@ import org.w3c.dom.Node;
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public abstract class TypeEntry extends SymTabEntry {
+public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
     protected Node    node;      // Node
 

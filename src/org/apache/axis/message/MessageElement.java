@@ -114,14 +114,14 @@ public class MessageElement implements SOAPElement, Serializable
     protected SOAPEnvelope message = null;
     protected boolean   _isDirty = false;
 
-    protected DeserializationContext context;
+    protected transient DeserializationContext context;
 
-    protected QName typeQName = null;
+    protected transient QName typeQName = null;
 
     protected Vector qNameAttrs = null;
 
     // Some message representations - as recorded SAX events...
-    protected SAX2EventRecorder recorder = null;
+    protected transient SAX2EventRecorder recorder = null;
     protected int startEventIndex = 0;
     protected int startContentsIndex = 0;
     protected int endEventIndex = -1;
@@ -785,6 +785,17 @@ public class MessageElement implements SOAPElement, Serializable
      */
 
     private void writeObject(ObjectOutputStream out) throws IOException {
+        if (typeQName == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(typeQName.getNamespaceURI());
+            out.writeObject(typeQName.getLocalPart());
+        }
+
+        if (attributes == null) {
+            attributes = new AttributesImpl();
+        }
         int n = attributes.getLength();
         out.writeInt(n);
         for (int i = 0; i < n; i++) {
@@ -799,6 +810,14 @@ public class MessageElement implements SOAPElement, Serializable
 
     private void readObject(ObjectInputStream in)
         throws IOException, ClassNotFoundException {
+
+        if (in.readBoolean()) {
+            typeQName = new QName((String)in.readObject(),
+                                  (String)in.readObject());
+        } else {
+            typeQName = null;
+        }
+
         attributes = new AttributesImpl();
         int n = in.readInt();
         for (int i = 0; i < n; i++) {

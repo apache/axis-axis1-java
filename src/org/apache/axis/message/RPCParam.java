@@ -64,6 +64,9 @@ import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -72,7 +75,7 @@ import java.util.ArrayList;
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class RPCParam
+public class RPCParam implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(RPCParam.class.getName());
@@ -80,7 +83,7 @@ public class RPCParam
     // Who's your daddy?
     RPCElement myCall;
     
-    private QName qname;
+    private transient QName qname;
     private Object value = null;
     private int countSetCalls = 0; // counts number of calls to set
 
@@ -217,5 +220,28 @@ public class RPCParam
                           value,  // value
                           javaType, xmlType, // java/xml type
                           true, wantXSIType); 
+    }
+
+    private void writeObject(ObjectOutputStream out)
+        throws IOException {
+        if (qname == null) {
+            out.writeBoolean(false);
+        } else {
+            out.writeBoolean(true);
+            out.writeObject(qname.getNamespaceURI());
+            out.writeObject(qname.getLocalPart());
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) 
+        throws IOException, ClassNotFoundException {
+        if (in.readBoolean()) {
+            qname = new QName((String)in.readObject(),
+                              (String)in.readObject());
+        } else {
+            qname = null;
+        }
+        in.defaultReadObject();
     }
 }
