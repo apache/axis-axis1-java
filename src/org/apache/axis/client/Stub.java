@@ -55,21 +55,18 @@
 
 package org.apache.axis.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.Iterator;
-import java.util.Properties;
+import org.apache.axis.AxisFault;
+import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
-
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.Service;
-
-import org.apache.axis.AxisFault;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
 * This class is the base for all generated stubs.
@@ -94,6 +91,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected URL        cachedEndpoint     = null;
     protected Integer    cachedTimeout      = null;
     protected QName      cachedPortName     = null;
+
+    // Support for Header
+    private Vector headers = new Vector();
 
     // Flag to determine whether this is the first call to register type mappings.
     // This need not be synchronized because firstCall is ONLY called from within
@@ -290,4 +290,77 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         maintainSession = session;
         cachedProperties.put(Call.SESSION_MAINTAIN_PROPERTY, new Boolean(session));
     } // setmaintainSession
+
+
+    /**
+     * Set the header
+     * @namespace namespace
+     * @param partName that uniquely identify a header object.
+     * @param headerValue Object that is sent in the request as a SOAPHeader
+     * @return void
+     */
+    public void setHeader(String namespace, String partName, Object headerValue) {
+        headers.add(new SOAPHeaderElement(namespace, partName, headerValue));
+    }
+
+    /**
+     * Set the header
+     */ 
+    public void setHeader(SOAPHeaderElement header) {
+        headers.add(header);
+    }
+
+    /**
+     * Get the header element
+     */ 
+    public SOAPHeaderElement getHeader(String namespace, String partName) {
+        for(int i=0;i<headers.size();i++) {
+            SOAPHeaderElement header = (SOAPHeaderElement)headers.get(i);
+            if(header.getNamespaceURI().equals(namespace) &&
+               header.getName().equals(partName))
+                return header;
+        }
+        return null;
+    }
+    
+    /**
+     * Get the array of header elements
+     */ 
+    public SOAPHeaderElement[] getHeaders() {
+        SOAPHeaderElement[] array = new SOAPHeaderElement[headers.size()];
+        headers.copyInto(array);
+        return array;
+    }
+
+    /**
+     * This method clears both requestHeaders and responseHeaders hashtables.
+     * @return void
+     */
+    public void clearHeaders() {
+        headers.clear();
+    }
+    
+    protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {		
+        SOAPHeaderElement[] headers = getHeaders();
+        for(int i=0;i<headers.length;i++){
+            call.addHeader(headers[i]);
+        }
+    }  
+
+    /**
+     * Helper method for updating headers from the response.
+     * @return void
+     */
+    protected void getResponseHeaders(org.apache.axis.client.Call call) throws AxisFault {		
+        org.apache.axis.Message response = call.getMessageContext().getResponseMessage();      
+        org.apache.axis.message.SOAPEnvelope env = response.getSOAPEnvelope();
+            
+        if ( env != null )	{
+            Iterator iterator = env.getHeaders().iterator();
+            while(iterator.hasNext()){
+                SOAPHeaderElement header = (SOAPHeaderElement) iterator.next();
+                headers.add(header);
+            }
+        }				
+    }  
 }

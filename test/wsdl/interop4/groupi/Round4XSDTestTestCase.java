@@ -600,8 +600,13 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            //TODO: What do we need to do here?
+            Round4XSDTestSoapStub stub = (Round4XSDTestSoapStub) binding;
+            String namespace = url.toString();
+            stub.setHeader(namespace, "test1", "header1");
+            stub.setHeader(namespace, "test2", "header2");
             binding.echoVoidSoapHeader();
+            assertEquals(stub.getHeader(namespace, "test1").getObjectValue(), "header1");
+            assertEquals(stub.getHeader(namespace, "test2").getObjectValue(), "header2");
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
