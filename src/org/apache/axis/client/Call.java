@@ -77,6 +77,9 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1794,6 +1797,9 @@ public class Call implements javax.xml.rpc.Call {
             Message msg = null ;
 
             msg = new Message( env );
+            if (msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING) != null) {
+                msg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
+             }
             setRequestMessage( msg );
             invoke();
             msg = msgContext.getResponseMessage();
@@ -2591,6 +2597,10 @@ public class Call implements javax.xml.rpc.Call {
 
         Message requestMessage = msgContext.getRequestMessage();
         if (requestMessage != null) {
+            try {
+                msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestMessage.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
+            } catch (SOAPException e) {
+            }
             reqEnv = requestMessage.getSOAPEnvelope();
 
             // If we have headers to insert, do so now.

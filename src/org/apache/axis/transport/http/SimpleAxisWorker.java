@@ -33,6 +33,8 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPMessage;
+
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
@@ -373,6 +375,12 @@ public class SimpleAxisWorker implements Runnable {
                 }
 
                 msgContext.setRequestMessage(requestMsg);
+                // put character encoding of request to message context
+                // in order to reuse it during the whole process.   
+                String requestEncoding = (String) requestMsg.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                if (requestEncoding != null) {
+                    msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
+                }
 
                 // set up session, if any
                 if (server.isSessionUsed()) {
@@ -440,6 +448,11 @@ public class SimpleAxisWorker implements Runnable {
                 }
             }
 
+            // synchronize the character encoding of request and response
+            String responseEncoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            if (responseEncoding != null) {
+                responseMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, responseEncoding);
+            }
             // Send it on its way...
             OutputStream out = socket.getOutputStream();
             out.write(HTTP);
