@@ -225,6 +225,9 @@ public abstract class JavaProvider extends BasicProvider
                   obj = getNewServiceObject(msgContext, clsName);
                   session.set(serviceName, obj);
                   msgContext.getService().addSession(session);
+                } catch(final Exception e) {
+                    session.remove(serviceName);
+                    throw e;
                 } finally {
                   lock.complete();
                 }
