@@ -15,17 +15,24 @@ Notes:
    This is a build file for use with the Jakarta Ant build tool.
 
 Prerequisites:
-
-   jakarta-ant from http://jakarta.apache.org
+   jakarta-ant        from http://jakarta.apache.org/ant/
+   wsdl4j             from http://www-124.ibm.com/developerworks/projects/wsdl4j/
+   commons-logging    from http://jakarta.apache.org/commons/logging.html
+   commons-discovery  from http://jakarta.apache.org/commons/discovery.html
+   log4j              from http://jakarta.apache.org/log4j
+   activation         from http://java.sun.com/products/javabeans/glasgow/jaf.html
 
 Optional components:
-   SOAP Attachment support enablement:
-     activation.jar     from http://java.sun.com/products/javabeans/glasgow/jaf.html
-     mailapi.jar        from http://java.sun.com/products/javamail/
-     JimiProClasses.zip from http://java.sun.com/products/jimi/
-   Security support enablement:
-     xmlsec.jar from fresh build of CVS from http://xml.apache.org/security/
-     Other support jars from http://cvs.apache.org/viewcvs.cgi/xml-security/libs/
+   servlet            from http://jakarta.apache.org/tomcat/
+   regexp             from http://jakarta.apache.org/regexp/
+   junit              from http://www.junit.org/
+   mailapi            from http://java.sun.com/products/javamail/
+   jimi               from http://java.sun.com/products/jimi/
+   xml-security       from http://xml.apache.org/security/
+   jsse               from http://java.sun.com/products/jsse/
+   commons-httpclient from http://jakarta.apache.org/commons/httpclient/
+   httpunit           from http://sourceforge.net/projects/httpunit/
+   jms                from http://java.sun.com/products/jms/
 
 Build Instructions:
    To build, run
