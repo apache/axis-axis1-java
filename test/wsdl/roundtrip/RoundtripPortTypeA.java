@@ -69,29 +69,68 @@ import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 import javax.xml.rpc.holders.StringHolder;
 
 /**
- * The RoundtripPortType interface defines the methods necessary when
- * when implementing this interface.  
+ * Defines methods for RoundtripPortType
  *
- * @version   1.00  06 Feb 2002
- * @author    Brent Ulbricht
  * @author    Rich Scheuerle
  */
-// Some of the methods are inherited, to test inherted interface processing
-public interface RoundtripPortType extends RoundtripPortTypeA, RoundtripPortTypeB {
-
-    public boolean methodBoolean(boolean inBoolean)
+public interface RoundtripPortTypeA {
+    public java.lang.String methodString(java.lang.String inString)
         throws java.rmi.RemoteException;
-    public byte methodByte(byte inByte)
+    public java.math.BigInteger methodBigInteger(java.math.BigInteger inInteger)
         throws java.rmi.RemoteException;
-    public short methodShort(short inShort)
+    public java.math.BigDecimal methodBigDecimal(java.math.BigDecimal inDecimal)
         throws java.rmi.RemoteException;
-    public int methodInt(int inInt)
+    public java.util.Calendar methodDateTime(java.util.Calendar inDateTime)
         throws java.rmi.RemoteException;
-    public long methodLong(long inLong)
+    public java.util.Date methodDate(java.util.Date inDateTime)
         throws java.rmi.RemoteException;
-    public float methodFloat(float inFloat)
+    public byte[] methodByteArray(byte[] inByteArray)
         throws java.rmi.RemoteException;
-    public double methodDouble(double inDouble)
+    public void methodAllTypesIn(java.lang.String string,
+                                 java.math.BigInteger integer,
+                                 java.math.BigDecimal decimal,
+                                 java.util.Calendar dateTime,
+                                 java.util.Date date,
+                                 boolean _boolean,
+                                 byte _byte,
+                                 short _short,
+                                 int _int,
+                                 long _long,
+                                 float _float,
+                                 double _double,
+                                 byte[] base64Binary,
+                                 java.lang.Boolean soapBoolean,
+                                 java.lang.Byte soapByte,
+                                 java.lang.Short soapShort,
+                                 java.lang.Integer soapInt,
+                                 java.lang.Long soapLong,
+                                 java.lang.Float soapFloat,
+                                 java.lang.Double soapDouble,
+                                 java.lang.Byte[] soapBase64)
+        throws java.rmi.RemoteException;
+    public int[] methodIntArrayInOut(int[] inIntArray)
+        throws java.rmi.RemoteException;
+    public void methodIntArrayIn(int[] inIntArray)
+        throws java.rmi.RemoteException;
+    public int[] methodIntArrayOut()
+        throws java.rmi.RemoteException;
+    public String[][] methodStringMArrayInOut(String[][] inStringArray)
+        throws java.rmi.RemoteException;
+    public void methodStringMArrayIn(String[][] inStringArray)
+        throws java.rmi.RemoteException;
+    public String[][] methodStringMArrayOut()
+        throws java.rmi.RemoteException;
+    public void methodBondInvestmentIn(BondInvestment bondInvestment)
+        throws java.rmi.RemoteException;
+    public BondInvestment methodBondInvestmentOut()
+        throws java.rmi.RemoteException;
+    public BondInvestment methodBondInvestmentInOut(BondInvestment bondInvestment)
+        throws java.rmi.RemoteException;
+    public float getRealtimeLastTradePrice(StockInvestment stockInvestment)
+        throws java.rmi.RemoteException;
+    public PreferredStockInvestment getDividends(PreferredStockInvestment preferredStock)
+        throws java.rmi.RemoteException;
+    public CallOptions[] methodCallOptions(CallOptions[] callOptions)
         throws java.rmi.RemoteException;
 } // RoundtripPortType
 
