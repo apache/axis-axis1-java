@@ -28,4 +28,10 @@ public class AddressBookNoImplSEISoapBindingImpl {
     {
         return (test.wsdl.addrNoImplSEI.Address) this.addresses.get(name);
     }
+
+    public test.wsdl.addrNoImplSEI.Address[] getAddresses() throws java.rmi.RemoteException {
+        test.wsdl.addrNoImplSEI.Address[] array = new test.wsdl.addrNoImplSEI.Address[this.addresses.size()];
+        this.addresses.values().toArray(array);
+        return array;
+    }
 }
