@@ -109,7 +109,7 @@ public class MapDeserializer extends DeserializerImpl {
             log.debug("Enter MapDeserializer::startElement()");
         }
         
-        if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
+        if (attributes.getValue(Constants.NS_URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
             return;
         }
         

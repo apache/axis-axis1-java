@@ -67,70 +67,72 @@ public class Constants {
 
     // Namespace Prefix Constants
     //////////////////////////////////////////////////////////////////////////
-    public static final String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
-    public static final String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
-    public static final String NSPREFIX_SCHEMA_XSI = "xsi" ;
-    public static final String NSPREFIX_SCHEMA_XSD = "xsd" ;
-    public static final String NSPREFIX_WSDL       = "wsdl" ;
-    public static final String NSPREFIX_WSDL_SOAP  = "wsdlsoap";
-    public static final String NSPREFIX_WSDD       = "wsdd";    
-    public static final String NSPREFIX_WSDD_JAVA  = "java";      
+    public static final String NS_PREFIX_SOAP_ENV   = "SOAP-ENV" ;
+    public static final String NS_PREFIX_SOAP_ENC   = "SOAP-ENC" ;
+    public static final String NS_PREFIX_SCHEMA_XSI = "xsi" ;
+    public static final String NS_PREFIX_SCHEMA_XSD = "xsd" ;
+    public static final String NS_PREFIX_WSDL       = "wsdl" ;
+    public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
 
 
     // Axis Namespaces
-    public static final String AXIS_NS = "http://xml.apache.org/axis/";
-    public static final String URI_WSDD = "http://xml.apache.org/axis/wsdd/";
-    public static final String URI_WSDD_JAVA = "http://xml.apache.org/axis/wsdd/providers/java";
+    public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
+    public static final String NS_URI_XMLSOAP = "http://xml.apache.org/xml-soap";
+
+
 
     //
     // SOAP-ENV Namespaces
     //
-    public static final String URI_SOAP_ENV =
+    public static final String NS_URI_SOAP_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
-    public static final String URI_SOAP12_ENV =
+    public static final String NS_URI_SOAP12_ENV =
                                    "http://www.w3.org/2001/12/soap-envelope";
-    public static final String URI_CURRENT_SOAP_ENV = URI_SOAP_ENV;  // SOAP 1.1 over the wire
+    public static final String NS_URI_CURRENT_SOAP_ENV = NS_URI_SOAP_ENV;  // SOAP 1.1 over the wire
 
-    public static final String[] URIS_SOAP_ENV = {
-        URI_SOAP_ENV,
-        URI_SOAP12_ENV,
+    public static final String[] NS_URIS_SOAP_ENV = {
+        NS_URI_SOAP_ENV,
+        NS_URI_SOAP12_ENV,
     };
 
     /**
      * Returns true if SOAP_ENV Namespace
      */
     public static boolean isSOAP_ENV(String s) {
-        for (int i=0; i<URIS_SOAP_ENV.length; i++) {
-            if (URIS_SOAP_ENV[i].equals(s)) {
+        for (int i=0; i<NS_URIS_SOAP_ENV.length; i++) {
+            if (NS_URIS_SOAP_ENV[i].equals(s)) {
                 return true;
             }
         }
         return false;
     }
 
+
+    public static final String NS_URI_LITERAL_ENC = "";
+    
     //
     // SOAP-ENC Namespaces
     //
-    public static final String URI_SOAP_ENC =
+    public static final String NS_URI_SOAP_ENC =
                                 "http://schemas.xmlsoap.org/soap/encoding/" ;
-    public static final String URI_SOAP_ENC_ALT = 
+    public static final String NS_URI_SOAP_ENC_ALT = 
                                 "http://schemas.xmlsoap.org/soap/encoding" ;
-    public static final String URI_SOAP12_ENC =
+    public static final String NS_URI_SOAP12_ENC =
                                    "http://www.w3.org/2001/12/soap-encoding";
-    public static final String URI_CURRENT_SOAP_ENC = URI_SOAP_ENC; // SOAP 1.1 over the wire
+    public static final String NS_URI_CURRENT_SOAP_ENC = NS_URI_SOAP_ENC; // SOAP 1.1 over the wire
 
-    public static final String[] URIS_SOAP_ENC = {
-        URI_SOAP_ENC,
-        URI_SOAP_ENC_ALT,
-        URI_SOAP12_ENC,
+    public static final String[] NS_URIS_SOAP_ENC = {
+        NS_URI_SOAP_ENC,
+        NS_URI_SOAP_ENC_ALT,
+        NS_URI_SOAP12_ENC,
     };
 
     /**
      * Returns true if SOAP_ENC Namespace
      */
     public static boolean isSOAP_ENC(String s) {
-        for (int i=0; i<URIS_SOAP_ENC.length; i++) {
-            if (URIS_SOAP_ENC[i].equals(s)) {
+        for (int i=0; i<NS_URIS_SOAP_ENC.length; i++) {
+            if (NS_URIS_SOAP_ENC[i].equals(s)) {
                 return true;
             }
         }
@@ -186,14 +188,14 @@ public class Constants {
 
         String namespaceURI = first.getNamespaceURI();
         String[] search = null;
-        if (namespaceURI.equals(URI_CURRENT_SOAP_ENC)) 
-            search = URIS_SOAP_ENC;
-        else if (namespaceURI.equals(URI_CURRENT_SOAP_ENV))
-            search = URIS_SOAP_ENV;
-        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSD))
-            search = URIS_SCHEMA_XSD;
-        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSI))
-            search = URIS_SCHEMA_XSI;
+        if (namespaceURI.equals(NS_URI_CURRENT_SOAP_ENC)) 
+            search = NS_URIS_SOAP_ENC;
+        else if (namespaceURI.equals(NS_URI_CURRENT_SOAP_ENV))
+            search = NS_URIS_SOAP_ENV;
+        else if (namespaceURI.equals(NS_URI_CURRENT_SCHEMA_XSD))
+            search = NS_URIS_SCHEMA_XSD;
+        else if (namespaceURI.equals(NS_URI_CURRENT_SCHEMA_XSI))
+            search = NS_URIS_SCHEMA_XSI;
         else
             search = new String[] {namespaceURI};
 
@@ -206,63 +208,63 @@ public class Constants {
     }
 
     // Misc SOAP Namespaces
-    public static final String URI_NEXT_ACTOR = 
-                               "http://schemas.xmlsoap.org/soap/actor/next" ;
-    public static final String URI_SOAP12_NEXT_ACTOR =
-                        "http://www.w3.org/2001/06/soap-envelope/actor/next";
-    public static final String URI_CURRENT_SOAP_NEXT_ACTOR = URI_SOAP12_NEXT_ACTOR;
+    public static final String NS_URI_NEXT_ACTOR = 
+                                     "http://schemas.xmlsoap.org/soap/actor/next" ;
+    public static final String NS_URI_SOAP12_NEXT_ACTOR =
+                                     "http://www.w3.org/2001/06/soap-envelope/actor/next";
+    public static final String NS_URI_CURRENT_SOAP_NEXT_ACTOR = NS_URI_SOAP12_NEXT_ACTOR;
 
-    public static final String URI_SOAP12_FAULT_NS =
+    public static final String NS_URI_SOAP12_FAULT_NS =
                                      "http://www.w3.org/2001/06/soap-faults";
-    public static final String URI_CURRENT_SOAP_FAULT = URI_SOAP12_FAULT_NS;  
+    public static final String NS_URI_CURRENT_SOAP_FAULT = NS_URI_SOAP12_FAULT_NS;  
 
-    public static final String URI_SOAP12_UPGRADE_NS =
+    public static final String NS_URI_SOAP12_UPGRADE_NS =
                                      "http://www.w3.org/2001/06/soap-upgrade";
-    public static final String URI_CURRENT_SOAP_UPGRADE = URI_SOAP12_UPGRADE_NS;  
+    public static final String NS_URI_CURRENT_SOAP_UPGRADE = NS_URI_SOAP12_UPGRADE_NS;  
 
-    public static final String URI_SOAP_HTTP =      
+    public static final String NS_URI_SOAP_HTTP =      
                                      "http://schemas.xmlsoap.org/soap/http";
-    public static final String URI_SOAP12_HTTP =      
+    public static final String NS_URI_SOAP12_HTTP =      
                                     "http://www.w3.org/2001/06/http";
-    public static final String URI_CURRENT_SOAP_HTTP = URI_SOAP12_HTTP;  
+    public static final String NS_URI_CURRENT_SOAP_HTTP = NS_URI_SOAP12_HTTP;  
     
-    public static String NS_URI_XMLNS = 
+    public static final String NS_URI_XMLNS = 
                                        "http://www.w3.org/2000/xmlns/";
     
 
     //
     // Schema XSD Namespaces
     //
-    public static final String URI_1999_SCHEMA_XSD =
+    public static final String NS_URI_1999_SCHEMA_XSD =
                                           "http://www.w3.org/1999/XMLSchema";
-    public static final String URI_1999_SCHEMA_XSD_ALT =
+    public static final String NS_URI_1999_SCHEMA_XSD_ALT =
                                           "http://www.w3.org/1999/XMLSchema/";
-    public static final String URI_2000_SCHEMA_XSD =
+    public static final String NS_URI_2000_SCHEMA_XSD =
                                        "http://www.w3.org/2000/10/XMLSchema";
-    public static final String URI_2000_SCHEMA_XSD_ALT =
+    public static final String NS_URI_2000_SCHEMA_XSD_ALT =
                                        "http://www.w3.org/2000/10/XMLSchema/";
-    public static final String URI_2001_SCHEMA_XSD =
+    public static final String NS_URI_2001_SCHEMA_XSD =
                                           "http://www.w3.org/2001/XMLSchema";
-    public static final String URI_2001_SCHEMA_XSD_ALT =
+    public static final String NS_URI_2001_SCHEMA_XSD_ALT =
                                           "http://www.w3.org/2001/XMLSchema/";
 
-    public static final String URI_CURRENT_SCHEMA_XSD = URI_2001_SCHEMA_XSD;
+    public static final String NS_URI_CURRENT_SCHEMA_XSD = NS_URI_2001_SCHEMA_XSD;
 
-    public static final String[] URIS_SCHEMA_XSD = {
-        URI_1999_SCHEMA_XSD,
-        URI_2000_SCHEMA_XSD,
-        URI_2001_SCHEMA_XSD,
-        URI_1999_SCHEMA_XSD_ALT,
-        URI_2000_SCHEMA_XSD_ALT,
-        URI_2001_SCHEMA_XSD_ALT,
+    public static final String[] NS_URIS_SCHEMA_XSD = {
+        NS_URI_1999_SCHEMA_XSD,
+        NS_URI_2000_SCHEMA_XSD,
+        NS_URI_2001_SCHEMA_XSD,
+        NS_URI_1999_SCHEMA_XSD_ALT,
+        NS_URI_2000_SCHEMA_XSD_ALT,
+        NS_URI_2001_SCHEMA_XSD_ALT,
     };
 
     /**
      * Returns true if SchemaXSD Namespace
      */
     public static boolean isSchemaXSD(String s) {
-        for (int i=0; i<URIS_SCHEMA_XSD.length; i++) {
-            if (URIS_SCHEMA_XSD[i].equals(s)) {
+        for (int i=0; i<NS_URIS_SCHEMA_XSD.length; i++) {
+            if (NS_URIS_SCHEMA_XSD[i].equals(s)) {
                 return true;
             }
         }
@@ -272,26 +274,26 @@ public class Constants {
     //
     // Schema XSI Namespaces
     //
-    public static final String URI_1999_SCHEMA_XSI =
+    public static final String NS_URI_1999_SCHEMA_XSI =
                                  "http://www.w3.org/1999/XMLSchema-instance";
-    public static final String URI_2000_SCHEMA_XSI =
+    public static final String NS_URI_2000_SCHEMA_XSI =
                               "http://www.w3.org/2000/10/XMLSchema-instance";
-    public static final String URI_2001_SCHEMA_XSI =
+    public static final String NS_URI_2001_SCHEMA_XSI =
                                  "http://www.w3.org/2001/XMLSchema-instance";
-    public static final String URI_CURRENT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
+    public static final String NS_URI_CURRENT_SCHEMA_XSI = NS_URI_2001_SCHEMA_XSI;
     
-    public static final String[] URIS_SCHEMA_XSI = {
-        URI_1999_SCHEMA_XSI,
-        URI_2000_SCHEMA_XSI,
-        URI_2001_SCHEMA_XSI,
+    public static final String[] NS_URIS_SCHEMA_XSI = {
+        NS_URI_1999_SCHEMA_XSI,
+        NS_URI_2000_SCHEMA_XSI,
+        NS_URI_2001_SCHEMA_XSI,
     };
 
     /**
      * Returns true if SchemaXSI Namespace
      */
     public static boolean isSchemaXSI(String s) {
-        for (int i=0; i<URIS_SCHEMA_XSI.length; i++) {
-            if (URIS_SCHEMA_XSI[i].equals(s)) {
+        for (int i=0; i<NS_URIS_SCHEMA_XSI.length; i++) {
+            if (NS_URIS_SCHEMA_XSI[i].equals(s)) {
                 return true;
             }
         }
@@ -301,20 +303,20 @@ public class Constants {
     //
     // WSDL Namespace
     //
-    public static final String URI_WSDL =
+    public static final String NS_URI_WSDL =
                                  "http://schemas.xmlsoap.org/wsdl/";
-    public static final String URI_CURRENT_WSDL = URI_WSDL;
+    public static final String NS_URI_CURRENT_WSDL = NS_URI_WSDL;
     
-    public static final String[] URIS_WSDL = {
-        URI_WSDL,
+    public static final String[] NS_URIS_WSDL = {
+        NS_URI_WSDL,
     };
 
     /**
      * Returns true if WSDL Namespace
      */
     public static boolean isWSDL(String s) {
-        for (int i=0; i<URIS_WSDL.length; i++) {
-            if (URIS_WSDL[i].equals(s)) {
+        for (int i=0; i<NS_URIS_WSDL.length; i++) {
+            if (NS_URIS_WSDL[i].equals(s)) {
                 return true;
             }
         }
@@ -324,20 +326,20 @@ public class Constants {
     //
     // WSDL SOAP Namespace
     //
-    public static final String URI_WSDL_SOAP =
+    public static final String NS_URI_WSDL_SOAP =
                                  "http://schemas.xmlsoap.org/wsdl/soap/";
-    public static final String URI_CURRENT_WSDL_SOAP = URI_WSDL_SOAP;
+    public static final String NS_URI_CURRENT_WSDL_SOAP = NS_URI_WSDL_SOAP;
     
-    public static final String[] URIS_WSDL_SOAP = {
-        URI_WSDL_SOAP,
+    public static final String[] NS_URIS_WSDL_SOAP = {
+        NS_URI_WSDL_SOAP,
     };
 
     /**
      * Returns true if WSDL SOAP Namespace
      */
     public static boolean isWSDLSOAP(String s) {
-        for (int i=0; i<URIS_WSDL_SOAP.length; i++) {
-            if (URIS_WSDL_SOAP[i].equals(s)) {
+        for (int i=0; i<NS_URIS_WSDL_SOAP.length; i++) {
+            if (NS_URIS_WSDL_SOAP[i].equals(s)) {
                 return true;
             }
         }
@@ -383,7 +385,7 @@ public class Constants {
     public static final String FAULT_SERVER_USER =
                                                    "Server.userException";
     public static final QName FAULT_MUSTUNDERSTAND =
-                                  new QName(URI_SOAP_ENV, "MustUnderstand");
+                                  new QName(NS_URI_SOAP_ENV, "MustUnderstand");
 
 
     // QNames
@@ -399,46 +401,47 @@ public class Constants {
 
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
-    public static final QName XSD_STRING = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string");
-    public static final QName XSD_BOOLEAN = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "boolean");
-    public static final QName XSD_DOUBLE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "double");
-    public static final QName XSD_FLOAT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "float");
-    public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
-    public static final QName XSD_INTEGER = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "integer");
-    public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
-    public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
-    public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
-    public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
-    public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
-    public static final QName XSD_HEXBIN = new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary");
-    public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
-    public static final QName XSD_QNAME = new QName(Constants.URI_2001_SCHEMA_XSD, "QName");
-    public static final QName SOAP_BASE64 = new QName(Constants.URI_CURRENT_SOAP_ENC, "base64");
+    public static final QName XSD_STRING = new QName(NS_URI_CURRENT_SCHEMA_XSD, "string");
+    public static final QName XSD_BOOLEAN = new QName(NS_URI_CURRENT_SCHEMA_XSD, "boolean");
+    public static final QName XSD_DOUBLE = new QName(NS_URI_CURRENT_SCHEMA_XSD, "double");
+    public static final QName XSD_FLOAT = new QName(NS_URI_CURRENT_SCHEMA_XSD, "float");
+    public static final QName XSD_INT = new QName(NS_URI_CURRENT_SCHEMA_XSD, "int");
+    public static final QName XSD_INTEGER = new QName(NS_URI_CURRENT_SCHEMA_XSD, "integer");
+    public static final QName XSD_LONG = new QName(NS_URI_CURRENT_SCHEMA_XSD, "long");
+    public static final QName XSD_SHORT = new QName(NS_URI_CURRENT_SCHEMA_XSD, "short");
+    public static final QName XSD_BYTE = new QName(NS_URI_CURRENT_SCHEMA_XSD, "byte");
+    public static final QName XSD_DECIMAL = new QName(NS_URI_CURRENT_SCHEMA_XSD, "decimal");
+    public static final QName XSD_BASE64 = new QName(NS_URI_CURRENT_SCHEMA_XSD, "base64Binary");
+    public static final QName XSD_HEXBIN = new QName(NS_URI_CURRENT_SCHEMA_XSD, "hexBinary");
+    public static final QName XSD_ANYTYPE = new QName(NS_URI_CURRENT_SCHEMA_XSD, "anyType");
+    public static final QName XSD_QNAME = new QName(NS_URI_CURRENT_SCHEMA_XSD, "QName");
+    public static final QName XSD_DATE = new QName(NS_URI_CURRENT_SCHEMA_XSD, "dateTime");
+    public static final QName XSD_DATE1 = new QName(NS_URI_CURRENT_SCHEMA_XSD, "date");
+    public static final QName XSD_DATE2= new QName(NS_URI_1999_SCHEMA_XSD,    "timeInstant");
+    public static final QName XSD_DATE3= new QName(NS_URI_2000_SCHEMA_XSD,    "timeInstant");
+    
+    public static final QName SOAP_BASE64 = new QName(NS_URI_CURRENT_SOAP_ENC, "base64");
+    public static final QName SOAP_STRING = new QName(NS_URI_CURRENT_SOAP_ENC, "string");
+    public static final QName SOAP_BOOLEAN = new QName(NS_URI_CURRENT_SOAP_ENC, "boolean");
+    public static final QName SOAP_DOUBLE = new QName(NS_URI_CURRENT_SOAP_ENC, "double");
+    public static final QName SOAP_FLOAT = new QName(NS_URI_CURRENT_SOAP_ENC, "float");
+    public static final QName SOAP_INT = new QName(NS_URI_CURRENT_SOAP_ENC, "int");
+    public static final QName SOAP_LONG = new QName(NS_URI_CURRENT_SOAP_ENC, "long");
+    public static final QName SOAP_SHORT = new QName(NS_URI_CURRENT_SOAP_ENC, "short");
+    public static final QName SOAP_BYTE = new QName(NS_URI_CURRENT_SOAP_ENC, "byte");
+    public static final QName SOAP_INTEGER = new QName(NS_URI_CURRENT_SOAP_ENC, "integer");
+    public static final QName SOAP_DECIMAL = new QName(NS_URI_CURRENT_SOAP_ENC, "decimal");
+    public static final QName SOAP_ARRAY = new QName(NS_URI_CURRENT_SOAP_ENC, "Array");
 
-    public static final QName SOAP_STRING = new QName(Constants.URI_CURRENT_SOAP_ENC, "string");
-    public static final QName SOAP_BOOLEAN = new QName(Constants.URI_CURRENT_SOAP_ENC, "boolean");
-    public static final QName SOAP_DOUBLE = new QName(Constants.URI_CURRENT_SOAP_ENC, "double");
-    public static final QName SOAP_FLOAT = new QName(Constants.URI_CURRENT_SOAP_ENC, "float");
-    public static final QName SOAP_INT = new QName(Constants.URI_CURRENT_SOAP_ENC, "int");
-    public static final QName SOAP_LONG = new QName(Constants.URI_CURRENT_SOAP_ENC, "long");
-    public static final QName SOAP_SHORT = new QName(Constants.URI_CURRENT_SOAP_ENC, "short");
-    public static final QName SOAP_BYTE = new QName(Constants.URI_CURRENT_SOAP_ENC, "byte");
-    public static final QName SOAP_INTEGER = new QName(Constants.URI_CURRENT_SOAP_ENC, "integer");
-    public static final QName SOAP_DECIMAL = new QName(Constants.URI_CURRENT_SOAP_ENC, "decimal");
-    public static final QName SOAP_ARRAY = new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
-
-    public static final QName SOAP_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
-    public static final QName SOAP_ELEMENT = new QName("http://xml.apache.org/xml-soap", "Element");
-    public static final QName SOAP_VECTOR = new QName("http://xml.apache.org/xml-soap", "Vector");
-
-    public static       QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
-    public static       QName XSD_DATE1 = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "date");
-    public static       QName XSD_DATE2= new QName(Constants.URI_1999_SCHEMA_XSD,    "timeInstant");
-    public static       QName XSD_DATE3= new QName(Constants.URI_2000_SCHEMA_XSD,    "timeInstant");
+    public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");
+    public static final QName SOAP_ELEMENT = new QName(NS_URI_XMLSOAP, "Element");
+    public static final QName SOAP_VECTOR = new QName(NS_URI_XMLSOAP, "Vector");
+    
+    
+    public static final QName QNAME_LITERAL_ITEM = new QName(NS_URI_LITERAL_ENC,"item");
     
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
-    public static final String URI_DEBUG = "http://xml.apache.org/axis/debug";
 
     // Where to put those pesky JWS classes
     public static final String MC_JWS_CLASSDIR = "jws.classDir" ;

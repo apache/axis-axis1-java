@@ -185,7 +185,7 @@ public class MessageContext {
     private int     operationStyle = ServiceDesc.STYLE_RPC;
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
-    private String  encodingStyle  = Constants.URI_CURRENT_SOAP_ENC;
+    private String  encodingStyle  = Constants.NS_URI_CURRENT_SOAP_ENC;
 
     /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
     private SOAPConstants soapConstants = new SOAP11Constants();
@@ -364,7 +364,7 @@ public class MessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return Constants.URI_CURRENT_SOAP_ENC.equals(encodingStyle);
+        return Constants.NS_URI_CURRENT_SOAP_ENC.equals(encodingStyle);
     }
 
     /**
@@ -545,7 +545,7 @@ public class MessageContext {
             setTypeMappingRegistry(tmr);
             setOperationStyle(service.getStyle());
             setEncodingStyle((service.getStyle() == ServiceDesc.STYLE_RPC) ?
-                                        Constants.URI_CURRENT_SOAP_ENC : "");
+                                        Constants.NS_URI_CURRENT_SOAP_ENC : "");
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.

@@ -70,12 +70,7 @@ public class BasicClientConfig extends SimpleProvider {
      * Constructor - deploy client-side basic transports.
      */
     public BasicClientConfig() {
-        Handler h = new LocalSender();
-        SimpleTargetedChain transport = new SimpleTargetedChain(h);
-        deployTransport("local", transport);
-
-        h = new HTTPSender();
-        transport = new SimpleTargetedChain(h);
-        deployTransport("http", transport);
+        deployTransport("local", new SimpleTargetedChain(new LocalSender()));
+        deployTransport("http", new SimpleTargetedChain(new HTTPSender()));
     }
 }

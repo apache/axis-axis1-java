@@ -30,8 +30,8 @@ public class TestBeanDeser extends TestCase {
     private AxisServer server = new AxisServer();
 
     public TestBeanDeser(String name) {
-        this(name, Constants.URI_CURRENT_SCHEMA_XSI,
-                Constants.URI_CURRENT_SCHEMA_XSD);
+        this(name, Constants.NS_URI_CURRENT_SCHEMA_XSI,
+                Constants.NS_URI_CURRENT_SCHEMA_XSD);
     }
 
     public TestBeanDeser(String name, String NS_XSI, String NS_XSD) {
@@ -54,8 +54,8 @@ public class TestBeanDeser extends TestCase {
 
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
-        tm.setSupportedEncodings(new String[]{Constants.URI_CURRENT_SOAP_ENC});
-        tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[]{Constants.NS_URI_CURRENT_SOAP_ENC});
+        tmr.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
         tm.register(test.encoding.RETURN.class,
                 new QName("urn:test.encoding", "RETURN"),
                 new org.apache.axis.encoding.ser.BeanSerializerFactory(

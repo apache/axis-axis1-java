@@ -64,19 +64,19 @@ import javax.xml.rpc.namespace.QName;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SOAP11Constants implements SOAPConstants {
-    private static QName headerQName = new QName(Constants.URI_SOAP_ENV,
-                                                       Constants.ELEM_HEADER);
-    private static QName bodyQName = new QName(Constants.URI_SOAP_ENV,
-                                                       Constants.ELEM_BODY);
-    private static QName faultQName = new QName(Constants.URI_SOAP_ENV,
-                                                       Constants.ELEM_FAULT);
+    private static QName headerQName = new QName(Constants.NS_URI_SOAP_ENV,
+                                                 Constants.ELEM_HEADER);
+    private static QName bodyQName = new QName(Constants.NS_URI_SOAP_ENV,
+                                               Constants.ELEM_BODY);
+    private static QName faultQName = new QName(Constants.NS_URI_SOAP_ENV,
+                                                Constants.ELEM_FAULT);
 
     public String getEnvelopeURI() {
-        return Constants.URI_SOAP_ENV;
+        return Constants.NS_URI_SOAP_ENV;
     }
 
     public String getEncodingURI() {
-        return Constants.URI_SOAP_ENC;
+        return Constants.NS_URI_SOAP_ENC;
     }
 
     public QName getHeaderQName() {

@@ -62,7 +62,7 @@ import java.io.PrintWriter;
 import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.wsdl.gen.Generator;
 
@@ -290,13 +290,13 @@ public abstract class JavaWriter implements Generator {
         pw.println();
         if ("deploy".equals(deploymentOpName)) {
             pw.println("<deployment");
-            pw.println("    xmlns=\"" + Constants.URI_WSDD +"\"");
-            pw.println("    xmlns:" + Constants.NSPREFIX_WSDD_JAVA + "=\"" +
-                       Constants.URI_WSDD_JAVA +"\">");
+            pw.println("    xmlns=\"" + WSDDConstants.NS_URI_WSDD +"\"");
+            pw.println("    xmlns:" + WSDDConstants.NS_PREFIX_WSDD_JAVA + "=\"" +
+                       WSDDConstants.NS_URI_WSDD_JAVA +"\">");
         }
         else {
             pw.println("<undeployment");
-            pw.println("    xmlns=\"" + Constants.URI_WSDD +"\">");
+            pw.println("    xmlns=\"" + WSDDConstants.NS_URI_WSDD +"\">");
         }
     } // initializeDeploymentDoc
 

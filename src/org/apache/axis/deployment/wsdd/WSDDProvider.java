@@ -92,10 +92,10 @@ public abstract class WSDDProvider
     private static Hashtable providers = new Hashtable();
 
     static {
-        providers.put(WSDDConstants.JAVARPC_PROVIDER, new WSDDJavaRPCProvider());
-        providers.put(WSDDConstants.JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
-        providers.put(WSDDConstants.HANDLER_PROVIDER, new WSDDHandlerProvider());
-        providers.put(WSDDConstants.EJB_PROVIDER, new WSDDJavaEJBProvider());
+        providers.put(WSDDConstants.QNAME_JAVARPC_PROVIDER, new WSDDJavaRPCProvider());
+        providers.put(WSDDConstants.QNAME_JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
+        providers.put(WSDDConstants.QNAME_HANDLER_PROVIDER, new WSDDHandlerProvider());
+        providers.put(WSDDConstants.QNAME_EJB_PROVIDER, new WSDDJavaEJBProvider());
     }
 
     /**

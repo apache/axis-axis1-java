@@ -87,6 +87,6 @@ public class WSDDFaultFlow
     
     protected QName getElementName()
     {
-        return WSDDConstants.FAULTFLOW_QNAME;
+        return WSDDConstants.QNAME_FAULTFLOW;
     }
 }

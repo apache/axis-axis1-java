@@ -106,10 +106,10 @@ public class EnvelopeBuilder extends SOAPHandler
             throw new SAXException(
                     JavaUtils.getMessage("badTag00", localName));
 
-        if (namespace.equals(Constants.URI_SOAP_ENV)) {
+        if (namespace.equals(Constants.NS_URI_SOAP_ENV)) {
             // SOAP 1.1
             soapConstants = SOAPConstants.SOAP11_CONSTANTS;
-        } else if (namespace.equals(Constants.URI_SOAP12_ENV)) {
+        } else if (namespace.equals(Constants.NS_URI_SOAP12_ENV)) {
             // SOAP 1.2
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         } else {

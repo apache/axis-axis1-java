@@ -89,7 +89,7 @@ public class RPCElement extends SOAPBodyElement
 
 //        recorder = new SAX2EventRecorder();
 
-        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
 
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
@@ -122,7 +122,7 @@ public class RPCElement extends SOAPBodyElement
         this.setNamespaceURI(namespace);
         this.name = methodName;
 
-        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
 
         for (int i = 0; args != null && i < args.length; i++) {
             if (args[i] instanceof RPCParam) {
@@ -137,7 +137,7 @@ public class RPCElement extends SOAPBodyElement
 
     public RPCElement(String methodName)
     {
-        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
 
         this.name = methodName;
     }

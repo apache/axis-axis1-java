@@ -94,7 +94,7 @@ public class MessageElement implements SOAPElement
         LogFactory.getLog(MessageElement.class.getName());
 
     private static final Mapping encMapping =
-            new Mapping(Constants.URI_CURRENT_SOAP_ENC,
+            new Mapping(Constants.NS_URI_CURRENT_SOAP_ENC,
                         "SOAP-ENC");
 
     protected String    name ;
@@ -195,7 +195,7 @@ public class MessageElement implements SOAPElement
                                                       localPart, 
                                                       attributes);
             
-            String rootVal = attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT);
+            String rootVal = attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
                 _isRoot = rootVal.equals("1");
 
@@ -212,13 +212,13 @@ public class MessageElement implements SOAPElement
             href = attributes.getValue(Constants.ATTR_HREF);
 
             // If there's an arrayType attribute, we can pretty well guess that we're an Array???
-            if (attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+            if (attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
                 typeQName = Constants.SOAP_ARRAY;
 
             // Set the encoding style to the attribute value.  If null,
             // we just automatically use our parent's (see getEncodingStyle)
             encodingStyle =
-                    attributes.getValue(Constants.URI_CURRENT_SOAP_ENC,
+                    attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC,
                                         Constants.ATTR_ENCODING_STYLE);
         }
     }
@@ -326,7 +326,7 @@ public class MessageElement implements SOAPElement
 
         // Wherever we set the encoding style, map the SOAP-ENC prefix
         // just for fun.
-        if (encodingStyle.equals(Constants.URI_CURRENT_SOAP_ENC)) {
+        if (encodingStyle.equals(Constants.NS_URI_CURRENT_SOAP_ENC)) {
             addMapping(encMapping);
         }
     }

@@ -98,7 +98,7 @@ public class WSDDHandler
 
     protected QName getElementName()
     {
-        return WSDDConstants.HANDLER_QNAME;
+        return QNAME_HANDLER;
     }
 
     public void writeToContext(SerializationContext context)
@@ -107,14 +107,13 @@ public class WSDDHandler
         AttributesImpl attrs = new AttributesImpl();
         QName name = getQName();
         if (name != null) {
-            attrs.addAttribute("", "name", "name",
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME,
                                "CDATA", context.qName2String(name));
         }
 
-        attrs.addAttribute("", "type", "type",
+        attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
                            "CDATA", context.qName2String(getType()));
-        context.startElement(new QName(WSDDConstants.WSDD_NS, "handler"),
-                             attrs);
+        context.startElement(WSDDConstants.QNAME_HANDLER, attrs);
         writeParamsToContext(context);
         context.endElement();
     }

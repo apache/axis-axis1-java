@@ -266,12 +266,12 @@ public class JWSProcessor extends BasicHandler
             SOAPService rpc = new SOAPService(new RPCProvider());
             msgContext.setService( rpc );
 
-            rpc.setOption( "className", clsName );
+            rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
 
             /** For now, allow all methods - we probably want to have a way to
             * configure this in the future.
             */
-            rpc.setOption( "allowedMethods", "*");
+            rpc.setOption(RPCProvider.OPTION_ALLOWEDMETHODS, "*");
 
             // Set up service description
             ServiceDesc sd = rpc.getServiceDescription();

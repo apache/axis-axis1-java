@@ -89,26 +89,26 @@ public class WSDDBeanMapping
     {
         super(e);
         
-        serializer = "org.apache.axis.encoding.ser.BeanSerializerFactory";
-        deserializer = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
+        serializer = BEAN_SERIALIZER_FACTORY;
+        deserializer = BEAN_DESERIALIZER_FACTORY;
         encodingStyle = null;
     }
 
     protected QName getElementName() {
-        return WSDDConstants.BEANMAPPING_QNAME;
+        return QNAME_BEANMAPPING;
     }
 
     public void writeToContext(SerializationContext context) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
 
         String typeStr = context.qName2String(typeQName);
-        attrs.addAttribute("", "languageSpecificType",
-                           "languageSpecificType", "CDATA", typeStr);
+        attrs.addAttribute("", ATTR_LANG_SPEC_TYPE, 
+                           ATTR_LANG_SPEC_TYPE, "CDATA", typeStr);
 
         String qnameStr = context.qName2String(qname);
-        attrs.addAttribute("", "qname", "qname", "CDATA", qnameStr);
+        attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, "CDATA", qnameStr);
 
-        context.startElement(WSDDConstants.BEANMAPPING_QNAME, attrs);
+        context.startElement(WSDDConstants.QNAME_BEANMAPPING, attrs);
         context.endElement();
     }
 }

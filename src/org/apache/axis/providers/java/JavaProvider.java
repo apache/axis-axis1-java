@@ -73,6 +73,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
+import org.apache.axis.deployment.wsdd.WSDDService;
 
 import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.holders.IntHolder;
@@ -93,12 +94,11 @@ public abstract class JavaProvider extends BasicProvider
     protected static Log log =
         LogFactory.getLog(JavaProvider.class.getName());
 
-    // from the original stubbed-out JavaProvider...
-    // not quite sure what these are for but it is to do with WSDD... -- RobJ
     public static final String OPTION_CLASSNAME = "className";
+    public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
-    public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
+
 
     public static final int SCOPE_REQUEST = 0;
     public static final int SCOPE_SESSION = 1;
@@ -378,7 +378,7 @@ public abstract class JavaProvider extends BasicProvider
             emitter.setLocationUrl(url);
             emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
-                                   getTypeMapping(Constants.URI_CURRENT_SOAP_ENC));
+                                   getTypeMapping(Constants.NS_URI_CURRENT_SOAP_ENC));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                           getDefaultTypeMapping());
             Document  doc = emitter.emit(Emitter.MODE_ALL);

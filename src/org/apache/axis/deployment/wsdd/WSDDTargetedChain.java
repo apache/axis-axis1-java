@@ -95,17 +95,17 @@ public abstract class WSDDTargetedChain
         throws WSDDException
     {
         super(e);
-        Element reqEl = getChildElement(e, "requestFlow");
+        Element reqEl = getChildElement(e, ELEM_WSDD_REQFLOW);
         if (reqEl != null) {
             requestFlow = new WSDDRequestFlow(reqEl);
         }
-        Element respEl = getChildElement(e, "responseFlow");
+        Element respEl = getChildElement(e, ELEM_WSDD_RESPFLOW);
         if (respEl != null) {
             responseFlow = new WSDDResponseFlow(respEl);
         }
         
         // !!! pivot? use polymorphic method?
-        String pivotStr = e.getAttribute("pivot");
+        String pivotStr = e.getAttribute(ATTR_PIVOT);
         if (pivotStr != null && !pivotStr.equals(""))
             pivotQName = XMLUtils.getQNameFromString(pivotStr, e);
         
@@ -196,7 +196,7 @@ public abstract class WSDDTargetedChain
         
         Handler pivot = null;
         if (pivotQName != null) {
-            if (WSDDConstants.WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
+            if (NS_URI_WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
                 try {
                     pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
                 } catch (InstantiationException e) {

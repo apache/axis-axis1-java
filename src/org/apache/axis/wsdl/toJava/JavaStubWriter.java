@@ -210,7 +210,7 @@ public class JavaStubWriter extends JavaWriter {
             if (bEntry.hasLiteral()) {
                 pw.println("                call.setEncodingStyle(null);");
             } else {
-                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP_ENC);");
+                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.NS_URI_SOAP_ENC);");
             }
             
             pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");

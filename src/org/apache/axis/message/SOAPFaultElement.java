@@ -83,7 +83,7 @@ public class SOAPFaultElement extends SOAPBodyElement implements javax.xml.soap.
     public SOAPFaultElement(AxisFault fault)
     {
         this.fault = fault;
-        namespaceURI = Constants.URI_SOAP_ENV;
+        namespaceURI = Constants.NS_URI_SOAP_ENV;
         name = Constants.ELEM_FAULT;
     }
     
