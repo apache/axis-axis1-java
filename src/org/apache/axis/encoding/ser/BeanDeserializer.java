@@ -55,36 +55,22 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import org.apache.axis.message.SOAPHandler;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
-import org.apache.axis.description.TypeDesc;
-
-import java.beans.IntrospectionException;
-
-import java.lang.reflect.Method;
-import java.beans.IntrospectionException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.ObjectStreamField;
 import java.io.Serializable;
-import java.util.Vector;
 import java.util.HashMap;
 
 /**
@@ -121,7 +107,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         this.javaType = javaType;
         this.typeDesc = typeDesc;
         // Get a list of the bean properties
-        BeanPropertyDescriptor[] pd = BeanSerializer.getPd(javaType);
+        BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType);
         // loop through properties and grab the names for later
         for (int i = 0; i < pd.length; i++) {
             BeanPropertyDescriptor descriptor = pd[i];
@@ -288,7 +274,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             String attrName = attributes.getLocalName(i);
 
             // look for the attribute property
-            BeanPropertyDescriptor bpd = 
+            BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
             if (bpd != null) {
                 if (bpd.getWriteMethod() == null ) continue ;

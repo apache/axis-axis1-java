@@ -55,36 +55,28 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SimpleType;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.wsdl.fromJava.ClassRep;
+import org.apache.axis.wsdl.fromJava.FieldRep;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.util.Vector;
 import java.lang.reflect.Method;
-import java.lang.reflect.Field;
-
-import org.apache.axis.Constants;
-import org.apache.axis.AxisFault;
-import org.apache.axis.description.TypeDesc;
-import org.apache.axis.description.FieldDesc;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.wsdl.fromJava.ClassRep;
-import org.apache.axis.wsdl.fromJava.FieldRep;
-import org.apache.axis.wsdl.toJava.Utils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.SimpleType;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+import java.util.Vector;
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
  *
@@ -104,7 +96,7 @@ public class SimpleSerializer implements Serializer {
         
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
-            propertyDescriptor = BeanSerializer.getPd(javaType);
+            propertyDescriptor = BeanUtils.getPd(javaType);
             typeDesc = TypeDesc.getTypeDescForClass(javaType);
         }
     }
@@ -115,7 +107,7 @@ public class SimpleSerializer implements Serializer {
         
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
-            propertyDescriptor = BeanSerializer.getPd(javaType);
+            propertyDescriptor = BeanUtils.getPd(javaType);
         }
     }
     /**
