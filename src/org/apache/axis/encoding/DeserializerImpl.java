@@ -230,6 +230,9 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
                                                             "" + value, "" + target));
                     }
                 }
+                // Don't need targets any more, so clear them
+                targets.clear();
+                targets = null;
             }
         }
     }

@@ -805,15 +805,15 @@ public class SerializationContextImpl implements SerializationContext
      * @return Serializer
      */
     public final Serializer getSerializerForJavaType(Class javaType) {
-        SerializerFactory dserF = null;
-        Serializer dser = null;
-        try {
-            dserF = (SerializerFactory) getTypeMapping().getSerializer(javaType);
+        SerializerFactory serF = null;
+        Serializer ser = null;
+        try { 
+            serF = (SerializerFactory) getTypeMapping().getSerializer(javaType);
         } catch (JAXRPCException e) {
         }
-        if (dserF != null) {
+        if (serF != null) {
             try {
-                dser = (Serializer) dserF.getSerializerAs(Constants.AXIS_SAX);
+                ser = (Serializer) serF.getSerializerAs(Constants.AXIS_SAX);
             } catch (JAXRPCException e) {}
         }
         return null;
