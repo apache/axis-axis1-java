@@ -133,7 +133,6 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
-            pw.println("    private boolean firstCall = true;");
         }
         pw.println();
 
@@ -199,8 +198,7 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            // The type mapping information is actually registered in");
             pw.println("            // the TypeMappingRegistry of the service, which");
             pw.println("            // is the reason why registration is only needed for the first call.");
-            pw.println("            if (firstCall) {");
-            pw.println("                firstCall = false;");
+            pw.println("            if (firstCall()) {");
             pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");
             pw.println("                    Class cls = (Class) cachedSerClasses.get(i);");
             pw.println("                    javax.xml.rpc.namespace.QName qName =");

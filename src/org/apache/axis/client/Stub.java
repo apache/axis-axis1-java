@@ -97,6 +97,22 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected URL        cachedEndpoint     = null;
     protected Integer    cachedTimeout      = null;
 
+    // Flag to determine whether this is the first call to register type mappings.
+    // firstCallLock is used to access this in a thread-safe manner.
+    private boolean firstCall     = true;
+    private Object  firstCallLock = new Object();
+
+    /**
+     * Is this the first time the type mappings are being registered?
+     */
+    protected boolean firstCall() {
+        synchronized (firstCallLock) {
+            boolean ret = firstCall;
+            firstCall = false;
+            return ret;
+        }
+    } // firstCall
+
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
      * specifies a standard set of properties that may be passed 
