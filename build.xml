@@ -289,6 +289,43 @@ Copyright:
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
   <target name="samples" depends="compile">
+
+  <!-- The interop echo sample depends on the wsdl2java task -->    
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <classpath>
+        <pathelement location="${build.lib}/${name}.jar"/>
+        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+        <path refid="classpath"/>
+      </classpath>
+      <include name="test/wsdl/*.java" />
+    </javac>
+
+    <taskdef name="wsdl2java"
+           classname="test.wsdl.Wsdl2javaAntTask">
+             <classpath refid="test-classpath" />
+    </taskdef>
+
+    <!-- Create java files for the echo sample -->
+    <wsdl2java url="samples/echo/InteropTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="http://soapinterop.org/" package="samples.echo"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="samples.echo"/>
+    </wsdl2java>
+    
+    <!-- Compile the echo sample generated java files -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="samples/echo/**.java" />
+    </javac>
+
+    <!-- Compile the sample code -->
     <javac srcdir="." destdir="${build.dest}"
            debug="${debug}">
       <classpath>
