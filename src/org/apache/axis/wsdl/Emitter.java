@@ -317,8 +317,6 @@ public class Emitter {
                 new FileWriter(nameValue + ".java"));
         if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
-        if (bMessageContext)
-            interfacePW.println("import org.apache.axis.MessageContext;");
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println("{");
 
@@ -784,7 +782,6 @@ public class Emitter {
             if (bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelName + ".java");
             if (bMessageContext) {
-                skelPW.println("import org.apache.axis.MessageContext;");
                 implType = portTypeName + "Axis impl";
             }
             skelPW.println("public class " + skelName);
