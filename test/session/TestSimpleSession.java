@@ -12,6 +12,7 @@ import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -89,10 +90,11 @@ public class TestSimpleSession extends TestCase {
         service.setOption("className", "test.session.TestSimpleSession");
         service.setOption("allowedMethods", "counter");
 
-        EngineConfiguration config =
-            (new DefaultEngineConfigurationFactory()).
-            getServerEngineConfigWithService(new QName(null, "sessionTest"),
-                                             service);
+        EngineConfiguration defaultConfig =
+            (new DefaultEngineConfigurationFactory()).getServerEngineConfig();
+        SimpleProvider config = new SimpleProvider(defaultConfig);
+        config.deployService("sessionTest", service);
+
         AxisServer server = new AxisServer(config);
 
         // Set up the client side (using the WSDD above)

@@ -83,27 +83,4 @@ public interface EngineConfigurationFactory {
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig();
-   
-    /**
-     * Get a default client engine configuration plus the specified
-     * transport Handler. This method is particularly useful for testcases.
-     *
-     * @param name a QName that identifies the transport
-     * @param transport a Handler for the transport
-     * @return a client EngineConfiguration
-     */
-    public EngineConfiguration getClientEngineConfigWithTransport(QName qname,
-                                                                  Handler transport);
-   
-
-    /**
-     * Get a default server engine configuration plus the specified
-     * service Handler. This method is particularly useful for testcases.
-     *
-     * @param name a QName that identifies the service
-     * @param service a Handler for the service
-     * @return a server EngineConfiguration
-     */
-    public EngineConfiguration getServerEngineConfigWithService(QName qname,
-                                                                Handler service);
 }
