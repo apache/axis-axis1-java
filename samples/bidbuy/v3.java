@@ -7,7 +7,7 @@ import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 import java.math.BigDecimal;
 import java.util.Date;

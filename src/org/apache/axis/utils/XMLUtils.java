@@ -75,7 +75,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Stack;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 public class XMLUtils {
     private static DocumentBuilderFactory dbf = initDOMFactory();

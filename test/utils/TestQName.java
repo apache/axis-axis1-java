@@ -3,7 +3,7 @@ package test.utils;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 public class TestQName extends TestCase
 {

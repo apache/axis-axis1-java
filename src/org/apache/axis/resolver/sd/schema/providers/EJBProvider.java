@@ -1,6 +1,6 @@
 package org.apache.axis.resolver.sd.schema.providers;
 
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.resolver.ResolverContext;
 import org.apache.axis.resolver.ejb.EJBResolver;

@@ -1,6 +1,6 @@
 package org.apache.axis.encoding;
 
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.xml.sax.Attributes;
 

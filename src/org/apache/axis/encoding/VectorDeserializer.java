@@ -58,7 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.*;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

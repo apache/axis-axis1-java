@@ -64,7 +64,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;

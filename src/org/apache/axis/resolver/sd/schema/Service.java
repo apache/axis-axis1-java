@@ -1,7 +1,7 @@
 package org.apache.axis.resolver.sd.schema;
 
 import java.util.HashMap;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
 

@@ -59,7 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 

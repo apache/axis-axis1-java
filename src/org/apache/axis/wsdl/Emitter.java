@@ -1030,7 +1030,7 @@ public class Emitter {
             System.out.println("Generating client-side stub: " + stubFileName);
 
         writeFileHeader(stubFileName, stubPW);
-        stubPW.println("public class " + stubName + " extends javax.rpc.Stub implements " + portTypeName + " {");
+        stubPW.println("public class " + stubName + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
         stubPW.println("    private org.apache.axis.client.Service service = null ;");
         stubPW.println("    private org.apache.axis.client.Call call = null ;");
         stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
@@ -1065,17 +1065,17 @@ public class Emitter {
         stubPW.println("        properties.put(name, value);");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From javax.rpc.Stub");
+        stubPW.println("    // From javax.xml.rpc.Stub");
         stubPW.println("    public Object _getProperty(String name) {");
         stubPW.println("        return properties.get(name);");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From javax.rpc.Stub");
+        stubPW.println("    // From javax.xml.rpc.Stub");
         stubPW.println("    public void _setTargetEndpoint(java.net.URL address) {");
         stubPW.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From javax.rpc.Stub");
+        stubPW.println("    // From javax.xml.rpc.Stub");
         stubPW.println("    public java.net.URL _getTargetEndpoint() {");
         stubPW.println("        try {");
         stubPW.println("            return new java.net.URL((String) call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL));");
@@ -1085,7 +1085,7 @@ public class Emitter {
         stubPW.println("        }");
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    // From javax.rpc.Stub");
+        stubPW.println("    // From javax.xml.rpc.Stub");
         stubPW.println("    public synchronized void setMaintainSession(boolean session) {");
         stubPW.println("        call.setMaintainSession(session);");
         stubPW.println("    }");
@@ -1212,14 +1212,14 @@ public class Emitter {
             return;
         }
         if ( firstSer ) {
-            pw.println("            javax.rpc.namespace.QName qn;" );
+            pw.println("            javax.xml.rpc.namespace.QName qn;" );
             pw.println("            Class cls;" );
         }
         firstSer = false ;
 
         QName qname = type.getQName();
-        //pw.println("            qn = new javax.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
-        pw.println("            qn = new javax.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
+        //pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
         pw.println("            cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
@@ -1269,7 +1269,7 @@ public class Emitter {
                 // XXX yikes, something is wrong
             }
             QName qn = type.getQName();
-            String typeString = "new org.apache.axis.encoding.XMLType( new javax.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+            String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\"))";
             if (p.mode == Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
@@ -1284,7 +1284,7 @@ public class Emitter {
         // set output type
         if (!"void".equals(parms.returnType)) {
             QName qn = emitFactory.getType(parms.returnType).getQName();
-            String outputType = "new org.apache.axis.encoding.XMLType(new javax.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+            String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
               qn.getLocalPart() + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
 
@@ -2109,16 +2109,16 @@ public class Emitter {
      */
     protected String holder(String typeValue) {
         if (typeValue.equals("java.lang.String")) {
-            return "javax.rpc.holders.StringHolder";
+            return "javax.xml.rpc.holders.StringHolder";
         }
         else if (typeValue.equals("java.math.BigDecimal")) {
-            return "javax.rpc.holders.BigDecimalHolder";
+            return "javax.xml.rpc.holders.BigDecimalHolder";
         }
         else if (typeValue.equals("java.util.Date")) {
-            return "javax.rpc.holders.DateHolder";
+            return "javax.xml.rpc.holders.DateHolder";
         }
-        else if (typeValue.equals("javax.rpc.namespace.QName")) {
-            return "javax.rpc.holders.QNameHolder";
+        else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
+            return "javax.xml.rpc.holders.QNameHolder";
         }
         else if (typeValue.equals("int")
                 || typeValue.equals("long")
@@ -2127,7 +2127,7 @@ public class Emitter {
                 || typeValue.equals("double")
                 || typeValue.equals("boolean")
                 || typeValue.equals("byte"))
-            return "javax.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
+            return "javax.xml.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
         else
             return typeValue + "Holder";
     } // holder
