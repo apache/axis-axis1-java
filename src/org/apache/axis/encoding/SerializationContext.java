@@ -502,16 +502,18 @@ public class SerializationContext
         if (attrMap.getLength() > 0) {
             attributes = new AttributesImpl();
             for (int i = 0; i < attrMap.getLength(); i++) {
-              Attr attr = (Attr)attrMap.item(i);
+                Attr attr = (Attr)attrMap.item(i);
+                if (attr.getNamespaceURI().equals(Constants.NS_URI_XMLNS))
+                    continue;
 
-              attributes.addAttribute(attr.getNamespaceURI(),
-                                      attr.getName(),
-                                      attr.getName(),
-                                      "CDATA", attr.getValue());
+                attributes.addAttribute(attr.getNamespaceURI(),
+                                        attr.getName(),
+                                        attr.getName(),
+                                        "CDATA", attr.getValue());
             }
         }
 
-        QName qName = new QName(el.getNamespaceURI(), el.getTagName());
+        QName qName = new QName(el.getNamespaceURI(), el.getLocalName());
 
         startElement(qName, attributes);
 
