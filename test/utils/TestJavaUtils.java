@@ -112,7 +112,7 @@ public class TestJavaUtils extends TestCase
         assertTrue(JavaUtils.isConvertable(new Long(1),Long.class));
         assertTrue(JavaUtils.isConvertable(new Long(1),long.class));
         assertTrue(JavaUtils.isConvertable(new Long(1),Object.class));
-        assertFalse(JavaUtils.isConvertable(new Long(1),Float.class));
+        assertTrue(!JavaUtils.isConvertable(new Long(1),Float.class));
         Class clazz = long.class;
         assertTrue(JavaUtils.isConvertable(clazz,Long.class));
         assertTrue(JavaUtils.isConvertable(clazz,Object.class));
