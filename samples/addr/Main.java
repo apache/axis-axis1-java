@@ -114,8 +114,7 @@ public class Main {
 
         AddressBookService abs = new AddressBookService();
         opts.setDefaultURL( abs.getAddress() );
-
-        URL serviceURL = new URL(abs.getAddress());
+        URL serviceURL = new URL(opts.getURL());
 
         AddressBook ab1 = null;
         if (serviceURL == null) {

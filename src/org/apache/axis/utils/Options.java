@@ -68,24 +68,18 @@ import org.apache.log4j.Priority;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Options {
     static Category category =
             Category.getInstance(Options.class.getName());
 
-    String  args[] = null ;
+    String  args[]     = null ;
+    Vector  usedArgs   = null ;
     URL     defaultURL = null ;
 
     //////////////////////////////////////////////////////////////////////////
     // SOASS (Start of Axis Specific Stuff)
-
-    String  host ;      // -h    also -l (url)
-    String  port ;      // -p
-    String  servlet ;   // -s    also -f (file)
-    String  protocol ;
-
-    String  user ;      // -u
-    String  passwd ;    // -w
 
     // EOASS
     //////////////////////////////////////////////////////////////////////////
@@ -95,6 +89,7 @@ public class Options {
      */
     public Options(String _args[]) throws MalformedURLException {
         args = _args ;
+        usedArgs = null ;
         defaultURL = new URL("http://localhost:8080/axis/servlet/AxisServlet");
         
         ///////////////////////////////////////////////////////////////////////
@@ -150,14 +145,24 @@ public class Options {
         int  loop ;
         int  i ;
 
+        for ( loop = 0 ; usedArgs != null && loop < usedArgs.size() ; loop++ ) {
+            String arg = (String) usedArgs.elementAt(loop);
+            if ( arg.charAt(0) != '-' ) continue ;
+            for ( i = 0 ; i < arg.length() ; i++ )
+                if ( arg.charAt(i) == optChar ) value++ ;
+        }
+
         for ( loop = 0 ; loop < args.length ; loop++ ) {
             if ( args[loop] == null || args[loop].length() == 0 ) continue ;
             if ( args[loop].charAt(0) != '-' ) continue ;
-            while ( args[loop] != null && (i = args[loop].indexOf(optChar)) != -1 ) {
+            while (args[loop] != null && 
+                   (i = args[loop].indexOf(optChar)) != -1) {
                 args[loop] = args[loop].substring(0, i) + args[loop].substring(i+1) ;
                 if ( args[loop].length() == 1 ) 
                     args[loop] = null ;
                 value++ ;
+                if ( usedArgs == null ) usedArgs = new Vector();
+                usedArgs.add( "-" + optChar );
             }
         }
         return( value );
@@ -178,6 +183,13 @@ public class Options {
         String  value = null ;
         int     loop ;
         int     i ;
+
+        for ( loop = 0 ; usedArgs != null && loop < usedArgs.size() ; loop++ ) {
+            String arg = (String) usedArgs.elementAt(loop);
+            if ( arg.charAt(0) != '-' || arg.charAt(1) != optChar )
+                continue ;
+            value = arg.substring(2);
+        }
 
         for ( loop = 0 ; loop < args.length ; loop++ ) {
             if ( args[loop] == null || args[loop].length() == 0 ) continue ;
@@ -210,6 +222,10 @@ public class Options {
                 args[loop] = null ;
             // For now, keep looping to get that last on there
             // break ; 
+        }
+        if ( value != null ) {
+            if ( usedArgs == null ) usedArgs = new Vector();
+            usedArgs.add( "-" + optChar + value );
         }
         return( value );
     }
@@ -256,6 +272,11 @@ public class Options {
     // SOASS
     public String getURL() throws MalformedURLException {
         String  tmp ;
+        String  host = null ;      // -h    also -l (url)
+        String  port = null ;      // -p
+        String  servlet = null ;   // -s    also -f (file)
+        String  protocol = null ;
+
         URL     url = null ;
         
         // Just in case...
@@ -298,17 +319,21 @@ public class Options {
     }
     
     public int getPort() {
-        return Integer.parseInt(port);
+        try {
+            URL url = new URL(getURL());
+            return( url.getPort() );
+        }
+        catch( Exception exp ) {
+            return( -1 );
+        }
     }
 
     public String getUser() {
-        if ( user == null ) user = isValueSet( 'u' );
-        return( user );
+        return( isValueSet('u') );
     }
 
     public String getPassword() {
-        if ( passwd == null ) passwd = isValueSet( 'w' );
-        return( passwd );
+        return( isValueSet('w') );
     }
     // EOASS
     //////////////////////////////////////////////////////////////////////////
