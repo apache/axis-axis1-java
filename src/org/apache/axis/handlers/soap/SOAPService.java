@@ -497,7 +497,7 @@ public class SOAPService extends SimpleTargetedChain
             }
         } catch (SOAPFaultException e) {
             msgContext.setPastPivot(true);
-            throw new AxisFault(e.getMessage());
+            throw AxisFault.makeFault(e);
             
         } catch (RuntimeException e) {
             SOAPFault fault = new SOAPFault(new AxisFault("Server", "Server Error", null, null));
