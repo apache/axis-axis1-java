@@ -22,7 +22,10 @@ import javax.xml.rpc.namespace.QName;
 
 
 /** 
- * Test deserialization of SOAP responses
+ * Test the SimpleSession implementation (using SOAP headers for session
+ * maintenance)
+ *
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestSimpleSession extends TestCase {
     static final String clientWSDD =
