@@ -16,7 +16,11 @@
 package samples.client;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.apache.axis.encoding.ser.ElementSerializerFactory;
+import org.apache.axis.encoding.ser.ElementDeserializerFactory;
+import org.apache.axis.encoding.ser.ElementDeserializer;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BaseType;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
@@ -26,6 +30,7 @@ import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.w3c.dom.Element;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
@@ -108,11 +113,17 @@ public class DynamicInvoker {
         DynamicInvoker invoker = new DynamicInvoker(wsdlLocation);
         HashMap map = invoker.invokeMethod(operationName, portName, args);
 
-        // print result
-        System.out.println("Result:");
-        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-            String name = (String) it.next();
-            System.out.println(name + "=" + map.get(name));
+        for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String key = (String) entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof Element) {
+                System.out.println("====== " + key + " ======");
+                XMLUtils.ElementToStream((Element) value, System.out);
+                System.out.println("=========================");
+            } else {
+                System.out.println(key + "=" + value);
+            }
         }
         System.out.println("\nDone!");
     }
@@ -152,6 +163,8 @@ public class DynamicInvoker {
         Call call = dpf.createCall(QName.valueOf(portName),
                                    QName.valueOf(operationName));
         ((org.apache.axis.client.Call)call).setTimeout(new Integer(15*1000));
+        ((org.apache.axis.client.Call)call).setProperty(ElementDeserializer.DESERIALIZE_CURRENT_ELEMENT, Boolean.TRUE);
+        
         // Output types and names
         Vector outNames = new Vector();
 
@@ -194,6 +207,13 @@ public class DynamicInvoker {
 
         // set output type
         if (parameters.returnParam != null) {
+
+            if(!parameters.returnParam.getType().isBaseType()) {
+                ((org.apache.axis.client.Call)call).registerTypeMapping(org.w3c.dom.Element.class, parameters.returnParam.getType().getQName(),
+                            new ElementSerializerFactory(),
+                            new ElementDeserializerFactory());
+            }
+
             // Get the QName for the return Type
             QName returnType = org.apache.axis.wsdl.toJava.Utils.getXSIType(
                     parameters.returnParam);

@@ -937,7 +937,7 @@ public class Call implements javax.xml.rpc.Call {
 
         //if (parmAndRetReq) {
         ParameterDesc param = new ParameterDesc();
-        param.setQName( paramName );
+        param.setQName(new QName(paramName.getNamespaceURI(),Utils.getLastLocalPart(paramName.getLocalPart())));
         param.setTypeQName( xmlType );
         param.setJavaType( javaType );
         byte mode = ParameterDesc.IN;
@@ -1024,7 +1024,7 @@ public class Call implements javax.xml.rpc.Call {
             operation = new OperationDesc();
 
         ParameterDesc param = new ParameterDesc();
-        param.setQName(paramName);
+        param.setQName(new QName(paramName.getNamespaceURI(),Utils.getLastLocalPart(paramName.getLocalPart())));
         param.setTypeQName(xmlType);
         param.setJavaType(javaType);
         if (parameterMode == ParameterMode.IN) {
