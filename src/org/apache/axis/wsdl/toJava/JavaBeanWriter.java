@@ -274,6 +274,9 @@ public class JavaBeanWriter extends JavaClassWriter {
                     }
                 }
 
+                // Make sure the property name is not reserved.
+                variableName = JavaUtils.getUniqueValue(
+                        helper.reservedPropNames, variableName);
                 names.add(typeName);
                 names.add(variableName);
 
@@ -304,7 +307,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Add attribute names
         if (attributes != null) {
 
-            for (int i = 0; i < attributes.size(); i += 1) {
+            for (int i = 0; i < attributes.size(); i++) {
                 ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
                 String typeName = attr.getType().getName(); 
                 String variableName = attr.getName();
@@ -314,6 +317,10 @@ public class JavaBeanWriter extends JavaClassWriter {
 		if (attr.getOptional()) {
 		    typeName = Utils.getWrapperType(typeName);
 		}
+
+                // Make sure the property name is not reserved.
+                variableName = JavaUtils.getUniqueValue(
+                        helper.reservedPropNames, variableName);
 
                 names.add(typeName);
                 names.add(variableName);
@@ -621,8 +628,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 for (int j = 0; j < attributes.size(); j += 1) {
                     ContainedAttribute attr = (ContainedAttribute) attributes.get(j);
                     paramTypes.add(attr.getType().getName());
-                    paramNames.add(attr.getName());
-                            
+                    paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, attr.getName()));
                 }
             }
 
@@ -632,9 +639,9 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-
                     paramTypes.add(elem.getType().getName());
-                    paramNames.add(elem.getName());
+                    paramNames.add(JavaUtils.getUniqueValue(
+                            helper.reservedPropNames, elem.getName()));
                 }
             }
         }

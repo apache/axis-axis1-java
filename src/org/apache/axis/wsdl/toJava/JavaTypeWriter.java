@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.Collections;
 
 /**
  * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
@@ -149,18 +150,13 @@ public class JavaTypeWriter implements Generator {
      * 
      * @param emitter    
      * @param type       
-     * @param elements   
      * @param base       
-     * @param attributes 
      * @return 
      */
     protected JavaWriter getBeanWriter(Emitter emitter, TypeEntry type, TypeEntry base) {   // CONTAINED_ELEM_AND_ATTR
         Vector elements = type.getContainedElements();
         Vector attributes = type.getContainedAttributes();
         
-        JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements,
-                base, attributes);
-
         // If this complexType is referenced in a
         // fault context, emit a bean-like exception
         // class
@@ -168,12 +164,16 @@ public class JavaTypeWriter implements Generator {
                 JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
 
         if ((isComplexFault != null) && isComplexFault.booleanValue()) {
+
             return new JavaBeanFaultWriter(emitter, type, elements, base,
-                    attributes, helperWriter);
+                attributes,
+                getBeanHelperWriter(emitter, type, elements, base,
+                                    attributes, true));
         }
 
         return new JavaBeanWriter(emitter, type, elements, base, attributes,
-                helperWriter);
+                getBeanHelperWriter(emitter, type, elements, base,
+                                    attributes, false));
     }
 
     /**
@@ -186,11 +186,13 @@ public class JavaTypeWriter implements Generator {
      * @param attributes 
      * @return 
      */
-    protected JavaWriter getBeanHelperWriter(Emitter emitter, TypeEntry type,
-                                             Vector elements, TypeEntry base,
-                                             Vector attributes) {
-        return new JavaBeanHelperWriter(emitter, type, elements, base,
-                attributes);
+    protected JavaWriter getBeanHelperWriter(
+            Emitter emitter, TypeEntry type, Vector elements, TypeEntry base,
+            Vector attributes, boolean forException) {
+        return new JavaBeanHelperWriter(
+                emitter, type, elements, base, attributes,
+                forException  ?  JavaBeanFaultWriter.RESERVED_PROPERTY_NAMES
+                              :  Collections.EMPTY_SET);
     }
 
     /**

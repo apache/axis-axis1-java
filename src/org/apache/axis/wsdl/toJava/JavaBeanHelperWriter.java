@@ -17,6 +17,7 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.ContainedAttribute;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
@@ -26,6 +27,7 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.Set;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
@@ -53,6 +55,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     /** Field canSearchParents */
     protected boolean canSearchParents;
 
+    /** Field reservedPropNames */
+    protected Set reservedPropNames;
+
     /**
      * Constructor.
      * 
@@ -64,7 +69,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
      */
     protected JavaBeanHelperWriter(Emitter emitter, TypeEntry type,
                                    Vector elements, TypeEntry extendType,
-                                   Vector attributes) {
+                                   Vector attributes, Set reservedPropNames) {
 
         super(emitter, type.getName() + "_Helper", "helper");
 
@@ -72,6 +77,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         this.elements = elements;
         this.attributes = attributes;
         this.extendType = extendType;
+        this.reservedPropNames = reservedPropNames;
 
         // is this a complex type that is derived from other types
         // by restriction?  if so, set the policy of the generated
@@ -271,11 +277,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             if (attributes != null) {
                 boolean wroteAttrDecl = false;
 
-                for (int i = 0; i < attributes.size(); i += 1) {
+                for (int i = 0; i < attributes.size(); i++) {
                     ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
                     TypeEntry te = attr.getType();
                     QName attrName = attr.getQName();
-
                     String fieldName = getAsFieldName(attr.getName());
 
                     QName attrXmlType = te.getQName();
@@ -315,8 +320,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                         continue;
                     }
 
-                    String fieldName = getAsFieldName(elem.getName());  // jongjin.
-
+                    String fieldName = getAsFieldName(elem.getName());
                     QName xmlName = elem.getQName();
 
                     // Some special handling for arrays.
@@ -390,8 +394,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
      * getter/setter methods "getFOO()/setFOO()".  So when the Introspector
      * looks at that bean, the property name will be "FOO", not "fOO" due
      * to the rules in the JavaBeans spec.  So this makes sure the
-     * metadata will match.
-     * 
+     * metadata will match. <p>
+     *
+     * The method also makes sure that the returned property name is not in
+     * the set of reserved properties as defined by {@link #reservedPropNames}.     
+     *  
      * @param fieldName 
      * @return 
      */
@@ -402,10 +409,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         // (because setURL() maps to a property named "URL", not "uRL")
         if ((fieldName.length() > 1)
                 && Character.isUpperCase(fieldName.charAt(1))) {
-            return Utils.capitalizeFirstChar(fieldName);
+            fieldName = Utils.capitalizeFirstChar(fieldName);
         }
 
-        return fieldName;
+        // Make sure the property name is not reserved.
+        return JavaUtils.getUniqueValue(reservedPropNames, fieldName);
     }
 
     /**
