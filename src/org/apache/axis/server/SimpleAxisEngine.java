@@ -119,15 +119,6 @@ public class SimpleAxisEngine extends BasicHandler {
                 null, null );
         }
 
-        /* Place in the bag so that handlers down the line can have access to */
-        /* it - ie. can look thru it's list of options                        */
-        /**********************************************************************/
-        /** !!! I'm not sure this is appropriate here, since we don't
-         * necessarily know whether this is the "real" service handler or
-         * not... --Glen
-         */
-        msgContext.setProperty( Constants.MC_SVC_HANDLER, h );
-        
         // Clear this for the next round of dispatch, if any.
         msgContext.clearProperty( Constants.MC_TARGET );
 
