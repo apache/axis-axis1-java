@@ -187,7 +187,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (type.getName().endsWith("[]")) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
                     pw.println("        deserializer=\"org.apache.axis.encoding.ser.ArrayDeserializerFactory\"");
-                } else if (type.getNode() != null && 
+                } else if (type.getNode() != null &&
                    SchemaUtils.getEnumerationBaseAndValues(
                      type.getNode(), emitter.getSymbolTable()) != null) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.EnumSerializerFactory\"");
@@ -206,7 +206,7 @@ public class JavaDeployWriter extends JavaWriter {
                     pw.println("        encodingStyle=\"\"");
                 else
                     pw.println("        encodingStyle=\"" + Constants.URI_CURRENT_SOAP_ENC + "\"");
-                
+
                 pw.println("      />");
             }
         }
@@ -223,9 +223,19 @@ public class JavaDeployWriter extends JavaWriter {
         boolean hasLiteral = bEntry.hasLiteral();
 
         String prefix = Constants.NSPREFIX_WSDD_JAVA;
+        String styleStr = "";
+
+        if (hasLiteral) {
+            styleStr = " style=\"document\"";
+        }
+
+        if (symbolTable.isWrapped()) {
+            styleStr = " style=\"wrapped\"";
+        }
+
         pw.println("  <service name=\"" + serviceName
                 + "\" provider=\"" + prefix +":RPC"
-                + "\"" + (hasLiteral ? " style=\"document\"" : "") + ">");
+                + "\"" + styleStr + ">");
 
         writeDeployBinding(binding);
         writeDeployTypes(hasLiteral);

@@ -8,10 +8,11 @@
 package test.wsdl.wrapped;
 
 public class CityBBBBindingImpl implements CityBBBBinding {
-    public GetAttractionResponse getAttraction(GetAttraction getAttraction) throws java.rmi.RemoteException {
-        GetAttractionResponse response = new GetAttractionResponse();
+    public static final String OID_STRING = "Attraction@cityCF::1028:1028";
+
+    public Attraction getAttraction(String attname) throws java.rmi.RemoteException {
         Attraction attraction = new Attraction();
-        attraction.setOID("Attraction@cityCF::1028:1028");
+        attraction.setOID(OID_STRING);
         attraction.setFacts("New Orleans at Christmastime is a city with the best food in the world, the best music" +
                             " in the world, international shopping, the French Quarter -- America&apos;s most " +
                             " romantic neighborhood, and the friendliest, most big-hearted people you&apos;d ever " +
@@ -40,7 +41,6 @@ public class CityBBBBindingImpl implements CityBBBBinding {
                             " a proof for the existence of heaven. And as every New Orleanian knows, Heaven is " +
                             " presided over by a French-Italian-Creole chef with a gumbo-pot belly and a laugh " +
                             " that fills that human heart with gladness. Merry Christmas to ya, New Orleans style.");
-        response.set_return(attraction);
-        return response;
+        return attraction;
     }
 }

@@ -177,7 +177,11 @@ public class TypeDesc {
         FieldDesc desc = (FieldDesc)fieldNameMap.get(fieldName);
         if (desc == null || desc.isElement())
             return null;
-        return desc.getXmlName();
+        QName ret = desc.getXmlName();
+        if (ret == null) {
+            ret = new QName("", fieldName);
+        }
+        return ret;
     }
 
     /**
