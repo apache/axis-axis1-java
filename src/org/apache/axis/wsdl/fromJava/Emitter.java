@@ -600,6 +600,10 @@ public class Emitter {
         return def;
     }
 
+    private static TypeMapping standardTypes = 
+        (TypeMapping)new org.apache.axis.encoding.TypeMappingRegistryImpl().getTypeMapping(null);
+
+
     /**
      * Build a Types object and load the input wsdl types
      * @param def Corresponding wsdl Definition
@@ -616,6 +620,24 @@ public class Emitter {
         if (inputSchema != null) {
             types.loadInputSchema(inputSchema);
         }
+
+        if (tm != null)
+        {
+            Class [] mappedTypes = tm.getAllClasses();
+            for (int i = 0; i < mappedTypes.length; i++)
+            {
+                Class mappedType = mappedTypes[i];
+                /**
+                 * If it's a non-standard type, make sure it shows up in
+                 * our WSDL
+                 */
+                if (standardTypes.getSerializer(mappedType) == null)
+                {
+                    types.writeTypeForPart(mappedType,null);
+                }
+            }
+        }
+
         return types;
     }
 
