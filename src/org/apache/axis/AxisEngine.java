@@ -191,10 +191,6 @@ public abstract class AxisEngine extends BasicHandler
             throw new InternalException(e);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
-        }
-
         /*Set the default attachment implementation */
 
         String attachmentsImp= null;
@@ -209,6 +205,11 @@ public abstract class AxisEngine extends BasicHandler
                   setOption(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
             }
         }
+
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+        }
+
     }
 
     /** Write out our engine configuration.
