@@ -1,10 +1,8 @@
-package samples.transport ;
-
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,82 +53,47 @@ package samples.transport ;
  * <http://www.apache.org/>.
  */
 
-import java.io.* ;
-import java.lang.Thread ;
+package org.apache.axis.transport.http ;
 
-import org.apache.axis.Message ;
-import org.apache.axis.AxisFault ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.handlers.BasicHandler ;
-import org.apache.axis.server.AxisServer ;
+import java.io.*;
+import javax.servlet.* ;
+import javax.servlet.http.* ;
+import org.apache.axis.* ;
+import org.apache.axis.server.* ;
+import org.apache.axis.utils.* ;
 
 /**
- * Waits for the XML to appear in a file called xml#.req and writes
- * the response in a file called xml#.res
- *
- * @author Doug Davis (dug@us.ibm.com)
+ * Proof-of-concept "management" servlet for Axis.
+ * 
+ * Point a browser here to administer the Axis installation.
+ * 
+ * Right now just starts and stops the server.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class FileReader extends Thread {
-  static int      nextNum = 1 ;
-  boolean  pleaseStop = false ;
-
-  public void run() {
-    String tmp = "" ;
-    AxisServer  server = new AxisServer();
-    server.init();
-
-    while( !pleaseStop ) {
-      try {
-        Thread.sleep( 100 );
-        File file = new File( "xml" + nextNum + ".req" );
-        if ( !file.exists() ) continue ;
-          
-          // avoid race condition where file comes to exist but we were halted -- RobJ
-          if (pleaseStop) continue;
-
-        Thread.sleep( 100 );   // let the other side finish writing
-        FileInputStream fis = new FileInputStream( file );
-        int thisNum = nextNum++; // increment early to avoid infinite loops
-        
-        Message msg = new Message( fis );
-        MessageContext  msgContext = new MessageContext(server);
-        msgContext.setRequestMessage( msg );
-
-        // SOAPAction hack
-        byte[]  buf = new byte[50];
-        fis.read( buf, 0, 50 );
-        String action = new String( buf );
-        msgContext.setTargetService( action.trim() );
-        // end of hack
-
-        try {
-            server.invoke( msgContext );
-            msg = msgContext.getResponseMessage();
-        } catch (AxisFault af) {
-            msg = new Message(af);
-            msg.setMessageContext(msgContext);
-        } catch (Exception e) {
-            msg = new Message(new AxisFault(e.toString()));
-            msg.setMessageContext(msgContext);
-        }
-        
-        buf = (byte[]) msg.getAsBytes();
-        FileOutputStream fos = new FileOutputStream( "xml" + thisNum + ".res" );
-        fos.write( buf );
-        fos.close();
-
-        fis.close();
-        file.delete();
-      }
-      catch( Exception e ) {
-        if ( !(e instanceof FileNotFoundException) )
-          e.printStackTrace();
-      }
-    }
-      System.out.println("FileReader halted.");
+public class AdminServlet extends HttpServlet {
+  private AxisServer server;
+  
+  public void init() {
+      server = AxisServer.getSingleton();
   }
 
-  public void halt() {
-    pleaseStop = true ;
+  public void doGet(HttpServletRequest req, HttpServletResponse res)
+                throws ServletException, IOException {
+    res.setContentType("text/html");
+    String str = "";
+    
+    String cmd = req.getParameter("cmd");
+    if (cmd != null) {
+        if (cmd.equals("start"))
+            server.start();
+        else
+            server.stop();
+    }
+
+    str += "Server is " + (server.isRunning() ? "running" : "stopped");
+    str += "<p><a href=\"?cmd=start\">start server</a>";
+    str += "<p><a href=\"?cmd=stop\">stop server</a>";
+    res.getWriter().println( str );
   }
 }
