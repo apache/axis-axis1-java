@@ -13,7 +13,7 @@
         &paths;
         &taskdefs;
 
-  <target name="compile">
+  <target name="compile" unless="axis-ant.present">
     <mkdir dir="${build.dest}"/>
     <mkdir dir="${build.lib}"/>
 
