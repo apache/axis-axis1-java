@@ -82,7 +82,7 @@ public class MessageElement
     protected AttributesImpl attributes;
     protected String    id;
     protected String    href;
-    protected boolean   isRoot = true;
+    protected boolean   _isRoot = true;
     protected SOAPEnvelope message = null;
     
     protected DeserializationContext context;
@@ -139,7 +139,7 @@ public class MessageElement
             this.attributes = new AttributesImpl(attributes);
             String rootVal = attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ROOT);
             if (rootVal != null)
-                isRoot = rootVal.equals("1");
+                _isRoot = rootVal.equals("1");
             
             id = attributes.getValue(Constants.ATTR_ID);
             // Register this ID with the context.....
@@ -175,7 +175,7 @@ public class MessageElement
         endEventIndex = endIndex;
     }
     
-    public boolean getRoot() { return isRoot; }
+    public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
     
     public String getName() { return( name ); }
