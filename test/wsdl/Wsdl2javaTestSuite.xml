@@ -28,18 +28,6 @@
     <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
     -->
     <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
-    <!-- AddressBook Sample -->
-    <wsdl2java url="samples/addr/AddressBook.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
-               noimports="no"
-               verbose="no"
-               typeMappingVersion="1.1"
-               testcase="no">
-        <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
-    </wsdl2java>
 
     <!-- WidgetPrice Java to WSDL Samples -->
     <java2wsdl output="build/work/samples/userguide/example6/WidgetPrice.wsdl"
