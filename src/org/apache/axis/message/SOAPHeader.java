@@ -316,6 +316,8 @@ public class SOAPHeader extends MessageElement
                 // Output this header element
                 ((SOAPHeaderElement)enum.nextElement()).output(context);
             }
+            // Output multi-refs
+            context.outputMultiRefs();
             // Output </SOAP-ENV:Header>
             context.endElement();
         }
