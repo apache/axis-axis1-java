@@ -267,7 +267,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                         if (v != null) {
 
                             // This constructed type is an enumeration.  Use the first one.
-                            String enumeration = (String) v.get(1);
+                            String enumeration = (String)
+                                JavaEnumTypeWriter.getEnumValueIds(v).get(0);
                             pw.print(paramType + "." + enumeration);
                         } else {
 

@@ -122,11 +122,8 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         
         // Create a list of the literal values.
         Vector values = new Vector();
-        boolean validJava = true;  // Assume all enum values are valid java identifiers
         for (int i=1; i < elements.size(); i++) {
             String value = (String) elements.get(i);
-            if (!JavaUtils.isJavaId(value))
-                validJava = false;
             if (baseClass.equals("String"))
                 value = "\"" + value + "\"";  // Surround literal with double quotes
             else if (baseClass.equals("Character"))
@@ -145,15 +142,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         }
         
         // Create a list of ids
-        Vector ids = new Vector();
-        for (int i=1; i < elements.size(); i++) {
-            // If any enum values are not valid java, then
-            // all of the ids are of the form value<1..N>.
-            if (!validJava) 
-                ids.add("value" + i);
-            else
-                ids.add(elements.get(i));
-        }
+        Vector ids = getEnumValueIds(elements);
 
         // Each object has a private _value_ variable to store the base value
         pw.println("    private " + baseType + " _value_;");
@@ -239,4 +228,33 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
             pw.println("    public String toString() { return String.valueOf(_value_);}");
     } // writeFileBody
 
+    /**
+     * Get the enumeration names for the values.
+     * The name is affected by whether all of the values of the enumeration
+     * can be expressed as valid java identifiers.
+     * @param Vector base and values vector from getEnumerationBaseAndValues
+     * @return Vector names of enum value identifiers.
+     */
+    public static Vector getEnumValueIds(Vector bv) {
+        boolean validJava = true;  // Assume all enum values are valid ids
+        // Walk the values looking for invalid ids
+        for (int i=1; i < bv.size() && validJava; i++) {
+            String value = (String) bv.get(i);
+            if (!JavaUtils.isJavaId(value))
+                validJava = false;
+        }
+        // Build the vector of ids
+        Vector ids = new Vector();
+        for (int i=1; i < bv.size(); i++) {
+            // If any enum values are not valid java, then
+            // all of the ids are of the form value<1..N>.
+            if (!validJava) { 
+                ids.add("value" + i);
+            }
+            else {
+                ids.add((String) bv.get(i));
+            }
+        }
+        return ids;
+    }
 } // class JavaEnumTypeWriter

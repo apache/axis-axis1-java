@@ -576,6 +576,10 @@
     <part name="enum" type="typens:enum"/>
   </message>
 
+  <message name="enumInt">
+    <part name="enumInt" type="typens:enumInt"/>
+  </message>
+
   <message name="array">
     <part name="array" type="typens:array"/>
   </message>
@@ -649,6 +653,22 @@
     <operation name="enumReturn">
       <input message="tns:empty"/>
       <output message="tns:enum"/>
+    </operation>
+    <operation name="enumIntIn">
+      <input message="tns:enumInt"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="enumIntInout">
+      <input message="tns:enumInt"/>
+      <output message="tns:enumInt"/>
+    </operation>
+    <operation name="enumIntOut" parameterOrder="enumInt">
+      <input message="tns:empty"/>
+      <output message="tns:enumInt"/>
+    </operation>
+    <operation name="enumIntReturn">
+      <input message="tns:empty"/>
+      <output message="tns:enumInt"/>
     </operation>
     <operation name="arrayIn">
       <input message="tns:array"/>
@@ -1008,6 +1028,66 @@
       </output>
     </operation>
     <operation name="enumReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumIntIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumIntInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumIntOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumIntReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
