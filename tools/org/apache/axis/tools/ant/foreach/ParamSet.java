@@ -65,8 +65,16 @@ import java.util.Vector;
 /**
  * Inner class stores sets of <param>s.
  * It can hold <fileset>s or <item>s or both.
+ * 
+ * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
+ * @author Davanum Srinivas
+ * @author Richard A. Sitze
  */
 public class ParamSet {
+    public static final String TYPE_FILE = "file".intern();
+    public static final String TYPE_DIR  = "dir".intern();
+    public static final String TYPE_BOTH = "both".intern();
+
     /**
      * Enumerated attribute with the values "file", "dir" and "both"
      * for the type attribute.
@@ -74,13 +82,13 @@ public class ParamSet {
     public static class FileDirBoth extends EnumeratedAttribute {
         public String[] getValues() {
             return new String[]{
-                "file", "dir", "both"
+                TYPE_FILE, TYPE_DIR, TYPE_BOTH
             };
         }
     }
 
     /** Defaults to "file". */
-    protected String type = "file";
+    protected String type = TYPE_FILE;
     private Vector filesets;
     private Vector items;
     private String name;
@@ -118,13 +126,13 @@ public class ParamSet {
             FileSet fileSet = (FileSet) enum.nextElement();
             File base = fileSet.getDir(project);
             DirectoryScanner scanner = fileSet.getDirectoryScanner(project);
-            if (!"dir".equals(type)) {
+            if (TYPE_DIR != type) {
                 String[] files = getFiles(base, scanner);
                 for (int j = 0; j < files.length; j++) {
                     values.addElement(files[j]);
                 }
             }
-            if (!"file".equals(type)) {
+            if (TYPE_FILE != type) {
                 String[] dirs = getDirs(base, scanner);
                 for (int j = 0; j < dirs.length; j++) {
                     values.addElement(dirs[j]);
@@ -143,7 +151,7 @@ public class ParamSet {
      * Shall the command work only on files, directories or both?
      */
     public void setType(FileDirBoth type) {
-        this.type = type.getValue();
+        this.type = type.getValue().intern();
     }
 
     /**

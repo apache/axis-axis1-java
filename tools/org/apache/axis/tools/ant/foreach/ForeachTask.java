@@ -89,7 +89,9 @@ import java.util.Vector;
  * in <code>ExecuteOn</code>.  It allows the user
  * to specify whether directories, files, or both directories and files
  * from the filesets are included as entries in the parameter set.
+ * 
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
+ * @author Davanum Srinivas
  */
 public class ForeachTask extends Task {
     private Ant callee;
