@@ -75,7 +75,7 @@ public abstract class SymTabEntry {
     protected String name;
 
     // Is this entry referenced by any other entry?
-    private boolean isReferenced = true;
+    private boolean isReferenced = false;
 
     private HashMap dynamicVars = new HashMap();
 
