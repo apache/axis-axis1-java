@@ -67,8 +67,8 @@ public class TestSer
             TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
-            SAXAdapter adapter = new SAXAdapter(new InputSource(reader), msgContext);
-            SOAPEnvelope env = adapter.getEnvelope();
+            DeserializationContext dser = new DeserializationContext(new InputSource(reader), msgContext);
+            SOAPEnvelope env = dser.getEnvelope();
             env.setMessageType(ServiceDescription.REQUEST);
             
             RPCElement rpcElem = (RPCElement)env.getFirstBody();

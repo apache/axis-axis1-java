@@ -173,7 +173,7 @@ public class TypeMappingRegistry implements Serializer {
         return null;
     }
     
-    public DeserializerBase getDeserializer(QName qname) {
+    public Deserializer getDeserializer(QName qname) {
         if (d != null) {
             DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
             if ((desc != null) && (desc.factory != null))

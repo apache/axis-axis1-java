@@ -14,7 +14,7 @@ public class InputStreamBody extends SOAPBodyElement
         this.inputStream = inputStream;
     }
     
-    public void output(SerializationContext context) throws IOException
+    public void outputImpl(SerializationContext context) throws IOException
     {
         try {
             byte[]  buf = new byte[ inputStream.available() ];

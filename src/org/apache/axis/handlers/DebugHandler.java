@@ -60,7 +60,6 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.DebugHeader;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 
@@ -82,6 +81,7 @@ public class DebugHandler extends BasicHandler {
                                                         "Debug");
             
             if (header != null) {
+                /*
                 int debugVal = 
                       ((Integer)header
                              .getValueAsType(SOAPTypeMappingRegistry.XSD_INT))
@@ -89,6 +89,7 @@ public class DebugHandler extends BasicHandler {
                 Debug.Print( 1, "Setting debug level to: " + debugVal );
                 Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
+                */
             }
         }
         catch( Exception e ) {

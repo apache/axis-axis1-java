@@ -1,3 +1,5 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
@@ -53,8 +55,6 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message ;
-
 import java.io.IOException;
 import java.util.* ;
 import org.apache.axis.* ;
@@ -69,17 +69,6 @@ import org.xml.sax.Attributes;
  * 
  */
 public class SOAPHeader extends MessageElement {
-    static class HeaderFactory implements ElementFactory {
-        public MessageElement createElement(String namespace, 
-                                        String localName,
-                                        Attributes attributes, 
-                                        DeserializationContext context)
-        {
-            return new SOAPHeader(namespace, localName, attributes, context);
-        }
-    }
-    public static ElementFactory factory() { return new HeaderFactory(); }
-    
     protected boolean   processed = false;
 
     protected String    actor;
@@ -125,10 +114,5 @@ public class SOAPHeader extends MessageElement {
 
     public boolean isProcessed() {
         return( processed );
-    }
-
-    public void output(SerializationContext context) throws IOException
-    {
-        super.output(context);
     }
 };

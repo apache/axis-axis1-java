@@ -61,16 +61,18 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.w3c.dom.*;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.MessageContext;
-import org.apache.axis.message.events.*;
-import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.DOM2Writer;
 import java.util.*;
 import java.io.*;
 
-public class MessageElement extends DeserializerBase
+public class MessageElement
 {
     private static final boolean DEBUG_LOG = false;
     
@@ -83,18 +85,19 @@ public class MessageElement extends DeserializerBase
     protected boolean   isRoot = true;
     protected SOAPEnvelope message = null;
     
+    protected DeserializationContext context;
+    
     // The java Object value of this element.  This is either set by
     // deserialization, or by the user creating a message.
     protected QName typeQName = null;
     
     protected Vector qNameAttrs = null;
-    
-    // String representation of this element.
-    protected String stringRep = null;
-    
-    protected ElementRecorder recorder = null;
-    protected DeserializerBase deserializer = null;
-    protected Boolean deserializing = null;
+
+    public Hashtable nsDecls = new Hashtable();
+                                            
+    protected SAX2EventRecorder recorder = null;
+    protected int startEventIndex = 0;
+    protected int endEventIndex = -1;
 
     /** No-arg constructor for building messages?
      */
@@ -109,94 +112,60 @@ public class MessageElement extends DeserializerBase
     }
     
     MessageElement(String namespace, String localPart,
-                    Attributes attributes, DeserializationContext context)
+                   Attributes attributes, DeserializationContext context)
     {
         if (DEBUG_LOG) {
-            System.out.println("New MessageElement named " + localPart);
+            System.out.println("New MessageElement (" + this + ") named " + localPart);
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 System.out.println("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
-      this.namespaceURI = namespace;
-      this.name = localPart;
-      setDeserializationContext(context);
+        this.namespaceURI = namespace;
+        this.name = localPart;
+        this.context = context;
+        this.startEventIndex = context.getCurrentRecordPos();
+        this.recorder = context.getRecorder();
 
-      if (attributes == null) {
-        this.attributes = new AttributesImpl();
-      } else {
-        typeQName = context.getTypeFromAttributes(attributes);
-
-        this.attributes = new AttributesImpl(attributes);
-        String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
-        if (rootVal != null)
-            isRoot = rootVal.equals("1");
-      
-        id = attributes.getValue(Constants.ATTR_ID);
-        // Register this ID with the context.....
-        if (id != null) {
-            context.registerID(id, this);
-        }
+        if (attributes == null) {
+            this.attributes = new AttributesImpl();
+        } else {
+            this.attributes = new AttributesImpl(attributes);
+            String rootVal = attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ROOT);
+            if (rootVal != null)
+                isRoot = rootVal.equals("1");
             
-        href = attributes.getValue(Constants.ATTR_HREF);
-        
-        // If there's an arrayType attribute, we can pretty well guess that we're an Array???
-        if (attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
-          typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-      }
-
-      if (typeQName == null) {
-          QName myQName = new QName(namespaceURI, name);
-          if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
-              typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_STRING)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_STRING;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_DOUBLE)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_DOUBLE;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_FLOAT)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_FLOAT;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_INT;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_LONG)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_LONG;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BYTE)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_BYTE;
-          }
-      }
-      
-      if (typeQName == null) {
-          // No type inline, so check service description.
-          ServiceDescription serviceDesc = context.getServiceDescription();
-          if (serviceDesc != null) {
-              setType(serviceDesc.getParamTypeByName(context.getMessageType(),
-                                                     name));
-          }
-      }
-      
-      // Look up type and set up an appropriate deserializer
-      if ((typeQName != null) && isDeserializing()) {
-          deserializer = context.getDeserializer(typeQName);
-          if (DEBUG_LOG) {
-              System.err.println(typeQName + " maps to " + deserializer);
-          }
-      }
-
+            id = attributes.getValue(Constants.ATTR_ID);
+            // Register this ID with the context.....
+            if (id != null) {
+                context.registerElementByID(id, this);
+            }
+            
+            href = attributes.getValue(Constants.ATTR_HREF);
+            
+            // If there's an arrayType attribute, we can pretty well guess that we're an Array???
+            if (attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+                typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
+        }
     }
     
-    public boolean isDeserializing()
+    /** !!! TODO : Make sure this handles multiple targets
+     */
+    Deserializer fixupDeserializer;
+    
+    public void setFixupDeserializer(Deserializer dser)
     {
-        boolean deser;
-        if (deserializing == null) {
-            ServiceDescription s = context.getServiceDescription();
-            deser = ((s == null) || (s.isRPC()));
-            deserializing = new Boolean(deser);
-        } else {
-            deser = deserializing.booleanValue();
-        }
-        return deser;
+        // !!! Merge targets here if already set?
+        fixupDeserializer = dser;
+    }
+    
+    public Deserializer getFixupDeserializer()
+    {
+        return fixupDeserializer;
+    }
+    
+    public void setEndIndex(int endIndex)
+    {
+        endEventIndex = endIndex;
     }
     
     public boolean getRoot() { return isRoot; }
@@ -213,6 +182,15 @@ public class MessageElement extends DeserializerBase
     
     public QName getType() { return typeQName; }
     public void setType(QName qName) { typeQName = qName; }
+    
+    public SAX2EventRecorder getRecorder() { return recorder; }
+    public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
+    
+    public Object getValueAsType(QName type)
+    {
+        // !!! TODO : Implement
+        return null;
+    }
     
     protected static class QNameAttr {
         QName name;
@@ -241,194 +219,59 @@ public class MessageElement extends DeserializerBase
         return message;
     }
     
-    public Element getAsDOM()
-    {
-        return null;
-    }
-    
     public MessageElement getRealElement()
     {
         if (href == null)
             return this;
         
-        return context.getElementByID(href.substring(1));
+        Object obj = context.getObjectByRef(href);
+        if (obj == null)
+            return null;
+        
+        if (!(obj instanceof MessageElement))
+            return null;
+        
+        return (MessageElement)obj;
     }
 
-    public Object getValue()
-    {
-        if (value != null) {
-            if (DEBUG_LOG) {
-                System.out.println(this + " returning val " + value);
-            }
-            return value;
-        }
-        
-        if (href != null) {
-            if (DEBUG_LOG) {
-                System.out.println(this + " looking up ref element " + href);
-            }
-            return getRealElement().getValue();
-        }
-        
-        if (deserializer != null) {
-            value = deserializer.getValue();
-            if (DEBUG_LOG) {
-                System.out.println(this + " returning dser (" + deserializer +
-                                   ") val=" + value);
-            }
-            deserializer = null;
-        } else {
-            
-            // Still not sure about this....
-            
-            if (recorder != null) {
-                try {
-                    StringWriter writer = new StringWriter();
-                    SerializationContext ctx = new SerializationContext(writer,
-                                                                        context.getMessageContext());
-                    recorder.publishChildrenToHandler(new SAXOutputter(ctx));
-                    writer.close();
-                    return writer.toString();
-                } catch (Exception e) {
-                    Debug.Print(1, "Exception while stringizing recorded events: " + e);
-                }
-            }
-        }
-        
-        if (DEBUG_LOG) {
-            System.out.println(this + " returning val=" + value);
-        }
-        return value;
-    }
-
-    public Object getValueAsType(QName typeQName) throws AxisFault
-    {
-        MessageElement realEl = getRealElement();
-        
-        if (realEl.typeQName != null) {
-            if (!realEl.typeQName.equals(typeQName))
-                throw new AxisFault("Couldn't convert " + realEl.typeQName +
-                    " to requested type " + typeQName);
-            return getValue();
-        }
-        
-        DeserializerBase dser = realEl.context.getDeserializer(typeQName);
-        if (dser == null)
-            throw new AxisFault("No deserializer for type " + typeQName);
-        
-        try {
-            realEl.publishToHandler(dser);
-        } catch (SAXException e) {
-            throw new AxisFault(e);
-        }
-        
-        return dser.getValue();
-    }
-    
-    public DeserializerBase getContentHandler()
-    {
-        if (isDeserializing()) {
-          if (href != null) {
-            deserializer = context.getElementByID(href.substring(1));
-            if (deserializer != null)
-              return deserializer;
-          }
-            if (deserializer != null) {
-                return deserializer;
-            }
-        }
-            
-        /** !!! Is it possible that we'll do this now, but
-        * later on we'll figure out the type (via some OOB
-        * means)?  In that case we want an easy way to
-        * squirt these SAX events to a deserializer.
-        */
-        if (DEBUG_LOG) {
-            System.err.println("Creating recorder for " + this.getName());
-        }
-        recorder = new ElementRecorder();
-        return recorder;
-    }
-    
-    public void setContentHandler(DeserializerBase handler)
-    {
-        if (deserializer != null) {
-            System.err.println("Non-null deser while setting content handler?");
-        }
-        
-        deserializer = handler;
-    }
-    
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
             throw new SAXException("No event recorder inside element");
         
-        recorder.publishToHandler(handler);
+        recorder.replay(startEventIndex, endEventIndex, handler);
     }
     
-    public void output(SerializationContext context) throws IOException
+    public void publishContents(ContentHandler handler) throws SAXException
+    {
+        if (recorder == null)
+            throw new SAXException("No event recorder inside element");
+        
+        recorder.replay(startEventIndex+1, endEventIndex-1, handler);
+    }
+    
+    /** This is the public output() method, which will always simply use
+     * the recorded SAX stream for this element if it is available.  If
+     * not, this method calls outputImpl() to allow subclasses and
+     * programmatically created messages to serialize themselves.
+     * 
+     * @param context the SerializationContext we will write to.
+     */
+    public final void output(SerializationContext context) throws Exception
     {
         context.registerPrefixForURI(prefix, namespaceURI);
-        //System.out.println("In outputToWriter (" + this.getName() + ")");
+        //stem.out.println("In output (" + this.getName() + ")");
         if (recorder != null) {
-            try {
-                recorder.publishToHandler(new SAXOutputter(context));
-            } catch (SAXException e) {
-                Exception ex = e.getException();
-                if (ex instanceof IOException)
-                    throw (IOException)ex;
-                throw new IOException(e.toString());
-            }
+            recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
             return;
         }
-
-        AttributesImpl attrs;
-        Object val = getValue();
         
-        if ((val != null) && (typeQName == null))
-            typeQName = context.getQNameForClass(val.getClass());
-        
-        if (attributes == null) {
-            attrs = new AttributesImpl();
-            // Writing a message from memory out to XML...
-            // !!! How do we set other attributes when serializing??
-            
-            ServiceDescription desc = context.getServiceDescription();
-            if ((desc == null) || desc.getSendTypeAttr()) {
-                if (typeQName != null) {
-                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
-                                       "CDATA",
-                                       context.qName2String(typeQName));
-                }
-            }
-            
-            /*  Removing this for right now... need to deal with nillable for real!!!
-            if (val == null)
-                attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
-                                   "CDATA", "1");
-            */
-        } else {
-            attrs = attributes;
-        }
-        
-        if (qNameAttrs != null) {
-            for (int i = 0; i < qNameAttrs.size(); i++) {
-                QNameAttr attr = (QNameAttr)qNameAttrs.elementAt(i);
-                attrs.addAttribute(attr.name.getNamespaceURI(),
-                                   attr.name.getLocalPart(),
-                                   context.qName2String(attr.name), "CDATA",
-                                   context.qName2String(attr.value));
-            }
-        }
-        
-        context.startElement(new QName(getNamespaceURI(), getName()), attrs);
-
-            
-        // Output the value...
-        if (val != null)
-            context.writeString(DOM2Writer.normalize(value.toString()));
-        
-        context.endElement();
+        outputImpl(context);
+    }
+    
+    /** Subclasses can override
+     */
+    protected void outputImpl(SerializationContext context) throws Exception
+    {
     }
 }
