@@ -62,6 +62,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.QName;
 
+import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
 import java.lang.*;
@@ -128,6 +129,35 @@ public class Deserializer extends SOAPHandler
             } catch (IllegalArgumentException argEx) {
                 argEx.printStackTrace();
                 throw new SAXException(argEx);
+            }
+        }
+    }
+    
+    public static class MethodTarget implements Target {
+        private Object targetObject;
+        private Method targetMethod;
+        private static final Class [] objArg = new Class [] { Object.class };
+
+        public MethodTarget(Object targetObject, String methodName)
+            throws NoSuchMethodException
+        {
+            this.targetObject = targetObject;
+            Class cls = targetObject.getClass();
+            targetMethod = cls.getMethod(methodName, objArg);
+        }
+        
+        public void set(Object value) throws SAXException {
+            try {
+                targetMethod.invoke(targetObject, new Object [] { value });
+            } catch (IllegalAccessException accEx) {
+                accEx.printStackTrace();
+                throw new SAXException(accEx);
+            } catch (IllegalArgumentException argEx) {
+                argEx.printStackTrace();
+                throw new SAXException(argEx);
+            } catch (InvocationTargetException targetEx) {
+                targetEx.printStackTrace();
+                throw new SAXException(targetEx);
             }
         }
     }
@@ -206,6 +236,9 @@ public class Deserializer extends SOAPHandler
         }
     }
     
+    private int startIdx = 0;
+    private int endIdx = -1;
+    
     /** Subclasses override this
      */
     public void onStartElement(String namespace, String localName,
@@ -223,17 +256,18 @@ public class Deserializer extends SOAPHandler
             // We know we're deserializing, and we can't seem to figure
             // out a type... so let's give them a string.
             // ??? Is this the right thing to do?
-            if (type == null)
-                type = SOAPTypeMappingRegistry.XSD_STRING;
-            
-            Deserializer dser = 
-                       context.getTypeMappingRegistry().getDeserializer(type);
-            if (dser != null) {
-                dser.copyValueTargets(this);
-                context.replaceElementHandler(dser);
-                // And don't forget to give it the start event...
-                dser.startElement(namespace, localName, qName,
-                                  attributes, context);
+            if (type != null) {
+                Deserializer dser = 
+                                   context.getTypeMappingRegistry().getDeserializer(type);
+                if (dser != null) {
+                    dser.copyValueTargets(this);
+                    context.replaceElementHandler(dser);
+                    // And don't forget to give it the start event...
+                    dser.startElement(namespace, localName, qName,
+                                      attributes, context);
+                }
+            } else {
+                startIdx = context.getCurrentRecordPos();
             }
         }
     }
@@ -274,6 +308,25 @@ public class Deserializer extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
+        // If we only have SAX events, but someone really wanted a
+        // value, try sending them the contents of this element
+        // as a String...
+        // ??? Is this the right thing to do here?
+        
+        if (this.getClass().equals(Deserializer.class) &&
+            !targets.isEmpty()) {
+            endIdx = context.getCurrentRecordPos();
+            
+            StringWriter writer = new StringWriter();
+            SerializationContext serContext = 
+                        new SerializationContext(writer,
+                                                 context.getMessageContext());
+            SAXOutputter so = new SAXOutputter(serContext);
+            context.getRecorder().replay(startIdx + 1,
+                                         endIdx - 1,
+                                         so);
+            value = writer.getBuffer().toString();
+        }
         valueComplete();
     }
 }

@@ -147,6 +147,11 @@ public class Message {
         return( currentForm );
     }
     
+    public String getMessageType()
+    {
+        return messageType;
+    }
+    
     public void setMessageType(String messageType)
     {
         this.messageType = messageType;
