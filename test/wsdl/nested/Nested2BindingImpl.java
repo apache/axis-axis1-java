@@ -35,6 +35,7 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
         address.setCURRENCY_ISO("");
         address.setCOUNTRYISO("DE");
         address.setONLY_CHANGE_COMADDRESS("X");
+        address.setAny("Test Any");
 
         RETURN ret = new RETURN();
         ret.setTYPE("");
