@@ -547,16 +547,9 @@ public class Utils {
     } // getNestedTypes
 
     /**
-     * Common code for generating a QName in emitted code.  Note that there's
-     * no semicolon at the end, so we can use this in a variety of contexts.
-     */ 
-    public static String getNewQName(javax.xml.rpc.namespace.QName qname)
-    {
-        return "new javax.xml.rpc.namespace.QName(\"" +
-                qname.getNamespaceURI() + "\", \"" +
-                qname.getLocalPart() + "\")";
-    }
-    
+     * Given the WSDL4J QName (javax.wsdl.QName), return the JAX-RPC
+     * QName (javax.xml.rpc.namespace.QName).
+     */
     public static javax.xml.rpc.namespace.QName getAxisQName(QName qname)
     {
         if (qname == null) {
@@ -565,7 +558,11 @@ public class Utils {
         return new javax.xml.rpc.namespace.QName(qname.getNamespaceURI(),
                                                  qname.getLocalPart());
     }
-    
+
+    /**
+     * Given the JAX-RPC QName (javax.xml.rpc.namespace.QName), return
+     * the WSDL4J QName (javax.wsdl.QName).
+     */
     public static QName getWSDLQName(javax.xml.rpc.namespace.QName qname)
     {
         if (qname == null) {

@@ -259,10 +259,6 @@ public class JavaStubWriter extends JavaClassWriter {
                     break;
                 }
             }
-            // Get the namespace for the operation from the portType
-            // RJB: is this the right thing to do?
-            String namespace = portType.getQName().getNamespaceURI();
-
             Operation ptOperation = operation.getOperation();
             OperationType type = ptOperation.getStyle();
 
@@ -275,7 +271,7 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             else {
                 writeOperation(pw,
-                        operation, parameters, soapAction, namespace, isRPC);
+                        operation, parameters, soapAction, isRPC);
             }
         }
     } // writeFileBody
@@ -460,7 +456,6 @@ public class JavaStubWriter extends JavaClassWriter {
             BindingOperation operation,
             Parameters parms,
             String soapAction,
-            String namespace,
             boolean isRPC) throws IOException {
 
         writeComment(pw, operation.getDocumentationElement());
@@ -574,7 +569,12 @@ public class JavaStubWriter extends JavaClassWriter {
             QName q = p.getElementName();
             pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
         } else {
-            pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
+            javax.xml.rpc.namespace.QName elementQName = Utils.getAxisQName(
+                    Utils.getOperationQName(operation));
+            if (elementQName != null) {
+                pw.println("        call.setOperationName(" +
+                        Utils.getNewQName(elementQName) + ");" );
+            }
         }
         
         // Invoke the operation
