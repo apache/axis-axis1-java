@@ -98,15 +98,18 @@ public class MethodRep {
         // Create a ParamRep for each parameter.  The holderClass() method
         // returns the name of the held type if this is a holder class.
         for (int i=0; i < method.getParameterTypes().length; i++) {
-            String name; 
+            String name = null; 
             if (paramNames !=null) {
                 name = (String) paramNames[i+1];
-            } else if (modes[i] == ParamRep.IN) {
-                name = "in" + i;
-            } else if (modes[i] == ParamRep.OUT) {
-                name = "out" + i;
-            } else {
-                name = "inOut" + i;
+            }
+            if (name == null || name.equals("") ) {
+                if (modes[i] == ParamRep.IN) {
+                    name = "in" + i;
+                } else if (modes[i] == ParamRep.OUT) {
+                    name = "out" + i;
+                } else {
+                    name = "inOut" + i;
+                }
             }
             _parameters.add(new ParamRep(name, types[i], modes[i]));
         }

@@ -90,6 +90,89 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         if (skel != null) 
             return;
         skel = new org.apache.axis.wsdl.SkeletonImpl();
+        skel.add("echoString",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoStringArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoInteger",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoIntegerArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoFloat",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoFloatArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoStruct",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoStructArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoVoid",
+                 new String[] {
+                 });
+        skel.add("echoBase64",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoHexBinary",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoDate",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoDecimal",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoMapArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoBoolean",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoMap",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
+        skel.add("echoMapArray",
+                 new String[] {
+                     "return",
+                     "input"
+                 });
         skel.add("echoStructAsSimpleTypes",
                  new String[] {
                  null,
