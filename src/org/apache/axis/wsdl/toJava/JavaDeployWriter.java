@@ -80,6 +80,9 @@ import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -505,5 +508,14 @@ public class JavaDeployWriter extends JavaWriter {
         } else {
             return "OUT";
         }
+    }
+    
+    protected PrintWriter getPrintWriter(String filename) throws IOException {
+        File file = new File(filename);
+        File parent = new File(file.getParent());
+        parent.mkdirs();
+        FileOutputStream out = new FileOutputStream(file);
+        OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
+        return new PrintWriter(writer);
     }
 } // class JavaDeployWriter

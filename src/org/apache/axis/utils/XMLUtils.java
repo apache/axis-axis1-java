@@ -394,12 +394,12 @@ parser.getParser().setEntityResolver(new DefaultEntityResolver());
     }
 
     public static void ElementToStream(Element element, OutputStream out) {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = getWriter(out);
         privateElementToWriter(element, writer, true, false);
     }
 
     public static void PrettyElementToStream(Element element, OutputStream out) {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = getWriter(out);
         privateElementToWriter(element, writer, true, true);
     }
 
@@ -412,13 +412,24 @@ parser.getParser().setEntityResolver(new DefaultEntityResolver());
     }
 
     public static void DocumentToStream(Document doc, OutputStream out) {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = getWriter(out);
         privateElementToWriter(doc.getDocumentElement(), writer, false, false);
     }
 
     public static void PrettyDocumentToStream(Document doc, OutputStream out) {
-        Writer writer = new OutputStreamWriter(out);
+        Writer writer = getWriter(out);
         privateElementToWriter(doc.getDocumentElement(), writer, false, true);
+    }
+    
+    private static Writer getWriter(OutputStream os) {
+        Writer writer = null;
+        try {
+            writer = new OutputStreamWriter(os, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            log.error(Messages.getMessage("exception00"), uee);
+            writer = new OutputStreamWriter(os);
+        }
+        return writer;
     }
 
     public static void DocumentToWriter(Document doc, Writer writer) {

@@ -63,6 +63,9 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -154,4 +157,12 @@ public class JavaUndeployWriter extends JavaWriter {
         pw.println("  <service name=\"" + serviceName + "\"/>");
     } //writeDeployPort
 
+    protected PrintWriter getPrintWriter(String filename) throws IOException {
+        File file = new File(filename);
+        File parent = new File(file.getParent());
+        parent.mkdirs();
+        FileOutputStream out = new FileOutputStream(file);
+        OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
+        return new PrintWriter(writer);
+    }
 } // class JavaUndeployWriter
