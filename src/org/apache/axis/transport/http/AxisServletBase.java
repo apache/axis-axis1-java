@@ -112,11 +112,28 @@ public class AxisServletBase extends HttpServlet {
         "AxisEngine" ;
 
     /**
+     *  Cached path to our WEB-INF directory
+     */
+    private String webInfPath = null;
+
+    /**
+     * Cached path to our "root" dir
+     */
+    private String homeDir = null;
+
+
+    /**
      * our initialize routine; subclasses should call this if they override it
      */
     public void init() {
+        ServletContext context = getServletConfig().getServletContext();
+
+        webInfPath = context.getRealPath("/WEB-INF");
+        homeDir = context.getRealPath("/");
+
         isDebug= log.isDebugEnabled();
-        if(isDebug) log.debug("In servlet init");
+        if(isDebug) log.debug("In AxisServletBase init");
+
     }
 
     /**
@@ -323,4 +340,29 @@ public class AxisServletBase extends HttpServlet {
         baseURL.append(request.getContextPath());
         return baseURL.toString();
     }
+
+    /**
+     * what is the servlet context
+     * @return get the context from the servlet config
+     */
+    public ServletContext getServletContext() {
+        return getServletConfig().getServletContext();
+    }
+
+    /**
+     * accessor to webinf
+     * @return path to WEB-INF/ in the local filesystem
+     */
+    protected String getWebInfPath() {
+        return webInfPath;
+    }
+
+    /**
+     * what is the root dir of the applet?
+     * @return path of root dir
+     */
+    protected String getHomeDir() {
+        return homeDir;
+    }
+
 }
