@@ -61,6 +61,7 @@ import java.util.Vector;
 import java.util.HashMap;
 
 import org.apache.axis.utils.JavapUtils;
+import org.apache.axis.utils.JavaUtils;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
@@ -303,8 +304,8 @@ public class ClassRep {
         Class[] types = new Class[method.getParameterTypes().length];
         for (int i=0; i < method.getParameterTypes().length; i++) {
             Class type = method.getParameterTypes()[i];
-            if (holderClass(type) != null) {
-                types[i] = holderClass(type);
+            if (JavaUtils.getHolderValueType(type) != null) {
+                types[i] = JavaUtils.getHolderValueType(type);
             } else {
                 types[i] = type;
             }
@@ -322,7 +323,7 @@ public class ClassRep {
         short[] modes = new short[method.getParameterTypes().length];
         for (int i=0; i < method.getParameterTypes().length; i++) {
             Class type = method.getParameterTypes()[i];
-            if (holderClass(type) != null) {
+            if (JavaUtils.getHolderValueType(type) != null) {
                 modes[i] = ParamRep.INOUT;
             } else {
                 modes[i] = ParamRep.IN;
@@ -460,27 +461,4 @@ public class ClassRep {
         return true;
     }
 
-
-    /**
-     * Determines if the Class is a Holder class. If so returns Class of held type
-     * else returns null
-     * @param type the Class
-     * @return class of held type or null
-     */
-    protected Class holderClass(Class type) {
-        if (type.getName() != null &&
-            type.getName().endsWith("Holder")) {
-            // Holder is supposed to have a public value field.
-            java.lang.reflect.Field field;
-            try {
-                field = type.getField("value");
-            } catch (Exception e) {
-                field = null;
-            }
-            if (field != null) {
-                return field.getType();
-            }
-        }
-        return null;
-    }
 };

@@ -174,8 +174,14 @@ public class JavaDeployWriter extends JavaWriter {
      */
     private void writeDeployBinding(Binding binding) throws IOException {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        String className = bEntry.getName();
+        if (emitter.getDeploySkeleton())
+            className += "Skeleton";
+        else
+            className += "Impl";
+
         pw.println("      <parameter name=\"className\" value=\""
-                         + bEntry.getName() + "Skeleton" + "\"/>");
+                         + className + "\"/>");
 
         String methodList = "";
         Iterator operationsIterator = binding.getBindingOperations().iterator();

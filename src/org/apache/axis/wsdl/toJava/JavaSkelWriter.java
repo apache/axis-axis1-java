@@ -106,21 +106,63 @@ public class JavaSkelWriter extends JavaWriter {
             isRPC = false;
         }
 
+        // The skeleton implements the portType and the WSDL2Java emitter skeleton
         String implType = portTypeName + " impl";
-        pw.println("public class " + className + " {");
+        pw.println("public class " + className + " implements " + portTypeName + ",");
+        pw.println("    org.apache.axis.wsdl.Skeleton {"); 
+
+        // Declare private impl and skeleton base delegates
         pw.println("    private " + implType + ";");
+        pw.println("    private static org.apache.axis.wsdl.SkeletonImpl skel = null;");
         pw.println();
-            // RJB WARNING! - is this OK?
+
+        // Skeleton constructors
         pw.println("    public " + className + "() {");
         pw.println("        this.impl = new " + bEntry.getName() + "Impl();");
+        pw.println("        init();");
         pw.println("    }");
         pw.println();
         pw.println("    public " + className + "(" + implType + ") {");
         pw.println("        this.impl = impl;");
+        pw.println("        init();");
+        pw.println("    }");
+
+        // Initialize operation parameter names
+        pw.println("    public String getParameterName(String opName, int i) {");
+        pw.println("        return skel.getParameterName(opName, i);");
+        pw.println("    }");
+        // Initialize operation parameter names
+        pw.println("    protected void init() {");
+        pw.println("        if (skel != null) ");
+        pw.println("            return;");
+        pw.println("        skel = new org.apache.axis.wsdl.SkeletonImpl();");
+        List operations = binding.getBindingOperations();
+        for (int i = 0; i < operations.size(); ++i) {
+            BindingOperation operation = (BindingOperation) operations.get(i);
+            Parameters parameters =
+                    ptEntry.getParameters(operation.getOperation().getName());
+
+            if (parameters != null) {
+                // The invoked java name of the operation is stored.
+                String opName = Utils.xmlNameToJava(operation.getOperation().getName());
+                pw.println("        skel.add(\"" + opName + "\",");
+                pw.println("                 new String[] {");
+                if (parameters.returnType != null) {
+                    pw.println("                 \"" + parameters.returnName + "\",");
+                } else {
+                    pw.println("                 null,");
+                }
+                for (int j=0; j < parameters.list.size(); j++) {
+                    Parameter p = (Parameter) parameters.list.get(j);
+                    pw.println("                 \"" + p.name + "\",");
+                }
+                pw.println("                 });");                
+            }       
+        }
         pw.println("    }");
         pw.println();
 
-        List operations = binding.getBindingOperations();
+        // Now write each of the operation methods
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
@@ -166,31 +208,19 @@ public class JavaSkelWriter extends JavaWriter {
             boolean isRPC) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
 
-        pw.println(parms.skelSignature);
+        // The skeleton used to have specialized operation signatures.
+        // now the same signature is used as the portType
+        pw.println(parms.signature);
         pw.println("    {");
 
-        // Instantiate the holders
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-
-            String holder = Utils.holder(p.type, symbolTable);
-            String holderVar = Utils.xmlNameToJava(p.name);
-            if (p.mode == Parameter.INOUT) {
-                pw.println("        " + holder + " " + holderVar
-                        + "Holder = new " + holder + "(" + holderVar + ");");
-            }
-            else if (p.mode == Parameter.OUT) {
-                pw.println("        " + holder + " " + holderVar
-                        + "Holder = new " + holder + "();");
-            }
-        }
+        // Note: The holders are now instantiated by the runtime and passed 
+        // in as parameters.
 
         // Call the real implementation
         if (parms.returnType == null) {
             pw.print("        ");
-        }
-        else {
-            pw.print("        Object ret = ");
+        } else {
+            pw.print("        " + parms.returnType.getName() + " ret = ");
         }
         String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
         boolean needComma = false;
@@ -202,37 +232,13 @@ public class JavaSkelWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             call = call + Utils.xmlNameToJava(p.name);
-            if (p.mode != Parameter.IN)
-                call = call + "Holder";
         }
         call = call + ")";
-        if (parms.returnType == null) {
-            pw.println(call + ";");
-        }
-        else {
-            pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
-        }
+        pw.println(call + ";");
 
-        // Handle the outputs, if there are any.
-        if (parms.inouts + parms.outputs > 0) {
-            pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-            if (parms.returnType != null)
-                pw.println("        list.add(new org.apache.axis.message.RPCParam(\""
-                        + parms.returnName + "\", ret));");
-            for (int i = 0; i < parms.list.size(); ++i) {
-                Parameter p = (Parameter) parms.list.get(i);
-
-                if (p.mode != Parameter.IN) {
-                    String pName = Utils.xmlNameToJava(p.name);
-                    pw.println("        list.add(new org.apache.axis.message.RPCParam(\""
-                            + p.name + "\", "
-                            + wrapPrimitiveType(p.type, pName + "Holder.value")
-                            + "));");
-                }
-            }
-            pw.println("        return list;");
+        if (parms.returnType != null) {
+            pw.print("        return ret;");
         }
-
         pw.println("    }");
         pw.println();
     } // writeSkeletonOperation

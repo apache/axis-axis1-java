@@ -85,6 +85,7 @@ public class WSDL2Java {
     protected static final int HELP_OPT = 'h';
     protected static final int VERBOSE_OPT = 'v';
     protected static final int SKELETON_OPT = 's';
+    protected static final int SKELETON_DEPLOY_OPT = 'S';
     protected static final int NAMESPACE_OPT = 'N';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
@@ -124,6 +125,10 @@ public class WSDL2Java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 SKELETON_OPT,
                 JavaUtils.getMessage("optionSkel00")),
+        new CLOptionDescriptor("skeletonDeploy",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SKELETON_DEPLOY_OPT,
+                JavaUtils.getMessage("optionSkeletonDeploy00")),
         new CLOptionDescriptor("NStoPkg",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
@@ -182,6 +187,21 @@ public class WSDL2Java {
      */ 
     public boolean getGenerateSkeleton() {
         return emitter.getGenerateSkeleton();
+    }
+
+    /**
+     * Turn on/off server skeleton deploy
+     * @param boolean value
+     */
+    public void deploySkeleton(boolean value) {
+        emitter.deploySkeleton(value);
+    }
+
+    /**
+     * Indicate if we should be deploying skeleton or implementation
+     */ 
+    public boolean getDeploySkeleton() {
+        return emitter.getDeploySkeleton();
     }
 
     /**
@@ -392,6 +412,14 @@ public class WSDL2Java {
                     case SKELETON_OPT:
                         bSkeleton = true;
                         wsdl2java.generateSkeleton(true);
+                        break;
+
+                    case SKELETON_DEPLOY_OPT:
+                        String value = option.getArgument(0);
+                        if (value.equalsIgnoreCase("true"))
+                            wsdl2java.deploySkeleton(true);
+                        else
+                            wsdl2java.deploySkeleton(false);
                         break;
 
                     case NAMESPACE_OPT:
