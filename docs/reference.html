@@ -517,7 +517,26 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
     outgoing message) portion of processing (this function works just like the 
     <b>&lt;service&gt;</b> element above). Typically handlers in the transport 
     request/response flows implement transport-specific functionality, such as 
-    parsing protocol headers, etc.</dd>
+    parsing protocol headers, etc.</dd><br><br>
+  <dd>For HTTP transports, users may allow Axis servlets to perform arbitrary actions 
+    (by means of a &quot;plug-in&quot;) when specific query strings are passed to the servlet (see the section 
+    <a href="developers-guide.html#Axis Servlet Query String Plug-ins">Axis Servlet Query String Plug-ins</a> 
+    in the <a href="developers-guide.html">Axis Developer's Guide</a> for more information on what this means 
+    and how to create a plug-in).  When the name of a query string handler class is known, users can enable it 
+    by adding an appropriate <b>&lt;parameter&gt;</b> element in the Axis server configuration's
+    <b>&lt;transport&gt;</b> element.  An example configuration might look like the following:<br><br>
+    <code>
+    &lt;transport name=&quot;http&quot;&gt;<br>
+    &nbsp;&nbsp;&lt;parameter name=&quot;qs:name&quot; value=&quot;class.name&quot; /&gt;<br>
+    &lt;/transport&gt;<br>
+    </code><br>
+    In this example, the query string that the Axis servlet should respond to is <i>?name</i> and the class 
+    that it should invoke when this query string is encountered is named <code>class.name</code>.  The 
+    <code>name</code> attribute of the <b>&lt;parameter&gt;</b> element must start with the string &quot;qs:&quot; 
+    to indicate that this <b>&lt;parameter&gt;</b> element defines a query string handler.  The <code>value</code> 
+    attribute must point to the name of a class implementing the <code>org.apache.axis.transport.http.QSHandler</code> 
+    interface.  By default, Axis provides for three Axis servlet query string handlers (<i>?list</i>, <i>?method</i>, 
+    and <i>?wsdl</i>).  See the Axis server configuration file for their definitions.</dd>
   <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;transport name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
     pivot=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler 

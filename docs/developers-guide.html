@@ -22,6 +22,7 @@ Table of Contents</h3>
 <br><a href="#Pluggable-Components">Pluggable-Components</a>
 <br>&nbsp;&nbsp;&nbsp;<a href="#Discovery">Discovery</a>
 <br>&nbsp;&nbsp;&nbsp;<a href="#Logging/Tracing">Logging/Tracing</a>
+<br>&nbsp;&nbsp;&nbsp;<a href="#Axis Servlet Query String Plug-ins">Axis Servlet Query String Plug-ins</a>
 <br><a href="#Configuration Properties">Configuration Properties</a>
 <br><a href="#Exception Handling">Exception Handling</a>
 <br><a href="#Compile And Run">Compile and Run</a>
@@ -343,6 +344,93 @@ For example: one can capture DEBUG (and higher) level information in a logfile,
 while limiting console output to INFO (and higher).
 </li>
 </ul>
+<h3>
+<a name="Axis Servlet Query String Plug-ins">Axis Servlet Query String Plug-ins</h3>
+Any servlet that is derived from the <code>org.apache.axis.transport.http.AxisServlet</code> class 
+supports a number of standard query strings (<i>?list</i>, <i>?method</i>, and <i>?wsdl</i>) that 
+provide information from or perform operations on a web service (for instance, <i>?method</i> is 
+used to invoke a method on a web service and <i>?wsdl</i> is used to retrieve the WSDL document for 
+a web service).  Axis serlvets are not limited to these three query strings and developers may 
+create their own &quot;plug-ins&quot; by implementing the <code>org.apache.axis.transport.http.QSHandler</code> 
+interface.  There is one method in this interface that must be implemented, with the following signature:
+<pre>
+public void invoke (MessageContext msgContext) throws AxisFault;
+</pre>
+The <code>org.apache.axis.MessageContext</code> instance provides the developer with a number of useful 
+objects (such as the Axis engine instance, and HTTP servlet objects) that are accessible by its 
+<code>getProperty</code> method.  The following constants can be used to retrieve various objects provided 
+by the Axis servlet invoking the query string plug-in:
+<ul>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_NAME</strong><br>
+A <code>String</code> containing the name of the query string plug-in.  For instance, if the query string <i>?wsdl</i> is 
+provided, the name of the plugin is <i>wsdl</i>.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_SERVICE_NAME</strong><br>
+A <code>String</code> containing the name of the Axis servlet that inovked the query string plug-in.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_IS_DEVELOPMENT</strong><br>
+A <code>Boolean</code> containing <code>true</code> if this version of Axis is considered to be in development 
+mode, <code>false</code> otherwise.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_ENABLE_LIST</strong><br>
+A <code>Boolean</code> containing <code>true</code> if listing of the Axis server configuration is allowed, 
+<code>false</code> otherwise.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_ENGINE</strong><br>
+A <code>org.apache.axis.server.AxisServer</code> object containing the engine for the Axis server.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.MC_HTTP_SERVLETREQUEST</strong><br>
+The <code>javax.servlet.http.HttpServletRequest</code> object from the Axis servlet that invoked the 
+query string plug-in
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.MC_HTTP_SERVLETRESPONSE</strong><br>
+The <code>javax.servlet.http.HttpServletResponse</code> object from the Axis servlet that invoked the 
+query string plug-in
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_WRITER</strong><br>
+The <code>java.io.PrintWriter</code> object from the Axis servlet that invoked the 
+query string plug-in
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_LOG</strong><br>
+The <code>org.apache.commons.logging.Log</code> object from the Axis servlet that invoked the query 
+string plug-in, which is used to log messages.
+<br><br>
+</li>
+<li><strong>org.apache.axis.transport.http.HTTPConstants.PLUGIN_EXCEPTION_LOG</strong><br>
+The <code>org.apache.commons.logging.Log</code> object from the Axis servlet that invoked the query 
+string plug-in, which is used to log exceptions.
+<br><br>
+</li>
+</ul>
+Query string plug-in development is much like normal servlet development since the same basic 
+information and methods of output are available to the developer.  Below is an example query string
+plug-in which simply displays the value of the system clock (<code>import</code> statements have been 
+omitted for brevity):
+<pre>
+public class QSClockHandler implements QSHandler {
+     public void invoke (MessageContext msgContext) throws AxisFault {
+          PrintWriter out = (PrintWriter) msgContext.getProperty (HTTPConstants.PLUGIN_WRITER);
+          HttpServletResponse response = (HttpServletResponse) msgContext.getProperty (HTTPConstants.MC_HTTP_SERVLETRESPONSE);
+          
+          response.setContentType ("text/html");
+          
+          out.println ("&lt;HTML&gt;&lt;BODY&gt;&lt;H1&gt;" + System.currentTimeMillis() + "&lt;/H1&gt;&lt;/BODY&gt;&lt;/HTML&gt;");
+     }
+}
+</pre>
+Once a query string plug-in class has been created, the Axis server must be set up to recognize the 
+query string which invokes it.  See the section <a href="reference.html#Deployment">Deployment (WSDD) Reference</a> in the 
+<a href="reference.html">Axis Reference Guide</a> for information on how the HTTP transport section of the Axis server configuration 
+file must be set up.
+
 
 <h2>
 <a NAME="Configuration Properties"></a>Configuration Properties</h2>
