@@ -873,6 +873,18 @@ public class SchemaUtils {
                          kind.getLocalPart().equals("all")) &&
                         Constants.isSchemaXSD(kind.getNamespaceURI())) {
                         groupNode = children.item(j);
+                        if (groupNode.getChildNodes().getLength() == 0) {
+                            // This covers the rather odd but legal empty sequence.
+                            // <complexType name="ArrayOfString">
+                            //   <complexContent>
+                            //     <restriction base="soapenc:Array">
+                            //       <sequence/>
+                            //       <attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
+                            //     </restriction>
+                            //   </complexContent>
+                            // </complexType>
+                            groupNode = null;
+                        }
                     }
                     if (kind != null &&
                         kind.getLocalPart().equals("attribute") &&
