@@ -503,13 +503,11 @@ public class ServiceDesc {
             qname2OperationsMap = new HashMap();
             for (Iterator i = operations.iterator(); i.hasNext();) {
                 OperationDesc operationDesc = (OperationDesc) i.next();
-                ArrayList list =
-                        (ArrayList)qname2OperationsMap.get(operationDesc.
-                                                          getElementQName());
+                QName qname = operationDesc.getElementQName();
+                ArrayList list = (ArrayList)qname2OperationsMap.get(qname);
                 if (list == null) {
                     list = new ArrayList();
-                    qname2OperationsMap.put(operationDesc.getElementQName(),
-                                           list);
+                    qname2OperationsMap.put(qname, list);
                 }
                 list.add(operationDesc);
             }

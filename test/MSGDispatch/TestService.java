@@ -114,9 +114,16 @@ public class TestService {
         return new Element [] { result };
     }
 
+    public Element [] testElementEcho(Element [] bodyElems)
+            throws Exception {
+        return bodyElems;
+    }
+    
     public void testEnvelope(SOAPEnvelope req, SOAPEnvelope resp)
             throws Exception {
         // Throw a header in and echo back.
+        SOAPBodyElement body = req.getFirstBody();
+        resp.addBodyElement(body);
         resp.addHeader(new SOAPHeaderElement("http://db.com", "local", "value"));
     }
 }
