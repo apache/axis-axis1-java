@@ -926,6 +926,15 @@ public class AxisServlet extends AxisServletBase {
 
             throw af;
         }
+        // the SOAP 1.1 spec & WS-I 1.0 says:
+        // soapaction    = "SOAPAction" ":" [ <"> URI-reference <"> ]
+        // some implementations leave off the quotes
+        // we strip them if they are present
+        if (soapAction.startsWith("\"") && soapAction.endsWith("\"")
+                && soapAction.length()>=2) {
+            int end = soapAction.length() - 1;
+            soapAction = soapAction.substring(1, end);
+        }
 
         if (soapAction.length()==0)
             soapAction = req.getContextPath(); // Is this right?
