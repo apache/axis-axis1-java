@@ -64,6 +64,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.xml.namespace.QName;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -196,65 +198,105 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 throw new IOException(JavaUtils.getMessage("emitFail03",
                         new String[] {portName, className, address}));
             }
-
-            // Write the private address info for this port
-            pw.println();
-            pw.println("    // " + JavaUtils.getMessage("getProxy00", portName));
-            writeComment(pw, p.getDocumentationElement());
-            pw.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
-
-            // Write the public address getter for this port
-            pw.println();
-            pw.println("    public java.lang.String get" + portName + "Address() {" );
-            pw.println("        return " + portName + "_address;" );
-            pw.println("    }" );
-            pw.println();
-
-            // Write the private WSDD service name for this port
+            writeAddressInfo(pw, portName, address, p);
             String wsddServiceName = portName + "WSDDServiceName";
-            pw.println("    // " + JavaUtils.getMessage("wsddServiceName00"));
-            pw.println("    private java.lang.String " + wsddServiceName + " = \"" + portName + "\";");
-            pw.println();
-
-            // Write the public accessors for the WSDD service name for this port
-            pw.println("    public java.lang.String get" + wsddServiceName + "() {");
-            pw.println("        return " + wsddServiceName + ";");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public void set" + wsddServiceName + "(java.lang.String name) {");
-            pw.println("        " + wsddServiceName + " = name;");
-            pw.println("    }");
-            pw.println();
-
-            // Write the get<portName>() method
-            pw.println("    public " + bindingType + " get" + portName + "() throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
-            pw.println("       java.net.URL endpoint;");
-            pw.println("        try {");
-            pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
-            pw.println("        }");
-            pw.println("        catch (java.net.MalformedURLException e) {");
-            pw.println("            return null; // " +
-                    JavaUtils.getMessage("unlikely00"));
-            pw.println("        }");
-            pw.println("        return get" + portName + "(endpoint);");
-            pw.println("    }");
-            pw.println();
-
-            // Write the get<portName>(URL) method
-            pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
-            pw.println("        try {");
-            pw.println("            " + stubClass + " _stub = new " + stubClass + "(portAddress, this);");
-            pw.println("            _stub.setPortName(get" + wsddServiceName + "());");
-            pw.println("            return _stub;");
-            pw.println("        }");
-            pw.println("        catch (org.apache.axis.AxisFault e) {");
-            pw.println("            return null; // ???");
-            pw.println("        }");
-            pw.println("    }");
+            writeWSDDServiceNameInfo(pw, wsddServiceName, portName);
+            writeGetPortName(pw, bindingType, portName);
+            writeGetPortNameURL(pw, bindingType, portName, stubClass,
+                    wsddServiceName);
         }
+        writeGetPortClass(pw, getPortIfaces, getPortStubClasses,
+                getPortPortNames, printGetPortNotice);
+        writeGetPortQNameClass(pw);
+        writeGetServiceName(pw, sEntry.getQName());
+        writeGetPorts(pw, getPortPortNames);
+    } // writeFileBody
 
-        // Build the getPort method.
+    /**
+     * Write the private address field for this port and the public getter for it.
+     */
+    protected void writeAddressInfo(PrintWriter pw, String portName,
+            String address, Port p) {
+        // Write the private address field for this port
         pw.println();
+        pw.println("    // " + JavaUtils.getMessage("getProxy00", portName));
+        writeComment(pw, p.getDocumentationElement());
+        pw.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
+
+        // Write the public address getter for this field
+        pw.println();
+        pw.println("    public java.lang.String get" + portName + "Address() {" );
+        pw.println("        return " + portName + "_address;" );
+        pw.println("    }" );
+        pw.println();
+
+    } // writeAddressInfo
+
+    /**
+     * Write the private WSDD service name field and the public accessors for it.
+     */
+    protected void writeWSDDServiceNameInfo(PrintWriter pw,
+            String wsddServiceName, String portName) {
+        // Write the private WSDD service name field
+        pw.println("    // " + JavaUtils.getMessage("wsddServiceName00"));
+        pw.println("    private java.lang.String " + wsddServiceName + " = \"" + portName + "\";");
+        pw.println();
+
+        // Write the public accessors for the WSDD service name
+        pw.println("    public java.lang.String get" + wsddServiceName + "() {");
+        pw.println("        return " + wsddServiceName + ";");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public void set" + wsddServiceName + "(java.lang.String name) {");
+        pw.println("        " + wsddServiceName + " = name;");
+        pw.println("    }");
+        pw.println();
+    } // writeWSDDServiceNameInfo
+
+    /**
+     * Write the get<portName>() method.
+     */
+    protected void writeGetPortName(PrintWriter pw, String bindingType,
+            String portName) {
+        pw.println("    public " + bindingType + " get" + portName + "() throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
+        pw.println("       java.net.URL endpoint;");
+        pw.println("        try {");
+        pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
+        pw.println("        }");
+        pw.println("        catch (java.net.MalformedURLException e) {");
+        pw.println("            return null; // " +
+                   JavaUtils.getMessage("unlikely00"));
+        pw.println("        }");
+        pw.println("        return get" + portName + "(endpoint);");
+        pw.println("    }");
+        pw.println();
+    } // writeGetPortName
+
+    /**
+     * Write the get<portName>(URL) method.
+     */
+    protected void writeGetPortNameURL(PrintWriter pw, String bindingType,
+            String portName, String stubClass, String wsddServiceName) {
+        pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
+        pw.println("        try {");
+        pw.println("            " + stubClass + " _stub = new " + stubClass + "(portAddress, this);");
+        pw.println("            _stub.setPortName(get" + wsddServiceName + "());");
+        pw.println("            return _stub;");
+        pw.println("        }");
+        pw.println("        catch (org.apache.axis.AxisFault e) {");
+        pw.println("            return null; // ???");
+        pw.println("        }");
+        pw.println("    }");
+        pw.println();
+    } // writeGetPortNameURL
+
+    /**
+     * Write the getPort(Class serviceInterfaceWriter) method.
+     */
+    protected void writeGetPortClass(PrintWriter pw, Vector getPortIfaces,
+            Vector getPortStubClasses, Vector getPortPortNames,
+            boolean printGetPortNotice)
+    {
         pw.println("    /**");
         pw.println("     * " + JavaUtils.getMessage("getPortDoc00"));
         pw.println("     * " + JavaUtils.getMessage("getPortDoc01"));
@@ -290,6 +332,53 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         }
         pw.println("    }");
         pw.println();
-    } // writeFileBody
+
+    } // writeGetPortClass
+
+    /**
+     * Write the getPort(QName portName, Class serviceInterfaceWriter) method.
+     */
+    protected void writeGetPortQNameClass(PrintWriter pw) {
+        pw.println("    /**");
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc00"));
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc01"));
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc02"));
+        pw.println("     */");
+        pw.println("    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
+        pw.println("        java.rmi.Remote _stub = getPort(serviceEndpointInterface);");
+        pw.println("        ((org.apache.axis.client.Stub) _stub).setPortName(portName);");
+        pw.println("        return _stub;");
+        pw.println("    }");
+        pw.println();
+    } // writeGetPortQNameClass
+
+    /**
+     * Write the getServiceName method.
+     */
+    protected void writeGetServiceName(PrintWriter pw, QName qname) {
+        pw.println("    public javax.xml.namespace.QName getServiceName() {");
+        pw.println("        return " + Utils.getNewQName(qname) + ";");
+        pw.println("    }");
+        pw.println();
+    } // writeGetServiceName
+
+    /**
+     * Write the getPorts method.
+     */
+    protected void writeGetPorts(PrintWriter pw, Vector portNames) {
+        pw.println("    private java.util.HashSet ports = null;");
+        pw.println();
+        pw.println("    public java.util.Iterator getPorts() {");
+        pw.println("        if (ports == null) {");
+        pw.println("            ports = new java.util.HashSet();");
+        for (int i = 0; i < portNames.size(); ++i) {
+            pw.println("            ports.add(new javax.xml.namespace.QName(\"" +
+                    portNames.get(i) + "\"));");
+        }
+        pw.println("        }");
+        pw.println("        return ports.iterator();");
+        pw.println("    }");
+        pw.println();
+    } // writeGetPorts
 
 } // class JavaServiceImplWriter

@@ -581,20 +581,21 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     }
 
     /**
-     * Returns an Iterator that can be used to get all of the ports
-     * specified in the WSDL file associated with this Service (if there
-     * is a WSDL file).
+     * Returns an <code>Iterator</code> for the list of
+     * <code>QName</code>s of service endpoints grouped by this
+     * service
      *
-     * @return Iterator The ports specified in the WSDL file
-     * @throws ServiceException If this Service class does not have access to the
-     *         required WSDL metadata
+     * @return Returns <code>java.util.Iterator</code> with elements
+     *     of type <code>javax.xml.namespace.QName</code>
+     * @throws ServiceException If this Service class does not
+     *     have access to the required WSDL metadata
      */
     public Iterator getPorts() throws ServiceException {
         if (wsdlService == null || wsdlService.getPorts() == null){
             // Return an empty iterator;
             return new Vector().iterator();
         }
-        return wsdlService.getPorts().values().iterator();
+        return wsdlService.getPorts().keySet().iterator();
     }
 
     /**
