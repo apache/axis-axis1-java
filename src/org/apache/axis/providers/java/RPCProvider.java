@@ -56,7 +56,6 @@
 package org.apache.axis.providers.java ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -66,7 +65,6 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.server.ParamList;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
@@ -75,7 +73,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Iterator;
@@ -314,45 +311,5 @@ public class RPCProvider extends JavaProvider
         //  then treat it as a wildcard automatically matching methodName
         ///////////////////////////////////////////////////////////////
         return;
-    }
-
-    /**
-     * Returns or creates the parameter name for the i'th parm of
-     * of the method specified.
-     * (Use i=-1 to access the return name.)
-     */
-    protected QName getParameterName(Object obj,
-                                      Method method,
-                                      int i,
-                                      String methodName) {
-        return getParameterName(obj, method, i, methodName, null);
-    }
-
-    /**
-     * Returns or creates the parameter name for the i'th parm of
-     * of the method specified, using the name in the appropriate
-     * position of the rpcParams Vector if it is supplied.
-     *
-     * (Use i=-1 to access the return name.)
-     */
-    protected QName getParameterName(Object obj,
-                                      Method method,
-                                      int i,
-                                      String methodName,
-                                      Vector rpcParams) {
-        QName parmName = null;
-        // Emitter skeletons keep track of the parameter names
-        if (obj instanceof org.apache.axis.wsdl.Skeleton)
-            parmName = ((org.apache.axis.wsdl.Skeleton)obj).getParameterName(method.getName(), i);
-        if (parmName == null) {
-            if (i >= 0) {
-                if (rpcParams != null && rpcParams.size() > i) {
-                    parmName = ((RPCParam)rpcParams.get(i)).getQName();
-                } else {
-                    parmName = new QName("", methodName + "Result" + i);
-                }
-            }
-        }
-        return parmName;
     }
 }
