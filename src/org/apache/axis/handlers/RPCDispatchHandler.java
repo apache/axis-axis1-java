@@ -93,43 +93,48 @@ public class RPCDispatchHandler implements Handler {
       // We know we're doing a java call so find the class, create a
       // new instance of it.
       int          i ;
-      Class        cls   = Class.forName(clsName);
-      Object       obj   = cls.newInstance();
-      Message      inMsg = msgContext.getIncomingMessage();
-      SOAPEnvelope env   = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
-      RPCBody      body  = env.getAsRPCBody();
-      String       mName = body.getMethodName();
-      Vector       args  = body.getArgs();        //RPCArg's
+      Class        cls    = Class.forName(clsName);
+      Object       obj    = cls.newInstance();
+      Message      inMsg  = msgContext.getIncomingMessage();
+      SOAPEnvelope env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
+      Vector       bodies = env.getAsRPCBody();
+      SOAPEnvelope resEnv = null ;
 
-      if ( !methodName.equals(mName) )
-        throw new AxisFault( "AxisServier.error", "Method names don't match",
-                             null, null );  // Should they??
-
-      Class[]  argClasses = new Class[ args.size() ];
-      Object[] argValues  = new Object[ args.size()];
-      for ( i = 0 ; i < args.size() ; i++ ) {
-        argClasses[i] = Class.forName("java.lang.String") ;
-        argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
+      for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
+        RPCBody      body  = (RPCBody) bodies.get( bNum );
+        String       mName = body.getMethodName();
+        Vector       args  = body.getArgs();        //RPCArg's
+  
+        if ( !methodName.equals(mName) )
+          throw new AxisFault( "AxisServier.error", "Method names don't match",
+                               null, null );  // Should they??
+  
+        Class[]  argClasses = new Class[ args.size() ];
+        Object[] argValues  = new Object[ args.size()];
+        for ( i = 0 ; i < args.size() ; i++ ) {
+          argClasses[i] = Class.forName("java.lang.String") ;
+          argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
+        }
+  
+        Method method = cls.getMethod( mName, argClasses );
+        Object objRes = method.invoke( obj, argValues );
+  
+        // Now put the result in a result SOAPEnvelope
+        if ( resEnv == null )
+          resEnv = new SOAPEnvelope();
+        RPCBody resBody = new RPCBody();
+        resBody.setMethodName( mName + "Response" );
+        resBody.setNamespace( body.getNamespace() );
+        resBody.setNamespaceURI( body.getNamespaceURI() );
+        RPCArg  arg = new RPCArg();
+        arg.setName( "return" );
+        arg.setValue( objRes.toString() );
+        resBody.addArg( arg );
+        resEnv.addBody( resBody );
       }
 
-      Method method = cls.getMethod( mName, argClasses );
-      Object objRes = method.invoke( obj, argValues );
-
-      // Now put the result in a result SOAPEnvelope
-      env = new SOAPEnvelope();
-      RPCBody resBody = new RPCBody();
-      resBody.setMethodName( mName + "Response" );
-      resBody.setNamespace( body.getNamespace() );
-      resBody.setNamespaceURI( body.getNamespaceURI() );
-      RPCArg  arg = new RPCArg();
-      arg.setName( "return" );
-      arg.setValue( objRes.toString() );
-      resBody.addArg( arg );
-      env.setBody( resBody );
-
-
       // Message outMsg = new Message( objRes.toString(), "String" );
-      Message outMsg = new Message( env, "SOAPEnvelope" );
+      Message outMsg = new Message( resEnv, "SOAPEnvelope" );
       msgContext.setOutgoingMessage( outMsg );
     }
     catch( Exception e ) {

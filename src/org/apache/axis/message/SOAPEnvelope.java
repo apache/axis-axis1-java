@@ -74,7 +74,7 @@ import org.apache.axis.utils.* ;
 public class SOAPEnvelope {
   protected String       prefix ;
   protected ArrayList    headers ;
-  protected SOAPBody     body ;    
+  protected Vector       body ; // Vector of SOAPBody's
 
   public SOAPEnvelope() {
   }
@@ -117,8 +117,8 @@ public class SOAPEnvelope {
         for ( i = 0 ; i < list.getLength() ; i++ ) {
           Node n = list.item(i);
           if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
-          body = new SOAPBody( (Element) n );
-          break ;
+          if ( body == null ) body = new Vector();
+          body.add( new SOAPBody( (Element) n ) );
         }
       }
     }
@@ -134,17 +134,39 @@ public class SOAPEnvelope {
     headers.add( header );
   }
 
-  public SOAPBody getBody() { return( body ); }
-  public void     setBody(SOAPBody b) { body = b ; }
+  /**
+   * Returns a vector of SOAPBody's - could be more than one
+   */
+  public Vector getBody() { 
+    return( body ); 
+  }
 
-  public RPCBody  getAsRPCBody() {
-    if ( body instanceof RPCBody ) return( (RPCBody) body );
-    return( (RPCBody) (body = new RPCBody( getBody()) ) );
+  public SOAPBody getFirstBody() {
+    return( (body == null) ? null : (SOAPBody) body.get(0) );
+  }
+
+  public void addBody(SOAPBody b) {
+    if ( body == null ) body = new Vector();
+    body.add( b );
+  }
+
+  /**
+   * Returns a vector of RPCBody's because there could be more than
+   * one in there.
+   */
+  public Vector  getAsRPCBody() {
+    if ( body == null ) return( null );
+    SOAPBody b = (SOAPBody) body.get(0);
+    for ( int i = 0 ; i < body.size() ; i++ )
+      if ( !(body.get(i) instanceof RPCBody) )
+        body.set(i, new RPCBody( (SOAPBody) body.get(i) ) );
+    return( body );
   }
 
   public Document getAsDOM() {
     Document doc = null ;
     Element  elem ;
+    int      i ;
 
     doc = new DocumentImpl();
     elem = doc.createElementNS(Constants.NSPREFIX_SOAP_ENV, 
@@ -159,7 +181,7 @@ public class SOAPEnvelope {
                                          Constants.NSPREFIX_SOAP_ENV + ":" +
                                          Constants.ELEM_HEADER);
       elem.appendChild( root );
-      for ( int i = 0 ; i < headers.size() ; i++ ) {
+      for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
         root.appendChild( h.getAsXML(doc) );
       }
@@ -169,7 +191,8 @@ public class SOAPEnvelope {
                                          Constants.NSPREFIX_SOAP_ENV + ":" + 
                                          Constants.ELEM_BODY);
       elem.appendChild( root );
-      root.appendChild( body.getAsXML(doc) );
+      for ( i = 0 ; i < body.size() ; i++ )
+        root.appendChild( ((SOAPBody)body.get(i)).getAsXML(doc) );
     }
     return( doc );
   }
