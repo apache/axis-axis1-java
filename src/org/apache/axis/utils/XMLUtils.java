@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,13 +75,13 @@ import java.util.Stack;
 public class XMLUtils {
     protected static Log log =
         LogFactory.getLog(XMLUtils.class.getName());
-        
+
     public static final String httpAuthCharEncoding = "ISO-8859-1";
     private static final String saxParserFactoryProperty =
         "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
-    private static Stack                  documentBuilders = new Stack(); 
+    private static Stack                  documentBuilders = new Stack();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
     private static DefaultHandler doNothingContentHandler = new DefaultHandler();
@@ -89,8 +89,10 @@ public class XMLUtils {
     private static String EMPTY = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(EMPTY.getBytes());
 
+    private static boolean tryReset= true;
+
     protected static boolean enableParserReuse = false;
-    
+
     static {
         // Initialize SAX Parser factory defaults
         initSAXFactory(null, true, false);
@@ -106,7 +108,7 @@ public class XMLUtils {
         }
     }
 
-    /** 
+    /**
      * Encode a string appropriately for XML.
      * @param orig the String to encode
      * @return a String in which XML special chars are repalced by entities
@@ -120,7 +122,7 @@ public class XMLUtils {
     /**
      * Get the current XMLEncoder
      * @return XMLEncoder
-     */ 
+     */
     public static XMLEncoder getXMLEncoder(MessageContext msgContext) {
         XMLEncoder encoder = null;
         String encoding = getEncoding(null, msgContext);
@@ -135,20 +137,20 @@ public class XMLUtils {
 
     /**
      * Get the current encoding in effect
-     * @return string 
-     */ 
+     * @return string
+     */
     public static String getEncoding(MessageContext msgContext) {
         XMLEncoder encoder = getXMLEncoder(msgContext);
-        return encoder.getEncoding();        
+        return encoder.getEncoding();
     }
 
     /**
      * Get the current encoding in effect
-     * @return string 
-     */ 
+     * @return string
+     */
     public static String getEncoding() {
         XMLEncoder encoder = getXMLEncoder(MessageContext.getCurrentContext());
-        return encoder.getEncoding();        
+        return encoder.getEncoding();
     }
 
     /** Initialize the SAX parser factory.
@@ -211,7 +213,7 @@ public class XMLUtils {
      * Gets a DocumentBuilder
      * @return DocumentBuilder
      * @throws ParserConfigurationException
-     */ 
+     */
     public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
         synchronized (documentBuilders) {
             if (!documentBuilders.empty()) {
@@ -228,22 +230,24 @@ public class XMLUtils {
     /**
      * Releases a DocumentBuilder
      * @param db
-     */ 
+     */
     public static void releaseDocumentBuilder(DocumentBuilder db) {
         synchronized (documentBuilders) {
             try {
                 db.setErrorHandler(null); // setting implementation default
             } catch (Throwable t) {
+                log.debug("Failed to set ErrorHandler to null on DocumentBuilder",
+                          t);
             }
             try {
                 db.setEntityResolver(null); // setting implementation default
             } catch (Throwable t) {
+                log.debug("Failed to set EntityResolver to null on DocumentBuilder",
+                          t);
             }
             documentBuilders.push(db);
         }
     }
-    
-    private static boolean tryReset= true;
 
     /** Get a SAX parser instance from the JAXP factory.
      *
@@ -256,13 +260,17 @@ public class XMLUtils {
 
         try {
             SAXParser parser = saxFactory.newSAXParser();
-            XMLReader reader = parser.getXMLReader(); 
+            XMLReader reader = parser.getXMLReader();
             // parser.getParser().setEntityResolver(new DefaultEntityResolver());
-            // The above commented line and the following line are added 
+            // The above commented line and the following line are added
             // for preventing XXE (bug #14105).
             // We may need to uncomment the deprecated setting
-            // in case that it is considered necessary.  
-            reader.setEntityResolver(new DefaultEntityResolver());
+            // in case that it is considered necessary.
+            try {
+                reader.setEntityResolver(new DefaultEntityResolver());
+            } catch (Throwable t) {
+                log.debug("Failed to set EntityResolver on DocumentBuilder", t);
+            }
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
             return parser;
         } catch (ParserConfigurationException e) {
@@ -287,8 +295,17 @@ public class XMLUtils {
             if(null != xmlReader){
                 xmlReader.setContentHandler(doNothingContentHandler);
                 xmlReader.setDTDHandler(doNothingContentHandler);
-                xmlReader.setEntityResolver(doNothingContentHandler);
-                xmlReader.setErrorHandler(doNothingContentHandler);
+                try {
+                    xmlReader.setEntityResolver(doNothingContentHandler);
+                } catch (Throwable t) {
+                    log.debug("Failed to set EntityResolver on DocumentBuilder", t);
+                }
+                try {
+                    xmlReader.setErrorHandler(doNothingContentHandler);
+                } catch (Throwable t) {
+                    log.debug("Failed to set ErrorHandler on DocumentBuilder", t);
+                }
+
                 synchronized (XMLUtils.class ) {
                     saxParsers.push(parser);
                 }
@@ -328,13 +345,20 @@ public class XMLUtils {
      * @throws IOException if i/o exceptions occur
      */
     public static Document newDocument(InputSource inp)
-        throws ParserConfigurationException, SAXException, IOException
-    {
+            throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilder db = null;
         try {
             db = getDocumentBuilder();
-            db.setEntityResolver(new DefaultEntityResolver());
-            db.setErrorHandler(new ParserErrorHandler());
+            try {
+                db.setEntityResolver(new DefaultEntityResolver());
+            } catch (Throwable t) {
+                log.debug("Failed to set EntityResolver on DocumentBuilder", t);
+            }
+            try {
+                db.setErrorHandler(new XMLUtils.ParserErrorHandler());
+            } catch (Throwable t) {
+                log.debug("Failed to set ErrorHandler on DocumentBuilder", t);
+            }
             Document doc = db.parse(inp);
             return doc;
         } finally {
@@ -351,11 +375,11 @@ public class XMLUtils {
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
      */
-    public static Document newDocument(InputStream inp) 
-        throws ParserConfigurationException, SAXException, IOException 
+    public static Document newDocument(InputStream inp)
+        throws ParserConfigurationException, SAXException, IOException
     {
         return XMLUtils.newDocument(new InputSource(inp));
-    } 
+    }
 
     /**
      * Get a new Document read from the indicated uri
@@ -364,14 +388,14 @@ public class XMLUtils {
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
      */
-    public static Document newDocument(String uri) 
-        throws ParserConfigurationException, SAXException, IOException 
+    public static Document newDocument(String uri)
+        throws ParserConfigurationException, SAXException, IOException
     {
-        // call the authenticated version as there might be 
+        // call the authenticated version as there might be
         // username/password info embeded in the uri.
         return XMLUtils.newDocument(uri, null, null);
     }
-    
+
     /**
      * Create a new document from the given URI, use the username and password
      * if the URI requires authentication.
@@ -381,7 +405,7 @@ public class XMLUtils {
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
-     */ 
+     */
     public static Document newDocument(String uri, String username, String password)
         throws ParserConfigurationException, SAXException, IOException
      {
@@ -459,7 +483,7 @@ public class XMLUtils {
         Writer writer = getWriter(out);
         privateElementToWriter(doc.getDocumentElement(), writer, false, true);
     }
-    
+
     private static Writer getWriter(OutputStream os) {
         Writer writer = null;
         try {
@@ -480,12 +504,12 @@ public class XMLUtils {
     }
     /**
      * Convert a simple string to an element with a text node
-     * 
+     *
      * @param namespace - element namespace
      * @param name - element name
      * @param string - value of the text node
      * @return element - an XML Element, null if no element was created
-     */ 
+     */
     public static Element StringToElement(String namespace, String name, String string) {
         try {
             Document doc = XMLUtils.newDocument();
@@ -493,7 +517,7 @@ public class XMLUtils {
             Text text = doc.createTextNode(string);
             element.appendChild(text);
             return element;
-        } 
+        }
         catch (ParserConfigurationException e) {
             // This should not occur
             throw new InternalException(e);
@@ -536,15 +560,15 @@ public class XMLUtils {
 
     /**
      * Searches for the namespace URI of the given prefix in the given DOM range.
-     * 
+     *
      * The namespace is not searched in parent of the "stopNode". This is
      * usefull to get all the needed namespaces when you need to ouput only a
-     * subtree of a DOM document. 
-     * 
+     * subtree of a DOM document.
+     *
      * @param prefix the prefix to find
      * @param e the starting node
      * @param stopNode null to search in all the document or a parent node where the search must stop.
-     * @return null if no namespace is found, or the namespace URI. 
+     * @return null if no namespace is found, or the namespace URI.
      */
     public static String getNamespace(String prefix, Node e, Node stopNode) {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
@@ -600,7 +624,7 @@ public class XMLUtils {
         } else {
             if (defaultNS) {
                 String ns = getNamespace(null, e);
-                if (ns != null) 
+                if (ns != null)
                     return new QName(ns, str);
             }
             return new QName("", str);
@@ -656,9 +680,8 @@ public class XMLUtils {
     }
     return strBuf.toString();
   }
-    
-    public static class ParserErrorHandler implements ErrorHandler
-    {
+
+    public static class ParserErrorHandler implements ErrorHandler {
         protected static Log log =
             LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
@@ -682,7 +705,7 @@ public class XMLUtils {
             if (log.isDebugEnabled())
                 log.debug( Messages.getMessage("warning00", getParseExceptionInfo(spe)));
         }
-        
+
         public void error(SAXParseException spe) throws SAXException {
             String message = "Error: " + getParseExceptionInfo(spe);
             throw new SAXException(message);
@@ -697,7 +720,7 @@ public class XMLUtils {
 
     /**
      * Utility to get the bytes uri.
-     * Does NOT handle authenticated URLs, 
+     * Does NOT handle authenticated URLs,
      * use getInputSourceFromURI(uri, username, password)
      *
      * @param uri the resource to get
@@ -740,18 +763,18 @@ public class XMLUtils {
 
     /**
      * Utility to get the bytes at a protected uri
-     * 
+     *
      * This will retrieve the URL if a username and password are provided.
      * The java.net.URL class does not do Basic Authentication, so we have to
      * do it manually in this routine.
-     * 
+     *
      * If no username is provided, we create an InputSource from the uri
      * and let the InputSource go fetch the contents.
-     * 
+     *
      * @param uri the resource to get
      * @param username basic auth username
      * @param password basic auth password
-     */ 
+     */
     private static InputSource getInputSourceFromURI(String uri,
                                                      String username,
                                                      String password)
@@ -765,12 +788,12 @@ public class XMLUtils {
             // let InputSource deal with it
             return new InputSource(uri);
         }
-        
+
         // if no authentication, just let InputSource deal with it
         if (username == null && wsdlurl.getUserInfo() == null) {
             return new InputSource(uri);
         }
-        
+
         // if this is not an HTTP{S} url, let InputSource deal with it
         if (!wsdlurl.getProtocol().startsWith("http")) {
             return new InputSource(uri);
@@ -792,20 +815,20 @@ public class XMLUtils {
         uconn.setInstanceFollowRedirects(true);
         uconn.setUseCaches(false);
 
-        // username/password info in the URL overrides passed in values 
+        // username/password info in the URL overrides passed in values
         String auth = null;
         if (userinfo != null) {
             auth = userinfo;
         } else if (username != null) {
             auth = (password == null) ? username : username + ":" + password;
         }
-        
+
         if (auth != null) {
             uconn.setRequestProperty("Authorization",
-                                     "Basic " + 
+                                     "Basic " +
                                      base64encode(auth.getBytes(httpAuthCharEncoding)));
         }
-        
+
         uconn.connect();
 
         return new InputSource(uconn.getInputStream());
@@ -818,16 +841,16 @@ public class XMLUtils {
     public static InputSource getEmptyInputSource() {
         return new InputSource(bais);
     }
-    
+
     /**
      * Find a Node with a given QName
-     * 
+     *
      * @param node parent node
      * @param name QName of the child we need to find
      * @return child node
-     */ 
+     */
     public static Node findNode(Node node, QName name){
-        if(name.getNamespaceURI().equals(node.getNamespaceURI()) && 
+        if(name.getNamespaceURI().equals(node.getNamespaceURI()) &&
            name.getLocalPart().equals(node.getLocalName()))
             return node;
         NodeList children = node.getChildNodes();
@@ -841,8 +864,8 @@ public class XMLUtils {
 
     /**
      * Trim all new lines from text nodes.
-     * 
-     * @param node 
+     *
+     * @param node
      */
     public static void normalize(Node node) {
         if (node.getNodeType() == Node.TEXT_NODE) {
@@ -852,7 +875,7 @@ public class XMLUtils {
                  if(ch == '\n' || ch == '\r' || ch == ' ') {
                     String data2 = trim(data);
                     ((Text) node).setData(data2);
-                 } 
+                 }
             }
         }
         for (Node currentChild = node.getFirstChild(); currentChild != null; currentChild = currentChild.getNextSibling()) {
@@ -878,14 +901,14 @@ public class XMLUtils {
         while(lastIdx > 0) {
             if(last != '\n' && last != '\r' && last != ' ')
                 break;
-            lastIdx--; 
+            lastIdx--;
             last = str.charAt(lastIdx);
         }
         if(lastIdx == 0)
             return "";
         return str.substring(0, lastIdx);
     }
-    
+
     /**
      * Converts a List with org.w3c.dom.Element objects to an Array
      * with org.w3c.dom.Element objects.
@@ -893,15 +916,15 @@ public class XMLUtils {
      * @return Element[] Array with org.w3c.dom.Element objects
      */
     public static Element[] asElementArray(List list) {
-                
-        Element[] elements = new Element[list.size()];        
-        
+
+        Element[] elements = new Element[list.size()];
+
         int i = 0;
         Iterator detailIter = list.iterator();
         while (detailIter.hasNext()) {
-            elements[i++] = (Element) detailIter.next();                                  
+            elements[i++] = (Element) detailIter.next();
         }
-        
+
         return elements;
     }
 
@@ -922,8 +945,8 @@ public class XMLUtils {
         } catch (SOAPException e) {
         }
         if(msgContext == null) {
-            msgContext = MessageContext.getCurrentContext();  
-        } 
+            msgContext = MessageContext.getCurrentContext();
+        }
         if(msgContext != null && encoding == null){
             encoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
         }
