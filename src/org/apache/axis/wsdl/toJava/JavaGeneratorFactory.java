@@ -74,7 +74,7 @@ import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -955,7 +955,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     public BaseTypeMapping getBaseTypeMapping() {
         if (btm == null) {
             btm = new BaseTypeMapping() {
-                    TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                    TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
                     public String getBaseName(QName qNameIn) {
                         javax.xml.namespace.QName qName = 
                             new javax.xml.namespace.QName(

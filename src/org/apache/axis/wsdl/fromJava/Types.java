@@ -59,6 +59,7 @@ package org.apache.axis.wsdl.fromJava;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
@@ -66,6 +67,10 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.Type;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -75,15 +80,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 /**
  *
@@ -138,6 +147,81 @@ public class Types {
     }
 
     /**
+     * Load the types from the input wsdl file.
+     * @param inputWSDL file or URL
+     */
+    public void loadInputTypes(String inputWSDL)
+        throws IOException, WSDLException
+    {
+
+        // Read the input wsdl file into a Document
+        Document doc = XMLUtils.newDocument(inputWSDL);
+
+        // Search for the 'types' element
+        NodeList elements = doc.getChildNodes();
+        if (elements.getLength() > 0 && 
+            elements.item(0).getLocalName().equals("definitions")) {
+            elements = elements.item(0).getChildNodes();
+            for (int i=0;
+                 i < elements.getLength() && wsdlTypesElem == null; 
+                 i++) {
+                Node node = elements.item(i);
+                if (node.getLocalName() != null &&
+                    node.getLocalName().equals("types")) {
+                    Document emptyDoc = XMLUtils.newDocument(inputWSDL);
+                    wsdlTypesElem = (Element) node;
+                    
+                }
+            }
+        }
+
+        // If types element not found, there is no need to continue.
+        if (wsdlTypesElem == null) {
+            return;
+        }
+
+        // Import the types element into the Types docHolder document
+        wsdlTypesElem = 
+            (Element) docHolder.importNode(wsdlTypesElem, true);
+        docHolder.appendChild(wsdlTypesElem);
+
+        // Create a symbol table and populate it with the input wsdl document
+        BaseTypeMapping btm = 
+            new BaseTypeMapping() {
+                TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
+                    public String getBaseName(QName qNameIn) {
+                        QName qName = new QName(
+                              qNameIn.getNamespaceURI(),                                 
+                              qNameIn.getLocalPart());
+                        Class cls = defaultTM.getClassForQName(qName);
+                        if (cls == null)
+                            return null;
+                        else 
+                            return JavaUtils.getTextClassName(cls.getName());
+                    }
+                }; 
+        SymbolTable symbolTable = new SymbolTable(btm,
+                                                  true, false, false, false);
+        symbolTable.populate(null, doc);
+
+        // Walk the type/element entries in the symbol table and 
+        // add each one to the list of processed types.  This prevents
+        // the types from being duplicated.
+        Vector v = symbolTable.getTypes();
+        for (int i=0; i < v.size(); i++) {
+            TypeEntry te = (TypeEntry) v.elementAt(i);
+            if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
+                addToTypesList(te.getQName(), 
+                               te.getQName().getLocalPart());
+            } else if (te instanceof Type) {
+                addToElementsList(te.getQName());
+            }
+        }
+
+    
+    }
+
+    /**
      * Serialize the Class as XML schema to the document.
      * Create a types node for the WSDL if one doesn't exist
      * Create a schema node for the Class namespace, if one doesn't exist
@@ -148,7 +232,7 @@ public class Types {
      * @param type <code>Class</code> to generate the XML Schema info for
      * @return the QName of the generated Schema type, null if void
      */
-    public QName writePartType(Class type, javax.xml.namespace.QName qname) throws Exception {
+    public QName writePartType(Class type, QName qname) throws AxisFault {
         //patch by costin to fix an NPE; commented out till we find out what the problem is
         //if you get NullPointerExceptions in this class, turn it on and submit some
         //replicable test data to the Axis team via bugzilla
@@ -164,7 +248,7 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
         if (isSimpleType(type)) {
-            javax.xml.namespace.QName typeQName = getTypeQName(type);
+            QName typeQName = getTypeQName(type);
             // Still need to write any element declaration...
             if (qname != null) {
                 String elementType = writeType(type);
@@ -187,7 +271,7 @@ public class Types {
      * @param type the class type
      * @return the QName of the generated Element
      */
-    private QName writeTypeAsElement(Class type, QName qName) throws Exception {
+    private QName writeTypeAsElement(Class type, QName qName) throws AxisFault {
         QName typeQName = writeTypeNamespace(type);
         if (qName == null) {
             qName = typeQName;
@@ -210,7 +294,7 @@ public class Types {
      * @return QName for the schema type representing the class
      */
     private QName writeTypeNamespace(Class type) {
-        javax.xml.namespace.QName qName = getTypeQName(type);
+        QName qName = getTypeQName(type);
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null)
           def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
@@ -222,11 +306,11 @@ public class Types {
      * @param javaType input javaType Class
      * @return QName
      */
-    private javax.xml.namespace.QName getTypeQName(Class javaType) {
-        javax.xml.namespace.QName qName = null;
+    private QName getTypeQName(Class javaType) {
+        QName qName = null;
 
         // Use the typeMapping information to lookup the qName.
-        javax.xml.namespace.QName dQName = null;
+        QName dQName = null;
         if (defaultTM != null) {
             dQName = defaultTM.getTypeQName(javaType);
         }
@@ -255,14 +339,14 @@ public class Types {
             // Construct ArrayOf<componentLocalPart>
             // Else
             // Construct ArrayOf_<componentPrefix>_<componentLocalPart>
-            javax.xml.namespace.QName cqName = getTypeQName(componentType);
+            QName cqName = getTypeQName(componentType);
             if (targetNamespace.equals(cqName.getNamespaceURI())) {
-                qName = new javax.xml.namespace.QName(
+                qName = new QName(
                         targetNamespace,
                         "ArrayOf" + cqName.getLocalPart());
             } else {
                 String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
-                qName = new javax.xml.namespace.QName(
+                qName = new QName(
                         targetNamespace,
                         "ArrayOf_" + pre + "_" + cqName.getLocalPart());
             }
@@ -278,7 +362,7 @@ public class Types {
             String ns = namespaces.getCreate(pkg);
             namespaces.getCreatePrefix(ns);
             String localPart = lcl.replace('$', '_');
-            qName = new javax.xml.namespace.QName(ns, localPart);
+            qName = new QName(ns, localPart);
         }
 
         return qName;
@@ -328,11 +412,13 @@ public class Types {
         NodeList nl = wsdlTypesElem.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++ ) {
             NamedNodeMap attrs = nl.item(i).getAttributes();
-            for (int n = 0; n < attrs.getLength(); n++) {
-                Attr a = (Attr)attrs.item(n);
-                if (a.getName().equals("targetNamespace") &&
-                    a.getValue().equals(qName.getNamespaceURI()))
-                    schemaElem = (Element)nl.item(i);
+            if (attrs != null) {
+                for (int n = 0; n < attrs.getLength(); n++) {
+                    Attr a = (Attr)attrs.item(n);
+                    if (a.getName().equals("targetNamespace") &&
+                        a.getValue().equals(qName.getNamespaceURI()))
+                        schemaElem = (Element)nl.item(i);
+                }
             }
         }
         if (schemaElem == null) {
@@ -351,9 +437,8 @@ public class Types {
 
     /**
      * Get the Types element for the WSDL document. If not present, create one
-     * @throws Exception
      */
-    private void writeWsdlTypesElement() throws Exception {
+    private void writeWsdlTypesElement() {
         if (wsdlTypesElem == null) {
             // Create a <wsdl:types> element corresponding to the wsdl namespaces.
             wsdlTypesElem =
@@ -371,9 +456,8 @@ public class Types {
      *
      * @param type Class for which to generate schema
      * @return a prefixed string for the schema type
-     * @throws Exception
      */
-    public String writeType(Class type) throws Exception {
+    public String writeType(Class type) throws AxisFault {
 
         // Quick return if schema type
         if (isSimpleType(type)) {
@@ -464,10 +548,14 @@ public class Types {
             attribute.setAttribute(Constants.NS_PREFIX_WSDL +":arrayType",
                                    componentTypeName );
         } else {
-            if (isEnumClass(type)) {
-                writeEnumType(qName, type);
-            } else {
-                ser.writeSchema(this);
+            try {
+                if (isEnumClass(type)) {
+                    writeEnumType(qName, type);
+                } else {
+                    ser.writeSchema(this);
+                }
+            } catch (Exception e) {
+                throw new AxisFault(JavaUtils.getMessage("writeSchemaProblem00", type.getName()), e);
             }
         }
         return prefixedName;
@@ -516,7 +604,8 @@ public class Types {
      * @param qName QName of type.
      * @param cls class of type
      */
-    private void writeEnumType(QName qName, Class cls)  throws Exception  {
+    private void writeEnumType(QName qName, Class cls) 
+        throws NoSuchMethodException, IllegalAccessException, AxisFault  {
         if (!isEnumClass(cls))
             return;
         // Get the base type of the enum class
@@ -639,7 +728,7 @@ public class Types {
               type == java.lang.Short.TYPE ||
               type == java.math.BigInteger.class ||
               type == java.math.BigDecimal.class ||
-              type == javax.xml.namespace.QName.class ||
+              type == QName.class ||
               type == java.util.Calendar.class ||
               type == org.apache.axis.encoding.Token.class ||
               type == org.apache.axis.encoding.NormalizedString.class ||

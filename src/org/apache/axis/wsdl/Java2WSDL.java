@@ -79,6 +79,7 @@ public class Java2WSDL {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int OUTPUT_WSDL_MODE_OPT = 'w';
+    protected static final int INPUT_OPT = 'I';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int OUTPUT_IMPL_OPT = 'O';
     protected static final int PACKAGE_OPT = 'p';
@@ -87,6 +88,7 @@ public class Java2WSDL {
     protected static final int PORTTYPE_NAME_OPT = 'P';
     protected static final int SERVICE_ELEMENT_NAME_OPT = 'S';
     protected static final int SERVICE_PORT_NAME_OPT = 's';
+    protected static final int BINDING_NAME_OPT = 'b';
     protected static final int LOCATION_OPT = 'l';
     protected static final int LOCATION_IMPORT_OPT = 'L';
     protected static final int METHODS_ALLOWED_OPT = 'm';
@@ -112,6 +114,10 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
                 JavaUtils.getMessage("j2wopthelp00")),
+        new CLOptionDescriptor("input",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                INPUT_OPT,
+                JavaUtils.getMessage("j2woptinput00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
@@ -124,6 +130,10 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PORTTYPE_NAME_OPT,
                 JavaUtils.getMessage("j2woptportTypeName00")),
+        new CLOptionDescriptor("bindingName",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                BINDING_NAME_OPT,
+                JavaUtils.getMessage("j2woptbindingName00")),
         new CLOptionDescriptor("serviceElementName",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SERVICE_ELEMENT_NAME_OPT,
@@ -282,6 +292,10 @@ public class Java2WSDL {
             wsdlFilename = option.getArgument();
             break;
             
+        case INPUT_OPT:
+            emitter.setInputWSDL(option.getArgument());
+            break;
+            
         case OUTPUT_IMPL_OPT:
             wsdlImplFilename = option.getArgument();
             break;
@@ -323,6 +337,10 @@ public class Java2WSDL {
             
         case PORTTYPE_NAME_OPT:
             emitter.setPortTypeName(option.getArgument());
+            break;
+            
+        case BINDING_NAME_OPT:
+            emitter.setBindingName(option.getArgument());
             break;
             
         case STOP_CLASSES_OPT:
