@@ -218,11 +218,7 @@ public class ArraySerializer implements Serializer {
         if (isEncoded) {
             AttributesImpl attrs;
             if (attributes != null) {
-                if (attributes instanceof AttributesImpl) {
-                    attrs = (AttributesImpl)attributes;
-                } else {
-                    attrs = new AttributesImpl(attributes);
-                }
+                attrs = new AttributesImpl(attributes);
             } else {
                 attrs = new AttributesImpl();
             }
