@@ -61,7 +61,6 @@ public class Constants {
   //  not all Engines will have notion of registries but defining these
   //  here should allow people to ask if they exist)
   //////////////////////////////////////////////////////////////////////////
-  public static String TYPEMAP_REGISTRY = "TypeMapRegistry" ;
 
   // Envelope Stuff
   //////////////////////////////////////////////////////////////////////////
