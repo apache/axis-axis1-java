@@ -89,7 +89,7 @@ public class TestBidBuySample extends TestCase {
         TestClient.main(args);
     }
     
-    public void testService () throws Exception {
+    public void testBidBuyService () throws Exception {
         try {
             System.out.println("Testing bidbuy sample.");
             System.out.println("Testing deployment...");
@@ -103,18 +103,6 @@ public class TestBidBuySample extends TestCase {
             e.printStackTrace();
             throw new Exception("Fault returned from test: "+e);
         }
-    }
-    
-    /**
-     * Read all the contents that are to be read
-     */
-    static void readFully(HttpURLConnection connection) throws IOException
-    {
-        // finish reading it to prevent (harmless) server-side exceptions
-        BufferedInputStream is = new BufferedInputStream(connection.getInputStream());
-        byte[] buffer = new byte[256];
-        while((is.read(buffer)) > 0) {}
-        is.close();
     }
     
 }

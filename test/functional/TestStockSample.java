@@ -122,17 +122,5 @@ public class TestStockSample extends TestCase {
         }
     }
     
-    /**
-     * Read all the contents that are to be read
-     */
-    static void readFully(HttpURLConnection connection) throws IOException
-    {
-        // finish reading it to prevent (harmless) server-side exceptions
-        BufferedInputStream is = new BufferedInputStream(connection.getInputStream());
-        byte[] buffer = new byte[256];
-        while((is.read(buffer)) > 0) {}
-        is.close();
-    }
-    
 }
 
