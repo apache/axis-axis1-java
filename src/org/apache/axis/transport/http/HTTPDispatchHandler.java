@@ -58,6 +58,7 @@ package org.apache.axis.transport.http;
 import java.io.* ;
 import java.net.* ;
 import java.util.* ;
+import java.lang.reflect.*;
 import org.jdom.* ;
 import org.jdom.input.SAXBuilder ;
 import org.jdom.output.XMLOutputter ;
@@ -95,7 +96,39 @@ public class HTTPDispatchHandler extends BasicHandler {
 
       Socket             sock = null ;
 
-      sock    = new Socket( host, port );
+      if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
+        if ( (port = tmpURL.getPort()) == -1 ) port = 443;
+        try {
+          Class SSLSocketFactoryClass =  
+            Class.forName("javax.net.ssl.SSLSocketFactory");
+          Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
+          Class[] createSocketMethodParamTypes = 
+            new Class[] {String.class, Integer.TYPE};
+          Method createSocketMethod = 
+            SSLSocketFactoryClass.getMethod("createSocket", 
+                                            createSocketMethodParamTypes);
+          Method getDefaultMethod = 
+            SSLSocketFactoryClass.getMethod("getDefault", new
+          Class[] {});
+          Method startHandshakeMethod = 
+            SSLSocketClass.getMethod("startHandshake", new Class[] {});
+          Object factory = getDefaultMethod.invoke(null, new Object[] {});
+          Object sslSocket = createSocketMethod .invoke(factory, 
+                               new Object[] {host, new Integer(port)});
+          // must shake out hidden errors!
+          startHandshakeMethod.invoke(sslSocket, new Object[] {}); 
+          sock = (Socket)sslSocket;
+        } catch (ClassNotFoundException cnfe) {
+          Debug.Print( 1, "SSL feature disallowed: support files not " +
+                          "installed or present in classpath");
+          throw new AxisFault(cnfe);
+        }
+        Debug.Print( 1, "Created an SSL connection");
+      } else {
+        if ((port = tmpURL.getPort()) == -1 ) port = 80;
+        sock    = new Socket( host, port );
+      }
+
       reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
 
       OutputStream  out  = sock.getOutputStream();
