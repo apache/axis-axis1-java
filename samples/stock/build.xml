@@ -58,6 +58,7 @@ Copyright:
   <!-- first, put the JWS where the functional test can see it -->
   <mkdir dir="${axis.home}/build/jws" />
   <copy file="${axis.home}/samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
+  <copy file="${axis.home}/samples/stock/GetQuote.wsdl" todir="${axis.home}" />
   <!--...not to mention the sample user list -->
   <copy file="${axis.home}/samples/stock/users.lst" todir="${axis.home}/build"/>
 
