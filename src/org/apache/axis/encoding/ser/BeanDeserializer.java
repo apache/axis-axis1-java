@@ -155,13 +155,22 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         
         if (typeDesc != null) {
             QName elemQName = new QName(namespace, localName);
-            String fieldName = typeDesc.getFieldNameForElement(elemQName);
+            
+            // IF we're SOAP-encoded AND this is an unprefixed element,
+            // ignore the actual namespace context for the element, and
+            // just compare local names.
+            boolean ignoreNS = ((prefix == null || prefix.equals("")) && 
+                                context.getMessageContext().isEncoded());
+            
+            String fieldName = typeDesc.getFieldNameForElement(elemQName, 
+                                                               ignoreNS);
+            
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
         }
 
         if (propDesc == null) {
             // look for a field by this name.
-            propDesc = (BeanPropertyDescriptor) propertyMap.get(JavaUtils.xmlNameToJava(localName));
+            propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
         }
         if (propDesc == null) {
             // No such field
