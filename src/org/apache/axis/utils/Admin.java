@@ -525,8 +525,6 @@ public class Admin {
                ": couldn't find pivot Handler '" + pivot + "'");
       
       service.setPivotHandler( tmpH );
-      // Save pivot name so we can list it later.
-      service.addOption("pivot", pivot);
     }
     
     if ( response != null && !"".equals(response) ) {
