@@ -360,7 +360,7 @@ methods throw <font face="Courier New,Courier"><font size=-1>MissingResourceExce
 if the resource cannot be found.&nbsp; And ParseException if there are
 more {X} entries than arguments.&nbsp; These exceptions are <font face="Courier New,Courier"><font size=-1>RuntimeException'</font></font>s,
 so the caller doesn't have to explicitly catch them.
-<p>The resource bundle properties file is org/apache/axis/utils/resources.properties.
+<p>The resource bundle properties file is org/apache/axis/utils/axis.nls.properties.
 <br>&nbsp;
 <li>
 Mechanism</li>
@@ -401,7 +401,7 @@ there is the following statement:
 if ( operationName == null )</font></font>
 <br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 throw new AxisFault( "No operation name specified" );</font></font>
-<p>We will have to add an entry into org/apache/axis/utils/resources.properties.&nbsp;
+<p>We will have to add an entry into org/apache/axis/utils/axis.nls.properties.&nbsp;
 Something like:
 <p><font face="Courier New,Courier"><font size=-1>noOperation=No operation
 name specified.</font></font>
