@@ -12,9 +12,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1DataTypesSoapSayHello() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -32,9 +32,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test2DataTypesSoapSayHelloName() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -52,9 +52,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test3DataTypesSoapGetIntArray() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -80,9 +80,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test4DataTypesSoapGetMode() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -100,9 +100,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test5DataTypesSoapGetOrder() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -120,9 +120,9 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test6DataTypesSoapGetOrders() {
-        DataTypesSoap binding;
+        DataTypes_Binding binding;
         try {
-            binding = new DataTypesLocator().getDataTypesSoap();
+            binding = new DataTypes_ServiceLocator().getDataTypes();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
