@@ -634,7 +634,8 @@ public class Constants {
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
 
     /**
-     * QName of stack trace element in an axis fault detail.
+     * Flag set if this was a runtime exception, rather than something thrown by the class at the end of the
+     * chain. Axis' logging treats runtime exceptions more seriously.
      */
     public static final QName QNAME_FAULTDETAIL_RUNTIMEEXCEPTION = new QName(NS_URI_AXIS, "isRuntimeException");
 
