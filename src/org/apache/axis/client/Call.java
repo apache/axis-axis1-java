@@ -1707,7 +1707,7 @@ public class Call implements javax.xml.rpc.Call {
             setRequestMessage(reqMsg);
 
             reqEnv.addBodyElement(body);
-            body.setParent(reqEnv);
+            body.setParentElement(reqEnv);
             reqEnv.setMessageType(Message.REQUEST);
 
             invoke();
