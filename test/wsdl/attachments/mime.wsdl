@@ -29,17 +29,26 @@
     </schema>
   </types>
 
-  <message name="m0"/>
-  <message name="m1">
+  <message name="empty"/>
+  <message name="pt1">
     <part name="body" element="tns:GetCompanyInfo"/>
   </message>
-  <message name="m2">
+  <message name="pt2">
     <part name="body" element="tns:GetCompanyInfo2"/>
     <part name="docs" type="xsd:string"/>
     <part name="logo" type="xsd:hexBinary"/>
   </message>
-  <message name="m3">
+  <message name="pt3">
     <part name="body" type="xsd:string"/>
+  </message>
+  <message name="pt4">
+    <part name="out" type="xsd:string"/>
+  </message>
+  <message name="mmp3">
+    <part name="body" type="xsd:string"/>
+  </message>
+  <message name="mmp4">
+    <part name="out" type="xsd:string"/>
   </message>
 
   <portType name="pt1">
@@ -54,19 +63,37 @@
     </operation>
 -->
     <operation name="inputPlainText">
-      <input message="tns:m3"/>
-      <output message="tns:m0"/>
+      <input message="tns:pt3"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="inoutPlainText">
+      <input message="tns:pt3"/>
+      <output message="tns:pt3"/>
     </operation>
     <operation name="echoPlainText">
-      <input message="tns:m3"/>
-      <output message="tns:m3"/>
+      <input message="tns:pt3"/>
+      <output message="tns:pt4"/>
     </operation>
-<!-- This operation fails for the document binding.  I'll figure it out later...
     <operation name="outputPlainText">
-      <input message="tns:m0"/>
-      <output message="tns:m3"/>
+      <input message="tns:empty"/>
+      <output message="tns:pt3"/>
     </operation>
--->
+    <operation name="inputMimeMultipart">
+      <input message="tns:mmp3"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="inoutMimeMultipart">
+      <input message="tns:mmp3"/>
+      <output message="tns:mmp3"/>
+    </operation>
+    <operation name="echoMimeMultipart">
+      <input message="tns:mmp3"/>
+      <output message="tns:mmp4"/>
+    </operation>
+    <operation name="outputMimeMultipart">
+      <input message="tns:empty"/>
+      <output message="tns:mmp3"/>
+    </operation>
   </portType>
 
   <binding name="b1" type="tns:pt1">
@@ -127,7 +154,7 @@
         <soap:body use="encoded"/>
       </output>
     </operation>
-    <operation name="echoPlainText">
+    <operation name="inoutPlainText">
       <soap:operation soapAction=""/>
       <input>
        <mime:multipartRelated>
@@ -144,7 +171,23 @@
         </mime:multipartRelated>
       </output>
     </operation>
-<!--
+    <operation name="echoPlainText">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="text/plain"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="out" type="text/plain"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
     <operation name="outputPlainText">
       <soap:operation soapAction=""/>
       <input>
@@ -158,108 +201,79 @@
         </mime:multipartRelated>
       </output>
     </operation>
--->
+    <operation name="inputMimeMultipart">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+    <operation name="inoutMimeMultipart">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
+    <operation name="echoMimeMultipart">
+      <soap:operation soapAction=""/>
+      <input>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="out" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
+    <operation name="outputMimeMultipart">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"/>
+      </input>
+      <output>
+       <mime:multipartRelated>
+          <mime:part>
+            <mime:content part="body" type="multipart/related"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </output>
+    </operation>
   </binding>
 
-  <binding name="b2" type="tns:pt1">
-    <soap:binding style="document"
-                  transport="http://schemas.xmlsoap.org/soap/http"/>
-<!--
-    <operation name="GetCompanyInfo">
-      <soap:operation soapAction="http://example.com/GetCompanyInfo"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-       <mime:multipartRelated>
-          <mime:part>
-            <soap:body parts="body" use="literal"/>
-          </mime:part>
-          <mime:part>
-            <mime:content part="docs" type="text/html"/>
-          </mime:part>
-          <mime:part>
-            <mime:content part="logo" type="image/gif"/>
-            <mime:content part="logo" type="image/jpeg"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </output>
-    </operation>
-    <operation name="GetCompanyInfo2">
-      <soap:operation soapAction="http://example.com/GetCompanyInfo2"/>
-      <input>
-       <mime:multipartRelated>
-          <mime:part>
-            <soap:body parts="body" use="literal"/>
-          </mime:part>
-          <mime:part>
-            <mime:content part="docs" type="text/plain"/>
-          </mime:part>
-          <mime:part>
-            <mime:content part="logo" type="image/gif"/>
-            <mime:content part="logo" type="image/jpeg"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
--->
-    <operation name="inputPlainText">
-      <soap:operation soapAction=""/>
-      <input>
-       <mime:multipartRelated>
-          <mime:part>
-            <mime:content part="body" type="text/plain"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </input>
-      <output>
-<!--        <soap:body use="literal"/>   Note:  turning on the literal flag causes problems:  "SimpleDeser cannot handle structured data!".  Two problems:  1.  why?  2.  I believe literal is supposed to be the default.  It doesn't seem to be in AXIS.  -->
-      </output>
-    </operation>
-    <operation name="echoPlainText">
-      <soap:operation soapAction=""/>
-      <input>
-       <mime:multipartRelated>
-          <mime:part>
-            <mime:content part="body" type="text/plain"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </input>
-      <output>
-       <mime:multipartRelated>
-          <mime:part>
-            <mime:content part="body" type="text/plain"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </output>
-    </operation>
-<!-- This operation fails and I can't figure out why at the moment...
-    <operation name="outputPlainText">
-      <soap:operation soapAction=""/>
-      <input>
-<!-        <soap:body use="literal"/>  Note:  turning on the literal flag causes problems:  "SimpleDeser cannot handle structured data!".  Two problems:  1.  why?  2.  I believe literal is supposed to be the default.  It doesn't seem to be in AXIS.  ->
-      </input>
-      <output>
-       <mime:multipartRelated>
-          <mime:part>
-            <mime:content part="body" type="text/plain"/>
-          </mime:part>
-        </mime:multipartRelated>
-      </output>
-    </operation>
--->
-  </binding>
+<!-- I want to do a document style binding, too, but it doesn't work yet -->
 
   <service name="Attachment">
     <port name="AttachmentPortRPC" binding="tns:b1">
       <soap:address location="http://localhost:8080/axis/services/AttachmentPortRPC"/>
     </port>
+<!-- doc doesn't work yet
     <port name="AttachmentPortDoc" binding="tns:b2">
       <soap:address location="http://localhost:8080/axis/services/AttachmentPortDoc"/>
     </port>
+-->
   </service>
 
 </wsdl:definitions> 

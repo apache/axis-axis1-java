@@ -140,8 +140,11 @@ public class ParameterDesc implements Serializable {
                                          "INOUT" : "OUT:  " 
                                          + "position:" + order) + "\n";
         text+=indent + "isReturn:   " + isReturn + "\n";
-        text+=indent + "typeQName:  " + typeQName+ "\n";
-        text+=indent + "javaType:   " + javaType+ "\n";
+        text+=indent + "typeQName:  " + typeQName + "\n";
+        text+=indent + "javaType:   " + javaType + "\n";
+        if (mimeType != null) {
+            text+=indent + "MIMEType:   " + mimeType + "\n";
+        }
         return text;
     } // toString
     

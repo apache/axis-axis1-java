@@ -1231,7 +1231,7 @@ public class SymbolTable {
                 // We're either RPC or literal + not wrapped.
                 
                 param.setName(partName);
-                param.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
+                param.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
 
                 // Add this type or element name
                 if (typeName != null) {
@@ -1326,7 +1326,7 @@ public class SymbolTable {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                     Parameter p = new Parameter();
                     p.setQName(elem.getName());
-                    p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
+                    p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
                     p.setType(elem.getType());
                     v.add(p);
                 }
@@ -1335,7 +1335,7 @@ public class SymbolTable {
                 // we can't use wrapped mode.
                 Parameter p = new Parameter();
                 p.setName(partName);
-                p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
+                p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
                 
                 if (typeName != null) {
                     p.setType(getType(typeName));
@@ -1389,6 +1389,8 @@ public class SymbolTable {
                 int inputBodyType = BindingEntry.USE_ENCODED;
                 int outputBodyType = BindingEntry.USE_ENCODED;
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
+                Map opMimeTypes = new HashMap();
+                mimeTypes.put(bindOp.getName(), opMimeTypes);
 
                 // input
                 if (bindOp.getBindingInput() != null) {
@@ -1409,7 +1411,7 @@ public class SymbolTable {
                             }
                             else if (obj instanceof MIMEMultipartRelated) {
                                 IntHolder holder = new IntHolder(inputBodyType);
-                                mimeTypes.putAll(collectMIMETypes(
+                                opMimeTypes.putAll(collectMIMETypes(
                                         (MIMEMultipartRelated) obj, holder, bindOp));
                                 inputBodyType = holder.value;
                             }
@@ -1436,7 +1438,7 @@ public class SymbolTable {
                             }
                             else if (obj instanceof MIMEMultipartRelated) {
                                 IntHolder holder = new IntHolder(outputBodyType);
-                                mimeTypes.putAll(collectMIMETypes(
+                                opMimeTypes.putAll(collectMIMETypes(
                                         (MIMEMultipartRelated) obj, holder, bindOp));
                                 outputBodyType = holder.value;
                             }

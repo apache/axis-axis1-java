@@ -83,6 +83,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.beans.Introspector;
 
+import javax.mail.internet.MimeMultipart;
+
 import javax.xml.soap.SOAPException;
 
 /** Utility class to deal with Java language related issues, such
@@ -240,9 +242,12 @@ public class JavaUtils
         }
 
         // Convert an AttachmentPart to the given destination class.
-        if (arg instanceof AttachmentPart && destClass == String.class) {
+        if (arg instanceof AttachmentPart) {
             try {
-                return ((AttachmentPart)arg).getDataHandler().getContent();
+                if (destClass == String.class
+                        || destClass == MimeMultipart.class) {
+                    return ((AttachmentPart)arg).getDataHandler().getContent();
+                }
             }
             catch (IOException ioe) {
             }
@@ -894,7 +899,7 @@ public class JavaUtils
     public static class HolderException extends Exception
     {
         public HolderException(String msg) { super(msg); }
-    };
+    }
 
 
     /**
@@ -1062,4 +1067,25 @@ public class JavaUtils
         return isFalse(value, true);
     }
     
+    /**
+     * Given the MIME type string, return the Java mapping.
+     */
+    public static String mimeToJava(String mime) {
+        if ("image/gif".equals(mime) || "image/jpeg".equals(mime)) {
+            return "java.awt.Image";
+        }
+        else if ("text/plain".equals(mime)) {
+            return "java.lang.String";
+        }
+        else if ("text/xml".equals(mime) || "application/xml".equals(mime)) {
+            return "javax.xml.transform.Source";
+        }
+        else if (mime != null && mime.startsWith("multipart/")) {
+            return "javax.mail.internet.MimeMultipart";
+        }
+        else {
+            return null;
+        }
+    } // mimeToJava
+
 }

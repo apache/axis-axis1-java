@@ -622,10 +622,17 @@ public class JavaStubWriter extends JavaClassWriter {
                 if (mode == Parameter.INOUT) {
                     javifiedName += ".value";
                 }
-                
+
                 if (mimeType.equals("text/plain")) {
-                    pw.println("        javax.activation.DataHandler _dh" + numberOfInMIMES++ +
+                    pw.println("        javax.activation.DataHandler _dh" +
+                            numberOfInMIMES++ +
                             " = new javax.activation.DataHandler(new org.apache.axis.attachments.PlainTextDataSource(\"" +
+                            javifiedName + "\", " + javifiedName + "));");
+                }
+                else if (mimeType.startsWith("multipart/")) {
+                    pw.println("        javax.activation.DataHandler _dh" +
+                            numberOfInMIMES++ +
+                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.MimeMultipartDataSource(\"" +
                             javifiedName + "\", " + javifiedName + "));");
                 }
             }
@@ -653,6 +660,10 @@ public class JavaStubWriter extends JavaClassWriter {
                 String mimeType = p.getMIMEType();
                 if (mimeType != null) {
                     if (mimeType.equals("text/plain")) {
+                        pw.print("_dh" + numberOfInMIMES++);
+                        continue;
+                    }
+                    else if (mimeType.startsWith("multipart/")) {
                         pw.print("_dh" + numberOfInMIMES++);
                         continue;
                     }
@@ -740,9 +751,12 @@ public class JavaStubWriter extends JavaClassWriter {
                                    TypeEntry type, String mimeType,
                                    String source) {
         String realTarget = null;
-        if (mimeType != null && mimeType.equals("text/plain")) {
+        if (mimeType != null) {
             realTarget = target;
-            target = "javax.activation.DataHandler _returnDH = ";
+            if(mimeType.equals("text/plain")
+                    || mimeType.startsWith("multipart/")) {
+                target = "javax.activation.DataHandler _returnDH = ";
+            }
         }
         if (type != null && type.getName() != null) {
             // Try casting the output to the expected output.
@@ -752,30 +766,47 @@ public class JavaStubWriter extends JavaClassWriter {
                        Utils.getResponseString(type, mimeType, source));
 
             if (mimeType != null) {
-                if (mimeType.equals("text/plain")) {
-                    pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
-                    pw.println("                byte[] _DHISBytes = new byte[_DHIS.available()];");
-                    pw.println("                _DHIS.read(_DHISBytes);");
-                    pw.println("                " + realTarget +
-                            Utils.getResponseString(type, null, "new String(_DHISBytes)"));
-                }
-                else {
-                    pw.println("                " + realTarget +
-                            Utils.getResponseString(type, mimeType, source));
-                }
+                writeMIMETypeReturn(pw, realTarget, source, type, mimeType);
                 target = realTarget;
             }
 
             pw.println("            } catch (java.lang.Exception _exception) {");
-            pw.println("                " + target +
-                       Utils.getResponseString(type, null, 
-                                         "org.apache.axis.utils.JavaUtils.convert(" +
-                                         source + ", " + 
-                                         type.getName() + ".class)"));
+            if (mimeType != null) {
+                pw.println("                // Is there anything we can do for MIME types?");
+                pw.println("                " + target + "null;");
+            }
+            else {
+                pw.println("                " + target +
+                        Utils.getResponseString(type, null, 
+                        "org.apache.axis.utils.JavaUtils.convert(" +
+                        source + ", " + type.getName() + ".class)"));
+            }
             pw.println("            }"); 
         } else {
             pw.println("              " + target +
                        Utils.getResponseString(type, mimeType, source));
         }
     }
+
+    /**
+     * Write the statements that convert the returned DataHandler to the appropriate
+     * MIME mapping type.
+     */
+    private void writeMIMETypeReturn(PrintWriter pw, String target,
+            String source, TypeEntry type, String mimeType) {
+        if (mimeType.equals("text/plain")) {
+            pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
+            pw.println("                byte[] _DHISBytes = new byte[_DHIS.available()];");
+            pw.println("                _DHIS.read(_DHISBytes);");
+            pw.println("                " + target + "new String(_DHISBytes);");
+        }
+        else if (mimeType.startsWith("multipart/")) {
+            pw.println("                " + target +
+                    "new javax.mail.internet.MimeMultipart(_returnDH.getDataSource());");
+        }
+        else {
+            pw.println("                " + target +
+                       Utils.getResponseString(type, mimeType, source));
+        }
+    } // writeMIMETypeReturn
 } // class JavaStubWriter

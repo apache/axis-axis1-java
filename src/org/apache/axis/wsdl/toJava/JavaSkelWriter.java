@@ -190,10 +190,9 @@ public class JavaSkelWriter extends JavaClassWriter {
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(paramName) +
-                        ", " + modeStr + ", " +
-                        Utils.getNewQName(paramType) +
-                        ", " +
-                        p.getType().getName() + ".class" +
+                        ", " + modeStr +
+                        ", " + Utils.getNewQName(paramType) +
+                        ", " + Utils.getParameterTypeName(p) + ".class" +
                         ", " + mimeType + "), ");
                 }
 
@@ -354,7 +353,14 @@ public class JavaSkelWriter extends JavaClassWriter {
         if (parms.returnType == null) {
             pw.print("        ");
         } else {
-            pw.print("        " + parms.returnType.getName() + " ret = ");
+            // Construct a Parameter for the return.
+            // RJB NOTE:  The return info should really just be a
+            //            Parameter rather than duplicating the same
+            //            info on the Parameters object.
+            Parameter returnParm = new Parameter();
+            returnParm.setMIMEType(parms.returnMIMEType);
+            returnParm.setType(parms.returnType);
+            pw.print("        " + Utils.getParameterTypeName(returnParm) + " ret = ");
         }
         String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
         boolean needComma = false;

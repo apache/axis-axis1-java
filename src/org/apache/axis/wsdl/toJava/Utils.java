@@ -597,34 +597,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             ret = parm.getType().getName();
         }
         else {
-            ret = mimeToJava(mime);
+            ret = JavaUtils.mimeToJava(mime);
             if (ret == null) {
                 ret = parm.getType().getName();
             }
         }
         return ret;
     } // getParameterTypeName
-
-    /**
-     * Given the MIME type string, return the Java mapping.
-     */
-    private static String mimeToJava(String mime) {
-        if ("image/gif".equals(mime) || "image/jpeg".equals(mime)) {
-            return "java.awt.Image";
-        }
-        else if ("text/plain".equals(mime)) {
-            return "java.lang.String";
-        }
-        else if ("text/xml".equals(mime) || "application/xml".equals(mime)) {
-            return "javax.xml.transform.Source";
-        }
-        else if (mime != null && mime.startsWith("multipart/")) {
-            return "javax.mail.internet.MimeMultipart";
-        }
-        else {
-            return null;
-        }
-    } // mimeToJava
 
     /** 
      * Get the QName that could be used in the xsi:type

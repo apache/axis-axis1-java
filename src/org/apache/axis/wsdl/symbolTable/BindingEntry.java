@@ -87,6 +87,9 @@ public class BindingEntry extends SymTabEntry {
     private boolean hasLiteral;
     private HashMap attributes;
     private HashMap parameters = new HashMap();
+
+    // This is a map of a map.  It's a map keyed on operation name whose values
+    // are maps keyed on parameter name.
     private Map     mimeTypes; 
     
 
@@ -136,8 +139,14 @@ public class BindingEntry extends SymTabEntry {
      * Get the mime mapping for the given parameter name.
      * If there is none, this returns null.
      */
-    public String getMIMEType(String parameterName) {
-        return (String) mimeTypes.get(parameterName);
+    public String getMIMEType(String operationName, String parameterName) {
+        Map opMap = (Map) mimeTypes.get(operationName);
+        if (opMap == null) {
+            return null;
+        }
+        else {
+            return (String) opMap.get(parameterName);
+        }
     } // getMIMEType
 
     /**
@@ -150,8 +159,13 @@ public class BindingEntry extends SymTabEntry {
     /**
      * Set the mime mapping for the given parameter name.
      */
-    public void setMIMEType(String parameterName, String type) {
-        mimeTypes.put(parameterName, type);
+    public void setMIMEType(String operationName, String parameterName, String type) {
+        Map opMap = (Map) mimeTypes.get(operationName);
+        if (opMap == null) {
+            opMap = new HashMap();
+            mimeTypes.put(operationName, opMap);
+        }
+        opMap.put(parameterName, type);
     } // setMIMEType
 
     /**

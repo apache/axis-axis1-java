@@ -185,10 +185,18 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             pw.println("        try {");
             if (params.returnType != null) {
                 pw.print("            ");
-                pw.print(params.returnType.getName());
+                // Construct a Parameter for the return.
+                // RJB NOTE:  The return info should really just be a
+                //            Parameter rather than duplicating the same
+                //            info on the Parameters object.
+                Parameter returnParm = new Parameter();
+                returnParm.setMIMEType(params.returnMIMEType);
+                returnParm.setType(params.returnType);
+                pw.print(Utils.getParameterTypeName(returnParm));
                 pw.print(" value = ");
 
-                if ( Utils.isPrimitiveType( params.returnType ) ) {
+                if (params.returnMIMEType == null &&
+                        Utils.isPrimitiveType(params.returnType)) {
                     if ( "boolean".equals( params.returnType.getName() ) ) {
                         pw.println("false;");
                     } else {
@@ -221,10 +229,11 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
                 Parameter param = (Parameter) iparam.next();
                 String paramType = param.getType().getName();
+                String mimeType = param.getMIMEType();
                 String suffix = "";
 
                 if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.getMIMEType(), param.getType(), emitter)
+                    pw.print("new " + Utils.holder(mimeType, param.getType(), emitter)
                             + "(");
                     suffix = ")";
                 }
@@ -239,6 +248,14 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                             pw.print("(short)0");
                         } else {
                             pw.print("0");
+                        }
+                    } else if (mimeType != null) {
+                        if (mimeType.equals("image/gif") ||
+                                mimeType.equals("image/jpeg")) {
+                            pw.print("java.awt.Toolkit.getDefaultToolkit().getImage(new byte[0])");
+                        }
+                        else {
+                            pw.print("new " + Utils.getParameterTypeName(param) + "()");
                         }
                     } else if (paramType.equals("java.lang.Boolean")) {
                         pw.print("new java.lang.Boolean(false)");

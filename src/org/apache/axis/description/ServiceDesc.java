@@ -586,7 +586,9 @@ public class ServiceDesc {
                         // This is a match if the paramClass is somehow
                         // convertable to the "real" parameter type.  If not,
                         // break out of this loop.
-                        if (!JavaUtils.isConvertable(paramClass, heldType)) {
+                        if (!JavaUtils.isConvertable(paramClass, heldType) &&
+                                !isMimeConvertable(
+                                param.getMIMEType(), heldType)) {
                             break;
                         }
                     }
@@ -623,6 +625,14 @@ public class ServiceDesc {
             syncOperationToClass(oper, superClass);
         }
     }
+
+    /**
+     * Is this is a MIME type and is it convertible to the given type?
+     */
+    private boolean isMimeConvertable(String mimeType, Class cls) {
+        return mimeType != null &&
+                cls.getName().equals(JavaUtils.mimeToJava(mimeType));
+    } // isMimeConvertable
 
     /**
      * Fill in a service description by introspecting the implementation
