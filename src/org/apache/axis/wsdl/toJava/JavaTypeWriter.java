@@ -88,6 +88,7 @@ public class JavaTypeWriter implements Generator {
             Emitter emitter,
             TypeEntry type,
             SymbolTable symbolTable) {
+
         if (type.isReferenced() && !type.isOnlyLiteralReferenced()) {
 
             // Determine what sort of type this is and instantiate 
@@ -171,7 +172,20 @@ public class JavaTypeWriter implements Generator {
                                    Vector attributes) {
         JavaWriter helperWriter = getBeanHelperWriter(emitter, type, elements, base,
                                                   attributes);
-        return new JavaBeanWriter(emitter, type, elements, base, attributes, 
+        // If this complexType is referenced in a
+        // fault context, emit a bean-like exception 
+        // class
+        Boolean isComplexFault = (Boolean)
+            type.getDynamicVar(
+                               JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+        if (isComplexFault != null && 
+            isComplexFault.booleanValue()) {
+            return new JavaBeanFaultWriter(emitter, type, 
+                                           elements, base, attributes, 
+                                           helperWriter);
+        }
+        return new JavaBeanWriter(emitter, type, 
+                                  elements, base, attributes, 
                                   helperWriter);
     }
 

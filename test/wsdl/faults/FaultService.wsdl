@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://test.com/wsdl/faults" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:serviceNS="http://test.com/wsdl/faults" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions targetNamespace="http://test.com/wsdl/faults" 
+     xmlns:tns="http://test.com/wsdl/faults"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+     xmlns:serviceNS="http://test.com/wsdl/faults"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+     xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <types>
+    <xsd:schema 
+        targetNamespace="http://test.com/wsdl/faults">
+      <xsd:complexType name="baseFault">
+        <xsd:sequence>
+          <xsd:element name="a" type="xsd:int"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="derivedFault">
+        <xsd:complexContent>
+          <xsd:extension base="tns:baseFault">
+            <xsd:sequence>
+              <xsd:element name="b" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+     <xsd:complexType name="derivedFault2">
+        <xsd:complexContent>
+          <xsd:extension base="tns:derivedFault">
+            <xsd:sequence>
+              <xsd:element name="c" type="xsd:float"/>
+            </xsd:sequence>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </types>
+
   <message name="getQuoteResponse">
     <part name="getQuoteResult" type="xsd:float"/>
   </message>
@@ -9,11 +47,29 @@
   <message name="InvalidTickerFaultMessage">
     <part name="tickerSymbol" type="xsd:string"/>
   </message>
+
+  <message name="throwFaultResponse">
+    <part name="return" type="xsd:int"/>
+  </message>
+  <message name="throwFaultRequest">
+    <part name="a" type="xsd:int"/>
+    <part name="b" type="xsd:string"/>
+    <part name="c" type="xsd:float"/>
+  </message>
+  <message name="throwFaultFault">
+    <part name="theFault" type="tns:derivedFault" />
+  </message>
+
   <portType name="FaultServicePortType">
     <operation name="getQuote">
       <input message="serviceNS:getQuoteRequest"/>
       <output message="serviceNS:getQuoteResponse"/>
-      <fault name="InvalidTickerFault" message="serviceNS:InvalidTickerFaultMessage"/>
+      <fault name="InvalidTickerFaultMessage" message="serviceNS:InvalidTickerFaultMessage"/>
+    </operation>
+    <operation name="throwFault">
+      <input message="serviceNS:throwFaultRequest"/>
+      <output message="serviceNS:throwFaultResponse"/>
+      <fault name="throwFaultFault" message="serviceNS:throwFaultFault"/>
     </operation>
   </portType>
   <binding name="FaultServiceSoapBinding" type="serviceNS:FaultServicePortType">
@@ -27,7 +83,19 @@
         <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
       </output>
       <fault>
-        <soap:fault name="InvalidTickerFault" use="encoded"/>
+        <soap:fault name="InvalidTickerFaultMessage" use="encoded"/>
+      </fault>
+    </operation>
+    <operation name="throwFault">
+      <soap:operation soapAction="" style="rpc"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </output>
+      <fault>
+        <soap:fault name="throwFaultFault" use="encoded"/>
       </fault>
     </operation>
   </binding>

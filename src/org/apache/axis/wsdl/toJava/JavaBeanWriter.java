@@ -61,6 +61,7 @@ import java.util.Vector;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.w3c.dom.Node;
@@ -74,7 +75,19 @@ public class JavaBeanWriter extends JavaWriter {
     private Vector attributes;
     private TypeEntry extendType;
     protected JavaWriter helper;
-    protected Vector names = new Vector();
+    protected Vector names = new Vector(); // even indices: types, odd: vars
+    protected String simpleValueType = null;  // name of type of simple value
+
+    // The following fields can be set by extended classes
+    // to control processing
+    protected boolean enableDefaultConstructor = true;
+    protected boolean enableFullConstructor = false;
+    protected boolean enableSimpleConstructors = false;
+    protected boolean enableToString = false;
+    protected boolean enableSetters = true;
+    protected boolean enableGetters = true;
+    protected boolean enableEquals = true;
+    protected boolean enableHashCode = true;
 
     /**
      * Constructor.
@@ -99,67 +112,183 @@ public class JavaBeanWriter extends JavaWriter {
         this.attributes = attributes;
         this.extendType = extendType;
         this.helper = helper;
+        if (type.isSimpleType()) {
+            enableSimpleConstructors = true;
+            enableToString = true;
+        }
     } // ctor
 
     /**
      * Generate the binding for the given complex type.
-     * The elements vector contains the Types (even indices) and
-     * element names (odd indices) of the contained elements
      */
     protected void writeFileBody() throws IOException {
-        String valueType = null;
-        Node node = type.getNode();
+        // Populate Names Vector with the names and types of the members.
+        // The write methods use the names vector whenever they need to get
+        // a member name or type.
+        preprocess();
 
+        // Write the start of the class definition
+        writeClassStart(getAbstractText(), getExtendsText(), getImplementsText());
+
+        // Write Member Fields
+        writeMemberFields();
+
+        // Write the default constructor
+        if (enableDefaultConstructor) {
+            writeDefaultConstructor();
+        }
+
+        // Write Full Constructor
+        if (enableFullConstructor) {
+            writeFullConstructor();
+        }
+
+        // Write SimpleConstructors
+        if (enableSimpleConstructors) {
+            writeSimpleConstructors();
+        }
+
+        // Write ToString method
+        if (enableToString) {
+            writeToStringMethod();
+        }
+
+        // Write accessor methods
+        writeAccessMethods();
+
+        // Write general purpose equals and hashCode methods
+        if (enableEquals) {
+            writeEqualsMethod();
+        }
+        if (enableHashCode) {
+            writeHashCodeMethod();
+        }
+
+        // Write the meta data into a Helper class or
+        // embed it in the bean class
+        if (emitter.isHelperWanted()) {
+            helper.generate(); // separate Helper Class
+        } else {
+            helper.generate(pw); // embed in Bean Class
+        }
+        
+        // Write end of class definition
+        writeClassStop();
+        pw.close();
+    } // writeFileBody
+
+    /**
+     * Builds the names String vector.  
+     * The even indices are the java class names of the 
+     * member fields.  The odd indices are the member variable
+     * names.
+     * Also sets the simpleValueType variable to the 
+     * java class name of the simple value if this bean represents
+     * a simple type
+     */
+    protected void preprocess() {
+        // Add element names
+        if (elements != null) {
+            for (int i = 0; i < elements.size(); i++) {
+                ElementDecl elem = (ElementDecl)elements.get(i);
+                String typeName = elem.getType().getName();
+                String elemName = elem.getName().getLocalPart();
+                String variableName = Utils.xmlNameToJava(elemName);
+                names.add(typeName);
+                names.add(variableName);
+                if (type.isSimpleType() &&
+                    variableName.equals("value")) {
+                    simpleValueType = typeName;
+                }
+            }
+        }
+        // Add attribute names
+        if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i += 2) {
+                String typeName = ((TypeEntry) attributes.get(i)).getName();
+                String variableName = 
+                    Utils.xmlNameToJava((String) attributes.get(i + 1));
+                names.add(typeName);
+                names.add(variableName);
+                if (type.isSimpleType() &&
+                    variableName.equals("value")) {
+                    simpleValueType = typeName;
+                }
+            }
+        }
+    }        
+    
+    /**
+     * Returns the appropriate extends text
+     * @return "" or " extends <class> "
+     */
+    protected String getExtendsText() {
         // See if this class extends another class
         String extendsText = "";
         if (extendType != null && !type.isSimpleType()) {
             extendsText = " extends " + extendType.getName() + " ";
         }
-
-        // We are only interested in the java names of the types, so create a names list
-        if (elements != null) {
-            for (int i = 0; i < elements.size(); i++) {
-                ElementDecl elem = (ElementDecl)elements.get(i);
-                TypeEntry type = elem.getType();
-                String elemName = elem.getName().getLocalPart();
-                String javaName = Utils.xmlNameToJava(elemName);
-                names.add(type.getName());
-                names.add(javaName);
-            }
+        return extendsText;
+    }
+    
+    /**
+     * Returns the appropriate implements text
+     * @return " implements <classes> "
+     */
+    protected String getImplementsText() {
+        // See if this class extends another class
+        String implementsText = " implements java.io.Serializable";
+        if (type.isSimpleType()) {
+            implementsText += ", org.apache.axis.encoding.SimpleType";
         }
-        // add the attributes to the names list (which will be bean elements too)
-        if (attributes != null) {
-            for (int i = 0; i < attributes.size(); i += 2) {
-                names.add(((TypeEntry) attributes.get(i)).getName());
-                names.add(Utils.xmlNameToJava((String) attributes.get(i + 1)));
-            }
-        }
+        implementsText += " ";
+        return implementsText;
+    }
 
-        String implementsText = "";
-        if (type.isSimpleType())
-            implementsText = ", org.apache.axis.encoding.SimpleType";
-
-        // Support abstract attribute by mapping to an abstract class
-        String abstractText = "";
+    /**
+     * Returns the appropriate extends text
+     * @return "" or "abstract "
+     */
+    protected String getAbstractText() {
+        Node node = type.getNode();
         if (node != null) {
             String abstractValue = Utils.getAttribute(node, "abstract");
             if (abstractValue != null && 
                 abstractValue.equalsIgnoreCase("true")) {
-                abstractText = "abstract ";
+                return "abstract ";
             }
         }
+        return "";
+    }
 
+    /**
+     * Writes the start of the class definition.
+     * @param String abstractText is the abstract keyword (or "")
+     * @param String extendsText is the extends clause (or "")
+     * @param String implementsText is the implements clause (or "")
+     */
+    protected void writeClassStart(String abstractText, 
+                                   String extendsText,
+                                   String implementsText) {
         pw.println("public " + abstractText + "class " + className + extendsText +
-                   " implements java.io.Serializable" + implementsText + " {");
+                   implementsText + " {");
+    }
 
+    /**
+     * Writes the end of the class definition.
+     */
+    protected void writeClassStop() {
+        pw.println("}");
+    }
+
+    /**
+     * Writes the member fields.
+     */
+    protected void writeMemberFields() {
         // Define the member element of the bean
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
-            
-            if (type.isSimpleType() && variable.equals("value")) {
-                valueType = typeName;
-            }
              
             // Declare the bean element
             pw.print("    private " + typeName + " " + variable + ";");
@@ -170,15 +299,172 @@ public class JavaBeanWriter extends JavaWriter {
             else
                 pw.println();
         }
-
-        // Define the default constructor
         pw.println();
+    }
+
+    /**
+     * Writes the default constructor.
+     */
+    protected void writeDefaultConstructor() {
+        // Define the default constructor
         pw.println("    public " + className + "() {");
         pw.println("    }");
-
         pw.println();
-        int j = 0; 
+    }
 
+    /**
+     * Writes the full constructor.  
+     * Note that this class is not recommended for 
+     * JSR 101 compliant beans, but is provided for
+     * extended classes which may wish to generate a full
+     * constructor.
+     */
+    protected void writeFullConstructor() {
+        // The constructor needs to consider all extended types
+        Vector extendList = new Vector();
+        extendList.add(type);
+        TypeEntry parent = extendType;
+        while(parent != null) {
+            extendList.add(parent);
+            parent = SchemaUtils.getComplexElementExtensionBase(
+                parent.getNode(),
+                emitter.getSymbolTable());
+        }
+        
+        // Now generate a list of names and types starting with
+        // the oldest parent.  (Attrs are considered before elements).
+        Vector paramTypes = new Vector();
+        Vector paramNames = new Vector();
+        for (int i=extendList.size()-1; i >= 0; i--) {
+            TypeEntry te = (TypeEntry) extendList.elementAt(i);
+
+            // The names of the inherited parms are mangled
+            // in case they interfere with local parms.
+            String mangle = "";
+            if (i > 0) {
+                mangle = "_" + 
+                    Utils.xmlNameToJava(te.getQName().getLocalPart()) +
+                    "_";
+            }
+            // Process the attributes
+            Vector attributes = SchemaUtils.getContainedAttributeTypes(
+                te.getNode(), emitter.getSymbolTable());
+            if (attributes != null) {
+                for (int j=0; j<attributes.size(); j+=2) {
+                    paramTypes.add(((TypeEntry) attributes.get(j)).getName());
+                    paramNames.add(mangle +
+                        Utils.xmlNameToJava((String) attributes.get(j + 1)));
+                }
+            }
+            // Process the elements
+            Vector elements = SchemaUtils.getContainedElementDeclarations(
+                te.getNode(), emitter.getSymbolTable()); 
+            if (elements != null) {
+                for (int j=0; j<elements.size(); j++) {
+                    ElementDecl elem = (ElementDecl)elements.get(j);
+                    paramTypes.add(elem.getType().getName());
+                    paramNames.add(mangle +
+                        Utils.xmlNameToJava(elem.getName().getLocalPart()));
+                }
+            }
+        }
+        // Set the index where the local params start
+        int localParams = paramTypes.size() - names.size()/2;
+
+        
+        // Now write the constructor signature
+        pw.println("    public " + className + "(");
+        for (int i=0; i<paramTypes.size(); i++) {
+            pw.print("           " + paramTypes.elementAt(i) + 
+                     " " + paramNames.elementAt(i));
+            if ((i+1) < paramTypes.size()) {
+                pw.println(","); 
+            } else {
+                pw.println(") {"); 
+            }
+        }
+
+        // Call the extended constructor to set inherited fields
+        if (extendType != null) {
+            pw.println("        super(");
+            for (int j=0; j<localParams; j++) {
+                pw.print("            " + paramNames.elementAt(j));
+                if ((j+1) < localParams) {
+                    pw.println(","); 
+                } else {
+                    pw.println(");");
+                }
+            }            
+        }
+        // Set local fields directly
+        for (int j=localParams; j<paramNames.size(); j++) {
+            pw.println("        this." + paramNames.elementAt(j) +
+                       " = " + paramNames.elementAt(j)+ ";");
+        } 
+        pw.println("    }");
+        pw.println();
+
+    }
+
+    /**
+     * Writes the constructors for SimpleTypes.
+     * Writes a constructor accepting a string and 
+     * a constructor accepting the simple java type.
+     */
+    protected void writeSimpleConstructors() {
+        // If this is a simple type,need to emit a string
+        // constructor and a value construtor.
+        if (type.isSimpleType() && simpleValueType != null) {
+            if (!simpleValueType.equals("java.lang.String")) {
+                pw.println("    public " + className + "(" + 
+                           simpleValueType + " value) {");
+                pw.println("        this.value = value;");
+                pw.println("    }");
+                pw.println();
+            }
+            
+            pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
+            pw.println("    public " + className + "(java.lang.String value) {");
+            // Make sure we wrap base types with its Object type
+            String wrapper = JavaUtils.getWrapper(simpleValueType);
+            if (wrapper != null) {
+                pw.println("        this.value = new " + wrapper +
+                           "(value)." + simpleValueType + "Value();");
+            } else {
+                pw.println("        this.value = new " + 
+                           simpleValueType + "(value);");
+            }
+            pw.println("    }");
+            pw.println();            
+        }
+    }
+
+    /**
+     * Writes the toString method  
+     * Currently the toString method is only written for  
+     * simpleTypes.                                 
+     */
+    protected void writeToStringMethod() {
+        // If this is a simple type, emit a toString
+        if (type.isSimpleType() && simpleValueType != null) {
+            pw.println("    // " + JavaUtils.getMessage("needToString"));
+            String wrapper = JavaUtils.getWrapper(simpleValueType);
+            pw.println("    public String toString() {");
+            if (wrapper != null) {
+                pw.println("        return new " + wrapper + "(value).toString();");
+            } else {
+                pw.println("        return value == null ? null : value.toString();");
+            }
+            pw.println("    }");
+            pw.println();
+        }
+    }
+
+    /**
+     * Writes the setter and getter methods    
+     */
+    protected void writeAccessMethods() {
+        int j = 0; 
         // Define getters and setters for the bean elements
         for (int i = 0; i < names.size(); i += 2, j++) {
             String typeName = (String) names.get(i);
@@ -189,14 +475,20 @@ public class JavaBeanWriter extends JavaWriter {
             if (typeName.equals("boolean"))
                 get = "is";
 
-            pw.println("    public " + typeName + " " + get + capName + "() {");
-            pw.println("        return " + name + ";");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public void set" + capName + "(" + typeName + " " + name + ") {");
-            pw.println("        this." + name + " = " + name + ";");
-            pw.println("    }");
-            pw.println();
+            if (enableGetters) {
+                pw.println("    public " + typeName + " " + 
+                           get + capName + "() {");
+                pw.println("        return " + name + ";");
+                pw.println("    }");
+                pw.println();
+            }
+            if (enableSetters) {
+                pw.println("    public void set" + capName + "(" + 
+                           typeName + " " + name + ") {");
+                pw.println("        this." + name + " = " + name + ";");
+                pw.println("    }");
+                pw.println();
+            }
             
             // If this is a special collection type, insert extra 
             // java code so that the serializer/deserializer can recognize
@@ -215,77 +507,39 @@ public class JavaBeanWriter extends JavaWriter {
                     String newingName = typeName.substring(0, bracketIndex + 1);
                     String newingSuffix = typeName.substring(bracketIndex + 1);
                     
-                    pw.println("    public " + compName + " " + get + capName + "(int i) {");
-                    pw.println("        return " + name + "[i];");
-                    pw.println("    }");
-                    pw.println();
-                    pw.println("    public void set" + capName + "(int i, " + compName + " value) {");
-                    pw.println("        if (this." + name + " == null ||");
-                    pw.println("            this." + name + ".length <= i) {");
-                    pw.println("            " + typeName + " a = new " +
-                               newingName + "i + 1" + newingSuffix + ";");
-                    pw.println("            if (this." + name + " != null) {");
-                    pw.println("                for(int j = 0; j < this." + name + ".length; j++)");
-                    pw.println("                    a[j] = this." + name + "[j];");
-                    pw.println("            }");
-                    pw.println("            this." + name + " = a;");
-                    pw.println("        }");
-                    pw.println("        this." + name + "[i] = value;");
-                    pw.println("    }");
-                    pw.println();
+                    if (enableGetters) {
+                        pw.println("    public " + compName + " " + get + capName +
+                                   "(int i) {");
+                        pw.println("        return " + name + "[i];");
+                        pw.println("    }");
+                        pw.println();
+                    }
+                    if (enableSetters) {
+                        pw.println("    public void set" + capName + "(int i, " +
+                                   compName + " value) {");
+                        pw.println("        if (this." + name + " == null ||");
+                        pw.println("            this." + name + ".length <= i) {");
+                        pw.println("            " + typeName + " a = new " +
+                                   newingName + "i + 1" + newingSuffix + ";");
+                        pw.println("            if (this." + name + " != null) {");
+                        pw.println("                for(int j = 0; j < this." + name +
+                                   ".length; j++)");
+                        pw.println("                    a[j] = this." + name + "[j];");
+                        pw.println("            }");
+                        pw.println("            this." + name + " = a;");
+                        pw.println("        }");
+                        pw.println("        this." + name + "[i] = value;");
+                        pw.println("    }");
+                        pw.println();
+                    }
                 }
             }
-        }
-       
-        // if this is a simple type, we need to emit a toString and a string
-        // constructor and throw in a value construtor too.
-        if (type.isSimpleType() && valueType != null) {
-            // emit contructors and toString().
-            if (!valueType.equals("java.lang.String")) {
-                pw.println("    public " + className + "(" + valueType + " value) {");
-                pw.println("        this.value = value;");
-                pw.println("    }");
-                pw.println();
-            }
-            
-            pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
-            pw.println("    public " + className + "(java.lang.String value) {");
-            // Make sure we wrap base types with its Object type
-            String wrapper = JavaUtils.getWrapper(valueType);
-            if (wrapper != null) {
-                pw.println("        this.value = new " + wrapper + "(value)." + valueType + "Value();");
-            } else {
-                pw.println("        this.value = new " + valueType + "(value);");
-            }
-            pw.println("    }");
-            pw.println();            
-            pw.println("    // " + JavaUtils.getMessage("needToString"));
-            pw.println("    public String toString() {");
-            if (wrapper != null) {
-                pw.println("        return new " + wrapper + "(value).toString();");
-            } else {
-                pw.println("        return value == null ? null : value.toString();");
-            }
-            pw.println("    }");
-            pw.println();
-        }
-        writeEqualsMethod();
-        writeHashCodeMethod();
-
-        // Write the meta data into a Helper class or
-        // embed it in the bean class
-        if (emitter.isHelperWanted()) {
-            helper.generate(); // separate Helper Class
-        } else {
-            helper.generate(pw); // embed in Bean Class
-        }
-        pw.println("}");
-        pw.close();
-    } // writeFileBody
+        }        
+    }
 
     /**
-     * Generate an equals method.
-     **/
+     * Writes a general purpose equals method
+     */
     protected void writeEqualsMethod() {
      
         // The __equalsCalc field and synchronized method are necessary
@@ -360,8 +614,12 @@ public class JavaBeanWriter extends JavaWriter {
         pw.println("        __equalsCalc = null;");
         pw.println("        return _equals;");
         pw.println("    }");
+        pw.println("");
     }
 
+    /**
+     * Writes a general purpose hashCode method.
+     */
     protected void writeHashCodeMethod() {
         // The __hashCodeCalc field and synchronized method are necessary
         // in case the object has direct or indirect references to itself.
@@ -434,5 +692,6 @@ public class JavaBeanWriter extends JavaWriter {
         pw.println("        __hashCodeCalc = false;");
         pw.println("        return _hashCode;");
         pw.println("    }");
+        pw.println("");
     }
 } // class JavaBeanWriter

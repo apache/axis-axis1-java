@@ -243,6 +243,8 @@ public class BeanSerializer implements Serializer, Serializable {
         List stopClasses = types.getStopClasses();
         if (superClass != null &&
                 superClass != java.lang.Object.class &&
+                superClass != java.lang.Exception.class &&
+                superClass != org.apache.axis.AxisFault.class &&
                 (stopClasses == null ||
                 !(stopClasses.contains(superClass.getName()))) ) {
             // Write out the super class

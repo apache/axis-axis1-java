@@ -73,6 +73,7 @@ import javax.wsdl.QName;
 import org.apache.axis.wsdl.gen.Generator;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
 
 /**
  * This is Wsdl2java's Definition Writer.  
@@ -129,8 +130,27 @@ public class JavaDefinitionWriter implements Generator {
         while (fi.hasNext()) {
             Map.Entry entry = (Map.Entry) fi.next();
             Fault fault = (Fault) entry.getKey();
-            QName faultQName = (QName) entry.getValue();
-            new JavaFaultWriter(emitter, faultQName, fault, symbolTable).generate();
+
+            // Generate the 'Simple' Faults.
+            // The complexType Faults are automatically handled
+            // by JavaTypeWriter.
+            MessageEntry me = symbolTable.getMessageEntry(
+                fault.getMessage().getQName());
+            boolean emitSimpleFault = true;
+            if (me != null) {
+                Boolean complexTypeFault = (Boolean)
+                    me.getDynamicVar(
+                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+                if (complexTypeFault != null &&
+                    complexTypeFault.booleanValue()) {
+                    emitSimpleFault = false;
+                }
+            }
+            if (emitSimpleFault) {
+                QName faultQName = (QName) entry.getValue();
+                new JavaFaultWriter(emitter, faultQName, fault,
+                                    symbolTable).generate();
+            }
         }
     } // writeFaults
 
