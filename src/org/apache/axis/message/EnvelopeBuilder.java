@@ -54,15 +54,8 @@
  */
 package org.apache.axis.message;
 
-/**
- * 
- * @author Glen Daniels (gdaniels@allaire.com)
- */
-
 import org.apache.axis.Constants;
 import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.soap.SOAP11Constants;
-import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
@@ -70,9 +63,15 @@ import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 
+/**
+ * The EnvelopeBuilder is responsible for parsing the top-level
+ * SOAP envelope stuff (Envelope, Body, Header), and spawning off
+ * HeaderBuilder and BodyBuilders.
+ *
+ * @author Glen Daniels (gdaniels@allaire.com)
+ */
 public class EnvelopeBuilder extends SOAPHandler
 {
-    private MessageElement element;
     private SOAPEnvelope envelope;
     private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
 
@@ -174,9 +173,6 @@ public class EnvelopeBuilder extends SOAPHandler
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        if (element != null) {
-            envelope.addTrailer(element);
-        }
     }
 
     public void endElement(String namespace, String localName,
