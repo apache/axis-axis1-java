@@ -115,7 +115,7 @@ public abstract class TypeEntry extends SymTabEntry {
     protected TypeEntry refType; // Some TypeEntries refer to other types.
                                  
 
-    protected String  dims;      // If refType is an element, dims indicates 
+    protected String  dims ="";  // If refType is an element, dims indicates 
                                  // the array dims (for example "[]").
                               
     protected boolean undefined; // If refType is an Undefined type 
@@ -150,7 +150,7 @@ public abstract class TypeEntry extends SymTabEntry {
             }
             ((Undefined)uType).register(this);
         } else {
-            isBaseType = (refType.getBaseType() != null && dims.equals(""));
+            isBaseType = (refType.isBaseType && refType.dims.equals("") && dims.equals(""));
         }
         
         //System.out.println(toString());
@@ -271,7 +271,7 @@ public abstract class TypeEntry extends SymTabEntry {
         if (refType != null && undefined && refType.undefined==false) {
             undefined = false;
             changedState = true;
-            isBaseType = (refType.getBaseType() != null && dims.equals(""));
+            isBaseType = (refType.isBaseType && refType.dims.equals("") && dims.equals(""));
         }
         return changedState;
     }

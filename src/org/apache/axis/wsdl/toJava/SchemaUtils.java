@@ -364,6 +364,144 @@ public class SchemaUtils {
     }
 
     /**
+     * If the specified node represents a 'normal' non-enumeration simpleType,
+     * the QName of the simpleType base is returned.
+     */
+    public static QName getSimpleTypeBase(Node node, SymbolTable symbolTable) {
+        QName baseQName = null;
+
+        if (node == null) {
+            return null;
+        }
+
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node simpleNode = null;
+            for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
+                QName simpleKind = Utils.getNodeQName(children.item(j));
+                if (simpleKind != null &&
+                    simpleKind.getLocalPart().equals("simpleType") &&
+                    Constants.isSchemaXSD(simpleKind.getNamespaceURI())) {
+                    simpleNode = children.item(j);
+                    node = simpleNode;
+                }
+            }
+        }
+        // Get the node kind, expecting a schema simpleType
+        nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("simpleType") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+
+            // Under the simpleType there should be a restriction.
+            // (There may be other #text nodes, which we will ignore).
+            NodeList children = node.getChildNodes();
+            Node restrictionNode = null;
+            for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
+                QName restrictionKind = Utils.getNodeQName(children.item(j));
+                if (restrictionKind != null &&
+                    restrictionKind.getLocalPart().equals("restriction") &&
+                    Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
+                    restrictionNode = children.item(j);
+            }
+
+            // The restriction node indicates the type being restricted
+            // (the base attribute contains this type).
+            
+            if (restrictionNode != null) {
+                baseQName = Utils.getNodeTypeRefQName(restrictionNode, "base");
+            }
+            
+            // Look for enumeration elements underneath the restriction node
+            if (baseQName != null && restrictionNode != null) {
+                NodeList enums = restrictionNode.getChildNodes();
+                for (int i=0; i < enums.getLength(); i++) {
+                    QName enumKind = Utils.getNodeQName(enums.item(i));
+                    if (enumKind != null &&
+                        enumKind.getLocalPart().equals("enumeration") &&
+                        Constants.isSchemaXSD(enumKind.getNamespaceURI())) {
+                        
+                        // Found an enumeration, this isn't a 
+                        // 'normal' simple type.
+                        return null;
+                    }
+                }
+            }
+        }
+        return baseQName;
+    }
+
+    /**
+     * Returns the contained restriction or extension node underneath
+     * the specified node.  Returns null if not found
+     */
+    public static Node getRestrictionOrExtensionNode(Node node) {
+        Node re = null;
+        if (node == null) {
+            return re;
+        }
+
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node node2 = null;
+            for (int j = 0; j < children.getLength() && node2 == null; j++) {
+                QName kind2 = Utils.getNodeQName(children.item(j));
+                if (kind2 != null &&
+                    (kind2.getLocalPart().equals("simpleType") ||
+                     kind2.getLocalPart().equals("complexType")) &&
+                    Constants.isSchemaXSD(kind2.getNamespaceURI())) {
+                    node2 = children.item(j);
+                    node = node2;
+                }
+            }
+        }
+        // Get the node kind, expecting a schema simpleType
+        nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            (nodeKind.getLocalPart().equals("simpleType") ||
+             nodeKind.getLocalPart().equals("complexType")) &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+
+            // Under the complexType there could be a complexContent.
+            NodeList children = node.getChildNodes();
+            Node complexContent = null;
+            Node extension = null;
+            if (nodeKind.getLocalPart().equals("complexType")) {
+                for (int j = 0; j < children.getLength() && complexContent == null; j++) {
+                    QName complexContentKind = Utils.getNodeQName(children.item(j));
+                    if (complexContentKind != null &&
+                        complexContentKind.getLocalPart().equals("complexContent") &&
+                        Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
+                        complexContent = children.item(j);
+                }
+                node = complexContent;
+            }
+            // Now get the extension or restriction node
+            if (node != null) {
+                children = node.getChildNodes();
+                for (int j = 0; j < children.getLength() && re == null; j++) {
+                    QName reKind = Utils.getNodeQName(children.item(j));
+                    if (reKind != null &&
+                        (reKind.getLocalPart().equals("extension") ||
+                         reKind.getLocalPart().equals("restriction")) &&
+                        Constants.isSchemaXSD(reKind.getNamespaceURI()))
+                        re = children.item(j);
+                }
+            }
+        }
+            
+        return re;
+    }
+
+    /**
      * If the specified node represents an array encoding of one of the following
      * forms, then return the qname repesenting the element type of the array.
      */
