@@ -479,6 +479,7 @@ public class BeanSerializer extends Deserializer
         String localNameUp = format(localName, FORCE_UPPER);
         String localNameLo = format(localName, FORCE_LOWER);
         for (int i=0; i<pd.length; i++) {
+            if (pd[i].getWriteMethod() == null ) continue ;
             if (pd[i].getName().equals(localNameUp) ||
                 pd[i].getName().equals(localNameLo)) {
 
