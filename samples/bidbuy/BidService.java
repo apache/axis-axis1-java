@@ -77,7 +77,6 @@ public class BidService {
      */
     public String Buy(PurchaseOrder PO) {
         String receipt = Integer.toString(nextReceiptNumber++);
-        System.out.println("PO: " + PO);
 
         for (int i=0; i<PO.getItems().length; i++) {
             LineItem item = PO.getItems()[i];
