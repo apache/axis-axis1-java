@@ -113,6 +113,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Set;
 
 /**
  * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and
@@ -197,6 +198,8 @@ public class SymbolTable {
 
     /** Field wsdlURI */
     private String wsdlURI = null;
+    
+    Set arrayTypeQNames = new HashSet();
 
     /**
      * Construct a symbol table with the given Namespaces.
@@ -1154,8 +1157,8 @@ public class SymbolTable {
 
                 numDims.value = 0;
 
-                QName arrayEQName = SchemaUtils.getArrayComponentQName(node,
-                        numDims);
+                QName arrayEQName = 
+                        SchemaUtils.getArrayComponentQName(node, numDims, this);
 
                 if (arrayEQName != null) {
 
@@ -1165,6 +1168,7 @@ public class SymbolTable {
                     TypeEntry refType = getTypeEntry(refQName, false);
 
                     if (refType == null) {
+//                        arrayTypeQNames.add(refQName);
 
                         // Not defined yet, add one
                         String baseName = btm.getBaseName(refQName);

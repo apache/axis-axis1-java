@@ -90,6 +90,7 @@ Copyright:
                  <include name="test/functional/build.xml"/>
                  <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
                  <exclude name="test/wsdl/interop3/**/build.xml" />
+		 <exclude name="test/wsdl/adaptive/**/build.xml" />
                </patternset>
              </fileset>
         </param>
@@ -200,6 +201,7 @@ Copyright:
               <exclude name="**/DataServiceTestCase.class"/>
               <exclude name="**/WhiteMesaSoap12TestSvcTestCase.class"/>
               <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
+	      <exclude name="**/test/wsdl/adaptive/**/*.class"/>
         </fileset>
       </batchtest>
     </junit>

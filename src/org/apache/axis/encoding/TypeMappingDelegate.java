@@ -259,10 +259,10 @@ class TypeMappingDelegate implements TypeMapping {
      * @return the type's QName
      * @throws JAXRPCException
      */
-    public QName getXMLType(Class javaType, QName xmlType)
+    public QName getXMLType(Class javaType, QName xmlType, boolean encoded)
             throws JAXRPCException {
         if (delegate != null) {
-            return delegate.getXMLType(javaType, xmlType);
+            return delegate.getXMLType(javaType, xmlType, encoded);
         }
         return null;
     }

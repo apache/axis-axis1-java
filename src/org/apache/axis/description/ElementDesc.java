@@ -54,6 +54,8 @@
  */
 package org.apache.axis.description;
 
+import javax.xml.namespace.QName;
+
 /**
  * An AttributeDesc is a FieldDesc for an Java field mapping to an
  * XML element
@@ -65,6 +67,9 @@ public class ElementDesc extends FieldDesc {
     private int minOccurs = 1;
     /** The maxOccurs value from the schema */
     private int maxOccurs = 1;
+    
+    /** If this is an array, this holds the array type */
+    private QName arrayType;
     
     public ElementDesc() {
         super(true);
@@ -88,5 +93,13 @@ public class ElementDesc extends FieldDesc {
 
     public void setMaxOccurs(int maxOccurs) {
         this.maxOccurs = maxOccurs;
+    }
+
+    public QName getArrayType() {
+        return arrayType;
+    }
+
+    public void setArrayType(QName arrayType) {
+        this.arrayType = arrayType;
     }
 }

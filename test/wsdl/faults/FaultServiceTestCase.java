@@ -24,13 +24,6 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
     }
     */
 
-    public static void main(String[] args) throws Exception {
-        FaultServiceTestCase tester = new FaultServiceTestCase("tester");
-        tester.testFaultServiceGetQuote();
-        tester.testFaultServiceThrowFault();
-        tester.testFaultServiceThrowExtensionFault();
-    }
-    
     public void testFaultServiceGetQuote() {
         test.wsdl.faults.FaultServicePortType binding;
         try {
@@ -61,7 +54,7 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         }
     }
 
-    public void testFaultServiceThrowFault() {
+    public void testFaultServiceThrowFault() throws Exception {
         test.wsdl.faults.FaultServicePortType binding;
         try {
             binding = new FaultServiceLocator().getFaultService();
@@ -98,14 +91,6 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         catch (BaseFault e) {
             throw new junit.framework.
                     AssertionFailedError("BaseFault caught: " + e);            
-        }
-        catch (org.apache.axis.AxisFault e) {
-            throw new junit.framework.
-                    AssertionFailedError("AxisFault caught: " + e);            
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.
-                    AssertionFailedError("Remote Exception caught: " + re );
         }
     }
 

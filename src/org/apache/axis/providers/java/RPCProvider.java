@@ -232,8 +232,7 @@ public class RPCProvider extends JavaProvider {
                 Class sigType = paramDesc.getJavaType();
                 
                 // Convert the value into the expected type in the signature
-                value = JavaUtils.convert(value,
-                        sigType);
+                value = JavaUtils.convert(value, sigType);
 
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {

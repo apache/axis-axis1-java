@@ -1132,14 +1132,16 @@ public class SchemaUtils {
      * @param dims is the output value that contains the number of dimensions if return is not null
      * @return QName or null
      */
-    public static QName getArrayComponentQName(Node node, IntHolder dims) {
+    public static QName getArrayComponentQName(Node node,
+                                               IntHolder dims,
+                                               SymbolTable symbolTable) {
 
         dims.value = 1;    // assume 1 dimension
 
         QName qName = getCollectionComponentQName(node);
 
         if (qName == null) {
-            qName = getArrayComponentQName_JAXRPC(node, dims);
+            qName = getArrayComponentQName_JAXRPC(node, dims, symbolTable);
         }
 
         return qName;
@@ -1213,7 +1215,9 @@ public class SchemaUtils {
      *         </xsd:complexType>
      */
     private static QName getArrayComponentQName_JAXRPC(Node node,
-                                                       IntHolder dims) {
+                                                       IntHolder dims,
+                                                       SymbolTable symbolTable)
+    {
 
         dims.value = 0;    // Assume 0
 
@@ -1280,15 +1284,16 @@ public class SchemaUtils {
                 baseType = Utils.getTypeQName(restrictionNode,
                         new BooleanHolder(), false);
 
-                if ((baseType != null)
-                        && baseType.getLocalPart().equals("Array")
-                        && Constants.isSOAP_ENC(baseType.getNamespaceURI())) {
-                    ;                   // Okay
-                } else {
-                    baseType = null;    // Did not find base=soapenc:Array
+                if (baseType != null) {
+                    if (!baseType.getLocalPart().equals("Array") ||
+                            !Constants.isSOAP_ENC(baseType.getNamespaceURI())) {
+                        if (!symbolTable.arrayTypeQNames.contains(baseType)) {
+                            baseType = null; // Did not find base=soapenc:Array
+                        }
+                    }
                 }
             }
-
+            
             // Under the restriction there should be an attribute OR a sequence/all group node.
             // (There may be other #text nodes, which we will ignore).
             Node groupNode = null;

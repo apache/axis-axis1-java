@@ -305,7 +305,12 @@ public class JavaUtils
                                 (String) handler.getContent()));
                     }
                     else if (destClass == OctetStream.class || destClass == byte[].class) {
-                        InputStream in = (InputStream) arg;
+                        InputStream in = null;
+                        if (arg instanceof InputStream) {
+                            in = (InputStream) arg;
+                        } else {
+                            in = (InputStream)handler.getContent();
+                        }
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         int byte1 = -1;
                         while((byte1 = in.read())!=-1)

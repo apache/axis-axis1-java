@@ -148,5 +148,10 @@ public class SOAP12Constants implements SOAPConstants {
         return Constants.FAULT_SOAP12_MUSTUNDERSTAND;
     }
 
-
+    /**
+     * Obtain the QName of the SOAP array type
+     */
+    public QName getArrayType() {
+        return Constants.SOAP_ARRAY12;
+    }
 }
