@@ -161,12 +161,12 @@ public class AxisServlet extends HttpServlet
                                   INIT_PROPERTY_TRANSPORT_NAME,
                                   HTTPTransport.DEFAULT_TRANSPORT_NAME);
 
-        if (JavaUtils.isTrue(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
+        if (JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
             securityProvider = new ServletSecurityProvider();
         }
 
         enableList =
-            JavaUtils.isTrue(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
+            JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
         if (jwsClassDir != null) {

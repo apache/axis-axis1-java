@@ -368,7 +368,7 @@ public class Utils {
 
         // An alternate qname is returned if nillable
         if (typeAttrName.equals("type")) {
-            if (JavaUtils.isTrue(getAttribute(node, "nillable"))) {
+            if (JavaUtils.isTrueExplicitly(getAttribute(node, "nillable"))) {
                 qName = getNillableQName(qName);
             }
         }
