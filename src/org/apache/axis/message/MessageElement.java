@@ -620,6 +620,13 @@ public class MessageElement implements SOAPElement, Serializable
                                 value);
     }
 
+    public void addAttribute(String prefix, String namespace, String localName,
+                             String value)
+    {
+        AttributesImpl attributes = makeAttributesEditable();
+        attributes.addAttribute(namespace, localName, prefix, "CDATA",
+                                value);
+    }
     /**
      * Set an attribute, adding the attribute if it isn't already present
      * in this element, and changing the value if it is.  Passing null as the
@@ -961,7 +968,7 @@ public class MessageElement implements SOAPElement, Serializable
     public SOAPElement addAttribute(Name name, String value)
         throws SOAPException {
         try {
-            addAttribute(name.getURI(), name.getLocalName(), value);
+            addAttribute(name.getPrefix(), name.getURI(), name.getLocalName(), value);
         } catch (RuntimeException t) {
             throw new SOAPException(t);
         }
@@ -992,8 +999,11 @@ public class MessageElement implements SOAPElement, Serializable
             String prefix = "";
             if (q != null) {
                 int idx = q.indexOf(":");
-                if (idx > 0)
+                if (idx > 0) {
                     prefix = q.substring(0, idx);
+                } else {
+                    prefix= q;
+                }
             }
 
             attrs.add(new PrefixedQName(attributes.getURI(i),
