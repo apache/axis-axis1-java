@@ -1374,9 +1374,7 @@ public class SerializationContextImpl implements SerializationContext
                         ((BaseSerializerFactory) serFactory).getXMLType();
                 }
                 if (actualXMLType.value == null) {
-                    actualXMLType.value =
-                        ((TypeMappingImpl) tm).getXMLType(javaType,
-                                                          xmlType);
+                    actualXMLType.value = tm.getXMLType(javaType, xmlType);
                 }
             }
         }
