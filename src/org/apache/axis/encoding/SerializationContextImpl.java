@@ -1203,11 +1203,13 @@ public class SerializationContextImpl implements SerializationContext
 
             if ( ser != null ) {
                 // Send the xmlType if indicated.
-                if (shouldSendType) {
-                    xmlType = ((TypeMappingImpl)tm).getXMLType(javaType,
+                QName actualType = ((TypeMappingImpl)tm).getXMLType(javaType,
                                                                xmlType);
-                    attributes = setTypeAttribute(attributes, xmlType);
-                }
+                
+                if (shouldSendType || (xmlType != null &&
+                                        (!actualType.equals(xmlType))))
+                    attributes = setTypeAttribute(attributes, actualType);
+                
                 // The multiref QName is our own fake name.
                 // It may be beneficial to set the name to the
                 // type name, but I didn't see any improvements
