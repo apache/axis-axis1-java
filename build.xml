@@ -6,7 +6,7 @@
         <!ENTITY targets SYSTEM "file:xmls/targets.xml">
 ]>
 
-<project default="compile" basedir=".">
+<project name="axis" default="compile" basedir=".">
 <!-- =================================================================== -->
 <description>
    Build file for Axis
@@ -33,6 +33,9 @@ Optional components:
    commons-httpclient from http://jakarta.apache.org/commons/httpclient/
    httpunit           from http://sourceforge.net/projects/httpunit/
    jms                from http://java.sun.com/products/jms/
+   castor             from http://www.exolab.org/castor
+   
+j2ee.jar contains the mailapi, activation and servlet libraries   
 
 Build Instructions:
    To build, run
