@@ -28,7 +28,7 @@ public class TestAutoTypes extends TestCase {
         tm.setDoAutoTypes(true);
         
         QName qname = tm.getTypeQName( AttributeBean.class );
-        assertEquals( "http://encoding.test/",
+        assertEquals( "http://encoding.test",
                       qname.getNamespaceURI() );
         assertEquals( "AttributeBean", qname.getLocalPart() );
         
@@ -36,7 +36,7 @@ public class TestAutoTypes extends TestCase {
         assertTrue( tm.getSerializer(AttributeBean.class) != null );
 
         assertEquals(
-            "http://encoding.test/",
+            "http://encoding.test",
             Namespaces.makeNamespace(AttributeBean[].class.getName()));
         assertEquals(
             "AttributeBean[]",
