@@ -74,7 +74,6 @@ import java.util.Properties;
 public class EJBProvider extends RPCProvider
 {
     private static final String beanNameOption = "beanJndiName";
-    private static final String allowedMethodsOption = "allowedMethods";
     private static final String homeInterfaceNameOption = "homeInterfaceName";
     public static final String jndiContextClass = "jndiContextClass";
     public static final String jndiURL = "jndiURL";
@@ -179,30 +178,9 @@ public class EJBProvider extends RPCProvider
     /**
      *
      */
-    protected String getServiceClassName(Handler service)
-    {
-        return (String) service.getOption( beanNameOption );
-    }
-    /**
-     *
-     */
-    protected String getServiceAllowedMethods(Handler service)
-    {
-        return (String) service.getOption( allowedMethodsOption );
-    }
-    /**
-     *
-     */
     protected String getServiceClassNameOptionName()
     {
         return beanNameOption;
-    }
-    /**
-     *
-     */
-    protected String getServiceAllowedMethodsOptionName()
-    {
-        return allowedMethodsOption;
     }
 
     /**

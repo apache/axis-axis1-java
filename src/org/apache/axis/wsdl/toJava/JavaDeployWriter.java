@@ -200,7 +200,7 @@ public class JavaDeployWriter extends JavaWriter {
             }
         }
 
-        pw.println("      <parameter name=\"methodName\" value=\""
+        pw.println("      <parameter name=\"allowedMethods\" value=\""
                 + methodList.substring(1) + "\"/>");
 
         if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
