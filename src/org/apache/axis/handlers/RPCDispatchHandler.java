@@ -117,7 +117,9 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Service name=" + methodName,
                                null, null );  // should they??
   
-        Method       method = jc.getMethod(methodName, args.size());
+        Debug.Print( 2, "mName: " + mName );
+        Debug.Print( 2, "MethodName: " + methodName );
+        Method       method = jc.getMethod(mName, args.size());
         if ( method == null )
           throw new AxisFault( "AxisServer.error", 
                                "Method not found\n" +
