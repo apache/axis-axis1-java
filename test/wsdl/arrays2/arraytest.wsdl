@@ -79,7 +79,7 @@
 
     <service name="ArrayTestService">
         <port    name="ArrayTestPort" binding="arraytest:ArrayTestBinding">
-        <soap:address location="https://pilot.xyz.net/webservices/ArrayTestService">
+        <soap:address location="http://pilot.xyz.net/webservices/ArrayTestService">
         </soap:address>
         </port>
     </service>
