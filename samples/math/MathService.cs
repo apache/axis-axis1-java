@@ -27,7 +27,7 @@ public class MathService : System.Web.Services.Protocols.SoapHttpClientProtocol 
     
     /// <remarks/>
     public MathService() {
-        this.Url = "http://172.16.17.142:8080/axis/services/Math";
+        this.Url = "http://localhost:8080/axis/services/Math";
     }
     
     /// <remarks/>
