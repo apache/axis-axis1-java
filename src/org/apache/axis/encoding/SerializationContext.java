@@ -940,9 +940,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         Iterator i = keys.iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
+                AttributesImpl attrs2 = new AttributesImpl(attrs);
                 Object val = i.next();
                 MultiRefItem mri = (MultiRefItem) multiRefValues.get(val);
-                attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
+                attrs2.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    mri.id);
 
                 forceSer = mri.value;
@@ -951,7 +952,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 // The sendType parameter is defaulted for interop purposes.
                 // Some of the remote services do not know how to
                 // ascertain the type in these circumstances (though Axis does).
-                serialize(multirefQName, attrs, mri.value,
+                serialize(multirefQName, attrs2, mri.value,
                           mri.xmlType,
                           this.sendNull,
                           Boolean.TRUE);   // mri.sendType
