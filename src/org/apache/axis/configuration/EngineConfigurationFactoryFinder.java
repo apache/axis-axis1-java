@@ -56,10 +56,11 @@
 package org.apache.axis.configuration;
 
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
@@ -129,68 +130,73 @@ public class EngineConfigurationFactoryFinder
      * ***
      *
      */
-    public static EngineConfigurationFactory newFactory(Object obj) {
+    public static EngineConfigurationFactory newFactory(final Object obj) {
         /**
          * recreate on each call is critical to gaining
          * the right class loaders.  Do not cache.
          */
-        Object[] params = new Object[] { obj };
+        final Object[] params = new Object[] { obj };
 
         /**
          * Find and examine each service
          */
-        ClassLoaders loaders =
-            ClassLoaders.getAppLoaders(mySpi, myFactory, true);
-
-        ResourceNameIterator it =
-            new DiscoverServiceNames(loaders).findResourceNames(mySpi.getName());
-
-        ResourceClassIterator services =
-            new DiscoverClasses(loaders).findResourceClasses(it);
-
-        EngineConfigurationFactory factory = null;
-        while (factory == null  &&  services.hasNext()) {
-            Class service = services.nextResourceClass().loadClass();
-
-            factory = newFactory(service, newFactoryParamTypes, params);
-        }
-
-        if (factory == null) {
-            try {
-                factory = EngineConfigurationFactoryServlet.newFactory(obj);
-            } catch (Exception e) {
-                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                              EngineConfigurationFactoryServlet.class.getName(),
-                                              requiredMethod), e);
-            }
-
-            if (factory == null) {
-                try {
-                    // should NEVER return null.
-                    factory = EngineConfigurationFactoryDefault.newFactory(obj);
-                } catch (Exception e) {
-                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                  EngineConfigurationFactoryDefault.class.getName(),
-                                                  requiredMethod), e);
-                }
-            }
-        }
-
-        if (factory != null) {
-            if(log.isDebugEnabled())
-                log.debug(Messages.getMessage("engineFactory", factory.getClass().getName()));
-        } else {
-            log.error(Messages.getMessage("engineConfigFactoryMissing"));
-            // we should be throwing an exception here,
-            //
-            // but again, requires more refactoring than we want to swallow
-            // at this point in time.  Ifthis DOES occur, it's a coding error:
-            // factory should NEVER be null.
-            // Testing will find this, as NullPointerExceptions will be generated
-            // elsewhere.
-        }
-
-        return factory;
+        return (EngineConfigurationFactory)AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        ClassLoaders loaders =
+                            ClassLoaders.getAppLoaders(mySpi, myFactory, true);
+                
+                        ResourceNameIterator it =
+                            new DiscoverServiceNames(loaders).findResourceNames(mySpi.getName());
+                
+                        ResourceClassIterator services =
+                            new DiscoverClasses(loaders).findResourceClasses(it);
+                
+                        EngineConfigurationFactory factory = null;
+                        while (factory == null  &&  services.hasNext()) {
+                            Class service = services.nextResourceClass().loadClass();
+                
+                            factory = newFactory(service, newFactoryParamTypes, params);
+                        }
+                
+                        if (factory == null) {
+                            try {
+                                factory = EngineConfigurationFactoryServlet.newFactory(obj);
+                            } catch (Exception e) {
+                                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                              EngineConfigurationFactoryServlet.class.getName(),
+                                                              requiredMethod), e);
+                            }
+                
+                            if (factory == null) {
+                                try {
+                                    // should NEVER return null.
+                                    factory = EngineConfigurationFactoryDefault.newFactory(obj);
+                                } catch (Exception e) {
+                                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                                  EngineConfigurationFactoryDefault.class.getName(),
+                                                                  requiredMethod), e);
+                                }
+                            }
+                        }
+                
+                        if (factory != null) {
+                            if(log.isDebugEnabled())
+                                log.debug(Messages.getMessage("engineFactory", factory.getClass().getName()));
+                        } else {
+                            log.error(Messages.getMessage("engineConfigFactoryMissing"));
+                            // we should be throwing an exception here,
+                            //
+                            // but again, requires more refactoring than we want to swallow
+                            // at this point in time.  Ifthis DOES occur, it's a coding error:
+                            // factory should NEVER be null.
+                            // Testing will find this, as NullPointerExceptions will be generated
+                            // elsewhere.
+                        }
+                
+                        return factory;
+                    }
+                });
     }
 
     public static EngineConfigurationFactory newFactory() {
