@@ -181,7 +181,8 @@ Copyright:
 
     <!-- Tests are packaged as test.*, so source dir is main dir -->
     <javac srcdir="${basedir}"
-      destdir="${build.dir}">
+      destdir="${build.dir}"
+      debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
       <include name="test/**/*.java" />
       <classpath refid="test-classpath" />
     </javac>
@@ -192,10 +193,11 @@ Copyright:
   <!-- Runs the JUnit testcases -->
   <!-- =================================================================== -->
   <target name="junit" if="junit.present" depends="buildTest">
-    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+    <mkdir dir="${basedir}/test-reports" />
+    <junit printsummary="yes" haltonfailure="no" fork="yes">
       <classpath refid="test-classpath" />
-      <formatter type="plain" />
-      <batchtest>
+      <formatter type="xml" />
+      <batchtest todir="test-reports">
         <fileset dir="${build.dir}">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->

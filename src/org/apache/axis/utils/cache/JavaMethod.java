@@ -85,6 +85,7 @@ public class JavaMethod {
             if (methods[i].getName().equals(name)) {
                 if (unique != null) {
                     workinglist = new Vector();
+                    workinglist.addElement(unique);
                     workinglist.addElement(methods[i]);
                     unique = null;
                 } else if (workinglist != null) {
