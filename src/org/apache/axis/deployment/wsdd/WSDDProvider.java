@@ -63,6 +63,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.apache.axis.Handler;
+import org.apache.axis.rpc.namespace.QName;
+import org.apache.axis.deployment.wsdd.providers.*;
 import java.util.Hashtable;
 
 

@@ -75,6 +75,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Stack;
+import org.apache.axis.rpc.namespace.QName;
 
 public class XMLUtils {
     private static DocumentBuilderFactory dbf = initDOMFactory();

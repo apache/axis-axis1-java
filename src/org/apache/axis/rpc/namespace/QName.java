@@ -50,4 +50,24 @@ public class QName {
 
         return localPart.equals(((QName)p1).localPart);
     };
+
+    public int hashCode() {
+        return namespaceURI.hashCode() ^ localPart.hashCode();
+    }
+
+    // temporary!!
+    public QName(String qName, org.w3c.dom.Element element) {
+        if (qName != null){
+            int i = qName.indexOf(":");
+            if (i < 0) {
+                setLocalPart(qName);
+                setNamespaceURI(null);
+            } else {
+                String prefix = qName.substring(0,i);
+                String local = qName.substring(i+1);
+                setLocalPart(local);
+                setNamespaceURI(org.apache.axis.utils.XMLUtils.getNamespace(prefix, element));
+            }
+        }
+    }
 }

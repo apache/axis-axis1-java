@@ -61,7 +61,7 @@ import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

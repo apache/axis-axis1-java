@@ -1212,14 +1212,14 @@ public class Emitter {
             return;
         }
         if ( firstSer ) {
-            pw.println("            org.apache.axis.utils.QName qn;" );
+            pw.println("            org.apache.axis.rpc.namespace.QName qn;" );
             pw.println("            Class cls;" );
         }
         firstSer = false ;
 
         QName qname = type.getQName();
-        //pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
-        pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
+        //pw.println("            qn = new org.apache.axis.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        pw.println("            qn = new org.apache.axis.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
         pw.println("            cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
@@ -1269,7 +1269,7 @@ public class Emitter {
                 // XXX yikes, something is wrong
             }
             QName qn = type.getQName();
-            String typeString = "new org.apache.axis.encoding.XMLType( new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+            String typeString = "new org.apache.axis.encoding.XMLType( new org.apache.axis.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\"))";
             if (p.mode == Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
@@ -1284,7 +1284,7 @@ public class Emitter {
         // set output type
         if (!"void".equals(parms.returnType)) {
             QName qn = emitFactory.getType(parms.returnType).getQName();
-            String outputType = "new org.apache.axis.encoding.XMLType(new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+            String outputType = "new org.apache.axis.encoding.XMLType(new org.apache.axis.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
               qn.getLocalPart() + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
 

@@ -66,7 +66,7 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;

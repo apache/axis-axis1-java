@@ -3,7 +3,7 @@ package org.apache.axis.message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
 import java.util.Vector;

@@ -58,7 +58,7 @@ package samples.userguide.example5;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.utils.Options;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
                                            
 public class Client
 {

@@ -63,7 +63,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 
 import java.util.Date;
 
