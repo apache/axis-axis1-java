@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -63,39 +63,39 @@ import org.apache.axis.utils.QName;
 
 /**
  * WSDD DeployableItem complexType
- * 
+ *
  * @author James Snell
  */
-public abstract class WSDDDeployableItem extends WSDDElement { 
-    
+public abstract class WSDDDeployableItem extends WSDDElement {
+
     LockableHashtable parms;
     QName qname;
-    
+
     public WSDDDeployableItem(Element e, String n) throws WSDDException {
         super(e,n);
     }
-    
+
     public String getName() {
         return getElement().getAttribute("name");
     }
 
     public QName getQName() {
         if (qname == null) {
-            String nsURI = element.getOwnerDocument().getDocumentElement().getAttribute("targetNamespace");
+            String nsURI = element.getOwnerDocument().getDocumentElement().getAttributeNS(org.apache.axis.Constants.URI_2000_SCHEMA_XSI, "targetNamespace");
             if (nsURI.equals("")) {
                 qname = new QName(null, getName());
             } else {
                 qname = new QName(nsURI, getName());
             }
-        }     
+        }
         return qname;
     }
-    
+
     protected String getType() {
         return getElement().getAttribute("type");
     }
-    
-    
+
+
     /**
      * Returns the config parameters as a hashtable (lockable)
      */
@@ -111,25 +111,25 @@ public abstract class WSDDDeployableItem extends WSDDElement {
         }
         return parms;
     }
-    
+
     public WSDDParameter[] getParameters() {
         WSDDElement[] e = createArray("parameter", WSDDParameter.class);
         WSDDParameter[] p = new WSDDParameter[e.length];
         System.arraycopy(e,0,p,0,e.length);
         return p;
     }
-    
+
     public WSDDParameter getParameter(String name) {
         WSDDParameter[] e = getParameters();
         for (int n = 0; n < e.length; n++) {
-            if (e[n].getName().equals(name)) 
+            if (e[n].getName().equals(name))
                 return e[n];
         }
         return null;
     }
-    
+
     abstract Handler newInstance(DeploymentRegistry registry) throws Exception;
-    
+
     /**
      * Creates a new instance of this deployable.  if the
      * java class is not found, the registry is queried to
@@ -157,14 +157,14 @@ public abstract class WSDDDeployableItem extends WSDDElement {
               throw e;
         }
     }
-    
+
     Object createInstance(Class _class) throws Exception {
         return _class.newInstance();
     }
-    
+
     Class getTypeClass(String type) throws ClassNotFoundException {
         type = type.substring(type.indexOf(":") + 1);
         return Class.forName(type);
     }
-    
+
 }

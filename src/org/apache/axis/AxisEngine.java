@@ -68,10 +68,6 @@ import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.encoding.*;
 
-/** Temporary - this will be replaced by deployment
- */
-import org.apache.axis.client.http.HTTPTransport;
-
 import org.w3c.dom.*;
 
 /**
@@ -102,7 +98,9 @@ public abstract class AxisEngine extends BasicHandler
     
     /** A map of protocol names to "client" (sender) transports
      */
-    protected Hashtable protocolSenders = new Hashtable();
+    protected SupplierRegistry transportRegistry = new SupplierRegistry();
+                                                        
+    //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
     
     /**
      * This engine's Session.  This Session supports "application scope"
@@ -129,18 +127,6 @@ public abstract class AxisEngine extends BasicHandler
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        /** Load default transports
-         *
-         * (these will be shared - really should be a factory, but
-         *  we need to go over the architecture / patterns here
-         *  anyway, so this is a quick P.O.C. for now)
-         */
-        protocolSenders.put("http", new HTTPTransport());
-        
-        // Once we've got a LocalTransport class...
-        //
-        //protocolSenders.put("local", new LocalTransport());
         
         Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
     }
@@ -187,6 +173,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     abstract protected void deployDefaultHandlers();
     abstract protected void deployDefaultServices();
+    abstract protected void deployDefaultTransports();
 
     /**
      * (re)initialize - What should really go in here???
@@ -203,9 +190,9 @@ public abstract class AxisEngine extends BasicHandler
 
         initializeHandlers();
         initializeServices();
+        initializeTransports();
 
         // Later...
-        //initializeTransports();
         //initializeTypeMappings();
 
         // Load the registry of deployed types
@@ -312,6 +299,11 @@ public abstract class AxisEngine extends BasicHandler
       deployDefaultServices();
       dontSaveYet = false;
     }
+    
+    public void initializeTransports()
+    {
+      deployDefaultTransports();
+    }
 
     public HandlerRegistry getHandlerRegistry()
     {
@@ -333,24 +325,19 @@ public abstract class AxisEngine extends BasicHandler
         _serviceRegistry = registry;
     }
     
+    public SupplierRegistry getTransportRegistry()
+    {
+        return transportRegistry;
+    }
+    
+    public void setTransportRegistry(SupplierRegistry registry)
+    {
+        transportRegistry = registry;
+    }
+    
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return _typeMappingRegistry;
-    }
-    
-    public Transport getTransportForProtocol(String protocol)
-        throws Exception
-    {
-        Transport transport = (Transport)protocolSenders.get(protocol);
-        if (transport == null)
-            throw new Exception("Couldn't find Transport for protocol '" +
-                                    protocol + "'");
-        return transport;
-    }
-    
-    public void addTransportForProtocol(String protocol, Transport transport)
-    {
-        protocolSenders.put(protocol, transport);
     }
     
     public void saveHandlerRegistry()
@@ -457,6 +444,30 @@ public abstract class AxisEngine extends BasicHandler
     {
         getServiceRegistry().remove(key);
         saveServiceRegistry();
+    }
+
+    /**
+     * Deploy a (client) Transport
+     */
+    public void deployTransport(String key, Handler transport)
+    {
+        transportRegistry.add(key, transport);
+    }
+    
+    /**
+     * Deploy a (client) Transport
+     */
+    public void deployTransport(String key, Supplier supplier)
+    {
+        transportRegistry.add(key, supplier);
+    }
+    
+    /**
+     * Undeploy (remove) a client Transport
+     */
+    public void undeployTransport(String key)
+    {
+        transportRegistry.remove(key);
     }
 
     /**

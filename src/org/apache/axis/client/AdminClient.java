@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,12 +79,9 @@ import org.apache.axis.transport.http.HTTPConstants;
  */
 
 public abstract class AdminClient {
-
-    // do the real work, and throw exception if fubar
-    // this is reused by the TestHTTPDeploy functional tests
-    public void doAdmin (String[] args)
-        throws Exception
+    public static void main (String[] args)
     {
+      try {
         Options opts = new Options( args );
         
         Debug.setDebugLevel( opts.isFlagSet('d') );
@@ -113,8 +110,12 @@ public abstract class AdminClient {
                 input = new FileInputStream( args[i] );
             }
             
-            ServiceClient     client       =
-                getServiceClient(opts, args);
+            ServiceClient client = new ServiceClient(opts.getURL());
+            
+            /** Unfortunately, this is transport-specific.  However, no one
+             * but the HTTP transport should pick this property up.
+             */
+            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");            
             
             Message         inMsg      = new Message( input, true );
             
@@ -134,6 +135,11 @@ public abstract class AdminClient {
             client.invoke();
             
             Message outMsg = client.getMessageContext().getResponseMessage();
+            if (outMsg == null) {
+              System.err.println("Null response message!");
+              return;
+            }
+            
             client.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
             input.close();
             SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
@@ -143,14 +149,9 @@ public abstract class AdminClient {
             body.output(ctx);
             System.out.println(writer.toString());
         }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
-    
-    /**
-     * create a ServiceClient as appropriate for specific transport;
-     * overridden by transport-specific subclasses
-     */
-    abstract public ServiceClient getServiceClient (Options opts, String[] args)
-        throws Exception;
-    
 }
 

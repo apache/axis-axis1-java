@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,23 +71,12 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
         try {
-            new samples.transport.tcp.AdminClient().doAdmin(args);
+            org.apache.axis.client.AdminClient.main(args);
         }
         catch( Exception e ) {
             System.err.println( e );
             e.printStackTrace( System.err );
         }
     }
-
-    /**
-     * create an appropriate ServiceClient
-     */
-    public ServiceClient getServiceClient (Options opts, String[] args) throws Exception {
-        URL url = new URL(opts.getURL());
-        ServiceClient client = new ServiceClient
-            ( new TCPTransport(url.getHost(), ""+url.getPort()) );
-        return client;
-    }
-        
 }
 

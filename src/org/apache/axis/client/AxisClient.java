@@ -96,6 +96,23 @@ public class AxisClient extends AxisEngine
     {
       // No default client services
     }
+    
+    /**
+     * Deploy the default transports.
+     */
+    protected void deployDefaultTransports()
+    {
+      /** If a transport has no req/resp chains, can we just deploy
+       * the sender directly???
+       */
+      SimpleTargetedChain transport = new SimpleTargetedChain();
+      transport.setPivotHandler(_handlerRegistry.find("HTTPSender"));
+      deployTransport("http", transport);
+      
+      transport = new SimpleTargetedChain();
+      transport.setPivotHandler(_handlerRegistry.find("LocalSender"));
+      deployTransport("local", transport);
+    }
 
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
@@ -159,22 +176,17 @@ public class AxisClient extends AxisEngine
                 if ( hName != null  && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
                 
-                /* Process the Transport Specific Request Chain */
-                /**********************************************/
-                hName = msgContext.getStrProp(MessageContext.TRANS_REQUEST);
-                if ( hName != null && (h = hr.find( hName )) != null )
+                /** Process the Transport Specific stuff
+                 * 
+                 * NOTE: Somewhere in here there is a handler which actually
+                 * sends the message and receives a response.  Generally
+                 * this is the pivot point in the Transport chain.
+                 */
+                hName = msgContext.getTransportName();
+                HandlerRegistry tr = getTransportRegistry();
+                if ( hName != null && (h = tr.find( hName )) != null )
                     h.invoke(msgContext);
-                
-                /* Note: at the end of the transport specific request chain should */
-                /* have been a handler that called the server.                   */
-                /*****************************************************************/
-                
-                /* Process the Transport Specific Response Chain */
-                /***********************************************/
-                hName = msgContext.getStrProp(MessageContext.TRANS_RESPONSE);
-                if ( hName != null  && (h = hr.find( hName )) != null )
-                    h.invoke(msgContext);
-                
+                                
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;

@@ -65,6 +65,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.client.AxisClient;
+import org.apache.axis.client.Transport;
 import org.apache.axis.server.AxisServer;
 
 import org.w3c.dom.* ;
@@ -229,6 +230,9 @@ public class Admin {
         }
         else if ( type.equals( "service" ) ) {
           registerService(elem, engine);
+        }
+        else if (type.equals("transport")) {
+          registerTransport(elem, engine);
         }
 
         // A streamlined means of deploying both a serializer and a deserializer
@@ -497,6 +501,53 @@ public class Admin {
     } catch (IllegalAccessException iae) {
       throw new AxisFault(iae);
     }
+  }
+
+  /**
+   * Deploy a transport described in XML into an AxisEngine.
+   * 
+   * @param elem the <transport> element
+   * @param engine the AxisEngine in which to deploy
+   */
+  public static void registerTransport(Element elem, AxisEngine engine)
+    throws AxisFault
+  {
+    SupplierRegistry tr = engine.getTransportRegistry();
+    
+    String   name    = elem.getAttribute( "name" );
+    String   request   = elem.getAttribute( "request" );
+    String   sender   = elem.getAttribute( "sender" );
+    String   response  = elem.getAttribute( "response" );
+    Hashtable options = new Hashtable();
+
+    if ( request  != null && request.equals("") )  request = null ;
+    if ( response != null && response.equals("") ) response = null ;
+    if ( sender  != null && sender.equals("") )  sender = null ;
+    if ( name != null && name.equals("") ) name = null ;
+
+    Debug.Print( 2, "Deploying Transport: " + name );
+    StringTokenizer      st = null ;
+    Vector reqNames = new Vector();
+    Vector respNames = new Vector();
+
+    st = new StringTokenizer( request, " \t\n\r\f," );
+    while ( st.hasMoreElements() ) {
+      reqNames.addElement(st.nextToken());
+    }
+    
+    st = new StringTokenizer( response, " \t\n\r\f," );
+    while ( st.hasMoreElements() ) {
+      respNames.addElement(st.nextToken());
+    }
+    getOptions( elem, options );
+    
+    TargetedChainSupplier supp = new TargetedChainSupplier(name,
+                                                           reqNames,
+                                                           respNames,
+                                                           sender,
+                                                           options,
+                                                           tr);
+    tr.add(name,supp);
   }
 
   /**

@@ -60,8 +60,9 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.TCPTransport;
+import org.apache.axis.client.AdminClient;
+import org.apache.axis.utils.Admin;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
@@ -76,14 +77,19 @@ public class TestTCPTransportSample extends TestCase {
         super(name);
     }
     
+    public void doTransportDeploy() throws Exception {
+        String[] args = { "client", "samples/transport/tcp/deploy.xml" };
+        Admin.main(args);
+    }
+    
     public void doTestDeploy () throws Exception {
-        String[] args = { "-p8088", "samples/stock/deploy.xml" };
-        new AdminClient().doAdmin(args);
+        String[] args = { "-ltcp://localhost:8088", "samples/stock/deploy.xml" };
+        AdminClient.main(args);
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "-p8088", "samples/stock/undeploy.xml" };
-        new AdminClient().doAdmin(args);
+        String[] args = { "-ltcp://localhost:8088", "samples/stock/undeploy.xml" };
+        AdminClient.main(args);
     }
     
     public void doTestStock() throws Exception {
@@ -133,12 +139,23 @@ public class TestTCPTransportSample extends TestCase {
     public void testTCPTransportSample () throws Exception {
         try {
             System.out.println("Testing TCP transport.");
-            System.out.println("Testing deployment...");
+            
+            System.out.print("Deploying TCP client transport...");
+            doTransportDeploy();
+            System.out.println("OK!");
+            
+            System.out.print("Testing deployment...");
             doTestDeploy();
-            System.out.println("Testing service...");
+            System.out.println("OK!");
+            
+            System.out.print("Testing service...");
             doTestStock();
-            System.out.println("Testing undeployment...");
+            System.out.println("OK!");
+            
+            System.out.print("Testing undeployment...");
             doTestUndeploy();
+            System.out.println("OK!");
+            
             System.out.println("Test complete.");
         }
         catch( Exception e ) {
