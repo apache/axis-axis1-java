@@ -368,7 +368,7 @@ public class StringUtils {
                 // if in unicode, then we're reading unicode
                 // values in somehow
                 unicode.append(ch);
-                if (unicode.length() == 4 && str.charAt(i+1) == ';') {
+                if (unicode.length() == 4) {
                     // unicode now contains the four hex digits
                     // which represents our unicode character
                     try {
@@ -381,11 +381,6 @@ public class StringUtils {
                     } catch (NumberFormatException nfe) {
                         throw new InternalException(nfe);
                     }
-                } else if (unicode.length() == 4) {
-                    // can't find the delimiter ';', thus it's an invalid unicode
-                    out.write(unicode.toString());
-                    unicode.setLength(0);
-                    inUnicode = false;
                 }
                 continue;
             } else if (ch=='&') {
@@ -396,7 +391,7 @@ public class StringUtils {
                     escapes.append(ch);
                     escapes.append(str.charAt(i+1));
                     escapes.append(str.charAt(i+2));
-                    if (escapes.toString().equals("&#x")) {
+                    if (escapes.toString().equals("&#x") && str.charAt(i+7)==';') {
                         inUnicode = true;
                     } else {
                         out.write(escapes.toString());
