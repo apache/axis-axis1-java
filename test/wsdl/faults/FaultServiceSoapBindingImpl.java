@@ -6,9 +6,9 @@
  * Author: Tom Jordahl (tomj@macromedia.com)
  */
 
-package test.faults.wsdl;
+package test.wsdl.faults;
 
-public class FaultServiceSoapBindingImpl implements test.faults.wsdl.FaultServicePortType {
+public class FaultServiceSoapBindingImpl implements test.wsdl.faults.FaultServicePortType {
     public float getQuote(java.lang.String tickerSymbol) throws java.rmi.RemoteException, InvalidTickerFaultMessage {
         throw new InvalidTickerFaultMessage(tickerSymbol);
     }
