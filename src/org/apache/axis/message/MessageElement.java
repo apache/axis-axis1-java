@@ -84,6 +84,7 @@ public class MessageElement
     protected String    href;
     protected boolean   _isRoot = true;
     protected SOAPEnvelope message = null;
+    protected boolean   isDirty = false;
     
     protected DeserializationContext context;
     
@@ -266,7 +267,7 @@ public class MessageElement
      */
     public final void output(SerializationContext context) throws Exception
     {
-        if (recorder != null) {
+        if ((recorder != null) && (!isDirty)) {
             recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
             return;
         }
@@ -278,5 +279,10 @@ public class MessageElement
      */
     protected void outputImpl(SerializationContext context) throws Exception
     {
+        if (prefix != null)
+            context.registerPrefixForURI(prefix, namespaceURI);
+        
+        context.startElement(new QName(namespaceURI, name), attributes);
+        context.endElement();
     }
 }
