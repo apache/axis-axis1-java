@@ -49,7 +49,7 @@ Copyright:
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
-	&targets;
+        &targets;
 
 <!-- =========================================================================== -->
   <target name="copy"/>
