@@ -326,9 +326,8 @@ public class SymbolTable {
      */
     protected void add(String context, Definition def, Document doc)
             throws IOException {
-        checkForUndefined(def);
         URL contextURL = context == null ? null : getURL(null, context);
-        populate(contextURL, def, doc);
+        populate(contextURL, def, doc, null);
         checkForUndefined();
         populateParameters();
         setReferences(def, doc);  // uses wrapped flag set in populateParameters
@@ -337,16 +336,23 @@ public class SymbolTable {
     /**
      * Scan the Definition for undefined objects and throw an error.
      */ 
-    private void checkForUndefined(Definition def) throws IOException {
+    private void checkForUndefined(Definition def, String filename) throws IOException {
         if (def != null) {
             // Bindings
             Iterator ib = def.getBindings().values().iterator();
             while (ib.hasNext()) {
                 Binding binding = (Binding) ib.next();
                 if (binding.isUndefined()) {
-                    throw new IOException(
+                    if (filename == null) {
+                        throw new IOException(
                             JavaUtils.getMessage("emitFailtUndefinedBinding01",
                                     binding.getQName().getLocalPart()));
+                    }
+                    else {
+                        throw new IOException(
+                            JavaUtils.getMessage("emitFailtUndefinedBinding02",
+                                    binding.getQName().getLocalPart(), filename));
+                    }
                 }
             }
 
@@ -355,9 +361,16 @@ public class SymbolTable {
             while (ip.hasNext()) {
                 PortType portType = (PortType) ip.next();
                 if (portType.isUndefined()) {
-                    throw new IOException(
+                    if (filename == null) {
+                        throw new IOException(
                             JavaUtils.getMessage("emitFailtUndefinedPort01",
                                     portType.getQName().getLocalPart()));
+                    }
+                    else {
+                        throw new IOException(
+                            JavaUtils.getMessage("emitFailtUndefinedPort02",
+                                    portType.getQName().getLocalPart(), filename));
+                    }
                 }
             }
             
@@ -400,10 +413,13 @@ public class SymbolTable {
     /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
+     * NOTE:  filename is used only by checkForUndefined so that it can report which WSDL file
+     * has the problem.  If we're on the primary WSDL file, then we don't know the name and
+     * filename will be null.  But we know the names of all imported files.
      */
     private HashSet importedFiles = new HashSet();
-    private void populate(URL context, Definition def, Document doc)
-            throws IOException {
+    private void populate(URL context, Definition def, Document doc,
+            String filename) throws IOException {
         if (doc != null) {
             populateTypes(doc);
 
@@ -413,6 +429,7 @@ public class SymbolTable {
             }
         }
         if (def != null) {
+            checkForUndefined(def, filename);
             if (addImports) {
                 // Add the symbols from the wsdl:import'ed WSDL documents
                 Map imports = def.getImports();
@@ -425,7 +442,8 @@ public class SymbolTable {
                             importedFiles.add(imp.getLocationURI());
                             URL url = getURL(context, imp.getLocationURI());
                             populate(url, imp.getDefinition(),
-                                    XMLUtils.newDocument(url.toString()));
+                                    XMLUtils.newDocument(url.toString()),
+                                    url.toString());
                         }
                     }
                 }
@@ -496,10 +514,10 @@ public class SymbolTable {
                 NamedNodeMap attributes = child.getAttributes();
                 Node importFile = attributes.getNamedItem("schemaLocation");
                 if (importFile != null) {
+                    String filename = getURL(context,
+                            importFile.getNodeValue()).toString();
                     populate(context, null,
-                            XMLUtils.newDocument(
-                                    getURL(context,
-                                    importFile.getNodeValue()).toString()));
+                            XMLUtils.newDocument(filename), filename);
                 }
             }
             lookForImports(context, child);
