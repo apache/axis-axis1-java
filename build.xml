@@ -102,9 +102,9 @@ Copyright:
     <echo message="--- Property values" />
     <echo message="debug=${debug}" />
 
-    <uptodate property="javadoc.required"
-              targetfile="${build.lib}/${name}.jar">
-      <srcfiles dir="${build.dir}" includes="**/*.html" />
+    <uptodate property="javadoc.notrequired"
+              targetfile="${build.javadocs}/index.html">
+      <srcfiles dir="${src.dir}" includes="**/*.java" />
     </uptodate>
   </target>
 
@@ -149,7 +149,7 @@ Copyright:
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
 
-  <target name="javadocs" depends="setenv" if="javadoc.required">
+  <target name="javadocs" depends="setenv" unless="javadoc.notrequired">
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              sourcepath="${src.dir}"
