@@ -214,8 +214,6 @@ public class Call implements javax.xml.rpc.Call {
     public void addParameter(String paramName, XMLType paramType,
                              int parameterMode) {
 
-        QName qn = paramType.getType();
-
         if ( paramNames == null ) {
             paramNames = new Vector();
             paramTypes = new Vector();
@@ -225,6 +223,21 @@ public class Call implements javax.xml.rpc.Call {
         paramNames.add( paramName );
         paramTypes.add( paramType.getType() );
         paramModes.add( new Integer(parameterMode) );
+    }
+
+    public XMLType getParameterTypeByName(String paramName) {
+        int  i ;
+
+        if ( paramNames == null ) return( null );
+
+        for (i = 0 ; i< paramNames.size() ; i++ ) 
+            if ( ((String)paramNames.get(i)).equals(paramName) ) {
+                org.apache.axis.encoding.XMLType  type ;
+                QName qn = (QName) paramTypes.get(i);
+                type = new org.apache.axis.encoding.XMLType( qn );
+                return( type );
+            }
+        return( null );
     }
 
     /**
