@@ -107,10 +107,13 @@
     <part name="id" type="xsd:int"/>
   </message>
 
+  <message name="empty"/>
+
   <!-- port type declns -->
   <portType name="PersonalInfoBook">
     <operation name="addEntry">
       <input message="tns:AddEntryRequest"/>
+      <output message="tns:empty"/>
     </operation>
     <operation name="getPersonalInfoFromName">
       <input message="tns:GetPersonalInfoFromNameRequest"/>

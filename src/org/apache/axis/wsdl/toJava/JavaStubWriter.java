@@ -270,7 +270,8 @@ public class JavaStubWriter extends JavaClassWriter {
                 pw.println();
             }
             else {
-                writeOperation(pw, operation, parameters, soapAction, opStyle);
+                writeOperation(pw, operation, parameters, soapAction, opStyle,
+                        type == OperationType.ONE_WAY);
             }
         }
     } // writeFileBody
@@ -471,7 +472,8 @@ public class JavaStubWriter extends JavaClassWriter {
             BindingOperation operation,
             Parameters parms,
             String soapAction,
-            String opStyle) throws IOException {
+            String opStyle,
+            boolean oneway) throws IOException {
 
         writeComment(pw, operation.getDocumentationElement());
 
@@ -614,12 +616,28 @@ public class JavaStubWriter extends JavaClassWriter {
                         Utils.getNewQName(elementQName) + ");" );
             }
         }
+        pw.println();
 
         // Invoke the operation
-        pw.println();
-        pw.print("        java.lang.Object _resp = _call.invoke(");
+        if (oneway) {
+            pw.print("        _call.invokeOneWay(");
+        }
+        else {
+            pw.print("        java.lang.Object _resp = _call.invoke(");
+        }
         pw.print("new java.lang.Object[] {");
+        writeParameters(pw, parms);
+        pw.println("});");
+        pw.println();
 
+        if (!oneway) {
+            writeResponseHandling(pw, parms);
+        }
+        pw.println("    }");
+        pw.println();
+    } // writeOperation
+
+    private void writeParameters(PrintWriter pw, Parameters parms) {
         // Write the input and inout parameter list
         boolean needComma = false;
         for (int i = 0; i < parms.list.size(); ++i) {
@@ -644,8 +662,9 @@ public class JavaStubWriter extends JavaClassWriter {
                 pw.print(javifiedName);
             }
         }
-        pw.println("});");
-        pw.println();
+    } // writeParamters
+
+    private void writeResponseHandling(PrintWriter pw, Parameters parms) {
         pw.println("        if (_resp instanceof java.rmi.RemoteException) {");
         pw.println("            throw (java.rmi.RemoteException)_resp;");
         pw.println("        }");
@@ -698,9 +717,7 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             pw.println("        }");
         }
-        pw.println("    }");
-        pw.println();
-    } // writeOperation
+    } // writeResponseHandling
 
     /** 
      * writeOutputAssign
