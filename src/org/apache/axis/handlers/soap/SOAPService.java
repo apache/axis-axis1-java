@@ -121,7 +121,7 @@ public class SOAPService extends SimpleTargetedChain
     /** Convenience constructor for wrapping SOAP semantics around
      * "service handlers" which actually do work.
      */
-    public SOAPService(Handler serviceHandler, String pivotName)
+    public SOAPService(Handler serviceHandler)
     {
         this();
         setPivotHandler(serviceHandler);

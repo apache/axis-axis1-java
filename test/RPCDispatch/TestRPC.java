@@ -101,7 +101,7 @@ public class TestRPC extends TestCase {
      */
     public void testReverseString() throws Exception {
         // Register the reverseString service
-        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseString");
         sr.add(SOAPAction, reverse);
@@ -115,7 +115,7 @@ public class TestRPC extends TestCase {
      */
     public void testReverseData() throws Exception {
         // Register the reverseData service
-        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        SOAPService reverse = new SOAPService(RPCDispatcher);
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseData");
         sr.add(SOAPAction, reverse);
@@ -131,7 +131,7 @@ public class TestRPC extends TestCase {
      */
     public void testMessageContext() throws Exception {
         // Register the targetService service
-        SOAPService tgtSvc = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        SOAPService tgtSvc = new SOAPService(RPCDispatcher);
         tgtSvc.addOption("className", "test.RPCDispatch.Service");
         tgtSvc.addOption("methodName", "targetService");
         sr.add(SOAPAction, tgtSvc);
@@ -145,7 +145,7 @@ public class TestRPC extends TestCase {
      */
     public void testNull() throws Exception {
         // Register the echoInt service
-        SOAPService echoInt = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        SOAPService echoInt = new SOAPService(RPCDispatcher);
         echoInt.addOption("className", "test.RPCDispatch.Service");
         echoInt.addOption("methodName", "echoInt");
         sr.add(SOAPAction, echoInt);

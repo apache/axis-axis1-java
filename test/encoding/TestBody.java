@@ -47,7 +47,7 @@ public class TestBody extends TestCase {
        
        // register the service with the engine
        Handler RPCDispatcher = hr.find("RPCDispatcher");
-       SOAPService target = new SOAPService(RPCDispatcher, "RPCDispatcher");
+       SOAPService target = new SOAPService(RPCDispatcher);
        sr.add(namespace, target);
 
        // create a message in context
