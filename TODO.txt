@@ -12,10 +12,14 @@ BETA 2 MUST DO LIST
 -------------------
 ! <Glen> Clean up User's Guide
 * <Russell> Clean up sample readme's
-! <Russell> beta1-to-beta2 document
-! <Russell?> Grow the FAQ
+* <Russell> beta1-to-beta2 document
+* <Russell> Grow the FAQ
 X <> Make sure the gump build works
-* <RickR/Doug> Make sure the attachment sample works
+X <RickR/Doug> Make sure the attachment sample works
+! <Glen> Cleanup of Java2WSDL ClassRep
+! <Glen> Bugzilla 6872/7373
+! <Tom> 8395 (probably not but under investigation)
+
 
 MESSAGE PARSING / ENCODING
 --------------------------
@@ -79,6 +83,7 @@ WSDL2Java
 ! <> Derived type support.
 ! <> Object[] doesn't work.  If we have method(Object[] array) and we pass in an Object[], we get NullPointerExceptions.  If, however, we pass in a String[] or a Phone[] then it works.  Object[] becomes xsd:anyType[].  Since anyType doesn't work, I don't expect anyType[] to work.
 ! <> do we want xsd:anyType to work?
+! <> with the --all flag, ALL types should be registered in the Stub.
 
 * <Russell> (ongoing) Need to pull everything writer-specific out of the framework(Emitter/SymbolTable/etc).  Signatures are still in there.  So are Wsdl2java options that only the writers care about.
 
