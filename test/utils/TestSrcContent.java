@@ -14,20 +14,28 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.oro.text.regex.Pattern;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.MalformedPatternException;
+
 import org.apache.axis.utils.JavaUtils;
 
 /**
  * This TestCase verifies that content of the source files adheres
- * to certain coding practices by looking for "illegal" strings:
+ * to certain coding practices by matching regular expressions
+ * (string patterns):
  *
  * - Verify that Log4J logger is not being used directly
  *   ("org.apache.log4j" is not in source files).
  *
- * - !! Someday: look for System.out.println .... !!
+ * - Verify that System.out.println is not used except
+ *   in wsdl to/from java tooling.
  *
- *
- * To add new strings to "avoid", search for and append to the
- * private attribute 'avoidStrings'.
+ * To add new patterns, search for and append to the
+ * private attribute 'avoidPatterns'.
  *
  * Based on code in TestMessages.java.
  */
@@ -40,6 +48,10 @@ public class TestSrcContent extends TestCase {
         return new TestSuite(TestSrcContent.class);
     }
 
+    private final String LS = System.getProperty("line.separator");
+
+    private String errors = "";
+
     /**
      * If this test is run from xml-axis/java, then walk through the source
      * tree (xml-axis/java/src), calling checkFile for each file.
@@ -48,62 +60,132 @@ public class TestSrcContent extends TestCase {
         String baseDir = System.getProperty("user.dir");
         File   srcDir = new File(baseDir, "src");
 
-        if (srcDir.exists() && !walkTree(srcDir)) {
-            throw new AssertionFailedError("Unexpected source file content");
+        if (srcDir.exists()) {
+            walkTree(srcDir);
+        }
+
+        if (!errors.equals("")) {
+            throw new AssertionFailedError(errors);
         }
     } // testSourceFiles
+
 
     /**
      * Walk the source tree
      */
-    private boolean walkTree(File srcDir) {
-        boolean cleanWalk = true;
-
+    private void walkTree(File srcDir) {
         File[] files = srcDir.listFiles();
         for (int i = 0; i < files.length; ++i) {
-
-            // beware 'shortcuts' in logic operations...
             if (files[i].isDirectory()) {
-                cleanWalk = walkTree(files[i]) && cleanWalk;
+                walkTree(files[i]);
             }
-            else if (files[i].getName().endsWith(".java")) {
-                cleanWalk = checkFile(files[i]) && cleanWalk;
+            else {
+                checkFile(files[i]);
+            }
+        }
+    } // walkTree
+
+
+    static private class FileNameContentPattern
+    {
+        private PatternCompiler compiler = new Perl5Compiler();
+        private PatternMatcher matcher = new Perl5Matcher();
+
+        private Pattern namePattern = null;
+        private Pattern contentPattern = null;
+        private boolean expectContent = true;
+
+        FileNameContentPattern(String namePattern,
+                               String contentPattern,
+                               boolean expectContentInFile)
+        {
+            try {
+                this.namePattern = compiler.compile(namePattern);
+                this.contentPattern = compiler.compile(contentPattern);
+                this.expectContent = expectContentInFile;
+            }
+            catch (MalformedPatternException e) {
+                throw new AssertionFailedError(e.getMessage());
             }
         }
 
-        return cleanWalk;
-    } // walkTree
+        /**
+         * This is not a match IFF
+         *  - the name matches, AND
+         *  - the content is not as expected
+         */
+        boolean noMatch(String name, String content)
+        {
+            return
+                matcher.matches(name, namePattern) &&
+                matcher.contains(content, contentPattern) != expectContent;
+        }
+
+        String getContent() { return contentPattern.getPattern(); }
+
+        boolean getExpectContent() { return expectContent; }
+    };
 
     /**
      * Check for the following in the input file:
-     *     string "org.apache.log4j.Category" in file.
+     *     "org.apache.log4j"
      */
-    private static final String avoidStrings[] =
+    private static final FileNameContentPattern avoidPatterns[] =
         {
-            "org.apache.log4j"
+            // For escape ('\'), remember that Java gets first dibs..
+            // so double-escape for pattern-matcher to see it.
+
+            // Verify that java files do not use Log4j
+            new FileNameContentPattern(".+\\.java",
+                                       "org\\.apache\\.log4j", false),
+
+            // Verify that axis java files do not use System.out.println
+            // or System.err.println, expect:
+            //   - AxisFault.java,
+            //   - Version.java
+            //   - client/AdminClient.java
+            //   - providers/BSFProvider.java
+            //   - utils/tcpmon.java
+            //   - tooling in 'org/apache/axis/wsdl'
+            //
+            new FileNameContentPattern(".+([\\\\/])"
+                                       + "java\\1src\\1org\\1apache\\1axis\\1"
+                                       + "(?!AxisFault\\.java"
+                                       + "|client\\1AdminClient\\.java"
+                                       + "|utils\\1tcpmon\\.java"
+                                       + "|providers\\1BSFProvider\\.java"
+                                       + "|Version\\.java"
+                                       + "|wsdl\\1)"
+                                       + "([a-zA-Z0-9_]+\\1)*"
+                                       + "[^\\\\/]+\\.java",
+                                       "System\\.(out|err)\\.println", false)
         };
 
-    private boolean checkFile(File file) {
-        boolean cleanFile = true;
-
+    private void checkFile(File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
             byte[] bytes = new byte[fis.available()];
             fis.read(bytes);
-            String string = new String(bytes);
+            String content = new String(bytes);
 
-            for (int i = 0; i < avoidStrings.length; i++) {
-                if (string.indexOf(avoidStrings[i]) >= 0) {
-                    System.out.println(file.getPath() + ": Unexpected '" + avoidStrings[i]);
-                    cleanFile = false;
+            for (int i = 0; i < avoidPatterns.length; i++) {
+                if (avoidPatterns[i].noMatch(file.getPath(), content)) {
+                //                if (content.indexOf(avoidStrings[i]) >= 0) {
+                    errors = errors
+                        + "File: " + file.getPath() + ": "
+                        + (avoidPatterns[i].getExpectContent()
+                           ? "Expected: "
+                           : "Unexpected: ")
+                        + avoidPatterns[i].getContent()
+                        + LS;
                 }
             }
         }
         catch (Throwable t) {
-            System.out.println(file.getPath() + ": " + t.getMessage());
-            cleanFile = false;
+            errors = errors
+                + "File: " + file.getPath()
+                + ": " + t.getMessage()
+                + LS;
         }
-
-        return cleanFile;
     } // checkFile
 }
