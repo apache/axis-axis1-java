@@ -97,7 +97,7 @@ public class TestAttributes extends TestCase {
                      1,
                      params.size());
 
-        Object obj = ((RPCParam)params.get(0)).getValue();
+        Object obj = ((RPCParam)params.get(0)).getObjectValue();
         assertTrue("Deserialized param not an AttributeBean!",
                    (obj instanceof AttributeBean));
         AttributeBean deserBean = (AttributeBean)obj;
@@ -163,7 +163,7 @@ public class TestAttributes extends TestCase {
                      1,
                      params.size());
 
-        Object obj = ((RPCParam)params.get(0)).getValue();
+        Object obj = ((RPCParam)params.get(0)).getObjectValue();
         assertTrue("Deserialized param not a SimpleBean!",
                    (obj instanceof SimpleBean));
 

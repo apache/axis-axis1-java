@@ -75,7 +75,7 @@ public class TestHrefs extends TestCase {
        RPCParam param = (RPCParam) arglist.get(0);
        assertNotNull("SOAP param should not be null", param);
 
-       Object result = param.getValue();
+       Object result = param.getObjectValue();
        assertEquals("Expected result not received for case " + pos, expected, result);
     }
 

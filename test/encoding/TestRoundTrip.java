@@ -89,7 +89,7 @@ public class TestRoundTrip extends TestCase {
         SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPEnvelope();
         RPCElement body = (RPCElement) envelope.getFirstBody();
         Vector arglist = body.getParams();
-        Object ret1 = ((RPCParam) arglist.get(0)).getValue();
+        Object ret1 = ((RPCParam) arglist.get(0)).getObjectValue();
 
         String xml2 = message.getSOAPPartAsString();
         Message message2 = new Message(xml2);
@@ -98,7 +98,7 @@ public class TestRoundTrip extends TestCase {
         SOAPEnvelope envelope2 = (SOAPEnvelope) message2.getSOAPEnvelope();
         RPCElement body2 = (RPCElement) envelope2.getFirstBody();
         Vector arglist2 = body2.getParams();
-        Object ret2 = ((RPCParam) arglist2.get(0)).getValue();
+        Object ret2 = ((RPCParam) arglist2.get(0)).getObjectValue();
 
         if (!equals(ret1, ret2)) {
             assertEquals("The result is not what is expected.", ret1, ret2);

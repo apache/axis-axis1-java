@@ -108,7 +108,7 @@ public class BSFProvider extends BasicProvider {
             // (values -> Holders, etc)
             for (int i = 0; i < numArgs; i++) {
                 RPCParam rpcParam = (RPCParam) args.get(i);
-                Object value = rpcParam.getValue();
+                Object value = rpcParam.getObjectValue();
 
                 // first check the type on the paramter
                 ParameterDesc paramDesc = rpcParam.getParamDesc();
@@ -125,7 +125,7 @@ public class BSFProvider extends BasicProvider {
                     value = JavaUtils.convert(value,
                             sigType);
 
-                    rpcParam.setValue(value);
+                    rpcParam.setObjectValue(value);
                 }
                 argValues[i] = value;
             }

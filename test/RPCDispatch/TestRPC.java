@@ -87,7 +87,7 @@ public class TestRPC extends TestCase {
 
         // Return the first parameter
         RPCParam param = (RPCParam) arglist.get(0);
-        return param.getValue();
+        return param.getObjectValue();
     }
 
     /**

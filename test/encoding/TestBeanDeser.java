@@ -96,7 +96,7 @@ public class TestBeanDeser extends TestCase {
         RPCParam param = (RPCParam) arglist.get(0);
         assertNotNull("SOAP param should not be null", param);
 
-        Object result = param.getValue();
+        Object result = param.getObjectValue();
         if (!equals(result, expected)) {
             // Try to convert to the expected class
             if (tryConvert) {

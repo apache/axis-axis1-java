@@ -194,7 +194,7 @@ public class RPCProvider extends JavaProvider {
         // (values -> Holders, etc)
         for (int i = 0; i < numArgs; i++) {
             RPCParam rpcParam = (RPCParam) args.get(i);
-            Object value = rpcParam.getValue();
+            Object value = rpcParam.getObjectValue();
             
             // first check the type on the paramter
             ParameterDesc paramDesc = rpcParam.getParamDesc();
@@ -210,7 +210,7 @@ public class RPCProvider extends JavaProvider {
                 // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value, sigType);
 
-                rpcParam.setValue(value);
+                rpcParam.setObjectValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
                     outs.add(rpcParam);
                 }
@@ -349,11 +349,11 @@ public class RPCProvider extends JavaProvider {
                 for (Iterator i = outs.iterator(); i.hasNext();) {
                     // We know this has a holder, so just unwrap the value
                     RPCParam param = (RPCParam) i.next();
-                    Holder holder = (Holder) param.getValue();
+                    Holder holder = (Holder) param.getObjectValue();
                     Object value = JavaUtils.getHolderValue(holder);
                     ParameterDesc paramDesc = param.getParamDesc();
 
-                    param.setValue(value);
+                    param.setObjectValue(value);
                     if (paramDesc != null && paramDesc.isOutHeader()) {
                         resEnv.addHeader(new RPCHeaderParam(param));
                     } else {

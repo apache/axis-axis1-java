@@ -126,7 +126,7 @@ public class TestArrays2TestCase extends junit.framework.TestCase {
         RPCElement body = (RPCElement) envelope.getFirstBody();
         Vector arglist = body.getParams();
         RPCParam param = (RPCParam) arglist.get(0);
-        DataType result = (DataType) param.getValue();
+        DataType result = (DataType) param.getObjectValue();
         System.out.println(result);
         assertTrue(result != null);
         InnerDataType inner[] = result.getInnerData();

@@ -184,7 +184,7 @@ public class TestDeser extends TestCase {
        RPCParam param = (RPCParam) arglist.get(0);
        assertNotNull("SOAP param should not be null" + postfix, param);
 
-       Object result = param.getValue();
+       Object result = param.getObjectValue();
        if (!equals(result, expected)) {
            String errorText = "Failed to decode " + data + postfix+" : ";
            // Try to convert to the expected class

@@ -57,7 +57,7 @@ public class TestString extends TestCase {
         RPCParam output = rpcElem.getParam("testParam");
         assertNotNull("No <testParam> param", output);
         
-        String result = (String)output.getValue();
+        String result = (String)output.getObjectValue();
         assertNotNull("No value for testParam param", result);
         
         assertEquals("Expected result not received.", expected, result);

@@ -107,7 +107,7 @@ public class TestOmittedValues extends TestCase {
         SOAPEnvelope resEnv = call.invoke(message.getSOAPEnvelope());
         RPCElement rpcElem = (RPCElement)resEnv.getFirstBody();
         RPCParam param = (RPCParam)rpcElem.getParams().get(0);
-        assertEquals("OK!", param.getValue());
+        assertEquals("OK!", param.getObjectValue());
     }
 
     // Server-side test method for omitting values

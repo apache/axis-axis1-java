@@ -78,7 +78,7 @@ public class TestBeanDeser3 extends TestCase {
         RPCParam param = (RPCParam) arglist.get(0);
         assertNotNull("SOAP param should not be null", param);
 
-        return param.getValue();
+        return param.getObjectValue();
     }
 
     public void testTravelRequest() throws Exception {

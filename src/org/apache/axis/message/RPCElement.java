@@ -41,10 +41,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.List;
 
 public class RPCElement extends SOAPBodyElement
 {
-    protected Vector params = new Vector();
+    //protected Vector params2 = new Vector();
     protected boolean needDeser = false;
     OperationDesc [] operations = null;
 
@@ -207,9 +208,10 @@ public class RPCElement extends SOAPBodyElement
                         // Check if the RPCParam's value match the signature of the
                         // param in the operation.
                         boolean match = true;
+                        List params = getParams2();
                         for ( int j = 0 ; j < params.size() && match ; j++ ) {
                             RPCParam rpcParam = (RPCParam)params.get(j);
-                            Object value = rpcParam.getValue();
+                            Object value = rpcParam.getObjectValue();
 
                             // first check the type on the paramter
                             ParameterDesc paramDesc = rpcParam.getParamDesc();
@@ -227,7 +229,7 @@ public class RPCElement extends SOAPBodyElement
                         }
                         // This is not the right operation, try the next one.
                         if(!match) {
-                            params = new Vector();
+                            children = new ArrayList();
                             continue;
                         }
 
@@ -237,13 +239,13 @@ public class RPCElement extends SOAPBodyElement
                     } catch (SAXException e) {
                         // If there was a problem, try the next one.
                         savedException = e;
-                        params = new Vector();
+                        children = new ArrayList();
                         continue;
                     }  catch (AxisFault e) {
                         // Thrown by getHeadersByName...
                         // If there was a problem, try the next one.
                         savedException = new SAXException(e);
-                        params = new Vector();
+                        children = new ArrayList();
                         continue;
                     }
                 }
@@ -287,6 +289,15 @@ public class RPCElement extends SOAPBodyElement
         publishToHandler((org.xml.sax.ContentHandler)context);
     }
 
+    private List getParams2() {
+        ArrayList list = new ArrayList();
+        for (int i = 0; children != null && i < children.size(); i++) {
+            if(children.get(i) instanceof RPCParam)
+                list.add(children.get(i));
+        }
+        return list;
+    }
+
     /** This gets the FIRST param whose name matches.
      * !!! Should it return more in the case of duplicates?
      */
@@ -296,8 +307,9 @@ public class RPCElement extends SOAPBodyElement
             deserialize();
         }
 
+        List params = getParams2();
         for (int i = 0; i < params.size(); i++) {
-            RPCParam param = (RPCParam)params.elementAt(i);
+            RPCParam param = (RPCParam)params.get(i);
             if (param.getName().equals(name))
                 return param;
         }
@@ -311,13 +323,14 @@ public class RPCElement extends SOAPBodyElement
             deserialize();
         }
 
-        return params;
+        return new Vector(getParams2());
     }
 
     public void addParam(RPCParam param)
     {
         param.setRPCCall(this);
-        params.addElement(param);
+        initializeChildren();
+        children.add(param);
     }
 
     protected void outputImpl(SerializationContext context) throws Exception
@@ -332,7 +345,7 @@ public class RPCElement extends SOAPBodyElement
         // for no params here, the server chokes with "can't find Body".
         // because it will be looking for the enclosing element always
         // found in an RPC-style (and wrapped) request
-        boolean noParams = params.size() == 0;
+        boolean noParams = getParams2().size() == 0;
 
         if (hasOperationElement || noParams) {
             // Set default namespace if appropriate (to avoid prefix mappings
@@ -350,8 +363,9 @@ public class RPCElement extends SOAPBodyElement
                 }
             }
         } else {
+            List params = getParams2();
             for (int i = 0; i < params.size(); i++) {
-                RPCParam param = (RPCParam)params.elementAt(i);
+                RPCParam param = (RPCParam)params.get(i);
                 if (!hasOperationElement && encodingStyle != null && encodingStyle.equals("")) {
                     context.registerPrefixForURI("", param.getQName().getNamespaceURI());
                 }

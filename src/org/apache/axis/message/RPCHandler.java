@@ -148,8 +148,6 @@ public class RPCHandler extends SOAPHandler
             return new DeserializerImpl();
         }
 
-        Vector params = rpcElem.getParams();
-        
         // Create a new param if not the same element
         if (currentParam == null ||
             !currentParam.getQName().getNamespaceURI().equals(namespace) ||
@@ -197,7 +195,7 @@ public class RPCHandler extends SOAPHandler
                     paramDesc = operation.getReturnParamDesc();
                 }
                 else {
-                    paramDesc = operation.getParameter(params.size() - 1);
+                    paramDesc = operation.getParameter(rpcElem.getParams().size() - 1);
                 }
             }
             

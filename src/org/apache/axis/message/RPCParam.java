@@ -34,15 +34,11 @@ import java.util.ArrayList;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class RPCParam implements Serializable
+public class RPCParam extends MessageElement implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(RPCParam.class.getName());
 
-    // Who's your daddy?
-    RPCElement myCall;
-    
-    private transient QName qname;
     private Object value = null;
     private int countSetCalls = 0; // counts number of calls to set
 
@@ -71,33 +67,33 @@ public class RPCParam implements Serializable
      */
     public RPCParam(String name, Object value)
     {
-        this.qname = new QName("", name);
+        super(new QName("", name));
         this.value = value;
     }
 
     public RPCParam(QName qname, Object value)
     {
-        this.qname = qname;
+        super(qname);
         this.value = value;
     }
 
     public RPCParam(String namespace, String name, Object value)
     {
-        this.qname = new QName(namespace, name);
+        super(new QName(namespace, name));
         this.value = value;
     }
     
     public void setRPCCall(RPCElement call)
     {
-        myCall = call;
+        parent = call;
     }
     
-    public Object getValue()
+    public Object getObjectValue()
     {
         return value;
     }
     
-    public void setValue(Object value)
+    public void setObjectValue(Object value)
     {
         this.value = value;
     }
@@ -129,16 +125,6 @@ public class RPCParam implements Serializable
         ((ArrayList) this.value).add(newValue);
     }
 
-    public String getName()
-    {
-        return this.qname.getLocalPart();
-    }
-    
-    public QName getQName()
-    {
-        return this.qname;
-    }
-    
     public static Method getValueSetMethod()
     {
         return valueSetMethod;
@@ -188,7 +174,7 @@ public class RPCParam implements Serializable
             }
             xmlType = paramDesc.getTypeQName();
         }
-        context.serialize(qname,  // element qname
+        context.serialize(getQName(),  // element qname
                           null,   // no extra attrs
                           value,  // value
                           xmlType, // java/xml type
@@ -197,12 +183,12 @@ public class RPCParam implements Serializable
 
     private void writeObject(ObjectOutputStream out)
         throws IOException {
-        if (qname == null) {
+        if (getQName() == null) {
             out.writeBoolean(false);
         } else {
             out.writeBoolean(true);
-            out.writeObject(qname.getNamespaceURI());
-            out.writeObject(qname.getLocalPart());
+            out.writeObject(getQName().getNamespaceURI());
+            out.writeObject(getQName().getLocalPart());
         }
         out.defaultWriteObject();
     }
@@ -210,11 +196,13 @@ public class RPCParam implements Serializable
     private void readObject(ObjectInputStream in) 
         throws IOException, ClassNotFoundException {
         if (in.readBoolean()) {
-            qname = new QName((String)in.readObject(),
-                              (String)in.readObject());
-        } else {
-            qname = null;
-        }
+            setQName(new QName((String)in.readObject(),
+                              (String)in.readObject()));
+        } 
         in.defaultReadObject();
+    }
+
+    protected void outputImpl(SerializationContext context) throws Exception {
+        serialize(context);
     }
 }

@@ -2460,7 +2460,7 @@ public class Call implements javax.xml.rpc.Call {
                     if (returnParamQName == null) {
                         // Assume the first param is the return
                         RPCParam param = (RPCParam)resArgs.get(0);
-                        result = param.getValue();
+                        result = param.getObjectValue();
                         outParamStart = 1;
                     } else {
                         // If the QName of the return value was given to us, look
@@ -2480,7 +2480,7 @@ public class Call implements javax.xml.rpc.Call {
                     RPCParam param = (RPCParam) resArgs.get(i);
 
                     Class javaType = getJavaTypeForQName(param.getQName());
-                    Object value = param.getValue();
+                    Object value = param.getObjectValue();
 
                     // Convert type if needed
                     if (javaType != null && value != null &&

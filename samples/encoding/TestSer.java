@@ -86,13 +86,13 @@ public class TestSer
             if (struct == null)
                 throw new Exception("No <struct> param");
             
-            if (!(struct.getValue() instanceof Data)) {
+            if (!(struct.getObjectValue() instanceof Data)) {
                 System.out.println("Not a Data object! ");
-                System.out.println(struct.getValue());
+                System.out.println(struct.getObjectValue());
                 System.exit(1);
             }
             
-            Data val = (Data)struct.getValue();
+            Data val = (Data)struct.getObjectValue();
             if (val == null)
                 throw new Exception("No value for struct param");
             

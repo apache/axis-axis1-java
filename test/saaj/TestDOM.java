@@ -1,6 +1,8 @@
 package test.saaj;
 
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.RPCElement;
 import org.w3c.dom.Element;
 import org.custommonkey.xmlunit.XMLUnit;
 
@@ -13,8 +15,11 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 import test.AxisTestBase;
 
@@ -102,6 +107,40 @@ public class TestDOM extends AxisTestBase {
             assertXMLEqual(domToString2, messageToString2);
         } finally {
             XMLUnit.setIgnoreWhitespace(oldIgnore);            
+        }
+    }
+    
+    public void testRPCParams() throws Exception {
+        SOAPMessage message = MessageFactory.newInstance().createMessage();
+        RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam1",
+                "this is a string #1");
+        RPCParam arg2 = new RPCParam("urn:myNamespace", "testParam2",
+                "this is a string #2");
+        RPCElement body = new RPCElement("urn:myNamespace", "method1",
+                new Object[]{arg1, arg2});
+        SOAPPart sp = message.getSOAPPart();
+        SOAPEnvelope se = sp.getEnvelope();
+        SOAPBody sb = se.getBody();
+        sb.addChildElement(body);
+        Iterator it = sb.getChildElements();
+        assertTrue(it.hasNext());
+
+        SOAPElement elem = (SOAPElement) it.next();
+
+        Name name2 = se.createName("testParam1", "", "urn:myNamespace");
+        Iterator it2 = elem.getChildElements(name2);
+        assertTrue(it2.hasNext());
+        while (it2.hasNext()) {
+            SOAPElement elem2 = (SOAPElement) it2.next();
+            System.out.println("child = " + elem2);
+        }
+
+        Name name3 = se.createName("testParam2", "", "urn:myNamespace");
+        Iterator it3 = elem.getChildElements(name3);
+        assertTrue(it3.hasNext());
+        while (it3.hasNext()) {
+            SOAPElement elem3 = (SOAPElement) it3.next();
+            System.out.println("child = " + elem3);
         }
     }
 

@@ -93,7 +93,7 @@ public class TestSer extends TestCase {
         RPCParam struct = rpcElem.getParam("struct");
         assertNotNull("No <struct> param", struct);
 
-        Data val = (Data)struct.getValue();
+        Data val = (Data)struct.getObjectValue();
         assertNotNull("No value for struct param", val);
 
         assertEquals("Data and Val string members are not equal", data.stringMember, val.stringMember);

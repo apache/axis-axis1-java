@@ -85,7 +85,7 @@ public class TestRPC extends TestCase {
         Vector arglist = body.getParams();
         assertNotNull("SOAP argument list was null", arglist);
         RPCParam param = (RPCParam) arglist.get(1);
-        assertTrue("Not expected result", ((String)param.getValue()).equals("abc"));
+        assertTrue("Not expected result", ((String)param.getObjectValue()).equals("abc"));
 
         // Check DOM
         Element e = body.getAsDOM();
