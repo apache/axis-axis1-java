@@ -120,7 +120,8 @@ public class JavaMethod {
                 }
             }
         } 
-
+        if ( unique.getParameterTypes().length != numargs )
+          return null ;
         return unique;
     }
 };
