@@ -62,6 +62,8 @@ Copyright:
   <property name="docs.dir" value="./docs"/>
   <property name="samples.dir" value="./samples"/>
 
+  <property name="wsdl4j.jar" value="../wsdl4j/build/lib/wsdl4j.jar"/>
+
   <property name="packages" value="org.*"/>
 
   <property name="build.file" value="build.xml"/>
@@ -86,6 +88,7 @@ Copyright:
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${junit.jar}"/>
+    <pathelement location="${wsdl4j.jar}"/>
     <pathelement path="${java.class.path}"/>
   </path>
 
@@ -101,16 +104,19 @@ Copyright:
       classname="junit.framework.TestCase"
       classpathref="classpath"/>
 
+    <available property="wsdl4j.present"
+      classname="javax.wsdl.Definition"
+      classpathref="classpath"/>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <echo message="--- Build environment for ${Name} ---" />
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
     <echo message="           then the component is not present)" />
     <echo message=""/>
-    <!--
     <echo message="=== Required Libraries ===" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message=""/>
-    -->
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
     <echo message="junit.present=${junit.present}" />
@@ -144,6 +150,7 @@ Copyright:
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
     </jar>
+    <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <antcall target="post-compile"/>
   </target>
 
@@ -292,8 +299,11 @@ Copyright:
     <copy todir="${dist.dir}/webapps/axis">
       <fileset dir="${webapp}"/>
     </copy>
-    <copy file="${build.lib}/axis.jar"
-          todir="${dist.dir}/webapps/axis/WEB-INF/lib"/>
+    <copy todir="${dist.dir}/webapps/axis/WEB-INF/lib">
+      <fileset dir="${build.lib}">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
     <copy todir="${dist.dir}/webapps/axis/WEB-INF/classes/samples">
       <fileset dir="${build.samples}"/>
     </copy>
