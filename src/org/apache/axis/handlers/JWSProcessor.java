@@ -67,7 +67,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.tools.javac.Main;
 
-import javax.servlet.http.HttpServlet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -330,11 +329,9 @@ public class JWSProcessor extends BasicHandler
         // Just to be safe (the above doesn't seem to return the webapp
         // classpath in all cases), manually do this:
 
-        HttpServlet servlet = (HttpServlet)msgContext.getProperty(
-                                         HTTPConstants.MC_HTTP_SERVLET);
-        if (servlet != null) {
-            String webBase = servlet.getServletContext().
-                                                  getRealPath("/WEB-INF");
+        String webBase = (String)msgContext.getProperty(
+                                         HTTPConstants.MC_HTTP_SERVLETLOCATION);
+        if (webBase != null) {
             classpath.append(webBase + File.separatorChar + "classes" +
                              File.pathSeparatorChar);
             try {

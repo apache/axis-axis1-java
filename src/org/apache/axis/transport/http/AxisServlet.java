@@ -160,6 +160,7 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, getServletContext().getRealPath("/WEB-INF") );
             msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
             try {
