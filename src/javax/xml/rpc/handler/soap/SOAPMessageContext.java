@@ -52,7 +52,59 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
 
-/** */
-public interface SOAPFaultElement extends SOAPElement {}
+package javax.xml.rpc.handler.soap;
+
+import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.handler.MessageContext;
+import javax.xml.soap.SOAPMessage;
+
+/**
+ * The interface <code>javax.xml.rpc.soap.SOAPMessageContext</code>
+ * provides access to the SOAP message for either RPC request or
+ * response. The <code>javax.xml.soap.SOAPMessage</code> specifies
+ * the standard Java API for the representation of a SOAP 1.1 message
+ * with attachments.
+ * @see javax.xml.soap.SOAPMessage
+ */
+public interface SOAPMessageContext extends MessageContext {
+
+    /**
+     *  Gets the request SOAPMessage from this message context
+     *  @return Returns the SOAPMessage; returns null if no request
+     *          SOAPMessage is present in this SOAPMessageContext
+     */
+    public abstract SOAPMessage getRequestMessage();
+
+    /**
+     *  Sets the request SOAPMessage for this message context
+     *  @param   message  Request SOAP message
+     *  @throws  JAXRPCException  If any error during the setting
+     *     of the request message or if invalid SOAPMessage
+     *     is set
+     *  @throws java.lang.UnsupportedOperationException If this
+     *     operation is not supported
+     */
+    public abstract void setRequestMessage(SOAPMessage message)
+        throws JAXRPCException;
+
+    /**
+     *  Gets the response SOAPMessage for this message context
+     *  @return Returns the SOAPMessage; returns null if no response
+     *     SOAPMessage is present in this SOAPMessageContext
+     *  @throws  JAXRPCException
+     */
+    public abstract SOAPMessage getResponseMessage() throws JAXRPCException;
+
+    /**
+     *  Sets the response SOAPMessage for this message context
+     *  @param   message Response SOAP message
+     *  @throws  JAXRPCException  If any error during the setting
+     *     of the response message or if invalid SOAPMessage
+     *     is set
+     *  @throws java.lang.UnsupportedOperationException If this
+     *     operation is not supported
+     */
+    public abstract void setResponseMessage(SOAPMessage message)
+        throws JAXRPCException;
+}

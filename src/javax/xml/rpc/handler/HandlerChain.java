@@ -52,7 +52,17 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
 
-/** */
-public interface SOAPFaultElement extends SOAPElement {}
+package javax.xml.rpc.handler;
+
+import java.util.List;
+
+/**
+ * The <code>javax.xml.rpc.handler.HandlerChain</code> represents an
+ * ordered list of handlers. All elements in the HandlerChain are of
+ * the type javax.xml.rpc.handler.HandlerInfo.
+ * <p>An implementation class for the HandlerChain interface abstracts
+ * the policy and mechanism for the invocation of the registered
+ * handlers.
+ */
+public interface HandlerChain extends Handler, List {}

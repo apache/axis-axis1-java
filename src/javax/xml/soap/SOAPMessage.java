@@ -323,7 +323,7 @@ public abstract class SOAPMessage {
     public abstract boolean saveRequired();
 
     /**
-     * TODO: Writes this <CODE>SOAPMessage</CODE> object to the given
+     * Writes this <CODE>SOAPMessage</CODE> object to the given
      *   output stream. The externalization format is as defined by
      *   the SOAP 1.1 with Attachments specification.
      *

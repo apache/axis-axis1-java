@@ -96,7 +96,7 @@ public abstract class SOAPElementFactory {
     public abstract SOAPElement create(String localName) throws SOAPException;
 
     /**
-     * TODO: Create a new <CODE>SOAPElement</CODE> object with the
+     * Create a new <CODE>SOAPElement</CODE> object with the
      * given local name, prefix and uri.
      * @param   localName a <CODE>String</CODE> giving
      *     the local name for the new element

@@ -182,7 +182,7 @@ public abstract class MessageFactory {
     public abstract SOAPMessage createMessage() throws SOAPException;
 
     /**
-     * TODO: Internalizes the contents of the given <CODE>
+     * Internalizes the contents of the given <CODE>
      * InputStream</CODE> object into a new <CODE>SOAPMessage</CODE>
      * object and returns the <CODE>SOAPMessage</CODE> object.
      * @param   mimeheaders    the transport-specific headers

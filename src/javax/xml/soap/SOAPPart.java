@@ -266,7 +266,7 @@ public abstract class SOAPPart {
     public abstract Iterator getMatchingMimeHeaders(String names[]);
 
     /**
-     * TODO: Retrieves all <CODE>MimeHeader</CODE> objects whose name
+     * Retrieves all <CODE>MimeHeader</CODE> objects whose name
      * does not match a name in the given array.
      * @param   names a <CODE>String</CODE> array with
      *     the name(s) of the MIME headers not to be returned
