@@ -31,6 +31,7 @@ Table of Contents</h3>
 <br><a href="#General Guidelines">General Guidelines</a>
 <br><a href="#Development Environment">Development Environment</a>
 <br><a href="#Logging/Tracing">Logging/Tracing</a>
+<br><a href="#Configuration Properties">Configuration Properties</a>
 <br><a href="#Exception Handling">Exception Handling</a>
 <br><a href="#Compile And Run">Compile and Run</a>
 <br><a href="#Internationalization">Internationalization</a>
@@ -292,6 +293,21 @@ at different log destinations.
 For example: one can capture DEBUG (and higher) level information in a logfile,
 while limiting console output to INFO (and higher).
 </ul>
+
+<h2>
+<a NAME="Configuration Properties"></a>Configuration Properties</h2>
+AXIS is in the process of moving away from using system properties
+as the primary point of internal configuration.
+Avoid calling <code>System.getProperty()</code>,
+and instead call <code>AxisEngine.getGlobalProperty</code>.
+<code>AxisEngine.getGlobalProperty</code> will
+call <code>System.getProperty</code>, and will (eventually)
+query other sources of configuration information.
+<p>
+Using this central point of access will allow the
+global configuration system to be redesigned
+to better support multiple AXIS engines in a
+single JVM.
 
 <h2>
 <a NAME="Exception Handling"></a>Exception Handling</h2>
