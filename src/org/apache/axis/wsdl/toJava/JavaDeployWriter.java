@@ -353,13 +353,13 @@ public class JavaDeployWriter extends JavaWriter {
                     // Get the operation QName
                     QName elementQName = Utils.getOperationQName(bindingOper);
 
-                    // Get the operation's return QName
+                    // Get the operation's return QName and type
                     QName returnQName = null;
-                    if (params.returnName != null)
-                        returnQName = params.returnName;
-
-                    // Get the QName representing the type
-                    QName returnType = Utils.getXSIType(params.returnType);
+                    QName returnType = null;
+                    if (params.returnParam != null) {
+                        returnQName = params.returnParam.getQName();
+                        returnType = Utils.getXSIType(params.returnParam.getType());
+                    }
 
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, 

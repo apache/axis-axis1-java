@@ -87,6 +87,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.w3c.dom.Node;
 
@@ -225,16 +226,17 @@ public class JavaImplWriter extends JavaClassWriter {
         }
 
         // Print the return statement
-        if (parms.returnType != null) {
+        if (parms.returnParam != null) {
+            TypeEntry returnType = parms.returnParam.getType();
             pw.print("        return ");
 
-            if (Utils.isPrimitiveType(parms.returnType)) {
-                String returnType = parms.returnType.getName();
-                if ("boolean".equals(returnType)) {
+            if (Utils.isPrimitiveType(returnType)) {
+                String returnString = returnType.getName();
+                if ("boolean".equals(returnString)) {
                     pw.println("false;");
-                } else if ("byte".equals(returnType)) {
+                } else if ("byte".equals(returnString)) {
                     pw.println("(byte)-3;");
-                } else if ("short".equals(returnType)) {
+                } else if ("short".equals(returnString)) {
                     pw.println("(short)-3;");
                 } else {
                     pw.println("-3;");
