@@ -374,17 +374,25 @@ public class Emitter {
         def.addNamespace("intf", intfNS);
         def.addNamespace("impl", implNS);
 
-        def.addNamespace("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
-        namespaces.putPrefix("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
+        def.addNamespace(Constants.NSPREFIX_WSDL_SOAP,
+                         Constants.URI_CURRENT_WSDL_SOAP);
+        namespaces.putPrefix(Constants.URI_CURRENT_WSDL_SOAP,
+                             Constants.NSPREFIX_WSDL_SOAP);
 
-        def.addNamespace("wsdl", "http://schemas.xmlsoap.org/wsdl/");
-        namespaces.putPrefix("wsdl", "http://schemas.xmlsoap.org/wsdl/");
+        def.addNamespace(Constants.NSPREFIX_WSDL,
+                         Constants.URI_CURRENT_WSDL);
+        namespaces.putPrefix(Constants.URI_CURRENT_WSDL,
+                             Constants.NSPREFIX_WSDL);
 
-        def.addNamespace("soapenc", Constants.URI_SOAP_ENC);
-        namespaces.putPrefix(Constants.URI_SOAP_ENC, "soapenc");
+        def.addNamespace(Constants.NSPREFIX_SOAP_ENC,
+                         Constants.URI_SOAP_ENC);
+        namespaces.putPrefix(Constants.URI_SOAP_ENC, 
+                             Constants.NSPREFIX_SOAP_ENC);
 
-        def.addNamespace("xsd", Constants.URI_CURRENT_SCHEMA_XSD);
-        namespaces.putPrefix(Constants.URI_CURRENT_SCHEMA_XSD, "xsd");
+        def.addNamespace(Constants.NSPREFIX_SCHEMA_XSD,
+                         Constants.URI_CURRENT_SCHEMA_XSD);
+        namespaces.putPrefix(Constants.URI_CURRENT_SCHEMA_XSD,
+                             Constants.NSPREFIX_SCHEMA_XSD);
     }
 
    /**
@@ -418,7 +426,7 @@ public class Emitter {
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         soapBinding.setStyle("rpc");
-        soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
+        soapBinding.setTransportURI(Constants.URI_SOAP_HTTP);
 
         binding.addExtensibilityElement(soapBinding);
 

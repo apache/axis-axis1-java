@@ -92,6 +92,8 @@ import javax.wsdl.extensions.soap.SOAPBody;
 
 import javax.xml.rpc.holders.BooleanHolder;
 
+import org.apache.axis.Constants;
+
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
@@ -489,14 +491,14 @@ public class SymbolTable {
 
         if (nodeKind != null) {
             if (nodeKind.getLocalPart().equals("complexType") &&
-                Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
                 // This is a definition of a complex type.
                 // Create a Type.
                 createTypeFromDef(node, false, false);
             }
             if (nodeKind.getLocalPart().equals("simpleType") &&
-                Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
                 // This is a definition of a simple type, which could be an enum
                 // Create a Type.
@@ -504,7 +506,7 @@ public class SymbolTable {
             }
             if (nodeKind.getLocalPart().equals("restriction") ||
                 nodeKind.getLocalPart().equals("extension") &&
-                Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
                 // The restriction or extension could be used for a number of different
                 // constructs (enumeration, inheritance, arrays, etc.)
@@ -513,7 +515,7 @@ public class SymbolTable {
                 }
             }
             else if (nodeKind.getLocalPart().equals("element") &&
-                   Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+                   Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
                 // If the element has a type/ref attribute, create
                 // a Type representing the referenced type.
                 if (Utils.getAttribute(node, "type") != null ||
@@ -527,7 +529,7 @@ public class SymbolTable {
                 createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             }
             else if (nodeKind.getLocalPart().equals("part") &&
-                     Utils.isWsdlNS(nodeKind.getNamespaceURI())) {
+                     Constants.isWSDL(nodeKind.getNamespaceURI())) {
 
                 // This is a wsdl part.  Create an TypeEntry representing the reference
                 createTypeFromRef(node);

@@ -312,9 +312,9 @@ public class Types {
 
         // Quick return if schema type
         if (isSimpleSchemaType(type))
-            return "xsd:" + reg.getTypeQName(type).getLocalPart();
+            return Constants.NSPREFIX_SCHEMA_XSD + ":" + reg.getTypeQName(type).getLocalPart();
         if (isSimpleSoapEncodingType(type))
-            return "soapenc:" + reg.getTypeQName(type).getLocalPart();
+            return Constants.NSPREFIX_SOAP_ENC + ":" + reg.getTypeQName(type).getLocalPart();
 
         // Write the namespace
         QName qName = writeTypeNamespace(type);
@@ -346,12 +346,13 @@ public class Types {
 
             Element restriction = docHolder.createElement("restriction");
             complexContent.appendChild(restriction);
-            restriction.setAttribute("base", "soap:Array");
+            restriction.setAttribute("base", Constants.NSPREFIX_SOAP_ENC + ":Array");
 
             Element attribute = docHolder.createElement("attribute");
             restriction.appendChild(attribute);
-            attribute.setAttribute("ref", "soapenc:arrayType");
-            attribute.setAttribute("wsdl:arrayType", componentTypeName + "[]" );
+            attribute.setAttribute("ref", Constants.NSPREFIX_SOAP_ENC +":arrayType");
+            attribute.setAttribute(Constants.NSPREFIX_WSDL +":arrayType",
+                                   componentTypeName + "[]" );
         } else {
             if (isEnumClass(type)) {
                 writeEnumType(qName, type);
@@ -640,10 +641,11 @@ public class Types {
         // generated.
         if (added) {
             String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
-            if (prefix.equals("soap") ||
-                prefix.equals("soapenc") ||
-                prefix.equals("wsdl") ||
-                prefix.equals("xsd")) 
+            if (prefix.equals(Constants.NSPREFIX_SOAP_ENV) ||
+                prefix.equals(Constants.NSPREFIX_SOAP_ENC) ||
+                prefix.equals(Constants.NSPREFIX_SCHEMA_XSD) ||
+                prefix.equals(Constants.NSPREFIX_WSDL) ||
+                prefix.equals(Constants.NSPREFIX_WSDL_SOAP))
                 return false;
             else
                 return true;

@@ -66,71 +66,218 @@ public class Constants {
     //  here should allow people to ask if they exist)
     //////////////////////////////////////////////////////////////////////////
 
-    // Envelope Stuff
+    // Namespace Prefix Constants
     //////////////////////////////////////////////////////////////////////////
     public static final String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
     public static final String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
     public static final String NSPREFIX_SCHEMA_XSI = "xsi" ;
     public static final String NSPREFIX_SCHEMA_XSD = "xsd" ;
+    public static final String NSPREFIX_WSDL       = "wsdl" ;
+    public static final String NSPREFIX_WSDL_SOAP  = "wsdlsoap";
+    public static final String NSPREFIX_WSDD       = "wsdd";    
+    public static final String NSPREFIX_WSDD_JAVA  = "wsdd-java";    
 
 
+    // Axis Namespaces
     public static final String AXIS_NS = "http://xml.apache.org/axis/";
-    
+    public static final String URI_WSDD = "http://xml.apache.org/axis/wsdd/";
+    public static final String URI_WSDD_JAVA = "http://xml.apache.org/axis/wsdd/providers/java";
+
     //
-    // SOAP 1.1 constants
+    // SOAP-ENV Namespaces
     //
     public static final String URI_SOAP_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
-    public static final String URI_SOAP_ENC =
-                                "http://schemas.xmlsoap.org/soap/encoding/" ;
-    public static final String URI_NEXT_ACTOR = 
-                               "http://schemas.xmlsoap.org/soap/actor/next" ;
-    
-    //
-    // SOAP 1.2 constants
-    //
     public static final String URI_SOAP12_ENV =
                                    "http://www.w3.org/2001/06/soap-envelope";
+    public static final String URI_CURRENT_SOAP_ENV = URI_SOAP12_ENV;
+
+    public static final String[] URIS_SOAP_ENV = {
+        URI_SOAP_ENV,
+        URI_SOAP12_ENV,
+    };
+
+    /**
+     * Returns true if SOAP_ENV Namespace
+     */
+    public static boolean isSOAP_ENV(String s) {
+        for (int i=0; i<URIS_SOAP_ENV.length; i++) {
+            if (URIS_SOAP_ENV[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //
+    // SOAP-ENC Namespaces
+    //
+    public static final String URI_SOAP_ENC =
+                                "http://schemas.xmlsoap.org/soap/encoding/" ;
+    public static final String URI_SOAP_ENC_ALT = 
+                                "http://schemas.xmlsoap.org/soap/encoding" ;
     public static final String URI_SOAP12_ENC =
                                    "http://www.w3.org/2001/06/soap-encoding";
+    public static final String URI_CURRENT_SOAP_ENC = URI_SOAP12_ENC;
+
+    public static final String[] URIS_SOAP_ENC = {
+        URI_SOAP_ENC,
+        URI_SOAP_ENC_ALT,
+        URI_SOAP12_ENC,
+    };
+
+    /**
+     * Returns true if SOAP_ENC Namespace
+     */
+    public static boolean isSOAP_ENC(String s) {
+        for (int i=0; i<URIS_SOAP_ENC.length; i++) {
+            if (URIS_SOAP_ENC[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    // Misc SOAP Namespaces
+    public static final String URI_NEXT_ACTOR = 
+                               "http://schemas.xmlsoap.org/soap/actor/next" ;
     public static final String URI_SOAP12_NEXT_ACTOR =
                         "http://www.w3.org/2001/06/soap-envelope/actor/next";
+    public static final String URI_CURRENT_SOAP_NEXT_ACTOR = URI_SOAP12_NEXT_ACTOR;
+
     public static final String URI_SOAP12_FAULT_NS =
                                      "http://www.w3.org/2001/06/soap-faults";
-    public static final String URI_SOAP12_UPGRADE_NS =
-                                    "http://www.w3.org/2001/06/soap-upgrade";
-    
+    public static final String URI_CURRENT_SOAP_FAULT = URI_SOAP12_FAULT_NS;  
 
+    public static final String URI_SOAP12_UPGRADE_NS =
+                                     "http://www.w3.org/2001/06/soap-upgrade";
+    public static final String URI_CURRENT_SOAP_UPGRADE = URI_SOAP12_UPGRADE_NS;  
+
+    public static final String URI_SOAP_HTTP =      
+                                     "http://schemas.xmlsoap.org/soap/http";
+    public static final String URI_SOAP12_HTTP =      
+                                    "http://www.w3.org/2001/06/http";
+    public static final String URI_CURRENT_SOAP_HTTP = URI_SOAP12_HTTP;  
+    
     public static String NS_URI_XMLNS = 
                                        "http://www.w3.org/2000/xmlns/";
     
-    // Schema namespaces
-    public static final String URI_1999_SCHEMA_XSI =
-                                 "http://www.w3.org/1999/XMLSchema-instance";
+
+    //
+    // Schema XSD Namespaces
+    //
     public static final String URI_1999_SCHEMA_XSD =
                                           "http://www.w3.org/1999/XMLSchema";
-    public static final String URI_2000_SCHEMA_XSI =
-                              "http://www.w3.org/2000/10/XMLSchema-instance";
+    public static final String URI_1999_SCHEMA_XSD_ALT =
+                                          "http://www.w3.org/1999/XMLSchema/";
     public static final String URI_2000_SCHEMA_XSD =
                                        "http://www.w3.org/2000/10/XMLSchema";
-    public static final String URI_2001_SCHEMA_XSI =
-                                 "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String URI_2000_SCHEMA_XSD_ALT =
+                                       "http://www.w3.org/2000/10/XMLSchema/";
     public static final String URI_2001_SCHEMA_XSD =
                                           "http://www.w3.org/2001/XMLSchema";
-    public static final String URI_CURRENT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
+    public static final String URI_2001_SCHEMA_XSD_ALT =
+                                          "http://www.w3.org/2001/XMLSchema/";
+
     public static final String URI_CURRENT_SCHEMA_XSD = URI_2001_SCHEMA_XSD;
+
+    public static final String[] URIS_SCHEMA_XSD = {
+        URI_1999_SCHEMA_XSD,
+        URI_2000_SCHEMA_XSD,
+        URI_2001_SCHEMA_XSD,
+        URI_1999_SCHEMA_XSD_ALT,
+        URI_2000_SCHEMA_XSD_ALT,
+        URI_2001_SCHEMA_XSD_ALT,
+    };
+
+    /**
+     * Returns true if SchemaXSD Namespace
+     */
+    public static boolean isSchemaXSD(String s) {
+        for (int i=0; i<URIS_SCHEMA_XSD.length; i++) {
+            if (URIS_SCHEMA_XSD[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //
+    // Schema XSI Namespaces
+    //
+    public static final String URI_1999_SCHEMA_XSI =
+                                 "http://www.w3.org/1999/XMLSchema-instance";
+    public static final String URI_2000_SCHEMA_XSI =
+                              "http://www.w3.org/2000/10/XMLSchema-instance";
+    public static final String URI_2001_SCHEMA_XSI =
+                                 "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String URI_CURRENT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
     
     public static final String[] URIS_SCHEMA_XSI = {
         URI_1999_SCHEMA_XSI,
         URI_2000_SCHEMA_XSI,
         URI_2001_SCHEMA_XSI,
     };
+
+    /**
+     * Returns true if SchemaXSI Namespace
+     */
+    public static boolean isSchemaXSI(String s) {
+        for (int i=0; i<URIS_SCHEMA_XSI.length; i++) {
+            if (URIS_SCHEMA_XSI[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
-    public static final String[] URIS_SCHEMA_XSD = {
-        URI_1999_SCHEMA_XSD,
-        URI_2000_SCHEMA_XSD,
-        URI_2001_SCHEMA_XSD,
+    //
+    // WSDL Namespace
+    //
+    public static final String URI_WSDL =
+                                 "http://schemas.xmlsoap.org/wsdl/";
+    public static final String URI_CURRENT_WSDL = URI_WSDL;
+    
+    public static final String[] URIS_WSDL = {
+        URI_WSDL,
     };
+
+    /**
+     * Returns true if WSDL Namespace
+     */
+    public static boolean isWSDL(String s) {
+        for (int i=0; i<URIS_WSDL.length; i++) {
+            if (URIS_WSDL[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //
+    // WSDL SOAP Namespace
+    //
+    public static final String URI_WSDL_SOAP =
+                                 "http://schemas.xmlsoap.org/wsdl/soap/";
+    public static final String URI_CURRENT_WSDL_SOAP = URI_WSDL_SOAP;
+    
+    public static final String[] URIS_WSDL_SOAP = {
+        URI_WSDL_SOAP,
+    };
+
+    /**
+     * Returns true if WSDL SOAP Namespace
+     */
+    public static boolean isWSDLSOAP(String s) {
+        for (int i=0; i<URIS_WSDL_SOAP.length; i++) {
+            if (URIS_WSDL_SOAP[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static final String ELEM_ENVELOPE = "Envelope" ;
     public static final String ELEM_HEADER   = "Header" ;
