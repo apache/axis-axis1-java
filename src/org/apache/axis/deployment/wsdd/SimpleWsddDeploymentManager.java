@@ -55,12 +55,9 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.Handler;
-import org.apache.axis.Constants;
-import javax.xml.rpc.namespace.QName;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.deployment.SimpleDeploymentManager;
+
+import javax.xml.rpc.namespace.QName;
 
 
 /**

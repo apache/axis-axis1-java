@@ -65,8 +65,9 @@ import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
+
+import javax.xml.rpc.namespace.QName;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and

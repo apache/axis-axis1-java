@@ -61,7 +61,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Attr;
@@ -73,6 +72,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;

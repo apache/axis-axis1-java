@@ -55,20 +55,20 @@ package org.apache.axis.handlers;
  * <http://www.apache.org/>.
  */
 
-import org.apache.axis.MessageContext;
-import org.apache.axis.Message;
-import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.session.SimpleSession;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.session.SimpleSession;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Set;
 
 /** This handler uses SOAP headers to do simple session management.
  * 

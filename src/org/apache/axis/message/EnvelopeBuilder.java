@@ -7,9 +7,10 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
-import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
 
 public class EnvelopeBuilder extends SOAPHandler
 {

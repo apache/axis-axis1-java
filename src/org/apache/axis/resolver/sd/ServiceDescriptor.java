@@ -7,8 +7,6 @@ import org.apache.axis.resolver.sd.schema.Fault;
 import org.apache.axis.resolver.sd.schema.HandlerList;
 import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.SDConstants;
-import javax.xml.rpc.namespace.QName;
-import org.apache.axis.utils.NSStack;
 import org.apache.axis.resolver.sd.schema.SDElement;
 import org.apache.axis.resolver.sd.schema.Service;
 import org.apache.axis.utils.Mapping;
@@ -17,6 +15,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
+import javax.xml.rpc.namespace.QName;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Stack;

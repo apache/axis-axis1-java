@@ -60,15 +60,13 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.providers.BasicProvider;
-import javax.xml.rpc.namespace.QName;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.apache.axis.providers.ComProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.rpc.namespace.QName;
 
 
 /**

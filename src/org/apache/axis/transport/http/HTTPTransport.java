@@ -58,8 +58,8 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.client.Transport;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Transport;
 
 /**
  * Extends Transport by implementing the setupMessageContext function to

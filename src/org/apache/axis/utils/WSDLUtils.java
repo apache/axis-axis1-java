@@ -63,7 +63,6 @@ import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -80,6 +79,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.factory.DefinitionFactory;
+import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 

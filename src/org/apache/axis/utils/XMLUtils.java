@@ -69,13 +69,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.rpc.namespace.QName;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Stack;
-import javax.xml.rpc.namespace.QName;
 
 public class XMLUtils {
     private static DocumentBuilderFactory dbf = initDOMFactory();

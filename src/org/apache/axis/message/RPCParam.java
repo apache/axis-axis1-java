@@ -56,8 +56,8 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.encoding.SerializationContext;
-import javax.xml.rpc.namespace.QName;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.lang.reflect.Field;
 

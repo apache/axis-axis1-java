@@ -2,9 +2,9 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 
 public class RPCElement extends SOAPBodyElement

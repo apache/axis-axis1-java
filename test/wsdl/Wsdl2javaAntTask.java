@@ -53,18 +53,10 @@
  */
 package test.wsdl;
 
-import org.apache.axis.wsdl.Emitter; 
+import org.apache.axis.wsdl.Emitter;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.Project;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URL;
+import org.apache.tools.ant.Task;
 
 import java.util.HashMap;
 

@@ -55,7 +55,7 @@
 
 package org.apache.axis.utils;
 
-import javax.xml.rpc.namespace.QName ;
+import javax.xml.rpc.namespace.QName;
 
 /**
  * This class allows us to easily implement extensible qualified fault codes

@@ -1,19 +1,11 @@
 package test.inout;
 
-import java.net.URL;
-
-import javax.xml.rpc.holders.StringHolder;
-
-import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
-
-import org.apache.axis.client.AdminClient;
-
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import junit.swingui.TestRunner;
 import org.apache.axis.utils.Options;
 
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
-import junit.swingui.TestRunner;
+import javax.xml.rpc.holders.StringHolder;
 
 /**
  * This class shows how to use the ServiceClient's ability to

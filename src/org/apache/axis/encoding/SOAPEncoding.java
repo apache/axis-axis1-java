@@ -1,9 +1,9 @@
 package org.apache.axis.encoding;
 
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.xml.sax.Attributes;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;

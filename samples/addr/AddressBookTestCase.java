@@ -57,9 +57,7 @@ package samples.addr;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.AdminClient;
 import org.apache.log4j.Category;
-import samples.addr.Main;
 
 /** Test the address book sample code.
  */

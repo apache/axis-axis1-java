@@ -57,12 +57,11 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.*;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 
 /** An VectorDeserializer handles deserializing SOAP vectors.

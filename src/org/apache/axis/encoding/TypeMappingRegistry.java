@@ -56,12 +56,12 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;

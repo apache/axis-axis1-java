@@ -62,15 +62,14 @@ import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.Options;
 import org.apache.axis.wsdl.Emitter;
-import org.apache.axis.wsdl.Utils;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.BuildLogger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

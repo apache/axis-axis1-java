@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import org.apache.axis.Handler;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;

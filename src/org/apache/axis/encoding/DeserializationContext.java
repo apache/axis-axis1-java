@@ -66,7 +66,6 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
@@ -76,6 +75,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
