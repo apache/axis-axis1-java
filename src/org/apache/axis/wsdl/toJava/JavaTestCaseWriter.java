@@ -319,7 +319,7 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");
         pw.print("            binding = new " + sEntry.getName());
-        pw.print("Locator" + "().get" + portName + "();");
+        pw.println("Locator" + "().get" + portName + "();");
         pw.println("        }");
         pw.println("        catch (javax.xml.rpc.ServiceException jre) {");
         pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
