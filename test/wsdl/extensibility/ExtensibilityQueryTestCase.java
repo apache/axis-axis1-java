@@ -7,33 +7,28 @@
 
 package test.wsdl.extensibility;
 
-import org.apache.axis.AxisEngine;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.client.AdminClient;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.Options;
-import org.apache.log4j.Level;
+import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.encoding.TypeMapping;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
 
 public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
+    protected static Log log =
+        LogFactory.getLog(ExtensibilityQueryTestCase.class.getName());
+    
     public ExtensibilityQueryTestCase(String name) {
         super(name);
     }
     public void testQuery() {
         ExtensibilityQueryPortType binding;
-        Logger root = Logger.getRootLogger();
-        Level origLevel = root.getEffectiveLevel();
-        root.setLevel(Level.FATAL);
         try {
             ExtensibilityQueryLocator locator = new ExtensibilityQueryLocator();
             binding = locator.getExtensibilityQueryPort();
@@ -44,9 +39,6 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         } 
         catch (Exception e) {
             throw new junit.framework.AssertionFailedError("Binding initialization Exception caught: " + e);
-        }
-        finally {
-            root.setLevel(origLevel);
         }
         assertTrue("binding is null", binding != null);
 
@@ -63,7 +55,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             MessageElement [] anyContent = any.get_any();
             assertEquals(1, anyContent.length);
             ResultListType result = (ResultListType)anyContent[0].getObjectValue(ResultListType.class);
-            root.debug("Message " + result + ": " + anyContent[0].toString());
+            log.debug("Message " + result + ": " + anyContent[0].toString());
             assertNotNull("ResultListType back from getResultList() is null", result);
             QueryResultType[] queryResult = result.getResult();
             assertTrue(queryResult.length == 2); 
