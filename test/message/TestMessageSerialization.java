@@ -55,33 +55,40 @@
 
 package test.message;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.axis.Message;
+import org.apache.axis.message.MimeHeaders;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ByteArrayInputStream;
 
 /**
- * Test org.apache.axis.Message subsystem.
- *
- * @author Glyn Normington (glyn@apache.org)
+ * Test serializability of org.apache.axis.Message
+ * 
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
+public class TestMessageSerialization extends TestCase {
+
+    public TestMessageSerialization(String name) {
         super(name);
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
+    public void test1() throws Exception {
+        String messageText = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+            + "<soap:Header>"
+            + "</soap:Header> "
+            + "<soap:Body>  "
+            + "</soap:Body>"
+            + "</soap:Envelope>";
+        Message message = new Message(messageText);
+        ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(ostream);
+        os.writeObject(message);
+        ostream.flush();
         
-        suite.addTestSuite(TestMessageElement.class);
-        suite.addTestSuite(TestSOAPEnvelope.class);
-        suite.addTestSuite(TestSOAPHeader.class);
-        suite.addTestSuite(TestSOAPBody.class);
-        suite.addTestSuite(TestJavaSerialization.class);
-        suite.addTestSuite(TestMessageSerialization.class);
- 
-        return suite;
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ostream.toByteArray()));
+        Message m2 = (Message) ois.readObject();
     }
 }
