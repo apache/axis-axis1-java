@@ -122,7 +122,7 @@ public class FileProvider implements ConfigurationProvider
     {
         Document doc = Admin.listConfig(engine);
         FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
-        XMLUtils.DocumentToStream(doc, fos);
+        XMLUtils.PrettyDocumentToStream(doc, fos);
         fos.close();
     }
 
