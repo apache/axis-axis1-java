@@ -20,5 +20,5 @@
     <parameter name="URL" value="tcp://localhost:8088/" />
   </service>
 
-</m:deploy>
+</deployment>
 
