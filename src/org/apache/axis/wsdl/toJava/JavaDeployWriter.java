@@ -258,7 +258,7 @@ public class JavaDeployWriter extends JavaWriter {
                 String ns = qn.getNamespaceURI();
                 pw.println("      <elementMapping xmlns:ns=\"" + 
                         ns + "\" element=\"ns:" + qn.getLocalPart() + "\" " +
-                        "method=\"" + opMap.get(qn) + "\">");
+                        "method=\"" + opMap.get(qn) + "\"/>");
             }
         }
         
