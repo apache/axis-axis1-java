@@ -29,6 +29,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.TeeOutputStream;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.MimeHeader;
@@ -429,10 +430,19 @@ public class HTTPSender extends BasicHandler {
                 throw fault;
             }
         }
+        ByteArrayOutputStream baos = null;
+        if (log.isDebugEnabled()) {
+            log.debug(Messages.getMessage("xmlSent00"));
+            log.debug("---------------------------------------------------");
+            baos = new ByteArrayOutputStream();
+        }
         if (httpChunkStream) {
             ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(out);
             out = new BufferedOutputStream(chunkedOutputStream, Constants.HTTP_TXR_BUFFER_SIZE);
             try {
+                if(baos != null) {
+                    out = new TeeOutputStream(out, baos);
+                }
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
                 log.error(Messages.getMessage("exception00"), e);
@@ -446,6 +456,9 @@ public class HTTPSender extends BasicHandler {
                     out.write(header.toString()
                             .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
                 }
+                if(baos != null) {
+                    out = new TeeOutputStream(out, baos);
+                }
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
                 log.error(Messages.getMessage("exception00"), e);
@@ -454,14 +467,6 @@ public class HTTPSender extends BasicHandler {
             out.flush();
         }
         if (log.isDebugEnabled()) {
-            log.debug(Messages.getMessage("xmlSent00"));
-            log.debug("---------------------------------------------------");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            try {
-                reqMessage.writeTo(baos);
-            } catch (SOAPException e) {
-                log.error(Messages.getMessage("exception00"), e);
-            }
             log.debug(header + new String(baos.toByteArray()));
         }
 
