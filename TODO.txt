@@ -16,7 +16,7 @@ Bugzillas for beta 3:  must:  must fix; nice:  it would be nice to have; post:  
 _ 7132 - nice - Glen
 _ 7407 - nice - Rich?
 _ 8419 - post
-_ 8423 - pend - Glen
+X 8423 - pend - dims
 _ 8435 - post
 M 8476 - must - Rich
 _ 8480 - pend - Glen
