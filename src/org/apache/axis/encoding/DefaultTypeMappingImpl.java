@@ -78,6 +78,8 @@ import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
@@ -492,6 +494,54 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_NMTOKEN)
         );
 
+        // a xsd:NmTokens
+        myRegister(Constants.XSD_NMTOKENS, org.apache.axis.types.NMTokens.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.NMTokens.class,
+                                             Constants.XSD_NMTOKENS),
+                   new SimpleDeserializerFactory(org.apache.axis.types.NMTokens.class,
+                                             Constants.XSD_NMTOKENS)
+        );
+
+        // a xsd:NOTATION
+        myRegister(Constants.XSD_NOTATION, org.apache.axis.types.Notation.class,
+                   new BeanSerializerFactory(org.apache.axis.types.Notation.class,
+                                             Constants.XSD_NOTATION),
+                   new BeanDeserializerFactory(org.apache.axis.types.Notation.class,
+                                             Constants.XSD_NOTATION)
+        );
+
+        // a xsd:XSD_ENTITY
+        myRegister(Constants.XSD_ENTITY, org.apache.axis.types.Entity.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Entity.class,
+                                             Constants.XSD_ENTITY),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Entity.class,
+                                             Constants.XSD_ENTITY)
+        );
+
+        // a xsd:XSD_ENTITIES
+        myRegister(Constants.XSD_ENTITIES, org.apache.axis.types.Entities.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Entities.class,
+                                             Constants.XSD_ENTITIES),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Entities.class,
+                                             Constants.XSD_ENTITIES)
+        );
+
+        // a xsd:XSD_IDREF
+        myRegister(Constants.XSD_IDREF, org.apache.axis.types.IDRef.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.IDRef.class,
+                                             Constants.XSD_IDREF),
+                   new SimpleDeserializerFactory(org.apache.axis.types.IDRef.class,
+                                             Constants.XSD_IDREF)
+        );
+
+        // a xsd:XSD_XSD_IDREFS
+        myRegister(Constants.XSD_IDREFS, org.apache.axis.types.IDRefs.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.IDRefs.class,
+                                             Constants.XSD_IDREFS),
+                   new SimpleDeserializerFactory(org.apache.axis.types.IDRefs.class,
+                                             Constants.XSD_IDREFS)
+        );
+        
         // a xsd:Duration
         myRegister(Constants.XSD_DURATION, org.apache.axis.types.Duration.class,
                    new SimpleSerializerFactory(org.apache.axis.types.Duration.class,
