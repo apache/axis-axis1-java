@@ -103,6 +103,8 @@ public class AxisServlet extends HttpServlet
 {
     protected static Log log =
         LogFactory.getLog(AxisServlet.class.getName());
+    private static Log tlog =
+        LogFactory.getLog("org.apache.axis.TIME");
 
     public static final String INIT_PROPERTY_TRANSPORT_NAME =
         "transport.name";
@@ -494,9 +496,15 @@ public class AxisServlet extends HttpServlet
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException
     {
+        long t0=0, t1=0, t2=0, t3=0, t4=0;
+        String soapAction=null;
+        MessageContext msgContext=null;
         if (isDebug) 
             log.debug("Enter: doPost()");
-
+        if( tlog.isDebugEnabled() ) {
+            t0=System.currentTimeMillis();
+        }
+        
         Message responseMsg = null;
         
         try {
@@ -514,7 +522,7 @@ public class AxisServlet extends HttpServlet
 
             /** get message context w/ various properties set
              */
-            MessageContext msgContext = createMessageContext(engine, req, res);
+            msgContext = createMessageContext(engine, req, res);
     
             // ? OK to move this to 'getMessageContext',
             // ? where it would also be picked up for 'doGet()' ?
@@ -548,7 +556,7 @@ public class AxisServlet extends HttpServlet
                  */
                 // (is this last stmt true??? (I don't think so - Glen))  
                 /********************************************************/
-                String soapAction = getSoapAction(req);
+                soapAction = getSoapAction(req);
     
                 if (soapAction != null) {
                     msgContext.setUseSOAPAction(true);
@@ -560,11 +568,17 @@ public class AxisServlet extends HttpServlet
                 // (Sam is Watching! :-)
                 msgContext.setSession(new AxisHttpSession(req));
     
+                if( tlog.isDebugEnabled() ) {
+                    t1=System.currentTimeMillis();
+                }
                 /* Invoke the Axis engine... */
                 /*****************************/
                 if(isDebug) log.debug("Invoking Axis Engine.");
                 engine.invoke(msgContext);
                 if(isDebug) log.debug("Return from Axis Engine.");
+                if( tlog.isDebugEnabled() ) {
+                    t2=System.currentTimeMillis();
+                }
             
                 responseMsg = msgContext.getResponseMessage();
             } catch (AxisFault e) {
@@ -582,6 +596,9 @@ public class AxisServlet extends HttpServlet
             log.error(JavaUtils.getMessage("axisFault00"), fault);
             responseMsg = new Message(fault);
         }
+        if( tlog.isDebugEnabled() ) {
+            t3=System.currentTimeMillis();
+        }
 
         /* Send response back along the wire...  */
         /***********************************/
@@ -592,6 +609,16 @@ public class AxisServlet extends HttpServlet
             log.debug("Response sent.");
             log.debug("Exit: doPost()");
         }
+        if( tlog.isDebugEnabled() ) {
+            t4=System.currentTimeMillis();
+            tlog.debug("axisServlet.doPost: " + soapAction +
+                       " pre=" + (t1-t0) +
+                       " invoke=" + (t2-t1) +
+                       " post=" + (t3-t2) +
+                       " send=" + (t4-t3) +
+                       " " + msgContext.getTargetService() + "." + msgContext.getOperation().getName() );
+        }
+
     }
     
     /**
