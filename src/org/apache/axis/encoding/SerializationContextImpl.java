@@ -201,14 +201,14 @@ public class SerializationContextImpl implements SerializationContext
 
             Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
             if ((opt != null) && (opt.equals(Boolean.FALSE))) {
-                sendXSIType = false;
+                    sendXSIType = false ;
             }
 
             // A Document-style service overrides the above settings. Don't
             // send xsi:type, and don't do multiref in that case.
             SOAPService service = msgContext.getService();
             if (service != null) {
-                if (service.getStyle() == ServiceDesc.STYLE_DOCUMENT) {
+                if (service.getStyle() != ServiceDesc.STYLE_RPC) {
                     sendXSIType = false;
                     doMultiRefs = false;
                 }
