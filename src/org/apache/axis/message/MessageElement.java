@@ -136,18 +136,32 @@ public class MessageElement extends DeserializerBase
         }
             
         href = attributes.getValue(Constants.ATTR_HREF);
+        
+        // If there's an arrayType attribute, we can pretty well guess that we're an Array???
+        if (attributes.getValue(Constants.URI_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+          typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
       }
 
       if (typeQName == null) {
           QName myQName = new QName(namespaceURI, name);
           if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
               typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
-              typeQName = SOAPTypeMappingRegistry.XSD_INT;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_STRING)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_STRING;
           } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
               typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_DOUBLE)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_DOUBLE;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_FLOAT)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_FLOAT;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_INT;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_LONG)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_LONG;
           } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
               typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BYTE)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_BYTE;
           }
       }
       
@@ -225,15 +239,25 @@ public class MessageElement extends DeserializerBase
     public Object getValue()
     {
         if (value != null) {
+            if (DEBUG_LOG) {
+                System.out.println(this + " returning val " + value);
+            }
             return value;
         }
         
         if (href != null) {
+            if (DEBUG_LOG) {
+                System.out.println(this + " looking up ref element " + href);
+            }
             return getRealElement().getValue();
         }
         
         if (deserializer != null) {
             value = deserializer.getValue();
+            if (DEBUG_LOG) {
+                System.out.println(this + " returning dser (" + deserializer +
+                                   ") val=" + value);
+            }
             deserializer = null;
         } else {
             // No attached deserializer, try it as a String...
@@ -244,6 +268,9 @@ public class MessageElement extends DeserializerBase
             }
         }
         
+        if (DEBUG_LOG) {
+            System.out.println(this + " returning val=" + value);
+        }
         return value;
     }
 
@@ -276,7 +303,6 @@ public class MessageElement extends DeserializerBase
         if (isDeserializing()) {
           if (href != null) {
             deserializer = context.getElementByID(href.substring(1));
-            System.out.println("Got href dser " + deserializer);
             if (deserializer != null)
               return deserializer;
           }

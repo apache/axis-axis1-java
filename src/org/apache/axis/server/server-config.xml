@@ -8,12 +8,14 @@
   <handler name="EchoHandler" class="org.apache.axis.handlers.EchoHandler"/>
   <handler name="JWSProcessor" class="org.apache.axis.handlers.JWSProcessor"/>
   <handler name="JWSHandler" class="org.apache.axis.handlers.JWSHandler"/>
+  <handler name="LocalResponder" class="org.apache.axis.transport.local.LocalResponder"/>
 
   <chain name="global.request" flow="JWSHandler,debug"/>
  </handlers>
 
  <transports>
   <transport name="http" pivot="HTTPSender"/>
+  <transport name="local" response="LocalResponder"/>
  </transports>
 
  <services>

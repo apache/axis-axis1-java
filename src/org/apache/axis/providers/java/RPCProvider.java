@@ -80,27 +80,52 @@ public class RPCProvider extends JavaProvider {
      * @param arg the array to convert
      * @param destClass the actual class we want (must implement List)
      */
-    private Object convert(Object arg, Class destClass)
+    public static Object convert(Object arg, Class destClass)
     {
-      // Right now only converts arrays -> Lists...
-      if (!arg.getClass().isArray())
+      if (DEBUG_LOG) {
+        System.out.println("Converting " + arg + " to " + destClass.getName());
+      }
+      
+      if (!(arg instanceof List))
         return arg;
       
-      Object [] argArray = (Object [])arg;
+      List list = (List)arg;
+      int length = list.size();
+      
+      if (destClass.isArray()) {
+        if (destClass.getComponentType().isPrimitive()) {
+          
+          Object array = Array.newInstance(destClass.getComponentType(), length);
+          for (int i = 0; i < length; i++) {
+            Array.set(array, i, list.get(i));
+          }
+          return array;
+          
+        } else {
+          Object [] array;
+          try {
+            array = (Object [])Array.newInstance(destClass.getComponentType(), length);
+          } catch (Exception e) {
+            return arg;
+          }
+          
+          return list.toArray(array);
+        }
+      }
       
       if (List.class.isAssignableFrom(destClass)) {
-        List list = null;
+        List newList = null;
         try {
-          list = (List)destClass.newInstance();
+          newList = (List)destClass.newInstance();
         } catch (Exception e) {
           // Couldn't build one for some reason... so forget it.
           return arg;
         }
         
-        for (int j = 0; j < argArray.length; j++) {
-          list.add(argArray[j]);
+        for (int j = 0; j < ((List)arg).size(); j++) {
+          newList.add(list.get(j));
         }
-        return list;
+        return newList;
       }
       
       return arg;

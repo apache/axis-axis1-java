@@ -64,6 +64,7 @@ import java.lang.reflect.Constructor;
 import java.util.Date;
 import java.util.List;
 import java.math.BigDecimal;
+import java.io.IOException;
 
 public class SOAPTypeMappingRegistry extends TypeMappingRegistry { 
     
@@ -77,6 +78,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
     public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
     public static final QName SOAP_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
@@ -98,6 +100,18 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
         else
             XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
+    }
+    
+    public static class ObjDeserializerFactory implements DeserializerFactory {
+        public DeserializerBase getDeserializer(Class cls) { return null; }
+    }
+    public static class ObjSerializer implements Serializer {
+        public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+            throws IOException
+        {
+            throw new IOException("Can't serialize a raw object");
+        }
     }
 
     public static abstract class BasicDeser extends DeserializerBase {
@@ -246,6 +260,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
           new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
           java.util.Date.class,
           new DateSerializer.DateDeserializerFactory());
+        
+        addDeserializerFactory(XSD_ANYTYPE, java.lang.Object.class, new ObjDeserializerFactory());
+        addSerializer(java.lang.Object.class, XSD_ANYTYPE, new ObjSerializer());
 
         // handle the various base64 QNames...
         addDeserializerFactory(SOAP_BASE64, byte[].class, base64Ser);

@@ -65,7 +65,9 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import org.apache.axis.encoding.*;
+import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
+import org.apache.axis.providers.java.RPCProvider;
 
 import org.xml.sax.*;
 
@@ -103,6 +105,12 @@ public class BeanSerializer extends DeserializerBase
         }
 
         return pd;
+    }
+    
+    protected PropertyDescriptor [] getPd(Object val)
+    {
+      if (cls == null) cls = val.getClass();
+      return getPd();
     }
 
     protected void setPd(PropertyDescriptor[] pd) {
@@ -192,7 +200,15 @@ public class BeanSerializer extends DeserializerBase
             try {
                 pd.getWriteMethod().invoke(object, new Object[] {value});
             } catch (Exception e) {
-                throw new SAXException(e);
+                value = RPCProvider.convert(value, pd.getPropertyType());
+                try {
+                    pd.getWriteMethod().invoke(object, new Object[] {value});
+                } catch (Exception ex) {
+                    Debug.Print(1, "Couldn't convert " + value.getClass().getName() +
+                                   " to bean field '" + pd.getName() + "', type " +
+                                   pd.getPropertyType().getName());
+                    throw new SAXException(ex);
+                }
             }
         }
     }
@@ -255,7 +271,7 @@ public class BeanSerializer extends DeserializerBase
         throws IOException
     {
         context.startElement(name, attributes);
-        PropertyDescriptor[] pd = getPd();
+        PropertyDescriptor[] pd = getPd(value);
 
         try {
             for (int i=0; i<pd.length; i++) {

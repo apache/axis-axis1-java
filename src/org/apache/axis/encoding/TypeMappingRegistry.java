@@ -232,7 +232,8 @@ public class TypeMappingRegistry implements Serializer {
                 attributes = setTypeAttribute(attributes, type, context);
                 ser.serialize(name, attributes, value, context);
             } else {
-                throw new IOException("No serializer found for class " + _class.getName());
+                throw new IOException("No serializer found for class " + _class.getName() +
+                                      " in registry " + this);
             }
         }
         // !!! Write out a generic null, or get type info from somewhere else?

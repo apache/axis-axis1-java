@@ -106,6 +106,7 @@ public class LocalSender extends BasicHandler {
     Debug.Print(3, msgStr);
 
     serverContext.setRequestMessage(new Message(msgStr));
+    serverContext.setTransportName("local");
 
     // copy soap action if it is present
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
@@ -134,7 +135,7 @@ public class LocalSender extends BasicHandler {
     // copy back the response, and force its format to String in order to
     // exercise the deserializers.
     clientContext.setResponseMessage(serverContext.getResponseMessage());
-    clientContext.getResponseMessage().getAsString();
+    //clientContext.getResponseMessage().getAsString();
 
     Debug.Print( 1, "Exit: LocalSender::invoke" );
   }
