@@ -67,217 +67,91 @@ import java.util.Enumeration;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glyn Normington (norm@uk.ibm.com)
  */
-public class SimpleTargetedChain extends BasicHandler implements TargetedChain
+public class SimpleTargetedChain extends SimpleChain implements TargetedChain
 {
    static Category category =
             Category.getInstance(SimpleTargetedChain.class.getName());
 
-    protected Handler    requestHandler ;
-    protected Handler    pivotHandler ;
-    protected Handler    responseHandler ;
+   protected Handler    requestHandler ;
+   protected Handler    pivotHandler ;
+   protected Handler    responseHandler ;
 
-    public void init() {
-        if ( requestHandler   != null )   requestHandler.init();
-        if ( pivotHandler != null ) pivotHandler.init();
-        if ( responseHandler  != null )  responseHandler.init();
-    }
+   /**
+    * Pivot indicator sets "past pivot point" before the response handler
+    * runs. This avoids having to reimplement SimpleChain.invoke and
+    * SimpleChain.generateWSDL.
+    */
+   private class PivotIndicator extends BasicHandler {
+       public PivotIndicator() {}
 
-    public void cleanup() {
-        if ( requestHandler   != null )   requestHandler.cleanup();
-        if ( pivotHandler != null ) pivotHandler.cleanup();
-        if ( responseHandler  != null )  responseHandler.cleanup();
-    }
+       public void undo(MessageContext msgContext) {}
 
-    /**
-     * Invoke the request chain, pivot handler and response chain.  If there's
-     * a fault we need to make sure that we undo any completed handler
-     * that has been successfully invoked and then rethrow the fault.
-     */
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::invoke") );
-        }
+       public void invoke(MessageContext msgContext) throws AxisFault {
+           msgContext.setPastPivot(true);
+       }
+   }
 
-        if ( requestHandler != null ) requestHandler.invoke( msgContext );
-        try {
-            if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
-        }
-        catch( Exception e ) {
-            category.error( "SimpleTargetedChain caught exception", e );
-            if ( requestHandler != null )
-                requestHandler.undo( msgContext );
-            throw AxisFault.makeFault(e);
-        }
-        msgContext.setPastPivot(true);
-        try {
-            if ( responseHandler != null )
-                responseHandler.invoke( msgContext );
-        }
-        catch( Exception e ) {
-            category.error( e );
-            if ( pivotHandler != null ) pivotHandler.undo( msgContext );
-            if ( requestHandler != null )
-                requestHandler.undo( msgContext );
-            throw AxisFault.makeFault(e);
-        }
-        
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::invoke") );
-        }
-    }
+   /**
+    * Default no-arg constructor.
+    */
+   public SimpleTargetedChain() {}
 
-    public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::editWSDL") );
-        }
+   /**
+    * Constructor for an instance with effectively only a pivot handler.
+    */
+   public SimpleTargetedChain(Handler handler) {
+       pivotHandler = handler;
+       if (pivotHandler != null) {
+           addHandler(pivotHandler);
+           addHandler(new PivotIndicator());
+       }
+   }
 
-        if ( requestHandler != null ) requestHandler.generateWSDL( msgContext );
-        try {
-            if ( pivotHandler != null ) pivotHandler.generateWSDL( msgContext );
-        }
-        catch( Exception e ) {
-            category.error( e );
-            if ( requestHandler != null )
-                requestHandler.undo( msgContext );
-            throw AxisFault.makeFault(e);
-        }
-        msgContext.setPastPivot(true);
-        try {
-            if ( responseHandler != null )
-                responseHandler.generateWSDL( msgContext );
-        }
-        catch( Exception e ) {
-            category.error( e );
-            throw AxisFault.makeFault(e);
-        }
+   /**
+    * Constructor which takes real or null request, pivot, and response
+    * handlers.
+    */
+   public SimpleTargetedChain(Handler reqHandler, Handler pivHandler,
+                              Handler respHandler) {
+       init(reqHandler, null, pivHandler, null, respHandler);
+   }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::editWSDL") );
-        }
-    }
+   /**
+    * Initialiser which takes real or null request, pivot, and response
+    * handlers and which allows for special request and response
+    * handlers to be inserted just before and after any pivot handler.
+    */
+   protected void init(Handler reqHandler, Handler specialReqHandler,
+                       Handler pivHandler, Handler specialRespHandler,
+                       Handler respHandler) {
 
-    /**
-     * Undo all of the work - in reverse order.
-     */
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::undo") );
-        }
+       requestHandler = reqHandler;
+       if (requestHandler != null)
+           addHandler(requestHandler);
 
-        if ( responseHandler   != null )   responseHandler.undo( msgContext );
-        if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
-        if ( requestHandler    != null )    requestHandler.undo( msgContext );
+       if (specialReqHandler != null)
+           addHandler(specialReqHandler);
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::undo") );
-        }
-    }
+       pivotHandler = pivHandler;
+       if (pivotHandler != null) {
+           addHandler(pivotHandler);
+           addHandler(new PivotIndicator());
+       }
 
-    public boolean canHandleBlock(QName qname) {
-        // TODO !!! : Need to look at this logic
-        return ((requestHandler==null) ? false :
-                  (requestHandler.canHandleBlock(qname) ||
-                   (pivotHandler==null)) ? false :
-                       (pivotHandler.canHandleBlock(qname) ||
-                        (responseHandler==null))  ? false :
-                            responseHandler.canHandleBlock(qname) );
-    }
+       if (specialRespHandler != null)
+           addHandler(specialRespHandler);
 
-    public Handler getRequestHandler() { return( requestHandler ); }
+       responseHandler = respHandler;
+       if (responseHandler != null)
+           addHandler(responseHandler);
+   }
 
-    public void setRequestHandler(Handler reqHandler)
-    {
-        requestHandler = reqHandler;
-    }
+   public Handler getRequestHandler() { return( requestHandler ); }
 
-    public Handler getPivotHandler() { return( pivotHandler ); }
+   public Handler getPivotHandler() { return( pivotHandler ); }
 
-    public void setPivotHandler(Handler handler) { pivotHandler = handler ; }
-
-    public Handler getResponseHandler() { return( responseHandler ); }
-
-    public void setResponseHandler(Handler respHandler)
-    {
-        responseHandler = respHandler;
-    }
-
-    public void clear() {
-        requestHandler = null ;
-        pivotHandler = null ;
-        responseHandler = null ;
-    }
-
-    public Element getDeploymentData(Document doc) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "SimpleTargetedChain::getDeploymentData") );
-        }
-
-        Element   root = doc.createElementNS("", "chain");
-        fillInDeploymentData(root);
-
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleTargetedChain::getDeploymentData") );
-        }
-        return( root );
-    }
-
-    /**
-     * Used by subclasses (i.e. SOAPService) to fill in deployment
-     * data into an Element which might not be named "chain".
-     *
-     * @param root the Element to fill in with deployment data.
-     */
-    public void fillInDeploymentData(Element root)
-    {
-        Document doc = root.getOwnerDocument();
-        StringBuffer str  = new StringBuffer();
-        Handler      h ;
-
-        if ( requestHandler != null ) {
-            if (requestHandler instanceof Chain) {
-                Handler[]  handlers = ((Chain)requestHandler).getHandlers();
-                str = new StringBuffer();
-                for ( int i = 0 ; i < handlers.length ; i++ ) {
-                    h = (Handler) handlers[i];
-                    if ( i != 0 ) str.append(",");
-                    str.append( h.getName() );
-                }
-            } else {
-                str.append(requestHandler.getName());
-            }
-            root.setAttribute( "request", str.toString() );
-        }
-        if ( pivotHandler != null ) {
-            root.setAttribute( "pivot", pivotHandler.getName() );
-        }
-        if ( responseHandler != null ) {
-            if (responseHandler instanceof Chain) {
-                Handler[]  handlers = ((Chain)responseHandler).getHandlers();
-                str = new StringBuffer();
-                for ( int i = 0 ; i < handlers.length ; i++ ) {
-                    h = (Handler) handlers[i];
-                    if ( i != 0 ) str.append(",");
-                    str.append( h.getName() );
-                }
-            } else {
-                str.append(responseHandler.getName());
-            }
-            root.setAttribute( "response", str.toString() );
-        }
-
-        options = this.getOptions();
-        if ( options != null ) {
-            Enumeration e = options.keys();
-            while ( e.hasMoreElements() ) {
-                String k = (String) e.nextElement();
-                Object v = options.get(k);
-                Element e1 = doc.createElementNS("", "option");
-                e1.setAttribute( "name", k );
-                e1.setAttribute( "value", v.toString() );
-                root.appendChild( e1 );
-            }
-        }
-    }
+   public Handler getResponseHandler() { return( responseHandler ); }
 
 };

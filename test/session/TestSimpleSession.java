@@ -71,14 +71,15 @@ public class TestSimpleSession extends TestCase {
     public void testSessionService() throws Exception
     {
         // Set up the server side
-        SOAPService service = new SOAPService(new RPCProvider());
         SimpleSessionHandler sessionHandler = new SimpleSessionHandler();
         // Set a 3-second reap period, and a 3-second timeout
         sessionHandler.setReapPeriodicity(3000);
         sessionHandler.setDefaultSessionTimeout(3000);
 
-        service.setRequestHandler(sessionHandler);
-        service.setResponseHandler(sessionHandler);
+        SOAPService service = new SOAPService(sessionHandler,
+                                              new RPCProvider(),
+                                              sessionHandler);
+
         service.setOption("scope", "session");
         service.setOption("className", "test.session.TestSimpleSession");
         service.setOption("methodName", "counter");

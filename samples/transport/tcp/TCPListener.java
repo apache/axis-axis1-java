@@ -155,8 +155,7 @@ public class TCPListener implements Runnable {
                 engine = new AxisServer();
                 engine.init();
 
-                SimpleTargetedChain c = new SimpleTargetedChain();
-                c.setPivotHandler(new TCPSender());
+                SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
 
                 try {
                     engine.deployTransport(transportName, c);
