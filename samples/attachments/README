@@ -1,7 +1,7 @@
 To run the attachments sample, you must do the following:
 1.  Set up your CLASSPATH.
 2.  Start a server.
-3.  Deploy the sample.
+3.  Deploy the service.
 4.  Run the sample.
 
 1.  Set up your CLASSPATH.
@@ -15,8 +15,8 @@ To run the attachments sample, you must do the following:
     available to it.  For this test, the AXIS SimplAxisServer is not enough.
     See the documentation for your server for details.
 
-3.  Deploy the sample.
-    To deploy the sample, run:
+3.  Deploy the service.
+    To deploy the service, run:
         java org.apache.axis.client.AdminClient attachdeploy.wsdd 
 
 4.  Run the sample.

@@ -1,7 +1,0 @@
-<m:deploy xmlns:m="AdminService">
- <handler name="TCPSender" class="samples.transport.tcp.TCPSender"/>
- <handler name="LogIt" class="org.apache.axis.handlers.LogMessage">
-  <option name="message" value="Hey, I'm here!"/>
- </handler>
- <transport name="tcp" pivot="TCPSender" request="LogIt"/>
-</m:deploy>
