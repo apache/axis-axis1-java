@@ -68,6 +68,9 @@
     <port name="GetQuote" binding="tns:GetQuoteBinding">
       <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
     </port>
+    <port name="GetQuoteJava" binding="tns:GetQuoteBinding">
+      <soap:address location="java:samples.stock.StockQuoteService"/>
+    </port>
   </service>
 
 </definitions>

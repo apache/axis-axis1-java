@@ -56,6 +56,7 @@ package org.apache.axis.configuration;
 
 import org.apache.axis.transport.local.LocalSender;
 import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.transport.java.JavaSender;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
 
@@ -70,6 +71,7 @@ public class BasicClientConfig extends SimpleProvider {
      * Constructor - deploy client-side basic transports.
      */
     public BasicClientConfig() {
+        deployTransport("java", new SimpleTargetedChain(new JavaSender()));
         deployTransport("local", new SimpleTargetedChain(new LocalSender()));
         deployTransport("http", new SimpleTargetedChain(new HTTPSender()));
     }

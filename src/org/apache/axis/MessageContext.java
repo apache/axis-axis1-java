@@ -673,6 +673,9 @@ public class MessageContext implements SOAPMessageContext {
     /** If on the client - this is the Call object */
     public static String CALL                = "call_object" ;
 
+    /** Are we doing Msg vs RPC? - For Java Binding */
+    public static String IS_MSG              = "isMsg" ;
+
     /** The directory where in coming attachments are created. */
     public static String ATTACHMENTS_DIR   = "attachments.directory" ;
 
