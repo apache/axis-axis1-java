@@ -170,7 +170,33 @@ public class Message {
 		setup(initialContents, false, null, null);
 	}
 
+        private static Class attachImpl = null; 
+
         private static boolean checkForAttchmentSupport= true;//aviod testing and possibly failing everytime.
+
+        private static boolean attachmentSupportEnabled = false;
+
+        public static boolean isAttachmentSupportEnabled(){
+             if(checkForAttchmentSupport){
+                 checkForAttchmentSupport= false;//aviod testing and possibly failing everytime.
+                 Class mailapiclass= null;
+                 Class dataHandlerclass=null;
+                 try {
+                     dataHandlerclass = Class.forName("javax.activation.DataHandler");
+                     mailapiclass = Class.forName("javax.mail.internet.MimeMultipart");
+                     attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
+                     attachmentSupportEnabled= true; 
+                  } catch (ClassNotFoundException ex) {
+                      // no support for it, leave mAttachments null.
+                  }   catch(java.lang.NoClassDefFoundError ex) {
+                      // no support for it, leave mAttachments null.
+                  }
+              }
+              
+              category.debug("Attachment support is enabled" + attachmentSupportEnabled);
+              return attachmentSupportEnabled;
+        }
+
     
 	/**
 	 * Do the work of construction.
@@ -182,34 +208,26 @@ public class Message {
           // If there is no org.apache.axis.attachments.AttachmentsImpl class,
           // it must mean activation.jar is not present and attachments are not
           // supported.
-          if(checkForAttchmentSupport){
-              try {
-                  Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
+          if(isAttachmentSupportEnabled()){
                   // Construct one, and cast to Attachments.
                   // There must be exactly one constructor of AttachmentsImpl, which must
                   // take an org.apache.axis.Message!
                   Constructor attachImplConstr = attachImpl.getConstructors()[0];
+                  try{
                   mAttachments = (Attachments)attachImplConstr.newInstance(
                       new Object[]{this,initialContents, contentType, contentLocation});
 
                   mSOAPPart = (SOAPPart) mAttachments.getRootPart(); //If it can't support it, it wont have a root part.
-                  
-              } catch (ClassNotFoundException ex) {
-                  checkForAttchmentSupport= false;
-                  // no support for it, leave mAttachments null.
-              } catch (InvocationTargetException ex) {
-                  checkForAttchmentSupport= false;
-                  // no support for it, leave mAttachments null.
-              } catch (InstantiationException ex) {
-                  checkForAttchmentSupport= false;
-                  // no support for it, leave mAttachments null.
-              } catch (IllegalAccessException ex) {
-                  checkForAttchmentSupport= false;
-                  // no support for it, leave mAttachments null.
-              } catch(java.lang.NoClassDefFoundError ex) {
-                  checkForAttchmentSupport= false;
-                  // no support for it, leave mAttachments null.
-              }
+                  }catch (InvocationTargetException ex) {
+                      category.fatal(ex);
+                      throw new RuntimeException(ex.getMessage());
+                  }catch (InstantiationException ex) {
+                      category.fatal(ex);
+                      throw new RuntimeException(ex.getMessage());
+                  }catch (IllegalAccessException ex) {
+                      category.fatal(ex);
+                      throw new RuntimeException(ex.getMessage());
+                  }
           }
 
         if(null == mSOAPPart ){ //The stream was not determined by a more complex type so default to text/xml 

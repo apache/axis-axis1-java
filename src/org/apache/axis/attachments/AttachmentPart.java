@@ -77,6 +77,9 @@ import java.io.IOException;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Rick Rineholt 
  */
+
+import org.apache.axis.transport.http.HTTPConstants ;
+
 public class AttachmentPart extends Part {
     static Category category = Category.getInstance(Message.class.getName());
     javax.activation.DataHandler datahandler= null;
@@ -94,6 +97,17 @@ public class AttachmentPart extends Part {
     public AttachmentPart(Message parent, javax.activation.DataHandler dh ) {
         super(parent);
         datahandler= dh;
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
+    }
+
+    public AttachmentPart() {
+        super(null);
+    }
+
+    public AttachmentPart(javax.activation.DataHandler dh ) {
+        super(null);
+        datahandler= dh;
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
     }
 
     javax.activation.DataHandler getActiviationDataHandler(){
@@ -102,29 +116,24 @@ public class AttachmentPart extends Part {
 
     /**
      * TODO: everything!
-     */ 
     public int getContentLength() {
         return 0;
     }
+    */ 
 
     /**
      * TODO: everything!
      */ 
     public String getContentType() {
-        return null;
+        return getMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
     }
 
     /**
      * TODO: everything!
-     */ 
     public int getSize() {
         return 0;
     }
-
-    /**
-     * TODO: everything!
      */ 
-    public void writeTo(OutputStream out) throws IOException {
-    }
+
 }
 

@@ -70,6 +70,7 @@ public class HTTPConstants {
     public static final String HEADER_POST = "POST";
     public static final String HEADER_HOST = "Host";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
     public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
     public static final String HEADER_CONTENT_LENGTH = "Content-Length";
     public static final String HEADER_CONTENT_LOCATION = "Content-Location";

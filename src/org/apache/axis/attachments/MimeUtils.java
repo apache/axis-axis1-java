@@ -65,6 +65,7 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.activation.*;
+import org.apache.axis.transport.http.HTTPConstants ;
 
 /**
  * This class is defines utilities for mime.
@@ -230,8 +231,9 @@ public class MimeUtils {
 
             for (java.util.Iterator it = pe.iterator(); it.hasNext(); ) {
                 java.util.Map.Entry es = (java.util.Map.Entry) it.next();
+                org.apache.axis.Part part=  (org.apache.axis.Part) es.getValue();
                 javax.activation.DataHandler dh =
-                    org.apache.axis.attachments.AttachmentUtils.getActiviationDataHandler((org.apache.axis.Part) es.getValue());
+                    org.apache.axis.attachments.AttachmentUtils.getActiviationDataHandler(part);
                 String contentID = (String) es.getKey();
 
                 if (contentID.startsWith("cid:")) contentID = contentID.substring(4);
@@ -244,9 +246,15 @@ public class MimeUtils {
                 if (contentType == null || contentType.trim().length() == 0) {
                     contentType = "application/octet-stream";
                 }
-                messageBodyPart.setHeader("Content-Type", contentType );
-                messageBodyPart.setHeader("Content-ID", "<" + contentID  + ">" );
-                messageBodyPart.setHeader("Content-Transfer-Encoding", "binary"); //Safe and fastest for anything other than mail;
+                messageBodyPart.setHeader(HTTPConstants.HEADER_CONTENT_TYPE , contentType );
+                messageBodyPart.setHeader(HTTPConstants.HEADER_CONTENT_ID , "<" + contentID  + ">" );
+                messageBodyPart.setHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING , "binary"); //Safe and fastest for anything other than mail;
+                for( java.util.Iterator i= part.getNonMatchingMimeHeaders(new String[]{
+                   HTTPConstants.HEADER_CONTENT_TYPE, HTTPConstants.HEADER_CONTENT_ID,
+                   HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING }); i.hasNext(); ){
+                       String header= (String) i.next();
+                       messageBodyPart.setHeader(header, part.getMimeHeader(header)); 
+                }
                 multipart.addBodyPart(messageBodyPart);
             }
         }

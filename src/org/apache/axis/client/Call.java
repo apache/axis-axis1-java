@@ -74,7 +74,7 @@ import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
-
+import org.apache.axis.attachments.AttachmentPart; 
 import javax.xml.rpc.encoding.XMLType ;
 
 import org.apache.log4j.Category;
@@ -628,7 +628,7 @@ public class Call implements javax.xml.rpc.Call {
                     env.addBodyElement( (SOAPBodyElement) params[i] );
 
             Message msg = new Message( env );
-            msgContext.setRequestMessage( msg );
+            setRequestMessage(msg);
 
             invoke();
 
@@ -699,7 +699,7 @@ public class Call implements javax.xml.rpc.Call {
                 env.addHeader((SOAPHeader)myHeaders.get(i));
 
             msg = new Message( env );
-            msgContext.setRequestMessage( msg );
+            setRequestMessage( msg );
             invoke();
             msg = msgContext.getResponseMessage();
             if (msg == null)
@@ -870,7 +870,22 @@ public class Call implements javax.xml.rpc.Call {
      * @param msg the new request message.
      */
     public void setRequestMessage(Message msg) {
+
+        if(null != attachmentParts && !attachmentParts.isEmpty()){ 
+            try{
+            org.apache.axis.attachments.Attachments attachments= msg.getAttachments();
+            if(null == attachments)
+              throw new RuntimeException("No support for attachments");
+
+            attachments.setAttachmentParts(attachmentParts);
+            }catch(org.apache.axis.AxisFault ex){
+              category.debug(ex);
+              throw  new RuntimeException(ex.getMessage());
+            }
+        }
+    
         msgContext.setRequestMessage(msg);
+        attachmentParts.clear();
     }
 
     /**
@@ -1061,7 +1076,7 @@ public class Call implements javax.xml.rpc.Call {
         String uri = encodingStyle ;
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
 
-        msgContext.setRequestMessage(reqMsg);
+        setRequestMessage(reqMsg);
 
         reqEnv.addBodyElement(body);
         reqEnv.setMessageType(Message.REQUEST);
@@ -1267,4 +1282,21 @@ public class Call implements javax.xml.rpc.Call {
     {
         return this.service;
     }
+
+
+    protected java.util.Vector attachmentParts= new java.util.Vector();
+
+    /**
+     * This method adds an attachment.
+     *
+     * Note: Not part of JAX-RPC specification.
+     * @exception RuntimeException if there is no support for attachments.
+     *
+     */
+     public void addAttachmentPart( Object attachment){
+         if(!Message.isAttachmentSupportEnabled()){
+              throw new RuntimeException("No support for attachments");
+         }
+         attachmentParts.add(attachment);
+     }
 }
