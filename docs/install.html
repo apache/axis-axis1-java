@@ -461,18 +461,18 @@ change URLs to correct host, port and webapp specifics.
     dialog boxes:          
 <pre class="xml">
     set AXIS_HOME=c:\tomcat\webapps\axis
-    set AXISLIB=%AXIS_HOME%\lib
-    set AXISCLASSPATH=%AXISLIB%\axis.jar;%AXISLIB%\commons-discovery.jar;
-          %AXISLIB%\commons-logging.jar;%AXISLIB%\jaxrpc.jar;%AXISLIB%\saaj.jar;
-          %AXISLIB%\log4j-1.2.8.jar;%AXISLIB%\xml-apis.jar;%AXISLIB%\xercesImpl.jar
+    set AXIS_LIB=%AXIS_HOME%\lib
+    set AXISCLASSPATH=%AXIS_LIB%\axis.jar;%AXIS_LIB%\commons-discovery.jar;
+          %AXIS_LIB%\commons-logging.jar;%AXIS_LIB%\jaxrpc.jar;%AXIS_LIB%\saaj.jar;
+          %AXIS_LIB%\log4j-1.2.8.jar;%AXIS_LIB%\xml-apis.jar;%AXIS_LIB%\xercesImpl.jar
 </pre>          
     Unix users have to do something similar:
 <pre class="xml">
     set AXIS_HOME=/usr/tomcat/webapps/axis
-    set AXISLIB=$AXIS_HOME/lib
-    set AXISCLASSPATH=$AXISLIB/axis.jar:$AXISLIB/commons-discovery.jar:
-          $AXISLIB/commons-logging.jar:$AXISLIB/jaxrpc.jar:$AXISLIB/saaj.jar:
-          $AXISLIB/log4j-1.2.8.jar:$AXISLIB/xml-apis.jar:$AXISLIB/xercesImpl.jar
+    set AXIS_LIB=$AXIS_HOME/lib
+    set AXISCLASSPATH=$AXIS_LIB/axis.jar:$AXIS_LIB/commons-discovery.jar:
+          $AXIS_LIB/commons-logging.jar:$AXIS_LIB/jaxrpc.jar:$AXIS_LIB/saaj.jar:
+          $AXIS_LIB/log4j-1.2.8.jar:$AXIS_LIB/xml-apis.jar:$AXIS_LIB/xercesImpl.jar
     export AXIS_HOME; export AXIS_LIB; export AXISCLASSPATH
 </pre>          
 
