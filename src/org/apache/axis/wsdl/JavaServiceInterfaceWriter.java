@@ -78,7 +78,7 @@ public class JavaServiceInterfaceWriter extends JavaWriter {
             Emitter emitter,
             PortTypeEntry ptEntry,
             SymbolTable symbolTable) {
-        super(emitter, ptEntry, "AXIS", "java",
+        super(emitter, ptEntry, "Axis", "java",
                 JavaUtils.getMessage("genIface01"));
         this.ptEntry = ptEntry;
         this.portType = ptEntry.getPortType();
