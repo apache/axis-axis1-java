@@ -97,12 +97,36 @@ public class TestArrayListConversions extends TestCase {
         if (!equals(v, ret)) assertEquals("Echo Array mangled the result.  Result is underneath\n" + ret, v, ret);
     }
 
+    /**
+     * Test the setReturnClass() API on Call by asking the runtime to
+     * give us back a Vector instead of an array.  Confirm we get a Vector
+     * back, and that it matches the data we send.
+     */
+    public void testReturnAsVector() throws Exception {
+        LinkedList l = new LinkedList();
+        l.add("Linked list item #1");
+        l.add("Second linked list item");
+        l.add("This will be a SOAP Array then a Vector!");
+
+        call.setOperationName(new QName(SERVICE_NAME, "echoArray"));
+        call.setReturnClass(Vector.class);
+        Object ret = call.invoke(new Object[]{l});
+        assertEquals("Return wasn't a Vector!", Vector.class, ret.getClass());
+        Vector v = (Vector)ret;
+        assertEquals("Sizes were different", l.size(), v.size());
+        for (int i = 0; i < l.size(); i++) {
+            String s = (String)l.get(i);
+            assertEquals("Value " + i + " didn't match", s, v.get(i));
+        }
+    }
+
     public static void main(String[] args) {
         TestArrayListConversions tester = new TestArrayListConversions("TestArrayListConversions");
         try {
             tester.testArrayConversion();
             tester.testLinkedListConversion();
             tester.testVectorConversion();
+            tester.testReturnAsVector();
         } catch (Exception e) {
             e.printStackTrace();
         }

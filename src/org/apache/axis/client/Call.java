@@ -174,6 +174,9 @@ public class Call implements javax.xml.rpc.Call {
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
 
+    // The desired return Java type, so we can do conversions if needed
+    private Class              returnJavaType  = null;
+
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
@@ -725,6 +728,25 @@ public class Call implements javax.xml.rpc.Call {
      */
     public QName getReturnType() {
         return( returnType );
+    }
+
+    /**
+     * Sets the desired return Java Class.  This is a convenience method
+     * which will cause the Call to automatically convert return values
+     * into a desired class if possible.  For instance, we return object
+     * arrays by default now for SOAP arrays - you could specify:
+     *
+     * setReturnClass(Vector.class)
+     *
+     * and you'd get a Vector back from invoke() instead of having to do
+     * the conversion yourself.
+     *
+     * @param cls the desired return class.
+     */
+    public void setReturnClass(Class cls) {
+        returnJavaType = cls;
+        // NOTE: Should be setting XML type based on this as well at some
+        // point, so you can just use this.
     }
 
     /**
@@ -1596,6 +1618,12 @@ public class Call implements javax.xml.rpc.Call {
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("exit00",
                                            "Call::invoke(RPCElement)") );
+        }
+
+        // Convert type if needed
+        if (returnJavaType != null &&
+                !(returnJavaType.isAssignableFrom(result.getClass()))) {
+            result = JavaUtils.convert(result, returnJavaType);
         }
 
         return( result );
