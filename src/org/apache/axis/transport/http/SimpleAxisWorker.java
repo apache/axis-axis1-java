@@ -508,7 +508,7 @@ public class SimpleAxisWorker implements Runnable {
             // out.write(response);
             out.flush();
         } catch (Exception e) {
-            log.debug(Messages.getMessage("exception00"), e);
+            log.info(Messages.getMessage("exception00"), e);
         } finally {
             try {
                 if (socket != null) socket.close();
