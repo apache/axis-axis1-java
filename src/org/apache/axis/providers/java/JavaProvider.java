@@ -259,25 +259,27 @@ public abstract class JavaProvider extends BasicProvider
                                                  clsName,
                                                  scope);
 
-            Message        reqMsg  = msgContext.getRequestMessage();
-            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
-            Message        resMsg  = msgContext.getResponseMessage();
-            SOAPEnvelope   resEnv  = (resMsg == null) ?
-                                     new SOAPEnvelope(msgContext.
-                                                        getSOAPConstants()) :
-                                     (SOAPEnvelope)resMsg.getSOAPEnvelope();
-
-            // If we didn't have a response message, make sure we set one up
-            if (resMsg == null) {
-                resMsg = new Message(resEnv);
-                msgContext.setResponseMessage( resMsg );
-            }
-
             try {
-                processMessage(msgContext, reqEnv,
-                               resEnv, obj);
-            } catch (Exception exp) {
-                throw exp;
+                Message        reqMsg  = msgContext.getRequestMessage();
+                SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
+                Message        resMsg  = msgContext.getResponseMessage();
+                SOAPEnvelope   resEnv  = (resMsg == null) ?
+                                         new SOAPEnvelope(msgContext.
+                                                            getSOAPConstants()) :
+                                         (SOAPEnvelope)resMsg.getSOAPEnvelope();
+    
+                // If we didn't have a response message, make sure we set one up
+                if (resMsg == null) {
+                    resMsg = new Message(resEnv);
+                    msgContext.setResponseMessage( resMsg );
+                }
+    
+                try {
+                    processMessage(msgContext, reqEnv,
+                                   resEnv, obj);
+                } catch (Exception exp) {
+                    throw exp;
+                }
             } finally {
                 // If this is a request scoped service object which implements
                 // ServiceLifecycle, let it know that it's being destroyed now.
