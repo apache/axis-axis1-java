@@ -25,7 +25,7 @@ import java.net.URL;
 */
 
 public class Compound1TestCase extends junit.framework.TestCase {
-    static URL url;
+    public static URL url;
 
     public Compound1TestCase(String name) {
         super(name);

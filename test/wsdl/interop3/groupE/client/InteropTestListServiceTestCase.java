@@ -64,7 +64,11 @@ package test.wsdl.interop3.groupE.client;
 
 import junit.framework.AssertionFailedError;
 
+import java.net.URL;
+
 public class InteropTestListServiceTestCase extends junit.framework.TestCase {
+    public static URL url;
+
     public InteropTestListServiceTestCase(String name) {
         super(name);
     }
@@ -72,8 +76,12 @@ public class InteropTestListServiceTestCase extends junit.framework.TestCase {
     public void testInteropTestListEchoLinkedList() {
         InteropTestList binding;
         try {
-            binding = new InteropTestListServiceLocator().getInteropTestList();        }
-        catch (javax.xml.rpc.ServiceException jre) {
+            if (url == null) {
+                binding = new InteropTestListServiceLocator().getInteropTestList();
+            } else {
+                binding = new InteropTestListServiceLocator().getInteropTestList(url);
+            }
+        } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);

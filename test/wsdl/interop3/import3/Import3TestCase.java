@@ -26,7 +26,7 @@ import java.net.URL;
 */
 
 public class Import3TestCase extends junit.framework.TestCase {
-    static URL url;
+    public static URL url;
 
     public Import3TestCase(String name) {
         super(name);
@@ -78,45 +78,6 @@ public class Import3TestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
-
-    public void testStep5EchoStruct() {
-        SoapInteropImport3PortType binding;
-        try {
-            binding = new Import3Locator().getSoapInteropImport3Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport3Port"));
-        }
-        catch (Throwable t) {
-            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
-        }
-        assertTrue("binding is null", binding != null);
-
-        try {
-            SOAPStruct value = null;
-            value = binding.echoStruct(new SOAPStruct());
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        }
-    }
-
-    public void testStep5EchoStructArray() {
-        SoapInteropImport3PortType binding;
-        try {
-            binding = new Import3Locator().getSoapInteropImport3Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport3Port"));
-        }
-        catch (Throwable t) {
-            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
-        }
-        assertTrue("binding is null", binding != null);
-
-        try {
-            SOAPStruct[] value = null;
-            value = binding.echoStructArray(new SOAPStruct[0]);
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        }
-    }
-
 
     public static void main(String[] args) {
         if (args.length == 1) {

@@ -87,6 +87,8 @@ import java.io.PrintWriter;
  * @author Glyn Normington <glyn@apache.org>
  */
 public abstract class InteropTestListServiceTestClient {
+    public static URL url;
+
     private static final String NS =
         "http://soapinterop.org/WSDLInteropTestList";
     private static final QName OPQN = new QName(NS, "echoLinkedList");
