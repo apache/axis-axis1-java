@@ -57,16 +57,19 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import samples.misc.TestClient;
+
 
 /** Test the proxy sample code.
  */
 public class TestProxySample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestProxySample.class.getName());
+            LogFactory.getLog(TestProxySample.class.getName());
 
     public TestProxySample(String name) {
         super(name);

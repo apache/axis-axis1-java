@@ -57,14 +57,16 @@ package test.wsdl.addrNoImplSEI;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 /** Test the address book sample code.
  */
 public class AddressBookTestCase extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(AddressBookTestCase.class.getName());
+            LogFactory.getLog(AddressBookTestCase.class.getName());
 
     public AddressBookTestCase(String name) {
         super(name);

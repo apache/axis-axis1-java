@@ -57,7 +57,6 @@ package samples.transport.tcp;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
@@ -69,6 +68,8 @@ import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -91,7 +92,7 @@ import java.net.URL;
  */
 public class TCPListener implements Runnable {
     static Log log =
-            AxisInternalServices.getLog(TCPSender.class.getName());
+            LogFactory.getLog(TCPSender.class.getName());
 
     // These have default values.
     private String transportName = "TCPTransport";

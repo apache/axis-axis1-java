@@ -57,16 +57,19 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.client.AdminClient;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import samples.stock.GetQuote;
+
 
 /** Test the stock sample code.
  */
 public class TestStockSample extends TestCase {
     static Log log =
-            AxisInternalServices.getLog(TestStockSample.class.getName());
+            LogFactory.getLog(TestStockSample.class.getName());
 
     public TestStockSample(String name) {
         super(name);
