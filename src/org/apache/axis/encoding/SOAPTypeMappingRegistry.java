@@ -216,7 +216,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
         addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
-        addSerializer(java.util.Vector.class, null, arraySer);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, new StringDeserializerFactory());    
         addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
