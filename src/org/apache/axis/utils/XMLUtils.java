@@ -93,7 +93,7 @@ public class XMLUtils {
         
     public static final String charEncoding = "ISO-8859-1";
 
-    private static DocumentBuilderFactory dbf = initDOMFactory();
+    private static DocumentBuilderFactory dbf = getDOMFactory();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
 
@@ -171,17 +171,19 @@ public class XMLUtils {
         saxFactory.setValidating(validating);
     }
 
-    public static DocumentBuilderFactory initDOMFactory() {
+    private static DocumentBuilderFactory getDOMFactory() {
+        DocumentBuilderFactory dbf;
         try {
             dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
         }
         catch( Exception e ) {
             log.error(JavaUtils.getMessage("exception00"), e );
+            dbf = null;
         }
         return( dbf );
     }
-
+    
     private static boolean tryReset= true;
 
     /** Get a SAX parser instance from the JAXP factory.
@@ -231,7 +233,9 @@ public class XMLUtils {
 
     public static Document newDocument() {
         try {
-            return dbf.newDocumentBuilder().newDocument();
+            synchronized (dbf) {
+                return dbf.newDocumentBuilder().newDocument();
+            }
         } catch (Exception e) {
             return null;
         }
@@ -239,7 +243,10 @@ public class XMLUtils {
 
     public static Document newDocument(InputSource inp) {
         try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilder db;
+            synchronized (dbf) {
+                db = dbf.newDocumentBuilder();
+            }
             db.setErrorHandler( new ParserErrorHandler() );
             return( db.parse( inp ) );
         }
