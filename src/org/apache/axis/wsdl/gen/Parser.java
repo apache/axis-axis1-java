@@ -82,6 +82,7 @@ public class Parser {
     protected boolean debug   = false;
     protected boolean imports = true;
     protected boolean verbose = false;
+    protected boolean nowrap = false;
 
     // Username and password for Authentication
     protected String username = null;
@@ -116,6 +117,14 @@ public class Parser {
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     } // setVerbose
+
+    public boolean isNowrap() {
+        return nowrap;
+    }
+
+    public void setNowrap(boolean nowrap) {
+        this.nowrap = nowrap;
+    }
 
     /**
      * Return the current timeout setting
@@ -194,7 +203,8 @@ public class Parser {
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
-                debug);
+                debug,
+                nowrap);
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);
@@ -256,7 +266,8 @@ public class Parser {
                 genFactory.getBaseTypeMapping(),
                 imports,
                 verbose,
-                debug);
+                debug,
+                nowrap);
         symbolTable.populate(context, doc);
         generate(symbolTable);
     } // run

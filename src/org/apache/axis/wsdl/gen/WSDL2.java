@@ -73,6 +73,7 @@ public class WSDL2 {
     protected static final int NETWORK_TIMEOUT_OPT = 'O';
     protected static final int NOIMPORTS_OPT = 'n';
     protected static final int VERBOSE_OPT = 'v';
+    protected static final int NOWRAP_OPT = 'W';
 
     protected CLOptionDescriptor[] options = new CLOptionDescriptor[]{
         new CLOptionDescriptor("help",
@@ -94,7 +95,11 @@ public class WSDL2 {
         new CLOptionDescriptor("Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
-                JavaUtils.getMessage("optionDebug00"))
+                JavaUtils.getMessage("optionDebug00")),
+        new CLOptionDescriptor("noWrapped",
+                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                 NOWRAP_OPT,
+                 JavaUtils.getMessage("optionNoWrap00"))
     };
 
     protected String wsdlURI = null;
@@ -178,6 +183,10 @@ public class WSDL2 {
 
             case DEBUG_OPT:
                 parser.setDebug(true);
+                break;
+
+            case NOWRAP_OPT:
+                parser.setNowrap(true);
                 break;
         }
     } // parseOption
