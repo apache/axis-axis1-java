@@ -410,7 +410,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected void getResponseHeaders(org.apache.axis.client.Call call) throws AxisFault {		
         org.apache.axis.Message response = call.getMessageContext().getResponseMessage();      
         org.apache.axis.message.SOAPEnvelope env = response.getSOAPEnvelope();
-            
+        // clear out existing headers
+        // this is important because a stub is reused across service calls
+        clearHeaders();
         if ( env != null )	{
             Iterator iterator = env.getHeaders().iterator();
             while(iterator.hasNext()){
