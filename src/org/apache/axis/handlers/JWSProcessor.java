@@ -259,7 +259,7 @@ public class JWSProcessor extends BasicHandler
             {
                 URL[] urls = ((URLClassLoader) cl).getURLs();
 
-                for(int i=0; i < urls.length; i++)
+                for(int i=0; (urls != null) && i < urls.length; i++)
                 {
                     classpath.append(urls[i].getPath());
                     classpath.append(File.pathSeparatorChar);
