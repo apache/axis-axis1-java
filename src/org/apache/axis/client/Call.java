@@ -1450,11 +1450,9 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        // We want the body encoding style to be what the user set
+        // Set both the envelope and the RPCElement encoding styles
         body.setEncodingStyle(encodingStyle);
-        // Do we really want to set the envelope?
-        if (encodingStyle != null)
-            reqEnv.setEncodingStyleURI(encodingStyle);
+        reqEnv.setEncodingStyle(encodingStyle);
 
         setRequestMessage(reqMsg);
 

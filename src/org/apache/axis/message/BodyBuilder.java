@@ -152,7 +152,6 @@ public class BodyBuilder extends SOAPHandler
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
                                          attributes, context);
-                //handler = new RPCHandler((RPCElement)element);
         } else {
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);

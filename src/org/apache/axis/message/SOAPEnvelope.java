@@ -85,7 +85,6 @@ public class SOAPEnvelope extends MessageElement
     public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
     public Vector trailers = new Vector();
-    public String encodingStyleURI = null;
 
     // This is a hint to any service description to tell it what
     // "type" of message we are.  This might be "request", "response",
@@ -143,18 +142,6 @@ public class SOAPEnvelope extends MessageElement
         this.messageType = messageType;
     }
     
-    public void setEncodingStyleURI(String uri)
-    {
-        encodingStyleURI = uri;
-        setAttribute(Constants.URI_SOAP_ENV,
-                     Constants.ATTR_ENCODING_STYLE,
-                     encodingStyleURI);
-    }
-
-    public String getEncodingStyleURI() {
-        return encodingStyleURI;
-    }
-
     public Vector getBodyElements() throws AxisFault
     {
         return bodyElements;

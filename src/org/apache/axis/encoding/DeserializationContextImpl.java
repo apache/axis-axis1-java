@@ -131,8 +131,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     private MessageElement curElement;
 
     protected int startOfMappingsPos = -1;
-    
-        
+           
     /**
      * Construct Deserializer using MessageContext and EnvelopeBuilder handler
      * @param ctx is the MessageContext

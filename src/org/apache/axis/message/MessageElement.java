@@ -115,6 +115,9 @@ public class MessageElement
     // Do we need links to our children too?
 
     public ArrayList namespaces = null;
+    
+    /** Our encoding style, if any */
+    protected String encodingStyle = null;
 
     /** No-arg constructor for building messages?
      */
@@ -177,6 +180,12 @@ public class MessageElement
             // If there's an arrayType attribute, we can pretty well guess that we're an Array???
             if (attributes.getValue(Constants.URI_CURRENT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
                 typeQName = Constants.SOAP_ARRAY;
+
+            // Set the encoding style to the attribute value.  If null,
+            // we just automatically use our parent's (see getEncodingStyle)
+            encodingStyle =
+                    attributes.getValue(Constants.URI_CURRENT_SOAP_ENC,
+                                        Constants.ATTR_ENCODING_STYLE);
         }
     }
 
@@ -224,6 +233,32 @@ public class MessageElement
 
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
+
+    /** 
+     * Get the encoding style.  If ours is null, walk up the hierarchy
+     * and use our parent's.  Default if we're the root is "".
+     * 
+     * @return the currently in-scope encoding style
+     */
+    public String getEncodingStyle() {
+        if (encodingStyle == null) {
+            if (parent == null)
+                return "";
+            return parent.getEncodingStyle();
+        }
+        return encodingStyle;
+    }
+    
+    /** 
+     * Set the encoding style.  Calling this means you are absolutely
+     * setting it to SOMETHING valid.  The semantics of a null value,
+     * as above in getEncodingStyle() are to just use the parent's value,
+     * but null here means set to "". 
+     */
+    public void setEncodingStyle(String encodingStyle) {
+        if (encodingStyle == null) encodingStyle = "";
+        this.encodingStyle = encodingStyle;
+    }
 
     public MessageElement getParent() { return parent; }
     public void setParent(MessageElement parent) 
@@ -484,6 +519,19 @@ public class MessageElement
                              context.qName2String(attr.value));
             }
             qNameAttrs = null;
+        }
+        
+        /**
+         * Write the encoding style attribute IF it's different from
+         * whatever encoding style is in scope....
+         */ 
+        if (encodingStyle != null) {
+            if ((parent == null) || 
+                (!encodingStyle.equals(parent.getEncodingStyle()))) {
+                setAttribute(Constants.URI_CURRENT_SOAP_ENC,
+                             Constants.ATTR_ENCODING_STYLE,
+                             encodingStyle);
+            }
         }
 
         outputImpl(context);
