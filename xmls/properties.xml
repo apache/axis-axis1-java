@@ -9,7 +9,7 @@
 <property file="${axis.home}/build.properties"/>
 <property file="${user.home}/build.properties"/>
 
-<property name="axis.version" value="beta3+" />
+<property name="axis.version" value="1.0rc1" />
 <property name="name" value="axis" />
 <property name="Name" value="Axis" />
 <property name="year" value="2002" />
@@ -40,6 +40,7 @@ them.
 <property name="jsse.jar" location="${lib.dir}/jsse.jar"/>
 <property name="commons-logging.jar" location="${lib.dir}/commons-logging.jar"/>
 <property name="commons-discovery.jar" location="${lib.dir}/commons-discovery.jar"/>
+<property name="commons-httpclient.jar" location="${lib.dir}/commons-httpclient.jar"/>
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.4.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
 <property name="jimi.jar" location="${lib.dir}/JimiProClasses.zip"/>
