@@ -239,7 +239,7 @@ Copyright:
     </java>
 
     <!-- now, run the actual test -->
-    <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
