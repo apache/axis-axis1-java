@@ -1,8 +1,10 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,48 +55,200 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
 
-import org.apache.axis.utils.*;
+import org.xml.sax.*;
+import org.xml.sax.helpers.AttributesImpl;
+import org.w3c.dom.*;
+import org.apache.axis.Constants;
+import org.apache.axis.message.events.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.utils.QName;
+import java.util.*;
 import java.io.*;
 
-/**
- * @author James Snell (jasnell@us.ibm.com)
- */
-public interface MessageElement { 
+public class MessageElement
+{
+    private static final boolean DEBUG_LOG = false;
     
- // Message Element Types.
-    public static byte ELEMENT_TYPE_ENVELOPE = 1;
-    public static byte ELEMENT_TYPE_HEADER = 2;
-    public static byte ELEMENT_TYPE_BODY = 3;
-    public static byte ELEMENT_TYPE_ENTRY = 4;
-    public static byte ELEMENT_TYPE_FAULT = 5;
-    public static byte ELEMENT_TYPE_ORPHAN = 99;    // No Parent
+    protected String    name ;
+    protected String    prefix ;
+    protected String    namespaceURI ;
+    protected AttributesImpl attributes;
+    protected String    id;
+    protected boolean   isRoot = false;
+    protected SOAPEnvelope message = null;
+    protected DeserializationContext context = null;
+    DeserializerBase deserializer;
+    
+    // The java Object value of this element.  This is either set by
+    // deserialization, or by the user creating a message.
+    protected Object value = null;
+    protected QName typeQName = null;
+    
+    // String representation of this element.
+    protected String stringRep = null;
+    
+    protected ElementRecorder recorder = null;
 
-    public byte           getMessageElementType();
-    public QName          getQName();
-    public QName          getTypeQName();
-    public String         getNamespaceURI();
-    public String         getLocalName();
-    public String         getPrefix();
+    /** No-arg constructor for building messages?
+     */
+    MessageElement()
+    {
+    }
     
-    public String         getAttribute(QName qname);
-    public String         getAttribute(String name);
+    MessageElement(String namespace, String localPart,
+                    Attributes attributes, DeserializationContext context)
+    {
+        if (DEBUG_LOG) {
+            System.out.println("New MessageElement named " + localPart);
+            for (int i = 0; i < attributes.getLength(); i++) {
+                System.out.println("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
+            }
+        }
+      this.namespaceURI = namespace;
+      this.name = localPart;
+      this.context = context;
+      this.attributes = new AttributesImpl();
+      for (int i = 0; i < attributes.getLength(); i++) {
+          this.attributes.addAttribute(attributes.getURI(i),
+                                       attributes.getLocalName(i),
+                                       attributes.getQName(i),
+                                       "string",
+                                       attributes.getValue(i));
+      }
+            
+      String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
+      // !!! This currently defaults to false... should it default to true?
+      if (rootVal != null)
+          isRoot = rootVal.equals("1");
+      
+      id = attributes.getValue(Constants.ATTR_ID);
+      // Register this ID with the context.....
+      if (id != null) {
+          context.registerID(id, this);
+      }
+    }
     
-    public MessageElement getNextSibling();
-    public MessageElement getPreviousSibling();
-    public MessageElement getFirstChild();
-    public MessageElement getFirstChildNamed(QName qname);
-    public MessageElement getParent();
+    public boolean getRoot() { return isRoot; }
+    public String getID() { return id; }
     
-    public String         getStringValue();
-    public Object         getValue();
-    public Object         getValue(Deserializer deser);
-    public Object         getValue(TypeMappingRegistry tmr);
- 
-    public Reader         getOuterCharacterStream();
-    public Reader         getInnerCharacterStream();
-    public InputStream    getOuterByteStream();
-    public InputStream    getInnerByteStream();
+    public String getName() { return( name ); }
+    
+    public String getPrefix() { return( prefix ); }
+    public void setPrefix(String prefix) { this.prefix = prefix; }
+    
+    public String getNamespaceURI() { return( namespaceURI ); }
+    public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
+    
+    public QName getType() { return typeQName; }
+    public void setType(QName qName) { typeQName = qName; }
+
+    public void setEnvelope(SOAPEnvelope env)
+    {
+        message = env;
+    }
+    public SOAPEnvelope getEnvelope()
+    {
+        return message;
+    }
+    
+    public Element getAsDOM()
+    {
+        return null;
+    }
+    
+    public Object getValue() throws IOException
+    {
+        if (value instanceof ElementRecorder) {
+            // !!! Lazy deserialization here... We have the SAX events,
+            //     but haven't run them through a deserializer yet.
+            return null;
+        }
+        
+        if (deserializer != null) {
+            value = deserializer.getValue();
+            deserializer = null;
+        }
+        
+        return value;
+    }
+
+    public void setValue(Object val)
+    {
+        value = val;
+    }
+    
+    public ContentHandler getContentHandler()
+    {
+        if (recorder == null)
+            recorder = new ElementRecorder();
+        
+        return recorder;
+    }
+    
+    public void publishToHandler(ContentHandler handler) throws SAXException
+    {
+        if (recorder == null)
+            throw new SAXException("No event recorder inside element");
+        
+        recorder.publishToHandler(handler);
+    }
+    
+    public void output(SerializationContext context) throws IOException
+    {
+        context.registerPrefixForURI(prefix, namespaceURI);
+        //System.out.println("In outputToWriter (" + this.getName() + ")");
+        if (recorder != null) {
+            try {
+                recorder.publishToHandler(new SAXOutputter(context));
+            } catch (SAXException e) {
+                Exception ex = e.getException();
+                if (ex instanceof IOException)
+                    throw (IOException)ex;
+                throw new IOException(e.toString());
+            }
+            return;
+        }
+
+        AttributesImpl attrs = new AttributesImpl();
+        Object val = getValue();
+        
+        if (val != null) {
+            if (typeQName == null)
+                typeQName = context.getQNameForClass(val.getClass());
+            
+            if (attributes != null) {
+                // Must be writing a message we parsed earlier, so just put out
+                // what's already there.
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    attrs.addAttribute(attributes.getURI(i), attributes.getLocalName(i),
+                                       attributes.getQName(i), "string",
+                                       attributes.getValue(i));
+                }
+            } else {
+                // Writing a message from memory out to XML...
+                // !!! How do we set other attributes when serializing??
+                
+                ServiceDescription desc = getEnvelope().getServiceDescription();
+                if ((desc == null) || desc.getSendTypeAttr()) {
+                    if (typeQName != null) {
+                        attrs.addAttribute(Constants.URI_SCHEMA_XSI, "type", "xsi:type",
+                                           "string",
+                                           context.qName2String(typeQName));
+                    }
+                }
+                
+                if (val == null)
+                    attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
+                                       "string", "1");
+            }
+            
+            context.startElement(new QName(getNamespaceURI(), getName()), attrs);
+            // Output the value...
+            if (val != null)
+                context.writeString(value.toString());
+            
+            context.endElement();
+        }
+    }
 }

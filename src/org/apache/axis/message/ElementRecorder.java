@@ -1,8 +1,10 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,74 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.*;
+import org.apache.axis.message.events.*;
+import java.util.*;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** This guy records the basic SAX events into an event queue.  Then it can
+ * play them back to any SAX ContentHandler.
+ * 
+ * !!! TODO: Record the rest of the events...
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public interface MessageWithAttachments { 
+class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
+{
+    private static final boolean DEBUG_LOG = false;
     
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
+    // The recorded list of SAX events "inside" this element
+    protected Vector _events = new Vector();
     
+    public ElementRecorder()
+    {
+    }
+    
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.out.println("(rec) startElement ['" + namespace + "' " +
+                           localName + "]");
+        }
+        
+        _events.addElement(new StartElementEvent(namespace, localName, qName, attributes));
+    }
+    
+    public void endElement(String namespace, String localName, String qName)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.out.println("(rec) endElement ['" + namespace + "' " +
+                           localName + "]");
+        }
+
+        _events.addElement(new EndElementEvent(namespace, localName, qName));
+    }
+    
+    public void characters(char [] chars, int start, int length)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.out.println("(rec) characters ['" +
+                               new String(chars, start, length) + "']");
+        }
+        
+        _events.addElement(new CharactersEvent(chars, start, length));
+    }
+
+    /** Someone wants to deal with the XML inside me using SAX.
+      * So replay all the events to their handler.
+      * 
+      */
+    public void publishToHandler(ContentHandler handler)
+        throws SAXException
+    {
+        Enumeration e = _events.elements();
+        while (e.hasMoreElements()) {
+            SAXEvent event = (SAXEvent)e.nextElement();
+            event.publishToHandler(handler);
+        }
+    }
 }
+

@@ -1,8 +1,10 @@
+package org.apache.axis.message.events;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,32 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** A <code>CharactersElementEvent</code>
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public interface MessageWithAttachments { 
+
+public class CharactersEvent implements SAXEvent
+{
+    char [] _characters;
+    int _start;
+    int _length;
     
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
+    public CharactersEvent(char [] characters, int start, int length)
+    {
+        _characters = new char[length];
+        System.arraycopy(characters, start, _characters, 0, length);
+        _start = 0;
+        _length = length;
+    }
     
+    public void publishToHandler(ContentHandler handler) throws SAXException
+    {
+        handler.characters(_characters, _start, _length);
+    }
 }

@@ -1,8 +1,10 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,58 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import java.util.*;
+import org.apache.axis.encoding.DeserializationContext;
+import org.xml.sax.Attributes;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** Implements a simple QName->Factory mapping.  Something like this
+ * (but more complex) could be used to generate factories based on
+ * attributes, position, things in the DeserializationContext, etc...
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public interface MessageWithAttachments { 
+public class ElementRegistry implements ElementFactory
+{
+    private Hashtable factories = new Hashtable();
+    private ElementFactory defaultFactory = null;
     
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
+    public ElementRegistry() {};
     
+    /** The defaultFactory argument is the factory we'll use if
+     * we can't find a matching one in the registry.
+     * 
+     */
+    public ElementRegistry(ElementFactory defaultFactory)
+    {
+        this.defaultFactory = defaultFactory;
+    }
+        
+    public void registerFactory(String namespace, String localName,
+                                ElementFactory factory)
+    {
+        // !!! This is a kludge.  Fix with QNames/hashcodes....?
+        String combinedName = namespace + "|" + localName;
+        
+        factories.put(combinedName, factory);
+    }
+    
+    public MessageElement createElement(String namespace, String localName,
+                                    Attributes attributes, DeserializationContext context)
+    {
+        // !!! This is a kludge.  Fix with QNames/hashcodes....?
+        String combinedName = namespace + "|" + localName;
+        
+        ElementFactory factory = (ElementFactory)factories.get(combinedName);
+        
+        //DBG:System.out.println("Factory for '" + combinedName + "' is " + factory);
+        
+        if (factory == null)
+            factory = defaultFactory;
+        
+        if (factory != null)
+            return factory.createElement(namespace, localName,
+                                         attributes, context);
+        
+        return null;
+    }
 }

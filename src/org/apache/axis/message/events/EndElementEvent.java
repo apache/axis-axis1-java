@@ -1,8 +1,10 @@
+package org.apache.axis.message.events;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,18 +55,31 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
-import java.util.Hashtable;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** An <code>EndElementEvent</code>
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public interface MessageWithAttachments { 
+
+public class EndElementEvent implements SAXEvent
+{
+    String _namespace;
+    String _localPart;
+    String _qName;
     
-    public boolean hasAttachments();
-    public Hashtable getAttachments();
-    public Object getAttachment(String id);
-    public Object getAttachment(int index);
+    public EndElementEvent(String namespace, String localPart, String qName)
+    {
+        _namespace = namespace;
+        _localPart = localPart;
+        _qName = qName;
+    }
     
+    public void publishToHandler(ContentHandler handler) throws SAXException
+    {
+        handler.endElement(_namespace, _localPart, _qName);
+    }
 }

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,98 +55,67 @@
 
 package org.apache.axis.message ;
 
-// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
-
 import java.util.* ;
-import org.apache.axis.message.* ;
 import org.apache.axis.* ;
+import org.apache.axis.encoding.DeserializationContext;
+import org.xml.sax.Attributes;
 
-import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
-
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** A simple header abstraction.  Extends MessageElement with header-specific
+ * stuff like mustUnderstand, actor, and a 'processed' flag.
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
+ * 
  */
-public class SOAPHeader {
-  protected Element   root ;
-  protected boolean   processed ;
+public class SOAPHeader extends MessageElement {
+    static class HeaderFactory implements ElementFactory {
+        public MessageElement createElement(String namespace, 
+                                        String localName,
+                                        Attributes attributes, 
+                                        DeserializationContext context)
+        {
+            return new SOAPHeader(namespace, localName, attributes, context);
+        }
+    }
+    public static ElementFactory factory() { return new HeaderFactory(); }
+    
+    protected boolean   processed = false;
 
-  // Utility vars - dup of info in 'root' but faster access here
-  protected String    name ;
-  protected String    prefix ;
-  protected String    namespaceURI ;
-  protected String    actor ;
-  protected boolean   mustUnderstand ;
+    protected String    actor;
+    protected boolean   mustUnderstand = false;
 
-  public SOAPHeader() {
-    processed = false ;
-  }
+    public SOAPHeader() {
+    }
 
-  public SOAPHeader(Element elem) {
-    processed = false ;
-    setRoot( elem );
-  }
+    public SOAPHeader(String namespace, String localPart,
+                      Attributes attributes, DeserializationContext context) {
+        super(namespace, localPart, attributes, context);
+        
+        // Check for mustUnderstand
+        String val = attributes.getValue(Constants.URI_SOAP_ENV,
+                                         Constants.ATTR_MUST_UNDERSTAND);
+        mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+        
+        actor = attributes.getValue(Constants.URI_SOAP_ENV,
+                                    Constants.ATTR_ACTOR);
+        
+        processed = false;
+    }
+    
+    public boolean getMustUnderstand() { return( mustUnderstand ); }
+    public void setMustUnderstand(boolean b) { 
+        mustUnderstand = b ;
+    }
 
-  public Element getRoot() {
-    return( root );
-  }
+    public String getActor() { return( actor ); }
+    public void setActor(String a) { 
+        actor = a ;
+    }
 
-  public void setRoot(Element elem) {
-    String  value ;
+    public void setProcessed(boolean value) {
+        processed = value ;
+    }
 
-    root           = elem ;
-    prefix         = elem.getPrefix();
-    namespaceURI   = elem.getNamespaceURI();
-    name           = elem.getLocalName();
-
-    value          = elem.getAttributeNS( elem.getNamespaceURI(),
-                                          Constants.ATTR_ACTOR );
-    if ( value != null )
-      actor = value ;
-    else 
-      // Handle the case where they set Actor before they set the root
-      if ( value != null ) setActor( value );
-
-    value = elem.getAttributeNS( elem.getNamespaceURI(),
-                                 Constants.ATTR_MUST_UNDERSTAND );
-    if ( value != null )
-      mustUnderstand = "1".equals(value);
-    else 
-      // Handle the case where they set MU before they set the root
-      if ( mustUnderstand ) setMustUnderstand( true );
-  }
-
-  public String getName() { return( name ); }
-  public String getPrefix() { return( prefix ); }
-  public String getNamespaceURI() { return( namespaceURI ); }
-
-  public boolean getMustUnderstand() { return( mustUnderstand ); }
-  public void setMustUnderstand(boolean b) { 
-    mustUnderstand = b ;
-    if ( root == null ) return ;
-    root.setAttributeNS( Constants.URI_SOAP_ENV,
-                         Constants.NSPREFIX_SOAP_ENV + ":" +
-                           Constants.ATTR_MUST_UNDERSTAND,
-                         "1" );
-
-  }
-
-  public String getActor() { return( actor ); }
-  public void setActor(String a) { 
-    actor = a ;
-    root.setAttributeNS( Constants.URI_SOAP_ENV,
-                         Constants.NSPREFIX_SOAP_ENV + ":" + 
-                           Constants.ATTR_ACTOR,
-                         actor );
-  }
-
-  public void setProcessed(boolean value) {
-    processed = value ;
-  }
-
-  public boolean isProcessed() {
-    return( processed );
-  }
-
+    public boolean isProcessed() {
+        return( processed );
+    }
 };

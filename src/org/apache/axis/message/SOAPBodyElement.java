@@ -1,8 +1,10 @@
+package org.apache.axis.message;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,92 +55,22 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message ;
+import org.xml.sax.Attributes;
+import org.apache.axis.encoding.DeserializationContext;
 
-// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
-
-import java.util.* ;
-
-import org.apache.axis.utils.AxisClassLoader ;
-import org.apache.axis.utils.Debug ;
-
-import org.w3c.dom.* ;
-
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** A Body element.
+ * 
+ * Useful subclass right now is RPCElement.
  */
-public class RPCArg {
-  protected String   prefix ;
-  protected String   namespaceURI ;
-  protected String   name ;
-  protected String   value ;         // only support String for now
-  protected String   type ;
-
-  public RPCArg() {} 
-
-  public RPCArg(Element elem) {
-    prefix = elem.getPrefix();
-    namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    value = elem.getFirstChild().getNodeValue();
-  }
-
-  public RPCArg(String name) {
-    setName( name );
-  }
-
-  // should go away once we support more than just String
-  public RPCArg(String name, String value) {  
-    setName( name );
-    setValue( value );
-  }
-
-  public String getPrefix() { return( prefix ); }
-  public void   setPrefix(String p) { prefix = p ; }
-
-  public String getNamespaceURI() { return( namespaceURI ); }
-  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
-
-  public String getName() { return( name ); }
-  public void   setName(String name) { this.name = name ; }
-
-  public String getValue() { return( value ); }
-  public void   setValue(String val) { value = val ; }
-
-  public String getTypeAsString() { 
-    if ( type == null ) type = "java.lang.String" ;
-    return( type );
-  }
-  public Class  getTypeAsClass() { 
-    if ( type == null ) type = "java.lang.String" ;
-    AxisClassLoader cl     = new AxisClassLoader();
-    Class           cls    = null ;
-    try {
-      cl.loadClass(type);
+public class SOAPBodyElement extends MessageElement
+{
+    public SOAPBodyElement(String namespace, String localPart,
+                      Attributes attributes, DeserializationContext context)
+    {
+        super(namespace, localPart, attributes, context);
     }
-    catch( Exception e ) {
-      Debug.Print(0, e);
+    
+    public SOAPBodyElement()
+    {
     }
-    return( cls );
-  }
-  public void   setType(String str) { type = str ; }
-
-  public Element getElement(Document doc) {
-    Element   root ;
-
-    if ( prefix != null ) {
-      root = doc.createElementNS( namespaceURI, prefix + ":" + name );
-      root.setAttribute( "xmlns:" + prefix, namespaceURI );
-    }
-    else 
-      root = doc.createElement( name );
-    if ( value == null ) {
-      root.setAttribute( "xsi:type", "string" );
-      root.setAttribute( "xsi:null", "1" );
-    }
-    else
-      root.appendChild( doc.createTextNode( value ) );
-    return( root );
-  }
-};
+}

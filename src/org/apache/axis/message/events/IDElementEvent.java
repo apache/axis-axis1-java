@@ -1,8 +1,10 @@
+package org.apache.axis.message.events;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,43 +55,33 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message ;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.apache.axis.message.MessageElement;
 
-// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
-
-import java.util.* ;
-import org.apache.axis.AxisFault ;
-import org.apache.axis.message.* ;
-
-import org.w3c.dom.* ;
-
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** An <code>IDElementEvent</code> represents hitting a sub-element
+ * with an ID set, which means the engine put it into another MessageElement.
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SOAPBody {
-  protected Element   root ;
 
-  public SOAPBody() {
-    root = null ;
-  }
-
-  public SOAPBody(Document doc) {
-    if ( doc != null )
-      root = doc.getDocumentElement() ;
-    else
-      root = null ;
-  }
-
-  public SOAPBody(Element elem) {
-    root = elem ;
-  }
-
-  public Element getRoot() {
-    return( root );
-  }
-
-  public void setRoot(Element r) {
-    this.root = r ;
-  }
-};
+public class IDElementEvent implements SAXEvent
+{
+    String _namespace;
+    String _localPart;
+    MessageElement _target;
+    
+    public IDElementEvent(String namespace, String localPart, MessageElement target)
+    {
+        _namespace = namespace;
+        _localPart = localPart;
+        _target = target;
+    }
+    
+    public void publishToHandler(ContentHandler handler) throws SAXException
+    {
+        _target.publishToHandler(handler);
+    }
+}
