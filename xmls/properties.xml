@@ -122,4 +122,4 @@
 <property name="iis.hostname" value="127.0.0.1"/>
 <property name="iis.port" value="80"/>
 
-
+<property name="exclude.log4j.configuration" value="false"/>
