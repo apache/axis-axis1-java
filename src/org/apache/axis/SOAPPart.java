@@ -305,7 +305,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * TODO: rename this for clarity to something more like setContents???
      */
     private void setCurrentForm(Object currMsg, int form) {
-        log.debug("setCurrentForm(" + currMsg + ", " + form);
         if (log.isDebugEnabled()) {
             String msgStr;
             if (currMsg instanceof String) {
@@ -527,13 +526,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
 
         InputSource is;
-            log.debug("yup533");
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
         } else {
-            log.debug("yup637");
-
             is = new InputSource(new StringReader(getAsString()));
         }
         DeserializationContext dser = new DeserializationContextImpl(is,
