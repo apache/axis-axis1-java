@@ -694,9 +694,15 @@ public class Types {
      * @return QName
      */
     public QName getTypeQName(Class javaType) {
-        QName qName = defaultTM.getTypeQName(javaType);
-        if(qName == null) {
+        QName qName = null;
+
+        // Use the typeMapping information to lookup the qName.
+        if (tm != null) {
             qName = tm.getTypeQName(javaType);
+        }
+
+        if (qName == null) {
+            qName = defaultTM.getTypeQName(javaType);
         }
 
         // If the javaType is an array and the qName is
