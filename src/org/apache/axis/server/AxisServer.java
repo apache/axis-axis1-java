@@ -216,7 +216,7 @@ public class AxisServer extends AxisEngine
               hName = Constants.GLOBAL_REQUEST ;
               if ( hName != null  && (h = hr.find( hName )) != null )
                   h.invoke(msgContext);
-      
+              
               /**
                * At this point, the service should have been set by someone
                * (either the originator of the MessageContext, or one of the
@@ -224,13 +224,23 @@ public class AxisServer extends AxisEngine
                * fault.
                */
               h = msgContext.getServiceHandler();
-              if (h != null)
-                  h.invoke(msgContext);
-              else
+              if (h == null) {
+                // It's possible that we haven't yet parsed the
+                // message at this point.  This is a kludge to
+                // make sure we have.  There probably wants to be
+                // some kind of declarative "parse point" on the handler
+                // chain instead....
+                Message rm = msgContext.getRequestMessage();
+                rm.getAsSOAPEnvelope().getFirstBody();
+                h = msgContext.getServiceHandler();
+                if (h == null)
                   throw new AxisFault("Server.NoService",
                                       "The Axis engine couldn't find a " +
                                       "target service to invoke!",
                                       null, null );
+              }
+
+              h.invoke(msgContext);
       
               /* Process the Global Response Chain */
               /***********************************/
