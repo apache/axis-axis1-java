@@ -835,6 +835,7 @@ public class MessageElement implements SOAPElement
                                        String prefix) throws SOAPException {
         MessageElement child = new MessageElement(getNamespaceURI(prefix),
                                                   localName);
+        child.setPrefix(prefix);
         addChild(child);
         return child;
     }
@@ -843,6 +844,7 @@ public class MessageElement implements SOAPElement
                                        String prefix,
                                        String uri) throws SOAPException {
             MessageElement child = new MessageElement(uri, localName);
+            child.setPrefix(prefix);
             child.addNamespaceDeclaration(prefix, uri);
             addChild(child);
             return child;
