@@ -57,7 +57,6 @@ package org.apache.axis.ime.internal;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.i18n.Messages;
 import org.apache.axis.ime.MessageExchange;
 import org.apache.axis.ime.MessageExchangeConstants;
 import org.apache.axis.ime.MessageExchangeCorrelator;
@@ -70,7 +69,7 @@ import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
@@ -288,91 +287,55 @@ public class MessageExchangeImpl
 
     /**
      * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@enableFeature(featureId)
+     * @see org.apache.axis.ime.MessageExchange@setOption(String,Object)
      */
-    public void enableFeature(String featureId)
-            throws AxisFault {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    public void setOption(
+            String OptionId,
+            Object OptionValue) {
+        provider.setOption(OptionId, OptionValue);
     }
 
     /**
      * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@disableFeature(featureId)
+     * @see org.apache.axis.ime.MessageExchange@getOption(String)
      */
-    public void disableFeature(String featureId)
-            throws AxisFault {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    public Object getOption(
+            String OptionId) {
+        return provider.getOption(OptionId);
     }
 
     /**
      * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@isFeatureEnabled(featureId)
+     * @see org.apache.axis.ime.MessageExchange@getOption(String,Object)
      */
-    public boolean isFeatureEnabled(String featureId)
-            throws AxisFault {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
-    }
-
-    /**
-     * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@isFeatureEnabled(featureId)
-     */
-    public String[] getSupportedFeatures()
-            throws AxisFault {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
-    }
-
-    /**
-     * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@setProperty(String,Object)
-     */
-    public void setProperty(
-            String propertyId,
-            Object propertyValue) {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
-    }
-
-    /**
-     * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@getProperty(String)
-     */
-    public Object getProperty(
-            String propertyId) {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
-    }
-
-    /**
-     * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@getProperty(String,Object)
-     */
-    public Object getProperty(
-            String propertyId,
+    public Object getOption(
+            String OptionId,
             Object defaultValue) {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+        return provider.getOption(OptionId, defaultValue);
     }
 
     /**
      * Unsupported for now
      * @see org.apache.axis.ime.MessageExchange@getProperties()
      */
-    public Map getProperties() {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    public Hashtable getOptions() {
+        return provider.getOptions();
     }
 
     /**
      * Unsupported for now
-     * @see org.apache.axis.ime.MessageExchange@setProperties(java.lang.Map)
+     * @see org.apache.axis.ime.MessageExchange@setProperties(java.lang.Hashtable)
      */
-    public void setProperties(Map properties) {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    public void setOptions(Hashtable options) {
+        provider.setOptions(options);
     }
 
     /**
      * Unsupported for now
      * @see org.apache.axis.ime.MessageExchange@clearProperties()
      */
-    public void clearProperties() {
-        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    public void clearOptions() {
+        provider.clearOptions();
     }
     
     
