@@ -99,8 +99,11 @@ public class FileSender extends BasicHandler {
       try {
         Thread.sleep( 100 );
         File file = new File( "xml" + nextNum + ".res" );
-        if ( !file.exists() ) continue ;
 
+        if ((new Date().getTime())>=timeout)
+            throw new AxisFault("timeout");
+
+        if ( !file.exists() ) continue ;
         Thread.sleep( 100 );   // let the other side finish writing
         FileInputStream fis = new FileInputStream( "xml" + nextNum + ".res" );
         msg = new Message( fis );
@@ -112,7 +115,8 @@ public class FileSender extends BasicHandler {
         break ;
       }
       catch( Exception e ) {
-        if ((new Date().getTime())>=timeout) throw new AxisFault("timeout");
+          if ((new Date().getTime())>=timeout)
+              throw new AxisFault("timeout");
 
         // File not there - just loop
       }
