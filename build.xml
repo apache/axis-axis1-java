@@ -26,10 +26,18 @@ Most useful targets:
  - dist     -> creates the complete binary distribution
  - srcdist  -> creates the complete src distribution
 
+Custom post-compilation work:
+
+   If you desire to do some extra work as a part of the build after the
+   axis.jar is assembled, simply create an ant buildfile called
+   "post-compile.xml" in this directory.  The build will automatically
+   notice this and run it at the appropriate time.  This is handy for
+   updating the jar file in a running server, for instance.
+
 Authors:
   Sam Ruby <rubys@us.ibm.com>
   Matthew J. Duftler <duftler@us.ibm.com>
-
+  Glen Daniels <gdaniels@macromedia.com>
 
 Copyright:
   Copyright (c) 2001 Apache Software Foundation.
@@ -61,10 +69,11 @@ Copyright:
   <property name="build.dir" value="./build"/>
   <property name="build.dest" value="./build/classes"/>
   <property name="build.lib" value="./build/lib"/>
-  <property name="build.samples" value="./build/samples"/>
+  <property name="build.samples" value="./build/classes/samples"/>
   <property name="build.javadocs" value="./build/javadocs"/>
+  <property name="build.webapp" value="./build/webapps/axis"/>
 
-  <property name="webapps" value="./webapps"/>
+  <property name="webapp" value="./webapps/axis"/>
 
   <property name="dist.dir" value="./axis-1_0"/>
 
@@ -93,6 +102,8 @@ Copyright:
     <available property="junit.present" 
       classname="junit.framework.TestCase"
       classpathref="classpath"/>
+
+    <available property="post-compile.present" file="post-compile.xml" />
 
     <echo message="--- Build environment for ${Name} ---" />
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
@@ -127,6 +138,14 @@ Copyright:
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" />
+    <antcall target="post-compile"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Custom post-compilation step                                        -->
+  <!-- =================================================================== -->
+  <target name="post-compile" if="post-compile.present">
+   <ant antfile="post-compile.xml"/>
   </target>
 
   <!-- =================================================================== -->
@@ -211,7 +230,7 @@ Copyright:
     <mkdir dir="${dist.dir}/docs/apiDocs"/>
     <mkdir dir="${dist.dir}/lib"/>
     <mkdir dir="${dist.dir}/samples"/>
-    <mkdir dir="${dist.dir}/webapps"/>
+    <mkdir dir="${dist.dir}/webapps/axis"/>
 
     <copy todir="${dist.dir}/docs/apiDocs">
       <fileset dir="${build.javadocs}"/>
@@ -225,8 +244,13 @@ Copyright:
     <copy todir="${dist.dir}/docs">
       <fileset dir="${docs.dir}"/>
     </copy>
-    <copy todir="${dist.dir}/webapps">
-      <fileset dir="${webapps}"/>
+    <copy todir="${dist.dir}/webapps/axis">
+      <fileset dir="${webapp}"/>
+    </copy>
+    <copy file="${build.lib}/axis.jar"
+          todir="${dist.dir}/webapps/axis/WEB-INF/lib"/>
+    <copy todir="${dist.dir}/webapps/axis/WEB-INF/classes/samples">
+      <fileset dir="${build.samples}"/>
     </copy>
 
     <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
