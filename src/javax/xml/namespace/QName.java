@@ -63,11 +63,11 @@ import java.io.Serializable;
  * as specified in <a href="http://www.w3.org/TR/xmlschema-2/#QName">XML
  * Schema Part2: Datatypes specification</a>.
  * <p>
- * The value of a QName contains a <b>namespaceURI</b> and a <b>localPart</b>.
+ * The value of a QName contains a <b>namespaceURI</b>, a <b>localPart</b> and a <b>prefix</b>.
  * The localPart provides the local part of the qualified name. The
  * namespaceURI is a URI reference identifying the namespace.
  *
- * @version 1.0
+ * @version 1.1
  */
 public class QName implements Serializable {
 
@@ -80,17 +80,16 @@ public class QName implements Serializable {
     /** Field localPart */
     private String localPart;
 
+    /** Field prefix */
+    private String prefix;
+
     /**
      * Constructor for the QName.
      *
      * @param localPart Local part of the QName
      */
     public QName(String localPart) {
-
-        this.namespaceURI = emptyString;
-        this.localPart    = (localPart == null)
-                            ? emptyString
-                            : localPart.intern();
+        this(emptyString, localPart, emptyString);
     }
 
     /**
@@ -100,13 +99,31 @@ public class QName implements Serializable {
      * @param localPart Local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
+        this(namespaceURI, localPart, emptyString);
+    }
 
+    /**
+     * Constructor for the QName.
+     *
+     * @param namespaceURI Namespace URI for the QName
+     * @param localPart Local part of the QName.
+     * @param prefix Prefix of the QName.
+     */
+    public QName(String namespaceURI, String localPart, String prefix) {
         this.namespaceURI = (namespaceURI == null)
-                            ? emptyString
-                            : namespaceURI.intern();
-        this.localPart    = (localPart == null)
-                            ? emptyString
-                            : localPart.intern();
+                ? emptyString
+                : namespaceURI.intern();
+        if (localPart == null) {
+            throw new IllegalArgumentException("invalid QName local part");
+        } else {
+            this.localPart = localPart.intern();
+        }
+
+        if (prefix == null) {
+            throw new IllegalArgumentException("invalid QName prefix");
+        } else {
+            this.prefix = prefix.intern();
+        }
     }
 
     /**
@@ -125,6 +142,15 @@ public class QName implements Serializable {
      */
     public String getLocalPart() {
         return localPart;
+    }
+
+    /**
+     * Gets the Prefix for this QName
+     *
+     * @return Prefix
+     */
+    public String getPrefix() {
+        return prefix;
     }
 
     /**
@@ -231,12 +257,12 @@ public class QName implements Serializable {
      * Ensure that deserialization properly interns the results.
      * @param in the ObjectInputStream to be read
      */
-    private void readObject(ObjectInputStream in) throws 
-        IOException, ClassNotFoundException
-    {
+    private void readObject(ObjectInputStream in) throws
+            IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         namespaceURI = namespaceURI.intern();
         localPart = localPart.intern();
+        prefix = prefix.intern();
     }
 }
