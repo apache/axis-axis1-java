@@ -99,7 +99,7 @@ public class JavaUndeployWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         writeDeployServices();
-        pw.println("</deployment>");
+        pw.println("</undeployment>");
         pw.close();
     } // writeFileBody
 
