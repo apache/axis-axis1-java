@@ -165,7 +165,6 @@ public class TestSrcContent extends TestCase {
                                        + "|utils\\1Admin\\.java"
                                        + "|utils\\1SOAPMonitor\\.java"
                                        + "|providers\\1BSFProvider\\.java"
-                                       + "|ime\\1internal\\1util\\1uuid\\1TestUUID\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
                                        + "|transport\\1jms\\1SimpleJMSListener\\.java"
                                        + "|Version\\.java"

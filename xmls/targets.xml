@@ -284,14 +284,6 @@
     <echo level="verbose">iis.found=${iis.found}</echo>
     <echo level="verbose">iis.base=${iis.base}</echo>
 
-
-    <!-- enables/disables compilation of the org.apache.axis.ime package -->
-    <condition property="compile.ime">
-      <and>
-        <equals arg1="${env.compileime}" arg2="true" />
-      </and>
-    </condition>
-    <echo level="verbose">compile.ime=${compile.ime}</echo>
     <!-- look for xalan -->
     <available property="xalan2.present"
                classname="org.apache.xalan.transformer.TransformerImpl" />
@@ -412,11 +404,6 @@
     <echo message="test.functional.SimpleAxisPort = ${test.functional.SimpleAxisPort}" />
     <echo message="test.functional.TCPListenerPort = ${test.functional.TCPListenerPort}" />
     <echo message="test.functional.fail = ${test.functional.fail}" />
-    <echo message="" />
-
-    <echo message="-- Internal Message Exchange ---" />
-    <echo message="" />
-    <echo message="compile.ime = ${compile.ime}" />
     <echo message="" />
 
     <pathconvert targetos="windows" property="classpath.as.string" refid="classpath"/>
