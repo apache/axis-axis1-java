@@ -340,6 +340,17 @@ public class SchemaUtils {
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
 
+        // The type qname is used to locate the TypeEntry, which is then
+        // used to retrieve the proper java name of the type.
+        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
+
+        if (nodeType == null) {
+            nodeType = getElementAnonQName(elementNode);            
+            forElement.value = false;
+        }        
+        TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
+                                                             forElement.value);
+
         // An element inside a complex type is either qualified or unqualified.
         // If the ref= attribute is used, the name of the ref'd element is used
         // (which must be a root element).  If the ref= attribute is not
@@ -363,15 +374,6 @@ public class SchemaUtils {
             }
         }
 
-        // The type qname is used to locate the TypeEntry, which is then
-        // used to retrieve the proper java name of the type.
-        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
-        if (nodeType == null) {
-            nodeType = getElementAnonQName(elementNode);            
-            forElement.value = false;
-        }        
-        TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
-                                                             forElement.value);
         if (type != null) {
             ElementDecl elem = new ElementDecl(type, nodeName);
             String minOccurs = Utils.getAttribute(elementNode, "minOccurs");
@@ -718,23 +720,27 @@ public class SchemaUtils {
      * @param dims is the output value that contains the number of dimensions if return is not null
      * @return QName or null
      */
-    public static QName getArrayElementQName(Node node, IntHolder dims) {
+    public static QName getArrayComponentQName(Node node, IntHolder dims) {
         dims.value = 1;  // assume 1 dimension
-        QName qName = getCollectionElementQName(node);
+        QName qName = getCollectionComponentQName(node);
         if (qName == null) {
-            qName = getArrayElementQName_JAXRPC(node, dims);
+            qName = getArrayComponentQName_JAXRPC(node, dims);
         }
         return qName;
     }
 
     /**
-     * If the specified node represents an element that refernces a collection
-     * then return the qname repesenting the element type of the collection.
+     * If the specified node represents an element that references a collection
+     * then return the qname repesenting the component of the collection.
      *
      *  <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-     *
+     *    returns qname for"xsd:string"
+     *  <xsd:element ref="alias"  maxOccurs="unbounded"/>
+     *    returns qname for "alias"
+     * @param node is the Node
+     * @return QName of the compoent of the collection
      */
-    private static QName getCollectionElementQName(Node node) {
+    private static QName getCollectionComponentQName(Node node) {
         if (node == null) {
             return null;
         }
@@ -745,15 +751,19 @@ public class SchemaUtils {
             nodeKind.getLocalPart().equals("element") &&
             Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
-            // Get the qName of just the type.
+            // Get the qName of just the type or just the ref
             // The compare it against the full type of the node, which
             // takes into account maxOccurs and could return a collection type.
-            // If different, return just the type (which is the collection element type).
-            QName justTypeQName = Utils.getNodeTypeRefQName(node, "type");
-            if (justTypeQName != null) {
+            // If different, return just the type (which is the collection component).
+            QName componentQName = Utils.getNodeTypeRefQName(node, "type");
+            if (componentQName == null) {
+                componentQName = Utils.getNodeTypeRefQName(node, "ref");
+            }
+
+            if (componentQName != null) {
                 QName fullTypeQName = Utils.getNodeTypeRefQName(node, new BooleanHolder());
-                if (justTypeQName != fullTypeQName)
-                    return justTypeQName;
+                if (componentQName != fullTypeQName)
+                    return componentQName;
             }
         }
         return null;
@@ -788,7 +798,7 @@ public class SchemaUtils {
      *</xsd:complexType>
      *
      */
-    private static QName getArrayElementQName_JAXRPC(Node node, IntHolder dims) {
+    private static QName getArrayComponentQName_JAXRPC(Node node, IntHolder dims) {
         dims.value = 0;  // Assume 0
         if (node == null) {
             return null;
