@@ -173,10 +173,14 @@ public class Java2WsdlAntTask extends Task
               Project.MSG_VERBOSE);
             ClassUtils.setClassLoader(className, cl);
             ClassUtils.setClassLoader(implClass, cl);
-            StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
-            while (tokenizer.hasMoreTokens()) {
-                String clsName = tokenizer.nextToken();
-                ClassUtils.setClassLoader(clsName, cl);
+            //add extra classes to the classpath when the classpath attr is not null
+            //??why do we do this? Why don't we do this when the classpath is unset?
+            if(extraClasses!=null) {
+                StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
+                while (tokenizer.hasMoreTokens()) {
+                    String clsName = tokenizer.nextToken();
+                    ClassUtils.setClassLoader(clsName, cl);
+                }
             }
         }
         try {
