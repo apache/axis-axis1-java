@@ -26,10 +26,15 @@ import java.io.InputStream;
  */
 
 public class ChunkedInputStream extends java.io.FilterInputStream {
+
     protected long chunkSize = 0l;
     protected volatile boolean closed = false;
-    private static final int maxCharLong = (Long.toHexString(Long.MAX_VALUE))
-      .toString().length();
+    
+    private static final int maxCharLong = 
+        (Long.toHexString(Long.MAX_VALUE)).toString().length();
+    
+    private byte[] buf = new byte[maxCharLong + 2];
+
     private ChunkedInputStream () {
         super(null);
     }
@@ -127,10 +132,7 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
     }
               
     protected long getChunked()throws IOException {
-        //StringBuffer buf= new StringBuffer(1024);
-        byte[]buf = new byte[maxCharLong + 2];
         int bufsz = 0;
- 
         chunkSize = -1L; 
         int c = -1;
 
@@ -158,13 +160,23 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
             closed = true;
             throw new IOException("'" + sbuf + "' " + ne.getMessage());
         }
-        if (chunkSize < 1L) closed = true;                  
+        if (chunkSize < 0L) {
+            closed = true;
+        } if (chunkSize == 0) {
+            closed = true;
+            // consume last \r\n tokens of 0\r\n\r\n chunk
+            if (in.read() != -1) {
+                in.read();
+            }
+        }
         if (chunkSize != 0L && c < 0) {
             //If chunk size is zero try and be tolerant that there maybe no cr or lf at the end.
             throw new IOException("HTTP Chunked stream closed in middle of chunk.");
         }
-        if (chunkSize < 0L) throw new IOException("HTTP Chunk size received " +
-            chunkSize + " is less than zero.");
+        if (chunkSize < 0L) {
+            throw new IOException("HTTP Chunk size received " +
+                                  chunkSize + " is less than zero.");
+        }
         return chunkSize;                  
     }
 
