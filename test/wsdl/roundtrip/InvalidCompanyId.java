@@ -64,7 +64,7 @@ package test.wsdl.roundtrip;
  */
 public class InvalidCompanyId extends Exception {
 
-    public int companyId;
+    private int companyId;
     private InvalidCompanyId e;  // This should not be put in the wsdl
 
     public InvalidCompanyId(int companyId) {

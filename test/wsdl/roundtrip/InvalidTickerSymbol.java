@@ -64,7 +64,7 @@ package test.wsdl.roundtrip;
  */
 public class InvalidTickerSymbol extends Exception {
 
-    public String tickerSymbol;
+    private String tickerSymbol;
 
     public InvalidTickerSymbol(String tickerSymbol) {
         this.tickerSymbol = tickerSymbol;

@@ -60,6 +60,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 
 
@@ -129,6 +130,24 @@ public class BeanPropertyDescriptor
     }
 
     /** 
+     * Construct a BPD with only a getter method
+     * @param _name is the name of the property
+     * @param _getter is the accessor method
+     */
+    public BeanPropertyDescriptor(String _name,
+                                  Method _getter) {
+        name = _name;
+        getter = _getter;
+        setter = null;
+        if (_getter == null || _name == null) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(getter == null ?
+                                         "badGetter00" :
+                                         "badProp03"));
+        }
+    }
+
+    /** 
      * Construct a BPD with a field
      * Both must be set
      * @param _name is the name of the property
@@ -183,7 +202,7 @@ public class BeanPropertyDescriptor
         } else if (field != null) {
             return field.get(obj);
         }
-        return null;
+        throw new IllegalAccessException(JavaUtils.getMessage("badGetter00"));
     }
     /**
      * Set the property value
@@ -196,6 +215,8 @@ public class BeanPropertyDescriptor
             setter.invoke(obj, new Object[] {newValue});
         } else if (field != null) {
             field.set(obj, newValue);
+        } else {
+            throw new IllegalAccessException(JavaUtils.getMessage("badSetter00"));
         }
     }    
     /** 
