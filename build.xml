@@ -224,6 +224,8 @@ Copyright:
       <arg value="samples/addr/AddressBook.wsdl"/>
       <arg value="-p"/>
       <arg value="samples.addr"/>
+      <arg value="-d"/>
+      <arg value="Session"/>
     </java>
   </target>
 
