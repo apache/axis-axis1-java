@@ -239,6 +239,8 @@ public class ArrayDeserializer extends DeserializerImpl
                         innerQName = arrayTypeValue;
                         innerDimString = arraySizeValue.substring(0, leftStarIndex + 1);
                     }
+                } else {
+                    dimString = arraySizeValue;
                 }
 
                 if (innerDimString == null) {
