@@ -172,12 +172,12 @@ public class MapSerializer implements Serializer
         Element element2 = types.createElement("element");
         element2.setAttribute("name", "key");
         element2.setAttribute("nillable", "true");
-        element2.setAttribute("type", "xsd:string");
+        element2.setAttribute("type", "xsd:anyType");
         seq2.appendChild(element2);
         Element element3 = types.createElement("element");
         element3.setAttribute("name", "value");
         element3.setAttribute("nillable", "true");
-        element3.setAttribute("type", "xsd:string");
+        element3.setAttribute("type", "xsd:anyType");
         seq2.appendChild(element3);
         types.writeSchemaTypeDecl(QNAME_ITEMTYPE, itemType);
 
