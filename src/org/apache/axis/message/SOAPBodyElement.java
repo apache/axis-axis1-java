@@ -54,7 +54,6 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;

@@ -56,7 +56,6 @@
 package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;

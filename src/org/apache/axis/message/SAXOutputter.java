@@ -54,7 +54,6 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.encoding.SerializationContext;
 
 import org.apache.axis.components.logger.LogFactory;

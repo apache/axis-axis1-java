@@ -55,7 +55,6 @@
 package org.apache.axis.handlers.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;

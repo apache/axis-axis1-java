@@ -55,10 +55,8 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -72,6 +70,7 @@ import javax.xml.namespace.QName;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler

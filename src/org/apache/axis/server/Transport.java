@@ -54,7 +54,6 @@
 
 package org.apache.axis.server;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.utils.JavaUtils;
 

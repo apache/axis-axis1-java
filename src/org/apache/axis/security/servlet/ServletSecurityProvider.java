@@ -55,7 +55,6 @@
 
 package org.apache.axis.security.servlet;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;

@@ -55,7 +55,6 @@
 package org.apache.axis.handlers.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
@@ -85,7 +84,7 @@ public class HTTPActionHandler extends BasicHandler
         log.debug("Enter: HTTPActionHandler::invoke");
 
         /** If there's already a targetService then just return.
-        */
+         */
         if ( msgContext.getService() == null ) {
             String action = (String) msgContext.getSOAPActionURI();
             log.debug( "  HTTP SOAPAction: " + action );

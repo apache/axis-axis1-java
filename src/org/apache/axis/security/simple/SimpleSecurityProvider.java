@@ -55,7 +55,6 @@
 
 package org.apache.axis.security.simple;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
