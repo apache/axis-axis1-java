@@ -181,6 +181,23 @@ public class AxisServer extends BasicHandler
   
               // When do we call init/cleanup??
               Debug.Print(1, "Calling default logic in AxisServer" );
+
+              /*  This is what the entirety of this logic might evolve to:
+              
+              hName = msgContext.getStrProp(MessageContext.TRANSPORT);
+              if ( hName != null ) {
+                if ((h = hr.find( hName )) != null ) {
+                  h.invoke(msgContext);
+                } else {
+                  System.err.println("Couldn't find transport " + hName);
+                }
+              } else {
+                // No transport set, so use the default (probably just
+                // calls the global->service handlers)
+                defaultTransport.invoke(msgContext);
+              }
+
+              */
               
               /* Process the Transport Specific Input Chain */
               /**********************************************/
@@ -206,24 +223,14 @@ public class AxisServer extends BasicHandler
                                      "Can't find '" + hName + "' handler",
                                      null, null );
               */
-              // This is HACKISH!  Why do we *have* both getTargetService
-              // and getServiceHandler?  And why is this code looking in
-              // the *handler* registry rather than the *service* registry???
-              // -- RobJ
-              hName = msgContext.getTargetService();
               h = msgContext.getServiceHandler();
-              if ( hName != null ) {
-                if (h != null || ((h = hr.find( hName )) != null))
+              if (h != null)
                   h.invoke(msgContext);
-                else
-                  throw new AxisFault( "Server.error",
-                                     "Can't find '" + hName + "' handler",
-                                     null, null );
-              } else {
-                throw new AxisFault("Server.NoService",
-                                    "The Axis engine couldn't find a target service to invoke!",
-                                    null, null );
-              }
+              else
+                  throw new AxisFault("Server.NoService",
+                                      "The Axis engine couldn't find a " +
+                                      "target service to invoke!",
+                                      null, null );
       
               /* Process the Global Output Chain */
               /***********************************/
