@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:s="http://www.w3.org/2001/XMLSchema" 
+             xmlns:s0="urn:dataTypes" 
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+             xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
+             xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+             targetNamespace="urn:dataTypes" 
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="urn:dataTypes">
+      <s:element name="SayHello">
+        <s:complexType />
+      </s:element>
+      <s:element name="SayHelloResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SayHelloResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SayHelloName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SayHelloNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SayHelloNameResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetIntArray">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetIntArrayResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetIntArrayResult" type="s0:ArrayOfInt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMode">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetModeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetModeResult" type="s0:Mode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="Mode">
+        <s:restriction base="s:string">
+          <s:enumeration value="On" />
+          <s:enumeration value="Off" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetOrder">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetOrderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrderResult" type="s0:Order" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Order">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OrderID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Price" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetOrders">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetOrdersResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrdersResult" type="s0:ArrayOfOrder" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfOrder">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Order" nillable="true" type="s0:Order" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="string" nillable="true" type="s:string" />
+      <s:element name="ArrayOfInt" nillable="true" type="s0:ArrayOfInt" />
+      <s:element name="Mode" type="s0:Mode" />
+      <s:element name="Order" nillable="true" type="s0:Order" />
+      <s:element name="ArrayOfOrder" nillable="true" type="s0:ArrayOfOrder" />
+    </s:schema>
+  </types>
+  <message name="SayHelloSoapIn">
+    <part name="parameters" element="s0:SayHello" />
+  </message>
+  <message name="SayHelloSoapOut">
+    <part name="parameters" element="s0:SayHelloResponse" />
+  </message>
+  <message name="SayHelloNameSoapIn">
+    <part name="parameters" element="s0:SayHelloName" />
+  </message>
+  <message name="SayHelloNameSoapOut">
+    <part name="parameters" element="s0:SayHelloNameResponse" />
+  </message>
+  <message name="GetIntArraySoapIn">
+    <part name="parameters" element="s0:GetIntArray" />
+  </message>
+  <message name="GetIntArraySoapOut">
+    <part name="parameters" element="s0:GetIntArrayResponse" />
+  </message>
+  <message name="GetModeSoapIn">
+    <part name="parameters" element="s0:GetMode" />
+  </message>
+  <message name="GetModeSoapOut">
+    <part name="parameters" element="s0:GetModeResponse" />
+  </message>
+  <message name="GetOrderSoapIn">
+    <part name="parameters" element="s0:GetOrder" />
+  </message>
+  <message name="GetOrderSoapOut">
+    <part name="parameters" element="s0:GetOrderResponse" />
+  </message>
+  <message name="GetOrdersSoapIn">
+    <part name="parameters" element="s0:GetOrders" />
+  </message>
+  <message name="GetOrdersSoapOut">
+    <part name="parameters" element="s0:GetOrdersResponse" />
+  </message>
+  <portType name="DataTypes">
+    <operation name="SayHello">
+      <input message="s0:SayHelloSoapIn" />
+      <output message="s0:SayHelloSoapOut" />
+    </operation>
+    <operation name="SayHelloName">
+      <input message="s0:SayHelloNameSoapIn" />
+      <output message="s0:SayHelloNameSoapOut" />
+    </operation>
+    <operation name="GetIntArray">
+      <input message="s0:GetIntArraySoapIn" />
+      <output message="s0:GetIntArraySoapOut" />
+    </operation>
+    <operation name="GetMode">
+      <input message="s0:GetModeSoapIn" />
+      <output message="s0:GetModeSoapOut" />
+    </operation>
+    <operation name="GetOrder">
+      <input message="s0:GetOrderSoapIn" />
+      <output message="s0:GetOrderSoapOut" />
+    </operation>
+    <operation name="GetOrders">
+      <input message="s0:GetOrdersSoapIn" />
+      <output message="s0:GetOrdersSoapOut" />
+    </operation>
+  </portType>
+  <binding name="DataTypes" type="s0:DataTypes">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="SayHello">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="SayHelloName">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetIntArray">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetMode">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetOrder">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetOrders">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="DataTypes">
+    <port name="DataTypes" binding="s0:DataTypes">
+      <soap:address location="http://localhost:8080/axis/services/DataTypes" />
+    </port>
+  </service>
+</definitions>

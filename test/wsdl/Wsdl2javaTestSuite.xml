@@ -297,6 +297,15 @@
         <mapping namespace="urn:Nested" package="test.wsdl.nested"/>
     </wsdl2java>
 
+    <!-- Nested Structure Test -->
+    <wsdl2java url="test/wsdl/datatypes/DataTypes.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:dataTypes" package="test.wsdl.datatypes"/>
+    </wsdl2java>
+
     <!-- Wrapped Sample Test -->
     <wsdl2java url="test/wsdl/wrapped/CityBBB.wsdl"
                output="build/work"
