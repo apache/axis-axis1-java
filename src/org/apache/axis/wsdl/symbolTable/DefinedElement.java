@@ -52,21 +52,30 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
+
+import org.w3c.dom.Node;
+
+import javax.wsdl.QName;
 
 /**
-* This writer doesn't do anything.  Wsdl2java doesn't write anything for messages, but since
-* the WriterFactory interface requires that getWriter(Message, SymbolTable) return a Writer, it
-* has to return something.  Ergo this class.
-*/
-public class NoopWriter implements Writer {
-
+ * This Type is for a QName that is an element, these types are only emitted if 
+ * referenced by a ref= or an element=.
+ * An element type can be defined inline or it can be defined via
+ * a ref/type attribute.
+ */
+public class DefinedElement extends Element {
     /**
-     * Do a whole lot of nothing.
+     * Create an element type defined by a ref/type attribute
      */
-    public void write() throws IOException {
-    } // write
-
-} // class NoopWriter
+    public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
+    };
+    /**
+     * Create an element type defined directly.               
+     */
+    public DefinedElement(QName pqName, Node pNode) {
+        super(pqName, pNode);
+    }
+};

@@ -53,10 +53,9 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import javax.wsdl.Message;
-import javax.wsdl.QName;
 
 /**
 * This class represents a WSDL message.  It simply encompasses the WSDL4J Message object so it can

@@ -62,15 +62,24 @@ import javax.wsdl.QName;
 
 import org.w3c.dom.Node;
 
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.gen.Generator;
+
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 /**
 * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
 * <typeName>.java, <typeName>Holder.java.
 */
-public class JavaTypeWriter implements Writer {
+public class JavaTypeWriter implements Generator {
     public static final String HOLDER_IS_NEEDED = "Holder is needed";
 
-    private Writer typeWriter = null;
-    private Writer holderWriter = null;
+    private Generator typeWriter = null;
+    private Generator holderWriter = null;
 
     /**
      * Constructor.
@@ -89,7 +98,7 @@ public class JavaTypeWriter implements Writer {
             if (!type.getName().endsWith("[]")) {
 
                 // Generate the proper class for either "complex" or "enumeration" types
-                Vector v = SchemaUtils.getEnumerationBaseAndValues(
+                Vector v = Utils.getEnumerationBaseAndValues(
                         node, symbolTable);
                 if (v != null) {
                     typeWriter = getEnumTypeWriter(emitter, type, v);
@@ -129,14 +138,14 @@ public class JavaTypeWriter implements Writer {
     /**
      * Write all the service bindnigs:  service and testcase.
      */
-    public void write() throws IOException {
+    public void generate() throws IOException {
         if (typeWriter != null) {
-            typeWriter.write();
+            typeWriter.generate();
         }
         if (holderWriter != null) {
-            holderWriter.write();
+            holderWriter.generate();
         }
-    } // write
+    } // generate
 
     /**
      * Does anything use this type as an inout/out parameter?  Query the Type dynamicVar
@@ -178,7 +187,7 @@ public class JavaTypeWriter implements Writer {
     /**
      * getHolderWriter
      **/
-    protected Writer getHolderWriter(Emitter emitter, TypeEntry type) {
+    protected Generator getHolderWriter(Emitter emitter, TypeEntry type) {
         return new JavaHolderWriter(emitter, type);
     }
 } // class JavaTypeWriter

@@ -60,7 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.wsdl.toJava.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;

@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -85,6 +85,11 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+
+import javax.wsdl.factory.WSDLFactory;
+
+import javax.wsdl.xml.WSDLReader;
 
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -97,6 +102,8 @@ import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
+import org.apache.axis.wsdl.gen.Generator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -115,9 +122,6 @@ import org.w3c.dom.NodeList;
 *   public PortTypeEntry getPortTypeEntry(QName name), etc.
 */
 public class SymbolTable {
-    // Mapping from Namespace to Java Package
-    private Namespaces namespaces;
-
     // Should the contents of imported files be added to the symbol table?
     private boolean addImports;
 
@@ -135,6 +139,8 @@ public class SymbolTable {
     // A list of the TypeEntry elements in the symbol table
     private Vector types = new Vector();
 
+    private boolean verbose;
+
     private boolean debug = false;
 
     private BaseTypeMapping btm = null;
@@ -144,15 +150,17 @@ public class SymbolTable {
 
     public static final String ANON_TOKEN = ">";
 
+    private Definition def = null;
+    private Document   doc = null;
+
     /**
      * Construct a symbol table with the given Namespaces.
      */
-    public SymbolTable(Namespaces namespaces,
-                       BaseTypeMapping btm,
-                       boolean addImports, boolean debug) {
-        this.namespaces = namespaces;
+    public SymbolTable(BaseTypeMapping btm, boolean addImports,
+            boolean verbose, boolean debug) {
         this.btm = btm;
         this.addImports = addImports;
+        this.verbose = verbose;
         this.debug = debug;
     } // ctor
 
@@ -174,7 +182,7 @@ public class SymbolTable {
     /**
      * Get the entry with the given QName of the given class.  If it does not exist, return null.
      */
-    private SymTabEntry get(QName qname, Class cls) {
+    public SymTabEntry get(QName qname, Class cls) {
         Vector v = (Vector) symbolTable.get(qname);
         if (v == null) {
             return null;
@@ -266,23 +274,9 @@ public class SymbolTable {
         return types;
     } // getTypes
 
-    public void setNamespaceMap(HashMap map) {
-        namespaces.putAll(map);
-    }
-
-    /**
-     * Get the Package name for the specified namespace
-     */
-    public String getPackage(String namespace) {
-        return (String) namespaces.getCreate(namespace);
-    }
-
-    /**
-     * Get the Package name for the specified QName
-     */
-    public String getPackage(QName qName) {
-        return getPackage(qName.getNamespaceURI());
-    }
+    public Definition getDefinition() {
+        return def;
+    } // getDefinition
 
     /**
      * Are we wrapping literal soap body elements.
@@ -319,12 +313,46 @@ public class SymbolTable {
 
 
     /**
+     * Call this method if you have a uri for the WSDL document
+     * @param uri wsdlURI the location of the WSDL file.
+     */
+
+    public void populate(String uri) throws IOException, WSDLException {
+        populate(uri, null, null);
+    } // populate
+
+    public void populate(String uri, String username, String password) throws IOException, WSDLException {
+        if (verbose)
+            System.out.println(JavaUtils.getMessage("parsing00", uri));
+
+        Document doc = XMLUtils.newDocument(uri, username, password);
+        if (doc == null) {
+            throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
+        }
+        populate(uri, doc);
+    } // populate
+
+    /**
+     * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * @param doc doc This is the XML Document containing the WSDL.
+     */
+    public void populate(String context, Document doc) throws IOException, WSDLException {
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        reader.setFeature("javax.wsdl.verbose", verbose);
+        this.def = reader.readWSDL(context, doc);
+        this.doc = doc;
+
+        add(context, def, doc);
+    } // populate
+
+    /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.  When the
      * symbol table has been populated, iterate through it, setting the isReferenced flag
      * appropriately for each entry.
      */
-    protected void add(String context, Definition def, Document doc)
+    private void add(String context, Definition def, Document doc)
             throws IOException {
         URL contextURL = context == null ? null : getURL(null, context);
         populate(contextURL, def, doc, null);
@@ -460,9 +488,9 @@ public class SymbolTable {
      * a file.
      */
     private static URL getURL(URL contextURL, String spec) throws IOException {
+        // See if we have a good URL.
         URL url = null;
         try {
-            // See if we have a good URL
             url = new URL(contextURL, spec);
         }
         catch (MalformedURLException me)
@@ -482,12 +510,11 @@ public class SymbolTable {
                 }
             }
         }
-        
-        // Everything is OK with this URL, although a file url constructed 
+
+        // Everything is OK with this URL, although a file url constructed
         // above may not exist.  This will be caught later when the URL is
         // accessed.
         return url;
-        
     } // getURL
     /**
      * Recursively find all xsd:import'ed objects and call populate for each one.
@@ -786,39 +813,6 @@ public class SymbolTable {
     } // createTypeFromRef
 
     /**
-     * Convert the specified QName into a full Java Name.
-     */
-    public String getJavaName(QName qName) {
-
-        // If this is one of our special 'collection' qnames.
-        // get the element type and append []
-        if (qName.getLocalPart().indexOf("[") > 0) {
-            String localPart = qName.getLocalPart().substring(0,qName.getLocalPart().indexOf("["));
-            QName eQName = new QName(qName.getNamespaceURI(), localPart);
-            return getJavaName(eQName) + "[]";
-        }
-
-        // Handle the special "java" namespace for types
-        if (qName.getNamespaceURI().equalsIgnoreCase("java")) {
-            return qName.getLocalPart();
-        }
-
-        // The QName may represent a base java name, so check this first
-        String fullJavaName = btm.getBaseName(qName);
-        if (fullJavaName != null) 
-            return fullJavaName;
-        
-        // Use the namespace uri to get the appropriate package
-        String pkg = getPackage(qName.getNamespaceURI());
-        if (pkg != null) {
-            fullJavaName = pkg + "." + Utils.xmlNameToJavaClass(qName.getLocalPart());
-        } else {
-            fullJavaName = Utils.xmlNameToJavaClass(qName.getLocalPart());
-        }
-        return fullJavaName;
-    } // getJavaName
-
-    /**
      * Populate the symbol table with all of the MessageEntry's from the Definition.
      */
     private void populateMessages(Definition def) throws IOException {
@@ -996,19 +990,8 @@ public class SymbolTable {
                 addOutParm(outputs, i, parameters, false);
             }
         }
+        parameters.faults = operation.getFaults();
 
-        // Collect the list of faults into a single string, separated by commas.
-        Map faults = operation.getFaults();
-        Iterator i = faults.values().iterator();
-        while (i.hasNext()) {
-            Fault fault = (Fault) i.next();
-            String exceptionName =
-                    Utils.getFullExceptionName(fault, this);
-            if (parameters.faultString == null)
-                parameters.faultString = exceptionName;
-            else
-                parameters.faultString = parameters.faultString + ", " + exceptionName;
-        }
         return parameters;
     } // parameters
 
@@ -1095,7 +1078,7 @@ public class SymbolTable {
      * This method returns a vector containing Parameters which represent
      * each Part (shouldn't we call these "Parts" or something?)
      */
-    protected void getParametersFromParts(Vector v, 
+    public void getParametersFromParts(Vector v, 
                                           Collection parts, 
                                           boolean literal, 
                                           String opName, 
@@ -1136,7 +1119,7 @@ public class SymbolTable {
             
             // flow to here means literal + wrapped!
                 
-            // See if we can map all the XML types to java types
+            // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
             Node node = null;
             Element e;

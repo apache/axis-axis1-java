@@ -54,14 +54,17 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import java.lang.reflect.Constructor;
+
+import java.io.IOException;
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
@@ -69,15 +72,35 @@ import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.gen.NoopGenerator;
+import org.apache.axis.wsdl.gen.Generator;
+import org.apache.axis.wsdl.gen.GeneratorFactory;
+
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.Type;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's implementation of the GeneratorFactory
 */
 
-public class JavaWriterFactory implements WriterFactory {
+public class JavaGeneratorFactory implements GeneratorFactory {
     protected Emitter     emitter;
     protected SymbolTable symbolTable;
 
@@ -85,19 +108,28 @@ public class JavaWriterFactory implements WriterFactory {
      * Default constructor.  Note that this class is unusable until setEmitter
      * is called.
      */
-    public JavaWriterFactory() {
+
+    public JavaGeneratorFactory() {
     } // ctor
 
+    public JavaGeneratorFactory(Emitter emitter) {
+        this.emitter = emitter;
+    } // ctor
+
+    public void setEmitter(Emitter emitter) {
+        this.emitter = emitter;
+    } // setEmitter
+
     /**
-     * Do the Wsdl2java writer pass:
+     * Do the Wsdl2java generator pass:
      * - resolve name clashes
      * - construct signatures
      */
-    public void writerPass(Definition def, SymbolTable symbolTable) {
+    public void generatorPass(Definition def, SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
-        if (emitter.bGenerateAll) {
+        if (emitter.generateAll()) {
             setAllReferencesToTrue();
         }
         else {
@@ -105,56 +137,151 @@ public class JavaWriterFactory implements WriterFactory {
         }
         constructSignatures(symbolTable);
         determineIfHoldersNeeded(symbolTable);
-    } // writerPass
+    } // generatorPass
 
     /**
-     * Provide the emitter object to this class.
+     * Since Wsdl2java doesn't emit anything for Messages, return the No-op generator.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    private Writers messageWriters = new Writers();
 
-    /**
-     * Since Wsdl2java doesn't emit anything for Messages, return the No-op writer.
-     */
-    public Writer getWriter(Message message, SymbolTable symbolTable) {
-        return new NoopWriter();
-    } // getWriter
+    public Generator getGenerator(Message message, SymbolTable symbolTable) {
+        MessageEntry mEntry = symbolTable.getMessageEntry(message.getQName());
+        messageWriters.addStuff(new NoopGenerator(), mEntry, symbolTable);
+        return messageWriters;
+    } // getGenerator
 
     /**
      * Return Wsdl2java's JavaPortTypeWriter object.
      */
-    public Writer getWriter(PortType portType, SymbolTable symbolTable) {
-        return new NoopWriter();
-    } // getWriter
+    private Writers portTypeWriters = new Writers();
+
+    public Generator getGenerator(PortType portType, SymbolTable symbolTable) {
+        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
+        portTypeWriters.addStuff(new NoopGenerator(), ptEntry, symbolTable);
+        return portTypeWriters;
+    } // getGenerator
 
     /**
      * Return Wsdl2java's JavaBindingWriter object.
      */
-    public Writer getWriter(Binding binding, SymbolTable symbolTable) {
-        return new JavaBindingWriter(emitter, binding, symbolTable);
-    } // getWriter
+    private Writers bindingWriters = new Writers();
+
+    public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
+        Generator writer = new JavaBindingWriter(emitter, binding, symbolTable);
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        bindingWriters.addStuff(writer, bEntry, symbolTable);
+        return bindingWriters;
+    } // getGenerator
 
     /**
      * Return Wsdl2java's JavaServiceWriter object.
      */
-    public Writer getWriter(Service service, SymbolTable symbolTable) {
-        return new JavaServiceWriter(emitter, service, symbolTable);
-    } // getWriter
+    private Writers serviceWriters = new Writers();
+
+    public Generator getGenerator(Service service, SymbolTable symbolTable) {
+        Generator writer = new JavaServiceWriter(emitter, service, symbolTable);
+        ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
+        serviceWriters.addStuff(writer, sEntry, symbolTable);
+        return serviceWriters;
+    } // getGenerator
 
     /**
      * Return Wsdl2java's JavaTypeWriter object.
      */
-    public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
-        return new JavaTypeWriter(emitter, type, symbolTable);
-    } // getWriter
+    private Writers typeWriters = new Writers();
+
+    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
+        Generator writer = new JavaTypeWriter(emitter, type, symbolTable);
+        typeWriters.addStuff(writer, type, symbolTable);
+        return typeWriters;
+    } // getGenerator
 
     /**
      * Return Wsdl2java's JavaDefinitionWriter object.
      */
-    public Writer getWriter(Definition definition, SymbolTable symbolTable) {
-        return new JavaDefinitionWriter(emitter, definition, symbolTable);
-    } // getWriter
+    private Writers defWriters = new Writers();
+
+    public Generator getGenerator(Definition definition, SymbolTable symbolTable) {
+        defWriters.addStuff(null, definition, symbolTable);
+        return defWriters;
+    } // getGenerator
+
+    // Hack class just to play with the idea of adding writers
+    class Writers implements Generator {
+        Vector writers = new Vector();
+        SymbolTable symbolTable = null;
+        Generator baseWriter = null;
+
+        // entry or def, but not both, will be a parameter.
+        SymTabEntry entry = null;
+        Definition def = null;
+
+        public void addGenerator(Class writer) {
+            writers.add(writer);
+        } // addWriter
+
+        public void addStuff(Generator baseWriter, SymTabEntry entry, SymbolTable symbolTable) {
+            this.baseWriter = baseWriter;
+            this.entry = entry;
+            this.symbolTable = symbolTable;
+        } // addStuff
+
+        public void addStuff(Generator baseWriter, Definition def, SymbolTable symbolTable) {
+            this.baseWriter = baseWriter;
+            this.def = def;
+            this.symbolTable = symbolTable;
+        } // addStuff
+
+        public void generate() throws IOException {
+            if (baseWriter != null) {
+                baseWriter.generate();
+            }
+            Class[] formalArgs = null;
+            Object[] actualArgs = null;
+            if (entry != null) {
+                formalArgs = new Class[] {Emitter.class, entry.getClass(), SymbolTable.class};
+                actualArgs = new Object[] {emitter, entry, symbolTable};
+            }
+            else {
+                formalArgs = new Class[] {Emitter.class, Definition.class, SymbolTable.class};
+                actualArgs = new Object[] {emitter, def, symbolTable};
+            }
+            for (int i = 0; i < writers.size(); ++i) {
+                Class wClass = (Class) writers.get(i);
+                Generator gen = null;
+                try {
+                    Constructor ctor = wClass.getConstructor(formalArgs);
+                    gen = (Generator) ctor.newInstance(actualArgs);
+                }
+                catch (Throwable t) {
+                    throw new IOException();
+                }
+                gen.generate();
+            }
+        } // generate
+    } // class Writers
+
+    public void addGenerator(Class wsdlClass, Class generator) {
+        // This is just a hack right now... it just works with Service
+        if (Message.class.isAssignableFrom(wsdlClass)) {
+            messageWriters.addGenerator(generator);
+        }
+        else if (PortType.class.isAssignableFrom(wsdlClass)) {
+            portTypeWriters.addGenerator(generator);
+        }
+        else if (Binding.class.isAssignableFrom(wsdlClass)) {
+            bindingWriters.addGenerator(generator);
+        }
+        else if (Service.class.isAssignableFrom(wsdlClass)) {
+            serviceWriters.addGenerator(generator);
+        }
+        else if (TypeEntry.class.isAssignableFrom(wsdlClass)) {
+            typeWriters.addGenerator(generator);
+        }
+        else if (Definition.class.isAssignableFrom(wsdlClass)) {
+            defWriters.addGenerator(generator);
+        }
+    } // addGenerator
 
     /**
      * Fill in the names of each SymTabEntry with the javaified name.
@@ -206,14 +333,14 @@ public class JavaWriterFactory implements WriterFactory {
                             typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         } 
                         anonQNames.put(typeQName, typeQName);
-                        tEntry.setName(symbolTable.getJavaName(typeQName) + dims);
+                        tEntry.setName(emitter.getJavaName(typeQName) + dims);
                     }
-                    entry.setName(symbolTable.getJavaName(typeQName) + dims);
+                    entry.setName(emitter.getJavaName(typeQName) + dims);
                 }
 
                 // If it is not a type, then use this entry's QName to generate its name.
                 else {
-                    entry.setName(symbolTable.getJavaName(entry.getQName()));
+                    entry.setName(emitter.getJavaName(entry.getQName()));
                 }
             }
         }
@@ -509,13 +636,21 @@ public class JavaWriterFactory implements WriterFactory {
                 signature = signature + p.getType().getName() + " " + javifiedName;
             }
             else {
-                signature = signature + Utils.holder(p.getType(), symbolTable) + " "
+                signature = signature + Utils.holder(p.getType(), emitter) + " "
                         + javifiedName;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
-        if (parms.faultString != null) {
-            signature = signature + ", " + parms.faultString;
+        if (parms.faults != null) {
+            // Collect the list of faults into a single string, separated by commas.
+            
+            Iterator i = parms.faults.values().iterator();
+            while (i.hasNext()) {
+                Fault fault = (Fault) i.next();
+                String exceptionName =
+                  Utils.getFullExceptionName(fault, emitter);
+                signature = signature + ", " + exceptionName;
+            }
         }
         return signature;
     } // constructSignature
@@ -599,4 +734,4 @@ public class JavaWriterFactory implements WriterFactory {
         return btm;
     }
 
-} // class JavaWriterFactory
+} // class JavaGeneratorFactory

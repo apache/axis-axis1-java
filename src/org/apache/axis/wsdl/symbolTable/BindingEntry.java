@@ -53,13 +53,12 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import java.util.HashMap;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
-import javax.wsdl.QName;
 
 /**
 * This class represents a WSDL binding.  It encompasses the WSDL4J Binding object so it can

@@ -52,35 +52,33 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import java.io.IOException;
 
-import javax.wsdl.QName;
+import java.util.Vector;
 
 /**
- * This represents a QName found in a reference but is not defined.
- * If the type is later defined, the UndefinedType is replaced with a new Type
+ * This UndefinedDelegate class implements the common functions of UndefinedType and UndefinedElement.
  */
-public class UndefinedType extends Type implements Undefined {
+public class UndefinedDelegate implements Undefined {
 
-   private UndefinedDelegate delegate = null;
+    private Vector list;
+    private TypeEntry undefinedType;
 
     /**
-     * Construct a referenced (but as of yet undefined) type 
+     * Constructor
      */
-    public UndefinedType(QName pqName) {
-        super(pqName, null);
-        undefined = true;
-        delegate = new UndefinedDelegate(this);
+    UndefinedDelegate(TypeEntry te) {
+        list = new Vector();
+        undefinedType = te;
     }
-
-    /**
+   /**
      *  Register referrant TypeEntry so that 
      *  the code can update the TypeEntry when the Undefined Element or Type is defined
      */
     public void register(TypeEntry referrant) {
-        delegate.register(referrant);
+        list.add(referrant);
     }
 
     /**
@@ -88,6 +86,28 @@ public class UndefinedType extends Type implements Undefined {
      *  referrant TypeEntry's that were registered.
      */
     public void update(TypeEntry def) throws IOException {
-        delegate.update(def);
+        boolean done = false;
+        while (!done) {
+            done = true;  // Assume this is the last pass
+
+            // Call updatedUndefined for all items on the list
+            // updateUndefined returns true if the state of the te TypeEntry
+            // is changed.  The outer loop is traversed until there are no more
+            // state changes.
+            for (int i=0; i < list.size() ; i++) {
+                TypeEntry te = (TypeEntry) list.elementAt(i);
+                if (te.updateUndefined(undefinedType, def))
+                    done = false;  // Items still undefined, need another pass
+            }
+        }
+        // It is possible that the def TypeEntry depends on an Undefined type.
+        // If so, register all of the entries with the undefined type.
+        TypeEntry uType = def.getUndefinedTypeRef();
+        if (uType != null) {
+            for (int i=0; i < list.size() ; i++) {
+                TypeEntry te = (TypeEntry) list.elementAt(i);
+                ((Undefined)uType).register(te);
+            }
+        }
     }
 };

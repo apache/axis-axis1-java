@@ -70,14 +70,20 @@ import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
+import org.apache.axis.wsdl.gen.Generator;
+
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
  * This is Wsdl2java's Definition Writer.  
  * It currently writes the following files:
  *   deploy.xml, undeploy.xml and Faults as needed.
  */
-public class JavaDefinitionWriter implements Writer {
+public class JavaDefinitionWriter implements Generator {
+/*
     protected Writer deployWriter = null;
     protected Writer undeployWriter = null;
+*/
     protected Emitter emitter;
     protected Definition definition;
     protected SymbolTable symbolTable;
@@ -87,8 +93,10 @@ public class JavaDefinitionWriter implements Writer {
      */
     public JavaDefinitionWriter(Emitter emitter, Definition definition,
             SymbolTable symbolTable) {
+/*
         deployWriter = new JavaDeployWriter(emitter, definition, symbolTable);
         undeployWriter = new JavaUndeployWriter(emitter, definition, symbolTable);
+*/
         this.emitter = emitter;
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -97,13 +105,15 @@ public class JavaDefinitionWriter implements Writer {
     /**
      * Write other items from the definition as needed.
      */
-    public void write() throws IOException {
-        if (emitter.getGenerateServerSide()) {
+    public void generate() throws IOException {
+/*
+        if (emitter.generateServerSide()) {
             deployWriter.write();
             undeployWriter.write();
         }
+*/
         writeFaults();
-    } // write
+    } // generate
 
     /**
      * Write all the faults.
@@ -120,7 +130,7 @@ public class JavaDefinitionWriter implements Writer {
             Map.Entry entry = (Map.Entry) fi.next();
             Fault fault = (Fault) entry.getKey();
             QName faultQName = (QName) entry.getValue();
-            new JavaFaultWriter(emitter, faultQName, fault, symbolTable).write();
+            new JavaFaultWriter(emitter, faultQName, fault, symbolTable).generate();
         }
     } // writeFaults
 
@@ -163,7 +173,7 @@ public class JavaDefinitionWriter implements Writer {
                         Fault f = (Fault) fi.next();
                         String name = Utils.getFullExceptionName(
                                 f,
-                                symbolTable);
+                                emitter);
                         // prevent duplicates
                         if (! faultList.contains(name) ) {
                             faultList.add(name);

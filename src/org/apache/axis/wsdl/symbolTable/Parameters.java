@@ -52,22 +52,45 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
+import java.util.Map;
+import java.util.Vector;
 
-import org.w3c.dom.Node;
-
-import javax.wsdl.QName;
+import javax.xml.rpc.namespace.QName;
 
 /**
- * Get the base language name for a qname
+ * This class simply collects all the parameter or message data for an operation into one place.
  */
-public abstract class BaseTypeMapping  {
-    /**
-     * If the qname is registered in the target language,
-     * return the name of the registered type.
-     * @param QName representing a type
-     * @return name of the registered type or null if not registered.
-     */
-     public abstract String getBaseName(QName qName);
-};
+public class Parameters {
+
+    // This vector contains instances of the Parameter class
+    public Vector list = new Vector();
+
+    // The type of the first output part, used as the method's return value
+    public TypeEntry returnType = null;
+
+    // The name of the return type (from the part name of the output message.
+    // Used to create the RPCParam for the return value.
+    public QName returnName = null;
+
+    // A map of the faults
+    public Map faults = null;
+
+    // The signature that the interface and the stub will use
+    public String signature = null;
+
+    // The numbers of the respective parameters
+    public int inputs = 0;
+    public int inouts = 0;
+    public int outputs = 0;
+
+    public String toString() {
+        return "\nreturnType = " + returnType
+                + "\nreturnName = " + returnName
+                + "\nfaults = " + faults
+                + "\nsignature = " + signature
+                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
+                + "\nlist = " + list;
+    } // toString
+} // class Parameters

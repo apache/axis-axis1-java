@@ -74,6 +74,11 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
 * This is Wsdl2java's service implementation writer.
 * It writes the <serviceName>Locator.java file.
@@ -152,7 +157,7 @@ public class JavaServiceImplWriter extends JavaWriter {
 
             // If there is not literal use, the interface name is the portType name.
             // Otherwise it is the binding name.
-            String bindingType = (bEntry.hasLiteral()) ?
+            String bindingType = bEntry.hasLiteral() ?
                     bEntry.getName() : ptEntry.getName();
 
             // getPort(Class) must return a stub for an interface.  Collect all

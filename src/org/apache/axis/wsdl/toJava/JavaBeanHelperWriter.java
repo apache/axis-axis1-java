@@ -54,15 +54,21 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Node;
-
-import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
+
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.rpc.namespace.QName;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.ElementDecl;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import org.w3c.dom.Node;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.

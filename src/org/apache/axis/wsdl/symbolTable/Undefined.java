@@ -52,32 +52,24 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-
-import org.w3c.dom.Node;
-
-import javax.wsdl.QName;
+import java.io.IOException;
 
 /**
- * This class represents a TypeEntry that is a type (complexType, simpleType, etc.
- *
- * @author Rich Scheuerle  (scheu@us.ibm.com)
+ * This Undefined interface is implemented by UndefinedType and UndefinedElement.
  */
-public abstract class Element extends TypeEntry {
+public interface Undefined {
+    /**
+     *  Register referrant TypeEntry so that 
+     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     */
+    public void register(TypeEntry referrant);
 
     /**
-     * Create an Element object for an xml construct that references a type that has 
-     * not been defined yet.  Defer processing until refType is known.
-     */ 
-    protected Element(QName pqName, TypeEntry refType, Node pNode, String dims) {
-        super(pqName, refType, pNode, dims);
-    }
-       
-    /**
-     * Create a Element object for an xml construct that is not a base java type
-     */  
-    protected Element(QName pqName, Node pNode) {
-        super(pqName, pNode);
-    }
+     *  Call update with the actual TypeEntry.  This updates all of the
+     *  referrant TypeEntry's that were registered.
+     */
+    public void update(TypeEntry def) throws IOException;
+      
 };

@@ -52,70 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
+
+import java.io.IOException;
 
 import javax.wsdl.QName;
-import java.util.Vector;
 
 /**
-  * This class simply collects
-  */
-public class Parameter {
+ * This represents a QName found in a reference but is not defined.
+ * If the type is later defined, the UndefinedType is replaced with a new Type
+ */
+public class UndefinedElement extends Element implements Undefined {
 
-    // constant values for the parameter mode.
-    public static final byte IN = 1;
-    public static final byte OUT = 2;
-    public static final byte INOUT = 3;
+    private UndefinedDelegate delegate = null;
 
-    // The QName of the element associated with this param.  Defaults to
-    // null, which means it'll be new QName("", name)
-    private QName qname;
-    
-    // The part name of this parameter, just a string.
-    private String name;
-    
-    private TypeEntry type;
-    private byte mode = IN;
-
-    public String toString() {
-        return "(" + type + ", " + getName() + ", "
-                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
-    } // toString
-
-    public QName getQName() {
-        return qname;
+    /**
+     * Construct a referenced (but as of yet undefined) element
+     */
+    public UndefinedElement(QName pqName) {
+        super(pqName, null);
+        undefined = true;
+        delegate = new UndefinedDelegate(this);
     }
 
-    public String getName() {
-        if (name == null && qname != null) {
-            return qname.getLocalPart();
-        }
-        return name;
+    /**
+     *  Register referrant TypeEntry so that 
+     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     */
+    public void register(TypeEntry referrant) {
+        delegate.register(referrant);
     }
 
-    public void setName(String name) {
-        this.name = name;
-        if (qname == null)
-            this.qname = new QName("", name);
+    /**
+     *  Call update with the actual TypeEntry.  This updates all of the
+     *  referrant TypeEntry's that were registered.
+     */
+    public void update(TypeEntry def) throws IOException {
+        delegate.update(def);
     }
-
-    public void setQName(QName qname) {
-        this.qname = qname;
-    }
-
-    public TypeEntry getType() {
-        return type;
-    }
-
-    public void setType(TypeEntry type) {
-        this.type = type;
-    }
-
-    public byte getMode() {
-        return mode;
-    }
-
-    public void setMode(byte mode) {
-        this.mode = mode;
-    }
-} // class Parameter
+};

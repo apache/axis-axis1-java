@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import java.util.HashMap;
 import java.util.Iterator;

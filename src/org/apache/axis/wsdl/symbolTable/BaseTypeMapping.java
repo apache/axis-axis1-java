@@ -48,28 +48,22 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
+  * individuals on behalf of the Apache Software Foundation.  For more * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
+import javax.wsdl.QName;
 
 /**
- * This Undefined interface is implemented by UndefinedType and UndefinedElement.
+ * Get the base language name for a qname
  */
-public interface Undefined {
+public abstract class BaseTypeMapping  {
     /**
-     *  Register referrant TypeEntry so that 
-     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     * If the qname is registered in the target language,
+     * return the name of the registered type.
+     * @param QName representing a type
+     * @return name of the registered type or null if not registered.
      */
-    public void register(TypeEntry referrant);
-
-    /**
-     *  Call update with the actual TypeEntry.  This updates all of the
-     *  referrant TypeEntry's that were registered.
-     */
-    public void update(TypeEntry def) throws IOException;
-      
+     public abstract String getBaseName(QName qName);
 };

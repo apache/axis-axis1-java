@@ -63,6 +63,9 @@ import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
 * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
 * NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
@@ -80,8 +83,8 @@ public class JavaFaultWriter extends JavaWriter {
         // Need to adjust the className and fileName to make sure they are consistent with
         // the full name.  The alternative is to pass a 'dummy' qname into JavaFaultWriter,
         // which is not appropriate.
-        String fullName = Utils.getFullExceptionName(fault, symbolTable);
-        className = fullName.substring(fullName.lastIndexOf(".")+1);
+        String fullName = Utils.getFullExceptionName(fault, emitter);
+        className = fullName.substring(fullName.lastIndexOf(".") + 1);
         fileName = className + ".java";
 
         this.fault = fault;

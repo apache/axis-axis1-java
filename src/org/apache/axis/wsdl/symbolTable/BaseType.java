@@ -52,31 +52,15 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
 import javax.wsdl.QName;
-import javax.wsdl.Service;
 
 /**
-* This class represents a WSDL service.  It simply encompasses the WSDL4J Service object so it can
-* reside in the SymbolTable.
-*/
-public class ServiceEntry extends SymTabEntry {
-    private Service service;
-
-    /**
-     * Construct a ServiceEntry from a WSDL4J Service object.
-     */
-    public ServiceEntry(Service service) {
-        super(service.getQName());
-        this.service = service;
-    } // ctor
-
-    /**
-     * Get this entry's Service object.
-     */
-    public Service getService() {
-        return service;
-    } // getService
-} // class ServiceEntry
+ * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String) 
+ */
+public class BaseType extends Type {
+    public BaseType(QName pqName) {
+        super(pqName);
+    }
+};

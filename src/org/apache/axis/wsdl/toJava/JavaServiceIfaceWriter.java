@@ -56,21 +56,19 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 
-import javax.wsdl.extensions.soap.SOAPAddress;
-
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
 * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
@@ -142,7 +140,7 @@ public class JavaServiceIfaceWriter extends JavaWriter {
 
             // If there is not literal use, the interface name is the portType name.
             // Otherwise it is the binding name.
-            String bindingType = (bEntry.hasLiteral()) ?
+            String bindingType = bEntry.hasLiteral() ?
                     bEntry.getName() : ptEntry.getName();
 
             // Write out the get<PortName> methods

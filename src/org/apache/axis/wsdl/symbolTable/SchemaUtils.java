@@ -52,27 +52,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
+
+import java.util.Vector;
+
+import javax.wsdl.QName;
+
+import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
+
+import org.apache.axis.Constants;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
-
-import javax.wsdl.QName;
-import javax.wsdl.Fault;
-import javax.wsdl.Message;
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.Collator;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.apache.axis.Constants;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
@@ -554,106 +546,6 @@ public class SchemaUtils {
             }
             // Return associated Type
             return (TypeEntry) symbolTable.getType(extendsType);
-        }
-        return null;
-    }
-
-    /**
-     * If the specified node represents a supported JAX-RPC enumeration,
-     * a Vector is returned which contains the base type and the enumeration values.
-     * The first element in the vector is the base type (an TypeEntry).
-     * Subsequent elements are values (Strings).
-     * If this is not an enumeration, null is returned.
-     */
-    public static Vector getEnumerationBaseAndValues(Node node, SymbolTable symbolTable) {
-        if (node == null) {
-            return null;
-        }
-
-        // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-            NodeList children = node.getChildNodes();
-            Node simpleNode = null;
-            for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
-                QName simpleKind = Utils.getNodeQName(children.item(j));
-                if (simpleKind != null &&
-                    simpleKind.getLocalPart().equals("simpleType") &&
-                    Constants.isSchemaXSD(simpleKind.getNamespaceURI())) {
-                    simpleNode = children.item(j);
-                    node = simpleNode;
-                }
-            }
-        }
-        // Get the node kind, expecting a schema simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("simpleType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
-            // Under the simpleType there should be a restriction.
-            // (There may be other #text nodes, which we will ignore).
-            NodeList children = node.getChildNodes();
-            Node restrictionNode = null;
-            for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
-                QName restrictionKind = Utils.getNodeQName(children.item(j));
-                if (restrictionKind != null &&
-                    restrictionKind.getLocalPart().equals("restriction") &&
-                    Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
-                    restrictionNode = children.item(j);
-            }
-
-            // The restriction node indicates the type being restricted
-            // (the base attribute contains this type).
-            // The base type must be a built-in type, and not boolean
-            TypeEntry baseEType = null;
-            if (restrictionNode != null) {
-                QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
-                baseEType = symbolTable.getType(baseType);
-                if (baseEType != null) {
-                    String javaName = baseEType.getName();
-                    if (javaName.equals("java.lang.String") ||
-                        javaName.equals("int") ||
-                        javaName.equals("long") ||
-                        javaName.equals("short") ||
-                        javaName.equals("float") ||
-                        javaName.equals("double") ||
-                        javaName.equals("byte"))
-                        ; // Okay Type
-                    else
-                        baseEType = null;
-                }
-            }
-
-            // Process the enumeration elements underneath the restriction node
-            if (baseEType != null && restrictionNode != null) {
-
-                Vector v = new Vector();                
-                NodeList enums = restrictionNode.getChildNodes();
-                for (int i=0; i < enums.getLength(); i++) {
-                    QName enumKind = Utils.getNodeQName(enums.item(i));
-                    if (enumKind != null &&
-                        enumKind.getLocalPart().equals("enumeration") &&
-                        Constants.isSchemaXSD(enumKind.getNamespaceURI())) {
-
-                        // Put the enum value in the vector.
-                        Node enumNode = enums.item(i);
-                        String value = Utils.getAttribute(enumNode, "value");
-                        if (value != null) {
-                            v.add(value);
-                        }
-                    }
-                }
-                
-                // is this really an enumeration?
-                if(v.isEmpty()) return null;
-                
-                // The first element in the vector is the base type (an TypeEntry).
-                v.add(0,baseEType);
-                return v;
-            }
         }
         return null;
     }

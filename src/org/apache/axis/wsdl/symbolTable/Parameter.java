@@ -52,27 +52,69 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
+import javax.wsdl.QName;
 
 /**
-* This is the interface for all writers.  All writers, very simply, must
-* support a write method.
-*
-* Writer and WriterFactory are part of the Writer framework.  Folks who want
-* to use the emitter to generate stuff from WSDL should do 3 things:
-* 1.  Write implementations of the Writer interface, one each for PortType,
-*     Binding, Service, and Type.  These implementations generate the stuff
-*     for each of these WSDL types.
-* 2.  Write an implementation of the WriterFactory interface that returns
-*     instantiations of these Writer implementations as appropriate.
-* 3.  Implement a class with a main method (like Wsdl2java) that instantiates
-*     an Emitter and passes it the WriterFactory implementation
-*/
-public interface Writer {
-    /**
-     * Write something.
-     */
-    public void write() throws IOException;
-}
+  * This class simply collects
+  */
+public class Parameter {
+
+    // constant values for the parameter mode.
+    public static final byte IN = 1;
+    public static final byte OUT = 2;
+    public static final byte INOUT = 3;
+
+    // The QName of the element associated with this param.  Defaults to
+    // null, which means it'll be new QName("", name)
+    private QName qname;
+    
+    // The part name of this parameter, just a string.
+    private String name;
+    
+    private TypeEntry type;
+    private byte mode = IN;
+
+    public String toString() {
+        return "(" + type + ", " + getName() + ", "
+                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
+    } // toString
+
+    public QName getQName() {
+        return qname;
+    }
+
+    public String getName() {
+        if (name == null && qname != null) {
+            return qname.getLocalPart();
+        }
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        if (qname == null)
+            this.qname = new QName("", name);
+    }
+
+    public void setQName(QName qname) {
+        this.qname = qname;
+    }
+
+    public TypeEntry getType() {
+        return type;
+    }
+
+    public void setType(TypeEntry type) {
+        this.type = type;
+    }
+
+    public byte getMode() {
+        return mode;
+    }
+
+    public void setMode(byte mode) {
+        this.mode = mode;
+    }
+} // class Parameter

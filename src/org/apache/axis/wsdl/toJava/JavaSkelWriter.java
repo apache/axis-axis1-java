@@ -74,6 +74,12 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
 * file which contains the <bindingName>Skeleton class.
@@ -107,7 +113,7 @@ public class JavaSkelWriter extends JavaWriter {
 
         // If there is not literal use, the interface name is the portType name.
         // Otherwise it is the binding name.
-        String portTypeName = (bEntry.hasLiteral()) ?
+        String portTypeName = bEntry.hasLiteral() ?
                 bEntry.getName () : ptEntry.getName();
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
@@ -275,7 +281,7 @@ public class JavaSkelWriter extends JavaWriter {
                     if (obj instanceof SOAPBody) {
                         namespace = ((SOAPBody) obj).getNamespaceURI();
                         if (namespace == null) {
-                            namespace = emitter.def.getTargetNamespace();
+                            namespace = symbolTable.getDefinition().getTargetNamespace();
                         }
                         if (namespace == null)
                             namespace = "";

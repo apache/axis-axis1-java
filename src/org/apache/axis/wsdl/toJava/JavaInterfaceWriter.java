@@ -56,14 +56,17 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
 * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
@@ -96,17 +99,17 @@ public class JavaInterfaceWriter extends JavaWriter {
     } // ctor
 
     /**
-     * Override write method to prevent duplicate interfaces because
+     * Override generate method to prevent duplicate interfaces because
      * of two bindings referencing the same portType
      */
-    public void write() throws IOException {
+    public void generate() throws IOException {
         String fqClass = packageName + "." + className;
 
         // Do not emit the same portType/interface twice
-        if (!emitter.fileInfo.getClassNames().contains(fqClass)) {
-             super.write();
+        if (!emitter.getGeneratedFileInfo().getClassNames().contains(fqClass)) {
+             super.generate();
         }
-    } // write
+    } // generate
 
     /**
      * Write the body of the portType interface file.
