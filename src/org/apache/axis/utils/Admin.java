@@ -148,6 +148,27 @@ public class Admin
                                  null, null);
          */
 
+        verifyHostAllowed(msgContext);
+
+        String rootNS = root.getNamespaceURI();
+        AxisEngine engine = msgContext.getAxisEngine();
+
+        // If this is WSDD, process it correctly.
+        if (rootNS != null && rootNS.equals(WSDDConstants.URI_WSDD)) {
+            return processWSDD(msgContext, engine, root);
+        }
+
+        // Else fault
+        // TODO: Better handling here
+        throw new Exception(Messages.getMessage("adminServiceNoWSDD"));
+    }
+
+    /**
+     * host validation logic goes here
+     * @param msgContext
+     * @throws AxisFault
+     */
+    private void verifyHostAllowed(MessageContext msgContext) throws AxisFault {
         /** For now, though - make sure we can only admin from our own
          * IP, unless the remoteAdmin option is set.
          */
@@ -182,18 +203,6 @@ public class Admin
                 }
             }
         }
-
-        String rootNS = root.getNamespaceURI();
-        AxisEngine engine = msgContext.getAxisEngine();
-
-        // If this is WSDD, process it correctly.
-        if (rootNS != null && rootNS.equals(WSDDConstants.URI_WSDD)) {
-            return processWSDD(msgContext, engine, root);
-        }
-
-        // Else fault
-        // TODO: Better handling here
-        throw new Exception(Messages.getMessage("adminServiceNoWSDD"));
     }
 
     /** Get an XML document representing this engine's configuration.
