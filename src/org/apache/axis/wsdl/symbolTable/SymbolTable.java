@@ -444,10 +444,20 @@ public class SymbolTable {
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
-                if (v.get(i) instanceof Undefined) {
+                SymTabEntry entry = (SymTabEntry) v.get(i);
+
+                // Check for a undefined XSD Schema Type and throw
+                // an unsupported message instead of undefined
+                if (entry instanceof UndefinedType && 
+                    SchemaUtils.isSimpleSchemaType(entry.getQName())) {
+                    throw new IOException(
+                            JavaUtils.getMessage("unsupportedSchemaType00",
+                                              entry.getQName().getLocalPart()));
+                }
+                if (entry instanceof Undefined) {
                     throw new IOException(
                             JavaUtils.getMessage("undefined00",
-                            "" + ((TypeEntry)v.get(i)).getQName()));
+                                                 entry.getQName().toString()));
                 }
             }
         }

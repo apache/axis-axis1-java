@@ -1061,7 +1061,7 @@ public class SchemaUtils {
                 TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
 
                 // Need to add code here to get the qualified or unqualified
-                // name.  Similar to the code around line 350 for elenments.
+                // name.  Similar to the code around line 350 for elements.
                 // Rich Scheuerle
 
                 // Now get the name.
@@ -1077,4 +1077,75 @@ public class SchemaUtils {
         return v;
     }
 
+    // list of all of the XSD types in Schema 2001
+    private static String schemaTypes[] = {
+        "string",
+        "normalizedString",
+        "token",        
+        "byte",
+        "unsignedByte",
+        "base64Binary",
+        "hexBinary",    
+        "integer",
+        "positiveInteger",
+        "negativeInteger",
+        "nonNegativeInteger",
+        "nonPositiveInteger",
+        "int",
+        "unsignedInt",  
+        "long",
+        "unsignedLong",
+        "short",
+        "unsignedShort",
+        "decimal",
+        "float",
+        "double",
+        "boolean",
+        "time",
+        "dateTime",
+        "duration",
+        "date",
+        "gMonth",
+        "gYear",
+        "gYearMonth",
+        "gDay",
+        "gMonthDay",
+        "Name",
+        "QName",
+        "NCName",
+        "anyURI",
+        "language",
+        "ID",
+        "IDREF",
+        "IDREFS",
+        "ENTITY",
+        "ENTITIES",
+        "NOTATION",
+        "NMTOKEN",
+        "NMTOKENS"
+    };
+    
+    /**
+     * Determine if a string is a simple XML Schema type 
+     */ 
+    public static boolean isSimpleSchemaType(String s) {
+        if (s == null)
+            return false;
+        
+        for (int i = 0; i < schemaTypes.length; i++) {
+            if (schemaTypes[i].equals(s))
+                return true;
+        }
+        return false;
+    }
+    /**
+     * Determine if a QName is a simple XML Schema type 
+     */ 
+    public static boolean isSimpleSchemaType(QName qname) {
+        if (qname == null || 
+            !Constants.isSchemaXSD(qname.getNamespaceURI())) {
+            return false;
+        }
+        return isSimpleSchemaType(qname.getLocalPart());
+    }
 }
