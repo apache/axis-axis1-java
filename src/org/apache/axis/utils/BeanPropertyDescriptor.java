@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 
@@ -101,11 +102,14 @@ public class BeanPropertyDescriptor
      */
     public Object get(Object obj) 
         throws InvocationTargetException, IllegalAccessException {
-        if (myPD.getReadMethod() != null) {
-            return myPD.getReadMethod().invoke(obj, noArgs);
+        Method readMethod = myPD.getReadMethod();
+        if (readMethod != null) {
+            return readMethod.invoke(obj, noArgs);
+        } else {
+            throw new IllegalAccessException(Messages.getMessage("badGetter00"));
         }
-        throw new IllegalAccessException(Messages.getMessage("badGetter00"));
     }
+
     /**
      * Set the property value
      * @param obj is the object
@@ -113,12 +117,14 @@ public class BeanPropertyDescriptor
      */
     public void set(Object obj, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
-        if (myPD.getWriteMethod() != null) {
-            myPD.getWriteMethod().invoke(obj, new Object[] {newValue});
+        Method writeMethod = myPD.getWriteMethod();
+        if (writeMethod != null) {
+            writeMethod.invoke(obj, new Object[] {newValue});
         } else {
             throw new IllegalAccessException(Messages.getMessage("badSetter00"));
         }
     }    
+
     /** 
      * Get an indexed property
      * @param obj is the object
