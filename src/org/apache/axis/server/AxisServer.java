@@ -71,6 +71,40 @@ import org.apache.axis.encoding.TypeMappingRegistry;
  */
 public class AxisServer extends AxisEngine
 {
+    /** Lifecycle routines for managing a static AxisServer
+     */
+    private static AxisServer singleton = null;
+    public static AxisServer getSingleton()
+    {
+        if (singleton == null)
+            singleton = new AxisServer();
+        return singleton;
+    }
+    
+    /** Is this server active?  If this is false, any requests will
+     * cause a SOAP Server fault to be generated.
+     */
+    private boolean running = true;
+    
+    public boolean isRunning() { return running; }
+    
+    /** Start the server.
+     */
+    public void start()
+    {
+        running = true;
+    }
+    
+    /** Stop the server.
+     */
+    public void stop()
+    {
+        running = false;
+    }
+    
+    /**
+     * Constructor.
+     */
     public AxisServer() {
       super(Constants.SERVER_HANDLER_REGISTRY,
             Constants.SERVER_SERVICE_REGISTRY);
@@ -96,6 +130,12 @@ public class AxisServer extends AxisEngine
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         Debug.Print( 1, "Enter: AxisServer::invoke" );
+        
+        if (!isRunning()) {
+            throw new AxisFault("Server.disabled",
+                                "This Axis server is not currently accepting requests.",
+                                null, null);
+        }
 
         String  hName = null ;
         Handler h     = null ;
@@ -174,18 +214,12 @@ public class AxisServer extends AxisEngine
               if ( hName != null  && (h = hr.find( hName )) != null )
                   h.invoke(msgContext);
       
-              /* Process the Protocol Specific-Handler/Chain */
-              /***********************************************/
-              /*
-              hName = msgContext.getStrProp(MessageContext.PROTOCOL_HANDLER);
-              if ( hName == null ) hName = "SOAPServer" ;
-              if ( hName != null && (h = hr.find( hName )) != null )
-                h.invoke(msgContext);
-              else
-                throw new AxisFault( "Server.error",
-                                     "Can't find '" + hName + "' handler",
-                                     null, null );
-              */
+              /**
+               * At this point, the service should have been set by someone
+               * (either the originator of the MessageContext, or one of the
+               * transport or global Handlers).  If it hasn't been set, we
+               * fault.
+               */
               h = msgContext.getServiceHandler();
               if (h != null)
                   h.invoke(msgContext);
