@@ -1,57 +1,57 @@
 /*
- * The Apache Software License, Version 1.1
- *
- *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Axis" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- */
+* The Apache Software License, Version 1.1
+*
+*
+* Copyright (c) 2001 The Apache Software Foundation.  All rights
+* reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+*
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in
+*    the documentation and/or other materials provided with the
+*    distribution.
+*
+* 3. The end-user documentation included with the redistribution,
+*    if any, must include the following acknowledgment:
+*       "This product includes software developed by the
+*        Apache Software Foundation (http://www.apache.org/)."
+*    Alternately, this acknowledgment may appear in the software itself,
+*    if and wherever such third-party acknowledgments normally appear.
+*
+* 4. The names "Axis" and "Apache Software Foundation" must
+*    not be used to endorse or promote products derived from this
+*    software without prior written permission. For written
+*    permission, please contact apache@apache.org.
+*
+* 5. Products derived from this software may not be called "Apache",
+*    nor may "Apache" appear in their name, without prior written
+*    permission of the Apache Software Foundation.
+*
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+* ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+* USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+* OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+* SUCH DAMAGE.
+* ====================================================================
+*
+* This software consists of voluntary contributions made by many
+* individuals on behalf of the Apache Software Foundation.  For more
+* information on the Apache Software Foundation, please see
+* <http://www.apache.org/>.
+*/
 
 package org.apache.axis.providers.java;
 
@@ -75,6 +75,7 @@ import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+import org.xml.sax.SAXException;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -147,8 +148,8 @@ public class RPCProvider extends JavaProvider {
                     if (param != null) {
                         Object val = bodyEl.getValueAsType(param.getTypeQName());
                         body = new RPCElement("",
-                                operation.getName(),
-                                new Object[]{val});
+                                              operation.getName(),
+                                              new Object[]{val});
                     }
                 }
             } else {
@@ -163,7 +164,7 @@ public class RPCProvider extends JavaProvider {
             if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
                 throw new Exception(Messages.getMessage("noBody00"));
             }
-
+            
             // look for a method in the service that has no arguments,
             // use the first one we find.
             ArrayList ops = serviceDesc.getOperations();
@@ -178,7 +179,7 @@ public class RPCProvider extends JavaProvider {
                     break;
                 }
             }
-
+            
             // If we still didn't find anything, report no body error.
             if (body == null) {
                 throw new Exception(Messages.getMessage("noBody00"));
@@ -186,9 +187,14 @@ public class RPCProvider extends JavaProvider {
         }
 
         String methodName = body.getMethodName();
-        Vector args = body.getParams();
+        Vector args = null;
+        try {
+            args = body.getParams();
+        } catch (SAXException e) {
+            throw e.getException();
+        }
         int numArgs = args.size();
-
+        
         // This may have changed, so get it again...
         // FIXME (there should be a cleaner way to do this)
         operation = msgContext.getOperation();
@@ -203,14 +209,14 @@ public class RPCProvider extends JavaProvider {
             throw new AxisFault(Messages.getMessage("noSuchOperation",
                     methodName));
         }
-
+        
         // Create the array we'll use to hold the actual parameter
         // values.  We know how big to make it from the metadata.
         Object[] argValues = new Object[operation.getNumParams()];
 
         // A place to keep track of the out params (INOUTs and OUTs)
         ArrayList outs = new ArrayList();
-
+        
         // Put the values contained in the RPCParams into an array
         // suitable for passing to java.lang.reflect.Method.invoke()
         // Make sure we respect parameter ordering if we know about it
@@ -219,10 +225,10 @@ public class RPCProvider extends JavaProvider {
         for (int i = 0; i < numArgs; i++) {
             RPCParam rpcParam = (RPCParam) args.get(i);
             Object value = rpcParam.getValue();
-
+            
             // first check the type on the paramter
             ParameterDesc paramDesc = rpcParam.getParamDesc();
-
+            
             // if we found some type info try to make sure the value type is
             // correct.  For instance, if we deserialized a xsd:dateTime in
             // to a Calendar and the service takes a Date, we need to convert
@@ -230,7 +236,7 @@ public class RPCProvider extends JavaProvider {
 
                 // Get the type in the signature (java type or its holder)
                 Class sigType = paramDesc.getJavaType();
-
+                
                 // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value,
                         sigType);
@@ -240,7 +246,7 @@ public class RPCProvider extends JavaProvider {
                     outs.add(rpcParam);
                 }
             }
-
+            
             // Put the value (possibly converted) in the argument array
             // make sure to use the parameter order if we have it
             if (paramDesc == null || paramDesc.getOrder() == -1) {
@@ -254,7 +260,7 @@ public class RPCProvider extends JavaProvider {
                         "" + argValues[i]));
             }
         }
-
+        
         // See if any subclasses want a crack at faulting on a bad operation
         // FIXME : Does this make sense here???
         String allowedMethods = (String) service.getOption("allowedMethods");
@@ -284,13 +290,13 @@ public class RPCProvider extends JavaProvider {
                 }
             }
         }
-
+        
         // OK!  Now we can invoke the method
         Object objRes = null;
         try {
             objRes = invokeMethod(msgContext,
-                    operation.getMethod(),
-                    obj, argValues);
+                                  operation.getMethod(),
+                                  obj, argValues);
         } catch (IllegalArgumentException e) {
             String methodSig = operation.getMethod().toString();
             String argClasses = "";
@@ -311,7 +317,7 @@ public class RPCProvider extends JavaProvider {
                     new String[]{methodSig, argClasses}),
                     e);
         }
-
+        
         /* Now put the result in the result SOAPEnvelope */
         /*************************************************/
         RPCElement resBody = new RPCElement(methodName + "Response");
@@ -326,7 +332,7 @@ public class RPCProvider extends JavaProvider {
                 if (returnQName == null) {
                     returnQName = new QName("", methodName + "Return");
                 }
-
+                
                 // For SOAP 1.2, add a result
                 if (msgContext.getSOAPConstants() ==
                         SOAPConstants.SOAP12_CONSTANTS) {
@@ -342,7 +348,7 @@ public class RPCProvider extends JavaProvider {
                 }
 
             }
-
+            
             // Then any other out params
             if (!outs.isEmpty()) {
                 for (Iterator i = outs.iterator(); i.hasNext();) {

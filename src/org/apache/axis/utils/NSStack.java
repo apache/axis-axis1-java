@@ -58,9 +58,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Stack;
-import java.util.Iterator;
 
 /**
  * The abstraction this class provides is a push down stack of variable
@@ -79,7 +76,7 @@ import java.util.Iterator;
  * Accordingly, this stack is implemented as a single array, will null
  * values used to indicate frame boundaries.
  *
- * @author: James Snell
+ * @author James Snell
  * @author Glen Daniels (gdaniels@macromedia.com)
  * @author Sam Ruby (rubys@us.ibm.com)
  */
@@ -118,9 +115,9 @@ public class NSStack {
      * Remove the top frame from the stack.
      */
     public void pop() {
-        top--;
-
         clearFrame();
+
+        top--;
 
         if (top == 0) {
             if (log.isTraceEnabled())
