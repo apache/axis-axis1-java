@@ -56,7 +56,6 @@ package org.apache.axis.tools.ant.wsdl;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;

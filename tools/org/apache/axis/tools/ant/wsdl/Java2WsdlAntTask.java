@@ -53,22 +53,21 @@
  */
 package org.apache.axis.tools.ant.wsdl;
 
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
-
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.types.Path;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-import org.apache.axis.utils.ClassUtils;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.io.File;
 
 /*
  * Important. we autogenerate the ant task docs from this.

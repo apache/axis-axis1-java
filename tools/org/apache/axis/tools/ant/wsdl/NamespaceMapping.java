@@ -55,16 +55,16 @@
 package org.apache.axis.tools.ant.wsdl;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.ProjectComponent;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectComponent;
 
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Enumeration;
-import java.io.File;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Used for nested package definitions.

@@ -57,10 +57,10 @@ package org.apache.axis.tools.ant.wsdl;
 
 import org.apache.tools.ant.ProjectComponent;
 
-import java.util.List;
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *a mappingset is a set of mappings
