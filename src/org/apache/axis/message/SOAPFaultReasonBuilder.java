@@ -1,8 +1,20 @@
+package org.apache.axis.message;
+
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.CallbackTarget;
+import org.apache.axis.encoding.Callback;
+import org.apache.axis.Constants;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,40 +64,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.message;
-
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.Callback;
-import org.apache.axis.encoding.CallbackTarget;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
 
 /**
- * Build a Fault body element.
- *
- * @author Sam Ruby (rubys@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
- * @author Tom Jordahl (tomj@macromedia.com)
- */
-public class SOAPFaultCodeBuilder extends SOAPHandler implements Callback
+ * Parser for the fault Reason element and its associated Text elements.
+ * 
+ * @author Glen Daniels (gdaniels@apache.org)
+ */ 
+public class SOAPFaultReasonBuilder extends SOAPHandler implements Callback
 {
-    // Fault data
-    protected QName faultCode = null;
-    protected SOAPFaultCodeBuilder next = null;
-
-    public SOAPFaultCodeBuilder() {
-    }
-
-    public QName getFaultCode() {
-        return faultCode;
-    }
-
-    public SOAPFaultCodeBuilder getNext() {
-        return next;
+    /** Storage for the actual text */
+    private ArrayList text = new ArrayList();
+    
+    public SOAPFaultReasonBuilder() {
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -95,31 +85,32 @@ public class SOAPFaultCodeBuilder extends SOAPHandler implements Callback
                                     DeserializationContext context)
         throws SAXException
     {
-
         QName thisQName = new QName(namespace, name);
-        if (thisQName.equals(Constants.QNAME_FAULTVALUE_SOAP12)) {
+        if (thisQName.equals(Constants.QNAME_TEXT_SOAP12)) {
             Deserializer currentDeser = null;
-            currentDeser = context.getDeserializerForType(Constants.XSD_QNAME);
+            currentDeser = context.getDeserializerForType(Constants.XSD_STRING);
             if (currentDeser != null) {
-                currentDeser.registerValueTarget(new CallbackTarget(this, thisQName));
+                currentDeser.registerValueTarget(new CallbackTarget(this, null));
             }
             return (SOAPHandler)currentDeser;
-        } else if (thisQName.equals(Constants.QNAME_FAULTSUBCODE_SOAP12)) {
-            return (next = new SOAPFaultCodeBuilder());
-        } else
+        } else {
             return null;
+        }
     }
 
-    /*
+    /**
      * Defined by Callback.
-     * This method gets control when the callback is invoked.
-     * @param is the value to set.
-     * @param hint is an Object that provide additional hint information.
+     * This method gets control when the callback is invoked, which happens
+     * each time we get a deserialized Text string. 
+     * 
+     * @param value the deserialized value
+     * @param hint (unused) provides additional hint information.
      */
     public void setValue(Object value, Object hint) {
-        QName thisQName = (QName)hint;
-        if (thisQName.equals(Constants.QNAME_FAULTVALUE_SOAP12)) {
-            faultCode = (QName)value;
-        }
+        text.add(value);        
+    }
+
+    public ArrayList getText() {
+        return text;
     }
 }
