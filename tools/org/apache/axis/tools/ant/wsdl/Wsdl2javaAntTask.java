@@ -255,6 +255,12 @@ public class Wsdl2javaAntTask extends Task
                 ClassUtils.setDefaultClassLoader(cl);
             }
 
+            try {
+                if(url.indexOf(':') == -1)
+                    url = getProject().resolveFile(url).getAbsolutePath();
+            } catch (Throwable t){
+            }
+            
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
                 emitter.run(url);
