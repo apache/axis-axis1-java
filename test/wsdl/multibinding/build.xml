@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.multibinding"/>
+  <echo message="Compiling test.wsdl.multibinding"/>
     <!-- Multiple-binding test with different literal usage -->
     <wsdl2java url="${axis.home}/test/wsdl/multibinding/multibinding.wsdl"
                output="${axis.home}/build/work"

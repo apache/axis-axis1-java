@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.marrays"/>
+  <echo message="Compiling test.wsdl.marrays"/>
     <!-- MArrayTests Test -->
     <wsdl2java url="${axis.home}/test/wsdl/marrays/MArrayTest.wsdl"
                output="${axis.home}/build/work"

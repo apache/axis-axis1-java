@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.nested"/>
+  <echo message="Compiling test.wsdl.nested"/>
     <!-- Nested Structure Test -->
     <wsdl2java url="${axis.home}/test/wsdl/nested/Nested.wsdl"
                output="${axis.home}/build/work"

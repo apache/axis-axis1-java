@@ -52,7 +52,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.filegen"/>
+  <echo message="Compiling test.wsdl.filegen"/>
     <!-- Verify files generated based on what is referenced in WSDL -->
     <wsdl2java url="${axis.home}/test/wsdl/filegen/FileGen.wsdl"
                output="${axis.home}/build/work"

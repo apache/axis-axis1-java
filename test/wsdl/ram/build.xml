@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.ram"/>
+  <echo message="Compiling test.wsdl.ram"/>
     <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
     <wsdl2java url="${axis.home}/test/wsdl/ram/ram.wsdl"
                output="${axis.home}/build/work"

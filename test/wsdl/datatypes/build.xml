@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.datatypes"/>
+  <echo message="Compiling test.wsdl.datatypes"/>
     <!-- DataType Structure Test -->
     <wsdl2java url="${axis.home}/test/wsdl/datatypes/DataTypes.wsdl"
                output="${axis.home}/build/work"

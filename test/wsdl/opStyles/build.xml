@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.opStyles"/>
+  <echo message="Compiling test.wsdl.opStyles"/>
     <!-- Operation style test (oneway, request/response, -->
     <!-- solicit/response, notification -->
     <wsdl2java url="${axis.home}/test/wsdl/opStyles/opStyles.wsdl"

@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.refattr"/>
+  <echo message="Compiling test.wsdl.refattr"/>
 
     <!-- RefAttr Test -->
     <wsdl2java url="${axis.home}/test/wsdl/refattr/refattr.wsdl"

@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.parameterOrder"/>
+  <echo message="Compiling test.wsdl.parameterOrder"/>
     <!-- This tests parameterOrder.  -->
     <wsdl2java url="${axis.home}/test/wsdl/parameterOrder/parameterOrder.wsdl"
                output="${axis.home}/build/work"

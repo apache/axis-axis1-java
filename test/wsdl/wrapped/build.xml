@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.wrapped"/>
+  <echo message="Compiling test.wsdl.wrapped"/>
     <!-- Wrapped Sample Test -->
     <wsdl2java url="${axis.home}/test/wsdl/wrapped/CityBBB.wsdl"
                output="${axis.home}/build/work"

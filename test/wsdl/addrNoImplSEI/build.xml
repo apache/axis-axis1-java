@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.addrNoImplSEI"/>
+  <echo message="Compiling test.wsdl.addrNoImplSEI"/>
 
     <!-- AddressBook roundtrip example that does not implement SEI -->
     <!-- Summary -->
