@@ -231,6 +231,10 @@ public class Emitter {
             // Collect information about ports and operations
             wsdlAttr = new WsdlAttributes(def, new HashMap());
 
+            // PortTypes and Services can share the same name.  If they do in this Definition,
+            // force their names to be suffixed with _PortType and _Service, respectively.
+            resolvePortTypeServiceNameClashes();
+
             // Output interfaces for portTypes - fill in the portTypesInfo HashMap
             writePortTypes(portTypesInfo);
 
@@ -422,6 +426,28 @@ public class Emitter {
         }
         return types;
     } // getNestedTypes
+
+    /**
+     * PortTypes and Services can share the same name.  If they do in this Definition,
+     * force their names to be suffixed with _PortType and _Service, respectively.  These names
+     * are placed back in the QName of the PortType and Service objects themselves.
+     */
+    private void resolvePortTypeServiceNameClashes() {
+        Map portTypes = def.getPortTypes();
+        Map services  = def.getServices();
+        Iterator pti = portTypes.keySet().iterator();
+        while (pti.hasNext()) {
+            QName ptName = (QName) pti.next();
+            Iterator si = services.keySet().iterator();
+            while (si.hasNext()) {
+                QName sName = (QName) si.next();
+                if (ptName.equals(sName)) {
+                    ptName.setLocalPart(ptName.getLocalPart() + "_Port");
+                    sName.setLocalPart(sName.getLocalPart() + "_Service");
+                }
+            }
+        }
+    } // resolvePortTypeServiceNameClashes
 
     /**
      * Generate the bindings for all port types, and fill in the portTypesInfo HashMap.
