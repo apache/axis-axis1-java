@@ -59,6 +59,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
 * This class is essentially a HashMap of <namespace, package name> pairs with
@@ -153,9 +154,31 @@ public class Namespaces extends HashMap {
         Iterator i = map.keySet().iterator();
         while (i.hasNext()) {
             Object key = i.next();
-            put(key, map.get(key));
+            String pkg = (String) map.get(key);
+            pkg = javify(pkg);
+            put(key, pkg);
         }
     } // putAll
+
+    /**
+     * Make sure each package name doesn't conflict with a Java keyword.
+     * Ie., org.apache.import.test becomes org.apache.import_.test.
+     */
+    private String javify(String pkg) {
+        StringTokenizer st = new StringTokenizer(pkg, ".");
+        pkg = "";
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (Utils.isJavaKeyword(token)) {
+                token = Utils.makeNonJavaKeyword(token);
+            }
+            pkg = pkg + token;
+            if (st.hasMoreTokens()) {
+                pkg = pkg + '.';
+            }
+        }
+        return pkg;
+    } // javify
 
     /**
      * Make a directory for the given package under root.

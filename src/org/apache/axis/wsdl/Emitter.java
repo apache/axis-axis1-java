@@ -186,6 +186,11 @@ public class Emitter {
             }
             emitFactory = new TypeFactory(namespaces);
             emit(def, doc);
+
+            // Output deploy.xml and undeploy.xml outside of the recursive emit method.
+            if (bEmitSkeleton) {
+                writeDeploymentXML(def.getTargetNamespace());
+            }
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -238,11 +243,6 @@ public class Emitter {
 
             // Output factory classes for services
             writeServices();
-
-            // Output deploy.xml and undeploy.xml
-            if (bEmitSkeleton) {
-                writeDeploymentXML(def.getTargetNamespace());
-            }
         }
     } // emit
 
