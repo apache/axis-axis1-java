@@ -154,6 +154,14 @@ public class Parser {
         return symbolTable == null ? null : symbolTable.getDefinition();
     } // getCurrentDefinition
 
+    /**
+     * Get the current WSDL URI.  The WSDL URI is null until
+     * run is called.
+     */
+    public String getWSDLURI() {
+        return symbolTable == null ? null : symbolTable.getWSDLURI();
+    } // getWSDLURI
+
     public void run(String wsdlURI) throws IOException, WSDLException {
         if (getFactory() == null) {
             setFactory(new NoopFactory());
