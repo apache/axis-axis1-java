@@ -75,7 +75,7 @@ public class ServiceException extends Exception {
      *          unknown.)
      */
     public ServiceException(Throwable cause) {
-        super(cause.toString());
+        super( (cause == null) ? null : cause.toString() );
         this.cause = cause;
     }
     
@@ -87,35 +87,6 @@ public class ServiceException extends Exception {
      */
     public Throwable getLinkedCause() {
         return cause;
-    }
-    
-    public void printStackTrace() { 
-        synchronized (System.err) {
-            System.err.println(this);
-            printStackTrace(System.err);
-        }
-    }
-    
-    public void printStackTrace(java.io.PrintStream ps) {
-        if (this.cause == null) {
-            super.printStackTrace(ps);
-        } else {
-            synchronized(ps) {
-                ps.println(this);
-                this.cause.printStackTrace(ps);
-            }
-        }
-    }
-    
-    public void printStackTrace(java.io.PrintWriter pw) {
-        if (this.cause == null) {
-            super.printStackTrace(pw);
-        } else {
-            synchronized(pw) {
-                pw.println(this);
-                this.cause.printStackTrace(pw);
-            }
-        }
     }
     
 }
