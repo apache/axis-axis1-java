@@ -17,11 +17,8 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.ClassUtils;
 
 import java.util.Calendar;
-import java.lang.reflect.Method;
-import java.lang.reflect.Constructor;
 
 /**
  * Implementation of the XML Schema type duration. Duration supports a minimum
@@ -71,7 +68,7 @@ public class Duration implements java.io.Serializable {
      * PnYnMnDTnHnMnS.
      *
      * @param duration String
-     * @throws IllegalArgumentException if the string doesn't parse correctly.
+     * @throws SchemaException if the string doesn't parse correctly.
      */
     public Duration(String duration) throws IllegalArgumentException {
         int position = 1;
@@ -81,21 +78,6 @@ public class Duration implements java.io.Serializable {
         if (duration.indexOf("P") == -1 || duration.equals("P")) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badDuration"));
-        }
-
-        // if does not have time
-        if (duration.indexOf("T") == -1) {
-            // no time information
-            if (!matches(duration, "-?P[0-9]*Y?[0-9]*M?[0-9]*D?")) {
-                throw new IllegalArgumentException(
-                        Messages.getMessage("badDuration"));
-            }
-        } else {
-            if (!matches(duration,
-                    "-?P[0-9]*Y?[0-9]*M?[0-9]*D?T[0-9]*H?[0-9]*M?[0-9]*\\.?[0-9]*S?")) {
-                throw new IllegalArgumentException(
-                        Messages.getMessage("badDuration"));
-            }
         }
 
         // if present, time cannot be empty
@@ -154,35 +136,65 @@ public class Duration implements java.io.Serializable {
      * @param time
      * @throws IllegalArgumentException if time does not match pattern
      *
-     * @deprecated for creating a Duration object from a String, use
-     * {@link #Duration(String) Duration(String)} constructor.
      */
     public void parseTime(String time) throws IllegalArgumentException {
-        if (time.length() == 0 ||
-            !matches(time,"[0-9]*H?[0-9]*M?[0-9]*\\.?[0-9]*S?")) {
+        if (time.length() == 0 || time.indexOf("-") != -1) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badTimeDuration"));
         }
 
-        int start = 0;
-        int end = time.indexOf("H");
-
-        if (end != -1) {
-            hours = Integer.parseInt(time.substring(0, end));
-            start = end + 1;
+        // check if time ends with either H, M, or S
+        if (!time.endsWith("H") && !time.endsWith("M") && !time.endsWith("S")) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badTimeDuration"));
         }
 
-        end = time.indexOf("M");
+        try {
+            // parse string and extract hours, minutes, and seconds
+            int start = 0;
 
-        if (end != -1) {
-            minutes = Integer.parseInt(time.substring(start, end));
-            start = end + 1;
-        }
+            // Hours
+            int end = time.indexOf("H");
+            // if there is H in a string but there is no value for hours,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badTimeDuration"));
+            }
+            if (end != -1) {
+                hours = Integer.parseInt(time.substring(0, end));
+                start = end + 1;
+            }
 
-        end = time.indexOf("S");
+            // Minutes
+            end = time.indexOf("M");
+            // if there is M in a string but there is no value for hours,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badTimeDuration"));
+            }
 
-        if (end != -1) {
-            seconds = Double.parseDouble(time.substring(start, end));
+            if (end != -1) {
+                minutes = Integer.parseInt(time.substring(start, end));
+                start = end + 1;
+            }
+
+            // Seconds
+            end = time.indexOf("S");
+            // if there is S in a string but there is no value for hours,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badTimeDuration"));
+            }
+
+            if (end != -1) {
+                setSeconds(Double.parseDouble(time.substring(start, end)));
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badTimeDuration"));
         }
     }
 
@@ -193,34 +205,62 @@ public class Duration implements java.io.Serializable {
      * @param date
      * @throws IllegalArgumentException if date does not match pattern
      *
-     * @deprecated for creating a Duration object from a String, use
-     * {@link #Duration(String) Duration(String)} constructor.
      */
     public void parseDate(String date) throws IllegalArgumentException {
-        if (date.length() == 0 || !matches(date, "[0-9]*Y?[0-9]*M?[0-9]*D?")) {
-            throw new IllegalArgumentException(Messages.getMessage(
-                    "badDateDuration"));
+        if (date.length() == 0 || date.indexOf("-") != -1) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badDateDuration"));
         }
 
-        int start = 0;
-        int end = date.indexOf("Y");
-
-        if (end != -1) {
-            years = Integer.parseInt(date.substring(0, end));
-            start = end + 1;
+        // check if date string ends with either Y, M, or D
+        if (!date.endsWith("Y") && !date.endsWith("M") && !date.endsWith("D")) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badDateDuration"));
         }
 
-        end = date.indexOf("M");
+        // catch any parsing exception
+        try {
+            // parse string and extract years, months, days
+            int start = 0;
+            int end = date.indexOf("Y");
 
-        if (end != -1) {
-            months = Integer.parseInt(date.substring(start, end));
-            start = end + 1;
-        }
+            // if there is Y in a string but there is no value for years,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badDateDuration"));
+            }
+            if (end != -1) {
+                years = Integer.parseInt(date.substring(0, end));
+                start = end + 1;
+            }
 
-        end = date.indexOf("D");
+            // months
+            end = date.indexOf("M");
+            // if there is M in a string but there is no value for months,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badDateDuration"));
+            }
+            if (end != -1) {
+                months = Integer.parseInt(date.substring(start, end));
+                start = end + 1;
+            }
 
-        if (end != -1) {
-            days = Integer.parseInt(date.substring(start, end));
+            end = date.indexOf("D");
+            // if there is D in a string but there is no value for days,
+            // throw an exception
+            if (start == end) {
+                throw new IllegalArgumentException(
+                        Messages.getMessage("badDateDuration"));
+            }
+            if (end != -1) {
+                days = Integer.parseInt(date.substring(start, end));
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badDateDuration"));
         }
     }
 
@@ -382,39 +422,6 @@ public class Duration implements java.io.Serializable {
         return duration.toString();
     }
 
-    /**
-     * Matches the pattern specified in the string
-     * 
-     * @param string
-     * @param regexp
-     * @return boolean
-     */ 
-    private boolean matches(String string, String regexp) {
-        try {
-            Method method = String.class.getMethod("matches", new Class[]{String.class});
-            Boolean b = (Boolean) method.invoke(string, new Object[]{regexp});
-            return b.booleanValue();
-        } catch (Throwable e) {
-        }        
-        try {
-            Class clazz = ClassUtils.forName("org.apache.regexp.RE");
-            Constructor constructor = clazz.getConstructor(new Class[]{String.class});
-            Object obj = constructor.newInstance(new Object[]{regexp});
-            Method method = clazz.getMethod("match", new Class[]{String.class});
-            Boolean b = (Boolean) method.invoke(obj, new Object[]{regexp});
-            return b.booleanValue();
-        } catch (Throwable e){
-        }
-        try {
-            Class clazz = ClassUtils.forName("org.apache.xerces.impl.xpath.regex.REUtil");
-            Method method = clazz.getMethod("matches", new Class[]{String.class,String.class});
-            Boolean b = (Boolean) method.invoke(string, new Object[]{regexp, string});
-            return b.booleanValue();
-        } catch (Throwable e){
-        }
-        throw new RuntimeException(Messages.getMessage("regexpFailure00"));
-    }
-    
     /**
      * The equals method compares the time represented by duration object, not
      * its string representation.
