@@ -115,7 +115,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             TypeEntry type = (TypeEntry) elements.get(i);
             String elemName = (String) elements.get(i + 1);
             String javaName = Utils.xmlNameToJava(elemName);
-            if (false && !javaName.equals(elemName)) {
+            if (!javaName.equals(elemName)) {
                 // If we did some mangling, make sure we'll write out the XML
                 // the correct way.
                 if (elementMappings == null)
