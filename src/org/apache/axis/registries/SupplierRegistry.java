@@ -58,8 +58,9 @@ package org.apache.axis.registries ;
 import java.io.* ;
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
-import org.apache.axis.suppliers.*;
 
 /** A <code>SupplierRegistry</code> contains Suppliers, which are used
  * by the find() method to obtain actual Handler references.  This
@@ -115,10 +116,19 @@ public class SupplierRegistry implements HandlerRegistry {
      * Given a 'key' return the corresponding Handler
      */
     public Handler find(String key) {
-        if ( suppliers == null ) return( null );
+        Debug.Print( 2, "Enter: SupplierRegistry::find" );
+        if ( suppliers == null ) {
+          Debug.Print( 2, "Exit: SupplierRegistry::find - suppliers is null" );
+          return( null );
+        }
         Supplier supplier = (Supplier)suppliers.get(key);
-        if (supplier == null) return null;
-        return supplier.getHandler();
+        if (supplier == null) {
+          Debug.Print( 2, "Exit: SupplierRegistry::find - supplier is null" );
+          return null;
+        }
+        Handler h = supplier.getHandler();
+        Debug.Print( 2, "Exit: SupplierRegistry::find - h=" + h );
+        return h ;
     }
 
     /**
