@@ -1346,7 +1346,7 @@ public class SymbolTable {
             //     there is only one element in a wrapped output param
             // THEN use the things in this element as the parameters
             if (vTypes != null && wrapped &&
-                    (!outputParts) || (vTypes.size() == 1 && outputParts)) {
+                    (!outputParts) || (vTypes.size() <= 1 && outputParts)) {
                 // add the elements in this list
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
