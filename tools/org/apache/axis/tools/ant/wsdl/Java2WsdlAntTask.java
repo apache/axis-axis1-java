@@ -24,6 +24,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
+import org.apache.tools.ant.types.Environment;
+import org.apache.tools.ant.types.CommandlineJava;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -82,6 +84,7 @@ public class Java2WsdlAntTask extends Task
     private Path classpath = null;
     private String soapAction = null;
     private List complexTypes = new LinkedList();
+    private CommandlineJava commandline = new CommandlineJava();
 
     /**
      * trace out parameters
@@ -152,6 +155,11 @@ public class Java2WsdlAntTask extends Task
             }
         }
 
+        CommandlineJava.SysProperties sysProperties =
+                commandline.getSystemProperties();
+        if (sysProperties != null) {
+            sysProperties.setSystem();
+        }
         try {
             traceParams(Project.MSG_VERBOSE);
             validate();
@@ -241,6 +249,10 @@ public class Java2WsdlAntTask extends Task
             t.printStackTrace(new PrintWriter(writer));
             log(writer.getBuffer().toString(), Project.MSG_ERR);
             throw new BuildException("Error while running " + getClass().getName(), t);
+        } finally {
+            if (sysProperties != null) {
+                sysProperties.restoreSystem();
+            }
         }
     }
 
@@ -509,5 +521,13 @@ public class Java2WsdlAntTask extends Task
      */
     public void setClasspathRef(Reference r) {
         createClasspath().setRefid(r);
+    }
+
+    /**
+     * Adds a system property that tests can access.
+     * @param sysp environment variable to add
+     */
+    public void addSysproperty(Environment.Variable sysp) {
+        commandline.addSysproperty(sysp);
     }
 }

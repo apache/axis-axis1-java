@@ -33,6 +33,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Environment;
 
 /*
  * IMPORTANT: see Java2WsdlAntTask on how to javadoc this task and rebuild
@@ -104,6 +106,7 @@ public class Wsdl2javaAntTask extends Task
     private List nsExcludes = new ArrayList();
     private List properties = new ArrayList();
 	private String implementationClassName = null;
+    private CommandlineJava commandline = new CommandlineJava();
 
     /**
      * do we print a stack trace when something goes wrong?
@@ -195,6 +198,12 @@ public class Wsdl2javaAntTask extends Task
 
         traceParams(Project.MSG_VERBOSE);
         validate();
+        CommandlineJava.SysProperties sysProperties =
+                commandline.getSystemProperties();
+        if (sysProperties != null) {
+            sysProperties.setSystem();
+        }
+        
         try {
             // Instantiate the emitter
             Emitter emitter = createEmitter();
@@ -291,6 +300,10 @@ public class Wsdl2javaAntTask extends Task
             //now throw an exception that includes the error text of the caught exception.
             throw new BuildException("WSDL processing error for "
                     + url +" :\n "+t.getMessage() , t);
+        } finally {
+            if (sysProperties != null) {
+                sysProperties.restoreSystem();
+            }
         }
 
     }
@@ -604,6 +617,14 @@ public class Wsdl2javaAntTask extends Task
         traceSystemSetting("http.proxyPassword", logLevel);
         traceSystemSetting("socks.proxyHost", logLevel);
         traceSystemSetting("socks.proxyPort", logLevel);
+    }
+
+    /**
+     * Adds a system property that tests can access.
+     * @param sysp environment variable to add
+     */
+    public void addSysproperty(Environment.Variable sysp) {
+        commandline.addSysproperty(sysp);
     }
 }
 
