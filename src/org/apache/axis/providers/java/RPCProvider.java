@@ -294,24 +294,6 @@ public class RPCProvider extends JavaProvider
     }
 
     /**
-     * This method is supposed to be used to get the
-     * the target method.  Currently the OperationDesc
-     * is used to get this information, and this method 
-     * is not used.  I commented out the code for now.
-     * @param MessageContext
-     * @param Method is the target method.   
-     * @param Object is the target object 
-     * @param Object[] are the method arguments
-     */
-    //protected Method[] getMethod(MessageContext msgContext,
-    //                             JavaClass jc,
-    //                             String methodName)
-    //    throws Exception
-    //{
-    //    return jc.getMethod(methodName);
-    //}
-
-    /**
      * This method encapsulates the method invocation.             
      * @param MessageContext
      * @param Method is the target method.   
