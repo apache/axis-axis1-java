@@ -286,9 +286,8 @@ public class Emitter {
         String nameValue = portType.getQName ().getLocalPart ();
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
-
-        if (bVerbose)
-            System.out.println("Generating PortType interface: " + nameValue + ".java");
+        if(bVerbose)
+        	System.out.println("Generating portType interface: " + nameValue + ".java");
 
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
@@ -316,8 +315,10 @@ public class Emitter {
         String nameValue = portType.getQName ().getLocalPart () + "Axis";
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
-        if (bVerbose)
+        if(bVerbose)
             System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
+        if(bMessageContext)
+            interfacePW.println ("import org.apache.axis.MessageContext;");
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
 
@@ -616,6 +617,18 @@ public class Emitter {
     } // writeOperation
 
     /**
+     * This method generates the skeleton interface signatures operation.
+     */
+    private Parameters writeOperationSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
+        String name = operation.getName ();
+        Parameters parms = parameters (operation);
+
+        interfacePW.println (parms.skelSignature + ";");
+
+        return parms;
+    } // writeOperation
+
+    /**
      * This method generates the axis server side impl interface signatures operation.
      */
     private Parameters writeOperationAxisSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
@@ -698,8 +711,7 @@ public class Emitter {
 
         String stubName = name + "Stub";
         PrintWriter stubPW = new PrintWriter (new FileWriter (stubName + ".java"));
-
-        if (bVerbose)
+        if(bVerbose)
             System.out.println("Generating client-side stub: " + stubName + ".java");
 
         stubPW.println ("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
@@ -774,16 +786,16 @@ public class Emitter {
         {
             String skelName = name + "Skeleton";
             skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
-            if (bVerbose)
+            String implType = portTypeName + " impl";
+            if(bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelName + ".java");
+            if(bMessageContext){
+                skelPW.println ("import org.apache.axis.MessageContext;");
+                implType = portTypeName + "Axis impl";
+            }
             skelPW.println ("public class " + skelName);
             skelPW.println ("{");
-            if (bMessageContext) {
-                skelPW.println ("    private " + portTypeName + "Axis impl;");
-            }
-            else {
-                skelPW.println ("    private " + portTypeName + " impl;");
-            }
+            skelPW.println ("    private " + implType + ";");
             skelPW.println ();
             // RJB WARNING! - is this OK?
             skelPW.println ("    public " + skelName + "()");
@@ -791,12 +803,7 @@ public class Emitter {
             skelPW.println ("        this.impl = new " + name + "Impl ();");
             skelPW.println ("    }");
             skelPW.println ();
-            if (bMessageContext) {
-                skelPW.println ("    public " + skelName + " (" + portTypeName + "Axis impl)");
-            }
-            else {
-                skelPW.println ("    public " + skelName + " (" + portTypeName + " impl)");
-            }
+            skelPW.println ("    public " + skelName + " (" + implType + ")");
             skelPW.println ("    {");
             skelPW.println ("        this.impl = impl;");
             skelPW.println ("    }");
@@ -1088,6 +1095,8 @@ public class Emitter {
         String serviceName = service.getQName().getLocalPart();
         PrintWriter servicePW = new PrintWriter (
                 new FileWriter (serviceName + ".java"));
+        if(bVerbose)
+            System.out.println("Generating service class: " + serviceName + ".java");
 
         // imports (none right now)
 
@@ -1199,11 +1208,11 @@ public class Emitter {
     private void writeDeploymentXML(){
         try{
             PrintWriter deployPW = new PrintWriter (new FileWriter ("deploy.xml"));
-            if (bVerbose)
+            if(bVerbose)
                 System.out.println("Generating deployment document: deploy.xml");
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = new PrintWriter (new FileWriter ("undeploy.xml"));
-            if (bVerbose)
+            if(bVerbose)
                 System.out.println("Generating deployment document: undeploy.xml");
             initializeDeploymentDoc(undeployPW, "undeploy");
             writeDeployServices(deployPW, undeployPW);
@@ -1342,7 +1351,7 @@ public class Emitter {
      */
     private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException{
         deployPW.println("      <option name=\"className\" value=\"" +
-                           binding.getQName ().getLocalPart () + "Impl" + "\"/>");
+                           binding.getQName ().getLocalPart () + "Skeleton" + "\"/>");
 
         String methodList = "";
         Iterator operationsIterator = binding.getBindingOperations().iterator();
@@ -1379,8 +1388,8 @@ public class Emitter {
         NamedNodeMap attributes = node.getAttributes ();
         String nameValue = capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter typePW = new PrintWriter (new FileWriter (nameValue + ".java"));
-        if (bVerbose)
-            System.out.println("Generating Type Implementation: " + nameValue + ".java");
+        if(bVerbose)
+            System.out.println("Generating type implementation: " + nameValue + ".java");
 
         typePW.println ("public class " + nameValue + " implements java.io.Serializable");
         typePW.println ("{");
@@ -1438,9 +1447,8 @@ public class Emitter {
             capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter pw =
             new PrintWriter (new FileWriter (typeName + "Holder.java"));
-
-        if (bVerbose)
-            System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
+        if(bVerbose)
+            System.out.println("Generating type implementation holder: " + typeName + "Holder.java");
 
         pw.println ("public final class " + typeName + "Holder implements java.io.Serializable");
         pw.println ("{");
