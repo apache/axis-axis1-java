@@ -449,7 +449,10 @@ public class MessageElement
     protected void outputImpl(SerializationContext context) throws Exception
     {
         if (elementRep != null) {
+            boolean oldPretty = context.getPretty();
+            context.setPretty(false);
             context.writeDOMElement(elementRep);
+            context.setPretty(oldPretty);
             return;
         }
 
