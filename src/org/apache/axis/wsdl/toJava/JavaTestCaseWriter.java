@@ -164,17 +164,6 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             pw.println("    }");
             pw.println("");
 
-            java.io.PrintWriter pw2 = new java.io.PrintWriter(new FileOutputStream("tests.txt",true));
-            pw2.println("=============== TEST CASE for " + sEntry.getName() + "TestCase" + " =======================");
-            pw2.println("    public void test"+portName+"WSDL() throws Exception {");
-            pw2.println("        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();");
-            pw2.println("        java.net.URL url = new java.net.URL(new " + sEntry.getName() + "Locator" + "().get" + portName + "Address() + \"?WSDL\");");
-            pw2.println("        javax.xml.rpc.Service service = serviceFactory.createService(url, new " + sEntry.getName() + "Locator().getServiceName());");
-            pw2.println("        assertTrue(service != null);");
-            pw2.println("    }");
-            pw2.println("");
-            pw2.close();
-            
             PortType portType = binding.getPortType();
 
             writeComment(pw, p.getDocumentationElement());
