@@ -283,6 +283,7 @@ Copyright:
     </copy>
     <copy todir="${dist.dir}/samples">
       <fileset dir="${build.samples}"/>
+      <fileset dir="./samples"/>
     </copy>
     <copy todir="${dist.dir}/docs">
       <fileset dir="${docs.dir}"/>
