@@ -506,6 +506,12 @@ public class JavaUtils
             if (dest.isAssignableFrom(src))
                 return true;
 
+            //Allow mapping of Map's to Map's
+            if (java.util.Map.class.isAssignableFrom(dest) &&
+                java.util.Map.class.isAssignableFrom(src)) {
+                  return true;
+            }
+
             // If it's a wrapping conversion, we're good.
             if (getWrapperClass(src) == dest)
                 return true;
