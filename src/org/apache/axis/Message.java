@@ -84,6 +84,9 @@ public class Message {
     private Object originalMessage ;
     private Object currentMessage ;
 
+    public static final String REQUEST  = "request" ;
+    public static final String RESPONSE = "response" ;
+
     private static final int FORM_STRING       = 1;
     private static final int FORM_INPUTSTREAM  = 2;
     private static final int FORM_SOAPENVELOPE = 3;

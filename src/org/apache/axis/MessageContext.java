@@ -55,7 +55,6 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
@@ -188,19 +187,6 @@ public class MessageContext {
         return mappingRegistry;
     }
 
-    /**
-     * A description of the service
-     */
-    private ServiceDescription serviceDesc = null;
-
-    public ServiceDescription getServiceDescription() {
-        return serviceDesc;
-    }
-
-    public void setServiceDescription(ServiceDescription serviceDesc) {
-        this.serviceDesc = serviceDesc;
-    }
-    
     /**
      * Transport
      */
@@ -396,10 +382,6 @@ public class MessageContext {
             SOAPService service = (SOAPService)sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
-            
-            if (serviceDesc == null) {
-                serviceDesc = service.getServiceDescription();
-            }
         }
     }
 
@@ -429,10 +411,76 @@ public class MessageContext {
     /** Place to store an AuthenticatedUser */
     public static String AUTHUSER            = "authenticatedUser";
 
+    /** Is this message an RPC message (instead of just a blob of xml) */
+    public static String ISRPC               ="is_rpc" ;
+
+    /** Temporary */
+    public static String SERVICE_DESCRIPTION = "service_description" ;
+
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
         return( (String) getProperty(propName) );
+    }
+
+    /**
+     * Tests to see if the named property is set in the 'bag'.
+     * If not there then 'false' is returned.
+     * If there, then...
+     *   if its a Boolean, we'll return booleanValue()
+     *   if its an Integer,  we'll return 'false' if its '0' else 'true'
+     *   if its a String, we'll return 'false' if its 'false' or '0' else 'true'
+     *   All other types return 'true'
+     */
+    public boolean isPropertyTrue(String propName) {
+        Object val = getProperty(propName);
+        if ( val == null ) return( false );
+        if ( val instanceof Boolean ) {
+            Boolean b = (Boolean) val ;
+            return( b.booleanValue() );
+        }
+        if ( val instanceof Integer ) {
+            Integer i = (Integer) val ;
+            if ( i.intValue() == 0 ) return( false );
+            return( true );
+        }
+        if ( val instanceof String ) {
+            String s = (String) val ;
+            if ( s.equalsIgnoreCase("false") ||
+                 s.equalsIgnoreCase("no") ) return( false );
+            return( true );
+        }
+        return( true );
+    }
+
+    /**
+     * Tests to see if the named property is set in the 'bag'.
+     * If not there then 'defaultVal' will be returned.
+     * If there, then...
+     *   if its a Boolean, we'll return booleanValue()
+     *   if its an Integer,  we'll return 'false' if its '0' else 'true'
+     *   if its a String, we'll return 'false' if its 'false' or '0' else 'true'
+     *   All other types return 'true'
+     */
+    public boolean isPropertyTrue(String propName, boolean defaultVal) {
+        Object val = getProperty(propName);
+        if ( val == null ) return( defaultVal );
+        if ( val instanceof Boolean ) {
+            Boolean b = (Boolean) val ;
+            return( b.booleanValue() );
+        }
+        if ( val instanceof Integer ) {
+            Integer i = (Integer) val ;
+            if ( i.intValue() == 0 ) return( false );
+            return( true );
+        }
+        if ( val instanceof String ) {
+            String s = (String) val ;
+            if ( s.equalsIgnoreCase("false") ||
+                 s.equalsIgnoreCase("no") ) return( false );
+            return( true );
+        }
+        return( true );
     }
 
     public Object getProperty(String propName) {

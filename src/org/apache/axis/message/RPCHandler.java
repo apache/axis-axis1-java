@@ -85,8 +85,9 @@ public class RPCHandler extends SOAPHandler
          * - Cache typeMappingRegistry
          * - Cache service description
          */
-        ServiceDescription serviceDesc = context.getMessageContext().
-                                                getServiceDescription();
+        ServiceDescription serviceDesc = (ServiceDescription) 
+                                                context.getMessageContext().
+                                                getProperty(MessageContext.SERVICE_DESCRIPTION);
         
         if (DEBUG_LOG) {
             System.err.println("In RPCHandler.onStartChild()");

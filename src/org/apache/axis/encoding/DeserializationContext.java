@@ -279,11 +279,6 @@ public class DeserializationContext extends DefaultHandler
         return getQNameFromString(type);
     }
     
-    public ServiceDescription getServiceDescription()
-    {
-        return msgContext.getServiceDescription();
-    }
-    
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return msgContext.getTypeMappingRegistry();

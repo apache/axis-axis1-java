@@ -60,7 +60,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.rpc.encoding.XMLType;
@@ -89,6 +88,13 @@ import java.io.StringWriter;
  * interface.  This class should be used to actually invoke the Web Service.
  * It can be prefilled by a WSDL document (on the constructor to the Service
  * object) or you can fill in the data yourself.
+ * <pre>
+ * Properties:
+ *     NAMESPACE        - Namespace URI of RPC Body
+ *     SEND_TYPE_ATTR   - Should we send the XSI type attributes (true/false)
+ *     TIMEOUT          - Timeout used by transport sender in seconds
+ *     TRANSPORT_NAME   - Name of transport handler to use
+ * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
@@ -97,11 +103,12 @@ public class Call implements org.apache.axis.rpc.Call {
     static Category category = Category.getInstance(Call.class.getName());
 
     private QName              portTypeName    = null ;
-    private ServiceDescription serviceDesc     = null ;
     private String             operationName   = null ;
     private Vector             paramNames      = null ;
     private Vector             paramTypes      = null ;
     private Vector             paramModes      = null ;
+    private String             encodingStyle   = null ;
+    private XMLType            returnType      = null ;
 
     private AxisEngine         engine          = null ;
     private MessageContext     msgContext      = null ;
@@ -111,6 +118,7 @@ public class Call implements org.apache.axis.rpc.Call {
     private Hashtable          myProperties    = null ;
 
     private boolean            maintainSession = false ;
+
 
     // Our Transport, if any
     private Transport          transport       = null ;
@@ -123,9 +131,10 @@ public class Call implements org.apache.axis.rpc.Call {
     private Vector             myHeaders       = null;
 
 
-    public static final String TRANSPORT_NAME    = "transport_name" ;
-    public static final String TIMEOUT           = "timeout" ;
     public static final String NAMESPACE         = "namespace" ;
+    public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
+    public static final String TIMEOUT           = "timeout" ;
+    public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
     /**
@@ -146,7 +155,6 @@ public class Call implements org.apache.axis.rpc.Call {
      * Default constructor - not much else to say.
      */
     public Call() {
-        serviceDesc = new ServiceDescription(null, true);
         setEngine( new AxisClient(configProvider) );
         if ( !initialized ) initialize();
     }
@@ -158,7 +166,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @return String URI of the encoding style to use
      */
     public String getEncodingStyle() {
-        return( serviceDesc.getEncodingStyleURI() );
+        return( encodingStyle );
     }
 
     /**
@@ -167,7 +175,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
-        serviceDesc.setEncodingStyleURI( namespaceURI );
+        encodingStyle = namespaceURI ;
     }
 
     /**
@@ -201,10 +209,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param type XMLType of the return value.
      */
     public void setReturnType(XMLType type) {
-        QName qn = type.getType();
-        serviceDesc.setReturnType(
-            new org.apache.axis.utils.QName(qn.getNamespaceURI(),
-                                            qn.getLocalPart()));
+        returnType = type ;
     }
 
     /**
@@ -219,9 +224,6 @@ public class Call implements org.apache.axis.rpc.Call {
         }
         if (paramModes != null) {
             paramModes.clear();
-        }
-        if (serviceDesc != null) {
-            serviceDesc.removeAllParams();
         }
     }
 
@@ -756,7 +758,7 @@ public class Call implements org.apache.axis.rpc.Call {
     public Object invoke(String namespace, String method, Object[] args) 
                     throws AxisFault {
         category.debug("Enter: Call::invoke(ns, meth, args)" );
-        RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
+        RPCElement  body = new RPCElement(namespace, method, args);
         Object ret = invoke( body );
         category.debug("Exit: Call::invoke(ns, meth, args)" );
         return ret;
@@ -809,15 +811,14 @@ public class Call implements org.apache.axis.rpc.Call {
             }
         }
 
-        String uri = null;
-        if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
+        String uri = encodingStyle ;
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
 
         msgContext.setRequestMessage(reqMsg);
         msgContext.setResponseMessage(resMsg);
 
         reqEnv.addBodyElement(body);
-        reqEnv.setMessageType(ServiceDescription.REQUEST);
+        reqEnv.setMessageType(Message.REQUEST);
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
@@ -859,7 +860,7 @@ public class Call implements org.apache.axis.rpc.Call {
 
         /** This must happen before deserialization...
          */
-        resMsg.setMessageType(ServiceDescription.RESPONSE);
+        resMsg.setMessageType(Message.RESPONSE);
 
         resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
 
@@ -932,7 +933,6 @@ public class Call implements org.apache.axis.rpc.Call {
             }
         }
 
-        msgContext.setServiceDescription(serviceDesc);
         msgContext.setMaintainSession(maintainSession);
 
         // set up message context if there is a transport
