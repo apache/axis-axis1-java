@@ -66,7 +66,7 @@ Copyright:
   <property name="year" value="2001"/>
 
   <!-- debug flag for ant javac, values are "on" and "off" -->
-  <property name="debug" value="off"/>  
+  <property name="debug" value="on"/>  
 
   <property name="deprecation" value="true"/>
 
