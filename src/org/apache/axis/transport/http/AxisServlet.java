@@ -533,11 +533,11 @@ public class AxisServlet extends AxisServletBase {
             "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
             "</SOAP-ENV:Envelope>";
 
-        ByteArrayInputStream istream =
-            new ByteArrayInputStream(msgtxt.getBytes());
-
         Message responseMsg=null;
         try {
+            ByteArrayInputStream istream =
+                new ByteArrayInputStream(msgtxt.getBytes(XMLUtils.charEncoding));
+
             AxisEngine engine = getEngine();
             Message msg = new Message(istream, false);
             msgContext.setRequestMessage(msg);
