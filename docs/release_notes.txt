@@ -1,0 +1,38 @@
+Axis Alpha Release Notes
+
+This is the <a href="http://xml.apache.org/axis/releases.html"> 
+alpha release</a> of the <a href="http://xml.apache.org/axis">
+Axis SOAP library</a>.  (Wondering what Axis is?  Please see our
+<a href="xml.apache.org/axis/faq.html">FAQ</a>.)
+
+This is an alpha release, and hence is not feature complete.  The main
+missing features include:
+
+- No support for SOAP attachments
+- Deployment syntax not finalized
+- Incomplete Apache SOAP 2.2 deployment descriptor support
+- Minimal testing in EJB / application server frameworks
+- No support for WSDL, XML-RPC, SMTP
+- Limited documentation
+
+The Axis team is working on all of these missing features.
+
+So, why an alpha release?
+
+The Axis code already has:
+
+- [TO BE VERIFIED OR REMOVED BEFORE RELEASE:]
+  Significantly higher performance than Apache SOAP 2.2
+- Good interoperability with other SOAP implementations
+- A streaming-oriented model for message parsing (SAX, not DOM)
+- A modular, configurable message handling architecture
+- A pluggable transport framewor
+- An extensive package and functional test suite
+
+Early adopters and advanced SOAP developers will find this release to be of
+interest.  Most Apache SOAP users, and those who need a fully featured
+next-version replacement for Apache SOAP 2.2, should hold off at least
+until Axis's beta release.  Progress towards that beta release may be
+viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html">
+requirements and status page</a>.
+
