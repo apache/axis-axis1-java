@@ -140,7 +140,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             throws SAXException
         {
             try {
-                value = makeValue(val.toString());
+                value = makeValue(val.toString().trim());
                 valueComplete();
             } catch (InvocationTargetException ite) {
                 Throwable realException = ite.getTargetException();

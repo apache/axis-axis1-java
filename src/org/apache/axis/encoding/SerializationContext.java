@@ -59,6 +59,7 @@ import java.io.*;
 import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.*;
@@ -79,6 +80,7 @@ public class SerializationContext
     public NSStack nsStack = new NSStack();
                                         
     boolean writingStartTag = false;
+    boolean startOfDocument = true;
     
     Stack elementStack = new Stack();
     Writer writer;
@@ -96,6 +98,11 @@ public class SerializationContext
      * serializations of identical objects).
      */
     private boolean doMultiRefs = false;
+    
+    /**
+     * Should I send an XML declaration?
+     */
+    private boolean sendXMLDecl = true;
     
     /**
      * A place to hold objects we cache for multi-ref serialization, and
@@ -118,6 +125,10 @@ public class SerializationContext
         this.writer = writer;
         this.msgContext = msgContext;
         if (msgContext==null) throw new NullPointerException();
+        Boolean shouldSendDecl = (Boolean)msgContext.getAxisEngine().
+                                          getOption(AxisEngine.PROP_XML_DECL);
+        if (shouldSendDecl != null)
+            sendXMLDecl = shouldSendDecl.booleanValue();
     }
     
     public ServiceDescription getServiceDescription()
@@ -256,6 +267,11 @@ public class SerializationContext
     {
         if (DEBUG_LOG) {
             System.out.println("Out: Starting element [" + qName.getNamespaceURI() + "]:" + qName.getLocalPart());
+        }
+
+        if (startOfDocument && sendXMLDecl) {
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF8\"?>");
+            startOfDocument = false;
         }
         
         if (writingStartTag) {
