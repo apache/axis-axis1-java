@@ -171,13 +171,15 @@ public class Admin {
     /**
      * Process a given XML document - needs cleanup.
      */
-    public Document AdminService(MessageContext msgContext, Element[] xml)
+    public Element[] AdminService(MessageContext msgContext, Vector xml)
         throws AxisFault
     {
         category.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
-        Document doc = process( msgContext, xml[0] );
+        Document doc = process( msgContext, (Element) xml.get(0) );
+        Element[] result = new Element[1];
+        result[0] = doc.getDocumentElement();
         category.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
-        return( doc );
+        return( result );
     }
 
     /** Process an engine configuration file by deploying appropriate stuff
