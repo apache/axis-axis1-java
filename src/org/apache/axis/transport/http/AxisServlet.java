@@ -193,11 +193,11 @@ public class AxisServlet extends HttpServlet
                 getServerEngineConfig();
 
             Map environment = new HashMap();
-            environment.put("servletContext", context);
-            String attdir= servlet.getInitParameter("axis.attachments.Directory");
-            if(attdir != null) environment.put("axis.attachments.Directory",  attdir);
+            environment.put(AxisEngine.ENV_SERVLET_CONTEXT, context);
+            String attdir= servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
+            if(attdir != null) environment.put(AxisEngine.ENV_ATTACHMENT_DIR, attdir);
             if(null != webInfPath){
-                environment.put("servlet.realpath",  webInfPath + File.separator + "attachments");
+                environment.put(AxisEngine.ENV_SERVLET_REALPATH, webInfPath + File.separator + "attachments");
             }
             environment.put(EngineConfiguration.PROPERTY_NAME, config);
 
