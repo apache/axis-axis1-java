@@ -143,7 +143,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     protected MessageElement parent = null;
 
-    public ArrayList namespaces = null;
+    public ArrayList namespaces = new ArrayList();
 
     /** Our encoding style, if any */
     protected String encodingStyle = null;
@@ -301,9 +301,9 @@ public class MessageElement implements SOAPElement, Serializable
      * @return Attributes collection
      */
     public Attributes getCompleteAttributes() {
-        if (namespaces == null)
+        if (namespaces.size()==0)
             return attributes;
-
+        
         AttributesImpl attrs = null;
         if (attributes == NullAttributes.singleton)
             attrs = new AttributesImpl();
@@ -447,7 +447,8 @@ public class MessageElement implements SOAPElement, Serializable
 
     public void setNSMappings(ArrayList namespaces)
     {
-        this.namespaces = namespaces;
+        if(namespaces != null)
+            this.namespaces = namespaces;
     }
 
     public String getPrefix(String namespaceURI) {
@@ -458,12 +459,10 @@ public class MessageElement implements SOAPElement, Serializable
             return getRealElement().getPrefix(namespaceURI);
         }
 
-        if (namespaces != null) {
-            for (int i = 0; i < namespaces.size(); i++) {
-                Mapping map = (Mapping)namespaces.get(i);
-                if (map.getNamespaceURI().equals(namespaceURI))
-                    return map.getPrefix();
-            }
+        for (int i = 0; i < namespaces.size(); i++) {
+            Mapping map = (Mapping)namespaces.get(i);
+            if (map.getNamespaceURI().equals(namespaceURI))
+                return map.getPrefix();
         }
 
         if (parent != null)
@@ -480,12 +479,10 @@ public class MessageElement implements SOAPElement, Serializable
             return getRealElement().getNamespaceURI(prefix);
         }
 
-        if (namespaces != null) {
-            for (int i = 0; i < namespaces.size(); i++) {
-                Mapping map = (Mapping)namespaces.get(i);
-                if (map.getPrefix().equals(prefix)) {
-                    return map.getNamespaceURI();
-                }
+        for (int i = 0; i < namespaces.size(); i++) {
+            Mapping map = (Mapping)namespaces.get(i);
+            if (map.getPrefix().equals(prefix)) {
+                return map.getNamespaceURI();
             }
         }
 
@@ -783,11 +780,9 @@ public class MessageElement implements SOAPElement, Serializable
         if (prefix != null)
             context.registerPrefixForURI(prefix, namespaceURI);
 
-        if (namespaces != null) {
-            for (Iterator i = namespaces.iterator(); i.hasNext();) {
-                Mapping mapping = (Mapping) i.next();
-                context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
-            }
+        for (Iterator i = namespaces.iterator(); i.hasNext();) {
+            Mapping mapping = (Mapping) i.next();
+            context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
         }
 
         if (objectValue != null) {
@@ -817,7 +812,6 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public void addMapping(Mapping map) {
-        if (namespaces == null) namespaces = new ArrayList();
         namespaces.add(map);
     }
 
