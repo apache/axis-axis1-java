@@ -163,8 +163,18 @@ public class ClassRep {
             Field f = cls.getDeclaredFields()[i];
             int mod = f.getModifiers();
             if (Modifier.isPublic(mod) ||
-                isJavaBeanField(cls, f))
-                _fields.add(new FieldRep(f));
+                isJavaBeanNormalField(cls, f) ||
+                isJavaBeanIndexedField(cls, f)) {
+                if (!isJavaBeanIndexedField(cls, f)) {
+                    _fields.add(new FieldRep(f));
+                } else {
+                    FieldRep fr = new FieldRep();
+                    fr.setName(f.getName());
+                    fr.setType(f.getType().getComponentType());
+                    fr.setIndexed(true);
+                    _fields.add(fr);
+                }
+            }
         }
     }
        
@@ -188,13 +198,13 @@ public class ClassRep {
 
 
     /**
-     * Determines if the Field in the Class has bean compliant accessors. If so returns true,
+     * Determines if the Field in the Class has Bean compliant accessors. If so returns true,
      * else returns false
      * @param type the Class
      * @param field the Field
      * @return true if the Field has JavaBean style accessor
      */
-    public static boolean isJavaBeanField(Class type, Field field) {
+    public static boolean isJavaBeanNormalField(Class type, Field field) {
         try {
             String fieldName =  field.getName().substring(0,1).toUpperCase()
                 + field.getName().substring(1);
@@ -206,6 +216,36 @@ public class ClassRep {
                 getter = "get" + fieldName;
             type.getMethod(setter, new Class[] {field.getType()});
             type.getMethod(getter, null);
+        }
+        catch (NoSuchMethodException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Determines if the Field in the Class has bean compliant indexed accessors. If so returns true,
+     * else returns false
+     * @param type the Class
+     * @param field the Field
+     * @return true if the Field has JavaBean indexed style accessors
+     */
+    public static boolean isJavaBeanIndexedField(Class type, Field field) {
+        // Must be an array
+        if (!field.getType().isArray())
+            return false;
+
+        try {
+            String fieldName =  field.getName().substring(0,1).toUpperCase()
+                + field.getName().substring(1);
+            String setter = "set" + fieldName;
+            String getter = null;
+            if (field.getType().getName().startsWith("boolean["))
+                getter = "is" + fieldName;
+            else
+                getter = "get" + fieldName;
+            type.getMethod(setter, new Class[] {int.class, field.getType().getComponentType()});
+            type.getMethod(getter, new Class[] {int.class});
         }
         catch (NoSuchMethodException ex) {
             return false;

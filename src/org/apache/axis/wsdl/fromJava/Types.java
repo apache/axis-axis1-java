@@ -470,7 +470,8 @@ public class Types {
         Vector fields = clsRep.getFields();
         for (int i=0; i < fields.size(); i++) {
             FieldRep field = (FieldRep) fields.elementAt(i);
-            writeField(field.getName(), field.getType(), all);
+
+            writeField(field.getName(), field.getType(), field.getIndexed(), all);
         }
     }
 
@@ -478,12 +479,16 @@ public class Types {
      * write a schema representation of the given Class field and append it to the where Node     * recurse on complex types
      * @param fieldName name of the field
      * @param fieldType type of the field
+     * @param isUnbounded causes maxOccurs="unbounded" if set
      * @param where location for the generated schema node
      * @throws Exception
      */
-    private void writeField(String fieldName, Class fieldType, Element where) throws Exception {
+    private void writeField(String fieldName, Class fieldType, boolean isUnbounded, Element where) throws Exception {
         String elementType = writeType(fieldType);
         Element elem = createElement(fieldName, elementType, isNullable(fieldType));
+        if (isUnbounded) {
+            elem.setAttribute("maxOccurs", "unbounded");
+        }
         where.appendChild(elem);
     }
 
