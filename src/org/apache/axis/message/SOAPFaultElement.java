@@ -100,7 +100,10 @@ public class SOAPFaultElement extends SOAPBodyElement
     
     public void characters(char [] chars, int start, int end)
     {
-        currentValue.append(chars, start, end);
+        // Only capture characters between StartChild and EndChild (the
+        // rest, presumably, is ignorable whitespace).
+        if (currentValue != null)
+            currentValue.append(chars, start, end);
     }
 
     public void onEndChild(String localName, DeserializerBase deserializer)
@@ -123,6 +126,8 @@ public class SOAPFaultElement extends SOAPBodyElement
             // !!! Not supported yet
             // fault.setFaultDetails(...);
         }
+
+        currentValue = null;
     }
 
     public DeserializerBase getContentHandler() { return this; }
