@@ -17,6 +17,7 @@
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
     <url-pattern>servlet/AxisServlet</url-pattern>
+    <url-pattern>*.jws</url-pattern>
   </servlet-mapping>
 
 </web-app>

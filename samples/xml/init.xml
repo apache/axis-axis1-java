@@ -4,6 +4,8 @@
 <!-- This file will be replaced by WSDD once it's ready -->
 
 <deploy>
+  <handler name="debug"   class="org.apache.axis.handlers.DebugHandler" />
+
   <handler name="MsgDispatcher"
            class="org.apache.axis.handlers.MsgDispatchHandler" />
 
@@ -11,11 +13,15 @@
            class="org.apache.axis.handlers.RPCDispatchHandler" />
 
   <handler name="router" class="org.apache.axis.handlers.Router" />
+  <handler name="jwsprocessor" class="org.apache.axis.handlers.JWSProcessor" />
 
   <handler name="HTTPAction" 
            class="org.apache.axis.handlers.HTTPActionHandler" />
-  <chain name="HTTPTransport" flow="HTTPAction,router" />
-  <service name="AxisServlet" handler="HTTPTransport" />
+
+  <chain name="HTTPTransport" flow="debug,HTTPAction,router" />
+
+  <service name="JWSProcessor" handler="jwsprocessor" />
+  <service name="AxisServlet"  handler="HTTPTransport" />
 
   <service name="AdminService" handler="MsgDispatcher">
     <option name="className" value="org.apache.axis.utils.Admin" />

@@ -8,11 +8,10 @@
 <!-- This file will be replaced by WSDD once it's ready         -->
 
 <deploy>
-  <handler name="debug"   class="org.apache.axis.handlers.DebugHandler" />
   <handler name="authen"  class="org.apache.axis.handlers.SimpleAuthenticationHandler" />
   <handler name="author"  class="org.apache.axis.handlers.SimpleAuthorizationHandler" />
   <chain   name="checks"  flow="authen,author" />
-  <chain   name="rpc"     flow="debug,checks,RPCDispatcher" />
+  <chain   name="rpc"     flow="checks,RPCDispatcher" />
 
   <service name="urn:xmltoday-delayed-quotes" handler="rpc" >
     <option name="className" value="samples.stock.StockQuoteService" />
