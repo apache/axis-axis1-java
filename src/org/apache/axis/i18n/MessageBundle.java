@@ -61,78 +61,56 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * <p>Wrapper class for resource bundles. Property files are used to store
- * resource strings, which are the only types of resources available.
- * Property files can inherit properties from other files so that
- * a base property file can be used and a small number of properties
- * can be over-ridden by another property file. For example you may
- * create an english version of a resource file named "resource.properties".
- * You then decide that the British English version of all of the properties
- * except one are the same, so there is no need to redefine all of the
- * properties in "resource_en_GB", just the one that is different.</p>
- * <p>The basename is the name of the property file without the ".properties"
- * extension.</p>
- * <p>Properties will be cached for performance.<p>
- * <p>Property values stored in the property files can also contain dynamic
- * variables. Any dynamic variable defined in PropertiesUtil.getVariableValue()
- * can be used (such as {date}), as well as arguments in the form {0}, {1}, etc.
- * Argument values are specified in the various overloaded getString() methods.</p>
+ * Accept parameters for ProjectResourceBundle,
+ * but defer object instantiation (and therefore
+ * resource bundle loading) until required.
  * 
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  * @author Karl Moss (kmoss@macromedia.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public abstract class ExtendMessages {
-    public static final String BASE_NAME = MessagesConstants.resourceName;
-    
+public class MessageBundle {
     private boolean loaded = false;
-    private ProjectResourceBundle _resourceBundle = null;
-    private final String resourceName;
-    private final ResourceBundle parent;
     
+    private ProjectResourceBundle _resourceBundle = null;
 
-    protected abstract String getPackageName();
-    protected abstract String getProjectName();
-    protected abstract ClassLoader getClassLoader();
-    protected abstract Locale getLocale();
+    private final String projectName;
+    private final String packageName;
+    private final String resourceName;
+    private final Locale locale;
+    private final ClassLoader classLoader;
+    private final ResourceBundle parent;
 
 
-    public final ProjectResourceBundle getMessageBundle() {
+    public final ProjectResourceBundle getResourceBundle() {
         if (!loaded) {
-            _resourceBundle = ProjectResourceBundle.getBundle(getProjectName(),
-                                                              getPackageName(),
+            _resourceBundle = ProjectResourceBundle.getBundle(projectName,
+                                                              packageName,
                                                               resourceName,
-                                                              getLocale(),
-                                                              getClassLoader(),
+                                                              locale,
+                                                              classLoader,
                                                               parent);
             loaded = true;
         }
         return _resourceBundle;
     }
 
-
     /**
      * Construct a new ExtendMessages
      */
-    protected ExtendMessages()
+    public MessageBundle(String projectName,
+                             String packageName,
+                             String resourceName,
+                             Locale locale,
+                             ClassLoader classLoader,
+                             ResourceBundle parent)
         throws MissingResourceException
     {
-        this(BASE_NAME, null);
-    }
-
-    /**
-     * Construct a new ExtendMessages
-     */
-    protected ExtendMessages(String resourceName)
-        throws MissingResourceException
-    {
-        this(resourceName, null);
-    }
-
-    protected ExtendMessages(String resourceName, ResourceBundle parent)
-        throws MissingResourceException
-    {
+        this.projectName = projectName;
+        this.packageName = packageName;
         this.resourceName = resourceName;
+        this.locale = locale;
+        this.classLoader = classLoader;
         this.parent = parent;
     }
 
@@ -250,15 +228,15 @@ public abstract class ExtendMessages {
     public String getMessage(String key, String[] array) throws MissingResourceException
     {
         String msg = null;
-        if (getMessageBundle() != null) {
-            msg = getMessageBundle().getString(key);
+        if (getResourceBundle() != null) {
+            msg = getResourceBundle().getString(key);
         }
 
         if (msg == null) {
             throw new MissingResourceException("Cannot find resource key \"" + key +
                                                "\" in base name " +
-                                               getMessageBundle().getResourceName(),
-                                               getMessageBundle().getResourceName(), key);
+                                               getResourceBundle().getResourceName(),
+                                               getResourceBundle().getResourceName(), key);
         }
 
         return MessageFormat.format(msg, array);

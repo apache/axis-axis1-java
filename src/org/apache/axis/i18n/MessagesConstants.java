@@ -62,19 +62,13 @@ import java.util.ResourceBundle;
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  */
 public class MessagesConstants {
-    public static final String projectName = "org.apache.axis";
-    public static final String resourceName = "axisNLS";
+    public static final String projectName = "org.apache.axis".intern();
+    public static final String resourceName = "axisNLS".intern();
     public static final Locale locale = null;
-    
-    public static final String rootPackageName = "org.apache.axis.utils";
+
+    public static final String rootPackageName = "org.apache.axis.utils".intern();
 
     public static final ResourceBundle rootBundle =
-        org.apache.axis.utils.Messages.getMessageBundle();
-//        
-//        ProjectResourceBundle.getBundle(projectName,
-//                                        rootPackageName,
-//                                        resourceName,
-//                                        locale,
-//                                        MessagesConstants.class.getClassLoader(),
-//                                        null);
+        ResourceBundle.getBundle("org.apache.axis.utils.axisNLS");
+//        org.apache.axis.utils.Messages.getResourceBundle();//
 }
