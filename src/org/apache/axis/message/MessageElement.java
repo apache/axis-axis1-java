@@ -526,8 +526,14 @@ public class MessageElement
          * whatever encoding style is in scope....
          */ 
         if (encodingStyle != null) {
-            if ((parent == null) || 
-                (!encodingStyle.equals(parent.getEncodingStyle()))) {
+            if (parent == null) {
+                // don't emit an encoding style if its "" (literal)
+                if (!encodingStyle.equals("")) { 
+                    setAttribute(Constants.URI_CURRENT_SOAP_ENC,
+                                 Constants.ATTR_ENCODING_STYLE,
+                                 encodingStyle);
+                }
+            } else if (!encodingStyle.equals(parent.getEncodingStyle())) {
                 setAttribute(Constants.URI_CURRENT_SOAP_ENC,
                              Constants.ATTR_ENCODING_STYLE,
                              encodingStyle);
