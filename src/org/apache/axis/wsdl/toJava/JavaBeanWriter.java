@@ -64,6 +64,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.Constants;
 
 import org.w3c.dom.Node;
 
@@ -95,12 +96,12 @@ public class JavaBeanWriter extends JavaClassWriter {
 
     /**
      * Constructor.
-     * @param emitter   
+     * @param emitter
      * @param type        The type representing this class
      * @param elements    Vector containing the Type and name of each property
      * @param extendType  The type representing the extended class (or null)
-     * @param attributes  Vector containing the attribute types and names    
-     * @param helper      Helper class writer                                
+     * @param attributes  Vector containing the attribute types and names
+     * @param helper      Helper class writer
      */
     protected JavaBeanWriter(
             Emitter emitter,
@@ -177,11 +178,11 @@ public class JavaBeanWriter extends JavaClassWriter {
     } // writeFileBody
 
     /**
-     * Builds the names String vector.  
-     * The even indices are the java class names of the 
+     * Builds the names String vector.
+     * The even indices are the java class names of the
      * member fields.  The odd indices are the member variable
      * names.
-     * Also sets the simpleValueType variable to the 
+     * Also sets the simpleValueType variable to the
      * java class name of the simple value if this bean represents
      * a simple type
      */
@@ -191,8 +192,14 @@ public class JavaBeanWriter extends JavaClassWriter {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
                 String typeName = elem.getType().getName();
-                String elemName = elem.getName().getLocalPart();
-                String variableName = Utils.xmlNameToJava(elemName);
+                String variableName;
+                if (elem.getAnyElement()) {
+                    typeName = "java.lang.Object";
+                    variableName = Constants.ANYCONTENT;
+                } else {
+                    String elemName = elem.getName().getLocalPart();
+                    variableName = Utils.xmlNameToJava(elemName);
+                }
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
@@ -206,7 +213,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             for (int i = 0; i < attributes.size(); i += 2) {
                 String typeName = ((TypeEntry) attributes.get(i)).getName();
                 QName xmlName = (QName) attributes.get(i + 1);
-                String variableName = 
+                String variableName =
                     Utils.xmlNameToJava(xmlName.getLocalPart());
                 names.add(typeName);
                 names.add(variableName);
@@ -216,8 +223,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
             }
         }
-    }        
-    
+    }
+
     /**
      * Returns the appropriate extends text
      * @return "" or "abstract "
@@ -244,7 +251,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         }
         return extendsText;
     }
-    
+
     /**
      * Returns the appropriate implements text
      * @return " implements <classes> "
@@ -267,10 +274,10 @@ public class JavaBeanWriter extends JavaClassWriter {
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
-             
+
             // Declare the bean element
             pw.print("    private " + typeName + " " + variable + ";");
-            
+
             // label the attribute fields.
             if (elements == null || i >= (elements.size()*2))
                 pw.println("  // attribute");
@@ -291,8 +298,8 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
 
     /**
-     * Writes the full constructor.  
-     * Note that this class is not recommended for 
+     * Writes the full constructor.
+     * Note that this class is not recommended for
      * JSR 101 compliant beans, but is provided for
      * extended classes which may wish to generate a full
      * constructor.
@@ -308,7 +315,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 parent.getNode(),
                 emitter.getSymbolTable());
         }
-        
+
         // Now generate a list of names and types starting with
         // the oldest parent.  (Attrs are considered before elements).
         Vector paramTypes = new Vector();
@@ -320,7 +327,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             // in case they interfere with local parms.
             String mangle = "";
             if (i > 0) {
-                mangle = "_" + 
+                mangle = "_" +
                     Utils.xmlNameToJava(te.getQName().getLocalPart()) +
                     "_";
             }
@@ -336,7 +343,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
             // Process the elements
             Vector elements = SchemaUtils.getContainedElementDeclarations(
-                te.getNode(), emitter.getSymbolTable()); 
+                te.getNode(), emitter.getSymbolTable());
             if (elements != null) {
                 for (int j=0; j<elements.size(); j++) {
                     ElementDecl elem = (ElementDecl)elements.get(j);
@@ -349,37 +356,37 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Set the index where the local params start
         int localParams = paramTypes.size() - names.size()/2;
 
-        
+
         // Now write the constructor signature
         if (paramTypes.size() > 0) {
             pw.println("    public " + className + "(");
             for (int i=0; i<paramTypes.size(); i++) {
-                pw.print("           " + paramTypes.elementAt(i) + 
+                pw.print("           " + paramTypes.elementAt(i) +
                          " " + paramNames.elementAt(i));
                 if ((i+1) < paramTypes.size()) {
-                    pw.println(","); 
+                    pw.println(",");
                 } else {
-                    pw.println(") {"); 
+                    pw.println(") {");
                 }
             }
-            
+
             // Call the extended constructor to set inherited fields
             if (extendType != null) {
                 pw.println("        super(");
                 for (int j=0; j<localParams; j++) {
                     pw.print("            " + paramNames.elementAt(j));
                     if ((j+1) < localParams) {
-                        pw.println(","); 
+                        pw.println(",");
                     } else {
                         pw.println(");");
                     }
-                }            
+                }
             }
             // Set local fields directly
             for (int j=localParams; j<paramNames.size(); j++) {
                 pw.println("        this." + paramNames.elementAt(j) +
                            " = " + paramNames.elementAt(j)+ ";");
-            } 
+            }
             pw.println("    }");
             pw.println();
         }
@@ -387,7 +394,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
     /**
      * Writes the constructors for SimpleTypes.
-     * Writes a constructor accepting a string and 
+     * Writes a constructor accepting a string and
      * a constructor accepting the simple java type.
      */
     protected void writeSimpleConstructors() {
@@ -395,13 +402,13 @@ public class JavaBeanWriter extends JavaClassWriter {
         // constructor and a value construtor.
         if (type.isSimpleType() && simpleValueType != null) {
             if (!simpleValueType.equals("java.lang.String")) {
-                pw.println("    public " + className + "(" + 
+                pw.println("    public " + className + "(" +
                            simpleValueType + " value) {");
                 pw.println("        this.value = value;");
                 pw.println("    }");
                 pw.println();
             }
-            
+
             pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
             pw.println("    public " + className + "(java.lang.String value) {");
             // Make sure we wrap base types with its Object type
@@ -410,18 +417,18 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        this.value = new " + wrapper +
                            "(value)." + simpleValueType + "Value();");
             } else {
-                pw.println("        this.value = new " + 
+                pw.println("        this.value = new " +
                            simpleValueType + "(value);");
             }
             pw.println("    }");
-            pw.println();            
+            pw.println();
         }
     }
 
     /**
-     * Writes the toString method  
-     * Currently the toString method is only written for  
-     * simpleTypes.                                 
+     * Writes the toString method
+     * Currently the toString method is only written for
+     * simpleTypes.
      */
     protected void writeToStringMethod() {
         // If this is a simple type, emit a toString
@@ -440,10 +447,10 @@ public class JavaBeanWriter extends JavaClassWriter {
     }
 
     /**
-     * Writes the setter and getter methods    
+     * Writes the setter and getter methods
      */
     protected void writeAccessMethods() {
-        int j = 0; 
+        int j = 0;
         // Define getters and setters for the bean elements
         for (int i = 0; i < names.size(); i += 2, j++) {
             String typeName = (String) names.get(i);
@@ -455,28 +462,28 @@ public class JavaBeanWriter extends JavaClassWriter {
                 get = "is";
 
             if (enableGetters) {
-                pw.println("    public " + typeName + " " + 
+                pw.println("    public " + typeName + " " +
                            get + capName + "() {");
                 pw.println("        return " + name + ";");
                 pw.println("    }");
                 pw.println();
             }
             if (enableSetters) {
-                pw.println("    public void set" + capName + "(" + 
+                pw.println("    public void set" + capName + "(" +
                            typeName + " " + name + ") {");
                 pw.println("        this." + name + " = " + name + ";");
                 pw.println("    }");
                 pw.println();
             }
-            
-            // If this is a special collection type, insert extra 
+
+            // If this is a special collection type, insert extra
             // java code so that the serializer/deserializer can recognize
-            // the class.  This is not JAX-RPC, and will be replaced with 
+            // the class.  This is not JAX-RPC, and will be replaced with
             // compliant code when JAX-RPC determines how to deal with this case.
             // These signatures comply with Bean Indexed Properties which seems
             // like the reasonable approach to take for collection types.
             // (It may be more efficient to handle this with an ArrayList...but
-            // for the initial support it was easier to use an actual array.) 
+            // for the initial support it was easier to use an actual array.)
             if (elements != null && j < elements.size()) {
                 ElementDecl elem = (ElementDecl)elements.get(j);
                 if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
@@ -495,11 +502,11 @@ public class JavaBeanWriter extends JavaClassWriter {
                         // specification, the indexed setter should not
                         // establish or grow the array.  Thus the following
                         // code is not generated for compliance purposes.
-                        /*                    
+                        /*
                         int bracketIndex = typeName.indexOf("[");
                         String newingName = typeName.substring(0, bracketIndex + 1);
                         String newingSuffix = typeName.substring(bracketIndex + 1);
-                    
+
                         pw.println("        if (this." + name + " == null ||");
                         pw.println("            this." + name + ".length <= i) {");
                         pw.println("            " + typeName + " a = new " +
@@ -518,14 +525,14 @@ public class JavaBeanWriter extends JavaClassWriter {
                     }
                 }
             }
-        }        
+        }
     }
 
     /**
      * Writes a general purpose equals method
      */
     protected void writeEqualsMethod() {
-     
+
         // The __equalsCalc field and synchronized method are necessary
         // in case the object has direct or indirect references to itself.
         pw.println("    private java.lang.Object __equalsCalc = null;");
@@ -611,8 +618,8 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println("    public synchronized int hashCode() {");
         pw.println("        if (__hashCodeCalc) {");
         pw.println("            return 0;");
-        pw.println("        }"); 
-        pw.println("        __hashCodeCalc = true;"); 
+        pw.println("        }");
+        pw.println("        __hashCodeCalc = true;");
 
         // Get the hashCode of the super class
         String start = "1";
@@ -624,10 +631,10 @@ public class JavaBeanWriter extends JavaClassWriter {
             String variableType = (String) names.get(i);
             String variable = (String) names.get(i + 1);
             String get = "get";
-            
+
             if (variableType.equals("boolean"))
                 get = "is";
-            
+
             if (variableType.equals("int") ||
                 variableType.equals("short") ||
                 variableType.equals("byte")) {
@@ -649,7 +656,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 // The hashCode calculation for arrays is complicated.
                 // Wish there was a hashCode method in java.utils.Arrays !
                 // Get the hashCode for each element of the array which is not an array.
-                pw.println("        if (" + get + 
+                pw.println("        if (" + get +
                            Utils.capitalizeFirstChar(variable) + "() != null) {");
                 pw.println("            for (int i=0;");
                 pw.println("                 i<java.lang.reflect.Array.getLength(" + get +
@@ -661,15 +668,15 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("                if (obj != null &&");
                 pw.println("                    !obj.getClass().isArray()) {");
                 pw.println("                    _hashCode += obj.hashCode();");
-                pw.println("                }");     
-                pw.println("            }");     
-                pw.println("        }");     
+                pw.println("                }");
+                pw.println("            }");
+                pw.println("        }");
             } else {
-                pw.println("        if (" + get + 
+                pw.println("        if (" + get +
                            Utils.capitalizeFirstChar(variable) + "() != null) {");
                 pw.println("            _hashCode += " + get +
                            Utils.capitalizeFirstChar(variable) + "().hashCode();");
-                pw.println("        }");  
+                pw.println("        }");
             }
         }
         // Reset the __hashCodeCalc variable and return

@@ -157,9 +157,4 @@ public class TestSer extends TestCase {
             fail(e.getMessage());
         }
     }
-
-    public static void main(String[] args) {
-        TestSer tester = new TestSer("TestSer");
-        tester.testEmptyXMLNS();
-    }
 }

@@ -276,11 +276,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,
                    null, null, false);
 
-        // This is the special type for the xsd:any element used for
-        // extensibility.
-        myRegister(Constants.XSD_ANY,    java.lang.Object.class,
-                   new ElementSerializerFactory(),
-                   new ElementDeserializerFactory(), false);
+//        // This is the special type for the xsd:any element used for
+//        // extensibility.
+//        myRegister(Constants.XSD_ANY,    org.w3c.dom.Element.class,
+//                   new ElementSerializerFactory(),
+//                   new ElementDeserializerFactory(), false);
 
         // See the SchemaVersion classes for where the registration of
         // dateTime (for 2001) and timeInstant (for 1999 & 2000) happen.

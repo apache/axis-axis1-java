@@ -65,6 +65,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SimpleValueSerializer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -79,7 +80,7 @@ import java.util.TimeZone;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
  */
-public class DateSerializer implements Serializer {
+public class DateSerializer implements SimpleValueSerializer {
 
     private static SimpleDateFormat zulu =
        new SimpleDateFormat("yyyy-MM-dd");
@@ -94,21 +95,23 @@ public class DateSerializer implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        String fdate;
+        context.writeString(getValueAsString(value, context));
+        context.endElement();
+    }
 
+    public String getValueAsString(Object value, SerializationContext context) {
+        StringBuffer buf = new StringBuffer();
         synchronized (calendar) {
             calendar.setTime((Date)value);
             if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
-                context.writeString("-");
+                buf.append("-");
                 calendar.setTime((Date)value);
                 calendar.set(Calendar.ERA, GregorianCalendar.AD);
                 value = calendar.getTime();
             }
-            fdate = zulu.format((Date)value);
+            buf.append(zulu.format((Date)value));
         }
-
-        context.writeString(fdate);
-        context.endElement();
+        return buf.toString();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

@@ -317,7 +317,8 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * @param el is a DOM Element
      */
     public void writeDOMElement(Element el) throws IOException;
-                      
+
+    public String getValueAsString(Object value, QName xmlType) throws IOException;
 }
 
 

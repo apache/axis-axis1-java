@@ -62,13 +62,21 @@
         encodingStyle=""
       />
 
-     <typeMapping
-        qname="query:bookQuery"
-        type="java:test.wsdl.extensibility.BookType"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-     />
+        <typeMapping
+           qname="query:bookQuery"
+           type="java:test.wsdl.extensibility.BookType"
+           serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+           deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+           encodingStyle=""
+        />
+
+        <typeMapping
+           qname="query:FindBooksQueryExpressionElement"
+           type="java:test.wsdl.extensibility.FindBooksQueryExpressionElement"
+           serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+           deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+           encodingStyle=""
+        />
     </service>
 
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,69 +53,21 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
-
-import org.xml.sax.Attributes;
-
-import javax.xml.namespace.QName;
-
-import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.types.HexBinary;
-import org.apache.axis.encoding.SimpleValueSerializer;
-import org.apache.axis.utils.JavaUtils;
 /**
- * Serializer for hexBinary.
+ * Serializers which implement this interface are indicating their
+ * ability to serialize "simple" values as strings.  These are things
+ * suitable for putting in attributes, for instance.
  *
- * @author Davanum Srinivas <dims@yahoo.com>
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
+ * @author Glen Daniels (gdaniels@apache.org)
  */
-public class HexSerializer implements SimpleValueSerializer {
+package org.apache.axis.encoding;
 
-    public QName xmlType;
-    public Class javaType;
-    public HexSerializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
-    }
-
+public interface SimpleValueSerializer extends Serializer {
     /**
-     * Serialize a HexBinary quantity.
-     */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
-        throws IOException
-    {
-        context.startElement(name, attributes);
-        context.writeString(getValueAsString(value, context));
-        context.endElement();
-    }
-
-    public String getValueAsString(Object value, SerializationContext context) {
-        value = JavaUtils.convert(value, javaType);
-        if (javaType == HexBinary.class) {
-            return ((HexBinary) value).toString();
-        } else {
-            return HexBinary.encode((byte[]) value);
-        }
-    }
-
-    public String getMechanismType() { return Constants.AXIS_SAX; }
-
-    /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * Return an XML compatible representation of the value.
      *
-     * @param types the Java2WSDL Types object which holds the context
-     *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
-     * @see org.apache.axis.wsdl.fromJava.Types
+     * @param value
+     * @return
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
-    }
+    public String getValueAsString(Object value, SerializationContext context);
 }

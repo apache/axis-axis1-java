@@ -74,7 +74,6 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -198,19 +197,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         prevQName = elemQName;
 
         if (typeDesc != null) {       
-            
-            // First lookup the field using the target namespace context
-            // and local name.  If this fails and the incoming element
-            // name is not prefixed, lookup the name assuming an unqualified
-            // name.
+            // Lookup the name appropriately (assuming an unqualified
+            // name for SOAP encoding, using the namespace otherwise)
             String fieldName = typeDesc.getFieldNameForElement(elemQName, 
                                                                isEncoded);
-//            if (fieldName == null && (prefix == null || prefix.equals(""))) {
-//                fieldName =
-//                    typeDesc.getFieldNameForElement(
-//                      new QName("", elemQName.getLocalPart()), false);
-//            }
-
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
         }
 
@@ -225,8 +215,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         Deserializer dSer = null;
         MessageContext messageContext = context.getMessageContext();
         if (propDesc == null && !messageContext.isEncoded()) {
-            // try to put unknown elements into an Object property
-            propDesc = getObjectPropertyDesc(elemQName, context);
+            // try to put unknown elements into a SOAPElement property, if
+            // appropriate
+            propDesc = getAnyPropertyDesc();
             if (propDesc != null) {
                 dSer = context.getDeserializerForType(elemQName);
                 if (dSer == null)  {
@@ -300,20 +291,18 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         return (SOAPHandler)dSer;
     }
 
-     public BeanPropertyDescriptor
-             getObjectPropertyDesc(QName qname,
-                                   DeserializationContext context) {
-        for (Iterator iterator = propertyMap.values().iterator();
-             iterator.hasNext();) {
-            BeanPropertyDescriptor propertyDesc =
-                    (BeanPropertyDescriptor) iterator.next();
-            // try to find xsd:any namespace="##any" property
-            if (propertyDesc.getName().equals("any") &&
-                propertyDesc.getType().getName().equals("java.lang.Object")) {
-                return propertyDesc;
-            }
-        }
-        return null;
+    /**
+     * Get a BeanPropertyDescriptor which indicates where we should
+     * put extensibility elements (i.e. XML which falls under the
+     * auspices of an &lt;xsd:any&gt; declaration in the schema)
+     *
+     * @return an appropriate BeanPropertyDescriptor, or null
+     */
+    public BeanPropertyDescriptor getAnyPropertyDesc() {
+        if (typeDesc == null)
+            return null;
+
+        return typeDesc.getAnyDesc();
     }
 
     /**
