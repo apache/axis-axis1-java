@@ -202,13 +202,15 @@ public class WSDDUndeployment
             qname = (QName)services.get(n);
  
             try {
-              String sname = qname.getLocalPart();
-              SOAPService service = MessageContext.getCurrentContext()
-                                                  .getAxisEngine()
-                                                  .getService(sname);
-              if ( service != null ) service.clearSessions();
+                String sname = qname.getLocalPart();
+                MessageContext messageContext = MessageContext.getCurrentContext();
+                if (messageContext != null) {
+                    SOAPService service = messageContext.getAxisEngine()
+                            .getService(sname);
+                    if ( service != null ) service.clearSessions();
+                }
             } catch(Exception exp) {
-              throw new ConfigurationException(exp);
+                throw new ConfigurationException(exp);
             }
             registry.undeployService(qname);
         }
