@@ -64,7 +64,7 @@ import java.text.NumberFormat;
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYearMonth">XML Schema 3.2.10</a>
  */ 
-public class YearMonth {
+public class YearMonth implements java.io.Serializable {
     int year;
     int month;
     String timezone = null;

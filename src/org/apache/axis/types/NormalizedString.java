@@ -64,7 +64,7 @@ import org.apache.axis.utils.Messages;
  * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#normalizedString">XML Schema Part 2: Datatypes 3.3.1</a>
  */
-public class NormalizedString extends Object {
+public class NormalizedString extends Object implements java.io.Serializable {
 
     String m_value = null;   // JAX-RPC maps xsd:string to java.lang.String
 

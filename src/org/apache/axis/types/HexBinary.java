@@ -63,7 +63,7 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Davanum Srinivas <dims@yahoo.com>
  */
-public class HexBinary extends Object{
+public class HexBinary extends Object implements java.io.Serializable{
 
     byte[] m_value = null;
 

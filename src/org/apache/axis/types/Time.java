@@ -64,7 +64,7 @@ import java.util.TimeZone;
 /**
  * Class that represents the xsd:time XML Schema type
  */ 
-public class Time {
+public class Time implements java.io.Serializable {
     private Calendar _value;
 
     
