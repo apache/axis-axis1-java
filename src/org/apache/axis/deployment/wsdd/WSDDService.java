@@ -132,6 +132,15 @@ public class WSDDService
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
     }
 
+    /**
+     * Add a WSDDTypeMapping to the Service.
+     * @param mapping 
+     **/
+    public void addTypeMapping(WSDDTypeMapping mapping) {
+        typeMappings.add(mapping);
+    }
+   
+
     protected QName getElementName()
     {
         return WSDDConstants.SERVICE_QNAME;
@@ -268,7 +277,7 @@ public class WSDDService
         cachedService = service;
         return service;
     }
-    
+
     public void deployTypeMapping(WSDDTypeMapping mapping)
         throws WSDDException
     {
