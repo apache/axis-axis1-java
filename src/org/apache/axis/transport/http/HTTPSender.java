@@ -61,11 +61,6 @@ public class HTTPSender extends BasicHandler {
     URL targetURL;
     
     /**
-     * Socket
-     */ 
-    Socket sock;
-
-    /**
      * invoke creates a socket connection, sends the request SOAP message and then
      * reads the response SOAP message back from the SOAP server
      *
@@ -85,14 +80,16 @@ public class HTTPSender extends BasicHandler {
             String host = targetURL.getHost();
             int port = targetURL.getPort();
 
+            SocketHolder socketHolder = new SocketHolder(null);
+            
             // Send the SOAP request to the server
-            InputStream inp = writeToSocket(msgContext, targetURL,
+            InputStream inp = writeToSocket(socketHolder, msgContext, targetURL,
                         otherHeaders, host, port, useFullURL);
 
             // Read the response back from the server
             Hashtable headers = new Hashtable();
-            inp = readHeadersFromSocket(msgContext, inp, headers);
-            readFromSocket(msgContext, inp, headers);
+            inp = readHeadersFromSocket(socketHolder, msgContext, inp, headers);
+            readFromSocket(socketHolder, msgContext, inp, headers);
         } catch (Exception e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -112,16 +109,16 @@ public class HTTPSender extends BasicHandler {
      * @param otherHeaders buffer for storing additional headers that need to be sent
      * @param useFullURL flag to indicate if the complete URL has to be sent
      *
-     * @return the socket
-     *
      * @throws IOException
      */
-    private Socket getSocket(
+    private void getSocket(
+            SocketHolder sockHolder,
             String protocol,
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
         SocketFactory factory = SocketFactoryFactory.getFactory(protocol, getOptions());
-        return factory.create(host, port, otherHeaders, useFullURL);
+        Socket sock = factory.create(host, port, otherHeaders, useFullURL);
+        sockHolder.setSocket(sock);
     }
 
     /**
@@ -136,7 +133,8 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private InputStream writeToSocket(MessageContext msgContext, URL tmpURL,
+    private InputStream writeToSocket(SocketHolder sockHolder,
+            MessageContext msgContext, URL tmpURL,
             StringBuffer otherHeaders, String host, int port,
             BooleanHolder useFullURL)
             throws Exception {
@@ -376,14 +374,14 @@ public class HTTPSender extends BasicHandler {
 
         header.append("\r\n"); //The empty line to start the BODY.
 
-        sock = getSocket(targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
+        getSocket(sockHolder, targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
 
         // optionally set a timeout for the request
         if (msgContext.getTimeout() != 0) {
-            sock.setSoTimeout(msgContext.getTimeout());
+            sockHolder.getSocket().setSoTimeout(msgContext.getTimeout());
         }
 
-        OutputStream out = sock.getOutputStream();
+        OutputStream out = sockHolder.getSocket().getOutputStream();
 
         if (!posting) {
             out.write(header.toString()
@@ -403,7 +401,7 @@ public class HTTPSender extends BasicHandler {
             // it wants us send anything more.
             out.flush();
             Hashtable cheaders= new Hashtable ();
-            inp = readHeadersFromSocket(msgContext, null, cheaders);
+            inp = readHeadersFromSocket(sockHolder, msgContext, null, cheaders);
             int returnCode= -1;
             Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
             if(null != Irc) {
@@ -464,7 +462,8 @@ public class HTTPSender extends BasicHandler {
         return inp;
     }
 
-    private InputStream readHeadersFromSocket(MessageContext msgContext,
+    private InputStream readHeadersFromSocket(SocketHolder sockHolder,
+                                              MessageContext msgContext,
                                               InputStream inp,
                                               Hashtable headers)
             throws IOException {
@@ -474,7 +473,7 @@ public class HTTPSender extends BasicHandler {
         String name, value;
         int returnCode = 0;
         if(null == inp) {
-            inp = new BufferedInputStream(sock.getInputStream());
+            inp = new BufferedInputStream(sockHolder.getSocket().getInputStream());
         }
 
         if (headers == null) {
@@ -569,7 +568,8 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private InputStream readFromSocket(MessageContext msgContext,
+    private InputStream readFromSocket(SocketHolder socketHolder,
+                                       MessageContext msgContext,
                                        InputStream inp,
                                        Hashtable headers)
             throws IOException {
@@ -617,7 +617,7 @@ public class HTTPSender extends BasicHandler {
 			// Temporary Redirect (HTTP: 307)			
 			// close old connection
 			inp.close();
-			sock.close();	
+			socketHolder.getSocket().close();	
 			// remove former result and set new target url
 			msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
 			msgContext.setProperty(MessageContext.TRANS_URL, location);
@@ -675,7 +675,7 @@ public class HTTPSender extends BasicHandler {
         }
 
 
-        outMsg = new Message( new SocketInputStream(inp, sock), false,
+        outMsg = new Message( new SocketInputStream(inp, socketHolder.getSocket()), false,
                               contentType, contentLocation);
         // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
         MimeHeaders mimeHeaders = outMsg.getMimeHeaders();
