@@ -67,7 +67,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -80,6 +82,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected JavaBeanHelperWriter helper;
     protected Vector names = new Vector(); // even indices: types, odd: vars
     protected ArrayList simpleValueTypes = new ArrayList();  // name of type of simple value
+    protected Set enumerationTypes = new HashSet();  // name of enumerated types
     protected PrintWriter pw;
 
     // The following fields can be set by extended classes
@@ -222,16 +225,26 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
                 names.add(typeName);
                 names.add(variableName);
+
                 if (type.isSimpleType() &&
                         (variableName.endsWith("Value") || variableName.equals("value"))) {
                     simpleValueTypes.add(typeName);
+                }
+
+                // bug 19069: need to generate code that access member variables that
+                // are enum types through the class interface, not the constructor
+                // this util method returns non-null if the type at node is an enum
+                if (null != Utils.getEnumerationBaseAndValues(elem.getType().getNode(),
+                                                              emitter.getSymbolTable())) {
+                    enumerationTypes.add(typeName);
                 }
             }
         }
         // Add attribute names
         if (attributes != null) {
             for (int i = 0; i < attributes.size(); i += 2) {
-                String typeName = ((TypeEntry) attributes.get(i)).getName();
+                TypeEntry attr = (TypeEntry) attributes.get(i);
+                String typeName = attr.getName();
                 QName xmlName = (QName) attributes.get(i + 1);
                 String variableName =
                         Utils.xmlNameToJava(xmlName.getLocalPart());
@@ -240,6 +253,14 @@ public class JavaBeanWriter extends JavaClassWriter {
                 if (type.isSimpleType() &&
                         (variableName.endsWith("Value") || variableName.equals("value"))) {
                     simpleValueTypes.add(typeName);
+                }
+
+                // bug 19069: need to generate code that access member variables that
+                // are enum types through the class interface, not the constructor
+                // this util method returns non-null if the type at node is an enum
+                if (null != Utils.getEnumerationBaseAndValues(attr.getNode(),
+                                                              emitter.getSymbolTable())) {
+                    enumerationTypes.add(typeName);
                 }
             }
         }
@@ -501,6 +522,10 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("            (java.util.Calendar) new org.apache.axis.encoding.ser.CalendarDeserializer(");
                 pw.println("                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(value);");
                 pw.println("        " + returnString + " cal;");
+            } else if (enumerationTypes.contains(simpleValueType)) {
+                // we're generating code that will obtain a reference to an enumeration: use the
+                // class forString interface, not the constructor.  Bug 19069
+                pw.println("        " + returnString + simpleValueType + ".fromString(value);");
             } else {
                 pw.println("        " + returnString + " new " +
                         simpleValueType + "(value);");
