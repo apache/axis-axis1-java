@@ -38,6 +38,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             binding = new test.wsdl.interop4.groupi.Round4XSDTestLocator().getRound4XSDTestSoap(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
+            jre.printStackTrace();
             if(jre.getLinkedCause()!=null)
                 jre.getLinkedCause().printStackTrace();
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -210,6 +211,10 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             input.set_int(input2);
             int[] value = null;
             value = binding.echoIntegerMultiOccurs(input);
+            assertEquals(input2.length, value.length);
+            for(int i=0;i<input2.length;i++) {
+                assertEquals("EchoIntegerMultiOccurs: Array values don't match", input2[i], value[i]);
+            }
             assertTrue("Array values don't match", Arrays.equals(input2, value));
         }
         catch (java.rmi.RemoteException re) {
@@ -548,7 +553,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         try {
             java.lang.Object input = new java.lang.String("Hello World");
             java.lang.Object value = null;
-            value = binding.retAnyType(input);
+            value = binding.echoAnyType(input);
             assertEquals(value, input);
         }
         catch (java.rmi.RemoteException re) {
@@ -574,7 +579,7 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
             _any[0] = new org.apache.axis.message.MessageElement("hello", "world");
             input.set_any(_any);
             test.wsdl.interop4.groupi._return value = null;
-            value = binding.retAny(input);
+            value = binding.echoAnyElement(input);
             assertEquals(value.get_any()[0].toString(), _any[0].toString());
         }
         catch (java.rmi.RemoteException re) {
