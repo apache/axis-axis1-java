@@ -110,13 +110,7 @@ public class AxisServer extends BasicHandler
         addOption( Constants.SERVICE_REGISTRY, sr );
 
         // Load the registry of deployed types
-        TypeMappingRegistry tmr = new TypeMappingRegistry();
-        try {
-            tmr.load("typemap-supp.reg");
-        } catch (Exception e) {
-            // ignore FileNotFoundException
-            // what to do about the rest?
-        }
+        TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());
         addOption( Constants.TYPEMAP_REGISTRY, tmr );
 
