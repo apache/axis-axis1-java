@@ -293,7 +293,6 @@ public class JavaDeployWriter extends JavaWriter {
                 if (params != null) {
                     QName elementQName = null;
                     QName returnQName = null;
-                    QName returnType = null;
 
                     // Get the operation qname
                     Input input = operation.getInput();
@@ -318,13 +317,9 @@ public class JavaDeployWriter extends JavaWriter {
                     if (params.returnName != null)
                         returnQName = Utils.getWSDLQName(params.returnName);
 
-                    if (params.returnType != null) {
-                        returnType = params.returnType.getQName();
-                    }
-
                     // Write the operation metadata
                     writeOperation(javaOperName, elementQName, returnQName,
-                                   returnType, params);
+                                   params);
                 }
             }
         }
@@ -354,7 +349,6 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeOperation(String javaOperName,
                                   QName elementQName,
                                   QName returnQName,
-                                  QName returnType,
                                   Parameters params) {
         pw.print("      <operation name=\"" + javaOperName + "\"");
         if (elementQName != null) {
@@ -365,11 +359,6 @@ public class JavaDeployWriter extends JavaWriter {
         if (returnQName != null) {
             pw.print(" returnQName=\"" +
                      Utils.genQNameAttributeString(returnQName, "retNS") +
-                     "\"");
-        }
-        if (returnType != null) {
-            pw.print(" returnType=\"" +
-                     Utils.genQNameAttributeString(returnType, "RTypeNS") +
                      "\"");
         }
         pw.println(" >");
