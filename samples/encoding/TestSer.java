@@ -28,26 +28,30 @@ public class TestSer
     public static final String myNS = "urn:myNS";
     
     public static void main(String args[]) {
-        MessageContext msgContext = new MessageContext(new AxisServer());
-        SOAPEnvelope msg = new SOAPEnvelope();
-        RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
-        QName dataQName = new QName("typeNS", "Data");
-
-        Data data = new Data();
-        Data data2 = new Data();
-        data.stringMember = "String member";
-        data.floatMember = new Float("1.23");
-        data.dataMember = data2;
-        
-        data2.stringMember = "another str member";
-        data2.floatMember = new Float("4.56");
-        data2.dataMember = null;  // "data;" for loop-test of multi-refs
-        
-        RPCParam arg2 = new RPCParam("", "struct", data);
-        RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[]{ arg1, arg2 });
-        msg.addBodyElement(body);
-        
         try {
+            MessageContext msgContext = new MessageContext(new AxisServer());
+            SOAPEnvelope msg = new SOAPEnvelope();
+            RPCParam arg1 = new RPCParam("urn:myNamespace",
+                                         "testParam",
+                                         "this is a string");
+            QName dataQName = new QName("typeNS", "Data");
+            
+            Data data = new Data();
+            Data data2 = new Data();
+            data.stringMember = "String member";
+            data.floatMember = new Float("1.23");
+            data.dataMember = data2;
+            
+            data2.stringMember = "another str member";
+            data2.floatMember = new Float("4.56");
+            data2.dataMember = null;  // "data;" for loop-test of multi-refs
+            
+            RPCParam arg2 = new RPCParam("", "struct", data);
+            RPCElement body = new RPCElement("urn:myNamespace",
+                                             "method1",
+                                             new Object[]{ arg1, arg2 });
+            msg.addBodyElement(body);
+            
             Reader reader = null;
             
             if (args.length == 0) {

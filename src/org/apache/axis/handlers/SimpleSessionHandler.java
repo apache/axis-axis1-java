@@ -224,7 +224,11 @@ public class SimpleSessionHandler extends BasicHandler
             SOAPHeaderElement header = new SOAPHeaderElement(SESSION_NS,
                                                              SESSION_LOCALPART,
                                                              id);
-            env.addHeader(header);
+            try {
+                env.addHeader(header);
+            } catch (Exception ex) {
+                throw AxisFault.makeFault(ex);
+            }
         }
     }
 
@@ -247,7 +251,11 @@ public class SimpleSessionHandler extends BasicHandler
             SOAPHeaderElement header = new SOAPHeaderElement(SESSION_NS,
                                                              SESSION_LOCALPART,
                                                              id);
-            env.addHeader(header);
+            try {
+                env.addHeader(header);
+            } catch (Exception ex) {
+                throw AxisFault.makeFault(ex);
+            }
         } else {
             // Request.  Set up the session if we find the header.
             Message msg = context.getRequestMessage();

@@ -65,6 +65,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import javax.xml.rpc.namespace.QName;
@@ -88,8 +89,24 @@ public class SOAPHeader extends MessageElement
 
     private SOAPConstants soapConstants;
 
-    SOAPHeader(SOAPConstants soapConsts) {
+    SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts)
+        throws SOAPException {
         soapConstants = soapConsts;
+        setParentElement(env);
+    }
+
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        try {
+            // cast to force exception if wrong type
+            super.setParentElement((SOAPEnvelope)parent);
+        } catch (Throwable t) {
+            throw new SOAPException(t);
+        }
+    }
+
+    public void detachNode() {
+        ((SOAPEnvelope)parent).removeHeaders();
+        super.detachNode();
     }
 
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)

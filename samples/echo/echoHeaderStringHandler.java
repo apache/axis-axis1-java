@@ -103,7 +103,11 @@ public class echoHeaderStringHandler extends BasicHandler
             SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS,
                                                              HEADER_RESNAME,
                                                              strVal);
-            env.addHeader(header);
+            try {
+                env.addHeader(header);
+            } catch (Exception ex) {
+                throw AxisFault.makeFault(ex);
+            }
         } else {
             // Request. look for the header
             Message msg = context.getRequestMessage();

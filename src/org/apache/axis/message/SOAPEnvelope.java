@@ -75,6 +75,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.soap.SOAPException;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -100,20 +102,21 @@ public class SOAPEnvelope extends MessageElement
     // deserialization 
     public String messageType;
     
-    public SOAPEnvelope()
+    public SOAPEnvelope() throws SOAPException
     {
         this(true, SOAPConstants.SOAP11_CONSTANTS);
     }
 
-    public SOAPEnvelope(SOAPConstants soapConstants)
+    public SOAPEnvelope(SOAPConstants soapConstants) throws SOAPException
     {
         this(true, soapConstants);
     }
 
     public SOAPEnvelope(boolean registerPrefixes, SOAPConstants soapConstants)
+        throws SOAPException
     {
         this.soapConstants = soapConstants;
-        header = new SOAPHeader(soapConstants);
+        header = new SOAPHeader(this, soapConstants);
 
         if (registerPrefixes) {
             if (namespaces == null)
@@ -130,9 +133,9 @@ public class SOAPEnvelope extends MessageElement
         setDirty(true);
     }
 
-    public SOAPEnvelope(InputStream input) throws SAXException {
+    public SOAPEnvelope(InputStream input) throws SAXException, SOAPException {
         InputSource is = new InputSource(input);
-        header = new SOAPHeader(soapConstants); // soapConstants = null!
+        header = new SOAPHeader(this, soapConstants); // soapConstants = null!
         DeserializationContext dser = null ;
         AxisClient     tmpEngine = new AxisClient(new NullProvider());
         MessageContext msgContext = new MessageContext(tmpEngine);
@@ -190,10 +193,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
     
-    public void addHeader(SOAPHeaderElement hdr)
+    public void addHeader(SOAPHeaderElement hdr) throws SOAPException
     {
         if (header == null) {
-            header = new SOAPHeader(soapConstants);
+            header = new SOAPHeader(this, soapConstants);
         }
         hdr.setEnvelope(this);
         header.addHeader(hdr);
@@ -208,6 +211,10 @@ public class SOAPEnvelope extends MessageElement
         bodyElements.addElement(element);
 
         _isDirty = true;
+    }
+
+    public void removeHeaders() {
+        header = null;
     }
     
     public void removeHeader(SOAPHeaderElement hdr)
