@@ -53,11 +53,11 @@ Copyright:
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.literal"/>
 
-    <!-- NOTE:  THIS DOMAIN HAS EXPIRED!  If it comes back,
-         we can add this test back in.
-    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
-    -->
+<!--
+    local version of the WSDL
     <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
+-->
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
                output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
