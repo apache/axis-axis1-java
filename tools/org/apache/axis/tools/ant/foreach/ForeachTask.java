@@ -53,18 +53,16 @@
 */
 package org.apache.axis.tools.ant.foreach;
 
-import java.io.File;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.taskdefs.Ant;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
 /**
  * Call a target foreach entry in a set of parameters based on a fileset.
  *  <pre>
@@ -94,173 +92,119 @@ import org.apache.tools.ant.types.FileSet;
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
  */
 public class ForeachTask extends Task {
-	/** Defaults to "file". */
-    protected String type = "file";
+    private Ant callee;
     private String subTarget;
     private Vector params;
     private Hashtable properties;
-    /**
-     * Enumerated attribute with the values "file", "dir" and "both"
-     * for the type attribute.
-     */
-    public static class FileDirBoth extends EnumeratedAttribute {
-        public String[] getValues() {
-            return new String[] {
-                "file", "dir", "both"
-            };
-        }
-    }
-    /**
-     * Inner class stores <item>s with <param> lists
-     */
-    public class ParamItem {
-        private String value;
-        public void setValue(String value) {
-            this.value = value;
-        }
-        public String getValue() {
-            return this.value;
-        }
-    }
-    /**
-     * Inner class stores sets of <param>s.
-     * It can hold <fileset>s or <item>s or both.
-     */
-    public class ParamSet {
-        private Vector filesets;
-        private Vector items;
-        private String name;
-        public ParamSet() {
-            filesets = new Vector();
-            items = new Vector();
-        }
-        public void addFileset(FileSet fileset) {
-            filesets.addElement(fileset);
-        }
-        public ParamItem createItem() {
-            ParamItem item = new ParamItem();
-            items.addElement(item);
-            return item;
-        }
-        public void setName(String name) {
-            this.name = name;
-        }
-        public String getName() {
-            return name;
-        }
-        public Enumeration getValues(Project project) {
-            /* As an arbitrary rule, this will return filesets first,
-            and then <item>s. The ordering of the buildfile is
-            not guaranteed. */
-            Vector values = new Vector();
-            Enumeration enum = filesets.elements();
-            while (enum.hasMoreElements()) {
-                FileSet fileSet          = (FileSet)enum.nextElement();
-                File base                = fileSet.getDir(project);
-                DirectoryScanner scanner = fileSet.getDirectoryScanner(project);
-                if (! "dir".equals(type)) {
-                    String[] files = getFiles(base, scanner);
-                    for (int j = 0; j < files.length; j++) {
-                        values.addElement(files[j]);
-                    }
-                }
-                if (! "file".equals(type)) {
-                    String[] dirs = getDirs(base, scanner);
-                    for (int j = 0; j < dirs.length; j++) {
-                        values.addElement(dirs[j]);
-                    }
-                }
-            }
-            enum = items.elements();
-            while (enum.hasMoreElements()) {
-                ParamItem item = (ParamItem)enum.nextElement();
-                values.addElement(item.getValue());
-            }
-            return values.elements();
-        }
-    }
+    // must match the default value of Ant#inheritAll
+    private boolean inheritAll = true;
+    // must match the default value of Ant#inheritRefs
+    private boolean inheritRefs = false;
+
     public ForeachTask() {
         params = new Vector();
         properties = new Hashtable();
     }
+
     public void init() {
-    }
-    private void buildProperty(String propName, String propValue) {
-        properties.put(propName, propValue);
-    }
-    private void executeTarget() {
-        /* The "callee" has to be created each time in order to make
-        the properties mutable. */
-        CallTarget callee;
-        callee = (CallTarget)project.createTask("antcall");
+        callee = (Ant) getProject().createTask("ant");
+        callee.setOwningTarget(getOwningTarget());
+        callee.setTaskName(getTaskName());
+        callee.setLocation(getLocation());
         callee.init();
-        callee.setTarget(subTarget);
-        Enumeration keys = properties.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            String val = (String)properties.get(key);
-            Property prop = callee.createParam();
-            prop.setName(key);
-            prop.setValue(val);
-        }
-        callee.execute();
     }
+
     /**
-     * This method is used to recursively iterate through
-     * each parameter set.
-     * It ends up being something like:
-     * <pre>
-      *    for( i=0; i< params[0].size ; i++ )
-      *       for( j=0; j < params[1].size ; j++ )
-      *          for( k=0; k < params[2].size ; k++ )
-      *             executeTarget( params[0][i], params[1][j] , params[2][k] ) ;
-      * </pre>
+     * If true, pass all properties to the new Ant project.
+     * Defaults to true.
      */
-    private void executeParameters(int paramNumber) {
-        if (paramNumber == params.size()) {
-            executeTarget();
-        } else {
-            ParamSet paramSet = (ParamSet)params.elementAt(paramNumber);
-            Enumeration values = paramSet.getValues(project);
-            while (values.hasMoreElements()) {
-                String val = (String)values.nextElement();
-                buildProperty(paramSet.getName(), val);
-                executeParameters(paramNumber + 1);
-            }
-        }
+    public void setInheritAll(boolean inherit) {
+       inheritAll = inherit;
     }
-    public void execute() {
-        if (subTarget == null) {
-            throw new BuildException("Attribute target is required.", location);
-        }
-        executeParameters(0);
+
+    /**
+     * If true, pass all references to the new Ant project.
+     * Defaults to false
+     * @param inheritRefs new value
+     */
+    public void setInheritRefs(boolean inheritRefs) {
+        this.inheritRefs = inheritRefs;
     }
+
+    /**
+     * Target to execute, required.
+     */
+    public void setTarget(String target) {
+        subTarget = target;
+    }
+
     public ParamSet createParam() {
         ParamSet param = new ParamSet();
         params.addElement(param);
         return param;
     }
-    public void setTarget(String target) {
-        subTarget = target;
+
+    private void buildProperty(String propName, String propValue) {
+        properties.put(propName, propValue);
     }
-    /**
-     * Return the list of files from this DirectoryScanner that should
-     * be included on the command line.
-     */
-    protected String[] getFiles(File basedir, DirectoryScanner ds) {
-        return ds.getIncludedFiles();
+
+    private void executeTarget() {
+        if (callee == null) {
+            init();
+        }
+
+        if (subTarget == null) {
+            throw new BuildException("Attribute target is required.",
+                                     getLocation());
+        }
+
+        callee.setAntfile(getProject().getProperty("ant.file"));
+        callee.setTarget(subTarget);
+        callee.setInheritAll(inheritAll);
+        callee.setInheritRefs(inheritRefs);
+        Enumeration keys = properties.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            String val = (String) properties.get(key);
+            Property prop = callee.createProperty();
+            prop.setName(key);
+            prop.setValue(val);
+        }
+        callee.execute();
+        System.gc();
+        System.gc();
+        System.gc();
     }
+
     /**
-     * Return the list of Directories from this DirectoryScanner that
-     * should be included on the command line.
+     * This method is used to recursively iterate through
+     * each parameter set.
+     * It ends up being something like:
+     * <pre>
+     *    for( i=0; i< params[0].size ; i++ )
+     *       for( j=0; j < params[1].size ; j++ )
+     *          for( k=0; k < params[2].size ; k++ )
+     *             executeTarget( params[0][i], params[1][j] , params[2][k] ) ;
+     * </pre>
      */
-    protected String[] getDirs(File basedir, DirectoryScanner ds) {
-        return ds.getIncludedDirectories();
+    private void executeParameters(int paramNumber) {
+        if (paramNumber == params.size()) {
+            executeTarget();
+        } else {
+            ParamSet paramSet = (ParamSet) params.elementAt(paramNumber);
+            Enumeration values = paramSet.getValues(project);
+            while (values.hasMoreElements()) {
+                String val = (String) values.nextElement();
+                buildProperty(paramSet.getName(), val);
+                executeParameters(paramNumber + 1);
+            }
+        }
     }
-    /**
-     * Shall the command work only on files, directories or both?
-     */
-    public void setType(FileDirBoth type) {
-        this.type = type.getValue();
+
+    public void execute() {
+        if (subTarget == null) {
+            throw new BuildException("Attribute target is required.", location);
+        }
+        executeParameters(0);
     }
 }
