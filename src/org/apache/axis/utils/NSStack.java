@@ -88,8 +88,8 @@ public class NSStack {
     public void push() {
         if (stack == null) stack = new Stack();
 
-        if (log.isDebugEnabled())
-            log.debug("NSPush (" + stack.size() + ")");
+        if (log.isTraceEnabled())
+            log.trace("NSPush (" + stack.size() + ")");
 
         stack.push(EMPTY);
     }
@@ -97,8 +97,8 @@ public class NSStack {
     public void push(ArrayList table) {
         if (stack == null) stack = new Stack();
 
-        if (log.isDebugEnabled())
-            log.debug("NSPush (" + stack.size() + ")");
+        if (log.isTraceEnabled())
+            log.trace("NSPush (" + stack.size() + ")");
 
         if (table.size() == 0) 
            stack.push(EMPTY);
@@ -119,8 +119,8 @@ public class NSStack {
     
     public ArrayList pop() {
         if (stack.isEmpty()) {
-            if (log.isDebugEnabled())
-                log.debug("NSPop (" + JavaUtils.getMessage("empty00") + ")");
+            if (log.isTraceEnabled())
+                log.trace("NSPop (" + JavaUtils.getMessage("empty00") + ")");
 
             if (parent != null)
                 return parent.pop();
@@ -128,9 +128,9 @@ public class NSStack {
             return null;
         }
         
-        if (log.isDebugEnabled()){
+        if (log.isTraceEnabled()){
             ArrayList t = (ArrayList)stack.pop();
-            log.debug("NSPop (" + stack.size() + ")");
+            log.trace("NSPop (" + stack.size() + ")");
             return t;
         } else {
             return (ArrayList)stack.pop();
@@ -205,10 +205,10 @@ public class NSStack {
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        if (log.isDebugEnabled()){
-            log.debug("--" + JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+        if (log.isTraceEnabled()){
+            log.trace("--" + JavaUtils.getMessage("noPrefix00", "" + this, prefix));
             dump("--");
-            log.debug("--" + JavaUtils.getMessage("end00"));
+            log.trace("--" + JavaUtils.getMessage("end00"));
         }
 
         return null;
@@ -241,18 +241,18 @@ public class NSStack {
             ArrayList list = (ArrayList)e.nextElement();
 
             if (list == null) {
-                log.debug(dumpPrefix + JavaUtils.getMessage("nullTable00"));
+                log.trace(dumpPrefix + JavaUtils.getMessage("nullTable00"));
                 continue;
             }
 
             for (int i = 0; i < list.size(); i++) {
                 Mapping map = (Mapping)list.get(i);
-                log.debug(dumpPrefix + map.getNamespaceURI() + " -> " + map.getPrefix());
+                log.trace(dumpPrefix + map.getNamespaceURI() + " -> " + map.getPrefix());
             }
         }
 
         if (parent != null) {
-            log.debug(dumpPrefix + "--" + JavaUtils.getMessage("parent00"));
+            log.trace(dumpPrefix + "--" + JavaUtils.getMessage("parent00"));
             parent.dump(dumpPrefix + "--");
         }
     }
