@@ -14,6 +14,7 @@ public class PackageTests extends TestCase {
         TestSuite suite = new TestSuite();
 
         suite.addTestSuite(TestTypeDescSynch.class);
+        suite.addTestSuite(TestTypesNonBeanCompatible.class);
 
         return suite;
     }
