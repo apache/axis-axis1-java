@@ -71,7 +71,7 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
 
             if (doc != null) {
                 response.setContentType ("text/xml; charset="+XMLUtils.getEncoding().toLowerCase());
-                XMLUtils.PrettyDocumentToWriter (doc, writer);
+                reportWSDL(doc, writer);
             }
 
             else {
@@ -108,6 +108,15 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
     }
 
     /**
+     * report WSDL
+     * @param doc
+     * @param writer
+     */ 
+    public void reportWSDL(Document doc, PrintWriter writer) {
+        XMLUtils.PrettyDocumentToWriter (doc, writer);
+    }
+
+    /**
      * report that we have no WSDL
      * @param res
      * @param writer
@@ -115,7 +124,7 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
      * @param axisFault optional fault string, for extra info at debug time only
      */
 
-    private void reportNoWSDL (HttpServletResponse res, PrintWriter writer,
+    public void reportNoWSDL (HttpServletResponse res, PrintWriter writer,
                                String moreDetailCode, AxisFault axisFault) {
         res.setStatus (HttpURLConnection.HTTP_NOT_FOUND);
         res.setContentType ("text/html");
