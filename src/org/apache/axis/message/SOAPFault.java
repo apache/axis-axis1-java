@@ -212,9 +212,11 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
         QName qname = null;       
         if (! cls.equals(AxisFault.class)) {
             FaultDesc faultDesc = null;
-            OperationDesc op = context.getMessageContext().getOperation();
-            if(op != null) {
-                faultDesc = op.getFaultByClass(cls);
+            if (context.getMessageContext() != null) {
+                OperationDesc op = context.getMessageContext().getOperation();
+                if (op != null) {
+                    faultDesc = op.getFaultByClass(cls);
+                }
             }
                 
             if (faultDesc != null) {
