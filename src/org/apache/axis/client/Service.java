@@ -410,6 +410,21 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                     Messages.getMessage("mustExtendRemote00"));
         }
 
+        // Validate the proxyInterface
+        if (wsdlParser != null) {
+            Port port = wsdlService.getPort(portName.getLocalPart());
+            if (port == null)
+                throw new ServiceException(Messages.getMessage("noPort00", "" + proxyInterface.getName()));
+    
+            Binding binding = port.getBinding();
+            SymbolTable symbolTable = wsdlParser.getSymbolTable();
+            BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+            if(bEntry.getParameters().size() !=  proxyInterface.getMethods().length) {
+                throw new ServiceException(Messages.getMessage("incompatibleSEI00", "" + portName));
+            }  
+            // TODO: Check the methods and the parameters as well.
+        }
+        
         try {
             Call call = null;
             if (portName == null) {
