@@ -94,7 +94,7 @@ import java.io.File;
  */
 public class MessageContext {
     protected static Log log =
-        LogFactory.getLog(MessageContext.class.getName());
+            LogFactory.getLog(MessageContext.class.getName());
 
     /**
      * The request message.  If we're on the client, this is the outgoing
@@ -115,7 +115,7 @@ public class MessageContext {
      * to determine what to do next.
      */
     private String           targetService ;
-    
+
     /**
      * The name of the Transport which this message was received on (or is
      * headed to, for the client).
@@ -126,17 +126,17 @@ public class MessageContext {
      * The default classloader that this service should use
      */
     private ClassLoader  classLoader ;
-    
+
     /**
      * The AxisEngine which this context is involved with
      */
     private AxisEngine       axisEngine;
-    
+
     /**
      * A Session associated with this request.
      */
     private Session          session;
-    
+
     /**
      * Should we track session state, or not?
      * default is not.
@@ -144,7 +144,7 @@ public class MessageContext {
      * maintainSession iff session != null...
      */
     private boolean          maintainSession = false;
-    
+
     /**
      * Are we doing request stuff, or response stuff?
      */
@@ -160,7 +160,7 @@ public class MessageContext {
      * MessageContext.
      */
     private LockableHashtable bag ;
-    
+
     /**
      * These variables are logically part of the bag, but are separated
      * because they are used often and the Hashtable is more expensive.
@@ -175,11 +175,11 @@ public class MessageContext {
     /**
      * Are we using SOAP encoding?  Default is true for RPC services,
      * should be set to false for document/literal.
-     */ 
+     */
     private boolean isEncoded = true;
 
     /**
-     * Get the active message context. 
+     * Get the active message context.
      * @return the current active message context
      */
     public static MessageContext getCurrentContext() {
@@ -189,13 +189,13 @@ public class MessageContext {
     static {
             try{
                 systemTempDir=System.getProperty("axis.attachments.Directory");
-            } catch(Throwable t){systemTempDir= null;} 
+            } catch(Throwable t){systemTempDir= null;}
 
-            if(systemTempDir== null)   
+            if(systemTempDir== null)
                 try{
                     File tf= File.createTempFile("Axis", "Axis");
                     File dir= tf.getParentFile();
-                    if(tf.exists()) tf.delete(); 
+                    if(tf.exists()) tf.delete();
                     if(dir != null){
                       systemTempDir= dir.getCanonicalPath();
                     }
@@ -206,17 +206,17 @@ public class MessageContext {
         this.axisEngine = engine;
 
         if(null != engine){
-            java.util.Hashtable opts= engine.getOptions();        
+            java.util.Hashtable opts= engine.getOptions();
             String attachmentsdir= null;
             if(null!=opts) attachmentsdir= (String)
                 opts.get(AxisEngine.PROP_ATTACHMENT_DIR);
-            if(null == attachmentsdir) attachmentsdir= systemTempDir; 
+            if(null == attachmentsdir) attachmentsdir= systemTempDir;
             if(attachmentsdir != null){
                 setProperty(ATTACHMENTS_DIR, attachmentsdir);
             }
         }
     }
-    
+
     /**
      * Mappings of QNames to serializers/deserializers (and therfore
      * to Java types).
@@ -239,7 +239,7 @@ public class MessageContext {
     public TypeMappingRegistry getTypeMappingRegistry() {
         if (mappingRegistry == null)
             return axisEngine.getTypeMappingRegistry();
-        
+
         return mappingRegistry;
     }
 
@@ -250,12 +250,12 @@ public class MessageContext {
     {
         return transportName;
     }
-    
+
     public void setTransportName(String transportName)
     {
         this.transportName = transportName;
     }
-    
+
     /**
      * Sessions
      */
@@ -263,12 +263,12 @@ public class MessageContext {
     {
         return session;
     }
-    
+
     public void setSession(Session session)
     {
         this.session = session;
     }
-    
+
     /**
      * Encoding
      */
@@ -286,7 +286,7 @@ public class MessageContext {
     public void setMaintainSession (boolean yesno) {
         maintainSession = yesno;
     }
-    
+
     /**
      * Are we maintaining session state?
      */
@@ -331,7 +331,7 @@ public class MessageContext {
         responseMessage = respMsg ;
         if (responseMessage != null) responseMessage.setMessageContext(this);
     };
-    
+
     /**
      * Return the current (i.e. request before the pivot, response after)
      * message.
@@ -340,7 +340,7 @@ public class MessageContext {
     {
         return (havePassedPivot ? responseMessage : requestMessage);
     }
-    
+
     /**
      * Set the current (i.e. request before the pivot, response after)
      * message.
@@ -355,7 +355,7 @@ public class MessageContext {
             requestMessage = curMsg;
         }
     }
-    
+
     /**
      * Determine when we've passed the pivot
      */
@@ -374,22 +374,22 @@ public class MessageContext {
 
     /**
      * Set timeout in our MessageContext.
-     * 
+     *
      * @param value the maximum amount of time, in milliseconds
      */
     public void setTimeout (int value) {
         timeout = value;
     }
-    
+
     /**
      * Get timeout from our MessageContext.
-     * 
+     *
      * @return value the maximum amount of time, in milliseconds
      */
     public int getTimeout () {
         return timeout;
     }
-    
+
     public ClassLoader getClassLoader() {
         if ( classLoader == null )
             classLoader = Thread.currentThread().getContextClassLoader();
@@ -403,7 +403,7 @@ public class MessageContext {
     public String getTargetService() {
         return( targetService );
     }
-    
+
     public AxisEngine getAxisEngine()
     {
         return axisEngine;
@@ -441,11 +441,11 @@ public class MessageContext {
      * service specific request/response/pivot point handlers
      */
     private SOAPService serviceHandler ;
-    
+
     public SOAPService getService() {
         return( serviceHandler );
     }
-    
+
     public void setService(SOAPService sh)
     {
         log.debug("MessageContext: setServiceHandler("+sh+")");
@@ -455,9 +455,11 @@ public class MessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setProperty(ISRPC, new Boolean(service.isRPC()));
+            setEncoded(service.getStyle() == SOAPService.STYLE_RPC);
+            setEncodingStyle(isEncoded() ? Constants.URI_CURRENT_SOAP_ENC:"");
         }
     }
-    
+
     /**
      * Let us know whether this is the client or the server.
      */
@@ -465,7 +467,7 @@ public class MessageContext {
     {
         return (axisEngine instanceof AxisClient);
     }
-    
+
     /** Contains an instance of Handler, which is the
      *  ServiceContext and the entrypoint of this service.
      *
@@ -480,13 +482,13 @@ public class MessageContext {
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
-    
+
     /** Place to store an AuthenticatedUser */
     public static String AUTHUSER            = "authenticatedUser";
 
     /** Is this message an RPC message (instead of just a blob of xml) */
     public static String ISRPC               = "is_rpc" ;
-  
+
     /** If on the client - this is the Call object */
     public static String CALL                = "call_object" ;
 
@@ -689,7 +691,7 @@ public class MessageContext {
             return null;
         }
     }
-    
+
     public void setPropertyParent(Hashtable parent)
     {
         bag.setParent(parent);
@@ -784,6 +786,9 @@ public class MessageContext {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
+        if (namespaceURI == null)
+            namespaceURI = "";
+
         encodingStyle = namespaceURI;
     } // setEncodingStype
 
@@ -803,7 +808,7 @@ public class MessageContext {
             bag.remove(propName);
         }
     }
-    
+
     public void reset()
     {
         if (bag != null) {

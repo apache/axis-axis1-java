@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.JavaUtils;
@@ -98,7 +99,7 @@ import java.util.Stack;
 public class SerializationContextImpl implements SerializationContext
 {
     protected static Log log =
-        LogFactory.getLog(SerializationContextImpl.class.getName());
+            LogFactory.getLog(SerializationContextImpl.class.getName());
 
     private NSStack nsStack = new NSStack();
     private boolean writingStartTag = false;
@@ -201,6 +202,16 @@ public class SerializationContextImpl implements SerializationContext
             if ((opt != null) && (opt.equals(Boolean.FALSE))) {
                 sendXSIType = false;
             }
+
+            // A Document-style service overrides the above settings. Don't
+            // send xsi:type, and don't do multiref in that case.
+            SOAPService service = msgContext.getService();
+            if (service != null) {
+                if (service.getStyle() == SOAPService.STYLE_DOCUMENT) {
+                    sendXSIType = false;
+                    doMultiRefs = false;
+                }
+            }
         }
     }
 
@@ -255,7 +266,11 @@ public class SerializationContextImpl implements SerializationContext
         if (msgContext == null)
             return DefaultTypeMappingImpl.create();
 
-        return (TypeMapping) msgContext.getTypeMappingRegistry().getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        String encodingStyle = msgContext.getEncodingStyle();
+        if (encodingStyle == null)
+            encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        return (TypeMapping) msgContext.
+                        getTypeMappingRegistry().getTypeMapping(encodingStyle);
     }
 
     /**
@@ -807,7 +822,7 @@ public class SerializationContextImpl implements SerializationContext
     public final Serializer getSerializerForJavaType(Class javaType) {
         SerializerFactory serF = null;
         Serializer ser = null;
-        try { 
+        try {
             serF = (SerializerFactory) getTypeMapping().getSerializer(javaType);
         } catch (JAXRPCException e) {
         }
