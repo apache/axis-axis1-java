@@ -179,7 +179,10 @@ Copyright:
           toDir="${build.dest}"/>
     <copy toDir="${build.dest}/org/apache/axis/i18n">
         <fileset dir="${src.dir}/org/apache/axis/i18n" includes="resource*.properties"/>
-    </copy> 
+    </copy>
+    <copy toDir="${build.dest}/org/apache/axis/utils">
+        <fileset dir="${src.dir}/org/apache/axis/utils" includes="tcpmon*.properties"/>
+    </copy>
 
     <tstamp>
       <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
