@@ -59,6 +59,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -72,12 +73,12 @@ import java.io.IOException;
 public class WSDDTypeMapping
     extends WSDDElement
 {
-    protected QName qname;
-    protected String serializer;
-    protected String deserializer;
-    protected QName typeQName;
-    protected String ref;
-    protected String encodingStyle;
+    protected QName qname = null;
+        protected String serializer = null;
+    protected String deserializer = null;
+    protected QName typeQName = null;
+    protected String ref = null;
+    protected String encodingStyle = null;
     
     /**
      * Default constructor
@@ -99,6 +100,11 @@ public class WSDDTypeMapping
         
         serializer = e.getAttribute("serializer");
         deserializer = e.getAttribute("deserializer");
+        encodingStyle = e.getAttribute("encodingStyle");
+        if (encodingStyle == null || encodingStyle.equals("")) {
+            encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        }
+
     }
 
     /**
@@ -114,8 +120,14 @@ public class WSDDTypeMapping
         String qnameStr = e.getAttribute("qname");
         qname = XMLUtils.getQNameFromString(qnameStr, e);
 
-        String typeStr = e.getAttribute("languageSpecificType");
+        // JSR 109 v0.093 indicates that this attribute is named "type"
+        
+        String typeStr = e.getAttribute("type");
         typeQName = XMLUtils.getQNameFromString(typeStr, e);
+        if (typeStr == null || typeStr.equals("")) {
+            typeStr = e.getAttribute("languageSpecificType");
+            typeQName = XMLUtils.getQNameFromString(typeStr, e);
+        }
     }
 
     /**
@@ -124,12 +136,14 @@ public class WSDDTypeMapping
     public void writeToContext(SerializationContext context)
             throws IOException {
         AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("", "encodingStyle", "encodingStyle", "CDATA", encodingStyle);
         attrs.addAttribute("", "serializer", "serializer", "CDATA", serializer);
         attrs.addAttribute("", "deserializer", "deserializer", "CDATA", deserializer);
 
         String typeStr = context.qName2String(typeQName);
-        attrs.addAttribute("", "languageSpecificType", 
-                           "languageSpecificType", "CDATA", typeStr);
+        // JSR 109 indicates that the name of this field is type
+        attrs.addAttribute("", "type", 
+                           "type", "CDATA", typeStr);
         
         String qnameStr = context.qName2String(qname);
         attrs.addAttribute("", "qname", "qname", "CDATA", qnameStr);

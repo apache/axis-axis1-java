@@ -75,7 +75,7 @@ public class Constants {
     public static final String NSPREFIX_WSDL       = "wsdl" ;
     public static final String NSPREFIX_WSDL_SOAP  = "wsdlsoap";
     public static final String NSPREFIX_WSDD       = "wsdd";    
-    public static final String NSPREFIX_WSDD_JAVA  = "wsdd-java";    
+    public static final String NSPREFIX_WSDD_JAVA  = "java";      
 
 
     // Axis Namespaces
