@@ -76,6 +76,7 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
+import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
@@ -132,10 +133,21 @@ public class SymbolTable {
     } // ctor
 
     /**
-     * Add the given Definition and Document information to the symbol table, populating it with
-     * SymTabEntries for each of the top-level symbols.
+     * Add the given Definition and Document information to the symbol table (including imported
+     * symbols), populating it with SymTabEntries for each of the top-level symbols.  When the
+     * symbol table has been populated, iterate through it, setting the isReferenced flag
+     * appropriately for each entry.
      */
     protected void add(Definition def, Document doc) throws IOException {
+        populate(def, doc);
+        setReferences();
+    } // add
+
+    /**
+     * Add the given Definition and Document information to the symbol table (including imported
+     * symbols), populating it with SymTabEntries for each of the top-level symbols.
+     */
+    private void populate(Definition def, Document doc) throws IOException {
         if (doc != null) {
             populateTypes(doc);
         }
@@ -148,7 +160,7 @@ public class SymbolTable {
                     Vector v = (Vector) imports.get(importKeys[i]);
                     for (int j = 0; j < v.size(); ++j) {
                         Import imp = (Import) v.get(j);
-                        add(imp.getDefinition(),
+                        populate(imp.getDefinition(),
                             XMLUtils.newDocument(imp.getLocationURI()));
                     }
                 }
@@ -158,7 +170,7 @@ public class SymbolTable {
             populateBindings(def);
             populateServices(def);
         }
-    } // add
+    } // populate
 
     /**
      * Populate the symbol table with all of the Types from the Document.
@@ -896,6 +908,125 @@ public class SymbolTable {
     } // populateServices
 
     /**
+     * Set each SymTabEntry's isReferenced flag.  The default is false.  If no other symbol
+     * references this symbol, then leave it false, otherwise set it to true.
+     */
+    private void setReferences() {
+        Iterator it = symbolTable.values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                if (entry instanceof MessageEntry) {
+                    setMessageReferences((MessageEntry) entry);
+                }
+                else if (entry instanceof PortTypeEntry) {
+                    setPortTypeReferences((PortTypeEntry) entry);
+                }
+                else if (entry instanceof BindingEntry) {
+                    setBindingReferences((BindingEntry) entry);
+                }
+                else if (entry instanceof ServiceEntry) {
+                    setServiceReferences((ServiceEntry) entry);
+                }
+            }
+        }
+    } // setReferences
+
+    /**
+     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     */
+    private void setMessageReferences(MessageEntry entry) {
+        Message message = entry.getMessage();
+        Iterator parts = message.getParts().values().iterator();
+        while (parts.hasNext()) {
+            Part part = (Part) parts.next();
+            Type type = getTypeEntry(part.getTypeName());
+            if (type != null) {
+                type.setIsReferenced(true);
+            }
+        }
+    } // setMessageReference
+
+    /**
+     * Set the isReferenced flag to true on all SymTabEntries that the given PortType refers to.
+     */
+    private void setPortTypeReferences(PortTypeEntry entry) {
+        PortType portType = entry.getPortType();
+        Iterator operations = portType.getOperations().iterator();
+
+        // For each operation, query its input, output, and fault messages
+        while (operations.hasNext()) {
+            Operation operation = (Operation) operations.next();
+
+            // Query the input message
+            Input input = operation.getInput();
+            if (input != null) {
+                Message message = input.getMessage();
+                if (message != null) {
+                    MessageEntry mEntry = getMessageEntry(message.getQName());
+                    if (mEntry != null) {
+                        mEntry.setIsReferenced(true);
+                    }
+                }
+            }
+
+            // Query the output message
+            Output output = operation.getOutput();
+            if (output != null) {
+                Message message = output.getMessage();
+                if (message != null) {
+                    MessageEntry mEntry = getMessageEntry(message.getQName());
+                    if (mEntry != null) {
+                        mEntry.setIsReferenced(true);
+                    }
+                }
+            }
+
+            // Query the fault messages
+            Iterator faults =
+              operation.getFaults().values().iterator();
+            while (faults.hasNext()) {
+                Message message = ((Fault) faults.next()).getMessage();
+                if (message != null) {
+                    MessageEntry mEntry = getMessageEntry(message.getQName());
+                    if (mEntry != null) {
+                        mEntry.setIsReferenced(true);
+                    }
+                }
+            }
+        }
+    } // setPortTypeReferences
+
+    /**
+     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     */
+    private void setBindingReferences(BindingEntry entry) {
+        Binding binding = entry.getBinding();
+        PortType portType = binding.getPortType();
+        PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
+        if (ptEntry != null) {
+            ptEntry.setIsReferenced(true);
+        }
+    } // setBindingReferences
+
+    /**
+     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     */
+    private void setServiceReferences(ServiceEntry entry) {
+        Service service = entry.getService();
+        Iterator ports = service.getPorts().values().iterator();
+        while (ports.hasNext()) {
+            Port port = (Port) ports.next();
+            Binding binding = (Binding) port.getBinding();
+            BindingEntry bEntry = getBindingEntry(binding.getQName());
+            if (bEntry != null) {
+                bEntry.setIsReferenced(true);
+            }
+        }
+    } // setServiceReferences
+
+    /**
      * Put the given SymTabEntry into the symbol table, if appropriate.  If 
      */
     private void symbolTablePut(SymTabEntry entry) {
@@ -1052,5 +1183,18 @@ public class SymbolTable {
     public String getPackage(QName qName) {
         return getPackage(qName.getNamespaceURI());
     }
+
+    /**
+     * For debugging purposes only.
+     */
+    public void dump(java.io.PrintStream out) {
+        Iterator it = symbolTable.values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                out.println(v.elementAt(i));
+            }
+        }
+    } // dump
 
 } // class SymbolTable
