@@ -78,7 +78,6 @@
     <!-- Now create a WSDL file from the Java classes -->
     <java2wsdl output="build/work/test/sequence/SequenceTest.wsdl"
                className= "test.sequence.SequenceTestPortType"
-               service= "SequenceTest"
                namespace="urn:SequenceTest2"
                location="http://localhost:8080/axis/services/SequenceTest">
         <mapping namespace="urn:SequenceTest2" package="test.sequence"/>

@@ -276,9 +276,21 @@ public class Emitter {
             clsName = cls.getName();
             clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
 
+            // If service name is null, construct it from location or className
             if (getServiceName() == null) {
-                String name = cls.getName();
-                name = name.substring(name.lastIndexOf('.') + 1);
+                String name = getLocationUrl();
+                if (name != null) {
+                    if (name.lastIndexOf('/') > 0) {
+                        name = name.substring(name.lastIndexOf('/') + 1);
+                    } else if (name.lastIndexOf('\\') > 0) {
+                        name = name.substring(name.lastIndexOf('\\') + 1);
+                    } else { 
+                        name = null;
+                    }
+                }
+                if (name == null) {
+                    name = clsName;
+                }
                 setServiceName(name);
             }
             
@@ -377,7 +389,7 @@ public class Emitter {
 
         Service service = def.createService();
 
-        service.setQName(new javax.wsdl.QName(implNS, getServiceName()));
+        service.setQName(new javax.wsdl.QName(implNS, getServiceName()+"Service"));
         def.addService(service);
 
         Port port = def.createPort();
@@ -406,7 +418,8 @@ public class Emitter {
         PortType portType = def.createPortType();
         portType.setUndefined(false);
 
-        portType.setQName(new javax.wsdl.QName(intfNS, getServiceName() + "PortType"));
+        // PortType name is the name of the class being processed
+        portType.setQName(new javax.wsdl.QName(intfNS, clsName));
 
         /** @todo should introduce allowInterfaces, to publish all methods from a interface */
         /** @todo if allowedMethods is specified always look for inherited methods as well?? */
