@@ -90,7 +90,7 @@ public class ProxyService {
         
         // add TCP for proxy testing
         client.addTransportPackage("samples.transport");
-        client.setTransportForProtocol("tcp", new TCPTransport());
+        client.setTransportForProtocol("tcp", TCPTransport.class);
         
         // NOW set the client's URL (since now the tcp handler exists)
         client.setURL(dest);

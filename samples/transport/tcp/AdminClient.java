@@ -72,8 +72,8 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
       
-        System.setProperty("java.protocol.handler.pkgs", "samples.transport");
-        ServiceClient.setTransportForProtocol("tcp", new TCPTransport());
+        ServiceClient.addTransportPackage("samples.transport");
+        ServiceClient.setTransportForProtocol("tcp", TCPTransport.class);
         
         try {
             org.apache.axis.client.AdminClient.main(args);

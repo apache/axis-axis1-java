@@ -117,8 +117,12 @@ public class TestStockSample extends TestCase {
         String[] args = { "samples/stock/undeploy.xml" };
         AdminClient.main(args);
     }
-    
-    
+
+    public static void main(String args[]) throws Exception {
+        TestStockSample tester = new TestStockSample("tester");
+        tester.testStockService();
+    }
+
     public void testStockService () throws Exception {
         try {
             System.out.println("Testing stock sample.");
