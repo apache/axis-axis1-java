@@ -184,7 +184,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 
         // FromValue returns the unique enumeration value object from the table
         pw.println("    public static " + javaName+ " fromValue(" + baseType +" value)");
-        pw.println("          throws java.lang.IllegalStateException {");
+        pw.println("          throws java.lang.IllegalArgumentException {");
         pw.println("        "+javaName+" enumeration = ("+javaName+")");
         if (baseClass.equals("java.lang.String") || 
             baseClass.equals(baseType)) {
@@ -192,37 +192,37 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         } else {
             pw.println("            _table_.get(new " + baseClass + "(value));");
         }
-        pw.println("        if (enumeration==null) throw new java.lang.IllegalStateException();");
+        pw.println("        if (enumeration==null) throw new java.lang.IllegalArgumentException();");
         pw.println("        return enumeration;");
         pw.println("    }");
         
         // FromString returns the unique enumeration value object from a string representation
         pw.println("    public static " + javaName+ " fromString(java.lang.String value)");
-        pw.println("          throws java.lang.IllegalStateException {");
+        pw.println("          throws java.lang.IllegalArgumentException {");
         if (baseClass.equals("java.lang.String")) {
             pw.println("        return fromValue(value);");
         } else if (baseClass.equals(baseType)) {
             pw.println("        try {");
             pw.println("            return fromValue(new " + baseClass + "(value));");
             pw.println("        } catch (Exception e) {");
-            pw.println("            throw new java.lang.IllegalStateException();"); 
+            pw.println("            throw new java.lang.IllegalArgumentException();"); 
             pw.println("        }");
         } else if (baseClass.equals("java.lang.Character")) {
             pw.println("        if (value != null && value.length() == 1);");  
             pw.println("            return fromValue(value.charAt(0));");                     
-            pw.println("        throw new java.lang.IllegalStateException();"); 
+            pw.println("        throw new java.lang.IllegalArgumentException();"); 
         } else if (baseClass.equals("java.lang.Integer")) {
             pw.println("        try {");
             pw.println("            return fromValue(java.lang.Integer.parseInt(value));");
             pw.println("        } catch (Exception e) {");
-            pw.println("            throw new java.lang.IllegalStateException();"); 
+            pw.println("            throw new java.lang.IllegalArgumentException();"); 
             pw.println("        }");
         } else {
             String parse = "parse" + baseClass.substring(baseClass.lastIndexOf(".")+1);
             pw.println("        try {");
             pw.println("            return fromValue("+baseClass+"." + parse+"(value));");
             pw.println("        } catch (Exception e) {");
-            pw.println("            throw new java.lang.IllegalStateException();"); 
+            pw.println("            throw new java.lang.IllegalArgumentException();"); 
             pw.println("        }");
         }
 
