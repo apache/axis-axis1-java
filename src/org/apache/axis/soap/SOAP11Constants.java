@@ -55,6 +55,7 @@
 package org.apache.axis.soap;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
 
 import javax.xml.namespace.QName;
 
@@ -105,7 +106,7 @@ public class SOAP11Constants implements SOAPConstants {
      * Obtain the MIME content type
      */
     public String getContentType() {
-        return "text/xml; charset=utf-8";
+        return "text/xml";
     }
 
     /**

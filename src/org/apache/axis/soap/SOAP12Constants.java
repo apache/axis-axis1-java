@@ -110,7 +110,7 @@ public class SOAP12Constants implements SOAPConstants {
      * Obtain the MIME content type
      */
     public String getContentType() {
-        return "application/soap+xml; charset=utf-8";
+        return "application/soap+xml";
     }
 
     /**

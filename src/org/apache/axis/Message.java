@@ -63,6 +63,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.AttachmentPart;
@@ -401,7 +402,7 @@ public class Message extends javax.xml.soap.SOAPMessage
             mSOAPPart.getAsBytes();
         }
 
-        String ret = sc.getContentType();
+        String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
         }
@@ -437,7 +438,7 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                Writer writer = new OutputStreamWriter(os,"UTF-8");
+                Writer writer = new OutputStreamWriter(os,XMLUtils.getEncoding());
                 writer = new BufferedWriter(writer);
                 mSOAPPart.writeTo(writer);
                 writer.flush();
