@@ -117,16 +117,12 @@ public abstract class MessageExchangeProvider
         return new MessageExchangeImpl(this);
     }
 
-    /**
-     * Unsupported for now
-     */
     public MessageExchange createMessageExchange(
-            Hashtable properties,
-            String[] enabledFeatures)
+            Hashtable options)
             throws AxisFault {
-        throw AxisFault.makeFault(
-            new UnsupportedOperationException(
-                Messages.getMessage("unsupportedOperationException00")));
+      MessageExchange msgex = new MessageExchangeImpl(this);
+      msgex.setOptions(options);
+      return msgex;
     }
             
     public void cleanup()

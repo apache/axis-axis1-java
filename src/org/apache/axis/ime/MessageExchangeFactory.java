@@ -76,7 +76,6 @@ public interface MessageExchangeFactory {
      * @return ConfigurableMessageExchange
      */
     public MessageExchange createMessageExchange(
-            Hashtable options,
-            String[] enabledFeatures)
+            Hashtable options)
               throws AxisFault;
 }
