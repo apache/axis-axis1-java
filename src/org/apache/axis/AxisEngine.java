@@ -402,12 +402,9 @@ public abstract class AxisEngine extends BasicHandler
         } else if (pivot instanceof MsgProvider) {
             newService.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
         } else {
-            newService.setParameter("handlerClass", pivot.getClass().getName());
             newService.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
+            newService.setParameter("handlerClass", pivot.getClass().getName());
         }
-//        WSDDProvider provider = newService.createProvider(WSDDJavaRPCProvider.class);
-//        provider.setAttribute("type", "java:" + service.getPivotHandler().getClass().getName());
-//        provider.setProviderAttribute("className", (String)service.getOption("className"));
         myRegistry.deployService(newService);
     }
 

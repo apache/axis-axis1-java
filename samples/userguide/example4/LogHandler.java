@@ -97,7 +97,7 @@ public class LogHandler extends BasicHandler {
             
             writer.close();
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
     

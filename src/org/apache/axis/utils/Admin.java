@@ -303,12 +303,8 @@ public class Admin {
     {
         Document doc = null ;
 
-        try {
-            WSDDDocument wsddDoc = new WSDDDocument(root);
-            engine.deployWSDD(wsddDoc);
-        } catch (DeploymentException e) {
-            throw new AxisFault(e);
-        }
+        WSDDDocument wsddDoc = new WSDDDocument(root);
+        engine.deployWSDD(wsddDoc);
         
         engine.saveConfiguration();
         
@@ -497,8 +493,7 @@ public class Admin {
         }
         catch( Exception e ) {
             e.printStackTrace();
-            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
         return( doc );
     }
@@ -664,7 +659,7 @@ public class Admin {
         try {
             registerTypeMappings(elem, serv);
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
         engine.getDeploymentRegistry().deployService(serv);
@@ -694,12 +689,12 @@ public class Admin {
             if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
             getOptions( elem, h );
             engine.deployHandler( name, h );
-        } catch (ClassNotFoundException cnfe) {
-              throw new AxisFault(cnfe);
-        } catch (InstantiationException ie) {
-              throw new AxisFault(ie);
-        } catch (IllegalAccessException iae) {
-              throw new AxisFault(iae);
+        } catch (ClassNotFoundException e) {
+              throw AxisFault.makeFault(e);
+        } catch (InstantiationException e) {
+              throw AxisFault.makeFault(e);
+        } catch (IllegalAccessException e) {
+              throw AxisFault.makeFault(e);
         }
     }
 

@@ -62,21 +62,14 @@ import org.apache.axis.AxisFault;
 public class DeploymentException
     extends AxisFault
 {
-
-    /**
-     *
-     */
-    public DeploymentException()
-    {
-        super();
+    public DeploymentException() {
     }
 
-    /**
-     *
-     * @param message (String) XXX
-     */
-    public DeploymentException(String message)
-    {
+    public DeploymentException(Exception e) {
+        super(e);
+    }
+
+    public DeploymentException(String message) {
         super(message);
     }
 }

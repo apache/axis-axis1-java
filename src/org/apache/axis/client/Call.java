@@ -1114,8 +1114,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         catch( Exception e ) {
             category.error( e );
-            if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         resMsg = msgContext.getResponseMessage();
@@ -1139,8 +1138,7 @@ public class Call implements javax.xml.rpc.Call {
             resArgs = body.getParams();
         } catch (Exception e) {
             category.error(e);
-            if (!(e instanceof AxisFault)) e = new AxisFault(e);
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (resArgs != null && resArgs.size() > 0) {

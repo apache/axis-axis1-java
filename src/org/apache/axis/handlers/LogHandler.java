@@ -98,7 +98,7 @@ public class LogHandler extends BasicHandler {
                 pw.close();
             } catch( Exception e ) {
                 category.error( e );
-                throw new AxisFault( e );
+                throw AxisFault.makeFault(e);
             }
         }
         category.debug(JavaUtils.getMessage("exit00", "LogHandler::invoke") );

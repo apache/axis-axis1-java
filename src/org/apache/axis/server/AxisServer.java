@@ -270,7 +270,7 @@ public class AxisServer extends AxisEngine
             throw e;
         } catch (Exception e) {
             // Should we even bother catching it ?
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
         
         if (category.isDebugEnabled()) {
@@ -416,7 +416,7 @@ public class AxisServer extends AxisEngine
             throw e;
         } catch(Exception e) {
             // Should we even bother catching it ?
-            throw new AxisFault( e );
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled()) {

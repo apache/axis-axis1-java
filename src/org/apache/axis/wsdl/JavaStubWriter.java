@@ -144,7 +144,7 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("        }");
         pw.println("        catch(Exception t) {");
-        pw.println("            throw new org.apache.axis.AxisFault(t);");
+        pw.println("            throw org.apache.axis.AxisFault.makeFault(t);");
         pw.println("        }");
 
         pw.println("    }");

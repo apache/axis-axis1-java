@@ -136,8 +136,7 @@ public class TCPSender extends BasicHandler {
         catch( Exception e ) {
             category.error( e );
             e.printStackTrace();
-            if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
         category.info( "Exit: TCPSender::invoke" );
     }

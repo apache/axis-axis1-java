@@ -162,7 +162,7 @@ public class EJBProvider extends RPCProvider
         }
         catch (Exception exception)
         {
-            throw new AxisFault(exception);
+            throw AxisFault.makeFault(exception);
         }
 
         Class homeClass = home.getClass();

@@ -340,7 +340,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
             while (null == ret && null != boundaryDelimitedStream);
         }
         catch (Exception e) {
-            throw new org.apache.axis.AxisFault(e);
+            throw org.apache.axis.AxisFault.makeFault(e);
         }
 
         return ret;

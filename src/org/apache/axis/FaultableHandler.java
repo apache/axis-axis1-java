@@ -107,13 +107,7 @@ public class FaultableHandler extends BasicHandler {
         }
         catch( Exception e ) {
             category.error( e );
-            AxisFault fault;
-            // Is this a Java Exception? a SOAPException? an AxisException?
-            if ( e instanceof AxisFault ) {
-                fault = (AxisFault)e;
-            } else {
-                fault = new AxisFault( e );
-            }
+            AxisFault fault = AxisFault.makeFault(e);
 
             AxisEngine engine = msgContext.getAxisEngine();
 
@@ -147,7 +141,7 @@ public class FaultableHandler extends BasicHandler {
                  */
                 faultHandler.invoke( msgContext );
             } else {
-                throw (AxisFault) e ;
+                throw fault;
             }
         }
         category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::invoke"));

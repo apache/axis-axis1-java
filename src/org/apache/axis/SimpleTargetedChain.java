@@ -105,11 +105,9 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
         }
         catch( Exception e ) {
             category.error( e );
-            if ( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
             if ( requestHandler != null )
                 requestHandler.undo( msgContext );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
         msgContext.setPastPivot(true);
         try {
@@ -118,12 +116,10 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
         }
         catch( Exception e ) {
             category.error( e );
-            if ( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
             if ( pivotHandler != null ) pivotHandler.undo( msgContext );
             if ( requestHandler != null )
                 requestHandler.undo( msgContext );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
         
         if (category.isDebugEnabled()) {
@@ -142,11 +138,9 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
         }
         catch( Exception e ) {
             category.error( e );
-            if ( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
             if ( requestHandler != null )
                 requestHandler.undo( msgContext );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
         msgContext.setPastPivot(true);
         try {
@@ -155,9 +149,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
         }
         catch( Exception e ) {
             category.error( e );
-            if ( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled()) {

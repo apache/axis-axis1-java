@@ -61,6 +61,6 @@ public class NoEndPointException extends AxisFault
 {
     public NoEndPointException ()
     {
-        super ();
+        super("Server.NoEndpoint", "No endpoint", null, null);
     } // ctor
 } // class NoEndPointException

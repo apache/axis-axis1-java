@@ -200,8 +200,7 @@ public abstract class TestClient {
             map = call.getMessageContext().getTypeMappingRegistry();
         }
         catch( Exception exp ) {
-            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-            throw new AxisFault(exp);
+            throw AxisFault.makeFault(exp);
         }
     }
 

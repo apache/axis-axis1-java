@@ -168,7 +168,7 @@ public class ServiceClient {
         try {
             call = new Call(endpointURL);
         } catch (MalformedURLException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -183,7 +183,7 @@ public class ServiceClient {
             service.setEngine(engine);
             call = new Call(endpointURL);
         } catch (MalformedURLException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
@@ -432,7 +432,7 @@ public class ServiceClient {
         try {
             return call.invoke(env);
         } catch (java.rmi.RemoteException e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
     }
 
