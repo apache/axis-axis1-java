@@ -89,6 +89,8 @@ public class RPCElement extends SOAPBodyElement
     {
         super(namespace, localName, prefix, attributes, context);
 
+//        recorder = new SAX2EventRecorder();
+
         encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
 
         // This came from parsing XML, so we need to deserialize it sometime
@@ -130,13 +132,6 @@ public class RPCElement extends SOAPBodyElement
     public String getMethodName()
     {
         return name;
-    }
-
-    protected Class  defaultParamTypes[] = null;
-
-    public Class [] getJavaParamTypes()
-    {
-        return defaultParamTypes;
     }
 
     public void deserialize() throws SAXException
