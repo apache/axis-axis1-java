@@ -186,12 +186,32 @@ public class SerializationContextImpl implements SerializationContext
     SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
     /**
+     * A list of particular namespace -> prefix mappings we should prefer.
+     * See getPrefixForURI() below.
+     */
+    HashMap preferredPrefixes = new HashMap();
+
+    /**
      * Construct SerializationContextImpl with associated writer
      * @param writer java.io.Writer
      */
     public SerializationContextImpl(Writer writer)
     {
         this.writer = writer;
+        initialize();
+    }
+
+    private void initialize() {
+        // These are the preferred prefixes we'll use instead of the "ns1"
+        // style defaults.  MAKE SURE soapConstants IS SET CORRECTLY FIRST!
+        preferredPrefixes.put(soapConstants.getEncodingURI(),
+                              Constants.NS_PREFIX_SOAP_ENC);
+        preferredPrefixes.put(Constants.NS_URI_XMLNS,
+                              Constants.NS_PREFIX_XML);
+        preferredPrefixes.put(schemaVersion.getXsdURI(),
+                              Constants.NS_PREFIX_SCHEMA_XSD);
+        preferredPrefixes.put(schemaVersion.getXsiURI(),
+                              Constants.NS_PREFIX_SCHEMA_XSI);
     }
 
 
@@ -252,6 +272,9 @@ public class SerializationContextImpl implements SerializationContext
                 }
             }
         }
+
+        // Set up preferred prefixes based on current schema, soap ver, etc.
+        initialize();
     }
 
     /**
@@ -346,6 +369,13 @@ public class SerializationContextImpl implements SerializationContext
     {
         return getPrefixForURI(uri, defaultPrefix, false);
     }
+
+    /**
+     * Get a prefix for the given namespace URI.  If one has already been
+     * defined in this serialization, use that.  Otherwise, map the passed
+     * default prefix to the URI, and return that.  If a null default prefix
+     * is passed, use one of the form "ns<num>"
+     */
     public String getPrefixForURI(String uri, String defaultPrefix, boolean attribute)
     {
         if ((uri == null) || (uri.equals("")))
@@ -355,17 +385,17 @@ public class SerializationContextImpl implements SerializationContext
         // "" prefix, but always register/find one.
         String prefix = nsStack.getPrefix(uri, attribute);
 
-        if (prefix == null && uri.equals(soapConstants.getEncodingURI())) {
-            prefix = Constants.NS_PREFIX_SOAP_ENC;
-            registerPrefixForURI(prefix, uri);
-        }
-
         if (prefix == null) {
-            if (defaultPrefix == null) {
-                prefix = "ns" + lastPrefixIndex++;
-            } else {
-                prefix = defaultPrefix;
+            prefix = (String)preferredPrefixes.get(uri);
+
+            if (prefix == null) {
+                if (defaultPrefix == null) {
+                    prefix = "ns" + lastPrefixIndex++;
+                } else {
+                    prefix = defaultPrefix;
+                }
             }
+
             registerPrefixForURI(prefix, uri);
         }
 

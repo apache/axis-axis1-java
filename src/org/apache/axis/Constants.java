@@ -78,6 +78,7 @@ public class Constants {
     public static final String NS_PREFIX_WSDL       = "wsdl" ;
     public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
     public static final String NS_PREFIX_XMLSOAP    = "apachesoap";
+    public static final String NS_PREFIX_XML        = "xml";
 
 
     // Axis Namespaces
