@@ -2552,7 +2552,8 @@ public class Emitter {
             } else if (typeMappingVersion.equals("1.2")) {
                 defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
             } else if (typeMappingVersion.equals("1.3")) {
-                defaultTM=DefaultJAXRPC11TypeMappingImpl.create();
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
+                defaultTM.setDelegate(DefaultJAXRPC11TypeMappingImpl.create());
             } else {
                 throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
             }
