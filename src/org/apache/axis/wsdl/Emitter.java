@@ -1666,11 +1666,11 @@ public class Emitter {
                 pw.println();
                 if (packageName == null) {
                     pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
-                           + " className=\"" + type.getJavaName() +"\">");
+                           + " classname=\"" + type.getJavaName() +"\"/>");
                 }
                 else {
                     pw.println("     <" + namespacePrefix + ":" + type.getQName().getLocalPart()
-                           + " className=\"" + packageName + "." + type.getJavaName() +"\">");
+                           + " classname=\"" + packageName + "." + type.getJavaName() +"\"/>");
                 }
             }
         }
