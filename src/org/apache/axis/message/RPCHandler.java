@@ -178,9 +178,6 @@ public class RPCHandler extends SOAPHandler
 
         Vector params = rpcElem.getParams();
         
-        // SAR: for now, ignore RPC Result elements
-        if (qname.equals(Constants.QNAME_RPC_RESULT)) return this;
-
         // Create a new param if not the same element
         if (currentParam == null ||
             !currentParam.getQName().getNamespaceURI().equals(namespace) ||

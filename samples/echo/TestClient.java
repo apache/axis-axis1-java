@@ -74,7 +74,6 @@ import org.apache.axis.utils.Options;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;

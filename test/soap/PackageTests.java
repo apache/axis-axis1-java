@@ -69,7 +69,7 @@ public class PackageTests
     {
         TestSuite suite = new TestSuite("All axis.soap tests");
 
-        suite.addTest(TestHeaderAttrs.suite());
+        suite.addTestSuite(TestHeaderAttrs.class);
         suite.addTestSuite(TestOnFaultHeaders.class);
 
         return suite;

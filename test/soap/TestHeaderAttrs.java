@@ -60,9 +60,12 @@ import junit.framework.TestSuite;
 import junit.framework.Test;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.local.LocalTransport;
+import org.apache.axis.transport.local.LocalResponder;
 import org.apache.axis.client.Call;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPHeaderElement;
@@ -103,10 +106,9 @@ public class TestHeaderAttrs extends TestCase {
 
     static final String localURL = "local:///testService";
 
-    public static Test suite() {
-        return new TestSuite(TestHeaderAttrs.class);
-    }
-    
+    // Which SOAP version are we using?  Default to SOAP 1.1
+    protected SOAPConstants soapVersion = SOAPConstants.SOAP11_CONSTANTS;
+
     public TestHeaderAttrs(String name) {
         super(name);
     }
@@ -127,6 +129,10 @@ public class TestHeaderAttrs extends TestCase {
         service.setOption("allowedMethods", "*");
         
         provider.deployService("testService", service);
+
+        SimpleTargetedChain serverTransport =
+                new SimpleTargetedChain(null, null, new LocalResponder());
+        provider.deployTransport("local", serverTransport);
     }
     
     /**
@@ -215,6 +221,7 @@ public class TestHeaderAttrs extends TestCase {
                            boolean doubled) throws Exception
     {
         Call call = new Call(new Service());
+        call.setSOAPVersion(soapVersion);
         call.setTransport(localTransport);
         
         call.addHeader(header);
@@ -231,14 +238,5 @@ public class TestHeaderAttrs extends TestCase {
         if (doubled) desiredResult = desiredResult * 2;
         
         return (i.intValue() == desiredResult);
-    }
-    
-    public static void main(String[] args) throws Exception {
-        TestHeaderAttrs tester = new TestHeaderAttrs("test");
-        tester.setUp();
-        tester.testMUBadHeader();
-        tester.testNonMUBadHeader();
-        tester.testGoodHeader();
-        tester.testGoodHeaderWithActors();
     }
 }

@@ -57,7 +57,7 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -154,28 +154,17 @@ public class SOAPHeaderElement extends MessageElement
         }
 
         processed = false;
+        alreadySerialized = true;
     }
 
     public boolean getMustUnderstand() { return( mustUnderstand ); }
     public void setMustUnderstand(boolean b) {
         mustUnderstand = b ;
-        String val = b ? "1" : "0";
-
-        // Instead of doing this can we hang out until serialization time
-        // and do it there, so that we can then resolve SOAP version?
-        setAttribute(Constants.URI_SOAP11_ENV,
-                     Constants.ATTR_MUST_UNDERSTAND,
-                     val);
     }
 
     public String getActor() { return( actor ); }
     public void setActor(String a) {
         actor = a ;
-
-        // FIXME
-        // Instead of doing this can we hang out until serialization time
-        // and do it there, so that we can then resolve SOAP version?
-        setAttribute(Constants.URI_SOAP11_ENV, Constants.ATTR_ACTOR, a);
     }
 
     public void setProcessed(boolean value) {
@@ -184,5 +173,27 @@ public class SOAPHeaderElement extends MessageElement
 
     public boolean isProcessed() {
         return( processed );
+    }
+
+    boolean alreadySerialized = false;
+
+    /** Subclasses can override
+     */
+    protected void outputImpl(SerializationContext context) throws Exception {
+        if (!alreadySerialized) {
+            SOAPConstants soapVer = getEnvelope().getSOAPConstants();
+            QName roleQName = soapVer.getRoleAttributeQName();
+
+            setAttribute(roleQName.getNamespaceURI(),
+                         roleQName.getLocalPart(), actor);
+
+            String val = mustUnderstand ? "1" : "0";
+
+            setAttribute(soapVer.getEnvelopeURI(),
+                         Constants.ATTR_MUST_UNDERSTAND,
+                         val);
+        }
+
+        super.outputImpl(context);
     }
 }

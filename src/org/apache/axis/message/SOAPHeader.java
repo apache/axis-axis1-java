@@ -60,7 +60,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.handlers.soap.SOAPService;
 
@@ -98,6 +97,7 @@ public class SOAPHeader extends MessageElement
         soapConstants = soapConsts;
         try {
             setParentElement(env);
+            setEnvelope(env);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
             log.fatal(Messages.getMessage("exception00"), ex);
@@ -130,6 +130,7 @@ public class SOAPHeader extends MessageElement
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)
         throws SOAPException {
         SOAPHeaderElement headerElement = new SOAPHeaderElement(name);
+        headerElement.setEnvelope(getEnvelope());
         addHeader(headerElement);
         return headerElement;
     }

@@ -126,6 +126,7 @@ public class EnvelopeBuilder extends SOAPHandler
         envelope.setPrefix(prefix);
         envelope.setNamespaceURI(namespace);
         envelope.setNSMappings(context.getCurrentNSMappings());
+        envelope.setSoapConstants(soapConstants);
         context.pushNewElement(envelope);
     }
 

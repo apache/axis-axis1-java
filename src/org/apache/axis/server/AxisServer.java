@@ -67,7 +67,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
