@@ -107,7 +107,7 @@ Copyright:
       <classpath refid="classpath" />
       <formatter type="xml" />
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dir}/classes">
+        <fileset dir="${build.dir}/classes" excludesfile="${axis.home}/junit-exclude-tests.txt">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/PackageTests.class" />
@@ -179,7 +179,7 @@ Copyright:
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}">
+        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
               <include name="**/FunctionalTests.class" />
@@ -204,7 +204,7 @@ Copyright:
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}">
+        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
               <include name="**/TestBidBuySample.class" />

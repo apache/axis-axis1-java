@@ -1,0 +1,3 @@
+# This file contains Test Cases that should work ideally, but currently fail
+# The test harness ignores the test cases specified below.
+**//test//dynamic//PackageTests.*

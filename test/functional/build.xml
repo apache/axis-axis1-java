@@ -91,7 +91,7 @@ Copyright:
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}">
+        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
            <include name="${componentName}/FunctionalTests.class" />
         </fileset>
       </batchtest>

@@ -147,7 +147,8 @@ Copyright:
       <test name="${testcase}" if="testcase"/>
       <batchtest todir="${test.reports.dir}" unless="testcase">
         <fileset dir="${build.dir}/classes"
-          includes="test/httpunit/*Tests.class"/>
+          includes="test/httpunit/*Tests.class"
+          excludesfile="${axis.home}/junit-exclude-tests.txt"/>
       </batchtest>
     </junit>
   </target>
