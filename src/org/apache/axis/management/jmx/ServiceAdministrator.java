@@ -19,6 +19,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * The ServiceAdmininstrator MBean exposes the
@@ -63,8 +64,8 @@ public class ServiceAdministrator implements ServiceAdministratorMBean {
      * @return Map of Services (SOAPService objects, Key is the ServiceName)
      * @throws AxisFault ConfigurationException
      */
-    public HashMap listServices()
+    public ArrayList listServices()
             throws AxisFault, ConfigurationException {
-        return org.apache.axis.management.ServiceAdmin.listServices();
+        return new ArrayList (org.apache.axis.management.ServiceAdmin.listServices().keySet());
     }
 }

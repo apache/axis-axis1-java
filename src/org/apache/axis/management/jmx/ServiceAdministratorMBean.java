@@ -19,6 +19,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * The ServiceAdministrator MBean exposes the
@@ -54,6 +55,6 @@ public interface ServiceAdministratorMBean {
      * @throws AxisFault,ConfigurationException
      *
      */
-    public HashMap listServices() throws AxisFault, ConfigurationException;
+    public ArrayList listServices() throws AxisFault, ConfigurationException;
 
 }

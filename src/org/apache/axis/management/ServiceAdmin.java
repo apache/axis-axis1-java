@@ -17,6 +17,7 @@ package org.apache.axis.management;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
+import org.apache.axis.management.jmx.ServiceAdministrator;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.server.AxisServer;
@@ -104,7 +105,6 @@ public class ServiceAdmin {
         while (iter.hasNext()) {
             ServiceDesc sd = (ServiceDesc) iter.next();
             String name = sd.getName();
-            System.out.println("Service Name is : " + name);
             SOAPService service = server.getConfig().getService(
                     new QName("", name));
             serviceMap.put(name, service);
@@ -133,6 +133,7 @@ public class ServiceAdmin {
      */ 
     static public void setEngine(AxisServer axisSrv) {
         ServiceAdmin.axisServer = axisSrv;
+        //Registrar.register(new ServiceAdministrator(), "AxisServer:name=localhost,port=8080", "AxisServerContext");
     }
 
 }
