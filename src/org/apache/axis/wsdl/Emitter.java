@@ -240,11 +240,11 @@ public class Emitter {
             // Output interfaces for portTypes
             writePortTypes();
 
-            // Output Stub classes for bindings
-            writeBindings();
-
             // Output factory classes for services
             writeServices();
+
+            // Output Stub classes for bindings
+            writeBindings();
         }
     } // emit
 
