@@ -66,6 +66,7 @@ import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 
@@ -74,7 +75,9 @@ import samples.bidbuy.TestClient;
 /** Test the stock sample code.
  */
 public class TestBidBuySample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestBidBuySample.class.getName());
+
     public TestBidBuySample(String name) {
         super(name);
     }
@@ -91,12 +94,12 @@ public class TestBidBuySample extends TestCase {
     
     public void testBidBuyService () throws Exception {
         try {
-            System.out.println("Testing bidbuy sample.");
-            System.out.println("Testing deployment...");
+            category.info("Testing bidbuy sample.");
+            category.info("Testing deployment...");
             doTestDeploy();
-            System.out.println("Testing service...");
+            category.info("Testing service...");
             doTest();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

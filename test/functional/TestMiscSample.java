@@ -65,6 +65,7 @@ import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
 
@@ -73,7 +74,9 @@ import samples.misc.TestClient;
 /** Test the stock sample code.
  */
 public class TestMiscSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestMiscSample.class.getName());
+
     public TestMiscSample(String name) {
         super(name);
     }
@@ -85,10 +88,10 @@ public class TestMiscSample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            System.out.println("Testing misc sample.");
-            System.out.println("Testing service...");
+            category.info("Testing misc sample.");
+            category.info("Testing service...");
             doTest();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

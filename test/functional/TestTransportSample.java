@@ -69,13 +69,16 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import junit.framework.TestCase;
 
 import org.apache.axis.utils.Admin;
+import org.apache.log4j.Category;
 
 import samples.transport.FileTest;
 
 /** Test the stock sample code.
  */
 public class TestTransportSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestTransportSample.class.getName());
+
     public TestTransportSample(String name) {
         super(name);
     }
@@ -103,9 +106,9 @@ public class TestTransportSample extends TestCase {
             if (fault == null) throw e;
             if (fault.indexOf("java.net.UnknownHost")<0) {
                 int start = fault.indexOf(": ");
-                System.out.println(fault.substring(start+2));
+                category.info(fault.substring(start+2));
             } else if (fault.equals("timeout")) {
-                System.out.println("timeout");
+                category.info("timeout");
             } else {
                 throw e;
             }
@@ -119,16 +122,16 @@ public class TestTransportSample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            System.out.println("Testing transport sample.");
-            System.out.println("Testing client deployment...");
+            category.info("Testing transport sample.");
+            category.info("Testing client deployment...");
             doTestClientDeploy();
-            System.out.println("Testing deployment...");
+            category.info("Testing deployment...");
             doTestDeploy();
-            System.out.println("Testing service with symbol IBM...");
+            category.info("Testing service with symbol IBM...");
             doTestIBM();
-            System.out.println("Testing service with symbol XXX...");
+            category.info("Testing service with symbol XXX...");
             doTestXXX();
-            System.out.println("Test complete.");
+            category.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

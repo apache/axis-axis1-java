@@ -57,13 +57,16 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.client.AdminClient;
+import org.apache.log4j.Category;
 
 import samples.echo.TestClient;
 
 /** Test the stock sample code.
  */
 public class TestEchoSample extends TestCase {
-    
+    static Category category =
+            Category.getInstance(TestEchoSample.class.getName());
+
     public TestEchoSample(String name) {
         super(name);
     }
@@ -74,7 +77,7 @@ public class TestEchoSample extends TestCase {
     }
 
     public void testEchoService () throws Exception {
-        System.out.println("Testing echo interop sample.");
+        category.info("Testing echo interop sample.");
 
         // deploy the echo service
         String[] args = {"-l", "local:", "samples/echo/deploy.xml"};
@@ -91,7 +94,7 @@ public class TestEchoSample extends TestCase {
         client.setURL("local:");
         client.execute();
 
-        System.out.println("Test complete.");
+        category.info("Test complete.");
     }
 }
 
