@@ -109,16 +109,15 @@ handlers/chains as debug/administration aids.
             <xsd:complexContent>
                 <xsd:extension base="wsdd:DeployableItem">
                     <xsd:sequence>
+                        <xsd:element ref="wsdd:namespace" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:requestFlow" minOccurs="0"/>
                         <xsd:element ref="wsdd:provider" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:responseFlow" minOccurs="0"/>
+                        <xsd:element ref="wsdd:requestFlow" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="wsdd:responseFlow" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:namespace" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                     <xsd:attribute name="description" type="xsd:string" use="optional"/>
@@ -234,9 +233,9 @@ from the Service Provider</xsd:documentation>
             <xsd:attribute name="encodingStyle" type="xsd:string" use="optional"/>
             <xsd:attribute name="qname" type="xsd:QName" use="optional"/>
             <xsd:attribute name="languageSpecificType" type="xsd:QName" use="optional"/>
-            <xsd:attribute name="serializer" type="xsd:QName" use="optional"/>
-            <xsd:attribute name="deserializer" type="xsd:QName" use="optional"/>
-            <xsd:attribute name="type" type="xsd:QName"/>
+            <xsd:attribute name="serializer" type="xsd:anyURI" use="optional"/>
+            <xsd:attribute name="deserializer" type="xsd:anyURI" use="optional"/>
+            <xsd:attribute name="type" type="xsd:anyURI"/>
         </xsd:complexType>
     </xsd:element>
     <!-- ==================================================================== -->
@@ -276,7 +275,7 @@ QName may or may not be the same as the required name attribute.
             </xsd:sequence>
             <xsd:attribute name="name" type="xsd:NMTOKEN" use="required"/>
             <xsd:attribute name="returnQName" type="xsd:QName" use="optional"/>
-            <xsd:attribute name="returnType" type="xsd:QName" use="optional"/>
+            <xsd:attribute name="returnType" type="xsd:anyURI" use="optional"/>
             <xsd:attribute name="qname" type="xsd:QName"/>
         </xsd:complexType>
     </xsd:element>
@@ -356,7 +355,7 @@ The provider element describes the deployment of the Axis Engine implementation.
             <xsd:anyAttribute namespace="##other"/>
         </xsd:complexType>
     </xsd:element>
-   <!-- ==================================================================== -->
+    <!-- ==================================================================== -->
     <!-- namespace-->
     <!-- ==================================================================== -->
     <xsd:element name="namespace" type="xsd:anyURI">
