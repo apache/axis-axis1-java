@@ -709,6 +709,7 @@ public class SerializationContextImpl implements SerializationContext
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
+        java.util.Vector vecQNames = new java.util.Vector();
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
@@ -757,11 +758,11 @@ public class SerializationContextImpl implements SerializationContext
                         qname = attributes.getLocalName(i);
                     }
                 } else {
-                    qname = attributes.getLocalName(i);
-                    if(qname == null)
-                        qname = attributes.getQName(i);
+                   qname = attributes.getQName(i);
+                    if(qname.equals(""))
+                        qname = attributes.getLocalName(i);
                 }
-
+                vecQNames.add(qname);
                 writer.write(qname);
                 writer.write("=\"");
                 writer.write(XMLUtils.xmlEncodeString(attributes.getValue(i)));
@@ -772,14 +773,18 @@ public class SerializationContextImpl implements SerializationContext
         ArrayList currentMappings = nsStack.peek();
         for (int i = 0; i < currentMappings.size(); i++) {
             Mapping map = (Mapping)currentMappings.get(i);
-            writer.write(" xmlns");
+            StringBuffer sb = new StringBuffer("xmlns");
             if (!map.getPrefix().equals("")) {
-                writer.write(":");
-                writer.write(map.getPrefix());
+                sb.append(":");
+                sb.append(map.getPrefix());
             }
-            writer.write("=\"");
-            writer.write(map.getNamespaceURI());
-            writer.write("\"");
+            if(vecQNames.indexOf(sb.toString())==-1){
+                writer.write(" ");
+                writer.write(sb.toString());
+                writer.write("=\"");
+                writer.write(map.getNamespaceURI());
+                writer.write("\"");
+            }
         }
 
         writingStartTag = true;

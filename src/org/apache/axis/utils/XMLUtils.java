@@ -195,7 +195,9 @@ public class XMLUtils {
             return (SAXParser )saxParsers.pop();
 
         try {
-            return saxFactory.newSAXParser();
+            SAXParser parser = saxFactory.newSAXParser();
+            parser.getXMLReader().setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+            return parser;
         } catch (ParserConfigurationException e) {
             log.error(JavaUtils.getMessage("parserConfigurationException00"), e);
             return null;

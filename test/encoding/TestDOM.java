@@ -6,11 +6,14 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.XMLUtils;
+
+import java.util.Iterator;
 
 /**
 
@@ -26,7 +29,7 @@ public class TestDOM extends TestCase {
         super(name);
     }
 
-    private String request =
+    private String header =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<SOAP-ENV:Envelope" +
         " SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"" +
@@ -42,8 +45,15 @@ public class TestDOM extends TestCase {
         "    </SOAP-SEC:signature>\n" +
         "  </SOAP-ENV:Header>\n" +
         "  <SOAP-ENV:Body id=\"body\">\n" +
-        "    <ns1:getQuote xmlns:ns1=\"urn:xmltoday-delayed-quotes\">\n" +
-        "      <symbol xsi:type=\"xsd:string\">IBM</symbol>\n" +
+        "    <ns1:getQuote xmlns:ns1=\"urn:xmltoday-delayed-quotes\">\n";
+
+    private String request1 =
+        "      <symbol xsi:type=\"xsd:string\">IBM</symbol>\n";
+
+    private String request2 =
+        "      <addResult xsi:type=\"xsd:int\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">4</addResult>\n";
+
+    private String footer =
         "    </ns1:getQuote>\n" +
         "  </SOAP-ENV:Body>\n" +
         "</SOAP-ENV:Envelope>";
@@ -55,6 +65,7 @@ public class TestDOM extends TestCase {
        engine.init();
        MessageContext msgContext = new MessageContext(engine);
        msgContext.setHighFidelity(true);
+       String request = header + request1 + footer;
        Message message = new Message(request);
        message.setMessageContext(msgContext);
 
@@ -71,6 +82,7 @@ public class TestDOM extends TestCase {
        engine.init();
        MessageContext msgContext = new MessageContext(engine);
        msgContext.setHighFidelity(true);
+        String request = header + request1 + footer;
        Message message = new Message(request);
        message.setMessageContext(msgContext);
 
@@ -95,6 +107,24 @@ public class TestDOM extends TestCase {
        assertTrue(result2.indexOf("foo3")!=-1);
     }
 
+    /**
+     * Test for Bug 7132
+     */
+    public void testAttributes() throws Exception {
+       AxisEngine engine = new AxisServer();
+       engine.init();
+       MessageContext msgContext = new MessageContext(engine);
+       msgContext.setHighFidelity(true);
+       String request = header + request2 + footer;
+       Message message = new Message(request);
+       message.setMessageContext(msgContext);
+       SOAPEnvelope envelope = message.getSOAPEnvelope();
+       SOAPBodyElement bodyElement = (SOAPBodyElement)envelope.getBodyElements().elementAt(0);
+       MessageElement me = (MessageElement) bodyElement.getChildren().get(0);
+       org.xml.sax.Attributes atts = me.getAttributes();
+       assertTrue(atts.getLength()==2);
+    }
+
     public void testEmptyNode() throws Exception
     {
         SOAPBodyElement body = new SOAPBodyElement(XMLUtils.newDocument().createElement("tmp"));
@@ -112,6 +142,7 @@ public class TestDOM extends TestCase {
     public static void main(String [] args) throws Exception
     {
         TestDOM tester = new TestDOM("TestDOM");
+        tester.testAttributes();
         tester.testHeaders();
         tester.testNodeWithAttribute();
         tester.testEmptyNode();
