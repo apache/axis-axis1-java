@@ -47,6 +47,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import java.io.File;
@@ -864,6 +865,47 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
 
         return new QName(ns, operationName);
+    }
+
+    /**
+     * Return the SOAPAction (if any) of this binding operation
+     *
+     * @param bindingOper the operation to look at
+     * @return the SOAPAction or null if not found
+     */
+    public static String getOperationSOAPAction(BindingOperation bindingOper) {
+        // Find the SOAPAction.
+        List elems = bindingOper.getExtensibilityElements();
+        Iterator it = elems.iterator();
+        boolean found = false;
+        String action = null;
+
+        while (!found && it.hasNext()) {
+            ExtensibilityElement elem =
+                    (ExtensibilityElement) it.next();
+
+            if (elem instanceof SOAPOperation) {
+                SOAPOperation soapOp = (SOAPOperation) elem;
+                action = soapOp.getSoapActionURI();
+                found = true;
+            } else if (elem instanceof UnknownExtensibilityElement) {
+
+                // TODO: After WSDL4J supports soap12, change this code
+                UnknownExtensibilityElement unkElement =
+                        (UnknownExtensibilityElement) elem;
+                QName name =
+                        unkElement.getElementType();
+
+                if (name.getNamespaceURI().equals(
+                        Constants.URI_WSDL12_SOAP)
+                        && name.getLocalPart().equals("operation")) {
+                    action = unkElement.getElement().getAttribute(
+                                    "soapAction");
+                    found = true;
+                }
+            }
+        }
+        return action;
     }
 
     /**

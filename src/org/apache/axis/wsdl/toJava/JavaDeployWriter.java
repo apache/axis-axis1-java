@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -67,10 +67,10 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Constructor.
-     * 
-     * @param emitter     
-     * @param definition  
-     * @param symbolTable 
+     *
+     * @param emitter
+     * @param definition
+     * @param symbolTable
      */
     public JavaDeployWriter(Emitter emitter, Definition definition,
                             SymbolTable symbolTable) {
@@ -84,8 +84,8 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Generate deploy.wsdd.  Only generate it if the emitter
      * is generating server-side mappings.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void generate() throws IOException {
 
@@ -97,8 +97,8 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Return the fully-qualified name of the deploy.wsdd file
      * to be generated.
-     * 
-     * @return 
+     *
+     * @return
      */
     protected String getFileName() {
 
@@ -110,9 +110,9 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Replace the default file header with the deployment doc file header.
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected void writeFileHeader(PrintWriter pw) throws IOException {
 
@@ -132,9 +132,9 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Write the body of the deploy.wsdd file.
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
         writeDeployServices(pw);
@@ -143,9 +143,9 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Write out deployment and undeployment instructions for each WSDL service
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected void writeDeployServices(PrintWriter pw) throws IOException {
 
@@ -181,13 +181,13 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Write out bean mappings for each type
-     * 
-     * @param pw         
-     * @param binding    
-     * @param hasLiteral 
-     * @param hasMIME    
-     * @param use        
-     * @throws IOException 
+     *
+     * @param pw
+     * @param binding
+     * @param hasLiteral
+     * @param hasMIME
+     * @param use
+     * @throws IOException
      */
     protected void writeDeployTypes(
             PrintWriter pw, Binding binding, boolean hasLiteral, boolean hasMIME, Use use)
@@ -284,15 +284,15 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Raw routine that writes out the typeMapping.
-     * 
-     * @param pw                  
-     * @param namespaceURI        
-     * @param localPart           
-     * @param javaType            
-     * @param serializerFactory   
-     * @param deserializerFactory 
-     * @param encodingStyle       
-     * @throws IOException 
+     *
+     * @param pw
+     * @param namespaceURI
+     * @param localPart
+     * @param javaType
+     * @param serializerFactory
+     * @param deserializerFactory
+     * @param encodingStyle
+     * @throws IOException
      */
     protected void writeTypeMapping(
             PrintWriter pw, String namespaceURI, String localPart, String javaType, String serializerFactory, String deserializerFactory, String encodingStyle)
@@ -310,12 +310,12 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Write out deployment and undeployment instructions for given WSDL port
-     * 
-     * @param pw      
-     * @param port    
-     * @param service 
-     * @param bEntry  
-     * @throws IOException 
+     *
+     * @param pw
+     * @param port
+     * @param service
+     * @param bEntry
+     * @throws IOException
      */
     protected void writeDeployPort(
             PrintWriter pw, Port port, Service service, BindingEntry bEntry)
@@ -385,10 +385,10 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Write out deployment instructions for given WSDL binding
-     * 
-     * @param pw     
-     * @param bEntry 
-     * @throws IOException 
+     *
+     * @param pw
+     * @param bEntry
+     * @throws IOException
      */
     protected void writeDeployBinding(PrintWriter pw, BindingEntry bEntry)
             throws IOException {
@@ -436,6 +436,9 @@ public class JavaDeployWriter extends JavaWriter {
                         symbolTable.getOperationParameters(operation, "", bEntry);
 
                 if (params != null) {
+                    // TODO: Should really construct a FaultDesc here and
+                    // TODO: pass it to writeOperation, but this will take
+                    // TODO: some refactoring
 
                     // Get the operation QName
                     QName elementQName = Utils.getOperationQName(bindingOper,
@@ -458,10 +461,13 @@ public class JavaDeployWriter extends JavaWriter {
                         faults = (ArrayList) faultMap.get(bindingOper);
                     }
 
+                    // Get the operation's SOAPAction
+                    String SOAPAction = Utils.getOperationSOAPAction(bindingOper);
+
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, returnQName,
                             returnType, params, binding.getQName(),
-                            faults);
+                            faults, SOAPAction);
                 }
             }
         }
@@ -498,20 +504,21 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Raw routine that writes out the operation and parameters.
-     * 
-     * @param pw           
-     * @param javaOperName 
-     * @param elementQName 
-     * @param returnQName  
-     * @param returnType   
-     * @param params       
-     * @param bindingQName 
-     * @param faults       
+     *
+     * @param pw
+     * @param javaOperName
+     * @param elementQName
+     * @param returnQName
+     * @param returnType
+     * @param params
+     * @param bindingQName
+     * @param faults
      */
     protected void writeOperation(PrintWriter pw, String javaOperName,
                                   QName elementQName, QName returnQName,
                                   QName returnType, Parameters params,
-                                  QName bindingQName, ArrayList faults) {
+                                  QName bindingQName, ArrayList faults,
+                                  String SOAPAction) {
 
         pw.print("      <operation name=\"" + javaOperName + "\"");
 
@@ -530,6 +537,12 @@ public class JavaDeployWriter extends JavaWriter {
         if (returnType != null) {
             pw.print(" returnType=\""
                     + Utils.genQNameAttributeString(returnType, "rtns")
+                    + "\"");
+        }
+
+        if (SOAPAction != null) {
+            pw.print(" soapAction=\""
+                    + SOAPAction
                     + "\"");
         }
 
@@ -609,9 +622,9 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Method getModeString
-     * 
-     * @param mode 
-     * @return 
+     *
+     * @param mode
+     * @return
      */
     public String getModeString(byte mode) {
 
@@ -626,10 +639,10 @@ public class JavaDeployWriter extends JavaWriter {
 
     /**
      * Method getPrintWriter
-     * 
-     * @param filename 
-     * @return 
-     * @throws IOException 
+     *
+     * @param filename
+     * @return
+     * @throws IOException
      */
     protected PrintWriter getPrintWriter(String filename) throws IOException {
 

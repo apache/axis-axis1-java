@@ -29,7 +29,6 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
-import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
@@ -249,47 +248,9 @@ public class JavaSkelWriter extends JavaClassWriter {
                 }
 
                 // Find the SOAPAction.
-                List elems = bindingOper.getExtensibilityElements();
-                Iterator it = elems.iterator();
-                boolean found = false;
-
-                while (!found && it.hasNext()) {
-                    ExtensibilityElement elem =
-                            (ExtensibilityElement) it.next();
-
-                    if (elem instanceof SOAPOperation) {
-                        SOAPOperation soapOp = (SOAPOperation) elem;
-                        String action = soapOp.getSoapActionURI();
-
-                        if (action != null) {
-                            pw.println("        _oper.setSoapAction(\""
-                                    + action + "\");");
-
-                            found = true;
-                        }
-                    } else if (elem instanceof UnknownExtensibilityElement) {
-
-                        // TODO: After WSDL4J supports soap12, change this code
-                        UnknownExtensibilityElement unkElement =
-                                (UnknownExtensibilityElement) elem;
-                        QName name =
-                                unkElement.getElementType();
-
-                        if (name.getNamespaceURI().equals(
-                                Constants.URI_WSDL12_SOAP)
-                                && name.getLocalPart().equals("operation")) {
-                            String action =
-                                    unkElement.getElement().getAttribute(
-                                            "soapAction");
-
-                            if (action != null) {
-                                pw.println("        _oper.setSoapAction(\""
-                                        + action + "\");");
-
-                                found = true;
-                            }
-                        }
-                    }
+                String action = Utils.getOperationSOAPAction(bindingOper);
+                if (action != null) {
+                    pw.println("        _oper.setSoapAction(\"" + action + "\");");
                 }
 
                 pw.println("        _myOperationsList.add(_oper);");
