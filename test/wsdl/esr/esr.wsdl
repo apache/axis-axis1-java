@@ -20,12 +20,25 @@
     <part name='echoVal' type='xsd:short'/>
     <part name='sqrtVal' type='xsd:double'/>
   </message>
+  <message name='EsrTest.esrRequest2'> 
+    <part name='bstrSAH' type='xsd:string'/>
+    <part name='bstrSUH' type='xsd:string'/>
+    <part name='value' type='xsd:short'/>
+  </message>
+  <message name='EsrTest.esrResponse2'>
+    <part name='echoVal' type='xsd:short'/>
+    <part name='sqrtVal' type='xsd:double'/>
+  </message>
 
   <!-- port type declns -->
   <portType name='EsrTest'>
     <operation name='esrInOut' parameterOrder='value echoVal sqrtVal'>
       <input message='tns:EsrTest.esrRequest' />
       <output message='tns:EsrTest.esrResponse' />
+    </operation>
+    <operation name='esrInOut2' parameterOrder='bstrSAH bstrSUH value echoVal sqrtVal'>
+      <input message='tns:EsrTest.esrRequest2' />
+      <output message='tns:EsrTest.esrResponse2' />
     </operation>
   </portType>
 
@@ -35,6 +48,21 @@
         style="rpc"
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="esrInOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="esrInOut2">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
