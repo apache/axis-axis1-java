@@ -111,14 +111,6 @@ public class HTTPSender extends BasicHandler {
 
             // default SOAPAction to request namespaceURI/method
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
-            if (action == null) {
-                Message rm = msgContext.getRequestMessage();
-                MessageElement body = rm.getSOAPEnvelope().getFirstBody();
-                action = body.getNamespaceURI();
-                if (action == null) action = "";
-                if (!action.endsWith("/")) action += "/";
-                action += body.getName();
-            }
 
             host = tmpURL.getHost();
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
@@ -364,11 +356,13 @@ public class HTTPSender extends BasicHandler {
              .append( ": " )
              .append( reqMessage.getContentType())
              .append( "\r\n" )
-             .append( (otherHeaders == null ? "" : otherHeaders.toString()))
-             .append( HTTPConstants.HEADER_SOAP_ACTION )
+             .append( (otherHeaders == null ? "" : otherHeaders.toString()));
+            if (action != null) {
+             header.append( HTTPConstants.HEADER_SOAP_ACTION )
              .append( ": \"" )
              .append( action )
              .append( "\"\r\n");
+            }
 
             header.append("\r\n");
 
