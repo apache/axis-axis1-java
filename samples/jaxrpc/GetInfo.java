@@ -53,55 +53,52 @@
  * <http://www.apache.org/>.
  */
 
-package samples.stock ;
+package samples.jaxrpc;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
+import org.apache.axis.encoding.XMLType; // This should probably be javax.xml.rpc.encoding.XMLType if we're told that class is approved (ie., it gets into the spec rather than just in the RI).
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.Call;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.Service;
+import javax.xml.rpc.ServiceFactory;
+
 import javax.xml.rpc.namespace.QName;
 
 /**
+ * This version of GetInfo is a near-duplicate of the GetInfo class in
+ * samples/stock.  This version is strictly JAX-RPC compliant.  It uses
+ * no AXIS enhancements.
  *
- * @author Doug Davis (dug@us.ibm.com.com)
+ * @author Russell Butek (butek@us.ibm.com)
  */
 public class GetInfo {
 
-  public static void main(String args[]) {
-    try {
-      Options opts = new Options( args );
+    public static void main(String args[]) throws Exception {
+        Options opts = new Options(args);
 
-      args = opts.getRemainingArgs();
+        args = opts.getRemainingArgs();
 
-      if ( args == null || args.length % 2 != 0 ) {
-        System.err.println( "Usage: GetInfo <symbol> <datatype>" );
-        System.exit(1);
-      }
+        if (args == null || args.length % 2 != 0) {
+            System.err.println("Usage: GetInfo <symbol> <datatype>");
+            System.exit(1);
+        }
 
-      String  symbol = args[0] ;
-      Service  service = new Service();
-      Call     call    = (Call) service.createCall();
+        String  symbol  = args[0];
+        Service service = ServiceFactory.newInstance().createService(null);
+        Call    call    = service.createCall();
 
-      call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
-      call.setOperationName( new QName("urn:cominfo", "getInfo") );
-      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
-      call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.IN );
-      call.setReturnType( XMLType.XSD_STRING );
-      call.setUsername( opts.getUser() );
-      call.setPassword( opts.getPassword() );
+        call.setTargetEndpointAddress(opts.getURL());
+        call.setOperationName(new QName("urn:cominfo", "getInfo"));
+        call.addParameter("symbol", XMLType.XSD_STRING, ParameterMode.IN);
+        call.addParameter("info", XMLType.XSD_STRING, ParameterMode.IN);
+        call.setReturnType(XMLType.XSD_STRING);
+        call.setProperty(Call.USERNAME_PROPERTY, opts.getUser());
+        call.setProperty(Call.PASSWORD_PROPERTY, opts.getPassword());
 
-      String res = (String) call.invoke( new Object[] { args[0], args[1] } );
+        String res = (String) call.invoke(new Object[] {args[0], args[1]});
 
-      System.out.println( symbol + ": " + res );
-    }
-    catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      else e.printStackTrace();
-    }
-  }
-
+        System.out.println(symbol + ": " + res);
+    } // main
 }
 

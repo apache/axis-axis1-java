@@ -196,7 +196,7 @@ public class GetQuote1 {
         /* Now use those QNames as pointers into the WSDL doc */
         /******************************************************/
         Service service = ServiceFactory.newInstance().createService(
-                new URL("file:GetQuote.wsdl"), servQN);
+                new URL("file:samples/stock/GetQuote.wsdl"), servQN);
         Call call = service.createCall(portQN, "getQuote");
 
         /* Strange - but allows the user to change just certain portions of */
@@ -218,41 +218,37 @@ public class GetQuote1 {
         /* Reuse the Call object for a different call */
         /**********************************************/
         call.setOperationName(new QName("urn:xmltoday-delayed-quotes", "test"));
+        call.removeAllParameters();
         call.setReturnType(XMLType.XSD_STRING);
 
         System.out.println(call.invoke(new Object[]{}));
         return ((Float) result).floatValue();
     } // getQuote3
 
-    public static void main(String args[]) {
-        try {
-            String    save_args[] = new String[args.length];
-            float     val;
-            GetQuote1 gq = new GetQuote1();
+    public static void main(String args[]) throws Exception {
+        String    save_args[] = new String[args.length];
+        float     val;
+        GetQuote1 gq = new GetQuote1();
 
-            /* Call the getQuote() that uses the WDSL */
-            /******************************************/
-            System.out.println("Using WSDL");
-            System.arraycopy(args, 0, save_args, 0, args.length);
-            val = gq.getQuote1(args);
-            System.out.println(gq.symbol + ": " + val);
+        /* Call the getQuote() that uses the WDSL */
+        /******************************************/
+        System.out.println("Using WSDL");
+        System.arraycopy(args, 0, save_args, 0, args.length);
+        val = gq.getQuote1(args);
+        System.out.println(gq.symbol + ": " + val);
 
-            /* Call the getQuote() that does it all manually */
-            /*************************************************/
-            System.out.println("Manually");
-            System.arraycopy(save_args, 0, args, 0, args.length);
-            val = gq.getQuote2(args);
-            System.out.println(gq.symbol + ": " + val);
+        /* Call the getQuote() that does it all manually */
+        /*************************************************/
+        System.out.println("Manually");
+        System.arraycopy(save_args, 0, args, 0, args.length);
+        val = gq.getQuote2(args);
+        System.out.println(gq.symbol + ": " + val);
 
-            /* Call the getQuote() that uses Axis's generated WSDL */
-            /*******************************************************/
-            System.out.println("WSDL + Reuse Call");
-            System.arraycopy(save_args, 0, args, 0, args.length);
-            val = gq.getQuote3(args);
-            System.out.println(gq.symbol + ": " + val);
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
+        /* Call the getQuote() that uses Axis's generated WSDL */
+        /*******************************************************/
+        System.out.println("WSDL + Reuse Call");
+        System.arraycopy(save_args, 0, args, 0, args.length);
+        val = gq.getQuote3(args);
+        System.out.println(gq.symbol + ": " + val);
     } // main
 }
