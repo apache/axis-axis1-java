@@ -261,6 +261,12 @@ public class RPCHandler extends SOAPHandler
         if (dser == null) {
           if (type != null) {
               dser = context.getDeserializerForType(type);
+              if(null != destClass && dser == null && destClass.isAssignableFrom( org.w3c.dom.Element.class )){
+                //If a DOM element is expected, as last resort always allow direct mapping 
+                // of parameter's SOAP xml to a DOM element.  Support of literal  parms by default.
+                dser = context.getDeserializer(destClass, Constants.SOAP_ELEMENT);
+
+              }
               if (dser == null) {
                   throw new SAXException(Messages.getMessage(
                           "noDeser01", localName,"" + type));
@@ -270,7 +276,7 @@ public class RPCHandler extends SOAPHandler
                   // with the current paramDesc type
                   Class xsiClass = 
                           context.getTypeMapping().getClassForQName(type);
-                  if (!JavaUtils.isConvertable(xsiClass, destClass)) {
+                  if (null != xsiClass  && !JavaUtils.isConvertable(xsiClass, destClass)) {
                       throw new SAXException("Bad types (" +
                                              xsiClass + " -> " + destClass + ")"); // FIXME!
                   }
