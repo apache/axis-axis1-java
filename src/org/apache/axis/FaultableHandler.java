@@ -56,7 +56,6 @@
 package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 

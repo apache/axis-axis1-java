@@ -12,7 +12,6 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 
 import org.xml.sax.SAXException;
