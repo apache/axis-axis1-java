@@ -438,16 +438,19 @@ public class Utils {
         String hostname = null;
 
         // get the target namespace of the document
-         try {
-             hostname = new URL(namespace).getHost();
-         }
-         catch (MalformedURLException e) {
-           if (namespace.indexOf(":") > -1) {
-             hostname = namespace.substring(namespace.indexOf(":") + 1);
-             if (hostname.indexOf("/") > -1)
-               hostname = hostname.substring(0, hostname.indexOf("/") );
-           }
-         }
+        try {
+            hostname = new URL(namespace).getHost();
+        }
+        catch (MalformedURLException e) {
+            if (namespace.indexOf(":") > -1) {
+                hostname = namespace.substring(namespace.indexOf(":") + 1);
+                if (hostname.indexOf("/") > -1)
+                    hostname = hostname.substring(0, hostname.indexOf("/") );
+            }
+            else {
+                hostname = namespace;
+            }
+        }
 
         // if we didn't file a hostname, bail
         if (hostname == null) {
@@ -492,11 +495,17 @@ public class Utils {
         else if (typeValue.equals("java.math.BigDecimal")) {
             return "javax.xml.rpc.holders.BigDecimalHolder";
         }
+        else if (typeValue.equals("java.math.BigInteger")) {
+            return "javax.xml.rpc.holders.BigIntegerHolder";
+        }
         else if (typeValue.equals("java.util.Date")) {
             return "javax.xml.rpc.holders.DateHolder";
         }
         else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
+        }
+        else if (typeValue.equals("byte[]")) {
+            return "javax.xml.rpc.holders.ByteArrayHolder";
         }
         else if (typeValue.equals("int")
                 || typeValue.equals("long")

@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="comprehensive types test"
+    targetNamespace="comprehensive.types.test"
+    xmlns:tns="comprehensive.types.test"
+    xmlns:typens="comprehensive.types"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema 
+        targetNamespace="comprehensive.types"
+        xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:simpleType name="enum">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="one"/>                      
+          <xsd:enumeration value="two"/>                    
+          <xsd:enumeration value="three"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:complexType name="complexAll">
+        <xsd:all>
+          <xsd:element name="areaCode" type="xsd:int"/>
+          <xsd:element name="exchange" type="xsd:string"/>
+          <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="complexSequence">
+        <xsd:sequence>
+          <xsd:element name="areaCode" type="xsd:int"/>
+          <xsd:element name="exchange" type="xsd:string"/>
+          <xsd:element name="number" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <message name="allPrimitives">
+    <part name="string" type="xsd:string"/>
+    <part name="integer" type="xsd:integer"/>
+    <part name="int" type="xsd:int"/>
+    <part name="long" type="xsd:long"/>
+    <part name="short" type="xsd:short"/>
+    <part name="decimal" type="xsd:decimal"/>
+    <part name="float" type="xsd:float"/>
+    <part name="double" type="xsd:double"/>
+    <part name="boolean" type="xsd:boolean"/>
+    <part name="byte" type="xsd:byte"/>
+    <part name="QName" type="xsd:QName"/>
+    <part name="dateTime" type="xsd:dateTime"/>
+    <part name="base64Binary" type="xsd:base64Binary"/>
+    <part name="hexBinary" type="xsd:hexBinary"/>
+    <part name="soapString" type="soapenc:string"/>
+    <part name="soapBoolean" type="soapenc:boolean"/>
+    <part name="soapFloat" type="soapenc:float"/>
+    <part name="soapDouble" type="soapenc:double"/>
+    <part name="soapDecimal" type="soapenc:decimal"/>
+    <part name="soapInt" type="soapenc:int"/>
+    <part name="soapShort" type="soapenc:short"/>
+    <part name="soapBase64" type="soapenc:base64"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="TypeTest">
+    <operation name="allPrimitivesIn">
+      <input message="tns:allPrimitives"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="allPrimitivesInout">
+      <input message="tns:allPrimitives"/>
+      <output message="tns:allPrimitives"/>
+    </operation>
+    <operation name="allPrimitivesOut">
+      <input message="tns:empty"/>
+      <output message="tns:allPrimitives"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="TypeTestBinding" type="tns:TypeTest">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="allPrimitivesIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="allPrimitivesInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="allPrimitivesOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="TypeTestService">
+    <port name="TypeTest" binding="tns:TypeTestBinding">
+      <soap:address location="http://localhost:8080/axis/services/TypeTest"/>
+    </port>
+  </service>
+
+</definitions>
+

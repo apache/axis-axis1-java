@@ -175,7 +175,7 @@ public class JavaSkelWriter extends JavaWriter {
 
             String holder = Utils.holder(p.type);
             if (p.mode == Parameter.INOUT) {
-                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + p.name + ");");
+                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + Utils.xmlNameToJava(p.name) + ");");
             }
             else if (p.mode == Parameter.OUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
@@ -197,7 +197,7 @@ public class JavaSkelWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             if (p.mode == Parameter.IN)
-                call = call + p.name;
+                call = call + Utils.xmlNameToJava(p.name);
             else
                 call = call + p.name + "Holder";
         }

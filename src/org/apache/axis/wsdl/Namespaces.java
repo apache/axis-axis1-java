@@ -128,7 +128,9 @@ public class Namespaces extends HashMap {
      */
     public String toDir(String pkg) {
         String dir = null;
-        pkg = pkg.replace('.', File.separatorChar);
+        if (pkg != null) {
+            pkg = pkg.replace('.', File.separatorChar);
+        }
         if (root == null) {
             dir = pkg;
         }
