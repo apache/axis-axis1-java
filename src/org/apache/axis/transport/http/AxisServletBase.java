@@ -240,7 +240,6 @@ public class AxisServletBase extends HttpServlet {
         } else {
             context.setAttribute(ATTR_AXIS_ENGINE, engine);
         }
-        context.setAttribute(ATTR_AXIS_ENGINE, engine);
     }
 
     /**
