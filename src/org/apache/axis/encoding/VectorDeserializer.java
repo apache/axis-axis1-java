@@ -79,7 +79,8 @@ implements ValueReceiver {
             Category.getInstance(VectorDeserializer.class.getName());
 
     public static class Factory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {
             return new VectorDeserializer();
         }
     }

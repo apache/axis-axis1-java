@@ -72,7 +72,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
 import java.io.IOException;
-
+import java.beans.IntrospectionException;
 
 /**
  *
@@ -279,6 +279,8 @@ public class WSDDService
                 tmr.addDeserializerFactory(mapping.getQName(), mapping
                                                                .getLanguageSpecificType(), deser);
             }
+        } catch (IntrospectionException e) {
+            throw new WSDDException(e);
         } catch (InstantiationException e) {
             throw new WSDDException(e);
         } catch (IllegalAccessException e) {

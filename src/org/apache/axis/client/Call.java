@@ -96,6 +96,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
+import java.beans.IntrospectionException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -1004,9 +1005,13 @@ public class Call implements javax.xml.rpc.Call {
      * @param _class the class of the associated Java data type.
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
+     * @throws IntrospectionException _class is not compatible with the
+     *                            specified deserializer.
      */
     public void addDeserializerFactory(QName qName, Class _class,
-                                       DeserializerFactory deserFactory){
+                                       DeserializerFactory deserFactory)
+        throws IntrospectionException
+    {
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addDeserializerFactory(qName, _class, deserFactory);
     }

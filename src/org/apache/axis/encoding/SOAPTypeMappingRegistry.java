@@ -56,16 +56,15 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.InternalException;
 import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.beans.IntrospectionException;
 
 public class SOAPTypeMappingRegistry extends TypeMappingRegistry { 
     
@@ -112,8 +111,10 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     public static class ObjDeserializerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) { return null; }
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() { return null; }
     }
+
     public static class ObjSerializer implements Serializer {
         public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
@@ -123,79 +124,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         }
     }
 
-    public static abstract class BasicDeser extends Deserializer {
-        StringBuffer val = new StringBuffer();
-        
-        public SOAPHandler onStartChild(String namespace,
-                                        String localName,
-                                        String prefix,
-                                        Attributes attributes,
-                                        DeserializationContext context)
-            throws SAXException
-        {
-            throw new SAXException(
-                    JavaUtils.getMessage("cantHandle00", "BasicDeser"));
-        }
-        
-        public void characters(char [] chars, int start, int end)
-            throws SAXException
-        {
-            val.append(chars, start, end);
-        }
-        
-        public void onEndElement(String namespace, String localName,
-                               DeserializationContext context)
-            throws SAXException
-        {
-            try {
-                value = makeValue(val.toString());
-            } catch (InvocationTargetException ite) {
-                Throwable realException = ite.getTargetException();
-                if (realException instanceof Exception)
-                   throw new SAXException((Exception)realException);
-                else
-                   throw new SAXException(ite.getMessage());
-            } catch (Exception e) {
-                throw new SAXException(e);
-            }
-        }
-        
-        abstract public Object makeValue(String source) throws Exception;
-    }
-    
-    /** A deserializer for any simple type with a (String) constructor.
-     * 
-     * The factory below will build one of these configured for the
-     * desired Class each time.
-     */
-    public static class BasicDeserializer extends BasicDeser {
-        Constructor constructor;
-        public BasicDeserializer(Class cls)
-        {
-            try {
-                constructor = cls.getDeclaredConstructor(
-                                   new Class [] { String.class });
-            } catch (Exception e) {
-                // TODO : Handle errors / throw?
-                e.printStackTrace();
-            }
-        }
-        
-        public Object makeValue(String source) throws Exception
-        {
-            return constructor.newInstance(new Object [] { source });
-        }
-    }
-    
-    public static class BasicDeserializerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls)
-        {
-            return new BasicDeserializer(cls);
-        }
-    }
-
     private Serializer arraySer = new ArraySerializer();
-    private DeserializerFactory factory = new BasicDeserializerFactory();
     private DeserializerFactory base64Ser = 
        new Base64Serializer.Base64DeserializerFactory();
     private DeserializerFactory hexSer =
@@ -206,7 +135,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
      * @param base QName based on the current Schema namespace
      * @param factory common factory to be used across all schemas
      */
-    private void addDeserializersFor(QName base, Class cls, DeserializerFactory factory) {
+    private void addDeserializersFor(QName base, Class cls, DeserializerFactory factory) 
+        throws IntrospectionException
+    {
         addDeserializerFactory(base, cls, factory);
         String localPart = base.getLocalPart();
         for (int i=0; i<Constants.URIS_SCHEMA_XSD.length; i++) {
@@ -246,7 +177,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         return qName;
     }
     
-    public SOAPTypeMappingRegistry() {
+    public SOAPTypeMappingRegistry() throws IntrospectionException {
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
         addSerializer(java.lang.Boolean.class, XSD_BOOLEAN, se);
@@ -263,13 +194,20 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(Hex.class, XSD_HEXBIN, new HexSerializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
-        addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
-        addDeserializersFor(XSD_INT, java.lang.Integer.class, factory);
-        addDeserializersFor(XSD_INTEGER, java.math.BigInteger.class, factory);
-        addDeserializersFor(XSD_LONG, java.lang.Long.class, factory);
-        addDeserializersFor(XSD_SHORT, java.lang.Short.class, factory);
-        addDeserializersFor(XSD_BYTE, java.lang.Byte.class, factory);
-        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, factory);
+        addDeserializersFor(XSD_STRING, java.lang.String.class, 
+            BasicDeserializer.getFactory(java.lang.String.class));
+        addDeserializersFor(XSD_INT, java.lang.Integer.class, 
+            BasicDeserializer.getFactory(java.lang.Integer.class));
+        addDeserializersFor(XSD_INTEGER, java.math.BigInteger.class, 
+            BasicDeserializer.getFactory(java.math.BigInteger.class));
+        addDeserializersFor(XSD_LONG, java.lang.Long.class, 
+            BasicDeserializer.getFactory(java.lang.Long.class));
+        addDeserializersFor(XSD_SHORT, java.lang.Short.class, 
+            BasicDeserializer.getFactory(java.lang.Short.class));
+        addDeserializersFor(XSD_BYTE, java.lang.Byte.class, 
+            BasicDeserializer.getFactory(java.lang.Byte.class));
+        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, 
+            BasicDeserializer.getFactory(java.math.BigDecimal.class));
         
         addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, 
             new BooleanDeserializerFactory());
@@ -327,10 +265,16 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     private static SOAPTypeMappingRegistry singleton = null;
-    public synchronized static SOAPTypeMappingRegistry getSingleton()
-    {
-        if (singleton == null)
-            singleton = new SOAPTypeMappingRegistry();
+    public synchronized static SOAPTypeMappingRegistry getSingleton() {
+        if (singleton == null) {
+            try {
+                singleton = new SOAPTypeMappingRegistry();
+            } catch (Exception e) {
+                // if this ever occurs, it is an internal error
+                throw new InternalException(e);
+            }
+        }
+
         return singleton;
     }
     

@@ -94,7 +94,8 @@ public class HexSerializer implements Serializer {
     static public class HexDeserializerFactory
         implements DeserializerFactory 
     {
-        public Deserializer getDeserializer(Class cls) {return new HexDeser();}
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {return new HexDeser();}
     }
 
     /** 

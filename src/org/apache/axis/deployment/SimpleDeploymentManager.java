@@ -56,6 +56,7 @@ package org.apache.axis.deployment;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.InternalException;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDHandler;
@@ -107,7 +108,12 @@ public class SimpleDeploymentManager
     {
         mappings = new Hashtable();
 
-        mappings.put(Constants.URI_SOAP_ENC, new SOAPTypeMappingRegistry());
+        try {
+            mappings.put(Constants.URI_SOAP_ENC, new SOAPTypeMappingRegistry());
+        } catch (Exception e) {
+            // if this ever occurs, we have an internal error
+            throw new InternalException(e);
+        }
     }
 
     /**

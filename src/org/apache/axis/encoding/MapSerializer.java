@@ -92,7 +92,8 @@ public class MapSerializer extends Deserializer implements Serializer
     
     // Our static deserializer factory
     public static class Factory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {
             return new MapSerializer();
         }
     }

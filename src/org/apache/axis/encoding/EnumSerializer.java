@@ -55,15 +55,21 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.InternalException;
+
 import org.xml.sax.Attributes;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.beans.IntrospectionException;
+
 /**
  * Serializer for a JAX-RPC enum.
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
+ * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class EnumSerializer implements Serializer, Serializable {
 
@@ -99,22 +105,24 @@ public class EnumSerializer implements Serializer, Serializable {
         context.endElement();
     }
 
-    public static DeserializerFactory getFactory()
+    public static DeserializerFactory getFactory(Class cls) 
+        throws IntrospectionException 
     {
-      return new EnumDeserializerFactory();
+        DeserializerFactory factory = new EnumDeserializerFactory();
+        factory.setJavaClass(cls);
+        return factory;
     }
 
-    public static class EnumDeserializer extends SOAPTypeMappingRegistry.BasicDeser {
-        java.lang.reflect.Method fromStringMethod;
-        public EnumDeserializer(Class cls)
-        {
-            try {
-                fromStringMethod = cls.getMethod("fromString", 
-                                                 new Class[] {java.lang.String.class});
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new NullPointerException(e.toString());
-            }
+    /**
+     * Deserialize an Enumeration data type.  Prior to calling makeValue,
+     * the setFromStringMethod method must be called with an enumeration
+     * data type.  
+     */
+    public static class EnumDeserializer extends BasicDeserializer {
+        private Method fromStringMethod;
+
+        protected void setFromStringMethod(Method fsm) {
+            this.fromStringMethod = fsm;
         }
         
         public Object makeValue(String source) throws Exception
@@ -126,8 +134,30 @@ public class EnumSerializer implements Serializer, Serializable {
         }
     }
 
+    /**
+     * Create a deserializer for a enumeration data type.
+     */
     static public class EnumDeserializerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {return new EnumDeserializer(cls);}
+        private Method fromStringMethod;
+
+        public void setJavaClass(Class cls) throws IntrospectionException {
+            if ( (this.fromStringMethod != null) ) {
+               throw new InternalException("Attempt to reuse factory");
+            }
+
+            try {
+                fromStringMethod = cls.getMethod("fromString", 
+                   new Class[] {java.lang.String.class});
+            } catch (Exception e) {
+                throw new IntrospectionException(e.toString());
+            }
+        }
+
+        public Deserializer getDeserializer() {
+            EnumDeserializer deserializer = new EnumDeserializer();
+            deserializer.setFromStringMethod(fromStringMethod);
+            return deserializer;
+        }
     }
 }
 

@@ -55,6 +55,8 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.InternalException;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -108,7 +110,17 @@ public class FloatSerializer implements Serializer {
     static public class FloatDeserializerFactory
         implements DeserializerFactory 
     {
-        public Deserializer getDeserializer(Class cls) {
+        private Class cls;
+
+        public void setJavaClass(Class cls) {
+            if ( (this.cls != null) && (this.cls != cls) ) {
+                throw new InternalException("Attempt to change class");
+            }
+
+            this.cls = cls;
+        }
+
+        public Deserializer getDeserializer() {
             if (cls == Float.class) {
                 return new FloatDeser();
             } else {

@@ -87,6 +87,7 @@ public class BooleanDeserializerFactory implements DeserializerFactory {
         }
     }
 
-    public Deserializer getDeserializer(Class cls) { return new BooleanDeser(); }
+    public void setJavaClass(Class cls) {}
+    public Deserializer getDeserializer() { return new BooleanDeser(); }
 
 }

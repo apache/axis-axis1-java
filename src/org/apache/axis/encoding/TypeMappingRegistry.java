@@ -64,6 +64,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -95,9 +96,11 @@ public class TypeMappingRegistry implements Serializer {
         Class cls;
         DeserializerFactory factory;
         DeserializerDescriptor(Class cls, DeserializerFactory factory)
+           throws IntrospectionException
         {
             this.cls = cls;
             this.factory = factory;
+            factory.setJavaClass(cls);
         }
     }
     
@@ -147,7 +150,9 @@ public class TypeMappingRegistry implements Serializer {
     
     public void addDeserializerFactory(QName qname,
                                        Class _class,
-                                       DeserializerFactory deserializerFactory) {
+                                       DeserializerFactory deserializerFactory)
+        throws IntrospectionException
+    {
         if (d == null) d= new Hashtable();
         d.put(qname, new DeserializerDescriptor(_class, deserializerFactory));
     }
@@ -186,7 +191,7 @@ public class TypeMappingRegistry implements Serializer {
         if (d != null) {
             DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
             if ((desc != null) && (desc.factory != null))
-               return desc.factory.getDeserializer(desc.cls);
+               return desc.factory.getDeserializer();
         }
         if (parent != null) return parent.getDeserializer(qname);
         return null;

@@ -94,7 +94,8 @@ public class Base64Serializer implements Serializer {
     static public class Base64DeserializerFactory 
         implements DeserializerFactory 
     {
-        public Deserializer getDeserializer(Class cls) {return new Base64Deser();}
+        public void setJavaClass(Class cls) {};
+        public Deserializer getDeserializer() {return new Base64Deser();}
     }
 
     /** 

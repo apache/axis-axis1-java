@@ -22,7 +22,8 @@ public class DataSer extends Deserializer implements Serializer
     public static final QName myTypeQName = new QName("typeNS", "Data");
     
     public static class DataSerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {
             return new DataSer();
         }
     }
