@@ -295,23 +295,4 @@ public class WSDL2Java extends WSDL2 {
         WSDL2Java wsdl2java = new WSDL2Java();
         wsdl2java.run(args);
     }
-
-    /**
-     * Print usage message and exit
-     */
-    protected void printUsage() {
-        String lSep = System.getProperty("line.separator");
-        StringBuffer msg = new StringBuffer();
-        msg.append("WSDL2Java " +
-                JavaUtils.getMessage("emitter00")).append(lSep);
-        msg.append(
-                JavaUtils.getMessage("usage00",
-                "java " + WSDL2Java.class.getName() + " [options] WSDL-URI"))
-                .append(lSep);
-        msg.append(JavaUtils.getMessage("options00")).append(lSep);
-        msg.append(CLUtil.describeOptions(WSDL2Java.options).toString());
-        System.out.println(msg.toString());
-        System.exit(1);
-    }
-
 }

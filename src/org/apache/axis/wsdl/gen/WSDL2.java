@@ -229,9 +229,10 @@ public class WSDL2 {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         msg.append(
-                "java WSDL2 [options] WSDL-URI")
+                JavaUtils.getMessage("usage00",
+                "java " + getClass().getName() + " [options] WSDL-URI"))
                 .append(lSep);
-        msg.append(lSep);
+        msg.append(JavaUtils.getMessage("options00")).append(lSep);
         msg.append(CLUtil.describeOptions(options).toString());
         System.out.println(msg.toString());
         System.exit(1);
