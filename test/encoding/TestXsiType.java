@@ -9,6 +9,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
@@ -58,8 +59,8 @@ public class TestXsiType extends TestCase {
         msg.addBodyElement(body);
 
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContext(stringWriter,
-                                                                msgContext);
+        SerializationContext context = new SerializationContextImpl(stringWriter,
+                                                                    msgContext);
 
         msg.output(context);
 
