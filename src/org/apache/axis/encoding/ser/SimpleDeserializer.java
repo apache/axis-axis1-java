@@ -108,14 +108,13 @@ public class SimpleDeserializer extends Deserializer {
         
         // if this type is a SimpleType bean, get bean properties
         if (SimpleType.class.isAssignableFrom(javaType)) {
-            this.pd = BeanUtils.getPd(javaType);
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
+            this.pd = BeanUtils.getPd(javaType,typeDesc);
             // loop through properties and grab the names for later
             for (int i = 0; i < pd.length; i++) {
                 BeanPropertyDescriptor descriptor = pd[i];
                 propertyMap.put(descriptor.getName(), descriptor);
             }
-
-            typeDesc = TypeDesc.getTypeDescForClass(javaType);
         }        
     }
     public SimpleDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
@@ -125,7 +124,7 @@ public class SimpleDeserializer extends Deserializer {
         
         // if this type is a SimpleType bean, get bean properties
         if (SimpleType.class.isAssignableFrom(javaType)) {
-            this.pd = BeanUtils.getPd(javaType);
+            this.pd = BeanUtils.getPd(javaType, typeDesc);
             // loop through properties and grab the names for later
             for (int i = 0; i < pd.length; i++) {
                 BeanPropertyDescriptor descriptor = pd[i];

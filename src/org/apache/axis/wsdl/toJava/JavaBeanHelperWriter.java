@@ -78,7 +78,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
     protected Vector elements;
     protected Vector attributes;
     protected TypeEntry extendType;
-    protected HashMap elementMappings = null;
+    protected Vector elementMetaData = null;
 
     /**
      * Constructor.
@@ -128,12 +128,17 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * write MetaData code
      */
     protected void writeMetaData() throws IOException {
-        // Collect elementMappings
+        // Collect elementMetaData
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
                 String elemName = elem.getName().getLocalPart();
                 String javaName = Utils.xmlNameToJava(elemName);
+
+                // Changed the code to write meta data 
+                // for all of the elements in order to
+                // support sequences. Defect 9060
+
 
                 // Meta data is needed if the default serializer
                 // action cannot map the javaName back to the
@@ -143,22 +148,22 @@ public class JavaBeanHelperWriter extends JavaWriter {
                 //    case and we have several problems with the mapping rules.
                 //    Seems best to gen meta data in this case.)
                 //  - the element name is qualified (has a namespace uri)
-                if (!javaName.equals(elemName) || 
-                    Character.isUpperCase(javaName.charAt(0)) ||
-                    !elem.getName().getNamespaceURI().equals("")) {
+                //if (!javaName.equals(elemName) || 
+                //    Character.isUpperCase(javaName.charAt(0)) ||
+                //    !elem.getName().getNamespaceURI().equals("")) {
                     // If we did some mangling, make sure we'll write out the XML
                     // the correct way.
-                    if (elementMappings == null)
-                        elementMappings = new HashMap();
+                    if (elementMetaData == null)
+                        elementMetaData = new Vector();
 
-                    elementMappings.put(javaName, elem.getName());
-                }
+                    elementMetaData.add(elem);
+                //}
             }
         }
         // if we have attributes, create metadata function which returns the
         // list of properties that are attributes instead of elements
 
-        if (attributes != null || elementMappings != null) {
+        if (attributes != null || elementMetaData != null) {
             boolean wroteFieldType = false;
             pw.println("    // " + JavaUtils.getMessage("typeMeta"));
             pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
@@ -187,12 +192,12 @@ public class JavaBeanHelperWriter extends JavaWriter {
                 }
             }
 
-            if (elementMappings != null) {
-                Iterator i = elementMappings.entrySet().iterator();
-                while (i.hasNext()) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String fieldName = (String)entry.getKey();
-                    QName xmlName = (QName) entry.getValue();
+            if (elementMetaData != null) {
+                for (int i=0; i<elementMetaData.size(); i++) {
+                    ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
+                    String elemLocalName = elem.getName().getLocalPart();
+                    String fieldName = Utils.xmlNameToJava(elemLocalName);
+                    QName xmlName = elem.getName();
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -226,7 +231,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      */
     protected void writeSerializer() throws IOException {
         String typeDesc = null;
-        if (attributes != null || elementMappings != null) {
+        if (attributes != null || elementMetaData != null) {
             typeDesc = "typeDesc";
         }
         String ser = " org.apache.axis.encoding.ser.BeanSerializer";
@@ -253,7 +258,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      */
     protected void writeDeserializer()  throws IOException {
         String typeDesc = null;
-        if (attributes != null || elementMappings != null) {
+        if (attributes != null || elementMetaData != null) {
             typeDesc = "typeDesc";
         }
         String dser = " org.apache.axis.encoding.ser.BeanDeserializer";

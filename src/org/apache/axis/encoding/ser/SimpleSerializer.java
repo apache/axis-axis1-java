@@ -92,8 +92,8 @@ public class SimpleSerializer implements Serializer {
         
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
-            propertyDescriptor = BeanUtils.getPd(javaType);
             typeDesc = TypeDesc.getTypeDescForClass(javaType);
+            propertyDescriptor = BeanUtils.getPd(javaType, typeDesc);
         }
     }
     public SimpleSerializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
@@ -103,7 +103,7 @@ public class SimpleSerializer implements Serializer {
         
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
-            propertyDescriptor = BeanUtils.getPd(javaType);
+            propertyDescriptor = BeanUtils.getPd(javaType,typeDesc);
         }
     }
     /**
