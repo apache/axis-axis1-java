@@ -341,7 +341,7 @@ Copyright:
 
     <!-- generate a report from all the tests. 
         requires Xalan or other XSLT engine in ant\lib-->
-    <target name="create-test-report" >
+    <target name="create-test-report" description="create the test report" >
       <mkdir dir="${test.reports.dir}"/>
       <junitreport todir="${test.functional.reportdir}">
         <fileset dir="${test.functional.reportdir}">
