@@ -57,12 +57,13 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Attr;
@@ -83,7 +84,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
-import org.apache.axis.attachments.Attachments;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
@@ -641,7 +641,11 @@ public class SerializationContext
             }
         }
 
-        QName qName = new QName(el.getNamespaceURI(), el.getLocalName());
+        String namespaceURI = el.getNamespaceURI();
+        String localPart = el.getLocalName();
+        if(namespaceURI == null || namespaceURI.length()==0)
+            localPart = el.getNodeName();
+        QName qName = new QName(namespaceURI, localPart);
 
         startElement(qName, attributes);
 
