@@ -100,7 +100,7 @@ public class Namespaces extends HashMap {
             value = Utils.makePackageName((String) key);
             put(key, value);
         }
-        return value;
+        return (String) value;
     } // getCreate
 
     /**
