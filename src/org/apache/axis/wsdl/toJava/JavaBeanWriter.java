@@ -220,6 +220,14 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
             }
         }
+        
+        if(extendType != null && extendType.getDimensions().equals("[]")) {
+            String typeName = extendType.getName();
+            String elemName = extendType.getQName().getLocalPart();
+            String variableName = Utils.xmlNameToJava(elemName);
+            names.add(typeName);
+            names.add(variableName);
+        }
     }
 
     /**
@@ -243,7 +251,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected String getExtendsText() {
         // See if this class extends another class
         String extendsText = "";
-        if (extendType != null && !type.isSimpleType()) {
+        if (extendType != null && !type.isSimpleType() && extendType.getDimensions().length()==0) {
             extendsText = " extends " + extendType.getName() + " ";
         }
         return extendsText;
