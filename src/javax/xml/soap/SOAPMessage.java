@@ -238,7 +238,7 @@ public abstract class SOAPMessage {
      *     there was a problem with the specified <CODE>
      *     DataHandler</CODE> object
      * @see DataHandler DataHandler
-     * @see DataContentHandler DataContentHandler
+     * @see javax.activation.DataContentHandler DataContentHandler
      */
     public AttachmentPart createAttachmentPart(DataHandler datahandler) {
 
@@ -275,7 +275,7 @@ public abstract class SOAPMessage {
      *     DataContentHandler</CODE> object for the given content
      *     object
      * @see DataHandler DataHandler
-     * @see DataContentHandler DataContentHandler
+     * @see javax.activation.DataContentHandler DataContentHandler
      */
     public AttachmentPart createAttachmentPart(Object content,
                                                String contentType) {

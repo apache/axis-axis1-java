@@ -83,7 +83,7 @@ public interface SOAPHeaderElement extends SOAPElement {
      * SOAPHeaderElement</CODE> object.
      * @return  a <CODE>String</CODE> giving the URI of the
      *     actor
-     * @see #setActor() setActor()
+     * @see #setActor(String) setActor()
      */
     public abstract String getActor();
 
