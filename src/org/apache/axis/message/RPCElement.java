@@ -214,6 +214,7 @@ public class RPCElement extends SOAPBodyElement
                         (operation.getNumInParams() >= numParams) :
                         (operation.getNumInParams() == numParams))) {
 
+                    boolean isEncoded = operation.getUse() == Use.ENCODED;
                     rpcHandler.setOperation(operation);
                     try {
                         // If no operation name and more than one
@@ -256,7 +257,7 @@ public class RPCElement extends SOAPBodyElement
 
                                 // Get the type in the signature (java type or its holder)
                                 Class sigType = paramDesc.getJavaType();
-                                if(!JavaUtils.isConvertable(value, sigType))
+                                if(!JavaUtils.isConvertable(value, sigType, isEncoded))
                                     match = false;
                             }
                         }

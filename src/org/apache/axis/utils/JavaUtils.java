@@ -485,6 +485,11 @@ public class JavaUtils
 
     public static boolean isConvertable(Object obj, Class dest)
     {
+        return isConvertable(obj, dest, false);
+    }
+
+    public static boolean isConvertable(Object obj, Class dest, boolean isEncoded)
+    {
         Class src = null;
         
         if (obj != null) {
@@ -528,8 +533,9 @@ public class JavaUtils
                  isConvertable(src.getComponentType(), dest.getComponentType())))
                     return true;
             
-            // If destination is an array, and src is a component, we're good.
-            if (dest.isArray() &&
+            // If destination is an array, and src is a component, we're good
+            // if we're not encoded!
+            if (!isEncoded && dest.isArray() &&
                 !dest.getComponentType().equals(Object.class) &&
                 dest.getComponentType().isAssignableFrom(src)) 
                 return true;
@@ -538,10 +544,6 @@ public class JavaUtils
                 (src == byte[].class && dest == HexBinary.class))
                 return true;
             
-            // Allow mapping of HashMaps to Hashtables
-            if (src == HashMap.class && dest == Hashtable.class)
-                return true;
-
             // Allow mapping of Calendar to Date
             if (Calendar.class.isAssignableFrom(src) && dest == Date.class)
                 return true;

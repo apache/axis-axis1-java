@@ -504,6 +504,7 @@ public class Emitter {
                 serviceDesc2.setStopClasses(stopClasses);
                 serviceDesc2.setAllowedMethods(allowedMethods);
                 serviceDesc2.setDisallowedMethods(disallowedMethods);
+                serviceDesc2.setStyle(style);                
             }
         }
 
@@ -611,7 +612,7 @@ public class Emitter {
         throws IOException, WSDLException, SAXException,
                ParserConfigurationException {
         types = new Types(def, tm, defaultTM, namespaces,
-                          intfNS, stopClasses);
+                          intfNS, stopClasses, serviceDesc);
         if (inputWSDL != null) {
             types.loadInputTypes(inputWSDL);
         }
@@ -1218,7 +1219,14 @@ public class Emitter {
             // Write the part
             ParameterDesc retParam = new ParameterDesc();
             if (desc.getReturnQName() == null) {
-                retParam.setName(desc.getName()+"Return");
+                String ns = "";
+                if (desc.getStyle() != Style.RPC) {
+                    ns = getServiceDesc().getDefaultNamespace();
+                    if (ns == null || "".equals(ns)) {
+                        ns = "http://ws.apache.org/axis/defaultNS";
+                    }
+                }
+                retParam.setQName(new QName(ns, desc.getName()+"Return"));
             } else {
                 retParam.setQName(desc.getReturnQName());
             }

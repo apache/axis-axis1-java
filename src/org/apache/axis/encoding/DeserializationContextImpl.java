@@ -413,7 +413,21 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             } else if (localName.equals(Constants.SOAP_BYTE.getLocalPart())) {
                 typeQName = Constants.SOAP_BYTE;
             }
-
+        }
+        
+        // If we still have no luck, check to see if there's an arrayType
+        // (itemType for SOAP 1.2) attribute, in which case this is almost
+        // certainly an array.
+        
+        if (typeQName == null && attrs != null) {
+            String encURI = getSOAPConstants().getEncodingURI();
+            String itemType = getSOAPConstants().getAttrItemType();
+            for (int i = 0; i < attrs.getLength(); i++) {
+                if (encURI.equals(attrs.getURI(i)) &&
+                        itemType.equals(attrs.getLocalName(i))) {
+                    return new QName(encURI, "Array");
+                }
+            }
         }
 
         return typeQName;

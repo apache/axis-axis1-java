@@ -2,6 +2,7 @@ package test.RPCDispatch;
 
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.utils.DOM2Writer;
 import org.w3c.dom.Node;
@@ -114,6 +115,14 @@ public class Service {
     public String overloaded(int i, String s)
     {
         return i + s;
+    }
+    
+    /**
+     * Echo a string array (this is for testing that String->String[]
+     * conversions do NOT happen when using encoded arrays)
+     */ 
+    public void arrayMethod(String [] arg) throws AxisFault {
+        throw new AxisFault("You shouldn't have called me!");
     }
 
     /**

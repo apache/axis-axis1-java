@@ -512,6 +512,13 @@ public class ArrayDeserializer extends DeserializerImpl
         return (SOAPHandler)dSer;
     }
 
+    public void characters(char[] chars, int i, int i1) throws SAXException {
+        for (int idx = i; i < i1; i++) {
+            if (!Character.isWhitespace(chars[idx]))
+                throw new SAXException(Messages.getMessage("charsInArray"));            
+        }
+    }
+
     /**
      * set is called during deserialization to assign
      * the Object value to the array position indicated by hint.
