@@ -112,12 +112,10 @@ public class RPCProvider extends JavaProvider
             log.debug(JavaUtils.getMessage("bodyIs00", "" + bodies.get(0)));
         }
 
-        /* Loop over each entry in the SOAPBody - each one is a different */
-        /* RPC call.                                                      */
-        /******************************************************************/
-        for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
-            RPCElement   body;
+        RPCElement   body = null;
 
+        // Find the first "root" body element, which is the RPC call.
+        for ( int bNum = 0 ; body == null && bNum < bodies.size() ; bNum++ ) {
             // If this is a regular old SOAPBodyElement, and it's a root,
             // we're probably a non-wrapped doc/lit service.  In this case,
             // we deserialize the element, and create an RPCElement "wrapper"
@@ -137,67 +135,67 @@ public class RPCProvider extends JavaProvider
                                               operation.getName(),
                                               new Object [] { val });
                     }
-                    else continue;
-                } else {
-                    continue;
                 }
             } else {
                 body = (RPCElement) bodies.get( bNum );
             }
+        }
 
-            String methodName = body.getMethodName();
-            Vector args = body.getParams();
-            int numArgs = args.size();
+        if (body == null) {
+            // throw something
+        }
+        String methodName = body.getMethodName();
+        Vector args = body.getParams();
+        int numArgs = args.size();
 
-            // This may have changed, so get it again...
-            // FIXME (there should be a cleaner way to do this)
-            operation = msgContext.getOperation();
+        // This may have changed, so get it again...
+        // FIXME (there should be a cleaner way to do this)
+        operation = msgContext.getOperation();
 
-            if (operation == null) {
-                QName qname = new QName(body.getNamespaceURI(),
-                                        body.getName());
-                operation = serviceDesc.getOperationByElementQName(qname);
-            }
+        if (operation == null) {
+            QName qname = new QName(body.getNamespaceURI(),
+                                    body.getName());
+            operation = serviceDesc.getOperationByElementQName(qname);
+        }
 
-            if (operation == null) {
-                throw new AxisFault(JavaUtils.getMessage("noSuchOperation",
-                                                         methodName));
-            }
+        if (operation == null) {
+            throw new AxisFault(JavaUtils.getMessage("noSuchOperation",
+                                                     methodName));
+        }
 
-            // Create the array we'll use to hold the actual parameter
-            // values.  We know how big to make it from the metadata.
-            Object[]     argValues  =  new Object [operation.getNumParams()];
+        // Create the array we'll use to hold the actual parameter
+        // values.  We know how big to make it from the metadata.
+        Object[]     argValues  =  new Object [operation.getNumParams()];
 
-            // A place to keep track of the out params (INOUTs and OUTs)
-            ArrayList outs = new ArrayList();
+        // A place to keep track of the out params (INOUTs and OUTs)
+        ArrayList outs = new ArrayList();
 
-            // Put the values contained in the RPCParams into an array
-            // suitable for passing to java.lang.reflect.Method.invoke()
-            // Make sure we respect parameter ordering if we know about it
-            // from metadata, and handle whatever conversions are necessary
-            // (values -> Holders, etc)
-            if ( args != null && args.size() > 0 ) {
-                for ( int i = 0 ; i < numArgs ; i++ ) {
-                    RPCParam rpcParam = (RPCParam)args.get(i);
-                    Object value = rpcParam.getValue();
-                    ParameterDesc paramDesc = rpcParam.getParamDesc();
-                    if (paramDesc != null && paramDesc.getJavaType() != null) {
-                        value = JavaUtils.convert(value,
-                                                  paramDesc.getJavaType());
-                        rpcParam.setValue(value);
-                        if (paramDesc.getMode() == ParameterDesc.INOUT)
-                            outs.add(rpcParam);
-                    }
-                    if (paramDesc == null || paramDesc.getOrder() == -1) {
-                        argValues[i]  = value;
-                    } else {
-                        argValues[paramDesc.getOrder()] = value;
-                    }
+        // Put the values contained in the RPCParams into an array
+        // suitable for passing to java.lang.reflect.Method.invoke()
+        // Make sure we respect parameter ordering if we know about it
+        // from metadata, and handle whatever conversions are necessary
+        // (values -> Holders, etc)
+        if ( args != null && args.size() > 0 ) {
+            for ( int i = 0 ; i < numArgs ; i++ ) {
+                RPCParam rpcParam = (RPCParam)args.get(i);
+                Object value = rpcParam.getValue();
+                ParameterDesc paramDesc = rpcParam.getParamDesc();
+                if (paramDesc != null && paramDesc.getJavaType() != null) {
+                    value = JavaUtils.convert(value,
+                                              paramDesc.getJavaType());
+                    rpcParam.setValue(value);
+                    if (paramDesc.getMode() == ParameterDesc.INOUT)
+                        outs.add(rpcParam);
+                }
+                if (paramDesc == null || paramDesc.getOrder() == -1) {
+                    argValues[i]  = value;
+                } else {
+                    argValues[paramDesc.getOrder()] = value;
+                }
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("  " + JavaUtils.getMessage("value00",
-                            "" + argValues[i]) );
-                    }
+                if (log.isDebugEnabled()) {
+                    log.debug("  " + JavaUtils.getMessage("value00",
+                                                          "" + argValues[i]) );
                 }
             }
 
