@@ -215,10 +215,12 @@ public class ArraySerializer implements Serializer
 
         if (isEncoded) {
             AttributesImpl attrs;
-            if (attributes != null) {
-                attrs = new AttributesImpl(attributes);
-            } else {
+            if (attributes == null) {
                 attrs = new AttributesImpl();
+            } else if (attributes instanceof AttributesImpl) {
+                attrs = (AttributesImpl)attributes;
+            } else {
+                attrs = new AttributesImpl(attributes);
             }
 
             if (attrs.getIndex(Constants.URI_DEFAULT_SOAP_ENC,

@@ -74,6 +74,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -847,6 +848,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Enter: DeserializationContextImpl::startElement(" + namespace + ", " + localName + ")");
         }
         
+        attributes = new AttributesImpl(attributes);
+
         SOAPHandler nextHandler = null;
 
         String prefix = "";

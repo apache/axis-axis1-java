@@ -179,10 +179,13 @@ public class SimpleSerializer implements SimpleValueSerializer {
             return attributes;
 
         AttributesImpl attrs;
-        if (attributes != null)
-            attrs = new AttributesImpl(attributes);
-        else
+        if (attributes == null) {
             attrs = new AttributesImpl();
+        } else if (attributes instanceof AttributesImpl) {
+            attrs = (AttributesImpl)attributes;
+        } else {
+            attrs = new AttributesImpl(attributes);
+        }
 
         try {
             // Find each property that is an attribute
