@@ -54,14 +54,14 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.ConfigurationException;
 
 
 /**
  *
  */
 public class WSDDException
-    extends DeploymentException
+    extends ConfigurationException
 {
     /**
      *

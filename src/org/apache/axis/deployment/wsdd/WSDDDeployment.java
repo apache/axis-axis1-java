@@ -59,7 +59,6 @@ import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
@@ -265,7 +264,7 @@ public class WSDDDeployment
     }
 
     public void deployToRegistry(WSDDDeployment target)
-        throws DeploymentException
+        throws ConfigurationException
     {
 
         WSDDGlobalConfiguration global = getGlobalConfiguration();

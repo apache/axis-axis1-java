@@ -57,7 +57,6 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.ClassUtils;
@@ -83,7 +82,6 @@ import java.util.Set;
  */
 public abstract class WSDDDeployableItem
     extends WSDDElement
-    implements DeployableItem
 {
     public static final int SCOPE_PER_ACCESS = 0;
     public static final int SCOPE_PER_REQUEST = 1;
