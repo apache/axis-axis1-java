@@ -1,23 +1,8 @@
-/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
- *
- *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
- *PERMISSION OF MACROMEDIA
- */
-/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
- *
- *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
- *PERMISSION OF MACROMEDIA
- */
-/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
- *
- *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
- *PERMISSION OF MACROMEDIA
- */
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
