@@ -202,6 +202,8 @@ public class RPCElement extends SOAPBodyElement
         if (operations != null) {
             int numParams = (getChildren() == null) ? 0 : getChildren().size();
 
+            SAXException savedException = null;
+
             // We now have an array of all operations by this name.  Try to
             // find the right one.  For each matching operation which has an
             // equal number of "in" parameters, try deserializing.  If we
@@ -229,14 +231,19 @@ public class RPCElement extends SOAPBodyElement
                         return;
                     } catch (SAXException e) {
                         // If there was a problem, try the next one.
+                        savedException = e;
                         params = new Vector();
                         continue;
                     }
                 }
             }
 
-            throw new SAXException(
+            if (savedException != null) {
+                throw savedException;
+            } else {
+                throw new SAXException(
                     JavaUtils.getMessage("noSuchOperation", name));
+            }
         }
 
         if (elementIsFirstParam) {

@@ -168,29 +168,36 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
 
                 Method readMethod = propertyDescriptor[i].getReadMethod();
-                if (readMethod != null && readMethod.getParameterTypes().length == 0) {
+                Class baseJavaType = readMethod.getReturnType();
+                Class javaType;
+                if (readMethod != null && 
+                    readMethod.getParameterTypes().length == 0) {
                     // Normal case: serialize the value
-                    Object propValue = propertyDescriptor[i].getReadMethod().invoke(value,noArgs);
+                    Object propValue = readMethod.invoke(value,noArgs);
+                    javaType = (propValue == null || baseJavaType.isPrimitive())
+                        ? baseJavaType : propValue.getClass();
                     context.serialize(qname,
                                       null,
-                                      propValue,
-                                      propertyDescriptor[i].getReadMethod().getReturnType());
+                                      propValue, javaType);
                 } else {
                     // Collection of properties: serialize each one
                     int j=0;
                     while(j >= 0) {
                         Object propValue = null;
                         try {
-                            propValue = propertyDescriptor[i].getReadMethod().invoke(value,
-                                                                     new Object[] { new Integer(j) });
+                            propValue = 
+                                readMethod.invoke(value,
+                                     new Object[] { new Integer(j) });
                             j++;
                         } catch (Exception e) {
                             j = -1;
                         }
                         if (j >= 0) {
+                            javaType = (propValue == null || 
+                                        baseJavaType.isPrimitive())
+                                ? baseJavaType : propValue.getClass();
                             context.serialize(qname, null,
-                                              propValue,
-                                              propertyDescriptor[i].getReadMethod().getReturnType());
+                                              propValue, javaType);
                         }
                     }
                 }
