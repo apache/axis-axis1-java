@@ -163,13 +163,11 @@ public class Admin {
             if ( elem == null ) continue ;
 
             if ( loop == 1 ) {
-              elem.setNodeValue( "service" );
-              
-              // Element tmpElem = doc.createElement( "service" );
-              // tmpElem.setChildren( elem.getChildren() );
-              // tmpElem.setAttributes( elem.getAttributes() );
-              // elem.removeChildren();
-              // elem = tmpElem ;
+              Element tmpElem = doc.createElement( "service" );
+              NodeList list = elem.getChildNodes();
+              for ( int ii = 0 ; ii < list.getLength() ; ii++ )
+                tmpElem.appendChild( doc.importNode(list.item(ii),true) );
+              elem = tmpElem ;
             }
 
             if ( elem.getTagName().equals("chain") )
@@ -191,6 +189,8 @@ public class Admin {
         Element  elem    = (Element) node ;
         String   type    = elem.getLocalName();
         String   name    = elem.getAttribute( "name" );
+
+        if ( name != null && name.equals("") ) name = null ;
   
         if ( action.equals( "undeploy" ) ) {
           if ( type.equals("service") ) {
@@ -215,10 +215,16 @@ public class Admin {
         String   input   = elem.getAttribute( "input" );
         String   pivot   = elem.getAttribute( "pivot" );
         String   output  = elem.getAttribute( "output" );
+
+        if ( flow   != null && flow.equals("") )   flow = null ;
+        if ( input  != null && input.equals("") )  input = null ;
+        if ( output != null && output.equals("") ) output = null ;
+        if ( pivot  != null && pivot.equals("") )  pivot = null ;
  
   
         if ( type.equals( "handler" ) ) {
           String   cls   = elem.getAttribute( "class" );
+          if ( cls != null && cls.equals("") ) cls = null ;
           Debug.Print( 2, "Deploying handler: " + name );
           
           if (hr instanceof SupplierRegistry) {

@@ -112,7 +112,7 @@ public class AdminClient {
 
         outMsg = msgContext.getResponseMessage();
         input.close();
-        System.err.println( outMsg.getAs( "String" ) );
+        System.out.println( outMsg.getAs( "String" ) );
       }
     }
     catch( Exception e ) {

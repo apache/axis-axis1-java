@@ -218,6 +218,7 @@ public class HTTPMessage {
 
     if ( Debug.getDebugLevel() > 0  ) {
       Element  elem = doc.createElementNS( Constants.URI_DEBUG, "d:Debug" );
+      elem.setAttribute( "xmlns:d", Constants.URI_DEBUG );
       elem.appendChild( doc.createTextNode( ""+Debug.getDebugLevel() ) );
       SOAPHeader  header = new SOAPHeader(elem);
       header.setActor( Constants.URI_NEXT_ACTOR );
