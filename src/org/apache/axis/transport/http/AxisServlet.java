@@ -103,6 +103,10 @@ import java.util.ArrayList;
 public class AxisServlet extends AxisServletBase {
     protected static Log log =
         LogFactory.getLog(AxisServlet.class.getName());
+
+    /**
+     * this log is for timing
+     */
     private static Log tlog =
         LogFactory.getLog("org.apache.axis.TIME");
 
@@ -123,7 +127,8 @@ public class AxisServlet extends AxisServletBase {
     private ServletSecurityProvider securityProvider = null;
 
     /**
-     * cache of logging debug option; only evaluated at init time
+     * cache of logging debug option; only evaluated at init time.
+     * So no dynamic switching of logging options with this servlet.
      */
      private static boolean isDebug = false;
 
@@ -784,28 +789,6 @@ public class AxisServlet extends AxisServletBase {
             soapAction = req.getContextPath(); // Is this right?
 
         return soapAction;
-    }
-
-    /**
-     * Retrieve option, in order of precedence:
-     * (Managed) System property (see discovery.ManagedProperty),
-     * servlet init param, context init param.
-     * Use of system properties is discouraged in production environments,
-     * as it overrides everything else.
-     */
-    private String getOption(ServletContext context,
-                             String param,
-                             String dephault)
-    {
-        String value = AxisProperties.getProperty(param);
-
-        if (value == null)
-            value = getInitParameter(param);
-
-        if (value == null)
-            value = context.getInitParameter(param);
-
-        return (value != null) ? value : dephault;
     }
 
     /**
