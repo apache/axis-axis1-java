@@ -419,8 +419,11 @@ public abstract class JavaProvider extends BasicProvider
 
             Emitter emitter = new Emitter();
 
-            // Set the name for the target service.
-            emitter.setServiceElementName(serviceDesc.getName());
+            // This seems like a good idea, but in fact isn't because the
+            // emitter will figure out a reasonable name (<classname>Service)
+            // for the WSDL service element name.  We provide the 'alias'
+            // setting to explicitly set this name. See bug 13262 for more info.
+            //emitter.setServiceElementName(serviceDesc.getName());
             
             // service alias may be provided if exact naming is required,
             // otherwise Axis will name it according to the implementing class name

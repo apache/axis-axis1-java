@@ -504,11 +504,11 @@ public class Emitter {
         }
 
         if (encodingList == null) {
+            clsName = cls.getName();
+            clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
+
             // Default the portType name
             if (getPortTypeName() == null) {
-                clsName = cls.getName();
-                clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
-
                 setPortTypeName(clsName);
             }
 
