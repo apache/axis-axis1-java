@@ -30,6 +30,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.MethodTarget;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.soap.SOAPConstants;
@@ -225,7 +226,12 @@ public class RPCHandler extends SOAPHandler
                 type = paramDesc.getTypeQName();
             }
         }
-            
+
+        if (type.equals(XMLType.AXIS_VOID)) {
+            Deserializer nilDSer =  new DeserializerImpl();
+            return (SOAPHandler) nilDSer;
+        }
+
         // If the nil attribute is set, just
         // return the base DeserializerImpl.
         // Register the value target to set the value
