@@ -3,6 +3,7 @@ package org.apache.axis.message;
 import java.io.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+import org.apache.axis.Constants;
 import org.apache.axis.message.events.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -52,6 +53,7 @@ public class DebugHeader extends SOAPHeader
     public DebugHeader(int debugLevel)
     {
         this.name = "Debug";
+        this.namespaceURI = Constants.URI_DEBUG;
         this.debugLevel = debugLevel;
     }
     
@@ -70,6 +72,7 @@ public class DebugHeader extends SOAPHeader
     public void output(SerializationContext context)
         throws IOException
     {
+        //context.registerPrefixForURI("m", namespaceURI);
         context.startElement(new QName(this.getNamespaceURI(), this.getName()), null);
         context.writeString(new Integer(debugLevel).toString());
         context.endElement();

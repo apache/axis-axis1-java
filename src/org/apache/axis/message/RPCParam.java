@@ -170,7 +170,7 @@ public class RPCParam extends MessageElement
                if (DEBUG_LOG) e.printStackTrace();
                return null;
             }
-            return xml.getBuffer();
+            return xml.getBuffer().toString();
         }
         
         if (deserializer != null) {

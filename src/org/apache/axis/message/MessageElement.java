@@ -108,17 +108,11 @@ public class MessageElement
       this.namespaceURI = namespace;
       this.name = localPart;
       this.context = context;
-      this.attributes = new AttributesImpl();
 
-      if (attributes != null) {
-        for (int i = 0; i < attributes.getLength(); i++) {
-            this.attributes.addAttribute(attributes.getURI(i),
-                                         attributes.getLocalName(i),
-                                         attributes.getQName(i),
-                                         "CDATA",
-                                         attributes.getValue(i));
-        }
-            
+      if (attributes == null) {
+        this.attributes = new AttributesImpl();
+      } else {
+        this.attributes = new AttributesImpl(attributes);
         String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
         // !!! This currently defaults to false... should it default to true?
         if (rootVal != null)
@@ -213,22 +207,15 @@ public class MessageElement
             return;
         }
 
-        AttributesImpl attrs = new AttributesImpl();
+        AttributesImpl attrs;
         Object val = getValue();
         
         if (val != null) {
             if (typeQName == null)
                 typeQName = context.getQNameForClass(val.getClass());
             
-            if (attributes != null) {
-                // Must be writing a message we parsed earlier, so just put out
-                // what's already there.
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    attrs.addAttribute(attributes.getURI(i), attributes.getLocalName(i),
-                                       attributes.getQName(i), "CDATA",
-                                       attributes.getValue(i));
-                }
-            } else {
+            if (attributes == null) {
+                attrs = new AttributesImpl();
                 // Writing a message from memory out to XML...
                 // !!! How do we set other attributes when serializing??
                 
@@ -244,6 +231,8 @@ public class MessageElement
                 if (val == null)
                     attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
                                        "CDATA", "1");
+            } else {
+                attrs = new AttributesImpl(attributes);
             }
             
             context.startElement(new QName(getNamespaceURI(), getName()), attrs);
