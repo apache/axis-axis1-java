@@ -529,13 +529,7 @@ public class WSDDService
             if (encodingStyle == null) {
                 encodingStyle = use.getEncoding();
             }
-            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
-            TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (tm == null || tm == df) {
-                tm = (TypeMapping) tmr.createTypeMapping();
-                tm.setSupportedEncodings(new String[] {encodingStyle});
-                tmr.register(encodingStyle, tm);
-            }
+            TypeMapping tm = tmr.getOrMakeTypeMapping(encodingStyle);
             desc.setTypeMappingRegistry(tmr);
             desc.setTypeMapping(tm);
 

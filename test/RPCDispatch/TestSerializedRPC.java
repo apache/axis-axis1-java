@@ -68,11 +68,8 @@ public class TestSerializedRPC extends TestCase {
         BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
 
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC);
-        if (tm == null || tm == tmr.getDefaultTypeMapping()) {
-            tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
-        }
+        TypeMapping tm = 
+                tmr.getOrMakeTypeMapping(Constants.URI_DEFAULT_SOAP_ENC);
         tm.register(javaType, xmlType, sf, df);
 
         ServiceDesc desc = new ServiceDesc();
@@ -92,8 +89,8 @@ public class TestSerializedRPC extends TestCase {
 
     /**
      * Invoke a given RPC method, and return the result
-     * @param soapAction action to be performed
-     * @param request XML body of the request
+     * @param method action to be performed
+     * @param bodyStr XML body of the request
      * @return Deserialized result
      */
     private final Object rpc(String method, String bodyStr,
