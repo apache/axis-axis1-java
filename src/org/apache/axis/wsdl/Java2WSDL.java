@@ -316,7 +316,7 @@ public class Java2WSDL {
         case PACKAGE_OPT:
             String packageName = option.getArgument(0);
             String namespace = option.getArgument(1);
-            namespaceMap.put(packageName, namespace);
+            namespaceMap.put(namespace, packageName);
             break;
             
         case NAMESPACE_OPT:
