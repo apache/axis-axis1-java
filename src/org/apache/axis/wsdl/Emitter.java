@@ -1885,7 +1885,10 @@ public class Emitter {
      */
     private PrintWriter printWriter(QName qname, String suffix, String extension, String message) throws IOException
     {
-        String name = Utils.capitalize(xmlNameToJava(qname.getLocalPart()));
+        String name = qname.getLocalPart();
+        // Don't capitalize for deploy.xml and undeploy.xml
+        if(name.indexOf("deploy")==-1)
+            name = Utils.capitalize(xmlNameToJava(name));
         String fileName = name + (suffix == null ? "" : suffix) + '.' + extension;
         String packageName = namespaces.getCreate(qname.getNamespaceURI());
         String packageDirName = namespaces.toDir(packageName);

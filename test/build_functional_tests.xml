@@ -70,7 +70,7 @@ Copyright:
 
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
-
+    
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -127,6 +127,9 @@ Copyright:
       </fileset>
       <fileset dir="${samples.dir}">
         <include name="**/*TestCase.java"/>
+      </fileset>
+      <fileset dir="${samples.dir}">
+        <include name="**/Main.java"/>
       </fileset>
     </copy>
     <path id="deploy.xml.files">
