@@ -279,6 +279,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
             throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
         }
         registerSOAPENCDefault(tm);
+        defaultDelTM = new TypeMappingDelegate(tm);
     }
     /**
      * Force registration of the given mapping as the SOAPENC default mapping
