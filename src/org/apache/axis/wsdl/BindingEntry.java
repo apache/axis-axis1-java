@@ -75,6 +75,7 @@ public class BindingEntry extends SymTabEntry {
     public static final int TYPE_SOAP = 0;
     public static final int TYPE_HTTP_GET = 1;
     public static final int TYPE_HTTP_POST = 2;
+    public static final int TYPE_UNKNOWN = 3;
 
     // Binding Operation use types
     public static final int USE_ENCODED = 0;
