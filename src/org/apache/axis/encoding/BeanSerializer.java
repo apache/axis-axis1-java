@@ -67,7 +67,7 @@ import java.beans.PropertyDescriptor;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
-import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.utils.JavaUtils;
 
 import org.xml.sax.*;
 
@@ -200,7 +200,7 @@ public class BeanSerializer extends DeserializerBase
             try {
                 pd.getWriteMethod().invoke(object, new Object[] {value});
             } catch (Exception e) {
-                value = RPCProvider.convert(value, pd.getPropertyType());
+                value = JavaUtils.convert(value, pd.getPropertyType());
                 try {
                     pd.getWriteMethod().invoke(object, new Object[] {value});
                 } catch (Exception ex) {

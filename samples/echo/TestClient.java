@@ -57,6 +57,7 @@ package samples.echo ;
 
 import java.lang.reflect.Array;
 import java.util.Date;
+import java.util.List;
 import java.math.BigDecimal;
 
 import org.apache.axis.AxisFault ;
@@ -69,6 +70,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
+import org.apache.axis.utils.JavaUtils;
 
 /**
  * Test Client for the echo interop service.  See the main entrypoint
@@ -95,6 +97,11 @@ public abstract class TestClient {
        if (obj1 instanceof Date && obj2 instanceof Date)
            if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
                return true;
+       if (obj1 instanceof List)
+         obj1 = JavaUtils.convert(obj1, new Object[]{}.getClass());
+       if (obj2 instanceof List)
+         obj2 = JavaUtils.convert(obj2, new Object[]{}.getClass());
+       
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
        if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
