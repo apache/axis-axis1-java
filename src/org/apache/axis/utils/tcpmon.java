@@ -441,8 +441,12 @@ public class tcpmon extends JFrame {
                 int         i1, i2 ;
                 int         i ;
                 int         reqSaved = 0 ;
+                int         tabWidth = 3 ;
+                boolean     atMargin = true ;
+                int         thisIndent = - 1, 
+                            nextIndent = -1,
+                            previousIndent = -1;
 
-                int   thisIndent, nextIndent=0 ;
                 if ( inSocket  != null ) inSocket.setSoTimeout( 10 );
                 if ( outSocket != null ) outSocket.setSoTimeout( 10 );
                 
@@ -463,17 +467,14 @@ public class tcpmon extends JFrame {
                         }
                     }
                     len=len1;
-                    if ( len == -1 ) break ;
 
-                    //System.out.println("Read: " + " "  + saved + " " +
-                    //                 len + " "  + new String( buffer, saved, 20 ));
-                    
+                    if ( len == -1 && saved == 0 ) break ;
+
                     // No matter how we may (or may not) format it, send it
                     // on unformatted - we don't want to mess with how its
                     // sent to the other side, just how its displayed
-                    if ( out != null ) {
+                    if ( out != null && len > 0 ) {
                       out.write( buffer, saved, len );
-                      //System.out.println("Write: " + len );
                     }
                 
                     if ( tmodel != null && reqSaved < 50 ) {
@@ -495,52 +496,63 @@ public class tcpmon extends JFrame {
 
                     if ( xmlFormat ) {
                         // Do XML Formatting
+                        boolean inXML = false ;
+                        int     bufferLen = saved ;
+                        if ( len != -1 ) bufferLen += len ;
                         i1 = 0 ;
                         i2 = 0 ;
                         saved = 0 ;
-                        for( ; i1 < len ; i1++ ) {
-                            if ( buffer[i1] != '<' && buffer[i1] != '/' )
-                                tmpbuffer[i2++] = buffer[i1];
-                            else {
-                                if ( i1+1 < len ) {
-                                    byte b1 = buffer[i1];
-                                    byte b2 = buffer[i1+1];
-                                    thisIndent = -1 ;
+                        for( ; i1 < bufferLen ; i1++ ) {
+                          // Except when we're at EOF, saved last char
+                          if ( len != -1 && i1+1 == bufferLen ) { 
+                            saved = 1; 
+                            break;
+                          }
+                          thisIndent = -1;
+                          if ( buffer[i1]=='<' && buffer[i1+1]!='/' ) {
+                            previousIndent = nextIndent++;
+                            thisIndent = nextIndent;
+                            inXML = true ;
+                          }
+                          if ( buffer[i1]=='<' && buffer[i1+1]=='/' ) {
+                            if (previousIndent>nextIndent) 
+                              thisIndent = nextIndent;
+                            previousIndent = nextIndent--;
+                            inXML = true ;
+                          }
+                          if ( buffer[i1]=='/' && buffer[i1+1]=='>' ) {
+                            previousIndent = nextIndent--;
+                            inXML = true ;
+                          }
+                          if ( thisIndent!=-1 ) {
+                            if ( thisIndent > 0 ) tmpbuffer[i2++] = (byte)'\n';
+                            for ( i = tabWidth*thisIndent; i>0; i-- )
+                              tmpbuffer[i2++] = (byte)' ';
+                          }
+                          atMargin = ( buffer[i1]=='\n' || buffer[i1]=='\r');
 
-                                    if ( b1 == '<' ) {
-                                        if ( b2 != '/' )  thisIndent = nextIndent++ ;
-                                        else              thisIndent = --nextIndent ;
-                                    }
-                                    else if ( b1 == '/' ) {
-                                        if ( b2 == '>' ) nextIndent-- ;
-                                    }
-
-                                    if ( thisIndent != -1 ) {
-                                        tmpbuffer[i2++] = (byte) '\n' ;
-                                        for ( i = 0 ; i < thisIndent ; i++ )
-                                            tmpbuffer[i2++] = (byte) ' ' ;
-                                    }
-
-                                    tmpbuffer[i2++] = buffer[i1];
-                                }
-                                else {
-                                    // last char is special - save it
-                                    saved = 1 ;
-                                }
-                            }
+                          if ( !inXML || !atMargin ) {
+                            tmpbuffer[i2++] = buffer[i1];
+                          }
                         }
+
                         textArea.append( new String( tmpbuffer, 0, i2 ) );
+
+                        // Shift saved bytes to the beginning
+                        for ( i = 0 ; i < saved ; i++ )
+                          buffer[i] = buffer[bufferLen-saved+i];
                     }
                     else {
                         textArea.append( new String( buffer, 0, len ) );
                     }
-                    // System.out.println("Sleep 3");
                     this.sleep(3);  // Let other threads have a chance to run
                 }
                 this.sleep(3);  // Let other threads have a chance to run
                 // halt();
-                done = true ;
-                //System.out.println("Done reading " + this);
+                // Only set the 'done' flag if we were reading from a
+                // Socket - if we were reading from an input stream then
+                // we'll let the other side control when we're done
+                if ( inSocket != null ) done = true ;
             }
             catch( Exception e ) {
                 e.printStackTrace();
@@ -548,7 +560,6 @@ public class tcpmon extends JFrame {
         }
         public  void halt() {
             try {
-                //System.out.println("Closing " +this + " " + inSocket + " " + outSocket );
                 if ( inSocket != null )  inSocket.close();
                 if ( outSocket != null ) outSocket.close();
                 inSocket  = null ;
