@@ -49,7 +49,7 @@ public class ServerHandler implements Handler {
 			e.printStackTrace();
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class ServerHandler implements Handler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return true;
 	}
 
 	/**
