@@ -67,10 +67,61 @@ import org.apache.axis.encoding.Hex;
  * can be found at http://www.whitemesa.com/interop.htm .
  *
  * @author Sam Ruby <rubys@us.ibm.com>
+ * @author Simon Fell <simon@zaks.demon.co.uk>
  */
 
-public class EchoService {
+public class EchoService implements org.apache.axis.wsdl.Skeleton {
 
+    private static org.apache.axis.wsdl.SkeletonImpl skel = null;
+    
+    public EchoService() {
+        init() ;
+    }
+    
+    public String getParameterName(String opName, int i) {
+        return skel.getParameterName(opName, i);
+    }
+
+    public static String getParameterNameStatic(String opName, int i) {
+        init();
+        return skel.getParameterName(opName, i);
+    }
+    protected static void init() {
+        if (skel != null) 
+            return;
+        skel = new org.apache.axis.wsdl.SkeletonImpl();
+        skel.add("echoStructAsSimpleTypes",
+                 new String[] {
+                 null,
+                 "inputStruct",
+                 "outputString",
+                 "outputInteger",
+                 "outputFloat",
+                 });
+        skel.add("echoSimpleTypesAsStruct",
+                 new String[] {
+                 "return",
+                 "inputString",
+                 "inputInteger",
+                 "inputFloat",
+                 });
+        skel.add("echo2DStringArray",
+                 new String[] {
+                 "return",
+                 "input2DStringArray",
+                 });
+        skel.add("echoNestedStruct",
+                 new String[] {
+                 "return",
+                 "inputStruct",
+                 });
+        skel.add("echoNestedArray",
+                 new String[] {
+                 "return",
+                 "inputStruct",
+                 });
+    }
+    
     /**
      * This method accepts a single string and echoes it back to the client.
      */
@@ -185,5 +236,31 @@ public class EchoService {
      */
     public HashMap [] echoMapArray(HashMap [] input) {
         return input;
+    }
+    
+    public void echoStructAsSimpleTypes(SOAPStruct inputStruct, 
+                                        javax.xml.rpc.holders.StringHolder outputString, 
+                                        javax.xml.rpc.holders.IntHolder outputInteger, 
+                                        javax.xml.rpc.holders.FloatHolder outputFloat) {
+        outputString.value = inputStruct.getVarString() ;
+        outputInteger.value = inputStruct.getVarInt() ;
+        outputFloat.value = inputStruct.getVarFloat() ;
+    }
+
+    public SOAPStruct echoSimpleTypesAsStruct(java.lang.String inputString, int inputInteger, float inputFloat) {
+        SOAPStruct s = new SOAPStruct(inputInteger, inputString, inputFloat) ;
+        return s ;
+    }
+
+    public java.lang.String[] echo2DStringArray(java.lang.String[] input2DStringArray) {
+        return input2DStringArray ;
+    }
+
+    public SOAPStructStruct echoNestedStruct(SOAPStructStruct inputStruct) {
+        return inputStruct ;
+    }
+
+    public SOAPArrayStruct echoNestedArray(SOAPArrayStruct inputStruct) {
+        return inputStruct ;
     }
 }
