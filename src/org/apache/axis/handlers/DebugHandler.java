@@ -79,10 +79,11 @@ public class DebugHandler extends BasicHandler {
             Message       msg = msgContext.getRequestMessage();
             SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
             Vector        headers = null ;
+            int           i ;
             
             headers = env.getHeadersByNameAndURI("Debug", Constants.URI_DEBUG);
 
-            for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
+            for ( i = 0 ; headers != null && i < headers.size() ; i ++ ) {
                 SOAPHeader  header = (SOAPHeader) headers.get(i);
                 Element     root   = header.getRoot();
                 String      value = root.getFirstChild().getNodeValue();
@@ -93,6 +94,8 @@ public class DebugHandler extends BasicHandler {
                     header.setProcessed( true );
                 }
             }
+            if ( i == 0 )
+              Debug.setDebugLevel( 0 );
         }
         catch( Exception e ) {
             Debug.Print( 1, e );
