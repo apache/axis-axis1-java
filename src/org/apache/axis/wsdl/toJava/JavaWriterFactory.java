@@ -156,11 +156,22 @@ public class JavaWriterFactory implements WriterFactory {
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
-                // If entry instanceof TypeEntry, then the java name has already been filled in.
-                // Don't try to do it again.  This method should really be doing the filling in
-                // of ALL enty java names, but that's another step toward generalizing the
-                // framework that I don't have time for right now.
-                if (!(entry instanceof TypeEntry)) {
+                // If it's a type, then use the referenced type's QName to generate this type's
+                // name.
+                if (entry instanceof TypeEntry) {
+                    TypeEntry tEntry = (TypeEntry) entry;
+                    String dims = tEntry.getDimensions();
+                    TypeEntry refType = tEntry.getRefType();
+                    while (refType != null) {
+                        tEntry = refType;
+                        dims += tEntry.getDimensions();
+                        refType = tEntry.getRefType();
+                    }
+                    entry.setName(symbolTable.getJavaName(tEntry.getQName()) + dims);
+                }
+
+                // If it is not a type, then use this entry's QName to generate its name.
+                else {
                     entry.setName(symbolTable.getJavaName(entry.getQName()));
                 }
             }

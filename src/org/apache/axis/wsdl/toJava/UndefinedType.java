@@ -70,7 +70,7 @@ public class UndefinedType extends Type implements Undefined {
      * Construct a referenced (but as of yet undefined) type 
      */
     public UndefinedType(QName pqName) {
-        super(pqName, "", null);
+        super(pqName, null);
         undefined = true;
         delegate = new UndefinedDelegate(this);
     }

@@ -75,7 +75,7 @@ public class DefinedElement extends Element {
     /**
      * Create an element type defined directly.               
      */
-    public DefinedElement(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName, pNode);
+    public DefinedElement(QName pqName, Node pNode) {
+        super(pqName, pNode);
     }
 };

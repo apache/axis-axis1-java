@@ -131,7 +131,7 @@ public abstract class TypeEntry extends SymTabEntry {
      * Defer processing until refType is known.
      */  
     protected TypeEntry(QName pqName, TypeEntry refType, Node pNode, String dims) {
-        super(pqName, "defer name");  // Set super qname (defer name)
+        super(pqName);
         node = pNode;
         this.undefined = refType.undefined;
         this.refType = refType;
@@ -147,7 +147,6 @@ public abstract class TypeEntry extends SymTabEntry {
             }
             ((Undefined)uType).register(this);
         } else {
-            setName(refType.getName() + dims);             
             isBaseType = (refType.getBaseType() != null && dims.equals(""));
         }
         
@@ -158,8 +157,8 @@ public abstract class TypeEntry extends SymTabEntry {
     /**
      * Create a TypeEntry object for an xml construct that is not a base java type
      */  
-    protected TypeEntry(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName);
+    protected TypeEntry(QName pqName, Node pNode) {
+        super(pqName);
         node  = pNode;
         refType = null;
         undefined = false;
@@ -172,7 +171,7 @@ public abstract class TypeEntry extends SymTabEntry {
      * Create a TypeEntry object for an xml construct name that represents a base java type
      */
     protected TypeEntry(QName pqName) {
-        super(pqName, Utils.getBaseJavaName(pqName));
+        super(pqName);
         node = null;
         undefined = false;
         dims = "";
@@ -181,7 +180,7 @@ public abstract class TypeEntry extends SymTabEntry {
     }
        
     /**
-     * Query Java Mapping Name
+     * Query the node for this type.
      */
     public Node getNode() {
         return node;
@@ -239,7 +238,6 @@ public abstract class TypeEntry extends SymTabEntry {
             if (te == this) {
                 // Detected a loop.
                 undefined = false;
-                setName("");
                 isBaseType = false;
                 node = null;                   
                 throw new IOException(JavaUtils.getMessage("undefinedloop00", getQName().toString()));
@@ -250,12 +248,25 @@ public abstract class TypeEntry extends SymTabEntry {
         if (refType != null && undefined && refType.undefined==false) {
             undefined = false;
             changedState = true;
-            setName(refType.getName() + dims);             
             isBaseType = (refType.getBaseType() != null && dims.equals(""));
         }
         return changedState;
     }
 
+
+    /**
+     * If this type references another type, return that type, otherwise return null.
+     */
+    public TypeEntry getRefType() {
+        return refType;
+    } // getRefType
+
+    /**
+     * Return the dimensions of this type, which can be 0 or more "[]".
+     */
+    public String getDimensions() {
+        return dims;
+    } // getDimensions
 
     /**
      * Get string representation.
@@ -276,6 +287,7 @@ public abstract class TypeEntry extends SymTabEntry {
             indent + "Base?:         " + isBaseType + "\n" + 
             indent + "Undefined?:    " + undefined + "\n" + 
             indent + "Node:          " + getNode() + "\n" +
+            indent + "Dims:          " + dims + "\n" +
             refString;
     }
 };

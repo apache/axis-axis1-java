@@ -63,8 +63,8 @@ import javax.wsdl.QName;
  * always emitted.
  */
 public class DefinedType extends Type {
-    public DefinedType(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName, pNode);
+    public DefinedType(QName pqName, Node pNode) {
+        super(pqName, pNode);
     }
     public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);

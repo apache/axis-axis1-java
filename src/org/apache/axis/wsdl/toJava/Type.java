@@ -84,7 +84,7 @@ public abstract class Type extends TypeEntry {
     /**
      * Create a Type object for an xml construct that is not a base java type
      */  
-    protected Type(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName, pNode);
+    protected Type(QName pqName, Node pNode) {
+        super(pqName, pNode);
     }
 };
