@@ -136,9 +136,6 @@ public class AttachmentsImpl implements Attachments {
         if (contentType != null) {
             if (contentType.equals(org.apache.axis.Message.MIME_UNKNOWN)) {
 
-                // Process the input stream for headers to determine the mime
-                // type.
-                //TODO -- This is for transports that do not process headers.
             } else {
                 java.util.StringTokenizer st =
                         new java.util.StringTokenizer(contentType, " \t;");
@@ -196,6 +193,8 @@ public class AttachmentsImpl implements Attachments {
         if (mpartStream != null) {
             Collection atts = mpartStream.getAttachments();
 
+            contentLocation= mpartStream.getContentLocation();
+
             mpartStream = null;
 
             setAttachmentParts(atts);
@@ -246,8 +245,8 @@ public class AttachmentsImpl implements Attachments {
     public Part addAttachmentPart(Part newPart)
             throws org.apache.axis.AxisFault {
 
-        multipart = null;
 
+        multipart = null;
         dimemultipart = null;
 
         mergeinAttachments();
@@ -341,7 +340,6 @@ public class AttachmentsImpl implements Attachments {
     public Part getAttachmentByReference(String reference)
             throws org.apache.axis.AxisFault {
 
-        mergeinAttachments();
 
         if (null == reference) {
             return null;
@@ -353,40 +351,39 @@ public class AttachmentsImpl implements Attachments {
             return null;
         }
 
+        mergeinAttachments();
+
+        //This search will pickit up if its fully qualified location or if it's a content-id
+        // that is not prefixed by the cid.
+
         Part ret = (Part) attachments.get(reference);
-
-        if (ret != null) {
-            return ret;
-        }
-
+        if( null != ret) return ret;
 
         String referenceLC = reference.toLowerCase();
 
         if (!referenceLC.startsWith(Attachments.CIDprefix) && (null != contentLocation)) {
-            String fqreference = contentLocation;
+            //Not a content-id check to see if its a relative location id.
 
-            if (!fqreference.endsWith("/")) {
-                fqreference += "/";
-            }
+                String fqreference = contentLocation;
 
-            if (reference.startsWith("/")) {
-                fqreference += reference.substring(1);
-            } else {
-                fqreference += reference;
-            }
-
-            // lets see if we can get it as Content-Location
-            ret = (AttachmentPart) attachments.get(fqreference);
-        
-                
+                if (!fqreference.endsWith("/")) {
+                    fqreference += "/";
                 }
 
-                if( null == ret && reference.startsWith(Attachments.CIDprefix)){ //last ditch effort.
-                ret = (Part) attachments.get( reference.substring(4));
-            
+                if (reference.startsWith("/")) {
+                    fqreference += reference.substring(1);
+                } else {
+                    fqreference += reference;
+                }
+
+                // lets see if we can get it as Content-Location
+                ret = (AttachmentPart) attachments.get(fqreference);
         }
 
-                
+        if( null == ret && reference.startsWith(Attachments.CIDprefix)){ 
+             //This is a content-id lets see if we have it.
+                ret = (Part) attachments.get( reference.substring(4));
+        }
 
         return ret;
     }
@@ -432,7 +429,7 @@ public class AttachmentsImpl implements Attachments {
         }
     }
 
-    /** Field multipart           */
+    /** multipart , cached entries for the stream of attachment that are going to be sent.   */
     javax.mail.internet.MimeMultipart multipart = null;
     DimeMultiPart dimemultipart = null;
 

@@ -216,6 +216,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
             do {
                 contentId = null;
+                contentLocation = null;
                 contentTransferEncoding = null;
 
                 // Read this attachments headers from the stream.
