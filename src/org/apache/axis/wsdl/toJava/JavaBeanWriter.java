@@ -267,12 +267,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                     variableName = Constants.ANYCONTENT;
                     isAny = true;
                 } else {
-                    String elemName = elem.getName().getLocalPart();
-                    int anonymousDelimitorIndex = elemName.lastIndexOf('>');
-                    if (anonymousDelimitorIndex > -1) {
-                        elemName = elemName.substring(anonymousDelimitorIndex + 1);
-                    }
-
+                    String elemName = Utils.getLastLocalPart(elem.getName().getLocalPart());
                     variableName = Utils.xmlNameToJava(elemName);
                 }
 
@@ -301,11 +296,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 TypeEntry attr = (TypeEntry) attributes.get(i);
                 String typeName = attr.getName();
                 QName xmlName = (QName) attributes.get(i + 1);
-                String attrName = xmlName.getLocalPart();
-                int anonymousDelimitorIndex = attrName.lastIndexOf('>');
-                if (anonymousDelimitorIndex > -1) {
-                    attrName = attrName.substring(anonymousDelimitorIndex + 1);
-                }
+                String attrName = Utils.getLastLocalPart(xmlName.getLocalPart());
                 String variableName =
                         Utils.xmlNameToJava(attrName);
 
@@ -495,15 +486,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (attributes != null) {
                 for (int j = 0; j < attributes.size(); j += 2) {
                     paramTypes.add(((TypeEntry) attributes.get(j)).getName());
-
-                    String name =
-                            ((QName) attributes.get(j + 1)).getLocalPart();
-
-                    int anonymousDelimitorIndex = name.lastIndexOf('>');
-                    if (anonymousDelimitorIndex > -1) {
-                        name = name.substring(anonymousDelimitorIndex + 1);
-                    }
-
+                    String name = Utils.getLastLocalPart(
+                            ((QName) attributes.get(j + 1)).getLocalPart());
                     paramNames.add(mangle + Utils.xmlNameToJava(name));
                 }
             }
@@ -516,13 +500,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (elements != null) {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
-
-                    String name = elem.getName().getLocalPart();
-                    int anonymousDelimitorIndex = name.lastIndexOf('>');
-                    if (anonymousDelimitorIndex > -1) {
-                        name = name.substring(anonymousDelimitorIndex + 1);
-                    }
-
+                    String name = Utils.getLastLocalPart(elem.getName().getLocalPart());
                     paramTypes.add(elem.getType().getName());
                     paramNames.add(
                             mangle
