@@ -76,7 +76,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
     public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
-    public static final QName XSD_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
+    public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName SOAP_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(Constants.URI_SOAP_ENC, "boolean");
@@ -155,8 +156,10 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         }
     }
 
-    private ArraySerializer arraySer = new ArraySerializer();
-    private BasicDeserializerFactory factory = new BasicDeserializerFactory();
+    private Serializer arraySer = new ArraySerializer();
+    private DeserializerFactory factory = new BasicDeserializerFactory();
+    private DeserializerFactory base64Ser = 
+       new Base64Serializer.Base64DeserializerFactory();
 
     /**
      * Alias common DeserializerFactories across the various popular schemas
@@ -227,7 +230,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, factory);
         
         addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
-        addDeserializersFor(XSD_BASE64, byte[].class, new Base64Serializer.Base64DeserializerFactory());
 
         // handle the various datetime QNames...
         addDeserializerFactory(
@@ -244,6 +246,10 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
           new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
           java.util.Date.class,
           new DateSerializer.DateDeserializerFactory());
+
+        // handle the various base64 QNames...
+        addDeserializerFactory(SOAP_BASE64, byte[].class, base64Ser);
+        addDeserializerFactory(XSD_BASE64, byte[].class, base64Ser);
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
