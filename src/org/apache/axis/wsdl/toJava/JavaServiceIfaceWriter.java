@@ -166,10 +166,10 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
             pw.println("    public String get" + portName + "Address();");
             pw.println();
             pw.println("    public " + bindingType + " get" + portName
-                    + "() throws javax.xml.rpc.DiscoveryException;");
+                    + "() throws " + javax.xml.rpc.ServiceException.class.getName() + ";");
             pw.println();
             pw.println("    public " + bindingType + " get" + portName
-                    + "(java.net.URL portAddress) throws javax.xml.rpc.DiscoveryException;");
+                    + "(java.net.URL portAddress) throws " + javax.xml.rpc.ServiceException.class.getName() + ";");
         }
     } // writeFileBody
 

@@ -341,8 +341,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         pw.print("            binding = new " + sEntry.getName());
         pw.println("Locator" + "().get" + portName + "();");
         pw.println("        }");
-        pw.println("        catch (javax.xml.rpc.DiscoveryException jre) {");
-        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPCDiscoveryExceptionn caught: \" + jre);");
+        pw.println("        catch (" + javax.xml.rpc.ServiceException.class.getName() + " jre) {");
+        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
 
         pw.println("        assertTrue(\"" +
