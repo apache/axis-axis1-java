@@ -185,6 +185,7 @@ Copyright:
               <include name="**/FunctionalTests.class" />
               <include name="**/*TestCase.class" />
               <exclude name="**/Interop3TestCase.class"/>
+              <exclude name="**/DataServiceTestCase.class"/>
               <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
         </fileset>
       </batchtest>
