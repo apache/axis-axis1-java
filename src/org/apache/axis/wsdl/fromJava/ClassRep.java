@@ -365,6 +365,7 @@ public class ClassRep extends BaseRep {
             Method method = cls.getDeclaredMethods()[i];
             int mod = method.getModifiers();
             if (Modifier.isPublic(mod) &&
+                method.getParameterTypes().length == 0 &&
                 (method.getName().startsWith("is") ||
                  method.getName().startsWith("get"))) {
                 String name = method.getName();
@@ -798,13 +799,14 @@ public class ClassRep extends BaseRep {
             else
                 getter = "get" + propName;
 
-            Method m = type.getDeclaredMethod(setter, new Class[] {int.class, type.getComponentType()});
+            Method m = cls.getDeclaredMethod(setter, new Class[] {int.class, type.getComponentType()});
             int mod = m.getModifiers();
             if (!Modifier.isPublic(mod)) {
                 return false;
             }
 
-            m = type.getDeclaredMethod(getter, new Class[] {int.class});
+            System.out.println("getter=" + setter);
+            m = cls.getDeclaredMethod(getter, new Class[] {int.class});
             mod = m.getModifiers();
             if (!Modifier.isPublic(mod)) {
                 return false;
@@ -813,6 +815,7 @@ public class ClassRep extends BaseRep {
         catch (NoSuchMethodException ex) {
             return false;
         }
+        System.out.println("indexed property");
         return true;
     }
 };

@@ -92,7 +92,7 @@ public class BondInvestment implements java.io.Serializable {
     private Double wrapperDouble;
     public Byte[] wrapperByteArray;
     public Short[] wrapperShortArray;
-    public CallOptions[] options;
+    private CallOptions[] options;
 
     public BondInvestment() {
 
@@ -167,4 +167,30 @@ public class BondInvestment implements java.io.Serializable {
     public static java.lang.String[] getAttributeElements() {
         return _attrs;
     }
+ 
+    public CallOptions getOptions(int i) {
+        return options[i];
+    }
+
+    public void setOptions(int i, CallOptions value) {
+        if (options == null ||
+            options.length <= i) {
+            CallOptions[] a = new CallOptions[i + 1];
+            if (options != null) {
+                for(int j=0; j<options.length; j++)
+                    a[j] = options[j];
+            }
+            options = a;
+        }
+        options[i] = value;
+    }
+
+    public CallOptions[] getOptions() {
+        return options;
+    }
+
+    public void setOptions(CallOptions[] options) {
+        this.options = options;
+    }
+
 } // BondInvestment 
