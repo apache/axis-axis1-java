@@ -243,23 +243,32 @@ public class TypeMappingRegistry implements Serializer {
         throws IOException
     {
         if (value != null) {
-            Vector classes = new Vector();
-            classes.add( value.getClass() );
-    
-            while( classes.size() != 0 ) {
-                Class _class = (Class) classes.remove( 0 );
-                Serializer ser = getSerializer(_class);
-                if ( ser != null ) {
-                    QName type = getTypeQName(_class);
-                    attributes = setTypeAttribute(attributes, type, context);
-                    ser.serialize(name, attributes, value, context);
-                    return;
+            Serializer  ser     = null ;
+            Class       _class  = null ;
+
+            // Check the most common case first
+            ser = getSerializer( _class = value.getClass() );
+            if ( ser == null ) {
+                Vector  classes = new Vector();
+                classes.add( _class );
+        
+                while( classes.size() != 0 ) {
+                    _class = (Class) classes.remove( 0 );
+                    if ( (ser = getSerializer(_class)) != null ) break ;
+                    if ( classes == null ) classes = new Vector();
+                    Class[] ifaces = _class.getInterfaces();
+                    for (int i = 0 ; i < ifaces.length ; i++ ) 
+                        classes.add( ifaces[i] );
+                    _class = _class.getSuperclass();
+                    if ( _class != null ) classes.add( _class );
                 }
-                Class[] ifaces = _class.getInterfaces();
-                for (int i = 0 ; i < ifaces.length ; i++ ) 
-                    classes.add( ifaces[i] );
-                _class = _class.getSuperclass();
-                if ( _class != null ) classes.add( _class );
+            }
+
+            if ( ser != null ) {
+                QName type = getTypeQName(_class);
+                attributes = setTypeAttribute(attributes, type, context);
+                ser.serialize(name, attributes, value, context);
+                return;
             }
 
             throw new IOException(JavaUtils.getMessage("noSerializer00",
