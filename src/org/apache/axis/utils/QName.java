@@ -55,6 +55,8 @@
 
 package org.apache.axis.utils ;
 
+import org.w3c.dom.Element;
+
 /**
  * @author Doug Davis (dug@us.ibm.com)
  * @author James Snell (jasnell@us.ibm.com)
@@ -69,7 +71,23 @@ public class QName {
         setNamespaceURI(namespaceURI);
         setLocalPart(localPart);
     }
-  
+    
+    public QName(String qName, Element element) {
+        if (qName != null){            
+            int i = qName.indexOf(":");
+            if (i < 0) {
+                setLocalPart(qName);
+                setNamespaceURI(null);
+            } else {
+                String prefix = qName.substring(0,i);
+                String local = qName.substring(i+1);
+                setLocalPart(local);
+                setNamespaceURI(XMLUtils.getNamespace(prefix, element));
+            }
+        }
+    }
+    
+    
     public void setNamespaceURI(String namespaceURI) {
         this.namespaceURI = namespaceURI ;
     };
@@ -87,7 +105,11 @@ public class QName {
     };
     
     public String toString() {
-        return namespaceURI + ":" + localPart;
+        if (namespaceURI == null) {
+            return localPart;
+        } else {
+            return namespaceURI + ":" + localPart;
+        }
     };
     
     public boolean equals(Object p1) {
