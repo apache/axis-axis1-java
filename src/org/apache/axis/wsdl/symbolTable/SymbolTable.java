@@ -106,6 +106,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -139,8 +140,20 @@ public class SymbolTable {
 
     private HashMap symbolTable = new HashMap();
 
-    // A list of the TypeEntry elements in the symbol table
-    private Vector types = new Vector();
+    // a map of qnames -> Elements in the symbol table
+    private final Map elementTypeEntries = new HashMap();
+    // an unmodifiable wrapper so that we can share the index with others, safely
+    private final Map elementIndex = Collections.unmodifiableMap(elementTypeEntries);
+    // a map of qnames -> Types in the symbol table
+    private final Map typeTypeEntries = new HashMap();
+    // an unmodifiable wrapper so that we can share the index with others, safely
+    private final Map typeIndex = Collections.unmodifiableMap(typeTypeEntries);
+
+    /** cache of nodes -> base types for complexTypes.  The cache is
+     * built on nodes because multiple TypeEntry objects may use the
+     * same node.
+     */
+    protected final Map node2ExtensionBase = new HashMap(); // allow friendly access
 
     private boolean verbose;
 
@@ -215,30 +228,19 @@ public class SymbolTable {
     } // getTypeEntry
 
     /**
-     * Get the Type TypeEntry with the given QName.  If it doesn't exist, return null.
+     * Get the Type TypeEntry with the given QName.  If it doesn't
+     * exist, return null.
      */
     public Type getType(QName qname) {
-        for (int i = 0; i < types.size(); ++i) {
-            TypeEntry type = (TypeEntry) types.get(i);
-            if (type.getQName().equals(qname)
-                    && (type instanceof Type)) {
-                return (Type) type;
-            }
-        }
-        return null;
+        return (Type)typeTypeEntries.get(qname);
     } // getType
 
     /**
-     * Get the Element TypeEntry with the given QName.  If it doesn't exist, return null.
+     * Get the Element TypeEntry with the given QName.  If it doesn't
+     * exist, return null.
      */
     public Element getElement(QName qname) {
-        for (int i = 0; i < types.size(); ++i) {
-            TypeEntry type = (TypeEntry) types.get(i);
-            if (type.getQName().equals(qname) && type instanceof Element) {
-                return (Element) type;
-            }
-        }
-        return null;
+        return (Element)elementTypeEntries.get(qname);
     } // getElement
 
     /**
@@ -272,11 +274,45 @@ public class SymbolTable {
     /**
      * Get the list of all the XML schema types in the symbol table.  In other words, all entries
      * that are instances of TypeEntry.
+     *
+     * @deprecated use specialized get{Element,Type}Index() methods instead
      */
     public Vector getTypes() {
-        return types;
+        Vector v = new Vector();
+        v.addAll(elementTypeEntries.values());
+        v.addAll(typeTypeEntries.values());
+        return v;
     } // getTypes
 
+    /**
+     * Return an unmodifiable map of qnames -> Elements in the symbol
+     * table.
+     *
+     * @return an unmodifiable <code>Map</code> value
+     */
+    public Map getElementIndex() {
+        return elementIndex;
+    }
+
+    /**
+     * Return an unmodifiable map of qnames -> Elements in the symbol
+     * table.
+     *
+     * @return an unmodifiable <code>Map</code> value
+     */
+    public Map getTypeIndex() {
+        return typeIndex;
+    }
+
+    /**
+     * Return the count of TypeEntries in the symbol table.
+     *
+     * @return an <code>int</code> value
+     */
+    public int getTypeEntryCount() {
+        return elementTypeEntries.size() + typeTypeEntries.size();
+    }
+    
     /**
      * Get the Definition.  The definition is null until
      * populate is called.
@@ -1931,9 +1967,13 @@ public class SymbolTable {
                 if (stuff.isEmpty()) {
                     stuff = def.getMessages();
                     if (stuff.isEmpty()) {
-                        for (int i = 0; i < types.size(); ++i) {
-                            TypeEntry type = (TypeEntry) types.get(i);
-                            setTypeReferences(type, doc, false);
+                        for (Iterator i = elementTypeEntries.values().iterator();
+                             i.hasNext();) {
+                            setTypeReferences((TypeEntry)i.next(), doc, false);
+                        }
+                        for (Iterator i = typeTypeEntries.values().iterator();
+                             i.hasNext();) {
+                            setTypeReferences((TypeEntry)i.next(), doc, false);
                         }
                     }
                     else {
@@ -2264,12 +2304,8 @@ public class SymbolTable {
                         // Replace it in the symbol table
                         v.setElementAt(entry, i);
 
-                        // Replace it in the types Vector
-                        for (int j = 0; j < types.size(); ++j) {
-                            if (types.elementAt(j) == oldEntry) {
-                                types.setElementAt(entry, j);
-                            }
-                        }
+                        // Replace it in the types index
+                        typeTypeEntries.put(name, entry);
 
                         // Update all of the entries that refer to the unknown type
                         ((UndefinedType)oldEntry).update((Type)entry);
@@ -2289,12 +2325,8 @@ public class SymbolTable {
                         // Replace it in the symbol table
                         v.setElementAt(entry, i);
 
-                        // Replace it in the types Vector
-                        for (int j = 0; j < types.size(); ++j) {
-                            if (types.elementAt(j) == oldEntry) {
-                                types.setElementAt(entry, j);
-                            }
-                        }
+                        // Replace it in the elements index
+                        elementTypeEntries.put(name, entry);
 
                         // Update all of the entries that refer to the unknown type
                         ((Undefined)oldEntry).update((Element)entry);
@@ -2309,8 +2341,12 @@ public class SymbolTable {
                     symbolTable.put(name, v);
                 }
                 v.add(entry);
-                if (entry instanceof TypeEntry) {
-                    types.add(entry);
+                // add TypeEntries to specialized indices for
+                // fast lookups during reference resolution.
+                if (entry instanceof Element) {
+                    elementTypeEntries.put(name, entry);
+                } else if (entry instanceof Type) {
+                    typeTypeEntries.put(name, entry);
                 }
             }
         }

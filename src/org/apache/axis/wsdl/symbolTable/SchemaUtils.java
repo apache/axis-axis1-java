@@ -61,6 +61,9 @@ import org.w3c.dom.NodeList;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -70,6 +73,8 @@ import java.util.Vector;
  */
 public class SchemaUtils {
 
+    static final QName VALUE_QNAME = Utils.findQName("", "value");
+    
     /**
      * If the specified node represents a supported JAX-RPC complexType or 
      * simpleType, a Vector is returned which contains ElementDecls for the 
@@ -89,53 +94,41 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType")) {
+                    node = kid;
+                    break;
                 }
             }
         }
 
         // Expecting a schema complexType or simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "complexType")) {
             // Under the complexType there could be complexContent/simpleContent
             // and extension elements if this is a derived type.  Skip over these.
             NodeList children = node.getChildNodes();
             Node complexContent = null;
             Node simpleContent = null;
             Node extension = null;
-            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
-                QName complexContentKind = Utils.getNodeQName(children.item(j));
-                if (complexContentKind != null &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
-                    if (complexContentKind.getLocalPart().equals("complexContent") )
-                        complexContent = children.item(j);
-                    else if (complexContentKind.getLocalPart().equals("simpleContent"))
-                        simpleContent = children.item(j);
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent")) {
+                    complexContent = kid;
+                    break;      // REMIND: should this be here or on either branch?
+                } else if (isXSDNode(kid, "simpleContent")) {
+                    simpleContent = kid;
                 }
             }
             if (complexContent != null) {
                 children = complexContent.getChildNodes();
                 for (int j = 0; j < children.getLength() && extension == null; j++) {
-                    QName extensionKind = Utils.getNodeQName(children.item(j));
-                    if (extensionKind != null &&
-                        extensionKind.getLocalPart().equals("extension") &&
-                        Constants.isSchemaXSD(extensionKind.getNamespaceURI()))
-                        extension = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "extension")) { 
+                        extension = kid;
+                    }
                 }
             }
             if (simpleContent != null) {
@@ -156,11 +149,10 @@ public class SchemaUtils {
                         Vector v = new Vector();
                         ElementDecl elem = new ElementDecl();
                         elem.setType(symbolTable.getTypeEntry(extendsOrRestrictsType, false));
-                        elem.setName(new javax.xml.namespace.QName("", "value"));
+                        elem.setName(VALUE_QNAME);
                         v.add(elem);
                         return v;
                     }
-                        
                 }
             }
 
@@ -260,7 +252,7 @@ public class SchemaUtils {
                     // serializer.
                     TypeEntry type = symbolTable.getType(Constants.XSD_ANY);
                     ElementDecl elem = 
-                        new ElementDecl(type, new QName("","any"));
+                        new ElementDecl(type, Utils.findQName("","any"));
                     elem.setAnyElement(true);
                     v.add(elem);
                 } else if (subNodeKind.getLocalPart().equals("element")) {
@@ -308,15 +300,11 @@ public class SchemaUtils {
         Vector v = new Vector();
         NodeList children = allNode.getChildNodes();
         for (int j = 0; j < children.getLength(); j++) {
-            QName subNodeKind = Utils.getNodeQName(children.item(j));
-            if (subNodeKind != null &&
-                Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
-                if (subNodeKind.getLocalPart().equals("element")) {
-                    ElementDecl elem = 
-                            processChildElementNode(children.item(j), 
-                                                    symbolTable);
-                    if (elem != null)
-                        v.add(elem);
+            Node kid = children.item(j);
+            if (isXSDNode(kid, "element")) {
+                ElementDecl elem = processChildElementNode(kid,symbolTable);
+                if (elem != null) {
+                    v.add(elem);
                 }
             }
         }
@@ -354,14 +342,14 @@ public class SchemaUtils {
             String form = Utils.getAttribute(elementNode, "form");
             if (form != null && form.equals("unqualified")) {
                 // Unqualified nodeName
-                nodeName = new QName("", nodeName.getLocalPart());            
+                nodeName = Utils.findQName("", nodeName.getLocalPart());            
             } else if (form == null) {
                 // check elementForDefault on schema element
                 String def = Utils.getScopedAttribute(elementNode, 
                                                       "elementFormDefault");
                 if (def == null || def.equals("unqualified")) {
                     // Unqualified nodeName
-                    nodeName = new QName("", nodeName.getLocalPart());            
+                    nodeName = Utils.findQName("", nodeName.getLocalPart());            
                 }
             }
         }
@@ -383,18 +371,12 @@ public class SchemaUtils {
      * or null.
      */
     public static QName getElementAnonQName(Node node) {
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
             for (int j = 0; j < children.getLength(); j++) {
-                QName kind = Utils.getNodeQName(children.item(j));
-                if (kind != null &&
-                    (kind.getLocalPart().equals("complexType") ||
-                     kind.getLocalPart().equals("simpleType")) &&
-                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                    return Utils.getNodeNameQName(children.item(j));
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType") || isXSDNode(kid, "simpleType")) {
+                    return Utils.getNodeNameQName(kid);
                 }
             }
         }
@@ -406,18 +388,12 @@ public class SchemaUtils {
      * or null.
      */
     public static QName getAttributeAnonQName(Node node) {
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("attribute") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "attribute")) {
             NodeList children = node.getChildNodes();
             for (int j = 0; j < children.getLength(); j++) {
-                QName kind = Utils.getNodeQName(children.item(j));
-                if (kind != null &&
-                    (kind.getLocalPart().equals("complexType") ||
-                     kind.getLocalPart().equals("simpleType")) &&
-                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                    return Utils.getNodeNameQName(children.item(j));
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType") || isXSDNode(kid, "simpleType")) {
+                    return Utils.getNodeNameQName(kid);
                 }
             }
         }
@@ -433,53 +409,37 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName kind = Utils.getNodeQName(children.item(j));
-                if (kind != null &&
-                    kind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
-                }
-                if (kind != null &&
-                    kind.getLocalPart().equals("simpleType") &&
-                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType")) {
+                    node = kid;
+                    break;
+                } else if (isXSDNode(kid, "simpleType")) { 
                     return true;
                 }
             }
         }
 
         // Expecting a schema complexType or simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("simpleType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "simpleType")) {
             return true;
         }
 
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "complexType")) {
             // Under the complexType there could be complexContent/simpleContent
             // and extension elements if this is a derived type.  Skip over these.
             NodeList children = node.getChildNodes();
             Node complexContent = null;
             Node simpleContent = null;
-            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
-                QName complexContentKind = Utils.getNodeQName(children.item(j));
-                if (complexContentKind != null &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
-                    if (complexContentKind.getLocalPart().equals("complexContent") )
-                        complexContent = children.item(j);
-                    else if (complexContentKind.getLocalPart().equals("simpleContent"))
-                        simpleContent = children.item(j);
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent")) {
+                    complexContent = kid;
+                    break;
+                } else if (isXSDNode(kid, "simpleContent")) {
+                    simpleContent = kid;
                 }
             }
             if (complexContent != null) {
@@ -493,6 +453,26 @@ public class SchemaUtils {
     }
 
     /**
+     * Test whether <tt>node</tt> is not null, belongs to the XML
+     * Schema namespace, and has a localName that matches
+     * <tt>schemaLocalName</tt>
+     *
+     * This can be used to determine that a given Node defines a
+     * schema "complexType" "element" and so forth.
+     *
+     * @param node a <code>Node</code> value
+     * @param schemaLocalName a <code>String</code> value
+     * @return true if the node is matches the name in the schema namespace.
+     */
+    private static boolean isXSDNode(Node node, String schemaLocalName) {
+        if ((node != null) && Constants.isSchemaXSD(node.getNamespaceURI())) {
+            String localName = node.getLocalName();
+            return ((localName != null) && localName.equals(schemaLocalName));
+        }
+        return false;
+    }
+
+    /**
      * If the specified node represents a supported JAX-RPC complexType/element
      * which extends another complexType.  The Type of the base is returned.
      */
@@ -501,18 +481,17 @@ public class SchemaUtils {
             return null;
         }
 
+        TypeEntry cached = (TypeEntry)symbolTable.node2ExtensionBase.get(node);
+        if (cached != null) {
+            return cached;      // cache hit
+        }
+
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
             Node complexNode = null;
             for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
+                if (isXSDNode(children.item(j), "complexType")) {
                     complexNode = children.item(j);
                     node = complexNode;
                 }
@@ -520,10 +499,7 @@ public class SchemaUtils {
         }
 
         // Expecting a schema complexType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "complexType")) {
 
             // Under the complexType there could be should be a complexContent &
             // extension elements if this is a derived type. 
@@ -531,39 +507,35 @@ public class SchemaUtils {
             Node content = null;
             Node extension = null;
             for (int j = 0; j < children.getLength() && content == null; j++) {
-                QName contentKind = Utils.getNodeQName(children.item(j));
-                if (contentKind != null &&
-                    contentKind.getLocalPart().equals("complexContent") &&
-                    Constants.isSchemaXSD(contentKind.getNamespaceURI()))
-                    content = children.item(j);
-                if (contentKind != null &&
-                    contentKind.getLocalPart().equals("simpleContent") &&
-                    Constants.isSchemaXSD(contentKind.getNamespaceURI()))
-                    content = children.item(j);
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent") || isXSDNode(kid, "simpleContent")) {
+                    content = kid;
+                }
             }
             if (content != null) {
                 children = content.getChildNodes();
                 for (int j = 0; j < children.getLength() && extension == null; j++) {
-                    QName extensionKind = Utils.getNodeQName(children.item(j));
-                    if (extensionKind != null &&
-                        extensionKind.getLocalPart().equals("extension") &&
-                        Constants.isSchemaXSD(extensionKind.getNamespaceURI()))
-                        extension = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "extension")) {
+                        extension = kid;
+                    }
                 }
             }
             if (extension == null) {
-                return null;  // No extension                               
+                cached = null;
+            } else {
+                // Get the QName of the extension base
+                QName extendsType = Utils.getTypeQName(extension, new BooleanHolder(), false);
+                if (extendsType == null) {
+                    cached = null;
+                } else {
+                    // Return associated Type
+                    cached = symbolTable.getType(extendsType);
+                }
             }
-
-            // Get the QName of the extension base
-            QName extendsType = Utils.getTypeQName(extension, new BooleanHolder(), false);
-            if (extendsType == null) {
-                return null; // No extension base
-            }
-            // Return associated Type
-            return symbolTable.getType(extendsType);
         }
-        return null;
+        symbolTable.node2ExtensionBase.put(node, cached);
+        return cached;
     }
 
     /**
@@ -579,37 +551,25 @@ public class SchemaUtils {
 
         // If the node kind is an element, dive into it.
         QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node simpleNode = null;
-            for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
-                QName simpleKind = Utils.getNodeQName(children.item(j));
-                if (simpleKind != null &&
-                    simpleKind.getLocalPart().equals("simpleType") &&
-                    Constants.isSchemaXSD(simpleKind.getNamespaceURI())) {
-                    simpleNode = children.item(j);
-                    node = simpleNode;
+            for (int j = 0; j < children.getLength(); j++) {
+                if (isXSDNode(children.item(j), "simpleType")) {
+                    node = children.item(j);
+                    break;
                 }
             }
         }
         // Get the node kind, expecting a schema simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("simpleType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "simpleType")) {
             // Under the simpleType there should be a restriction.
             // (There may be other #text nodes, which we will ignore).
             NodeList children = node.getChildNodes();
             Node restrictionNode = null;
             for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
-                QName restrictionKind = Utils.getNodeQName(children.item(j));
-                if (restrictionKind != null &&
-                    restrictionKind.getLocalPart().equals("restriction") &&
-                    Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
+                if (isXSDNode(children.item(j), "restriction")) {
                     restrictionNode = children.item(j);
+                }
             }
 
             // The restriction node indicates the type being restricted
@@ -623,11 +583,7 @@ public class SchemaUtils {
             if (baseQName != null && restrictionNode != null) {
                 NodeList enums = restrictionNode.getChildNodes();
                 for (int i=0; i < enums.getLength(); i++) {
-                    QName enumKind = Utils.getNodeQName(enums.item(i));
-                    if (enumKind != null &&
-                        enumKind.getLocalPart().equals("enumeration") &&
-                        Constants.isSchemaXSD(enumKind.getNamespaceURI())) {
-                        
+                    if (isXSDNode(enums.item(i), "enumeration")) {
                         // Found an enumeration, this isn't a 
                         // 'normal' simple type.
                         return null;
@@ -649,42 +605,28 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
             Node node2 = null;
-            for (int j = 0; j < children.getLength() && node2 == null; j++) {
-                QName kind2 = Utils.getNodeQName(children.item(j));
-                if (kind2 != null &&
-                    (kind2.getLocalPart().equals("simpleType") ||
-                     kind2.getLocalPart().equals("complexType") ||
-                     kind2.getLocalPart().equals("simpleContent")) &&
-                    Constants.isSchemaXSD(kind2.getNamespaceURI())) {
-                    node2 = children.item(j);
-                    node = node2;
+            for (int j = 0; j < children.getLength(); j++) {
+                Node n = children.item(j);
+                if (isXSDNode(n, "simpleType") || isXSDNode(n, "complexType") || isXSDNode(n, "simpleContent")) {
+                    node = n;
+                    break;
                 }
             }
         }
         // Get the node kind, expecting a schema simpleType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            (nodeKind.getLocalPart().equals("simpleType") ||
-             nodeKind.getLocalPart().equals("complexType")) &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "simpleType") || isXSDNode(node, "complexType")) {
             // Under the complexType there could be a complexContent.
             NodeList children = node.getChildNodes();
             Node complexContent = null;
-            if (nodeKind.getLocalPart().equals("complexType")) {
+            if (node.getLocalName().equals("complexType")) {
                 for (int j = 0; j < children.getLength() && complexContent == null; j++) {
-                    QName complexContentKind = Utils.getNodeQName(children.item(j));
-                    if (complexContentKind != null &&
-                        (complexContentKind.getLocalPart().equals("complexContent") ||
-                         complexContentKind.getLocalPart().equals("simpleContent"))&&
-                        Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
-                        complexContent = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "complexContent") || isXSDNode(kid, "simpleContent")) {
+                        complexContent = kid;
+                    }
                 }
                 node = complexContent;
             }
@@ -692,12 +634,10 @@ public class SchemaUtils {
             if (node != null) {
                 children = node.getChildNodes();
                 for (int j = 0; j < children.getLength() && re == null; j++) {
-                    QName reKind = Utils.getNodeQName(children.item(j));
-                    if (reKind != null &&
-                        (reKind.getLocalPart().equals("extension") ||
-                         reKind.getLocalPart().equals("restriction")) &&
-                        Constants.isSchemaXSD(reKind.getNamespaceURI()))
-                        re = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "extension") || isXSDNode(kid, "restriction")) {
+                        re = kid;
+                    }
                 }
             }
         }
@@ -738,11 +678,7 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive get its type.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "element")) {
             // Compare the componentQName with the name of the
             // full name.  If different, return componentQName
             BooleanHolder forElement = new BooleanHolder();
@@ -793,39 +729,29 @@ public class SchemaUtils {
         }
 
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType")) {
+                    node = kid;
+                    break;
                 }
             }
         }
-        // Get the node kind, expecting a schema complexType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
+        // Get the node kind, expecting a schema complexType
+        if (isXSDNode(node, "complexType")) {
             // Under the complexType there should be a complexContent.
             // (There may be other #text nodes, which we will ignore).
             NodeList children = node.getChildNodes();
             Node complexContentNode = null;
-            for (int j = 0; j < children.getLength() && complexContentNode == null; j++) {
-                QName complexContentKind = Utils.getNodeQName(children.item(j));
-                if (complexContentKind != null &&
-                    (complexContentKind.getLocalPart().equals("complexContent") ||
-                    complexContentKind.getLocalPart().equals("simpleContent")) &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
-                    complexContentNode = children.item(j);
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent") || isXSDNode(kid, "simpleContent")) {
+                    complexContentNode = kid;
+                    break;
+                }
             }
 
             // Under the complexContent there should be a restriction.
@@ -833,12 +759,12 @@ public class SchemaUtils {
             Node restrictionNode = null;
             if (complexContentNode != null) {
                 children = complexContentNode.getChildNodes();
-                for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
-                    QName restrictionKind = Utils.getNodeQName(children.item(j));
-                    if (restrictionKind != null &&
-                        restrictionKind.getLocalPart().equals("restriction") &&
-                        Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
-                        restrictionNode = children.item(j);
+                for (int j = 0; j < children.getLength(); j++) {
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "restriction")) {
+                        restrictionNode = kid;
+                        break;
+                    }
                 }
             }
 
@@ -864,12 +790,9 @@ public class SchemaUtils {
                 for (int j = 0;
                      j < children.getLength() && groupNode == null && attributeNode == null;
                      j++) {
-                    QName kind = Utils.getNodeQName(children.item(j));
-                    if (kind != null &&
-                        (kind.getLocalPart().equals("sequence") ||
-                         kind.getLocalPart().equals("all")) &&
-                        Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                        groupNode = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "sequence") || isXSDNode(kid, "all")) {
+                        groupNode = kid;
                         if (groupNode.getChildNodes().getLength() == 0) {
                             // This covers the rather odd but legal empty sequence.
                             // <complexType name="ArrayOfString">
@@ -883,18 +806,16 @@ public class SchemaUtils {
                             groupNode = null;
                         }
                     }
-                    if (kind != null &&
-                        kind.getLocalPart().equals("attribute") &&
-                        Constants.isSchemaXSD(kind.getNamespaceURI())) {
+                    if (isXSDNode(kid, "attribute")) {
                         // If the attribute node does not have ref="soapenc:arrayType"
                         // then keep looking.
                         BooleanHolder isRef = new BooleanHolder();
-                        QName refQName = Utils.getTypeQName(children.item(j), isRef, false);
+                        QName refQName = Utils.getTypeQName(kid, isRef, false);
                         if (refQName != null &&
                             isRef.value &&
                             refQName.getLocalPart().equals("arrayType") &&
                             Constants.isSOAP_ENC(refQName.getNamespaceURI())) {
-                            attributeNode = children.item(j);
+                            attributeNode = kid;
                         }
                     }
                 }
@@ -938,11 +859,10 @@ public class SchemaUtils {
                 NodeList elements = groupNode.getChildNodes();
                 Node elementNode = null;
                 for (int i=0; i < elements.getLength() && elementNode == null; i++) {
-                    QName elementKind = Utils.getNodeQName(elements.item(i));
-                    if (elementKind != null &&
-                        elementKind.getLocalPart().equals("element") &&
-                        Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
+                    Node kid = elements.item(i);
+                    if (isXSDNode(kid, "element")) {
                         elementNode = elements.item(i);
+                        break;
                     }
                 }
                  
@@ -989,70 +909,49 @@ public class SchemaUtils {
         }
         // Check for SimpleContent
         // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+        if (isXSDNode(node, "element")) {
             NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexType")) {
+                    node = kid;
+                    break;
                 }
             }
         }
 
         // Expecting a schema complexType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
+        if (isXSDNode(node, "complexType")) {
             // Under the complexType there could be complexContent/simpleContent
             // and extension elements if this is a derived type.  Skip over these.
             NodeList children = node.getChildNodes();
             Node content = null;
-            Node extension = null;
-            for (int j = 0; j < children.getLength() && content == null; j++) {
-                QName complexContentKind = Utils.getNodeQName(children.item(j));
-                if (complexContentKind != null &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
-                    if (complexContentKind.getLocalPart().equals("complexContent") ||
-                        complexContentKind.getLocalPart().equals("simpleContent")) {
-                        content = children.item(j);
-                    }
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent") || isXSDNode(kid, "simpleContent")) {
+                    content = kid;
+                    break;
                 }
             }
             // Check for extensions
             if (content != null) {
                 children = content.getChildNodes();
                 for (int j = 0; j < children.getLength(); j++) {
-                    QName extensionKind = Utils.getNodeQName(children.item(j));
-                    if (extensionKind != null &&
-                            extensionKind.getLocalPart().equals("extension") &&
-                            Constants.isSchemaXSD(extensionKind.getNamespaceURI())) {
-                        extension = children.item(j);
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "extension")) {
+                        node = kid;
                         break;
                     }
                 }
-            }
-            
-            if (extension != null) {
-                node = extension;
             }
             
             // examine children of the node for <attribute> elements
             children = node.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
-                nodeKind = Utils.getNodeQName(child);
-                if (nodeKind == null ||
-                        ! nodeKind.getLocalPart().equals("attribute"))
+                if (! isXSDNode(child, "attribute")) {
                     continue;
+                }
                 
                 // we have an attribute node
                 if (v == null)
@@ -1076,14 +975,14 @@ public class SchemaUtils {
                     String form = Utils.getAttribute(child, "form");
                     if (form != null && form.equals("unqualified")) {
                         // Unqualified nodeName
-                        attributeName = new QName("", attributeName.getLocalPart());            
+                        attributeName = Utils.findQName("", attributeName.getLocalPart());            
                     } else if (form == null) {
                         // check attributeFormDefault on schema element
                         String def = Utils.getScopedAttribute(child, 
                                                               "attributeFormDefault");
                         if (def == null || def.equals("unqualified")) {
                             // Unqualified nodeName
-                            attributeName = new QName("", attributeName.getLocalPart());            
+                            attributeName = Utils.findQName("", attributeName.getLocalPart());            
                         }
                     }
                 } else {
@@ -1152,6 +1051,8 @@ public class SchemaUtils {
         "NMTOKEN",
         "NMTOKENS"
     };
+
+    private static final Set schemaTypeSet = new HashSet(Arrays.asList(schemaTypes));
     
     /**
      * Determine if a string is a simple XML Schema type 
@@ -1159,14 +1060,8 @@ public class SchemaUtils {
     private static boolean isSimpleSchemaType(String s) {
         if (s == null)
             return false;
-        
-        // This is rather expensive.  Probably should be
-        // a hash lookup.  
-        for (int i = 0; i < schemaTypes.length; i++) {
-            if (schemaTypes[i].equals(s))
-                return true;
-        }
-        return false;
+
+        return schemaTypeSet.contains(s);
     }
     /**
      * Determine if a QName is a simple XML Schema type 
