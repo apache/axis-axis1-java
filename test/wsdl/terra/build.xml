@@ -59,7 +59,7 @@ Copyright:
                verbose="no"
                serverSide="no"
                testcase="no">
-        <mapping namespace="http://terraservice.net/terraserver/" package="test.wsdl.terra"/>
+        <mapping namespace="http://terraserver-usa.com/terraserver/" package="test.wsdl.terra"/>
     </wsdl2java>
 
     <!-- online version of the WSDL 
