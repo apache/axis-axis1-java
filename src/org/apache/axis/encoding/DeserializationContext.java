@@ -200,7 +200,8 @@ public class DeserializationContext
     public DeserializerBase getDeserializer(QName qName)
     {
         DeserializerBase dSer = getTypeMappingRegistry().getDeserializer(qName);
-        dSer.setDeserializationContext(this);
+        if (dSer != null)
+            dSer.setDeserializationContext(this);
         return dSer;
     }
 }

@@ -59,6 +59,7 @@ import org.apache.axis.*;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.*;
 import org.xml.sax.*;
+import org.xml.sax.helpers.AttributesImpl;
 import java.lang.reflect.Array;
 import java.io.IOException;
 
@@ -194,6 +195,43 @@ public class ArraySerializer extends DeserializerBase
                           Object value, SerializationContext context)
         throws IOException
     {
-        throw new IOException("Can't serialize Arrays just yet...");
+        if (value == null)
+            throw new IOException("Can't serialize null Arrays just yet...");
+    
+        Class cls = value.getClass();
+        if (!cls.isArray())
+            throw new IOException("Can't seialize a " + cls.getName() +
+                                  " with the ArraySerializer!");
+        
+        Class componentType = cls.getComponentType();
+        QName componentQName = context.getQNameForClass(componentType);
+        if (componentQName == null)
+            throw new IOException("No mapped schema type for " + componentType.getName());
+        String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
+        String arrayType = prefix + ":" + componentQName.getLocalPart();
+        int len = Array.getLength(value);
+        
+        arrayType += "[" + len + "]";
+        
+        Attributes attrs = attributes;
+        
+        if (attributes.getIndex(Constants.URI_SOAP_ENC,
+                                Constants.ATTR_ARRAY_TYPE) == -1) {
+            context.registerPrefixForURI("SOAP-ENC", Constants.URI_SOAP_ENC);
+            AttributesImpl attrImpl = new AttributesImpl(attributes);
+            attrImpl.addAttribute(Constants.URI_SOAP_ENC, 
+                                  Constants.ATTR_ARRAY_TYPE,
+                                  "SOAP-ENC:arrayType",
+                                  "CDATA",
+                                  arrayType);
+            attrs = attrImpl;
+        }
+        
+        context.startElement(name, attrs);
+        
+        for (int index = 0; index < len; index++)
+            context.serialize(new QName("","item"), null, Array.get(value, index));
+        
+        context.endElement();
     }
 }
