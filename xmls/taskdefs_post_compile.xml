@@ -1,5 +1,5 @@
   <taskdef name="foreach" classname="org.apache.axis.tools.ant.foreach.ForeachTask">
-        <classpath refid="classpath"loaderref="axis" />
+        <classpath refid="classpath" loaderref="axis" />
   </taskdef>
 
   <taskdef name="runaxisfunctionaltests" classname="org.apache.axis.tools.ant.axis.RunAxisFunctionalTestsTask">
