@@ -293,11 +293,8 @@ public class JavaDeployWriter extends JavaWriter {
                 if (params != null) {
                     QName elementQName = null;
                     QName returnQName = null;
-                    Vector paramQNames = new Vector();
-                    Vector paramTypes = new Vector();
-                    Vector paramModes = new Vector();
 
-                    // Get the operation qname 
+                    // Get the operation qname
                     Input input = operation.getInput();
                     if (input != null) {
                         Map parts = input.getMessage().getParts();
@@ -315,42 +312,14 @@ public class JavaDeployWriter extends JavaWriter {
                             elementQName = null;
                         }
                     }
+
                     // Get the operation's return QName
                     if (params.returnName != null)
                         returnQName = Utils.getWSDLQName(params.returnName);
 
-                    Vector paramList = params.list;
-                    for (int i = 0; i < paramList.size(); i++) {
-                        Parameter param = (Parameter) paramList.elementAt(i);
-                        TypeEntry typeEntry = param.getType();
-
-                        QName paramQName = null;
-                        QName paramType = null;
-                        String paramMode = null;
-
-                        // Get the parameter type QName
-                        if (typeEntry instanceof DefinedElement) {
-                            paramType = typeEntry.getRefType().getQName();
-                        } else {
-                            paramType = typeEntry.getQName();
-                        }
-                        
-                        // Get the parameter name QName
-                        paramQName = param.getQName();
-                        if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
-                            paramQName = new QName("", param.getName());
-                        }
-
-                        // Get the parameter mode
-                        if (param.getMode() != Parameter.IN) {
-                            paramMode = getModeString(param.getMode());
-                        }
-                        paramQNames.add(paramQName);
-                        paramTypes.add(paramType);
-                        paramModes.add(paramMode);
-                    }
+                    // Write the operation metadata
                     writeOperation(javaOperName, elementQName, returnQName,
-                                   paramQNames, paramTypes, paramModes);
+                                   params);
                 }
             }
         }
@@ -377,41 +346,60 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Raw routine that writes out the operation and parameters.
      */
-    protected void writeOperation(String javaOperName, 
+    protected void writeOperation(String javaOperName,
                                   QName elementQName,
                                   QName returnQName,
-                                  Vector paramQNames,
-                                  Vector paramTypes,
-                                  Vector paramModes) {
+                                  Parameters params) {
         pw.print("      <operation name=\"" + javaOperName + "\"");
         if (elementQName != null) {
-            pw.print(" qname=\"" + Utils.genQNameAttributeString(elementQName, "operNS") + "\"");
+            pw.print(" qname=\"" +
+                     Utils.genQNameAttributeString(elementQName, "operNS") +
+                     "\"");
         }
         if (returnQName != null) {
-            pw.print(" returnQName=\"" + Utils.genQNameAttributeString(returnQName, "retNS") + "\"");
+            pw.print(" returnQName=\"" +
+                     Utils.genQNameAttributeString(returnQName, "retNS") +
+                     "\"");
         }
         pw.println(" >");
-        for (int i=0; i < paramQNames.size(); i++) {
-            QName paramQName = (QName) paramQNames.elementAt(i);
-            QName paramType = (QName) paramTypes.elementAt(i);
-            String paramMode = (String) paramModes.elementAt(i);
+
+        Vector paramList = params.list;
+        for (int i = 0; i < paramList.size(); i++) {
+            Parameter param = (Parameter) paramList.elementAt(i);
+            TypeEntry typeEntry = param.getType();
+
+            QName paramQName = null;
+            QName paramType = null;
+
+            // Get the parameter type QName
+            if (typeEntry instanceof DefinedElement) {
+                paramType = typeEntry.getRefType().getQName();
+            } else {
+                paramType = typeEntry.getQName();
+            }
+
+            // Get the parameter name QName
+            paramQName = param.getQName();
+
             pw.print("        <parameter");
-            if (paramQName == null || paramQName.getNamespaceURI().equals("")) {
-                pw.print(" name=\"" + paramQName.getLocalPart() + "\"" );
+            if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
+                pw.print(" name=\"" + param.getName() + "\"" );
             } else {
                 pw.print(" qname=\"" +
                          Utils.genQNameAttributeString(paramQName,
                                                        "pns") + "\"");
             }
+
             pw.print(" type=\"" +
                      Utils.genQNameAttributeString(paramType,
                                                    "tns") + "\"");
-            if (paramMode != null) {
-                pw.print(" mode=\"" + paramMode + "\"");
-            }            
+            // Get the parameter mode
+            if (param.getMode() != Parameter.IN) {
+                pw.print(" mode=\"" + getModeString(param.getMode()) + "\"");
+            }
             pw.println("/>");
-                
         }
+
         pw.println("      </operation>");
     }
 
