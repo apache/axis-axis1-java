@@ -57,6 +57,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Map;
+import java.util.HashMap;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -98,6 +100,13 @@ public class SOAPService extends SimpleTargetedChain
      */
     private ServiceDesc serviceDescription = new JavaServiceDesc();
     private AxisEngine engine;
+
+    /**
+     * A list of our active service objects (these can have lifetimes and
+     * be reaped)
+     */
+    public Map serviceObjects = new HashMap();
+    public int nextObjectID = 1;
 
     /**
      * List of sessions (for all services), key=serviceName, value=Service

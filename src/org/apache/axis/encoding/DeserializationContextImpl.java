@@ -469,7 +469,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             } catch (Exception e) {
             }
         }
+
         Deserializer dser = null;
+
+        QName type = getTypeMapping().getTypeQName(cls);
+        dser = getDeserializer(cls, type);
+        if (dser != null)
+            return dser;
+
         try {
             Method method = cls.getMethod(DESERIALIZER_METHOD, DESERIALIZER_CLASSES);
             if (method != null) {

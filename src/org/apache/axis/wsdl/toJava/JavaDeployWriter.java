@@ -214,17 +214,9 @@ public class JavaDeployWriter extends JavaWriter {
             // Note this same check is repeated in JavaStubWriter.
             boolean process = true;
 
-            // 1) Don't register types that are base (primitive) types.
-            // If the baseType != null && getRefType() != null this
-            // is a simpleType that must be registered.
-            // 2) Don't register the special types for collections
-            // (indexed properties) or element types
-            // 3) Don't register types that are not referenced
-            // or only referenced in a literal context.
-            if (((type.getBaseType() != null) && (type.getRefType() == null))
-                    || (type instanceof CollectionTE)
-                    || (type instanceof Element) || !type.isReferenced()
-                    || type.isOnlyLiteralReferenced()) {
+            // Don't register types we shouldn't (see Utils.shouldEmit for
+            // details)
+            if (!Utils.shouldEmit(type)) {
                 process = false;
             }
 

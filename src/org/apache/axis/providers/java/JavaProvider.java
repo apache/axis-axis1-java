@@ -16,13 +16,6 @@
 
 package org.apache.axis.providers.java;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.server.ServiceLifecycle;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -42,6 +35,12 @@ import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
 import org.xml.sax.SAXException;
+
+import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.server.ServiceLifecycle;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
@@ -103,21 +102,36 @@ public abstract class JavaProvider extends BasicProvider
             }
         } else if (scope == Scope.APPLICATION) {
             // MUST be AxisEngine here!
-            AxisEngine engine = msgContext.getAxisEngine();
-            Session appSession = engine.getApplicationSession();
-            if (appSession != null) {
-                return getSessionServiceObject(appSession, serviceName,
-                                               msgContext, clsName);
-            } else {
-                // was no application session - log an error and 
-                // treat as request scope
-                log.error(Messages.getMessage("noAppSession"));
-                scopeHolder.value = Scope.DEFAULT.getValue();
-                return getNewServiceObject(msgContext, clsName);
+            return getApplicationScopedObject(msgContext, serviceName, clsName, scopeHolder);
+        } else if (scope == Scope.FACTORY) {
+            String objectID = msgContext.getStrProp("objectID");
+            if (objectID == null) {
+                return getApplicationScopedObject(msgContext, serviceName, clsName, scopeHolder);
             }
+            SOAPService svc = (SOAPService)service;
+            Object ret = svc.serviceObjects.get(objectID);
+            if (ret == null) {
+                throw new AxisFault("NoSuchObject", null, null, null);
+            }
+            return ret;
+        }
+
+        // NOTREACHED
+        return null;
+    }
+
+    private Object getApplicationScopedObject(MessageContext msgContext, String serviceName, String clsName, IntHolder scopeHolder) throws Exception {
+        AxisEngine engine = msgContext.getAxisEngine();
+        Session appSession = engine.getApplicationSession();
+        if (appSession != null) {
+            return getSessionServiceObject(appSession, serviceName,
+                                           msgContext, clsName);
         } else {
-            // NOTREACHED
-            return null;
+            // was no application session - log an error and
+            // treat as request scope
+            log.error(Messages.getMessage("noAppSession"));
+            scopeHolder.value = Scope.DEFAULT.getValue();
+            return getNewServiceObject(msgContext, clsName);
         }
     }
 
