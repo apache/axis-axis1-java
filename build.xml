@@ -158,6 +158,14 @@ Copyright:
 
     <available property="post-compile.present" file="post-compile.xml" />
 
+    <property environment="env"/>
+    <condition property="debug" value="on">
+    <and>
+      <equals arg1="on" arg2="${env.debug}"/>
+    </and>
+    </condition>
+
+
     <echo message="--- Build environment for ${Name} ---" />
     <echo message="--- Flags (Note: If the {property name} is displayed, "/>
     <echo message="           then the component is not present)" />
