@@ -232,6 +232,20 @@ public class JavaTestCaseWriter extends JavaWriter {
                         } else {
                             pw.print("0");
                         }
+                    } else if (paramType.equals("java.lang.Boolean")) {
+                        pw.print("new java.lang.Boolean(false)");
+                    } else if (paramType.equals("java.lang.Byte")) {
+                        pw.print("new java.lang.Byte((byte)0)");
+                    } else if (paramType.equals("java.lang.Double")) {
+                        pw.print("new java.lang.Double(0)");
+                    } else if (paramType.equals("java.lang.Float")) {
+                        pw.print("new java.lang.Float(0)");
+                    } else if (paramType.equals("java.lang.Integer")) {
+                        pw.print("new java.lang.Integer(0)");
+                    } else if (paramType.equals("java.lang.Long")) {
+                        pw.print("new java.lang.Long(0)");
+                    } else if (paramType.equals("java.lang.Short")) {
+                        pw.print("new java.lang.Short((short)0)");
                     } else if (paramType.equals("java.math.BigDecimal")) {
                         pw.print("new java.math.BigDecimal(0)");
                     } else if (paramType.equals("java.math.BigInteger")) {

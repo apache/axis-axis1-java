@@ -467,7 +467,11 @@ public class JavaStubWriter extends JavaWriter {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.name);
-                    // duplicate scheu's quick fix from a couple dozen lines up...
+                    // If expecting an array, need to call convert(..) because
+                    // the runtime stores arrays in a different form (ArrayList). 
+                    // NOTE A:
+                    // It seems that it should be the responsibility of the 
+                    // Call to convert the ArrayList into the proper array.
                     if (p.type.getName().endsWith("[]")) {
                         pw.println("             // REVISIT THIS!");
                         pw.println ("            " + javifiedName
@@ -484,7 +488,9 @@ public class JavaStubWriter extends JavaWriter {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
                     
-                    // Quick Fix By scheu for now.  This should be fixed elsewhere. 
+                    // If expecting an array, need to call convert(..) because
+                    // the runtime stores arrays in a different form (ArrayList). 
+                    // (See NOTE A)
                     if (parms.returnType != null &&
                         parms.returnType.getName() != null &&
                         parms.returnType.getName().indexOf("[]") > 0) {
@@ -511,7 +517,9 @@ public class JavaStubWriter extends JavaWriter {
                     if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
-                            // duplicate scheu's quick fix from a couple dozen lines up...
+                            // If expecting an array, need to call convert(..) because
+                            // the runtime stores arrays in a different form (ArrayList). 
+                            // (See NOTE A)
                             if (p.type.getName().endsWith("[]")) {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
@@ -526,16 +534,33 @@ public class JavaStubWriter extends JavaWriter {
                             }
                         }
                         else {
-                            pw.println ("            " + javifiedName
-                                    + ".value = " + getResponseString(p.type,
+                            // If expecting an array, need to call convert(..) because
+                            // the runtime stores arrays in a different form (ArrayList). 
+                            // (See NOTE A)
+                            if (p.type.getName().endsWith("[]")) {
+                                pw.println("             // REVISIT THIS!");
+                                pw.println ("            " + javifiedName
+                                            + ".value = (" + p.type.getName()
+                                            + ") org.apache.axis.utils.JavaUtils.convert("
+                                            + "((org.apache.axis.message.RPCParam) output.get("
+                                            + outdex++ + ")).getValue(), "
+                                            + p.type.getName() + ".class);");
+                            }
+                            else {
+                                pw.println ("            " + javifiedName
+                                            + ".value = " + getResponseString(p.type,
                                     "((org.apache.axis.message.RPCParam) output.get("
                                     + outdex++ + ")).getValue()"));
+                            }
                         }
                     }
 
                 }
                 if (parms.outputs > 0) {
-                    // Quick Fix By scheu for now.  This should be fixed elsewhere.
+
+                    // If expecting an array, need to call convert(..) because
+                    // the runtime stores arrays in a different form (ArrayList). 
+                    // (See NOTE A)
                     if (parms.returnType != null &&
                         parms.returnType.getName() != null &&
                         parms.returnType.getName().indexOf("[]") > 0) {

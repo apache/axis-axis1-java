@@ -79,7 +79,8 @@ public class Main {
     static int id2         = 123;
     static String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
     static String[] games  = new String[] { "Doom", "Axis & Allies" };
-    static byte[]   nickName = new byte[] { 'g', 'e', 'e', 'k' };
+    static Byte[]   nickName = new Byte[] { new Byte((byte)'g'), new Byte((byte)'e'),
+                                            new Byte((byte)'e'), new Byte((byte)'k') };
     static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets, id, id2,
                                               //foods,games,
                                               nickName);
@@ -129,7 +130,7 @@ public class Main {
         System.err.println("");
         */
 
-        byte[] nb =pi.getNickName();
+        Byte[] nb =pi.getNickName();
         System.err.print ("\tNickName=");
         for(int i=0; i<nb.length; i++)
             System.err.print(nb[i]);

@@ -134,6 +134,8 @@ public class JavaImplWriter extends JavaWriter {
             Parameter param = (Parameter) iparam.next();
             String paramType = param.type.getName();
 
+            // Note that similar code is in JavaTestCaseWriter.
+            // So please check both places if changes are made.
             if (param.mode == Parameter.OUT) {
                 pw.print("        " + Utils.xmlNameToJava(param.name)
                         + ".value = ");
@@ -147,12 +149,28 @@ public class JavaImplWriter extends JavaWriter {
                     } else {
                         pw.print("-3");
                     }
+                } else if (paramType.equals("java.lang.Boolean")) {
+                    pw.print("new java.lang.Boolean(false)");
+                } else if (paramType.equals("java.lang.Byte")) {
+                    pw.print("new java.lang.Byte((byte)-3)");
+                } else if (paramType.equals("java.lang.Double")) {
+                    pw.print("new java.lang.Double(-3)");
+                } else if (paramType.equals("java.lang.Float")) {
+                    pw.print("new java.lang.Float(-3)");
+                } else if (paramType.equals("java.lang.Integer")) {
+                    pw.print("new java.lang.Integer(-3)");
+                } else if (paramType.equals("java.lang.Long")) {
+                    pw.print("new java.lang.Long(-3)");
+                } else if (paramType.equals("java.lang.Short")) {
+                    pw.print("new java.lang.Short((short)-3)");
                 } else if (paramType.equals("java.math.BigDecimal")) {
                     pw.print("new java.math.BigDecimal(-3)");
                 } else if (paramType.equals("java.math.BigInteger")) {
                     pw.print("new java.math.BigInteger(\"-3\")");
                 } else if (paramType.equals("byte[]")) {
                     pw.print("new byte[0]");
+                } else if (paramType.equals("java.lang.Byte[]")) {
+                    pw.print("new java.lang.Byte[0]");
                 } else {
                     pw.print("new " + paramType + "()");
                 }
