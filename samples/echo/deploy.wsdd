@@ -15,22 +15,22 @@
     <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStruct"
       languageSpecificType="java:samples.echo.SOAPStruct"/>    
     <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qName="echo:ArrayOfSOAPStruct"
+      qname="echo:ArrayOfSOAPStruct"
       type="java:samples.echo.SOAPStruct[]"
       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
     <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qName="echo:ArrayOfstring"
+      qname="echo:ArrayOfstring"
       type="java:java.lang.String[]"
       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
     <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qName="echo:ArrayOfint"
+      qname="echo:ArrayOfint"
       type="java:int[]"
       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
     <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qName="echo:ArrayOffloat"
+      qname="echo:ArrayOffloat"
       type="java:float[]"
       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
