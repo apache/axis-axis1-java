@@ -111,8 +111,8 @@ public class XMLUtils {
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
 
-    private static String empty = new String("");
-    private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
+    private static String EMPTY = "";
+    private static ByteArrayInputStream bais = new ByteArrayInputStream(EMPTY.getBytes());
 
     static {
         // Initialize SAX Parser factory defaults
