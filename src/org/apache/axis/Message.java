@@ -31,6 +31,8 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -312,6 +314,18 @@ public class Message extends javax.xml.soap.SOAPMessage
             String contentLocations[] = mimeHeaders.getHeader("Content-Location");
             contentLocation = (contentLocations != null)? contentLocations[0] : null;
         }
+        if (contentType != null) {
+            int delimiterIndex = contentType.lastIndexOf("charset");
+            if (delimiterIndex > 0) {
+                String charsetPart = contentType.substring(delimiterIndex);
+                int charsetIndex = charsetPart.indexOf('=');
+                String charset = charsetPart.substring(charsetIndex + 1).trim();
+                try {
+                    setProperty(SOAPMessage.CHARACTER_SET_ENCODING, charset);
+                } catch (SOAPException e) {
+                }
+            }
+        }
         // Try to construct an AttachmentsImpl object for attachment
         // functionality.
         // If there is no org.apache.axis.attachments.AttachmentsImpl class,
@@ -448,7 +462,28 @@ public class Message extends javax.xml.soap.SOAPMessage
             }
         }
 
-        String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
+        // The origional logic is very simple
+        // String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
+        // The following logic is devised to utilize CHARACTER_SET_ENCODING property from SAAJ 1.2.
+        String encoding = null;
+        try {
+            encoding = (String) getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+        } catch (SOAPException e) {
+        }
+        if (encoding == null) {
+            encoding = XMLUtils.getEncoding().toLowerCase();
+        }
+
+        String ret = sc.getContentType() + "; charset=" + encoding;
+        
+        // Support of SOAP 1.2 HTTP binding
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        if (envelope != null) {
+            if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+                ret = "application/soap+xml; charset=" + encoding;
+            }
+        }
+
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
         }
@@ -491,7 +526,7 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                String charEncoding = (String)getProperty(CHARACTER_SET_ENCODING);
+                String charEncoding = (String)getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
                 if(charEncoding == null){
                     charEncoding = "UTF-8";
                 }
@@ -499,7 +534,7 @@ public class Message extends javax.xml.soap.SOAPMessage
                 writer = new BufferedWriter(writer);
 
                 // write the xml declaration header
-                String incXMLDecl = (String)getProperty(super.WRITE_XML_DECLARATION);
+                String incXMLDecl = (String)getProperty(SOAPMessage.WRITE_XML_DECLARATION);
                 if(incXMLDecl == null){
                     incXMLDecl = "false";
                 }
