@@ -19,16 +19,22 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * The QSWSDLHandler class is a handler which provides an AXIS service's WSDL
@@ -125,41 +131,96 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
                     + "</p>");
         }
         if (axisFault != null && isDevelopment()) {
-            //dev systems only give fault dumps
+            //only dev systems give fault dumps
             writeFault(writer, axisFault);
         }
     }
 
     /**
-     * Updates WSDL service location using URL from the request, so we are sure the returned WSDL contains the correct
-     * location URL.
+     * Updates the soap:address locations for all ports in the WSDL using the URL from the request as
+     * the base portion for the updated locations, ensuring the WSDL returned to the client contains
+     * the correct location URL.
      *
      * @param wsdlDoc    the WSDL as a DOM document
      * @param msgContext the current Axis JAX-RPC message context
-     * @throws AxisFault if we fail to obtain the {@link org.apache.axis.description.ServiceDesc} for this service
+     * @throws AxisFault if we fail to obtain the list of deployed service names from the server config
      */
     protected void updateSoapAddressLocationURLs(Document wsdlDoc,
                                                  MessageContext msgContext)
             throws AxisFault {
-        NodeList soapAddresses = wsdlDoc.getDocumentElement()
-                .getElementsByTagNameNS(Constants.URI_WSDL11_SOAP, "address");
-        if (soapAddresses == null || soapAddresses.getLength() == 0) {
-            soapAddresses =
-                    wsdlDoc.getDocumentElement().getElementsByTagNameNS(
-                            Constants.URI_WSDL12_SOAP, "address");
+        Set deployedServiceNames;
+        try {
+            deployedServiceNames = getDeployedServiceNames(msgContext);
         }
-        if (soapAddresses != null) {
+        catch (ConfigurationException ce) {
+            throw new AxisFault("Failed to determine deployed service names.", ce);
+        }
+        NodeList wsdlPorts = wsdlDoc.getDocumentElement().getElementsByTagNameNS(Constants.NS_URI_WSDL11, "port");
+        if (wsdlPorts != null) {
             String endpointURL = getEndpointURL(msgContext);
-            log.debug("Setting soap:address location values in WSDL for service " +
-                    msgContext.getTargetService() +
-                    " to: " +
-                    endpointURL);
-            for (int i = 0; i < soapAddresses.getLength(); i++) {
-                Node locationAttrib = soapAddresses.item(i).getAttributes()
-                        .getNamedItem("location");
-                locationAttrib.setNodeValue(endpointURL);
+            String baseEndpointURL = endpointURL.substring(0, endpointURL.lastIndexOf("/") + 1);
+            for (int i = 0; i < wsdlPorts.getLength(); i++) {
+                Element portElem = (Element) wsdlPorts.item(i);
+                Node portNameAttrib = portElem.getAttributes().getNamedItem("name");
+                if (portNameAttrib == null) {
+                    continue;
+                }
+                String portName = portNameAttrib.getNodeValue();
+                NodeList soapAddresses = portElem.getElementsByTagNameNS(Constants.URI_WSDL11_SOAP, "address");
+                if (soapAddresses == null || soapAddresses.getLength() == 0) {
+                    soapAddresses = portElem.getElementsByTagNameNS(Constants.URI_WSDL12_SOAP, "address");
+                }
+                if (soapAddresses != null) {
+                    for (int j = 0; j < soapAddresses.getLength(); j++) {
+                        Element addressElem = (Element) soapAddresses.item(j);
+                        Node addressLocationAttrib = addressElem.getAttributes().getNamedItem("location");
+                        if ( addressLocationAttrib == null )
+                        {
+                            continue;
+                        }
+                        String addressLocation = addressLocationAttrib.getNodeValue();
+                        String addressServiceName = addressLocation.substring(addressLocation.lastIndexOf("/") + 1);
+                        String newServiceName = getNewServiceName(deployedServiceNames, addressServiceName, portName);
+                        if (newServiceName != null) {
+                            String newAddressLocation = baseEndpointURL + newServiceName;
+                            addressLocationAttrib.setNodeValue(newAddressLocation);
+                            log.debug("Setting soap:address location values in WSDL for port " +
+                                    portName +
+                                    " to: " +
+                                    newAddressLocation);
+                        }
+                        else
+                        {
+                            log.debug("For WSDL port: " + portName + ", unable to match port name or the last component of " +
+                                    "the SOAP address url with a " +
+                                    "service name deployed in server-config.wsdd.  Leaving SOAP address: " +
+                                    addressLocation + " unmodified.");
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private String getNewServiceName(Set deployedServiceNames, String currentServiceEndpointName, String portName) {
+        String endpointName = null;
+        if (deployedServiceNames.contains(currentServiceEndpointName)) {
+            endpointName = currentServiceEndpointName;
+        }
+        else if (deployedServiceNames.contains(portName)) {
+            endpointName = portName;
+        }
+        return endpointName;
+    }
+
+    private Set getDeployedServiceNames(MessageContext msgContext) throws ConfigurationException {
+        Set serviceNames = new HashSet();
+        Iterator deployedServicesIter = msgContext.getAxisEngine().getConfig().getDeployedServices();
+        while (deployedServicesIter.hasNext()) {
+            ServiceDesc serviceDesc = (ServiceDesc) deployedServicesIter.next();
+            serviceNames.add(serviceDesc.getName());
+        }
+        return serviceNames;
     }
 
     /**
