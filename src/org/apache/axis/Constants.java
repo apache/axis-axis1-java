@@ -408,6 +408,8 @@ public class Constants {
 
     // Where to put those pesky JWS classes
     public static final String MC_JWS_CLASSDIR = "jws.classDir" ;
+    // Where we're rooted
+    public static final String MC_HOME_DIR = "home.dir";
 
     // Relative path of the request URL (ie. http://.../axis/a.jws = /a.jws
     public static final String MC_RELATIVE_PATH = "path";
