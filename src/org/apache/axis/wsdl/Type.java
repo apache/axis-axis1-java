@@ -180,7 +180,7 @@ public class Type {
             } else if (localName.equals("byte")) {
                 return "byte";
             } else if (localName.equals("QName")) {
-                return "javax.rpc.namespace.QName";
+                return "javax.xml.rpc.namespace.QName";
             } else if (localName.equals("dateTime")) {
                 return "java.util.Date";
             } else if (localName.equals("base64Binary")) {

@@ -55,7 +55,7 @@
 package org.apache.axis.deployment.v2dd;
 
 import org.w3c.dom.Element;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 public class V2DDMap extends V2DDElement { 
 

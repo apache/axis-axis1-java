@@ -5,7 +5,7 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 import org.apache.axis.encoding.DeserializationContext;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

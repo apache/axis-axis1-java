@@ -1,7 +1,7 @@
 package org.apache.axis.providers;
 
 import org.apache.axis.handlers.BasicHandler;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 import java.util.Hashtable;
 

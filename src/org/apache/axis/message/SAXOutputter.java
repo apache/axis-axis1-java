@@ -1,7 +1,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

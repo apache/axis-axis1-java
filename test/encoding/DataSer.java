@@ -7,7 +7,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.message.SOAPHandler;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

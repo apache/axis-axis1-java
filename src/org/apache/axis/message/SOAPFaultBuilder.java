@@ -61,7 +61,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ValueReceiver;
 import org.apache.axis.utils.QFault;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

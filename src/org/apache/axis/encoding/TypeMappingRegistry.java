@@ -56,7 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;

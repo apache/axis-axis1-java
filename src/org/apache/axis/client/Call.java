@@ -71,8 +71,8 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
-import javax.rpc.encoding.XMLType;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.encoding.XMLType;
+import javax.xml.rpc.namespace.QName;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.log4j.Category;
 
@@ -100,7 +100,7 @@ import java.util.Vector;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-public class Call implements javax.rpc.Call {
+public class Call implements javax.xml.rpc.Call {
     static Category category = Category.getInstance(Call.class.getName());
 
     private QName              portTypeName    = null ;
@@ -451,12 +451,12 @@ public class Call implements javax.rpc.Call {
      * @throws JAXRPCException is there's an error
      */
     public void invokeOneWay(Object[] params)
-                           throws javax.rpc.JAXRPCException {
+                           throws javax.xml.rpc.JAXRPCException {
         try {
             invoke( getParamList(params) );
         }
         catch( Exception exp ) {
-            throw new javax.rpc.JAXRPCException( exp.toString() );
+            throw new javax.xml.rpc.JAXRPCException( exp.toString() );
         }
     }
 
@@ -597,7 +597,7 @@ public class Call implements javax.rpc.Call {
      * @return Object[] Array of parameters to pass to invoke()
      */
     private Object[] getParamList(Object[] params)
-                           throws javax.rpc.JAXRPCException {
+                           throws javax.xml.rpc.JAXRPCException {
         int  numParams = 0 ;
         int  i ;
 
@@ -615,7 +615,7 @@ public class Call implements javax.rpc.Call {
         }
 
         if ( numParams != params.length )
-            throw new javax.rpc.JAXRPCException(
+            throw new javax.xml.rpc.JAXRPCException(
                                        "Number of parameters passed in (" +
                                        params.length + ") doesn't match the " +
                                        "number of IN/INOUT parameters (" +

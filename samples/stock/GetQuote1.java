@@ -60,7 +60,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 

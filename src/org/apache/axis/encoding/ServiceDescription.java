@@ -57,7 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
-import javax.rpc.namespace.QName;
+import javax.xml.rpc.namespace.QName;
 
 import java.util.Enumeration;
 import java.util.Vector;
