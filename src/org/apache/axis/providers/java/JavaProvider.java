@@ -115,6 +115,7 @@ public abstract class JavaProvider extends BasicProvider
     public static final String OPTION_WSDL_SERVICEELEMENT="wsdlServiceElement";
     public static final String OPTION_WSDL_SERVICEPORT="wsdlServicePort";
     public static final String OPTION_WSDL_TARGETNAMESPACE="wsdlTargetNamespace";
+    public static final String OPTION_WSDL_INPUTSCHEMA="wsdlInputSchema";
 
     public static final String OPTION_SCOPE = "scope";
 
@@ -446,8 +447,8 @@ public abstract class JavaProvider extends BasicProvider
 
             emitter.setLocationUrl(locationUrl);
             emitter.setServiceDesc(serviceDesc);
-            emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
-                                   getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC));
+            emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry()
+                                       .getTypeMapping(serviceDesc.getUse().getEncoding()));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                           getDefaultTypeMapping());
 
@@ -463,6 +464,12 @@ public abstract class JavaProvider extends BasicProvider
             }
             if (wsdlServicePort != null && wsdlServicePort.length() > 0) {
                 emitter.setServicePortName(wsdlServicePort);
+            }
+
+            String wsdlInputSchema = (String) 
+                service.getOption(OPTION_WSDL_INPUTSCHEMA);
+            if (null != wsdlInputSchema && wsdlInputSchema.length() > 0) {
+                emitter.setInputSchema(wsdlInputSchema);
             }
 
             Document  doc = emitter.emit(Emitter.MODE_ALL);

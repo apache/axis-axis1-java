@@ -88,9 +88,13 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,6 +158,64 @@ public class Types {
      */ 
     public Namespaces getNamespaces() {
         return namespaces;
+    }
+    
+    /**
+     * Loads the types from the input schema file.
+     * @param inputSchema file or URL
+     */
+    public void loadInputSchema(String inputSchema)
+        throws IOException, WSDLException, SAXException, 
+               ParserConfigurationException
+    {
+        // Read the input wsdl file into a Document
+        Document doc = XMLUtils.newDocument(inputSchema);
+        
+        // Ensure that the root element is xsd:schema
+        Element root = doc.getDocumentElement();
+        if (root.getLocalName().equals("schema") &&
+                Constants.isSchemaXSD(root.getNamespaceURI())) {
+            Node schema = docHolder.importNode(root, true);
+            if (null == wsdlTypesElem) {
+               writeWsdlTypesElement();
+            }
+            wsdlTypesElem.appendChild(schema);
+
+            // Create a symbol table and populate it with the input types
+            BaseTypeMapping btm = 
+                new BaseTypeMapping() {
+                        public String getBaseName(QName qNameIn) {
+                            QName qName = new QName(
+                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else 
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    }; 
+            SymbolTable symbolTable = new SymbolTable(btm,
+                                                      true, false, false);
+            symbolTable.populateTypes(new URL(inputSchema), doc);
+
+            // Walk the type/element entries in the symbol table and 
+            // add each one to the list of processed types.  This prevents
+            // the types from being duplicated.
+            Vector v = symbolTable.getTypes();
+            for (int i=0; i < v.size(); i++) {
+                TypeEntry te = (TypeEntry) v.elementAt(i);
+                if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
+                    addToElementsList(te.getQName());
+                } else if (te instanceof Type) {
+                    addToTypesList(te.getQName()); 
+                }
+            }
+        } else {
+            // If not, we'll just bail out... perhaps we should log a warning
+            // or throw an exception?
+            ;
+        }
     }
 
     /**
@@ -224,10 +286,7 @@ public class Types {
                 addToTypesList(te.getQName()); 
             }
         }
-
-    
     }
-
 
     /**
      * Write out a type referenced by a part type attribute.

@@ -77,30 +77,31 @@ import java.util.List;
 
 public class Java2WSDL {
     // Define our short one-letter option identifiers.
-    protected static final int HELP_OPT = 'h';
-    protected static final int OUTPUT_WSDL_MODE_OPT = 'w';
-    protected static final int INPUT_OPT = 'I';
-    protected static final int OUTPUT_OPT = 'o';
-    protected static final int OUTPUT_IMPL_OPT = 'O';
-    protected static final int PACKAGE_OPT = 'p';
-    protected static final int NAMESPACE_OPT = 'n';
-    protected static final int NAMESPACE_IMPL_OPT = 'N';
-    protected static final int PORTTYPE_NAME_OPT = 'P';
-    protected static final int SERVICE_ELEMENT_NAME_OPT = 'S';
-    protected static final int SERVICE_PORT_NAME_OPT = 's';
+    protected static final int INHERITED_CLASS_OPT = 'a';
+    protected static final int SOAPACTION_OPT = 'A';
     protected static final int BINDING_NAME_OPT = 'b';
+    protected static final int STOP_CLASSES_OPT = 'c';
+    protected static final int IMPORT_SCHEMA_OPT = 'C';
+    protected static final int EXTRA_CLASSES_OPT = 'e';
+    protected static final int HELP_OPT = 'h';
+    protected static final int IMPL_CLASS_OPT = 'i';
+    protected static final int INPUT_OPT = 'I';
     protected static final int LOCATION_OPT = 'l';
     protected static final int LOCATION_IMPORT_OPT = 'L';
     protected static final int METHODS_ALLOWED_OPT = 'm';
-    protected static final int INHERITED_CLASS_OPT = 'a';
-    protected static final int IMPL_CLASS_OPT = 'i';
-    protected static final int METHODS_NOTALLOWED_OPT = 'x';
-    protected static final int STOP_CLASSES_OPT = 'c';
+    protected static final int NAMESPACE_OPT = 'n';
+    protected static final int NAMESPACE_IMPL_OPT = 'N';
+    protected static final int OUTPUT_OPT = 'o';
+    protected static final int OUTPUT_IMPL_OPT = 'O';
+    protected static final int PACKAGE_OPT = 'p';
+    protected static final int PORTTYPE_NAME_OPT = 'P';
+    protected static final int SERVICE_PORT_NAME_OPT = 's';
+    protected static final int SERVICE_ELEMENT_NAME_OPT = 'S';
     protected static final int TYPEMAPPING_OPT = 'T';
-    protected static final int SOAPACTION_OPT = 'A';
-    protected static final int STYLE_OPT = 'y';
     protected static final int USE_OPT = 'u';
-    protected static final int EXTRA_CLASSES_OPT = 'e';
+    protected static final int OUTPUT_WSDL_MODE_OPT = 'w';
+    protected static final int METHODS_NOTALLOWED_OPT = 'x';
+    protected static final int STYLE_OPT = 'y';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -207,8 +208,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("extraClasses",
              CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENT_REQUIRED,
              EXTRA_CLASSES_OPT, 
-             Messages.getMessage("j2woptExtraClasses00"))
-        
+             Messages.getMessage("j2woptExtraClasses00")),
+        new CLOptionDescriptor("importSchema",
+             CLOptionDescriptor.ARGUMENT_OPTIONAL,
+             IMPORT_SCHEMA_OPT, 
+             Messages.getMessage("j2woptImportSchema00"))
     };
 
     protected Emitter emitter;
@@ -417,7 +421,11 @@ public class Java2WSDL {
                     status = false;
                 }
                 break;
-            
+
+        case IMPORT_SCHEMA_OPT:
+                emitter.setInputSchema(option.getArgument());
+                break;
+
         default: 
             break;
         }

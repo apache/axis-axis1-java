@@ -639,7 +639,7 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the Types from the Document.
      */
-    private void populateTypes(URL context, Document doc)
+    public void populateTypes(URL context, Document doc)
         throws IOException, SAXException, WSDLException, 
                ParserConfigurationException {
         addTypes(context, doc, ABOVE_SCHEMA_LEVEL);

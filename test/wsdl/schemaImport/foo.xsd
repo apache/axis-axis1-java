@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 U (http://www.xmlspy.com) by Doug Bitting (Agile Software) -->
+<xs:schema targetNamespace="urn:ImportSchemaTest" xmlns="urn:ImportSchemaTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:complexType name="foo">
+    <xs:sequence>
+      <xs:element name="bar" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>bar annotation</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="baz" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>baz annotation</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ball" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>ball annotation</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
