@@ -301,6 +301,10 @@ public class Constants {
     public static final String ATTR_ARRAY_TYPE      = "arrayType";
     public static final String ATTR_OFFSET          = "offset";
     public static final String ATTR_POSITION        = "position";
+    
+    // Well-known actor values
+    public static final String ACTOR_NEXT = 
+            "http://schemas.xmlsoap.org/soap/actor/next";
 
     // Fault Codes
     //////////////////////////////////////////////////////////////////////////
