@@ -29,6 +29,7 @@ import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.cache.MethodCache;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.IDResolver;
@@ -499,7 +500,10 @@ public class DeserializationContext extends DefaultHandler
             return dser;
 
         try {
-            Method method = cls.getMethod(DESERIALIZER_METHOD, DESERIALIZER_CLASSES);
+            Method method = 
+                MethodCache.getInstance().getMethod(cls,
+                                                    DESERIALIZER_METHOD, 
+                                                    DESERIALIZER_CLASSES);     
             if (method != null) {
                 TypeDesc typedesc = TypeDesc.getTypeDescForClass(cls);
                 if (typedesc != null) {

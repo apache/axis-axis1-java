@@ -54,6 +54,7 @@ import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.cache.MethodCache;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.commons.logging.Log;
@@ -1382,10 +1383,13 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     }
 
     private Serializer getSerializerFromClass(Class javaType, QName qname) {
+        
         Serializer serializer = null;
         try {
-            Method method = javaType.getMethod(
-                    SERIALIZER_METHOD, SERIALIZER_CLASSES);
+            Method method = 
+                MethodCache.getInstance().getMethod(javaType,
+                                                    SERIALIZER_METHOD,
+                                                    SERIALIZER_CLASSES);
             if (method != null) {
                 serializer = (Serializer) method.invoke(null,
                     new Object[] {getEncodingStyle(), javaType, qname});
