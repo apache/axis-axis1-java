@@ -67,6 +67,7 @@ import org.apache.axis.registries.* ;
  * allows creational dynamics to be configured on a per-handler basis.
  *
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Doug Davis (dug@us.ibm.com)
  */
 public class SupplierRegistry implements HandlerRegistry {
     protected String     fileName;
@@ -145,7 +146,7 @@ public class SupplierRegistry implements HandlerRegistry {
         return( result );
     }
 
-    private void load() { 
+    protected void load() { 
         try {
             FileInputStream    fis = new FileInputStream( fileName );
             ObjectInputStream  ois = new ObjectInputStream( fis );
@@ -158,7 +159,7 @@ public class SupplierRegistry implements HandlerRegistry {
         }
     }
 
-    private void save() {
+    protected void save() {
         try {
             FileOutputStream    fos = new FileOutputStream( fileName );
             ObjectOutputStream  oos = new ObjectOutputStream( fos );

@@ -204,6 +204,16 @@ public class HTTPDispatchHandler extends BasicHandler {
           len = 0 ;
         }
       }
+
+      if ( b != -1 && Debug.getDebugLevel() > 8 ) {
+        // Special case - if the debug level is this high then something
+        // really bad must be going on - so just dump the input stream
+        // to stdout.
+        while ( (b = (byte) inp.read()) != -1 )
+          System.err.print(b);
+        System.err.println("");
+      }
+
       if ( b != -1 ) {
         SAXBuilder parser = new SAXBuilder();
         Document doc = parser.build(inp);
