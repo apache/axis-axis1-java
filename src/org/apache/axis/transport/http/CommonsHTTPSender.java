@@ -58,6 +58,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.CommonsHTTPClientProperties;
+import org.apache.axis.components.net.CommonsHTTPClientPropertiesFactory;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
 import org.apache.axis.encoding.Base64;
@@ -104,11 +106,14 @@ public class CommonsHTTPSender extends BasicHandler {
     LogFactory.getLog(CommonsHTTPSender.class.getName());
     
     private HttpConnectionManager connectionManager;
+    private CommonsHTTPClientProperties clientProperties;
     
     public CommonsHTTPSender() {
-        // should pull settings for pool size, timeouts from
-        // declarative configuration
-        connectionManager = new MultiThreadedHttpConnectionManager();
+        MultiThreadedHttpConnectionManager cm = new MultiThreadedHttpConnectionManager();
+        this.clientProperties = CommonsHTTPClientPropertiesFactory.create();
+        cm.setMaxConnectionsPerHost(clientProperties.getMaximumConnectionsPerHost());
+        cm.setMaxTotalConnections(clientProperties.getMaximumTotalConnections());
+        this.connectionManager = cm;
     }
     
     /**
@@ -134,6 +139,8 @@ public class CommonsHTTPSender extends BasicHandler {
             // the underlying connection manager, however, is retained
             // so sockets get recycled when possible.
             HttpClient httpClient = new HttpClient(connectionManager);
+            // the timeout value for allocation of connections from the pool
+            httpClient.setHttpConnectionFactoryTimeout(clientProperties.getConnectionPoolTimeout());
             
             HostConfiguration hostConfiguration = getHostConfiguration(httpClient, targetURL);
             
@@ -331,7 +338,12 @@ public class CommonsHTTPSender extends BasicHandler {
         
         // optionally set a timeout for the request
         if (msgContext.getTimeout() != 0) {
+            /* ISSUE: these are not the same, but MessageContext has only one
+                      definition of timeout */
+            // SO_TIMEOUT -- timeout for blocking reads
             httpClient.setTimeout(msgContext.getTimeout());
+            // timeout for initial connection 
+            httpClient.setConnectionTimeout(msgContext.getTimeout());
         }
         
         // Get SOAPAction, default to ""
