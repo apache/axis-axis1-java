@@ -371,6 +371,11 @@ public class Emitter {
                     } else { 
                         name = null;
                     }
+                    // if we got the name from the location, strip .jws from it
+                    if (name.endsWith(".jws") ) {
+                        name = name.substring(0, 
+                                              (name.length() - ".jws".length()));
+                    }
                 }
                 if (name == null) {
                     name = clsName;
