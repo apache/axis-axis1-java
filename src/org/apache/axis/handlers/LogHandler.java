@@ -69,7 +69,7 @@ public class LogHandler implements Handler {
   public void cleanup() {
   }
 
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println( "In LogHandler" );
     try {
       FileWriter  fw   = new FileWriter( "axis.log", true );
@@ -90,6 +90,7 @@ public class LogHandler implements Handler {
     }
     catch( Exception e ) {
       e.printStackTrace( System.err );
+      throw new AxisFault( e );
     }
   }
 

@@ -55,64 +55,64 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.server ;
+package org.apache.axis ;
 
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
+import java.util.* ;
+import org.w3c.dom.* ;
+import org.xml.sax.InputSource ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.framework.* ;
+import org.apache.xml.serialize.* ;
 
-public class SimpleAxisEngine implements Handler {
-  /**
-   * This entry point into the SOAP server 
-   */
+// PLACEHOLDER until we figure out what we really want to put here
+// Just something to keep us moving forward
 
-  public void init() {
+public class AxisFault extends Exception {
+  protected String    faultCode ;
+  protected String    faultString ;
+  protected String    faultActor ;
+  protected Vector    faultDetails ;  // vector of Element's
+
+  public AxisFault(String code, String str, String actor, Element[] details) {
+    setFaultCode( code );
+    setFaultString( str );
+    setFaultActor( actor );
+    setFaultDetails( details );
   }
 
-  public void cleanup() {
-  };
-
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    // Load the simple handler registry and init it
-    HandlerRegistry  hr = new SimpleHandlerRegistry();
-    hr.init();
-
-    // Load the simple deployed services registry and init it
-    HandlerRegistry  sr = new SimpleServiceRegistry();
-    sr.init();
-
-    String action = (String) msgContext.getProperty( "SOAPAction" );
-    if ( action == null ) action = "EchoService" ;
-
-    Handler h = sr.find( action );
-
-    if ( h == null ) {
-      Message msg = new Message( "Service '"+action+"' not found", "String" );
-      msgContext.setOutgoingMessage( msg );
-      return ;
-    }
-
-    h.init();
-    try {
-      h.invoke( msgContext );
-    }
-    catch( Exception e ) {
-      // Should we even bother catching it ?
-      throw new AxisFault( e );
-    }
-    h.cleanup();
-  };
-
-  public void undo(MessageContext msgContext) {
-  };
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  };
-
-  public QName[] getBlocksHandled() {
-    return( null );
+  public AxisFault(Exception exception) {
+    setFaultCode( "Server.generalException" );
+    setFaultString( exception.toString() );
+    // need to set details if we were in the body at the time!!
   }
 
+  public void setFaultCode(String code) {
+    faultCode = code ;
+  }
+
+  public String getFaultCode() { 
+    return( faultCode );
+  }
+
+  public void setFaultString(String str) {
+    faultString = str ;
+  }
+
+  public String getFaultString() {
+    return( faultString );
+  }
+
+  public void setFaultActor(String actor) {
+    faultActor = actor ;
+  }
+
+  public void setFaultDetails(Element[] details) {
+    faultDetails = new Vector( details.length );
+    for ( int loop = 0 ; loop < details.length ; loop++ )
+      faultDetails.add( details[loop] );
+  }
+
+  public Element[] getFaultDetails() {
+    return( (Element[]) faultDetails.toArray() );
+  }
 };

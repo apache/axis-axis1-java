@@ -80,17 +80,20 @@ public class FaultableHandler implements Handler {
    * invoked.  This assumes that the workHandler has caught the exception
    * and already processed it's undo logic - as needed.
    */
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     try {
       workHandler.invoke( msgContext );
     }
     catch( Exception e ) {
       // Is this a Java Exception? a SOAPException? an AxisException?
+      if ( !(e instanceof AxisFault) )
+        e = new AxisFault( e );
+
       String   key          = "blah" ; // add logic to map from e -> key
       Handler  faultHandler = (Handler) faultHandlers.get( key );
-      if ( faultHandler == null ) throw e ;
-      faultHandler.invoke( msgContext );
-      throw e ;
+      if ( faultHandler != null )
+        faultHandler.invoke( msgContext );
+      throw (AxisFault) e ;
     }
   }
 

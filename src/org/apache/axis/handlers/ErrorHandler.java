@@ -67,9 +67,9 @@ public class ErrorHandler implements Handler {
   public void cleanup() {
   }
 
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In EchoHandler");
-    throw new Exception( "ERROR" );
+    throw new AxisFault( "Server.Whatever", "ERROR", null, null );
   }
 
   public void undo(MessageContext msgContext) {

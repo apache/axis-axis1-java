@@ -83,22 +83,26 @@ public class SimpleTargetedChain implements Handler {
    * a fault we need to make sure that we undo any completed handler
    * that has been successfully invoked and then rethrow the fault.
    */
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     if ( inputChain != null ) inputChain.invoke( msgContext );
     try {
       if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
     }
     catch( Exception e ) {
+      if ( !(e instanceof AxisFault ) )
+        e = new AxisFault( e );
       if ( inputChain != null ) inputChain.undo( msgContext );
-      throw e ;
+      throw (AxisFault) e ;
     }
     try {
       if ( outputChain != null )  outputChain.invoke( msgContext );
     }
     catch( Exception e ) {
+      if ( !(e instanceof AxisFault ) )
+        e = new AxisFault( e );
       if ( pivotHandler != null ) pivotHandler.undo( msgContext );
       if ( inputChain   != null )   inputChain.undo( msgContext );
-      throw e ;
+      throw (AxisFault) e ;
     }
   }
 
