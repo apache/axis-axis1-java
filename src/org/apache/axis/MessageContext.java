@@ -423,7 +423,10 @@ public class MessageContext {
     public static String AUTHUSER            = "authenticatedUser";
 
     /** Is this message an RPC message (instead of just a blob of xml) */
-    public static String ISRPC               ="is_rpc" ;
+    public static String ISRPC               = "is_rpc" ;
+  
+    /** If on the client - this is the Call object */
+    public static String CALL                = "call_object" ;
 
     /** Just a util so we don't have to cast the result
      */

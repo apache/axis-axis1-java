@@ -237,6 +237,16 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Returns the XMLType of the return value of this Call - or null if
+     * not set.
+     *
+     * @return the XMLType specified for this Call (or null).
+     */
+    public XMLType getReturnType() {
+        return( returnType );
+    }
+
+    /**
      * Clears the list of parameters.
      */
     public void removeAllParameters() {
@@ -948,6 +958,7 @@ public class Call implements javax.xml.rpc.Call {
         category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
 
         msgContext.reset();
+        msgContext.setProperty( MessageContext.CALL, this );
 
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();
