@@ -163,6 +163,10 @@ Copyright:
       classname="org.apache.commons.logging.Log"
       classpathref="classpath"/>
 
+    <available property="commons-httpclient.present"
+      classname="org.apache.commons.httpclient.HttpConnection"
+      classpathref="classpath"/>
+
     <available property="log4j.present"
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
@@ -241,6 +245,7 @@ Copyright:
     <echo message="attachments.present=${attachments.present}" />
     <echo message="security.present=${security.present}" />
     <echo message="jsse.present=${jsse.present}" />
+    <echo message="commons-httpclient.present=${commons-httpclient.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
@@ -296,6 +301,7 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/components/bytecode/BCEL*" unless="bcel.present"/>
