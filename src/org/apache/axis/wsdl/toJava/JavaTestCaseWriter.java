@@ -179,7 +179,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             String testMethodName = "test" + counter++ + portName + javaOpName;
             pw.println("    public void " + testMethodName + "() {");
 
-            String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
+            String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
             writeBindingAssignment(bindingType, portName);
 
             pw.println("        try {");

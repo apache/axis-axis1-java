@@ -124,7 +124,7 @@ public class JavaStubWriter extends JavaWriter {
                 symbolTable.getPortTypeEntry(portType.getQName());
 
         String portTypeName = 
-                (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
+                (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;

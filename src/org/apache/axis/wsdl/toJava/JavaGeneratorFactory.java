@@ -177,7 +177,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         javifyNames(symbolTable);
         setFaultContext(symbolTable);
         resolveNameClashes(symbolTable);
-        determineSEINames(symbolTable);
+        determineInterfaceNames(symbolTable);
         if (emitter.isAllWanted()) {
             setAllReferencesToTrue();
         }
@@ -531,14 +531,15 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     }
 
-    protected void determineSEINames(SymbolTable symbolTable) {
+    protected void determineInterfaceNames(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                 if (entry instanceof BindingEntry) {
-                    // The SEI name is normally the portType name.
+                    // The SEI (Service Endpoint Interface) name
+                    // is normally the portType name.
                     // But the binding info MIGHT force the SEI
                     // name to be the binding name.
                     BindingEntry bEntry = (BindingEntry) entry;
@@ -550,11 +551,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                                 bEntry.getBinding().getPortType().getQName());
                         seiName = ptEntry.getName();
-                    }                    bEntry.setDynamicVar(JavaBindingWriter.SEI_NAME, seiName);
+                    }                    bEntry.setDynamicVar(JavaBindingWriter.INTERFACE_NAME, seiName);
                 }
             }
         }
-    } // determineSEINames
+    } // determineInterfaceNames
 
     /**
      * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this

@@ -79,11 +79,12 @@ public class JavaBindingWriter implements Generator {
     Generator implWriter = null;
     Generator interfaceWriter = null;
 
-    // This is the dynamic var key for the SEI name.  This name
-    // could either be derived from the portType or the binding.
-    // The generatorPass fills this dynamic var in and it is
-    // used in the writers that need the SEI name.
-    public static String SEI_NAME = "SEI name";
+    // This is the dynamic var key for the SEI (Service Endpoint
+    // Interface) name.  This name could either be derived from
+    // the portType or the binding.  The generatorPass fills
+    // this dynamic var in and it is used in the writers that
+    // need this SEI name.
+    public static String INTERFACE_NAME = "interface name";
 
     /**
      * Constructor.
