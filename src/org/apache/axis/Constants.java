@@ -463,6 +463,8 @@ public class Constants {
 
     // Fault Codes
     //////////////////////////////////////////////////////////////////////////
+    public static final String FAULT_CLIENT = "Client";
+
     public static final String FAULT_SERVER_GENERAL =
                                                    "Server.generalException";
 
