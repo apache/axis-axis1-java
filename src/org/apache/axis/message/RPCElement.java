@@ -77,7 +77,7 @@ public class RPCElement extends SOAPBodyElement
     protected boolean needDeser = false;
     
     // encoding style to put in soap body element
-    protected String encodingStyle = null;
+    protected String encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
     
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)

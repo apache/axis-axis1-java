@@ -101,4 +101,20 @@ public class TestSer extends TestCase {
         assertEquals("Data and Val float members are not equal",data.floatMember.floatValue(), 
                      val.floatMember.floatValue(), 0.00001F);
     }
+
+    /**
+     * Test RPC element serialization when we have no MessageContext
+     */
+    public void testRPCElement() throws Exception
+    {
+        SOAPEnvelope env = new SOAPEnvelope();
+        RPCElement method = new RPCElement("ns",
+                                           "method",
+                                           new Object [] { "argument" });
+        env.addBodyElement(method);
+        String soapStr = env.toString();
+
+        // If there was no exception, we succeeded in serializing it.
+    }
+
 }
