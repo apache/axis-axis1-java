@@ -108,6 +108,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -1189,8 +1190,14 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setProperty( MessageContext.CALL, this );
         msgContext.setMaintainSession(maintainSession);
 
-        // Go thru the properties and ones that are Axis specific, and
-        // need to be moved to the msgContext - do so.
+        /**
+         * Go thru the properties and ones that are Axis specific, and
+         * need to be moved to the msgContext - do so.
+         * TBD:
+         *   security.auth.subject
+         *   soap.operation.style
+         *   encodingstyle.namespace.uri
+         */
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();
             while (enum.hasMoreElements()) {
@@ -1206,7 +1213,22 @@ public class Call implements javax.xml.rpc.Call {
 
                     msgContext.setTimeout( intValue );
                 }
-                else
+                else if (name.equals("http.auth.user")) {
+                    msgContext.setProperty(MessageContext.USERID, value);
+                }
+                else if (name.equals("http.auth.password")) {
+                    msgContext.setProperty(MessageContext.PASSWORD, value);
+                }
+                else if (name.equals("soap.http.soapaction.uri")) {
+                    Object b = getProperty("soap.http.soapaction.use");
+                    boolean use = false;  
+                    if (b != null && b instanceof Boolean) {
+                        use = ((Boolean)b).booleanValue();
+                    }
+                    if (use == true) 
+                        msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, value);
+                }
+                else // Just pass the property through to the message context
                     msgContext.setProperty(name, value);
             }
         }
