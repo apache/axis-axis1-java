@@ -153,7 +153,7 @@ public class Emitter {
     private Map exceptionMsg = null;
 
     private ArrayList encodingList;
-    private Types types;
+    protected Types types;
     private String clsName;
     private String portTypeName;
     private String bindingName;
@@ -450,7 +450,7 @@ public class Emitter {
      * Invoked prior to building a definition to ensure parms
      * and data are set up.
      */
-    private void init(int mode) {
+    protected void init(int mode) {
 
         // Default use depending on setting of style
         if (use == null) {
@@ -580,7 +580,7 @@ public class Emitter {
      *
      * @return WSDL Definition
      */
-    private Definition createDefinition()
+    protected Definition createDefinition()
         throws WSDLException, SAXException, IOException, 
                ParserConfigurationException {
         Definition def;
@@ -598,7 +598,7 @@ public class Emitter {
         return def;
     }
 
-    private static TypeMapping standardTypes = 
+    protected static TypeMapping standardTypes = 
         (TypeMapping)new org.apache.axis.encoding.TypeMappingRegistryImpl().getTypeMapping(null);
 
 
@@ -607,7 +607,7 @@ public class Emitter {
      * @param def Corresponding wsdl Definition
      * @return Types object
      */
-    private Types createTypes(Definition def)
+    protected Types createTypes(Definition def)
         throws IOException, WSDLException, SAXException,
                ParserConfigurationException {
         types = new Types(def, tm, defaultTM, namespaces,
@@ -646,7 +646,7 @@ public class Emitter {
      * @param def  <code>Definition</code>
      * @param tns  target namespace
      */
-    private void writeDefinitions(Definition def, String tns) {
+    protected void writeDefinitions(Definition def, String tns) {
         def.setTargetNamespace(tns);
 
         def.addNamespace("intf", intfNS);
@@ -685,7 +685,7 @@ public class Emitter {
      * @param tns  target namespace
      * @param loc  target location
      */
-    private void writeImport(Definition def, String tns, String loc) {
+    protected void writeImport(Definition def, String tns, String loc) {
         Import imp = def.createImport();
 
         imp.setNamespaceURI(tns);
@@ -700,7 +700,7 @@ public class Emitter {
      * @param def  <code>Definition</code>
      * @param add  true if binding should be added to the def
      */
-    private Binding writeBinding(Definition def, boolean add) {
+    protected Binding writeBinding(Definition def, boolean add) {
         QName bindingQName =
             new QName(intfNS, getBindingName());
 
@@ -734,7 +734,7 @@ public class Emitter {
      * @param def
      * @param binding
      */
-    private void writeService(Definition def, Binding binding) {
+    protected void writeService(Definition def, Binding binding) {
 
         QName serviceElementQName =
             new QName(implNS,
@@ -769,7 +769,7 @@ public class Emitter {
      * @throws WSDLException
      * @throws AxisFault
      */
-    private void writePortType(Definition def, Binding binding)
+    protected void writePortType(Definition def, Binding binding)
         throws WSDLException, AxisFault {
 
         QName portTypeQName = new QName(intfNS, getPortTypeName());
@@ -859,7 +859,7 @@ public class Emitter {
      * @throws WSDLException
      * @throws AxisFault
      */
-    private void writeMessages(Definition def,
+    protected void writeMessages(Definition def,
                                Operation oper,
                                OperationDesc desc,
                                BindingOperation bindingOper)
@@ -939,7 +939,7 @@ public class Emitter {
      * @param def
      * @param binding
      */
-    private BindingOperation writeOperation(Definition def,
+    protected BindingOperation writeOperation(Definition def,
                                      Binding binding,
                                      OperationDesc desc) {
         Operation oper = def.createOperation();
@@ -954,7 +954,7 @@ public class Emitter {
      * @param binding
      * @param oper
      */
-    private BindingOperation writeBindingOperation (Definition def,
+    protected BindingOperation writeBindingOperation (Definition def,
                                         Binding binding,
                                         Operation oper,
                                         OperationDesc desc) {
@@ -1026,7 +1026,7 @@ public class Emitter {
         return bindingOper;
     }
 
-    private ExtensibilityElement writeSOAPBody(QName operQName) {
+    protected ExtensibilityElement writeSOAPBody(QName operQName) {
         SOAPBody soapBody = new SOAPBodyImpl();
         // for now, if its document, it is literal use.        
         if (use == Use.ENCODED) {
@@ -1046,7 +1046,7 @@ public class Emitter {
         return soapBody;
     } // writeSOAPBody
 
-    private SOAPFault writeSOAPFault(FaultDesc faultDesc) {
+    protected SOAPFault writeSOAPFault(FaultDesc faultDesc) {
         SOAPFault soapFault = new com.ibm.wsdl.extensions.soap.SOAPFaultImpl();
         if (use != Use.ENCODED) {
             soapFault.setUse("literal");
@@ -1079,7 +1079,7 @@ public class Emitter {
      * @throws WSDLException
      * @throws AxisFault
      */
-    private Message writeRequestMessage(Definition def,
+    protected Message writeRequestMessage(Definition def,
                                         OperationDesc oper)
         throws WSDLException, AxisFault
     {
@@ -1122,14 +1122,14 @@ public class Emitter {
         return msg;
     }
     
-    private QName getRequestQName(OperationDesc oper) {
+    protected QName getRequestQName(OperationDesc oper) {
         QName qname = oper.getElementQName();
         if (qname == null) {
             qname = new QName(oper.getName());
         }
         return qname;
     }
-    private QName getResponseQName(OperationDesc oper) {
+    protected QName getResponseQName(OperationDesc oper) {
         QName qname = oper.getElementQName();
         if (qname == null) {
             return new QName(oper.getName() + "Response");
@@ -1200,7 +1200,7 @@ public class Emitter {
      * @throws WSDLException
      * @throws AxisFault
      */
-    private Message writeResponseMessage(Definition def,
+    protected Message writeResponseMessage(Definition def,
                                          OperationDesc desc)
         throws WSDLException, AxisFault
     {
@@ -1243,7 +1243,7 @@ public class Emitter {
      * @throws WSDLException
      * @throws AxisFault
      */
-    private Message writeFaultMessage(Definition def,
+    protected Message writeFaultMessage(Definition def,
                                       FaultDesc exception)
         throws WSDLException, AxisFault
     {
@@ -1361,7 +1361,7 @@ public class Emitter {
     /*
      * Return a message QName which has not already been defined in the WSDL
      */
-    private QName createMessageName(Definition def, String methodName) {
+    protected QName createMessageName(Definition def, String methodName) {
 
         QName qName = new QName(intfNS, methodName);
 
@@ -1383,7 +1383,7 @@ public class Emitter {
      * @param filename the name of the file to be written
      * @throws IOException various file i/o exceptions
      */
-    private void prettyDocumentToFile(Document doc, String filename)
+    protected void prettyDocumentToFile(Document doc, String filename)
         throws IOException {
         FileOutputStream fos = new FileOutputStream(new File(filename));
         XMLUtils.PrettyDocumentToStream(doc, fos);
