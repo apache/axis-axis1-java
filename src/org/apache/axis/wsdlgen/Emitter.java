@@ -107,6 +107,10 @@ import java.util.StringTokenizer;
  */
 public class Emitter {
 
+    public static final int MODE_ALL = 0;
+    public static final int MODE_INTERFACE = 1;
+    public static final int MODE_IMPLEMENTATION = 2;
+
     private Class cls;
     private String allowedMethods;
     private String intfNS;          
@@ -161,9 +165,41 @@ public class Emitter {
      * @throws Exception
      */
     public void emit(String filename) throws Exception {
-        Definition def = getWSDL();
-        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
-        types.insertTypesFragment(doc);
+        emit(filename, MODE_ALL);
+    }
+
+    /**
+     * Generates a WSDL document for a given <code>Class</code>. The sections of
+     * the WSDL generated are controlled by the mode parameter 
+     * mode 0: All
+     * mode 1: Interface
+     * mode 2: Implementation
+     * 
+     * @param filename  WSDL
+     * @param mode generation mode - all, interface, implementation                     
+     * @throws Exception
+     */
+    public void emit(String filename, int mode) throws Exception {
+        Document doc = null;
+        Definition def = null;
+        switch (mode) {
+            case MODE_ALL:
+                def = getWSDL();
+                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                types.insertTypesFragment(doc);
+                break;
+            case MODE_INTERFACE:
+                def = getIntfWSDL();
+                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                types.insertTypesFragment(doc);
+                break;
+            case MODE_IMPLEMENTATION:
+                def = getImplWSDL();
+                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                break;
+            default:
+                throw new Exception ("unrecognized output WSDL mode"); 
+        }
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
@@ -258,7 +294,7 @@ public class Emitter {
                 implNS = intfNS + "-impl";
 
             namespaces.put(cls.getName(), intfNS, "intf");
-            namespaces.put(cls.getName(), implNS, "impl");
+            namespaces.putPrefix(implNS, "impl");
         }
     }
 
