@@ -167,10 +167,17 @@ public class WSDL2Java extends WSDL2 {
         addOptions(options);
     } // ctor
 
+    /**
+     * Instantiate an extension of the Parser
+     */
     protected Parser createParser() {
         return new Emitter();
     } // createParser
 
+    /**
+     * Parse an option
+     * @param CLOption is the option
+     */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
             case FACTORY_CLASS_OPT:
@@ -260,6 +267,11 @@ public class WSDL2Java extends WSDL2 {
         }
     } // parseOption
 
+    /**
+     * validateOptions
+     * This method is invoked after the options are set to validate 
+     * the option settings.
+     */
     protected void validateOptions() {
         super.validateOptions();
 
@@ -276,6 +288,8 @@ public class WSDL2Java extends WSDL2 {
 
     /**
      * Main
+     * Run the WSDL2Java emitter with the specified command-line arguments
+     * @param String[] command-line arguments
      */
     public static void main(String args[]) {
         WSDL2Java wsdl2java = new WSDL2Java();

@@ -101,18 +101,35 @@ public class WSDL2 {
     protected String wsdlURI = null;
     protected Parser parser;
 
+    /**
+     * Constructor
+     * Used by extended classes to construct an instance of WSDL2
+     */
     protected WSDL2 () {
         parser = createParser();
     } // ctor
 
+    /**
+     * createParser
+     * Used by extended classes to construct an instance of the Parser
+     */
     protected Parser createParser() {
         return new Parser();
     } // createParser
 
+    /**
+     * getParser
+     * get the Parser object
+     */
     protected Parser getParser() {
         return parser;
     } // getParser
 
+    /**
+     * addOptions
+     * Add option descriptions to the tool.
+     * @param CLOptionDescriptor[] the options
+     */
     protected void addOptions(CLOptionDescriptor[] newOptions) {
         if (newOptions != null && newOptions.length > 0) {
             CLOptionDescriptor[] allOptions = new CLOptionDescriptor[
@@ -123,6 +140,10 @@ public class WSDL2 {
         }
     } // addOptions
 
+    /**
+     * Parse an option
+     * @param CLOption is the option 
+     */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
             case CLOption.TEXT_ARGUMENT:
@@ -159,6 +180,11 @@ public class WSDL2 {
         }
     } // parseOption
 
+    /**
+     * validateOptions
+     * This method is invoked after the options are set to validate and default the options
+     * the option settings.
+     **/
     protected void validateOptions() {
         if (wsdlURI == null) {
             printUsage();
@@ -170,6 +196,11 @@ public class WSDL2 {
                 parser.getUsername(), parser.getPassword()));
     } // validateOptions
 
+
+    /**
+     * checkForAuthInfo
+     * set user and password information
+     */
     private void checkForAuthInfo(String uri) {
         URL url = null;
         try {
@@ -190,6 +221,10 @@ public class WSDL2 {
         } 
     }
 
+    /**
+     * printUsage
+     * print usage information and quit.
+     */
     protected void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
@@ -202,6 +237,11 @@ public class WSDL2 {
         System.exit(1);
     } // printUsage
 
+    /**
+     * run 
+     * checkes the command-line arguments and runs the tool.
+     * @param String[] command-line arguments.
+     */
     protected void run(String[] args) {
         // Parse the arguments
         CLArgsParser argsParser = new CLArgsParser(args, options);
@@ -238,6 +278,11 @@ public class WSDL2 {
         }
     } // run
 
+    /**
+     * Main
+     * Run the tool with the specified command-line arguments
+     * @param String[] command-line arguments
+     */
     public static void main(String[] args) {
         WSDL2 wsdl2 = new WSDL2();
         wsdl2.run(args);
