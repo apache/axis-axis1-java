@@ -647,7 +647,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         }
         
         try {
-            elem.setParentElement(curElement);
+            if(curElement != null)
+                elem.setParentElement(curElement);
         } catch (Exception e) {
             /*
              * The only checked exception that may be thrown from setParent

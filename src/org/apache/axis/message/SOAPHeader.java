@@ -110,6 +110,8 @@ public class SOAPHeader extends MessageElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
+        if(parent == null)
+            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
         try {
             // cast to force exception if wrong type
             super.setParentElement((SOAPEnvelope)parent);
