@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;

@@ -88,7 +88,6 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -153,16 +152,13 @@ public class SerializationContextImpl implements SerializationContext
 
     class MultiRefItem {
         String id;
-        Class javaType;
         QName xmlType;
         Boolean sendType;
         Object value;
         MultiRefItem(String id,
-                     Class javaType,
                      QName xmlType,
                      Boolean sendType, Object value) {
             this.id = id;
-            this.javaType = javaType;
             this.xmlType = xmlType;
             this.sendType = sendType;
             this.value = value;
@@ -479,13 +475,13 @@ public class SerializationContextImpl implements SerializationContext
      * is serialized directly instead of using id/href pairs.  Thus
      * primitive serialization/deserialization is slightly faster.
      * @param value to be serialized
-     * @param javaType is the "real" java type of value.  Used to distinguish
-     * between java primitives and their wrapper classes.
      * @return true/false
      */
-    public boolean isPrimitive(Object value, Class javaType)
+    public boolean isPrimitive(Object value)
     {
         if (value == null) return true;
+
+        Class javaType = value.getClass();
 
         if (javaType.isPrimitive()) return true;
 
@@ -555,14 +551,12 @@ public class SerializationContextImpl implements SerializationContext
      * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
-     * @param javaType is the "real" type of the value.
      */
     public void serialize(QName elemQName,
                           Attributes attributes,
-                          Object value,
-                          Class javaType)
+                          Object value)
         throws IOException {
-        serialize(elemQName, attributes, value, javaType, null, true, null);
+        serialize(elemQName, attributes, value, null, true, null);
     }
 
     /**
@@ -583,7 +577,6 @@ public class SerializationContextImpl implements SerializationContext
      * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
-     * @param javaType is the "real" type of the value.
      * @param xmlType is the qname of the type or null.
      * @param sendNull determines whether to send null values.
      * @param sendType determines whether to set xsi:type attribute.
@@ -591,7 +584,6 @@ public class SerializationContextImpl implements SerializationContext
     public void serialize(QName elemQName,
                           Attributes attributes,
                           Object value,
-                          Class javaType,
                           QName xmlType,
                           boolean sendNull,
                           Boolean sendType)
@@ -599,6 +591,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         boolean shouldSendType = (sendType == null) ? shouldSendXSIType() :
             sendType.booleanValue();
+
         if (value == null) {
             // If the value is null, the element is
             // passed with xsi:nil="true" to indicate that no object is present.
@@ -626,7 +619,7 @@ public class SerializationContextImpl implements SerializationContext
                 //Attachment support and this is an object that should be treated as an attachment.
 
                 //Allow an the attachment to do its own serialization.
-                serializeActual(elemQName, attributes, value, javaType,
+                serializeActual(elemQName, attributes, value,
                                 xmlType, sendType);
 
                 //No need to add to mulitRefs. Attachment data stream handled by
@@ -649,7 +642,7 @@ public class SerializationContextImpl implements SerializationContext
         // hashCode() and equals() methods have been overloaded to make two
         // Objects appear equal.
 
-        if (doMultiRefs && (value != forceSer) && !isPrimitive(value, javaType)) {
+        if (doMultiRefs && (value != forceSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
 
@@ -663,7 +656,7 @@ public class SerializationContextImpl implements SerializationContext
                 // it for next time.
                 multiRefIndex++;
                 id = "id" + multiRefIndex;
-                mri = new MultiRefItem (id, javaType, xmlType, sendType, value);
+                mri = new MultiRefItem (id, xmlType, sendType, value);
                 multiRefValues.put(getIdentityKey(value), mri);
 
                 /** If we're in the middle of writing out
@@ -710,7 +703,7 @@ public class SerializationContextImpl implements SerializationContext
             forceSer = null;
 
         // Actually serialize the value.  (i.e. not an href like above)
-        serializeActual(elemQName, attributes, value, javaType, xmlType, sendType);
+        serializeActual(elemQName, attributes, value, xmlType, sendType);
     }
 
     /**
@@ -778,7 +771,7 @@ public class SerializationContextImpl implements SerializationContext
                 // Some of the remote services do not know how to
                 // ascertain the type in these circumstances (though Axis does).
                 serialize(multirefQName, attrs, mri.value,
-                          mri.javaType, mri.xmlType,
+                          mri.xmlType,
                           true,
                           null);   // mri.sendType
             }
@@ -1081,16 +1074,12 @@ public class SerializationContextImpl implements SerializationContext
      * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
-     * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value
-     * is really a wrapped primitive.
      * @param xmlType (optional) is the desired type QName.
      * @param sendType indicates whether the xsi:type attribute should be set.
      */
     public void serializeActual(QName elemQName,
                                 Attributes attributes,
                                 Object value,
-                                Class javaType,
                                 QName xmlType,
                                 Boolean sendType)
         throws IOException
@@ -1099,6 +1088,7 @@ public class SerializationContextImpl implements SerializationContext
             sendType.booleanValue();
 
         if (value != null) {
+            Class javaType = value.getClass();
             TypeMapping tm = getTypeMapping();
 
             if (tm == null) {
@@ -1109,21 +1099,21 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             SerializerInfo info = null;
-            // If the javaType is abstract, try getting a
-            // serializer that matches the value's class.
-            if (javaType != null &&
-                !javaType.isPrimitive() &&
-                !javaType.isArray() &&
-                !isPrimitive(value, javaType) &&
-                Modifier.isAbstract(javaType.getModifiers())) {
-                info = getSerializer(value.getClass(), value);
-                if (info != null) {
-                    // Successfully found a serializer for the derived object.
-                    // Must serialize the type.
-                    shouldSendType = true;
-                    xmlType = null;
-                }
-            }
+//            // If the javaType is abstract, try getting a
+//            // serializer that matches the value's class.
+//            if (javaType != null &&
+//                !javaType.isPrimitive() &&
+//                !javaType.isArray() &&
+//                !isPrimitive(value, javaType) &&
+//                Modifier.isAbstract(javaType.getModifiers())) {
+//                info = getSerializer(value.getClass(), value);
+//                if (info != null) {
+//                    // Successfully found a serializer for the derived object.
+//                    // Must serialize the type.
+//                    shouldSendType = true;
+//                    xmlType = null;
+//                }
+//            }
             // Try getting a serializer for the prefered xmlType
             if (info == null && xmlType != null) {
                 info = getSerializer(javaType, xmlType);

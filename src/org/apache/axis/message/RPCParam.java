@@ -224,7 +224,7 @@ public class RPCParam implements Serializable
         context.serialize(qname,  // element qname
                           null,   // no extra attrs
                           value,  // value
-                          javaType, xmlType, // java/xml type
+                          xmlType, // java/xml type
                           true, wantXSIType); 
     }
 

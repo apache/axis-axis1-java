@@ -55,7 +55,6 @@
 
 package org.apache.axis.message;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
@@ -749,8 +748,7 @@ public class MessageElement implements SOAPElement, Serializable
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
                               attributes,
-                              objectValue,
-                              objectValue.getClass());
+                              objectValue);
             return;
         }
 

@@ -39,9 +39,9 @@ public class DataSer implements Serializer
         Data data = (Data)value;
 
         context.startElement(name, attributes);
-        context.serialize(new QName("", STRINGMEMBER), null, data.stringMember, String.class);
-        context.serialize(new QName("", FLOATMEMBER), null, data.floatMember, float.class);
-        context.serialize(new QName("", DATAMEMBER), null, data.dataMember, Data.class);
+        context.serialize(new QName("", STRINGMEMBER), null, data.stringMember);
+        context.serialize(new QName("", FLOATMEMBER), null, data.floatMember);
+        context.serialize(new QName("", DATAMEMBER), null, data.dataMember);
         context.endElement();
     }
     public String getMechanismType() { return Constants.AXIS_SAX; }
