@@ -102,7 +102,6 @@ public class ServiceDesc {
 
     /** The name of this service */
     private String name = null;
-    private static final String ALL_METHODS= "*";
 
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
@@ -848,6 +847,13 @@ public class ServiceDesc {
      */
     private void getSyncedOperationsForName(Class implClass, String methodName)
     {
+        // If we're a Skeleton deployment, skip the statics.
+        if (isSkeletonClass) {
+            if (methodName.equals("getOperationDescByName") ||
+                methodName.equals("getOperationDescs"))
+                return;
+        }
+        
         // If we have no implementation class, don't worry about it (we're
         // probably on the client)
         if (implClass == null)
@@ -944,6 +950,13 @@ public class ServiceDesc {
      */
     private void createOperationsForName(Class implClass, String methodName)
     {
+        // If we're a Skeleton deployment, skip the statics.
+        if (isSkeletonClass) {
+            if (methodName.equals("getOperationDescByName") ||
+                methodName.equals("getOperationDescs"))
+                return;
+        }
+        
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
