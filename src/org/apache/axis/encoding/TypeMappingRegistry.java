@@ -104,7 +104,7 @@ public class TypeMappingRegistry implements Serializer {
     
     public boolean isEmpty()
     {
-      return (d == null || d.isEmpty());
+        return (d == null || d.isEmpty());
     }
     
     /**
@@ -261,73 +261,75 @@ public class TypeMappingRegistry implements Serializer {
     public void dumpToSerializationContext(SerializationContext ctx)
       throws IOException
     {
-      if (d == null) {
-        return;
-      }
-      
-      Enumeration enum = d.keys();
-      while (enum.hasMoreElements()) {
-        QName typeQName = (QName)enum.nextElement();
-        DeserializerDescriptor desc = 
-                                    (DeserializerDescriptor)d.get(typeQName);
-        if (desc.cls == null)
-          continue;
-
-        AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "type", "type",
-                           "CDATA", ctx.qName2String(typeQName));
-        attrs.addAttribute("", "class", "class",
-                           "CDATA", desc.cls.getName());
-        
-        String dser = desc.factory.getClass().getName();
-        attrs.addAttribute("", "dser", "dser",
-                           "CDATA", dser);
-        
-        SerializerDescriptor serDesc = (SerializerDescriptor)s.get(desc.cls);
-        if (serDesc != null) {
-          attrs.addAttribute("", "ser", "ser",
-                             "CDATA",
-          serDesc.serializer.getClass().getName());
+        if (d == null) {
+            return;
         }
         
-        ctx.startElement(typeMappingQName, attrs);
-        ctx.endElement();
-      }
+        Enumeration enum = d.keys();
+        while (enum.hasMoreElements()) {
+            QName typeQName = (QName)enum.nextElement();
+            DeserializerDescriptor desc = 
+                                    (DeserializerDescriptor)d.get(typeQName);
+            if (desc.cls == null)
+                continue;
+
+            AttributesImpl attrs = new AttributesImpl();
+            attrs.addAttribute("", "type", "type",
+                               "CDATA", ctx.qName2String(typeQName));
+            attrs.addAttribute("", "class", "class",
+                               "CDATA", desc.cls.getName());
+            
+            String dser = desc.factory.getClass().getName();
+            attrs.addAttribute("", "dser", "dser",
+                               "CDATA", dser);
+            
+            SerializerDescriptor serDesc =
+                                       (SerializerDescriptor)s.get(desc.cls);
+            if (serDesc != null) {
+                attrs.addAttribute("", "ser", "ser",
+                                   "CDATA",
+                                   serDesc.serializer.getClass().getName());
+            }
+            
+            ctx.startElement(typeMappingQName, attrs);
+            ctx.endElement();
+        }
     }
 
     public void dumpToElement(Element root)
     {
-      if ((d == null) || (parent == null)) {
-        return;
-      }
-
-      Document doc = root.getOwnerDocument();
-      
-      Enumeration enum = d.keys();
-      while (enum.hasMoreElements()) {
-        QName typeQName = (QName)enum.nextElement();
-        DeserializerDescriptor desc = 
-                                    (DeserializerDescriptor)d.get(typeQName);
-        if (desc.cls == null)
-          continue;
-        
-        Element mapEl = doc.createElement("typeMapping");
-
-        mapEl.setAttribute("type", "ns:" + typeQName.getLocalPart());
-        mapEl.setAttribute("xmlns:ns", typeQName.getNamespaceURI());
-        
-        mapEl.setAttribute("classname", desc.cls.getName());
-        
-        String dser = desc.factory.getClass().getName();
-        mapEl.setAttribute("deserializerFactory", dser);
-        
-        SerializerDescriptor serDesc = (SerializerDescriptor)s.get(desc.cls);
-        if (serDesc != null) {
-          mapEl.setAttribute("serializer", serDesc.serializer.
-                                                   getClass().getName());
+        if ((d == null) || (parent == null)) {
+            return;
         }
 
-        root.appendChild(mapEl);
-      }
+        Document doc = root.getOwnerDocument();
+        
+        Enumeration enum = d.keys();
+        while (enum.hasMoreElements()) {
+            QName typeQName = (QName)enum.nextElement();
+            DeserializerDescriptor desc = 
+                                   (DeserializerDescriptor)d.get(typeQName);
+            if (desc.cls == null)
+                continue;
+            
+            Element mapEl = doc.createElement("typeMapping");
+
+            mapEl.setAttribute("type", "ns:" + typeQName.getLocalPart());
+            mapEl.setAttribute("xmlns:ns", typeQName.getNamespaceURI());
+            
+            mapEl.setAttribute("classname", desc.cls.getName());
+            
+            String dser = desc.factory.getClass().getName();
+            mapEl.setAttribute("deserializerFactory", dser);
+            
+            SerializerDescriptor serDesc =
+                                      (SerializerDescriptor)s.get(desc.cls);
+            if (serDesc != null) {
+                mapEl.setAttribute("serializer", serDesc.serializer.
+                                                      getClass().getName());
+            }
+
+            root.appendChild(mapEl);
+        }
     }
 }

@@ -67,76 +67,76 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public interface Handler extends Serializable {
-  /**
-   * Init is called when the chain containing this Handler object
-   * is instantiated.
-   */
-  public void init();
+    /**
+     * Init is called when the chain containing this Handler object
+     * is instantiated.
+     */
+    public void init();
 
-  /**
-   * Cleanup is called when the chain containing this Handler object
-   * is done processing the chain.
-   */
-  public void cleanup();
+    /**
+     * Cleanup is called when the chain containing this Handler object
+     * is done processing the chain.
+     */
+    public void cleanup();
 
-  /**
-   * Invoke is called to do the actual work of the Handler object.
-   * If there is a fault during the processing of this method it is
-   * invoke's job to catch the exception and undo any partial work
-   * that has been completed.  Once we leave 'invoke' if a fault
-   * is thrown, this classes 'undo' method will be called to undo
-   * the work that 'invoke' did.
-   * Invoke should rethrow any exceptions it catches.
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault ;
+    /**
+     * Invoke is called to do the actual work of the Handler object.
+     * If there is a fault during the processing of this method it is
+     * invoke's job to catch the exception and undo any partial work
+     * that has been completed.  Once we leave 'invoke' if a fault
+     * is thrown, this classes 'undo' method will be called to undo
+     * the work that 'invoke' did.
+     * Invoke should rethrow any exceptions it catches.
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault ;
 
-  /**
-   * Called when a fault occurs to 'undo' whatever 'invoke' did.
-   */
-  public void undo(MessageContext msgContext);
+    /**
+     * Called when a fault occurs to 'undo' whatever 'invoke' did.
+     */
+    public void undo(MessageContext msgContext);
 
-  /**
-   * Can this Handler process this QName?
-   */
-  public boolean canHandleBlock(QName qname);
+    /**
+     * Can this Handler process this QName?
+     */
+    public boolean canHandleBlock(QName qname);
 
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value);
+    /**
+     * Add the given option (name/value) to this handler's bag of options
+     */
+    public void addOption(String name, Object value);
 
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name);
-  
-  /**
-   * Set the name (i.e. registry key) of this Handler
-   */
-  public void setName(String name);
-  
-  /**
-   * Return the name (i.e. registry key) for this Handler
-   */
-  public String getName();
+    /**
+     * Returns the option corresponding to the 'name' given
+     */
+    public Object getOption(String name);
+    
+    /**
+     * Set the name (i.e. registry key) of this Handler
+     */
+    public void setName(String name);
+    
+    /**
+     * Return the name (i.e. registry key) for this Handler
+     */
+    public String getName();
 
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions();
+    /**
+     * Return the entire list of options
+     */
+    public Hashtable getOptions();
 
-  /**
-   * Sets a whole list of options
-   */
-  public void setOptions(Hashtable opts);
+    /**
+     * Sets a whole list of options
+     */
+    public void setOptions(Hashtable opts);
 
-  /**
-   * This will return the root element of an XML doc that describes the
-   * deployment information about this handler.  This is NOT the WSDL,
-   * this is all of the static internal data use by Axis - WSDL takes into
-   * account run-time information (like which service we're talking about)
-   * this is just the data that's stored in the registry.  Used by the
-   * 'list' Admin function.
-   */
-  public Element getDeploymentData(Document doc);
+    /**
+     * This will return the root element of an XML doc that describes the
+     * deployment information about this handler.  This is NOT the WSDL,
+     * this is all of the static internal data use by Axis - WSDL takes into
+     * account run-time information (like which service we're talking about)
+     * this is just the data that's stored in the registry.  Used by the
+     * 'list' Admin function.
+     */
+    public Element getDeploymentData(Document doc);
 };

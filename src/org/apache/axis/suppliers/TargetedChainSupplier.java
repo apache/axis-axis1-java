@@ -95,64 +95,64 @@ public class TargetedChainSupplier implements Supplier
     
     private void addHandlersToChain(Vector names, Chain chain)
     {
-      if (names == null)
-        return;
-      
-      Enumeration e = names.elements();
-      while (e.hasMoreElements()) {
-        String hName = (String)e.nextElement();
-        Handler h = _registry.find(hName);
-        chain.addHandler(h);
-      }
+        if (names == null)
+            return;
+        
+        Enumeration e = names.elements();
+        while (e.hasMoreElements()) {
+            String hName = (String)e.nextElement();
+            Handler h = _registry.find(hName);
+            chain.addHandler(h);
+        }
     }
     
     public SimpleTargetedChain getNewChain()
     {
-      return new SimpleTargetedChain();
+        return new SimpleTargetedChain();
     }
     
     public Handler getHandler()
     {
-      if (_chain == null) {
-        Debug.Print(2, "TargetedChainSupplier: Building chain '" + _myName + 
+        if (_chain == null) {
+            Debug.Print(2, "TargetedChainSupplier: Building chain '" + _myName + 
+                           "'");
+
+            Handler h;
+            SimpleTargetedChain c = getNewChain();
+            c.setOptions(_options);
+            c.setName(_myName);
+            
+            if (!_requestNames.isEmpty()) {
+                if (_requestNames.size() == 1) {
+                    h = _registry.find((String)_requestNames.elementAt(0));
+                    c.setRequestHandler(h);
+                } else {
+                    Chain chain = new SimpleChain();
+                    addHandlersToChain(_requestNames, chain);
+                    c.setRequestHandler(chain);
+                }
+            }
+            
+            h = _registry.find(_pivotName);
+            c.setPivotHandler(h);
+
+            if (!_responseNames.isEmpty()) {
+                if (_responseNames.size() == 1) {
+                    h = _registry.find((String)_responseNames.elementAt(0));
+                    c.setResponseHandler(h);
+                } else {
+                    Chain chain = new SimpleChain();
+                    addHandlersToChain(_responseNames, chain);
+                    c.setResponseHandler(chain);
+                }
+            }
+            
+            _chain = c;
+        }
+        
+        Debug.Print(2, "TargetedChainSupplier: Returning chain '" + _myName + 
                        "'");
-
-        Handler h;
-        SimpleTargetedChain c = getNewChain();
-        c.setOptions(_options);
-        c.setName(_myName);
         
-        if (!_requestNames.isEmpty()) {
-          if (_requestNames.size() == 1) {
-            h = _registry.find((String)_requestNames.elementAt(0));
-            c.setRequestHandler(h);
-          } else {
-            Chain chain = new SimpleChain();
-            addHandlersToChain(_requestNames, chain);
-            c.setRequestHandler(chain);
-          }
-        }
-        
-        h = _registry.find(_pivotName);
-        c.setPivotHandler(h);
-
-        if (!_responseNames.isEmpty()) {
-          if (_responseNames.size() == 1) {
-            h = _registry.find((String)_responseNames.elementAt(0));
-            c.setResponseHandler(h);
-          } else {
-            Chain chain = new SimpleChain();
-            addHandlersToChain(_responseNames, chain);
-            c.setResponseHandler(chain);
-          }
-        }
-        
-        _chain = c;
-      }
-      
-      Debug.Print(2, "TargetedChainSupplier: Returning chain '" + _myName + 
-                     "'");
-      
-      return _chain;
+        return _chain;
     }
 }

@@ -74,80 +74,80 @@ import org.apache.axis.message.* ;
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
     
-  // Simple hashtable of user and password.  Null means everybody
-  // will authenticate (replace with new Hashtable() if you want 
-  // the default to be that nobody will be authenticated.
-  static private Hashtable entries = null;
+    // Simple hashtable of user and password.  Null means everybody
+    // will authenticate (replace with new Hashtable() if you want 
+    // the default to be that nobody will be authenticated.
+    static private Hashtable entries = null;
 
-  // load the users list
-  static {
-    File userFile = new File("users.lst");
-    if (userFile.exists()) {
-      entries = new Hashtable();
+    // load the users list
+    static {
+        File userFile = new File("users.lst");
+        if (userFile.exists()) {
+            entries = new Hashtable();
 
-      try {
+            try {
 
-        FileReader        fr   = new FileReader( userFile );
-        LineNumberReader  lnr  = new LineNumberReader( fr );
-        String            line = null ;
+                FileReader        fr   = new FileReader( userFile );
+                LineNumberReader  lnr  = new LineNumberReader( fr );
+                String            line = null ;
 
-        // parse lines into user and passwd tokens and add result to hash table
-        while ( (line = lnr.readLine()) != null ) {
-          StringTokenizer  st = new StringTokenizer( line );
-          if ( st.hasMoreTokens() ) {
-            String userID = st.nextToken();
-            String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
+                // parse lines into user and passwd tokens and add result to hash table
+                while ( (line = lnr.readLine()) != null ) {
+                    StringTokenizer  st = new StringTokenizer( line );
+                    if ( st.hasMoreTokens() ) {
+                        String userID = st.nextToken();
+                        String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-            Debug.Print( 2, "From file: '", userID, "':'", passwd, "'" );
-            entries.put(userID, passwd);
-          }
+                        Debug.Print( 2, "From file: '", userID, "':'", passwd, "'" );
+                        entries.put(userID, passwd);
+                    }
+                }
+
+                lnr.close();
+
+            } catch( Exception e ) {
+                Debug.Print( 1, e );
+            }
+        }
+    }
+
+    /**
+     * Authenticate the user and password from the msgContext
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
+
+        if (entries != null) {
+            String  userID = (String) msgContext.getProperty( MessageContext.USERID );
+            Debug.Print( 1, "User: ",  userID );
+
+            // in order to authenticate, the user must exist
+            if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
+                throw new AxisFault( "Server.Unauthenticated", 
+                    "User '" + userID + "' not authenticated (unknown user)",
+                    null, null );
+            
+            String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
+            String valid = (String) entries.get(userID);
+            Debug.Print( 2, "Pass: ", passwd );
+            
+            // if a password is defined, then it must match
+            if ( valid.length()>0 && !valid.equals(passwd) ) 
+                throw new AxisFault( "Server.Unauthenticated", 
+                    "User '" + userID + "' not authenticated (bad password)",
+                    null, null );
+
+            Debug.Print( 1, "User '", userID, "' authenticated to server" );
         }
 
-        lnr.close();
-
-      } catch( Exception e ) {
-        Debug.Print( 1, e );
-      }
-    }
-  }
-
-  /**
-   * Authenticate the user and password from the msgContext
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
-
-    if (entries != null) {
-      String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-      Debug.Print( 1, "User: ",  userID );
-
-      // in order to authenticate, the user must exist
-      if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
-        throw new AxisFault( "Server.Unauthenticated", 
-          "User '" + userID + "' not authenticated (unknown user)",
-          null, null );
-  
-      String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-      String valid = (String) entries.get(userID);
-      Debug.Print( 2, "Pass: ", passwd );
-  
-      // if a password is defined, then it must match
-      if ( valid.length()>0 && !valid.equals(passwd) ) 
-        throw new AxisFault( "Server.Unauthenticated", 
-          "User '" + userID + "' not authenticated (bad password)",
-          null, null );
-
-      Debug.Print( 1, "User '", userID, "' authenticated to server" );
+        Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
     }
 
-    Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
-  }
-
-  /**
-   * Nothing to undo
-   */
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
-    Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
-  }
+    /**
+     * Nothing to undo
+     */
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
+        Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
+    }
 };

@@ -68,102 +68,102 @@ package org.apache.axis.utils ;
 import java.io.* ;
 
 public class Debug {
-  private static int     debugLevel = 0 ;
-  private static boolean toScreen   = true ;
-  private static boolean toFile     = false ;
+    private static int     debugLevel = 0 ;
+    private static boolean toScreen   = true ;
+    private static boolean toFile     = false ;
 
-  public static void setDebugLevel( int dl ) {
-    debugLevel = dl ;
-  }
-
-  public static int getDebugLevel() {
-    return( debugLevel );
-  }
-
-  public static int incDebugLevel() {
-    return( ++debugLevel );
-  }
-
-  public static int decDebugLevel() {
-    return( debugLevel = ( (debugLevel == 0) ? 0 : (debugLevel-1) ) );
-  }
-
-  public static void setToScreen(boolean b) {
-    toScreen = b ;
-  }
-
-  public static void setToFile(boolean b) {
-    toFile = b ;
-  }
-
-  public static boolean DebugOn(int level) {
-    return( debugLevel >= level );
-  }
-
-  public static void Print( int level, Exception exp ) {
-    if ( debugLevel < level ) return ;
-    try {
-      String msg = "Exception: " + exp ;
-      if ( toScreen ) {
-        System.err.println( msg );
-        exp.printStackTrace();
-      }
-      if ( toFile ) {
-        FileWriter   fw = new FileWriter( "AxisDebug.log", true );
-        fw.write( msg, 0, msg.length() );
-        PrintWriter  pw = new PrintWriter( fw );
-        exp.printStackTrace( pw );
-        pw.close();
-        fw.close();
-      }
+    public static void setDebugLevel( int dl ) {
+        debugLevel = dl ;
     }
-    catch( Exception e ) {
-      System.err.println( "Can't log debug info: " + e );
-      e.printStackTrace();
-    }
-  }
 
-  public static void Print( int level, String msg ) {
-    if ( debugLevel >= level ) {
-      if ( toScreen ) System.err.println( msg );
-      if ( toFile ) {
+    public static int getDebugLevel() {
+        return( debugLevel );
+    }
+
+    public static int incDebugLevel() {
+        return( ++debugLevel );
+    }
+
+    public static int decDebugLevel() {
+        return( debugLevel = ( (debugLevel == 0) ? 0 : (debugLevel-1) ) );
+    }
+
+    public static void setToScreen(boolean b) {
+        toScreen = b ;
+    }
+
+    public static void setToFile(boolean b) {
+        toFile = b ;
+    }
+
+    public static boolean DebugOn(int level) {
+        return( debugLevel >= level );
+    }
+
+    public static void Print( int level, Exception exp ) {
+        if ( debugLevel < level ) return ;
         try {
-          FileWriter fw = new FileWriter( "AxisDebug.log", true );
-          fw.write( msg, 0, msg.length() );
-          fw.write(System.getProperty("line.separator"));
-          fw.close();
+            String msg = "Exception: " + exp ;
+            if ( toScreen ) {
+                System.err.println( msg );
+                exp.printStackTrace();
+            }
+            if ( toFile ) {
+                FileWriter   fw = new FileWriter( "AxisDebug.log", true );
+                fw.write( msg, 0, msg.length() );
+                PrintWriter  pw = new PrintWriter( fw );
+                exp.printStackTrace( pw );
+                pw.close();
+                fw.close();
+            }
         }
         catch( Exception e ) {
-          System.err.println( "Can't log debug info: " + e );
-          e.printStackTrace();
+            System.err.println( "Can't log debug info: " + e );
+            e.printStackTrace();
         }
-      }
     }
-  }
 
-  public static void Print( int level, String msg1, Object msg2 ) {
-    if ( debugLevel >= level ) {
-      Print(level, msg1 + msg2);
+    public static void Print( int level, String msg ) {
+        if ( debugLevel >= level ) {
+            if ( toScreen ) System.err.println( msg );
+            if ( toFile ) {
+                try {
+                    FileWriter fw = new FileWriter( "AxisDebug.log", true );
+                    fw.write( msg, 0, msg.length() );
+                    fw.write(System.getProperty("line.separator"));
+                    fw.close();
+                }
+                catch( Exception e ) {
+                    System.err.println( "Can't log debug info: " + e );
+                    e.printStackTrace();
+                }
+            }
+        }
     }
-  }
 
-  public static void Print( int level, String msg1, Object msg2, Object msg3 ) {
-    if ( debugLevel >= level ) {
-      Print(level, msg1 + msg2 + msg3);
+    public static void Print( int level, String msg1, Object msg2 ) {
+        if ( debugLevel >= level ) {
+            Print(level, msg1 + msg2);
+        }
     }
-  }
 
-  public static void Print( int level, String msg1, Object msg2, Object msg3,
-                                       Object msg4) {
-    if ( debugLevel >= level ) {
-      Print(level, msg1 + msg2 + msg3 + msg4);
+    public static void Print( int level, String msg1, Object msg2, Object msg3 ) {
+        if ( debugLevel >= level ) {
+            Print(level, msg1 + msg2 + msg3);
+        }
     }
-  }
 
-  public static void Print( int level, String msg1, Object msg2, Object msg3,
-                                       Object msg4, Object msg5) {
-    if ( debugLevel >= level ) {
-      Print(level, msg1 + msg2 + msg3 + msg4 + msg5);
+    public static void Print( int level, String msg1, Object msg2, Object msg3,
+                              Object msg4) {
+        if ( debugLevel >= level ) {
+            Print(level, msg1 + msg2 + msg3 + msg4);
+        }
     }
-  }
+
+    public static void Print( int level, String msg1, Object msg2, Object msg3,
+                              Object msg4, Object msg5) {
+        if ( debugLevel >= level ) {
+            Print(level, msg1 + msg2 + msg3 + msg4 + msg5);
+        }
+    }
 }

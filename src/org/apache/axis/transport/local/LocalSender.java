@@ -72,91 +72,91 @@ import java.net.*;
  */
 public class LocalSender extends BasicHandler {
 
-  private volatile AxisServer server;
+    private volatile AxisServer server;
 
-  /**
-   * Allocate an embedded Axis server to process requests and initialize it.
-   */
-  public synchronized void init() {
-    AxisServer server = new AxisServer();
-    server.init();
-    this.server=server;
-  }
-
-  public void invoke(MessageContext clientContext) throws AxisFault {
-    Debug.Print( 1, "Enter: LocalSender::invoke" );
-
-    AxisServer targetServer = (AxisServer)clientContext.
-                                     getProperty(LocalTransport.LOCAL_SERVER);
-    Debug.Print(3, "LocalSender using server " + targetServer);
-    
-    if (targetServer == null) {
-      // This should have already been done, but it doesn't appear to be
-      // something that can be relied on.  Oh, well...
-      if (server == null) init();
-      targetServer = server;
-    }
-    
-    // Define a new messageContext per request
-    MessageContext serverContext = new MessageContext(targetServer);
-
-    // copy the request, and force its format to String in order to
-    // exercise the serializers.
-    String msgStr = clientContext.getRequestMessage().getAsString();
-    
-    Debug.Print(3, "LocalSender sending XML:");
-    Debug.Print(3, msgStr);
-
-    serverContext.setRequestMessage(new Message(msgStr));
-    serverContext.setTransportName("local");
-
-    // copy soap action if it is present
-    String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
-    if (action != null) {
-       serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
-       serverContext.setTransportName("http");
+    /**
+     * Allocate an embedded Axis server to process requests and initialize it.
+     */
+    public synchronized void init() {
+        AxisServer server = new AxisServer();
+        server.init();
+        this.server=server;
     }
 
-    // set the realpath if possible
-    String transURL = clientContext.getStrProp(MessageContext.TRANS_URL);
-    if (transURL != null) {
-      try {
-        URL url = new URL(transURL);
-        if (url.getProtocol().equals("file")) {
-          String file = url.getFile();
-          if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
-          serverContext.setProperty(Constants.MC_REALPATH, file);
+    public void invoke(MessageContext clientContext) throws AxisFault {
+        Debug.Print( 1, "Enter: LocalSender::invoke" );
+
+        AxisServer targetServer = (AxisServer)clientContext.
+                                                            getProperty(LocalTransport.LOCAL_SERVER);
+        Debug.Print(3, "LocalSender using server " + targetServer);
+        
+        if (targetServer == null) {
+            // This should have already been done, but it doesn't appear to be
+            // something that can be relied on.  Oh, well...
+            if (server == null) init();
+            targetServer = server;
         }
-      } catch (Exception e) {
-      }
-    }
+        
+        // Define a new messageContext per request
+        MessageContext serverContext = new MessageContext(targetServer);
 
-    // invoke the request
-    try {
-        targetServer.invoke(serverContext);
-    } catch (AxisFault fault) {
-        Message respMsg = serverContext.getResponseMessage();
-        if (respMsg == null) {
-            respMsg = new Message(fault);
-            serverContext.setResponseMessage(respMsg);
-        } else {
-            SOAPFaultElement faultEl = new SOAPFaultElement(fault);
-            SOAPEnvelope env = respMsg.getAsSOAPEnvelope();
-            env.clearBody();
-            env.addBodyElement(faultEl);
+        // copy the request, and force its format to String in order to
+        // exercise the serializers.
+        String msgStr = clientContext.getRequestMessage().getAsString();
+        
+        Debug.Print(3, "LocalSender sending XML:");
+        Debug.Print(3, msgStr);
+
+        serverContext.setRequestMessage(new Message(msgStr));
+        serverContext.setTransportName("local");
+
+        // copy soap action if it is present
+        String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
+        if (action != null) {
+            serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
+            serverContext.setTransportName("http");
         }
+
+        // set the realpath if possible
+        String transURL = clientContext.getStrProp(MessageContext.TRANS_URL);
+        if (transURL != null) {
+            try {
+                URL url = new URL(transURL);
+                if (url.getProtocol().equals("file")) {
+                    String file = url.getFile();
+                    if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
+                    serverContext.setProperty(Constants.MC_REALPATH, file);
+                }
+            } catch (Exception e) {
+            }
+        }
+
+        // invoke the request
+        try {
+            targetServer.invoke(serverContext);
+        } catch (AxisFault fault) {
+            Message respMsg = serverContext.getResponseMessage();
+            if (respMsg == null) {
+                respMsg = new Message(fault);
+                serverContext.setResponseMessage(respMsg);
+            } else {
+                SOAPFaultElement faultEl = new SOAPFaultElement(fault);
+                SOAPEnvelope env = respMsg.getAsSOAPEnvelope();
+                env.clearBody();
+                env.addBodyElement(faultEl);
+            }
+        }
+
+        // copy back the response, and force its format to String in order to
+        // exercise the deserializers.
+        clientContext.setResponseMessage(serverContext.getResponseMessage());
+        //clientContext.getResponseMessage().getAsString();
+
+        Debug.Print( 1, "Exit: LocalSender::invoke" );
     }
 
-    // copy back the response, and force its format to String in order to
-    // exercise the deserializers.
-    clientContext.setResponseMessage(serverContext.getResponseMessage());
-    //clientContext.getResponseMessage().getAsString();
-
-    Debug.Print( 1, "Exit: LocalSender::invoke" );
-  }
-
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: LocalSender::undo" );
-    Debug.Print( 1, "Exit: LocalSender::undo" );
-  }
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: LocalSender::undo" );
+        Debug.Print( 1, "Exit: LocalSender::undo" );
+    }
 };

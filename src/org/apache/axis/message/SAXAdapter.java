@@ -39,11 +39,11 @@ public class SAXAdapter extends SOAPSAXHandler
      */
     public void parse() throws SAXException
     {
-      try {
-        _parser.parse(inputSource, this);
-      } catch (java.io.IOException ioe) {
-        throw new SAXException(ioe);
-      }
+        try {
+            _parser.parse(inputSource, this);
+        } catch (java.io.IOException ioe) {
+            throw new SAXException(ioe);
+        }
     }
     
     /** Called by the control thread; let the parsing thread

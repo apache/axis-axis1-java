@@ -66,14 +66,14 @@ import org.apache.axis.utils.Debug;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class LocalResponder extends BasicHandler {
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: LocalResponder::invoke" );
-    msgContext.getResponseMessage().getAsString();
-    Debug.Print( 1, "Enter: LocalResponder::invoke" );
-  }
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: LocalResponder::invoke" );
+        msgContext.getResponseMessage().getAsString();
+        Debug.Print( 1, "Enter: LocalResponder::invoke" );
+    }
 
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: LocalResponder::undo" );
-    Debug.Print( 1, "Exit: LocalResponder::undo" );
-  }
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: LocalResponder::undo" );
+        Debug.Print( 1, "Exit: LocalResponder::undo" );
+    }
 };

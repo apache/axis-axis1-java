@@ -81,71 +81,75 @@ import org.apache.axis.transport.http.HTTPConstants;
 public abstract class AdminClient {
     public static void main (String[] args)
     {
-      try {
-        Options opts = new Options( args );
-        
-        if (opts.isFlagSet('d') > 0) {
-          Debug.setDebugLevel( opts.isFlagSet('d') );
-        }
-        
-        args = opts.getRemainingArgs();
-        
-        if ( args == null ) {
-            System.err.println( "Usage: AdminClient xml-files | list" );
-            System.exit(1);
-        }
-        
-        for ( int i = 0 ; i < args.length ; i++ ) {
-            InputStream input = null ;
+        try {
+            Options opts = new Options( args );
             
-            if ( args[i].equals("list") ) {
-                System.err.println( "Doing a list" );
-                String str = "<m:list xmlns:m=\"AdminService\"/>" ;
-                input = new ByteArrayInputStream( str.getBytes() );
-            } else if (args[i].equals("quit")) {
-                System.out.println("Doing a quit");
-                String str = "<m:quit xmlns:m=\"AdminService\"/>";
-                input = new ByteArrayInputStream(str.getBytes());
-            }
-            else {
-                System.out.println( "Processing file: " + args[i] );
-                input = new FileInputStream( args[i] );
+            if (opts.isFlagSet('d') > 0) {
+                Debug.setDebugLevel( opts.isFlagSet('d') );
             }
             
-            ServiceClient client = new ServiceClient(opts.getURL());
+            args = opts.getRemainingArgs();
             
-            /** Unfortunately, this is transport-specific.  However, no one
-             * but the HTTP transport should pick this property up.
-             */
-            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");            
-            
-            Message         inMsg      = new Message( input, true );
-            
-            client.setRequestMessage( inMsg );
-            
-            client.set( Transport.USER, opts.getUser() );
-            client.set( Transport.PASSWORD, opts.getPassword() );
-            
-            client.invoke();
-            
-            Message outMsg = client.getMessageContext().getResponseMessage();
-            if (outMsg == null) {
-              System.err.println("Null response message!");
-              return;
+            if ( args == null ) {
+                System.err.println( "Usage: AdminClient xml-files | list" );
+                System.exit(1);
             }
             
-            client.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
-            input.close();
-            SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
-            SOAPBodyElement body = envelope.getFirstBody();
-            StringWriter writer = new StringWriter();
-            SerializationContext ctx = new SerializationContext(writer, client.getMessageContext());
-            body.output(ctx);
-            System.out.println(writer.toString());
+            for ( int i = 0 ; i < args.length ; i++ ) {
+                InputStream input = null ;
+                
+                if ( args[i].equals("list") ) {
+                    System.err.println( "Doing a list" );
+                    String str = "<m:list xmlns:m=\"AdminService\"/>" ;
+                    input = new ByteArrayInputStream( str.getBytes() );
+                } else if (args[i].equals("quit")) {
+                    System.out.println("Doing a quit");
+                    String str = "<m:quit xmlns:m=\"AdminService\"/>";
+                    input = new ByteArrayInputStream(str.getBytes());
+                }
+                else {
+                    System.out.println( "Processing file: " + args[i] );
+                    input = new FileInputStream( args[i] );
+                }
+                
+                ServiceClient client = new ServiceClient(opts.getURL());
+                
+                /** Unfortunately, this is transport-specific.  However, no one
+                * but the HTTP transport should pick this property up.
+                */
+                client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");            
+                
+                Message         inMsg      = new Message( input, true );
+                
+                client.setRequestMessage( inMsg );
+                
+                client.set( Transport.USER, opts.getUser() );
+                client.set( Transport.PASSWORD, opts.getPassword() );
+                
+                client.invoke();
+                
+                Message outMsg = client.getMessageContext().
+                                                     getResponseMessage();
+                if (outMsg == null) {
+                    System.err.println("Null response message!");
+                    return;
+                }
+                
+                client.getMessageContext().setServiceDescription(
+                                      new ServiceDescription("Admin", false));
+                input.close();
+                SOAPEnvelope envelope =
+                                    (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
+                SOAPBodyElement body = envelope.getFirstBody();
+                StringWriter writer = new StringWriter();
+                SerializationContext ctx = new SerializationContext(writer,
+                                                  client.getMessageContext());
+                body.output(ctx);
+                System.out.println(writer.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
     }
 }
 

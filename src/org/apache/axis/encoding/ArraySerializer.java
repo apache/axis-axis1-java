@@ -80,13 +80,13 @@ public class ArraySerializer extends DeserializerBase
 
     static Hashtable primitives = new Hashtable();
     static {
-      primitives.put(Character.class, Character.TYPE);
-      primitives.put(Byte.class, Byte.TYPE);
-      primitives.put(Short.class, Short.TYPE);
-      primitives.put(Integer.class, Integer.TYPE);
-      primitives.put(Long.class, Long.TYPE);
-      primitives.put(Float.class, Float.TYPE);
-      primitives.put(Double.class, Double.TYPE);
+        primitives.put(Character.class, Character.TYPE);
+        primitives.put(Byte.class, Byte.TYPE);
+        primitives.put(Short.class, Short.TYPE);
+        primitives.put(Integer.class, Integer.TYPE);
+        primitives.put(Long.class, Long.TYPE);
+        primitives.put(Float.class, Float.TYPE);
+        primitives.put(Double.class, Double.TYPE);
     }
 
     public static class Factory implements DeserializerFactory {
@@ -95,7 +95,7 @@ public class ArraySerializer extends DeserializerBase
         }
     }
     public static DeserializerFactory factory = new Factory();
-                                                     
+    
     public QName arrayType = null;
     public int curIndex = 0;
     QName arrayItemType;
@@ -107,8 +107,8 @@ public class ArraySerializer extends DeserializerBase
         super.startElement(namespace, localName, qName, attributes);
         
         QName arrayTypeValue = context.getQNameFromString(
-                 attributes.getValue(Constants.URI_SOAP_ENC,
-                                     Constants.ATTR_ARRAY_TYPE));
+                                  attributes.getValue(Constants.URI_SOAP_ENC,
+                                                   Constants.ATTR_ARRAY_TYPE));
         if (arrayTypeValue == null)
             throw new SAXException("No arrayType attribute for array!");
         
@@ -126,7 +126,7 @@ public class ArraySerializer extends DeserializerBase
         }
 
         String componentTypeName =
-                    arrayTypeValueLocalPart.substring(0, leftBracketIndex);
+                        arrayTypeValueLocalPart.substring(0, leftBracketIndex);
 
         if (componentTypeName.endsWith("]"))
         {
@@ -139,25 +139,27 @@ public class ArraySerializer extends DeserializerBase
                                   componentTypeName);
 
         String lengthStr =
-                 arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
-                                                   rightBracketIndex);
+                       arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
+                                                         rightBracketIndex);
         
         if (lengthStr.length() > 0)
         {
             if (lengthStr.indexOf(',') != -1)
             {
-                throw new IllegalArgumentException("Multi-dimensional arrays are " +
-                    "not supported '" +
+                throw new IllegalArgumentException(
+                    "Multi-dimensional arrays are not supported '" +
                     lengthStr + "'.");
             }
 
             try
             {
                 int length = Integer.parseInt(lengthStr);
-                Class componentType = context.getTypeMappingRegistry().getClassForQName(arrayItemType);
-        
+                Class componentType = context.getTypeMappingRegistry().
+                                              getClassForQName(arrayItemType);
+                
                 if (componentType == null)
-                    throw new SAXException("No component type for " + arrayItemType);
+                    throw new SAXException("No component type for " +
+                                           arrayItemType);
                 
                 // Replace wrapper classes with primitive equivalents
                 /*
@@ -173,9 +175,9 @@ public class ArraySerializer extends DeserializerBase
             }
             catch (NumberFormatException e)
             {
-                throw new IllegalArgumentException("Explicit array length is not a " +
-                    "valid integer '" + lengthStr +
-                    "'.");
+                throw new IllegalArgumentException(
+                    "Explicit array length is not a valid integer '" +
+                    lengthStr + "'.");
             }
         }
     }
@@ -188,13 +190,13 @@ public class ArraySerializer extends DeserializerBase
         QName itemType = context.getTypeFromAttributes(attributes);
         /*
         if (itemType != null) {
-            if (!arrayItemType.equals(itemType))
-                throw new SAXException("Item type (" + itemType + ") didn't match ArrayType (" +
-                                        arrayItemType + ")");
+        if (!arrayItemType.equals(itemType))
+        throw new SAXException("Item type (" + itemType + ") didn't match ArrayType (" +
+        arrayItemType + ")");
         }
         */
         if (itemType == null)
-          itemType = arrayItemType;
+            itemType = arrayItemType;
         
         DeserializerBase dSer = context.getDeserializer(itemType);
         dSer.registerCallback(this, new Integer(curIndex++));
@@ -208,10 +210,10 @@ public class ArraySerializer extends DeserializerBase
     
     public void valueReady(Object value, Object hint)
     {
-      /*
+        /*
         Array.set(this.value, ((Integer)hint).intValue(), value);
-      */
-      ((Vector)this.value).set(((Integer)hint).intValue(), value);
+        */
+        ((Vector)this.value).set(((Integer)hint).intValue(), value);
     }
 
     public void serialize(QName name, Attributes attributes,
@@ -220,28 +222,29 @@ public class ArraySerializer extends DeserializerBase
     {
         if (value == null)
             throw new IOException("Can't serialize null Arrays just yet...");
-    
+        
         Class cls = value.getClass();
         List list = null;
         
         if (!cls.isArray()) {
-          if (!(value instanceof List)) {
-            throw new IOException("Can't serialize a " + cls.getName() +
-                                  " with the ArraySerializer!");
-          }
-          list = (List)value;
+            if (!(value instanceof List)) {
+                throw new IOException("Can't serialize a " + cls.getName() +
+                    " with the ArraySerializer!");
+            }
+            list = (List)value;
         }
         
         Class componentType;
         if (list == null) {
-          componentType = cls.getComponentType();
+            componentType = cls.getComponentType();
         } else {
-          componentType = list.get(0).getClass();
+            componentType = list.get(0).getClass();
         }
         
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
-            throw new IOException("No mapped schema type for " + componentType.getName());
+            throw new IOException("No mapped schema type for " +
+                                  componentType.getName());
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
         String arrayType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
@@ -268,7 +271,7 @@ public class ArraySerializer extends DeserializerBase
         for (int index = 0; index < len; index++)
             context.serialize(new QName("","item"), null,
                               (list == null) ? Array.get(value, index) :
-                                              list.get(index));
+                                               list.get(index));
         
         context.endElement();
     }

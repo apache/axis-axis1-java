@@ -79,134 +79,134 @@ import org.w3c.dom.* ;
  */
 public class JWSProcessor extends BasicHandler
 {
-  static String errFile = "jws.err" ;
+    static String errFile = "jws.err" ;
 
-  public void invoke(MessageContext msgContext) throws AxisFault
-  {
-    Debug.Print( 1, "Enter: JWSProcessor::invoke" );
-    try {
-      /* Grab the *.jws filename from the context - should have been */
-      /* placed there by another handler (ie. HTTPActionHandler)     */
-      /***************************************************************/
-      Runtime  rt      = Runtime.getRuntime();
-      String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
-      Debug.Print( 2, "jwsFile: " + jwsFile );
-      String   jFile   = jwsFile.substring(0, jwsFile.length()-3) + "java" ;
-      String   cFile   = jwsFile.substring(0, jwsFile.length()-3) + "class" ;
-      Debug.Print( 2, "jFile: " + jFile );
-      Debug.Print( 2, "cFile: " + cFile );
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: JWSProcessor::invoke" );
+        try {
+            /* Grab the *.jws filename from the context - should have been */
+            /* placed there by another handler (ie. HTTPActionHandler)     */
+            /***************************************************************/
+            Runtime  rt      = Runtime.getRuntime();
+            String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
+            Debug.Print( 2, "jwsFile: " + jwsFile );
+            String   jFile   = jwsFile.substring(0, jwsFile.length()-3) + "java" ;
+            String   cFile   = jwsFile.substring(0, jwsFile.length()-3) + "class" ;
+            Debug.Print( 2, "jFile: " + jFile );
+            Debug.Print( 2, "cFile: " + cFile );
 
-      File  f1 = new File( cFile );
-      File  f2 = new File( jwsFile );
+            File  f1 = new File( cFile );
+            File  f2 = new File( jwsFile );
 
-      /* Get the class */
-      /*****************/
-      String clsName = f2.getName();
-      clsName = clsName.substring( 0, clsName.length()-4 );
-      Debug.Print( 2, "ClsName: " + clsName );
+            /* Get the class */
+            /*****************/
+            String clsName = f2.getName();
+            clsName = clsName.substring( 0, clsName.length()-4 );
+            Debug.Print( 2, "ClsName: " + clsName );
 
-      /* Check to see if we need to recompile */
-      /****************************************/
-      if ( !f1.exists() || f2.lastModified() > f1.lastModified() ) {
-        /* If the class file doesn't exist, or it's older than the */
-        /* java file then recompile the java file.                 */
-        /* Start by copying the *.jws file to *.java               */
-        /***********************************************************/
-        Debug.Print(1, "Compiling: " + jwsFile );
-        Debug.Print(3, "copy " + jwsFile + " " + jFile );
-        FileReader fr = new FileReader( jwsFile );
-        FileWriter fw = new FileWriter( jFile );
-        char[] buf = new char[4096];
-        int    rc ;
-        while ( (rc = fr.read( buf, 0, 4095)) >= 0 )
-          fw.write( buf, 0, rc );
-        fw.close();
-        fr.close();
+            /* Check to see if we need to recompile */
+            /****************************************/
+            if ( !f1.exists() || f2.lastModified() > f1.lastModified() ) {
+                /* If the class file doesn't exist, or it's older than the */
+                /* java file then recompile the java file.                 */
+                /* Start by copying the *.jws file to *.java               */
+                /***********************************************************/
+                Debug.Print(1, "Compiling: " + jwsFile );
+                Debug.Print(3, "copy " + jwsFile + " " + jFile );
+                FileReader fr = new FileReader( jwsFile );
+                FileWriter fw = new FileWriter( jFile );
+                char[] buf = new char[4096];
+                int    rc ;
+                while ( (rc = fr.read( buf, 0, 4095)) >= 0 )
+                    fw.write( buf, 0, rc );
+                fw.close();
+                fr.close();
 
-        /* Now run javac on the *.java file */
-        /************************************/
-        Debug.Print(2, "javac " + jFile );
-        // Process proc = rt.exec( "javac " + jFile );
-        // proc.waitFor();
-        FileOutputStream  out      = new FileOutputStream( errFile );
-        Main              compiler = new Main( out, "javac" );
-        String            outdir   = f1.getParent();
-        String[]          args     = null ;
-        
-        if (outdir == null) outdir=".";
+                /* Now run javac on the *.java file */
+                /************************************/
+                Debug.Print(2, "javac " + jFile );
+                // Process proc = rt.exec( "javac " + jFile );
+                // proc.waitFor();
+                FileOutputStream  out      = new FileOutputStream( errFile );
+                Main              compiler = new Main( out, "javac" );
+                String            outdir   = f1.getParent();
+                String[]          args     = null ;
+                
+                if (outdir == null) outdir=".";
 
-        args = new String[] { "-d", outdir,
-                              "-classpath",
-                                System.getProperty("java.class.path" ),
-                              jFile };
-        boolean           result   = compiler.compile( args );
+                args = new String[] { "-d", outdir,
+                          "-classpath",
+                          System.getProperty("java.class.path" ),
+                          jFile };
+                boolean           result   = compiler.compile( args );
 
-        /* Delete the temporary *.java file and check the return code */
-        /**************************************************************/
-        (new File(jFile)).delete();
+                /* Delete the temporary *.java file and check the return code */
+                /**************************************************************/
+                (new File(jFile)).delete();
 
-        if ( !result ) {
-          /* Delete the *class file - sometimes it gets created even */
-          /* when there are errors - so erase it so it doesn't       */
-          /* confuse us.                                             */
-          /***********************************************************/
-          (new File(cFile)).delete();
+                if ( !result ) {
+                    /* Delete the *class file - sometimes it gets created even */
+                    /* when there are errors - so erase it so it doesn't       */
+                    /* confuse us.                                             */
+                    /***********************************************************/
+                    (new File(cFile)).delete();
 
-          Document doc = XMLUtils.newDocument();
+                    Document doc = XMLUtils.newDocument();
 
-          Element         root = doc.createElement( "Errors" );
-          StringBuffer    sbuf = new StringBuffer();
-          FileReader      inp  = new FileReader( errFile );
+                    Element         root = doc.createElement( "Errors" );
+                    StringBuffer    sbuf = new StringBuffer();
+                    FileReader      inp  = new FileReader( errFile );
 
-          buf = new char[4096];
+                    buf = new char[4096];
 
-          while ( (rc = inp.read(buf, 0, 4096)) > 0 )
-             sbuf.append( buf, 0, rc );
-          inp.close();
-          root.appendChild( doc.createTextNode( sbuf.toString() ) );
-          (new File(errFile)).delete();
-          throw new AxisFault( "Server.compileError",
-                               "Error while compiling: " + jFile,
-                               null, new Element[] { root } );
+                    while ( (rc = inp.read(buf, 0, 4096)) > 0 )
+                        sbuf.append( buf, 0, rc );
+                    inp.close();
+                    root.appendChild( doc.createTextNode( sbuf.toString() ) );
+                    (new File(errFile)).delete();
+                    throw new AxisFault( "Server.compileError",
+                        "Error while compiling: " + jFile,
+                        null, new Element[] { root } );
+                }
+                (new File(errFile)).delete();
+
+                AxisClassLoader.removeClassLoader( clsName );
+            }
+            AxisClassLoader cl = msgContext.getClassLoader( clsName );
+            if ( !cl.isClassRegistered(clsName) )
+                cl.registerClass( clsName, cFile );
+            msgContext.setClassLoader( cl );
+
+            /* Create a new RPCProvider - this will be the "service"   */
+            /* that we invoke.                                                */
+            /******************************************************************/
+            Handler rpc = new RPCProvider();
+            msgContext.setServiceHandler( rpc );
+
+            rpc.addOption( "className", clsName );
+            
+            /** For now, allow all methods - we probably want to have a way to
+            * configure this in the future.
+            */
+            rpc.addOption( "methodName", "*");
+
+            rpc.init();   // ??
+            rpc.invoke( msgContext );
+            rpc.cleanup();  // ??
         }
-        (new File(errFile)).delete();
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
 
-        AxisClassLoader.removeClassLoader( clsName );
-      }
-      AxisClassLoader cl = msgContext.getClassLoader( clsName );
-      if ( !cl.isClassRegistered(clsName) )
-        cl.registerClass( clsName, cFile );
-      msgContext.setClassLoader( cl );
-
-      /* Create a new RPCProvider - this will be the "service"   */
-      /* that we invoke.                                                */
-      /******************************************************************/
-      Handler rpc = new RPCProvider();
-      msgContext.setServiceHandler( rpc );
-
-      rpc.addOption( "className", clsName );
-      
-      /** For now, allow all methods - we probably want to have a way to
-       * configure this in the future.
-       */
-      rpc.addOption( "methodName", "*");
-
-      rpc.init();   // ??
-      rpc.invoke( msgContext );
-      rpc.cleanup();  // ??
-    }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-      throw (AxisFault) e ;
+        Debug.Print( 1, "Exit : JWSProcessor::invoke" );
     }
 
-    Debug.Print( 1, "Exit : JWSProcessor::invoke" );
-  }
-
-  public void undo(MessageContext msgContext)
-  {
-    Debug.Print( 1, "Enter: JWSProcessor::undo" );
-    Debug.Print( 1, "Exit: JWSProcessor::undo" );
-  }
+    public void undo(MessageContext msgContext)
+    {
+        Debug.Print( 1, "Enter: JWSProcessor::undo" );
+        Debug.Print( 1, "Exit: JWSProcessor::undo" );
+    }
 }

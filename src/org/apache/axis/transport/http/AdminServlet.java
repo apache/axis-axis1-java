@@ -72,28 +72,28 @@ import org.apache.axis.utils.* ;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class AdminServlet extends HttpServlet {
-  private AxisServer server;
-  
-  public void init() {
-      server = AxisServer.getSingleton();
-  }
-
-  public void doGet(HttpServletRequest req, HttpServletResponse res)
-                throws ServletException, IOException {
-    res.setContentType("text/html");
-    String str = "";
+    private AxisServer server;
     
-    String cmd = req.getParameter("cmd");
-    if (cmd != null) {
-        if (cmd.equals("start"))
-            server.start();
-        else
-            server.stop();
+    public void init() {
+        server = AxisServer.getSingleton();
     }
 
-    str += "Server is " + (server.isRunning() ? "running" : "stopped");
-    str += "<p><a href=\"?cmd=start\">start server</a>";
-    str += "<p><a href=\"?cmd=stop\">stop server</a>";
-    res.getWriter().println( str );
-  }
+    public void doGet(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException {
+        res.setContentType("text/html");
+        String str = "";
+        
+        String cmd = req.getParameter("cmd");
+        if (cmd != null) {
+            if (cmd.equals("start"))
+                server.start();
+            else
+                server.stop();
+        }
+
+        str += "Server is " + (server.isRunning() ? "running" : "stopped");
+        str += "<p><a href=\"?cmd=start\">start server</a>";
+        str += "<p><a href=\"?cmd=stop\">stop server</a>";
+        res.getWriter().println( str );
+    }
 }

@@ -58,7 +58,7 @@ package org.apache.axis;
  * @author James Snell (jasnell@us.ibm.com)
  */
 public interface TargetedChain extends Handler { 
-   
+    
     /**
      * Returns the Request handler
      */

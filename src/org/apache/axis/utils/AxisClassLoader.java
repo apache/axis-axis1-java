@@ -69,104 +69,104 @@ import org.apache.axis.utils.cache.JavaClass ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisClassLoader extends ClassLoader {
-  static Hashtable classLoaders = new Hashtable();
+    static Hashtable classLoaders = new Hashtable();
 
-  Hashtable classCache          = new Hashtable() ;
+    Hashtable classCache          = new Hashtable() ;
 
-  public AxisClassLoader() {
-    super();
-  }
-
-  static public AxisClassLoader getClassLoader() {
-    return( getClassLoader(null) );
-  }
-
-  static public AxisClassLoader getClassLoader(String name) {
-    AxisClassLoader cl = null ;
-    if ( name == null ) name = "<default_class_loader>" ;
-    cl = (AxisClassLoader) classLoaders.get( name );
-    if ( cl == null ) 
-      classLoaders.put( name, cl = new AxisClassLoader() );
-    return( cl );
-  }
-  
-  static public void removeClassLoader(String name) {
-    if ( name != null )
-      classLoaders.remove( name );
-  }
-
-  public void registerClass( String name, String classFile )
-      throws FileNotFoundException, IOException
-  {
-    /* Load the class file the *.class file */
-    /****************************************/
-    FileInputStream       fis  = new FileInputStream( classFile );
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    byte buf[] = new byte[1024];
-    for(int i = 0; (i = fis.read(buf)) != -1; )
-      baos.write(buf, 0, i);
-    fis.close();
-    baos.close();
-
-    /* Create a new Class object from it */
-    /*************************************/
-    byte[] data = baos.toByteArray();
-    Class  cls  = defineClass( name, data, 0, data.length );
-
-    /* And finally register it */
-    /***************************/
-    registerClass( name, cls );
-  }
-
-  public synchronized void registerClass( String name, Class cls ) {
-    /* And finally register it */
-    /***************************/
-    JavaClass oldClass = (JavaClass)classCache.get(name);
-    if (oldClass!=null && oldClass.getJavaClass()==cls) return;
-    classCache.put( name, new JavaClass(cls) );
-  }
-
-  public synchronized void deregisterClass( String name ) {
-    /* Deregister the passed in className */
-    /**************************************/
-    classCache.remove( name);
-  }
-
-  public boolean isClassRegistered( String name ) {
-    return( classCache != null && classCache.get(name) != null );
-  }
-
-  public Class loadClass(String name) throws ClassNotFoundException {
-    Object obj ;
-
-    /* Check the classCache for the className - if there just return */
-    /* the class - if not there use the default class loader.        */
-    /*****************************************************************/
-    if ( classCache != null ) {
-      obj = classCache.get( name );
-      if ( obj != null )
-        return( ((JavaClass)obj).getJavaClass() );
+    public AxisClassLoader() {
+        super();
     }
 
-    ClassLoader cl = this.getClass().getClassLoader();
-    Class cls = cl.loadClass( name );
-    registerClass( name, cls );
-    return cls;
-  }
-
-  /**
-   * Find the cached JavaClass entry for this class, creating one
-   * if necessary.
-   * @param className name of the class desired
-   * @return JavaClass entry
-   */
-  public JavaClass lookup(String className) throws ClassNotFoundException {
-    JavaClass jc = (JavaClass) classCache.get( className );
-    if ( jc == null ) {
-        loadClass( className );
-        jc = (JavaClass) classCache.get( className );
+    static public AxisClassLoader getClassLoader() {
+        return( getClassLoader(null) );
     }
 
-    return jc;
-  }
+    static public AxisClassLoader getClassLoader(String name) {
+        AxisClassLoader cl = null ;
+        if ( name == null ) name = "<default_class_loader>" ;
+        cl = (AxisClassLoader) classLoaders.get( name );
+        if ( cl == null ) 
+            classLoaders.put( name, cl = new AxisClassLoader() );
+        return( cl );
+    }
+    
+    static public void removeClassLoader(String name) {
+        if ( name != null )
+            classLoaders.remove( name );
+    }
+
+    public void registerClass( String name, String classFile )
+        throws FileNotFoundException, IOException
+    {
+        /* Load the class file the *.class file */
+        /****************************************/
+        FileInputStream       fis  = new FileInputStream( classFile );
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte buf[] = new byte[1024];
+        for(int i = 0; (i = fis.read(buf)) != -1; )
+            baos.write(buf, 0, i);
+        fis.close();
+        baos.close();
+
+        /* Create a new Class object from it */
+        /*************************************/
+        byte[] data = baos.toByteArray();
+        Class  cls  = defineClass( name, data, 0, data.length );
+
+        /* And finally register it */
+        /***************************/
+        registerClass( name, cls );
+    }
+
+    public synchronized void registerClass( String name, Class cls ) {
+        /* And finally register it */
+        /***************************/
+        JavaClass oldClass = (JavaClass)classCache.get(name);
+        if (oldClass!=null && oldClass.getJavaClass()==cls) return;
+        classCache.put( name, new JavaClass(cls) );
+    }
+
+    public synchronized void deregisterClass( String name ) {
+        /* Deregister the passed in className */
+        /**************************************/
+        classCache.remove( name);
+    }
+
+    public boolean isClassRegistered( String name ) {
+        return( classCache != null && classCache.get(name) != null );
+    }
+
+    public Class loadClass(String name) throws ClassNotFoundException {
+        Object obj ;
+
+        /* Check the classCache for the className - if there just return */
+        /* the class - if not there use the default class loader.        */
+        /*****************************************************************/
+        if ( classCache != null ) {
+            obj = classCache.get( name );
+            if ( obj != null )
+                return( ((JavaClass)obj).getJavaClass() );
+        }
+
+        ClassLoader cl = this.getClass().getClassLoader();
+        Class cls = cl.loadClass( name );
+        registerClass( name, cls );
+        return cls;
+    }
+
+    /**
+     * Find the cached JavaClass entry for this class, creating one
+     * if necessary.
+     * @param className name of the class desired
+     * @return JavaClass entry
+     */
+    public JavaClass lookup(String className) throws ClassNotFoundException {
+        JavaClass jc = (JavaClass) classCache.get( className );
+        if ( jc == null ) {
+            loadClass( className );
+            jc = (JavaClass) classCache.get( className );
+        }
+
+        return jc;
+    }
 };

@@ -76,85 +76,85 @@ import org.xml.sax.*;
 public class DateSerializer implements Serializer {
 
     private static SimpleDateFormat zulu = 
-      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                        //  0123456789 0 123456789
+                                          new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    //  0123456789 0 123456789
 
     static {
-      zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     static class DateDeser extends SOAPTypeMappingRegistry.BasicDeser {
         Object makeValue(String source) { 
-          Date result;
+            Date result;
 
-          // validate fixed portion of format
-          if (source.length() < 19) 
-            throw new NumberFormatException("invalid dateTime");
+            // validate fixed portion of format
+            if (source.length() < 19) 
+                throw new NumberFormatException("invalid dateTime");
 
-          if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
-              source.charAt(10) != 'T')
-            throw new NumberFormatException("invalid date");
+            if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
+                source.charAt(10) != 'T')
+                throw new NumberFormatException("invalid date");
 
-          if (source.charAt(13) != ':' || source.charAt(16) != ':')
-            throw new NumberFormatException("invalid time");
+            if (source.charAt(13) != ':' || source.charAt(16) != ':')
+                throw new NumberFormatException("invalid time");
 
-          // convert what we have validated so far
-          try {
-            result=zulu.parse(source.substring(0,19)+".000Z"); 
-          } catch (Exception e) {
-            throw new NumberFormatException(e.toString());
-          }
-
-          int pos = 19;
-
-          // parse optional milliseconds
-          if (pos < source.length() && source.charAt(pos)=='.') {
-            int milliseconds = 0;
-            int start = ++pos;
-            while (pos<source.length() && Character.isDigit(source.charAt(pos)))
-              pos++;
-
-            String decimal=source.substring(start,pos);
-            if (decimal.length()==3) {
-              milliseconds=Integer.parseInt(decimal);
-            } else if (decimal.length() < 3) {
-              milliseconds=Integer.parseInt((decimal+"000").substring(0,3));
-            } else {
-              milliseconds=Integer.parseInt(decimal.substring(0,3));
-              if (decimal.charAt(3)>='5') ++milliseconds;
+            // convert what we have validated so far
+            try {
+                result=zulu.parse(source.substring(0,19)+".000Z"); 
+            } catch (Exception e) {
+                throw new NumberFormatException(e.toString());
             }
 
-            // add milliseconds to the current result
-            result.setTime(result.getTime()+milliseconds);
-          }
+            int pos = 19;
 
-          // parse optional timezone
-          if (pos+5 < source.length() &&
-               (source.charAt(pos)=='+' || (source.charAt(pos)=='-')))
-          {
-            if (!Character.isDigit(source.charAt(pos+1)) || 
-                !Character.isDigit(source.charAt(pos+2)) || 
-                source.charAt(pos+3) != ':'              || 
-                !Character.isDigit(source.charAt(pos+4)) || 
-                !Character.isDigit(source.charAt(pos+5)))
-               throw new NumberFormatException("invalid timezone");
+            // parse optional milliseconds
+            if (pos < source.length() && source.charAt(pos)=='.') {
+                int milliseconds = 0;
+                int start = ++pos;
+                while (pos<source.length() && Character.isDigit(source.charAt(pos)))
+                    pos++;
 
-            int hours = (source.charAt(pos+1)-'0')*10+source.charAt(pos+2)-'0';
-            int mins  = (source.charAt(pos+4)-'0')*10+source.charAt(pos+5)-'0';
-            int milliseconds = (hours*60+mins)*60*1000;
+                String decimal=source.substring(start,pos);
+                if (decimal.length()==3) {
+                    milliseconds=Integer.parseInt(decimal);
+                } else if (decimal.length() < 3) {
+                    milliseconds=Integer.parseInt((decimal+"000").substring(0,3));
+                } else {
+                    milliseconds=Integer.parseInt(decimal.substring(0,3));
+                    if (decimal.charAt(3)>='5') ++milliseconds;
+                }
 
-            // subtract milliseconds from the current result to obtain GMT
-            if (source.charAt(pos)=='+') milliseconds=-milliseconds;
-            result.setTime(result.getTime()+milliseconds);
-            pos+=6;  
-          }
+                // add milliseconds to the current result
+                result.setTime(result.getTime()+milliseconds);
+            }
 
-          if (pos < source.length() && source.charAt(pos)=='Z') pos++;
+            // parse optional timezone
+            if (pos+5 < source.length() &&
+                (source.charAt(pos)=='+' || (source.charAt(pos)=='-')))
+            {
+                if (!Character.isDigit(source.charAt(pos+1)) || 
+                    !Character.isDigit(source.charAt(pos+2)) || 
+                    source.charAt(pos+3) != ':'              || 
+                    !Character.isDigit(source.charAt(pos+4)) || 
+                    !Character.isDigit(source.charAt(pos+5)))
+                    throw new NumberFormatException("invalid timezone");
 
-          if (pos < source.length())
-            throw new NumberFormatException("unexpected characters");
+                int hours = (source.charAt(pos+1)-'0')*10+source.charAt(pos+2)-'0';
+                int mins  = (source.charAt(pos+4)-'0')*10+source.charAt(pos+5)-'0';
+                int milliseconds = (hours*60+mins)*60*1000;
 
-          return result;
+                // subtract milliseconds from the current result to obtain GMT
+                if (source.charAt(pos)=='+') milliseconds=-milliseconds;
+                result.setTime(result.getTime()+milliseconds);
+                pos+=6;  
+            }
+
+            if (pos < source.length() && source.charAt(pos)=='Z') pos++;
+
+            if (pos < source.length())
+                throw new NumberFormatException("unexpected characters");
+
+            return result;
         }
     }
 

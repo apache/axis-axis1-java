@@ -144,7 +144,7 @@ public class MessageContext {
     private Hashtable bag ;
 
     public MessageContext(AxisEngine engine) {
-      this.axisEngine = engine;
+        this.axisEngine = engine;
     }
 
     
@@ -256,27 +256,27 @@ public class MessageContext {
     };
 
     public AxisClassLoader getClassLoader() {
-      if ( classLoader == null )
-        classLoader = AxisClassLoader.getClassLoader(null);
-      return( classLoader );
+        if ( classLoader == null )
+            classLoader = AxisClassLoader.getClassLoader(null);
+        return( classLoader );
     }
 
     public AxisClassLoader getClassLoader(String name) {
-      if ( name == null ) return( getClassLoader() );
-      return( AxisClassLoader.getClassLoader(name) );
+        if ( name == null ) return( getClassLoader() );
+        return( AxisClassLoader.getClassLoader(name) );
     }
 
     public void setClassLoader(AxisClassLoader cl ) {
-      classLoader = cl ;
+        classLoader = cl ;
     }
 
     public String getTargetService() {
-      return( targetService );
+        return( targetService );
     }
     
     public AxisEngine getAxisEngine()
     {
-      return axisEngine;
+        return axisEngine;
     }
 
     /**
@@ -308,22 +308,22 @@ public class MessageContext {
      */
     private Handler          serviceHandler ;
     public Handler getServiceHandler() {
-      return( serviceHandler );
+        return( serviceHandler );
     }
     
     public void setServiceHandler(Handler sh)
     {
-      Debug.Print(2,"MessageContext: setServiceHandler("+sh+")");
-      serviceHandler = sh;
-      if (sh != null && sh instanceof SOAPService) {
-        SOAPService service = (SOAPService)sh;
-        TypeMappingRegistry tmr = service.getTypeMappingRegistry();
-        setTypeMappingRegistry(tmr);
-        
-        if (serviceDesc == null) {
-          serviceDesc = service.getServiceDescription();
+        Debug.Print(2,"MessageContext: setServiceHandler("+sh+")");
+        serviceHandler = sh;
+        if (sh != null && sh instanceof SOAPService) {
+            SOAPService service = (SOAPService)sh;
+            TypeMappingRegistry tmr = service.getTypeMappingRegistry();
+            setTypeMappingRegistry(tmr);
+            
+            if (serviceDesc == null) {
+                serviceDesc = service.getServiceDescription();
+            }
         }
-      }
     }
 
     /** Contains an instance of Handler, which is the
@@ -340,7 +340,7 @@ public class MessageContext {
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
-  
+    
     /** A String with the user's ID (if available)
      */
     public static String USERID              = "user.id";
@@ -352,7 +352,7 @@ public class MessageContext {
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
-      return( (String) getProperty(propName) );
+        return( (String) getProperty(propName) );
     }
 
     public Object getProperty(String propName) {

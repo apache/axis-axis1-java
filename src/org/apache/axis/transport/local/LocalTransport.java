@@ -98,7 +98,7 @@ public class LocalTransport extends Transport
      */
     public LocalTransport(AxisServer server)
     {
-      this.server = server;
+        this.server = server;
     }
     
     /**
@@ -111,7 +111,7 @@ public class LocalTransport extends Transport
     {
         mc.setTransportName("local");
         if (server != null)
-          mc.setProperty(LOCAL_SERVER, server);
+            mc.setProperty(LOCAL_SERVER, server);
     }
 }
 

@@ -64,15 +64,15 @@ import org.apache.axis.utils.* ;
  */
 public class LogMessage extends BasicHandler
 {
-  public void invoke(MessageContext context)
-  {
-    String msg = (String)getOption("message");
-    if (msg != null)
-      Debug.Print(0, msg);
-  }
- 
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: URLMapper::undo" );
-    Debug.Print( 1, "Exit: URLMapper::undo" );
-  }
+    public void invoke(MessageContext context)
+    {
+        String msg = (String)getOption("message");
+        if (msg != null)
+            Debug.Print(0, msg);
+    }
+    
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: URLMapper::undo" );
+        Debug.Print( 1, "Exit: URLMapper::undo" );
+    }
 }

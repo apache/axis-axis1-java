@@ -87,29 +87,29 @@ public class SimpleChainSupplier implements Supplier
     
     public Handler getHandler()
     {
-      if (_chain == null) {
-        Debug.Print(2, "SimpleChainSupplier: Building chain '" + _myName + 
-                       "'");
-        Chain c = new SimpleChain();
-        c.setOptions(_options);
-        c.setName(_myName);
-        try {
-          for (int i = 0; i < _handlerNames.size(); i++) {
-            Handler handler = _registry.find(
-                                             (String)_handlerNames.elementAt(i));
-            c.addHandler(handler);
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
-          return null;
+        if (_chain == null) {
+            Debug.Print(2, "SimpleChainSupplier: Building chain '" + _myName + 
+                           "'");
+            Chain c = new SimpleChain();
+            c.setOptions(_options);
+            c.setName(_myName);
+            try {
+                for (int i = 0; i < _handlerNames.size(); i++) {
+                    Handler handler = _registry.find(
+                                                     (String)_handlerNames.elementAt(i));
+                    c.addHandler(handler);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            
+            _chain = c;
         }
         
-        _chain = c;
-      }
-      
-      Debug.Print(2, "SimpleChainSupplier: returning chain '" + _myName +
-                     "'");
-      
-      return _chain;
+        Debug.Print(2, "SimpleChainSupplier: returning chain '" + _myName +
+                       "'");
+        
+        return _chain;
     }
 }

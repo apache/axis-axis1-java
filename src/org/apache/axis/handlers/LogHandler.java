@@ -67,44 +67,44 @@ import org.apache.axis.handlers.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class LogHandler extends BasicHandler {
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: LogHandler::invoke" );
-    try {
-      FileWriter  fw   = new FileWriter( "axis.log", true );
-      PrintWriter pw   = new PrintWriter( fw );
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: LogHandler::invoke" );
+        try {
+            FileWriter  fw   = new FileWriter( "axis.log", true );
+            PrintWriter pw   = new PrintWriter( fw );
 
-      Message inMsg = msgContext.getRequestMessage();
-      Message outMsg = msgContext.getResponseMessage();
-  
-      pw.println( "=======================================================" );
-      pw.println( "= " + ( new Time(System.currentTimeMillis()) ).toString() );
-      pw.println( "= InMsg: " + inMsg );
-      pw.println( "= InMsg: " + (inMsg == null ? "-" : inMsg.getAsString()));
-      pw.println( "= OutMsg: " + outMsg );
-      pw.println( "= OutMsg: " + (outMsg == null ? "-" : outMsg.getAsString()));
-      pw.println( "=======================================================" );
-  
-      pw.close();
+            Message inMsg = msgContext.getRequestMessage();
+            Message outMsg = msgContext.getResponseMessage();
+            
+            pw.println( "=======================================================" );
+            pw.println( "= " + ( new Time(System.currentTimeMillis()) ).toString() );
+            pw.println( "= InMsg: " + inMsg );
+            pw.println( "= InMsg: " + (inMsg == null ? "-" : inMsg.getAsString()));
+            pw.println( "= OutMsg: " + outMsg );
+            pw.println( "= OutMsg: " + (outMsg == null ? "-" : outMsg.getAsString()));
+            pw.println( "=======================================================" );
+            
+            pw.close();
+        }
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            throw new AxisFault( e );
+        }
+        Debug.Print( 1, "Exit: LogHandler::invoke" );
     }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      throw new AxisFault( e );
-    }
-    Debug.Print( 1, "Exit: LogHandler::invoke" );
-  }
 
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Exit: LogHandler::undo" );
-    try {
-      FileWriter  fw   = new FileWriter( "axis.log", true );
-      PrintWriter pw   = new PrintWriter( fw );
-      pw.println( "=====================" );
-      pw.println( "= Fault occurred " );
-      pw.println( "=====================" );
-      pw.close();
-    } catch( Exception e ) {
-      Debug.Print( 1, e );
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Exit: LogHandler::undo" );
+        try {
+            FileWriter  fw   = new FileWriter( "axis.log", true );
+            PrintWriter pw   = new PrintWriter( fw );
+            pw.println( "=====================" );
+            pw.println( "= Fault occurred " );
+            pw.println( "=====================" );
+            pw.close();
+        } catch( Exception e ) {
+            Debug.Print( 1, e );
+        }
+        Debug.Print( 1, "Exit: LogHandler::undo" );
     }
-    Debug.Print( 1, "Exit: LogHandler::undo" );
-  }
 };
