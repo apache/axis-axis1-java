@@ -89,6 +89,22 @@ public abstract class TestClient {
     private static EchoServicePortType binding = null;
 
     /**
+     * When testMode is true, we throw exceptions up to the caller
+     * instead of recording them and continuing.
+     */
+    private boolean testMode = false;
+
+    public TestClient() {
+    }
+
+    /**
+     * Constructor which sets testMode
+     */
+    public TestClient(boolean testMode) {
+        this.testMode = testMode;
+    }
+
+    /**
      * Determine if two objects are equal.  Handles nulls and recursively
      * verifies arrays are equal.  Accepts dates within a tolerance of
      * 999 milliseconds.
@@ -134,7 +150,7 @@ public abstract class TestClient {
            }
            return true;
        }
-       
+
        if (obj1 instanceof List)
          obj1 = JavaUtils.convert(obj1, Object[].class);
        if (obj2 instanceof List)
@@ -156,7 +172,7 @@ public abstract class TestClient {
     {
         try {
             binding = new EchoServiceAccessLocator().
-                getEchoServicePortType(new java.net.URL(url)); 
+                getEchoServicePortType(new java.net.URL(url));
             ((EchoServiceBindingStub) binding).soapAction = soapAction;
             ((EchoServiceBindingStub) binding).addMethodToAction = addMethodToAction;
         } catch (Exception exp) {
@@ -181,97 +197,217 @@ public abstract class TestClient {
 
         {
             String input = "abccdefg";
-            output = binding.echoString(input);
-            verify("echoString", input, output);
+            try {
+                output = binding.echoString(input);
+                verify("echoString", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoString", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             String[] input = new String[] {"abc", "def"};
-            output = binding.echoStringArray(input);
-            verify("echoStringArray", input, output);
+            try {
+                output = binding.echoStringArray(input);
+                verify("echoStringArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoStringArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             Integer input = new Integer(42);
-            output = new Integer( binding.echoInteger(input.intValue()));
-            verify("echoInteger", input, output);
+            try {
+                output = new Integer( binding.echoInteger(input.intValue()));
+                verify("echoInteger", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoInteger", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             int[] input = new int[] {42};
-            output = binding.echoIntegerArray(input);
-            verify("echoIntegerArray", input, output);
+            try {
+                output = binding.echoIntegerArray(input);
+                verify("echoIntegerArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoIntegerArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             Float input = new Float(3.7F);
-            output = new Float(binding.echoFloat(input.floatValue()));
-            verify("echoFloat", input, output);
+            try {
+                output = new Float(binding.echoFloat(input.floatValue()));
+                verify("echoFloat", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoFloat", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
             float[] input = new float[] {3.7F, 7F};
-            output = binding.echoFloatArray(input);
-            verify("echoFloatArray", input, output);
+            try {
+                output = binding.echoFloatArray(input);
+                verify("echoFloatArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoFloatArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            output = binding.echoStruct(input);
-            verify("echoStruct", input, output);
+            try {
+                output = binding.echoStruct(input);
+                verify("echoStruct", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoStruct", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             SOAPStruct[] input = new SOAPStruct[] {
                 new SOAPStruct(1, "one", 1.1F),
                 new SOAPStruct(2, "two", 2.2F),
                 new SOAPStruct(3, "three", 3.3F)};
-            output = binding.echoStructArray(input);
-            verify("echoStructArray", input, output);
+            try {
+                output = binding.echoStructArray(input);
+                verify("echoStructArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoStructArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
-            binding.echoVoid();
-            verify("echoVoid", null, null);
+            try {
+                binding.echoVoid();
+                verify("echoVoid", null, null);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoVoid", null, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
             byte[] input = "Base64".getBytes();
-            output = binding.echoBase64(input);
-            verify("echoBase64", input, output);
+            try {
+                output = binding.echoBase64(input);
+                verify("echoBase64", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoBase64", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             Hex input = new Hex("3344");
-            output = binding.echoHexBinary(input.getBytes());
-            verify("echoHexBinary", input, output);
+            try {
+                output = binding.echoHexBinary(input.getBytes());
+                verify("echoHexBinary", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoHexBinary", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             Date input = new Date();
-            output = binding.echoDate(input);
-            verify("echoDate", input, output);
+            try {
+                output = binding.echoDate(input);
+                verify("echoDate", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoDate", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             BigDecimal input = new BigDecimal("3.14159");
-            output = binding.echoDecimal(input);
-            verify("echoDecimal", input, output);
+            try {
+                output = binding.echoDecimal(input);
+                verify("echoDecimal", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoDecimal", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         {
             Boolean input = Boolean.TRUE;
-            output = new Boolean( binding.echoBoolean(input.booleanValue()));
-            verify("echoBoolean", input, output);
+            try {
+                output = new Boolean( binding.echoBoolean(input.booleanValue()));
+                verify("echoBoolean", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoBoolean", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
-        
+
         HashMap map = new HashMap();
         map.put(new Integer(5), "String Value");
         map.put("String Key", new Date());
         {
             HashMap input = map;
-            output = binding.echoMap(input);
-            verify("echoMap", input, output);
+            try {
+                output = binding.echoMap(input);
+                verify("echoMap", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoMap", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         HashMap map2 = new HashMap();
@@ -279,8 +415,16 @@ public abstract class TestClient {
         map2.put("test", new Float(411));
         {
             HashMap[] input = new HashMap [] {map, map2 };
-            output = binding.echoMapArray(input);
-            verify("echoMapArray", input, output);
+            try {
+                output = binding.echoMapArray(input);
+                verify("echoMapArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoMapArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
     }
 
@@ -292,24 +436,40 @@ public abstract class TestClient {
         Object output = null;
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            StringHolder outputString = new StringHolder();
-            IntHolder outputInteger = new IntHolder();
-            FloatHolder outputFloat = new FloatHolder();
-            binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
-            output = new SOAPStruct(outputInteger.value,
-                                    outputString.value,
-                                    outputFloat.value);
-            verify("echoStructAsSimpleTypes", 
-                   input, output);
+            try {
+                StringHolder outputString = new StringHolder();
+                IntHolder outputInteger = new IntHolder();
+                FloatHolder outputFloat = new FloatHolder();
+                binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
+                output = new SOAPStruct(outputInteger.value,
+                                        outputString.value,
+                                        outputFloat.value);
+                verify("echoStructAsSimpleTypes",
+                       input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoStructAsSimpleTypes", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
             SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
-            output = binding.echoSimpleTypesAsStruct(
-                    input.getVarString(), input.getVarInt(), input.getVarFloat());
-            verify("echoSimpleTypesAsStruct", 
-                   input, 
-                   output);
+            try {
+                output = binding.echoSimpleTypesAsStruct(
+                   input.getVarString(), input.getVarInt(), input.getVarFloat());
+                verify("echoSimpleTypesAsStruct",
+                       input,
+                       output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoSimpleTypesAsStruct", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
@@ -318,10 +478,18 @@ public abstract class TestClient {
             input[0][1] = "01";
             input[1][0] = "10";
             input[1][1] = "11";
-            output = binding.echo2DStringArray(input);
-            verify("echo2DStringArray", 
-                   input, 
-                   output);
+            try {
+                output = binding.echo2DStringArray(input);
+                verify("echo2DStringArray",
+                       input,
+                       output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echo2DStringArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         {
@@ -329,16 +497,32 @@ public abstract class TestClient {
                                                           1,
                                                           3F,
                                                           new SOAPStruct(5, "Hello", 103F));
-            output = binding.echoNestedStruct(input);
-            verify("echoNestedStruct", input, output);
+            try {
+                output = binding.echoNestedStruct(input);
+                verify("echoNestedStruct", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoNestedStruct", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
         {
             SOAPArrayStruct input = new SOAPArrayStruct("AXIS",
                                                         1,
                                                         3F,
                                                         new String[] {"one", "two", "three"});
-            output = binding.echoNestedArray(input);
-            verify("echoNestedArray", input, output);
+            try {
+                output = binding.echoNestedArray(input);
+                verify("echoNestedArray", input, output);
+            } catch (Exception e) {
+                if (!testMode) {
+                    verify("echoNestedArray", input, e);
+                } else {
+                    throw e;
+                }
+            }
         }
     }
 
@@ -353,7 +537,7 @@ public abstract class TestClient {
      * on their results.
      *
      * Arguments are of the form:
-     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter 
+     *   -h localhost -p 8080 -s /soap/servlet/rpcrouter
      * -h indicats the host
      */
     public static void main(String args[]) throws Exception {
@@ -361,17 +545,18 @@ public abstract class TestClient {
 
         boolean testPerformance = opts.isFlagSet('k') > 0;
         boolean allTests = opts.isFlagSet('A') > 0;
+        boolean testMode = opts.isFlagSet('t') > 0;
 
         // set up tests so that the results are sent to System.out
         TestClient client;
 
         if (testPerformance) {
-            client = new TestClient() {
+            client = new TestClient(testMode) {
                public void verify(String method, Object sent, Object gotBack) {
                }
             };
         } else {
-            client = new TestClient() {
+            client = new TestClient(testMode) {
             public void verify(String method, Object sent, Object gotBack) {
                 String message;
                 if (this.equals(sent, gotBack)) {
