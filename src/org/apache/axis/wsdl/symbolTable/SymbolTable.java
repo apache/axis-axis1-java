@@ -152,6 +152,7 @@ public class SymbolTable {
 
     private Definition def = null;
     private Document   doc = null;
+    private String     wsdlURI = null;
 
     /**
      * Construct a symbol table with the given Namespaces.
@@ -274,9 +275,22 @@ public class SymbolTable {
         return types;
     } // getTypes
 
+    /**
+     * Get the Definition.  The definition is null until
+     * populate is called.
+     */
     public Definition getDefinition() {
         return def;
     } // getDefinition
+
+    /**
+     * Get the WSDL URI.  The WSDL URI is null until populate
+     * is called, and ONLY if a WSDL URI is provided.
+     * 
+     */
+    public String getWSDLURI() {
+        return wsdlURI;
+    } // getWSDLURI
 
     /**
      * Are we wrapping literal soap body elements.
@@ -329,6 +343,7 @@ public class SymbolTable {
         if (doc == null) {
             throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
         }
+        this.wsdlURI = uri;
         populate(uri, doc);
     } // populate
 
