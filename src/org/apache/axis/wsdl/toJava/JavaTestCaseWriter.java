@@ -299,10 +299,9 @@ public class JavaTestCaseWriter extends JavaWriter {
                 while (i.hasNext()) {
                     count++;
                     Fault f = (Fault) i.next();
-                    String namespace = portType.getQName().getNamespaceURI();
                     pw.print("        catch (");
                     pw.print(Utils.getFullExceptionName(
-                            f, symbolTable, namespace));
+                            f, symbolTable));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");

@@ -76,6 +76,14 @@ public class JavaFaultWriter extends JavaWriter {
      */
     protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
         super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"), "fault");
+
+        // Need to adjust the className and fileName to make sure they are consistent with
+        // the full name.  The alternative is to pass a 'dummy' qname into JavaFaultWriter,
+        // which is not appropriate.
+        String fullName = Utils.getFullExceptionName(fault, symbolTable);
+        className = fullName.substring(fullName.lastIndexOf(".")+1);
+        fileName = className + ".java";
+
         this.fault = fault;
         this.symbolTable = symbolTable;
     } // ctor

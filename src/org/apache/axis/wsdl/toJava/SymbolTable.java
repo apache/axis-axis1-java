@@ -1017,7 +1017,7 @@ public class SymbolTable {
         while (i.hasNext()) {
             Fault fault = (Fault) i.next();
             String exceptionName =
-                    Utils.getFullExceptionName(fault, this, namespace);
+                    Utils.getFullExceptionName(fault, this);
             if (parameters.faultString == null)
                 parameters.faultString = exceptionName;
             else
