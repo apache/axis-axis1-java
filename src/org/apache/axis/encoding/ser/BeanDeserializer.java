@@ -102,6 +102,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
     QName xmlType;
     Class javaType;
     protected HashMap propertyMap = new HashMap();
+    protected QName prevQName;
     
     /** Type metadata about this class for XML deserialization */
     protected TypeDesc typeDesc = null;
@@ -157,9 +158,15 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
     {
         BeanPropertyDescriptor propDesc = null;
         
-        if (typeDesc != null) {
-            QName elemQName = new QName(namespace, localName);
-            
+        QName elemQName = new QName(namespace, localName);
+        // The collectionIndex needs to be reset for Beans with multiple arrays
+        if ((prevQName == null) || (!prevQName.equals(elemQName))) {
+            prevQName = elemQName;
+            collectionIndex = -1;
+        }  
+        prevQName = elemQName;
+
+        if (typeDesc != null) {       
             // IF we're SOAP-encoded AND this is an unprefixed element,
             // ignore the actual namespace context for the element, and
             // just compare local names.
