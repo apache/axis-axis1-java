@@ -54,7 +54,11 @@
  */
 package org.apache.axis.utils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Class loader for JWS files.  There is one of these per JWS class, and

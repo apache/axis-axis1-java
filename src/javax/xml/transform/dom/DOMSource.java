@@ -53,14 +53,9 @@
  */
 package javax.xml.transform.dom;
 
-import javax.xml.transform.*;
-
-import java.lang.String;
-
-import java.io.OutputStream;
-import java.io.Writer;
-
 import org.w3c.dom.Node;
+
+import javax.xml.transform.Source;
 
 
 /**

@@ -66,7 +66,8 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.FaultDesc;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -104,7 +105,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class emits WSDL from Java classes.  It is used by the ?WSDL

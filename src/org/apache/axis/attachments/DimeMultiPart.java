@@ -60,8 +60,7 @@
 package org.apache.axis.attachments;
 
 
-import org.apache.axis.transport.http.HTTPConstants;
-import javax.activation.*;
+
 
 
 /**
