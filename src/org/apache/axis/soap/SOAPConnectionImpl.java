@@ -69,8 +69,25 @@ import java.util.Iterator;
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
-    boolean closed = false;
-    
+    private boolean closed = false;
+    private Integer timeout = null;
+
+    /**
+     * get the timeout value
+     * @return
+     */ 
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * set the timeout value
+     * @param timeout
+     */ 
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
+
     /**
      * Sends the given message to the specified endpoint and
      * blocks until it has returned the response.
@@ -101,6 +118,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
                     call.addAttachmentPart(attachment);
                 }
             }
+            call.setTimeout(timeout);
             call.setReturnClass(SOAPMessage.class);
             call.invoke(env);
             return call.getResponseMessage();
