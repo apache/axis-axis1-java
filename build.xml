@@ -546,7 +546,7 @@ Copyright:
     depends="setenv" >
     <cvschangelog dir="."
                 destfile="${build.dest}/changelog.xml"
-                start="5 Mar 2003"
+                start="4 Sep 2003"
     />        
     <style in="${build.dest}/changelog.xml" 
            out="${axis.home}/docs/changelog.html" 
