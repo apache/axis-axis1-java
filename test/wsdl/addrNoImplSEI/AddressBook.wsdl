@@ -57,7 +57,7 @@
   </message>
 
   <!-- port type declns -->
-  <portType name="AddressBook">
+  <portType name="AddressBookNoImplSEI">
     <operation name="addEntry">
       <input message="tns:AddEntryRequest"/>
     </operation>
@@ -68,7 +68,7 @@
   </portType>
 
   <!-- binding declns -->
-  <binding name="AddressBookSOAPBinding" type="tns:AddressBook">
+  <binding name="AddressBookNoImplSEISoapBinding" type="tns:AddressBookNoImplSEI">
     <soap:binding style="rpc"
                   transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="addEntry">
@@ -100,8 +100,8 @@
   </binding>
 
   <!-- service decln -->
-  <service name="AddressBookService">
-    <port name="AddressBookNoImplSEI" binding="tns:AddressBookSOAPBinding">
+  <service name="AddressBookNoImplSEIService">
+    <port name="AddressBookNoImplSEI" binding="tns:AddressBookNoImplSEISoapBinding">
       <soap:address location="http://localhost:8080/axis/services/AddressBookNoImplSEI"/>
     </port>
   </service>
