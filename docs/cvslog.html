@@ -12,6 +12,884 @@
 <hr size="2">
 <TABLE CELLSPACING="1" CELLPADDING="3" WIDTH="100%" BORDER="0">
 <TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-16 16:36 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for Perf problems from Archit Shah (http://marc.theaimsgroup.com/?l=axis-dev&amp;m=110061913205350&amp;w=2)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DeserializerImpl.java?rev=1.44&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/DeserializerImpl.java (1.44)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-16 16:36 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for Perf problems from Archit Shah (http://marc.theaimsgroup.com/?l=axis-dev&amp;m=110061913205350&amp;w=2)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleDeserializer.java?r1=1.41&r2=1.40">src/org/apache/axis/encoding/ser/SimpleDeserializer.java (1.41)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleListDeserializer.java?rev=1.5&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/SimpleListDeserializer.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeImpl.java?r1=1.9&r2=1.8">src/org/apache/axis/message/NodeImpl.java (1.9)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeListImpl.java?rev=1.5&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/NodeListImpl.java (1.5)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-16 05:21 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>a fix for qname serialization when a default namespace is set</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/QNameSerializer.java?rev=1.11&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/QNameSerializer.java (1.11)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleListSerializer.java?rev=1.4&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/SimpleListSerializer.java (1.4)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 19:03 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>apparently this was needed :)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SOAPHandler.java?r1=1.19&r2=1.18">src/org/apache/axis/message/SOAPHandler.java (1.19)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 18:14 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Move the getSocket call to *before* we copy over the 'otherHeaders'.
+This way, the proxy authentication headers will get put in the request.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/HTTPSender.java?r1=1.121&r2=1.120">src/org/apache/axis/transport/http/HTTPSender.java (1.121)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 07:13 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>just a few more minor optimizations</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BaseDeserializerFactory.java?r1=1.23&r2=1.22">src/org/apache/axis/encoding/ser/BaseDeserializerFactory.java (1.23)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BaseSerializerFactory.java?r1=1.31&r2=1.30">src/org/apache/axis/encoding/ser/BaseSerializerFactory.java (1.31)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleDeserializer.java?rev=1.40&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/SimpleDeserializer.java (1.40)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleDeserializerFactory.java?rev=1.10&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/SimpleDeserializerFactory.java (1.10)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/SimpleListDeserializerFactory.java?rev=1.3&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/SimpleListDeserializerFactory.java (1.3)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/cache/MethodCache.java?rev=1.7&content-type=text/x-cvsweb-markup">src/org/apache/axis/utils/cache/MethodCache.java (1.7)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 05:33 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>removed addTextNode() call, seems unecessary since MessageElement has the entire recorder. all tests passed</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SOAPHandler.java?rev=1.18&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/SOAPHandler.java (1.18)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 05:32 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>tiny optimization for getting params</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/RPCElement.java?r1=1.99&r2=1.98">src/org/apache/axis/message/RPCElement.java (1.99)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 05:26 gdaniels</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Slightly different style for resetting cached value - cleans things up,
+and avoids future problems adding other exit points from this method.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/SerializationContext.java?r1=1.96&r2=1.95">src/org/apache/axis/encoding/SerializationContext.java (1.96)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-15 04:45 gdaniels</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Update to RC2</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/release-notes.html?rev=1.31&content-type=text/x-cvsweb-markup">release-notes.html (1.31)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/xmls/properties.xml?rev=1.55&content-type=text/x-cvsweb-markup">xmls/properties.xml (1.55)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 06:45 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>optimizations: caches the result of isEnumClass. This is called everytime a BeanSerializerFactory/BeanDeserializerFactory is created.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/JavaUtils.java?rev=1.113&content-type=text/x-cvsweb-markup">src/org/apache/axis/utils/JavaUtils.java (1.113)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 06:38 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>commited older version before, this is a bit better</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SAX2EventRecorder.java?r1=1.15&r2=1.14">src/org/apache/axis/message/SAX2EventRecorder.java (1.15)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 05:11 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>optimizations: one less array copy</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SAX2EventRecorder.java?rev=1.14&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/SAX2EventRecorder.java (1.14)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 05:07 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>optimizations: just create the common serializers/deserializer factories directly, no need for reflection</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BaseDeserializerFactory.java?rev=1.22&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/BaseDeserializerFactory.java (1.22)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BaseSerializerFactory.java?rev=1.30&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/BaseSerializerFactory.java (1.30)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 05:04 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>StringUtils test</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/utils/PackageTests.java?rev=1.12&content-type=text/x-cvsweb-markup">test/utils/PackageTests.java (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/utils/TestStringUtils.java?rev=1.1&content-type=text/x-cvsweb-markup">test/utils/TestStringUtils.java (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 05:03 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>fixed resource issues (tests were failing), optimized StringUtils.strip() to do substring ones</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/SimpleAxisServer.java?r1=1.87&r2=1.86">src/org/apache/axis/transport/http/SimpleAxisServer.java (1.87)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/utils/StringUtils.java?rev=1.6&content-type=text/x-cvsweb-markup">src/org/apache/axis/utils/StringUtils.java (1.6)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-14 05:03 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>fixed resource issues (tests were failing), optimized StringUtils.strip() to do substring ones</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/i18n/resource.properties?r1=1.98&r2=1.97">src/org/apache/axis/i18n/resource.properties (1.98)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 20:20 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Map serializer fix: Map keys and values can be any type, so should always
+send xsi:type information on those elements.
+Also, get the current encoding from the message context so we do not
+emit a soapenc prefix when using literal serialization.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/MapSerializer.java?rev=1.27&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/ser/MapSerializer.java (1.27)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 19:19 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Revisit last fix:
+Fix a problem with WSDD type mappings.  If you registered the same QName
+in both encoded and literal, encoding styles the last one "wins",
+which is bad.
+
+Keep the data structure a Map to prevent the list from growing when a service
+is redeployed, but include the encodingStyle in the Key.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/deployment/wsdd/WSDDDeployment.java?r1=1.62&r2=1.61">src/org/apache/axis/deployment/wsdd/WSDDDeployment.java (1.62)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 17:27 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>accessor for operations</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/RPCElement.java?r1=1.98&r2=1.97">src/org/apache/axis/message/RPCElement.java (1.98)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 17:26 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix a problem with WSDD type mappings.  If you registered the same QName
+in both encoded and literal, encoding styles the last one "wins",
+which is bad.
+
+Make the Map in to a List, since we never used the keys in the map for anything.
+
+Add missing JavaDoc comments where there was "XXX".</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/deployment/wsdd/WSDDDeployment.java?rev=1.61&content-type=text/x-cvsweb-markup">src/org/apache/axis/deployment/wsdd/WSDDDeployment.java (1.61)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 16:13 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>another way of updating operations</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/RPCElement.java?r1=1.97&r2=1.96">src/org/apache/axis/message/RPCElement.java (1.97)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 15:44 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Trying to find cause of Gump Failure (http://brutus.apache.org/gump/public/ws-axis/ws-axis-test/gump_work/build_ws-axis_ws-axis-test.txt)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/i18n/resource.properties?r1=1.97&r2=1.96">src/org/apache/axis/i18n/resource.properties (1.97)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/SimpleAxisServer.java?r1=1.86&r2=1.85">src/org/apache/axis/transport/http/SimpleAxisServer.java (1.86)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-12 01:20 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>made it easy to extend the class</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/transport/http/HTTPSender.java?rev=1.120&content-type=text/x-cvsweb-markup">src/org/apache/axis/transport/http/HTTPSender.java (1.120)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-11 23:13 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix bug 1646: WSDL for byte[] in a wrapped/doc/lit service was a xsd:byte
+array instead of a xsd:Base64Binary element per JAX-RPC.
+
+Special case the byte array in the emitting of wrapped parameters and make
+sure the type mapping is used.
+
+Plus, do some cleanup (comments, unneed initialization) in Emitter and
+DefaultSOAPEncodingTypeMapping.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/DefaultSOAPEncodingTypeMappingImpl.java?r1=1.6&r2=1.5">src/org/apache/axis/encoding/DefaultSOAPEncodingTypeMappingImpl.java (1.6)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/fromJava/Emitter.java?r1=1.132&r2=1.131">src/org/apache/axis/wsdl/fromJava/Emitter.java (1.132)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/fromJava/Types.java?r1=1.101&r2=1.100">src/org/apache/axis/wsdl/fromJava/Types.java (1.101)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-11 05:29 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>just minor optimizations, no need for equals in this case which can lead to full toString() call</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeImpl.java?r1=1.8&r2=1.7">src/org/apache/axis/message/NodeImpl.java (1.8)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-11 00:29 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>additional tests cases for getValue()</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/message/TestMessageElement.java?r1=1.18&r2=1.17">test/message/TestMessageElement.java (1.18)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-11 00:00 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>optimizations to MessageElement.getValue()</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/TextSerializationContext.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/encoding/TextSerializationContext.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?r1=1.188&r2=1.187">src/org/apache/axis/message/MessageElement.java (1.188)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SOAPEnvelope.java?r1=1.104&r2=1.103">src/org/apache/axis/message/SOAPEnvelope.java (1.104)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-10 15:57 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>just factored out a bit of code into an operation</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/RPCElement.java?rev=1.96&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/RPCElement.java (1.96)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-09 19:20 tomj</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Add a bit of defensive code to avoid class names with periods in front of
+them when a there is an empty (not null) namespace in a QName.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/toJava/Emitter.java?r1=1.73&r2=1.72">src/org/apache/axis/wsdl/toJava/Emitter.java (1.73)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-09 17:49 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>a fix to symboltable to reuse existing type for reference type if there is one. solves problems with invalid type mapping and propably duplicated type mappings in the stub</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/wsdl/symbolTable/SymbolTable.java?r1=1.109&r2=1.108">src/org/apache/axis/wsdl/symbolTable/SymbolTable.java (1.109)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-07 14:36 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>some whitemesa wsdl's moved.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/wsdl/interop/build.xml?rev=1.15&content-type=text/x-cvsweb-markup">test/wsdl/interop/build.xml (1.15)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-07 11:26 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Use the parent SOAPEnvelope's getOwnerDocument() before trying to use the context and before creating a brand new one. This reduces the # of instances where we have to create new documents and speeds things up.
+
+Notes:
+- I need Jarek's cooperation to figure out where he is seeing slowdown due to repeated newDocument() calls.
+- With this change, Bottom line is if the SOAPPart is set for the SOAPEnvelope then we don't create newDocument's every time.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?r1=1.187&r2=1.186">src/org/apache/axis/message/MessageElement.java (1.187)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/NodeImpl.java?r1=1.7&r2=1.6">src/org/apache/axis/message/NodeImpl.java (1.7)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/SOAPEnvelope.java?rev=1.103&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/SOAPEnvelope.java (1.103)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/saaj/PackageTests.java?rev=1.12&content-type=text/x-cvsweb-markup">test/saaj/PackageTests.java (1.12)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/saaj/TestText.java?rev=1.1&content-type=text/x-cvsweb-markup">test/saaj/TestText.java (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-05 00:12 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>clean up</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/components/uuid/FastUUIDGen.java?r1=1.2&r2=1.1">src/org/apache/axis/components/uuid/FastUUIDGen.java (1.2)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-05 00:11 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>simple uuid gen tests</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/components/TestUUID.java?rev=1.5&content-type=text/x-cvsweb-markup">test/components/TestUUID.java (1.5)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/test/components/build.xml?rev=1.1&content-type=text/x-cvsweb-markup">test/components/build.xml (1.1)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 21:28 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>java 1.3 compilation fix</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/SerializationContext.java?r1=1.95&r2=1.94">src/org/apache/axis/encoding/SerializationContext.java (1.95)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 21:05 gawor</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>faster time-based uuid generator implementation. switched as default</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/components/uuid/FastUUIDGen.java?rev=1.1&content-type=text/x-cvsweb-markup">src/org/apache/axis/components/uuid/FastUUIDGen.java (1.1)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/components/uuid/UUIDGenFactory.java?rev=1.7&content-type=text/x-cvsweb-markup">src/org/apache/axis/components/uuid/UUIDGenFactory.java (1.7)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 18:23 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Don't make a copy of the array...use it as is.</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/components/encoding/UTF16Encoder.java?rev=1.4&content-type=text/x-cvsweb-markup">src/org/apache/axis/components/encoding/UTF16Encoder.java (1.4)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/components/encoding/UTF8Encoder.java?rev=1.4&content-type=text/x-cvsweb-markup">src/org/apache/axis/components/encoding/UTF8Encoder.java (1.4)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 13:38 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for:
+AXIS-1406 - No extraClasses option for wsdd
+
+from:
+AJ Banck (ajbanck@informatica.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/docs/reference.html?rev=1.38&content-type=text/x-cvsweb-markup">docs/reference.html (1.38)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/providers/BasicProvider.java?rev=1.23&content-type=text/x-cvsweb-markup">src/org/apache/axis/providers/BasicProvider.java (1.23)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 13:23 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for:
+AXIS-1589 - SerializationContext.serialize(*,*,*,*,Boolean.FALSE) adds types
+
+from:
+toby cabot (toby@caboteria.org)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/ArraySerializer.java?r1=1.59&r2=1.58">src/org/apache/axis/encoding/ser/ArraySerializer.java (1.59)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/ser/BeanSerializer.java?r1=1.78&r2=1.77">src/org/apache/axis/encoding/ser/BeanSerializer.java (1.78)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 13:23 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for:
+AXIS-1589 - SerializationContext.serialize(*,*,*,*,Boolean.FALSE) adds types
+
+from:
+toby cabot (toby@caboteria.org)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/encoding/SerializationContext.java?r1=1.94&r2=1.93">src/org/apache/axis/encoding/SerializationContext.java (1.94)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/MessageElement.java?r1=1.186&r2=1.185">src/org/apache/axis/message/MessageElement.java (1.186)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/message/RPCParam.java?rev=1.61&content-type=text/x-cvsweb-markup">src/org/apache/axis/message/RPCParam.java (1.61)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 12:58 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fix for:
+AXIS-1640 - Implementation of setContent in AttachmentPart is wrong
+
+from:
+Chelliah Thirunavukkarasu (chelliah@versai.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/attachments/AttachmentPart.java?rev=1.46&content-type=text/x-cvsweb-markup">src/org/apache/axis/attachments/AttachmentPart.java (1.46)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-04 12:54 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>Fixes for:
+AXIS-1639 - Call.setPortType and getPortType marked deprecated. Not conformant with JAX-RPC
+AXIS-1638 - Service.createCall(QName, QName) ignores the operationName's namespace
+
+from:
+Chelliah Thirunavukkarasu (chelliah@versai.com)</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/client/Call.java?rev=1.234&content-type=text/x-cvsweb-markup">src/org/apache/axis/client/Call.java (1.234)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/src/org/apache/axis/client/Service.java?rev=1.100&content-type=text/x-cvsweb-markup">src/org/apache/axis/client/Service.java (1.100)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
+<TD class="dateAndAuthor" colspan="2">2004-11-03 14:34 dims</TD>
+</TR>
+<TR>
+<TD width="20">    </TD><TD>
+<pre>
+<b>CVS log from RC1 to today</b>
+</pre>
+<ul>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/build.xml?r1=1.255&r2=1.254">build.xml (1.255)
+      </a>
+</li>
+<li>
+<a href="http://cvs.apache.org/viewcvs/ws-axis/java/docs/cvslog.html?rev=1.3&content-type=text/x-cvsweb-markup">docs/cvslog.html (1.3)
+      </a>
+</li>
+</ul>
+</TD>
+</TR>
+<TR>
 <TD class="dateAndAuthor" colspan="2">2004-11-01 15:08 dims</TD>
 </TR>
 <TR>
