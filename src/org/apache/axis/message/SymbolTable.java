@@ -1,6 +1,6 @@
 package org.apache.axis.message;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This was swiped from xerces2, I stripped the comments
@@ -13,7 +13,8 @@ public class SymbolTable {
     protected Entry[] fBuckets = new Entry[TABLE_SIZE];
     public SymbolTable() {}
     
-    public ArrayList list = new ArrayList();
+    private ArrayList list = new ArrayList();
+    private HashMap hash = new HashMap();
     
     public String getSymbol(int bucket) {
         return (String)list.get(bucket);
@@ -23,10 +24,14 @@ public class SymbolTable {
     }
     
     public int addSymbol(String symbol) {
-        int ret = list.indexOf(symbol);
-        if (ret == -1) {
+        Integer i = (Integer)hash.get(symbol);
+        int ret;
+        if (i == null) {
             list.add(symbol);
             ret = list.size() - 1;
+            hash.put(symbol, new Integer(ret));
+        } else {
+            ret = i.intValue();
         }
         return ret;
         /*
