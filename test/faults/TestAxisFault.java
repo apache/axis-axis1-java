@@ -63,8 +63,11 @@ import org.apache.axis.Constants;
 import org.apache.axis.NoEndPointException;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * unit tests for the ubiquitous AxisFault 
@@ -139,6 +142,41 @@ public class TestAxisFault extends TestCase {
         af.addFaultDetailString("alles geht gut");
         Element match=af.lookupFaultDetail(new QName(null,"string"));
         assertNotNull(match);
+    }
+
+    public void testArrayAddWorks() {
+        AxisFault af = new AxisFault();
+        af.addFaultDetailString("alles geht gut");
+        Element array[]=new Element[2];
+        array[0] = createElement("ein","un");
+        array[1] = createElement("zwei", "deux");
+        af.setFaultDetail(array);
+        Element match = af.lookupFaultDetail(new QName(null, "zwei"));
+        assertNotNull(match);
+        Element old = af.lookupFaultDetail(new QName(null, "string"));
+        assertNull(old);
+    }
+
+    public void testEmptyArrayAddWorks() {
+        AxisFault af = new AxisFault();
+        af.addFaultDetailString("alles geht gut");
+        Element array[] = new Element[0];
+        af.setFaultDetail(array);
+        Element old = af.lookupFaultDetail(new QName(null, "string"));
+        assertNull(old);
+    }
+
+    public Element createElement(String tag,String child) {
+        Document doc = null;
+        try {
+            doc = XMLUtils.newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("xml trouble");
+        }
+        Element element = doc.createElement(tag);
+        Text text = doc.createTextNode(child);
+        element.appendChild(text);
+        return element;
     }
 
     /**
