@@ -56,7 +56,6 @@
 package org.apache.axis.utils.compiler;
 
 import org.apache.axis.utils.JavaUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -65,6 +64,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -120,9 +122,28 @@ public class Javac extends AbstractCompiler
      */
     public boolean compile() throws IOException {
         ByteArrayOutputStream err = new ByteArrayOutputStream();
-        sun.tools.javac.Main compiler = new sun.tools.javac.Main(err, "javac");
-        boolean result =
-                compiler.compile(toStringArray(fillArguments(new ArrayList())));
+        boolean result = false;
+
+        try {
+            // Create an instance of the compiler, redirecting output to err
+            Class c = Class.forName("sun.tools.javac.Main");
+            Constructor cons =
+                c.getConstructor(new Class[] { OutputStream.class,
+                                               String.class });
+            Object compiler = cons.newInstance(new Object[] { err,
+                                                              "javac" });
+            // Call the compile() method
+            Method compile = c.getMethod("compile",
+                                         new Class [] { String[].class });
+            Boolean ok =
+                (Boolean) compile.invoke(compiler,
+                                        new Object[] {toStringArray(fillArguments(new ArrayList()))});
+            result = ok.booleanValue();
+        } catch (Exception cnfe){
+            log.error(JavaUtils.getMessage("noCompiler00"), cnfe);
+            throw new RuntimeException(JavaUtils.getMessage("noCompiler00"));
+        }
+
         this.errors = new ByteArrayInputStream(err.toByteArray());
         return result;
     }
