@@ -455,16 +455,22 @@ public class Constants {
     public static final QName XSD_UNSIGNEDINT = new QName(URI_2001_SCHEMA_XSD, "unsignedInt");
     public static final QName XSD_UNSIGNEDSHORT = new QName(URI_2001_SCHEMA_XSD, "unsignedShort");
     public static final QName XSD_UNSIGNEDBYTE = new QName(URI_2001_SCHEMA_XSD, "unsignedByte");
+    public static final QName XSD_POSITIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "positiveInteger");
+    public static final QName XSD_NEGATIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "negativeInteger");
+    public static final QName XSD_NONNEGATIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "nonNegativeInteger");
+    public static final QName XSD_NONPOSITIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "nonPositiveInteger");
 
     public static final QName XSD_YEARMONTH = new QName(URI_2001_SCHEMA_XSD, "gYearMonth");
     public static final QName XSD_MONTHDAY = new QName(URI_2001_SCHEMA_XSD, "gMonthDay");
     public static final QName XSD_YEAR = new QName(URI_2001_SCHEMA_XSD, "gYear");
     public static final QName XSD_MONTH = new QName(URI_2001_SCHEMA_XSD, "gMonth");
     public static final QName XSD_DAY = new QName(URI_2001_SCHEMA_XSD, "gDay");
+    public static final QName XSD_DURATION = new QName(URI_2001_SCHEMA_XSD, "duration");
 
     public static final QName XSD_NAME = new QName(URI_2001_SCHEMA_XSD, "Name");
     public static final QName XSD_NCNAME = new QName(URI_2001_SCHEMA_XSD, "NCName");
     public static final QName XSD_NMTOKEN = new QName(URI_2001_SCHEMA_XSD, "NMTOKEN");
+    public static final QName XSD_ANYURI = new QName(URI_2001_SCHEMA_XSD, "anyURI");
 
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");

@@ -449,6 +449,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_NMTOKEN),
                    true);
 
+        // a xsd:Duration
+        myRegister(Constants.XSD_DURATION, org.apache.axis.types.Duration.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Duration.class,
+                                             Constants.XSD_DURATION),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Duration.class,
+                                             Constants.XSD_DURATION),
+                   true);
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.
