@@ -165,9 +165,14 @@ public abstract class MessageExchangeProvider
         if (log.isDebugEnabled()) {
             log.debug("Enter: MessageExchangeProvider::processReceive");
         }
-        RECEIVE_REQUESTS.put(
+        if (context.getMessageExchangeCorrelator() != null) {
+          RECEIVE_REQUESTS.put(
             context.getMessageExchangeCorrelator(),
             context);
+        } else {
+          RECEIVE_REQUESTS.put(
+            SimpleMessageExchangeCorrelator.NULL_CORRELATOR, context);
+        }
         if (log.isDebugEnabled()) {
             log.debug("Exit: MessageExchangeProvider::processReceive");
         }

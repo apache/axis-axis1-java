@@ -101,7 +101,7 @@ public class FirstComeFirstServeDispatchPolicy
             context.getMessageExchangeCorrelator();
         receiveContext = (MessageExchangeReceiveContext)RECEIVE_REQUESTS.get(correlator);
         if (receiveContext == null) {
-            receiveContext = (MessageExchangeReceiveContext)RECEIVE_REQUESTS.get();
+            receiveContext = (MessageExchangeReceiveContext)RECEIVE_REQUESTS.get(SimpleMessageExchangeCorrelator.NULL_CORRELATOR);
         }
         if (receiveContext == null) 
             RECEIVE.put(correlator,context);
