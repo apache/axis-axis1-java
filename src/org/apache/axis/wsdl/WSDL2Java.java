@@ -54,33 +54,29 @@
  */
 package org.apache.axis.wsdl;
 
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.BaseTypeMapping;
-import org.apache.axis.wsdl.toJava.JavaWriterFactory;
+import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.GeneratedFileInfo;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
-
-import javax.wsdl.QName;
-
+import org.apache.axis.wsdl.toJava.JavaWriterFactory;
 import org.w3c.dom.Document;
 
+import javax.wsdl.Definition;
+import javax.wsdl.QName;
+import javax.wsdl.WSDLException;
 import java.io.File;
 import java.io.IOException;
-
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Date;
-
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
 
 /**
  * Command line interface to the wsdl2java utility
@@ -297,7 +293,7 @@ public class WSDL2Java {
 
 
     /**
-     * Indicate writer factory 
+     * Indicate writer factory
      * @param String class name
      */
     public void factory(String value) {
@@ -459,6 +455,8 @@ public class WSDL2Java {
      */
     public void emit(String wsdlURL)
             throws Exception {
+
+        Authenticator.setDefault(new DefaultAuthenticator());
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
@@ -749,4 +747,12 @@ public class WSDL2Java {
         System.exit(1);
     }
 
+    private class DefaultAuthenticator extends Authenticator {
+        protected PasswordAuthentication getPasswordAuthentication() {
+            String proxyUser = System.getProperty("http.proxyUser","");
+            String proxyPassword = System.getProperty("http.proxyPassword","");
+            System.out.println("Authenticator:" + getRequestingPrompt() + "[" + proxyUser + ":" + proxyPassword + "]");
+            return new PasswordAuthentication (proxyUser, proxyPassword.toCharArray());
+        }
+    }
 }
