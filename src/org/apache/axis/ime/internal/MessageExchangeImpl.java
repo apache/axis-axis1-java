@@ -65,7 +65,7 @@ import org.apache.axis.ime.MessageExchangeStatusListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeLifecycle;
-import org.apache.axis.ime.internal.util.uuid.UUIDGenFactory;
+import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
