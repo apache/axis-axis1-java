@@ -1,8 +1,10 @@
+package org.apache.axis.handlers;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,48 +55,24 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
-
-import java.util.* ;
-
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.DebugHeader;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
 
-import org.w3c.dom.* ;
-
-/**
+/** This handler simply prints a custom message to the debug log.
  *
- * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class DebugHandler extends BasicHandler {
-    
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: DebugHandler::invoke" );
-        try {
-            Message       msg = msgContext.getRequestMessage();
-            
-            SOAPEnvelope message = (SOAPEnvelope)msg.getAs("SOAPEnvelope");
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, "Debug");
-            if ((header != null) && (header instanceof DebugHeader)) {
-                int debugVal = ((DebugHeader)header).getDebugLevel();
-                Debug.Print( 1, "Setting debug level to: " + debugVal );
-                Debug.setDebugLevel(debugVal);
-                header.setProcessed(true);
-            }
-        }
-        catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-        }
-        Debug.Print( 1, "Exit: DebugHandler::invoke" );
-    }
-
-    public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: DebugHandler::undo" );
-        Debug.Print( 1, "Exit: DebugHandler::undo" );
-    }
-    
-};
+public class LogMessage extends BasicHandler
+{
+  public void invoke(MessageContext context)
+  {
+    String msg = (String)getOption("message");
+    if (msg != null)
+      Debug.Print(0, msg);
+  }
+ 
+  public void undo(MessageContext msgContext) {
+    Debug.Print( 1, "Enter: URLMapper::undo" );
+    Debug.Print( 1, "Exit: URLMapper::undo" );
+  }
+}
