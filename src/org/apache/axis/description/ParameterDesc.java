@@ -116,7 +116,9 @@ public class ParameterDesc {
     public static byte modeFromString(String modeStr)
     {
         byte ret = IN;
-        if (modeStr.equalsIgnoreCase("out")) {
+        if (modeStr == null) { 
+            return IN;
+        } else if (modeStr.equalsIgnoreCase("out")) {
             ret = OUT;
         } else if (modeStr.equalsIgnoreCase("inout")) {
             ret = INOUT;
