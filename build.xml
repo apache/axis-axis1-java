@@ -68,7 +68,7 @@ Copyright:
   <property name="jaxrpc" value="jaxrpc"/>
 
   <!-- debug flag for ant javac, values are "on" and "off" -->
-  <property name="debug" value="off"/>  
+  <property name="debug" value="on"/>  
 
   <property name="deprecation" value="true"/>
 
