@@ -79,6 +79,7 @@ import javax.xml.namespace.QName;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * General purpose deserializer for an arbitrary java bean.
@@ -94,7 +95,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
     QName xmlType;
     Class javaType;
-    protected HashMap propertyMap = new HashMap();
+    protected Map propertyMap = null;
     protected QName prevQName;
 
     public static final String DESERIALIZE_ANY = "DeserializeAny";
@@ -110,18 +111,25 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         this(javaType, xmlType, TypeDesc.getTypeDescForClass(javaType));
     }
 
-    // Construct BeanSerializer for the indicated class/qname and meta Data
+    // Construct BeanDeserializer for the indicated class/qname and meta Data
     public BeanDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc ) {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
         // Get a list of the bean properties
-        BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, typeDesc);
-        // loop through properties and grab the names for later
-        for (int i = 0; i < pd.length; i++) {
-            BeanPropertyDescriptor descriptor = pd[i];
-            propertyMap.put(descriptor.getName(), descriptor);
+        BeanPropertyDescriptor[] pd = null;
+        if (typeDesc != null) {
+            propertyMap = typeDesc.getPropertyDescriptorMap();
+        } else {
+            pd = BeanUtils.getPd(javaType, null);
+            propertyMap = new HashMap();
+            // loop through properties and grab the names for later
+            for (int i = 0; i < pd.length; i++) {
+                BeanPropertyDescriptor descriptor = pd[i];
+                propertyMap.put(descriptor.getName(), descriptor);
+            }
         }
+
         // create a value
         try {
             value=javaType.newInstance();

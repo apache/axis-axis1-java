@@ -113,7 +113,11 @@ public class BeanSerializer implements Serializer, Serializable {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
-        propertyDescriptor = BeanUtils.getPd(javaType, typeDesc);
+        if (typeDesc != null) {
+            propertyDescriptor = typeDesc.getPropertyDescriptors();
+        } else {
+            propertyDescriptor = BeanUtils.getPd(javaType, null);
+        }
     }
 
     /**
@@ -272,9 +276,12 @@ public class BeanSerializer implements Serializer, Serializable {
             extension.setAttribute("base", base);
             e = extension;
             // Get the property descriptors for the super class
-            superPd =
-                BeanUtils.getPd(superClass,
-                                TypeDesc.getTypeDescForClass(superClass));
+            TypeDesc superTypeDesc = TypeDesc.getTypeDescForClass(superClass);
+            if (superTypeDesc != null) {
+                superPd = typeDesc.getPropertyDescriptors();
+            } else {
+                superPd = BeanUtils.getPd(superClass, null);
+            }
         } else {
             e = complexType;
         }
