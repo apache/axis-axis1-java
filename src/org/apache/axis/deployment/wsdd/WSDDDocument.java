@@ -177,7 +177,4 @@ public class WSDDDocument
             undeployment.undeployFromRegistry(registry);
         }
     }
-
-    public void undeploy(DeploymentRegistry registry) throws DeploymentException {
-    }
 }
