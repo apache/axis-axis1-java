@@ -268,6 +268,10 @@ public class JavaBeanWriter extends JavaClassWriter {
                     isAny = true;
                 } else {
                     String elemName = elem.getName().getLocalPart();
+                    int anonymousDelimitorIndex = elemName.lastIndexOf('>');
+                    if (anonymousDelimitorIndex > -1) {
+                        elemName = elemName.substring(anonymousDelimitorIndex + 1);
+                    }
 
                     variableName = Utils.xmlNameToJava(elemName);
                 }
@@ -297,8 +301,13 @@ public class JavaBeanWriter extends JavaClassWriter {
                 TypeEntry attr = (TypeEntry) attributes.get(i);
                 String typeName = attr.getName();
                 QName xmlName = (QName) attributes.get(i + 1);
+                String attrName = xmlName.getLocalPart();
+                int anonymousDelimitorIndex = attrName.lastIndexOf('>');
+                if (anonymousDelimitorIndex > -1) {
+                    attrName = attrName.substring(anonymousDelimitorIndex + 1);
+                }
                 String variableName =
-                        Utils.xmlNameToJava(xmlName.getLocalPart());
+                        Utils.xmlNameToJava(attrName);
 
                 names.add(typeName);
                 names.add(variableName);
@@ -490,6 +499,11 @@ public class JavaBeanWriter extends JavaClassWriter {
                     String name =
                             ((QName) attributes.get(j + 1)).getLocalPart();
 
+                    int anonymousDelimitorIndex = name.lastIndexOf('>');
+                    if (anonymousDelimitorIndex > -1) {
+                        name = name.substring(anonymousDelimitorIndex + 1);
+                    }
+
                     paramNames.add(mangle + Utils.xmlNameToJava(name));
                 }
             }
@@ -503,10 +517,16 @@ public class JavaBeanWriter extends JavaClassWriter {
                 for (int j = 0; j < elements.size(); j++) {
                     ElementDecl elem = (ElementDecl) elements.get(j);
 
+                    String name = elem.getName().getLocalPart();
+                    int anonymousDelimitorIndex = name.lastIndexOf('>');
+                    if (anonymousDelimitorIndex > -1) {
+                        name = name.substring(anonymousDelimitorIndex + 1);
+                    }
+
                     paramTypes.add(elem.getType().getName());
                     paramNames.add(
                             mangle
-                            + Utils.xmlNameToJava(elem.getName().getLocalPart()));
+                            + Utils.xmlNameToJava(name));
                 }
             }
         }

@@ -878,6 +878,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 + "\", \"" + qname.getLocalPart() + "\")";
     }
 
+    public static String getNewQNameWithLastLocalPart(javax.xml.namespace.QName qname) {
+        return "new javax.xml.namespace.QName(\"" + qname.getNamespaceURI()
+                + "\", \"" + getLastLocalPart(qname.getLocalPart()) + "\")";
+    }
+
     /**
      * Get the parameter type name.  If this is a MIME type, then
      * figure out the appropriate type from the MIME type, otherwise

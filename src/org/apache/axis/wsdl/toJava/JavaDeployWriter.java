@@ -553,7 +553,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         if (returnQName != null) {
             pw.print(" returnQName=\""
-                    + Utils.genQNameAttributeString(returnQName, "retNS")
+                    + Utils.genQNameAttributeStringWithLastLocalPart(returnQName, "retNS")
                     + "\"");
         }
 
@@ -585,7 +585,7 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.print(" name=\"" + param.getName() + "\"");
             } else {
                 pw.print(" qname=\""
-                        + Utils.genQNameAttributeString(paramQName, "pns")
+                        + Utils.genQNameAttributeStringWithLastLocalPart(paramQName, "pns")
                         + "\"");
             }
 

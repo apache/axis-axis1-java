@@ -388,13 +388,13 @@
 
         <!-- Test for nested defined complexType -->
         <xsd:element name="a" type="xsd:short" />
-        <xsd:complexType name="b">
-          <xsd:sequence>
             <xsd:complexType name="a">
               <xsd:sequence>
                 <xsd:element name="c" type="xsd:int" />
               </xsd:sequence>
             </xsd:complexType>
+        <xsd:complexType name="b">
+          <xsd:sequence>
             <xsd:element name="d" type="typens2:a" />
           </xsd:sequence>
         </xsd:complexType>

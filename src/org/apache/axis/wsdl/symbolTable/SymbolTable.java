@@ -1720,8 +1720,10 @@ public class SymbolTable {
         // instead of: void echo(StringHolder inout)
         // Do this:  string echo(string in)
         if (wrapped && (inputs.size() == 1) && (outputs.size() == 1)
-                && ((Parameter) inputs.get(0)).getName().equals(
-                        ((Parameter) outputs.get(0)).getName())) {
+                && 
+                Utils.getLastLocalPart(((Parameter) inputs.get(0)).getName()).equals(
+                Utils.getLastLocalPart(((Parameter) outputs.get(0)).getName()))
+                ) {
 
             // add the input and make sure its a IN not an INOUT
             addInishParm(inputs, null, 0, -1, parameters, false);
@@ -1792,9 +1794,11 @@ public class SymbolTable {
      * @return 
      */
     private int getPartIndex(String name, Vector v) {
-
+        name = Utils.getLastLocalPart(name);
         for (int i = 0; i < v.size(); i++) {
-            if (name.equals(((Parameter) v.get(i)).getName())) {
+            String paramName = ((Parameter) v.get(i)).getName();
+            paramName = Utils.getLastLocalPart(paramName);
+            if (name.equals(paramName)) {
                 return i;
             }
         }
@@ -1844,13 +1848,45 @@ public class SymbolTable {
         if (outdex >= 0) {
             Parameter outParam = (Parameter) outputs.get(outdex);
 
+            TypeEntry paramEntry = p.getType();
+            TypeEntry outParamEntry = outParam.getType();
+            String paramLastLocalPart = Utils.getLastLocalPart(paramEntry.getQName().getLocalPart());
+            String outParamLastLocalPart = Utils.getLastLocalPart(outParamEntry.getQName().getLocalPart());
             if (p.getType().equals(outParam.getType())) {
                 outputs.remove(outdex);
                 p.setMode(Parameter.INOUT);
 
                 ++parameters.inouts;
-            } else {
+            } 
+            /*
+            else if (paramLastLocalPart.equals(outParamLastLocalPart)) {
+                outputs.remove(outdex);
+                p.setMode(Parameter.INOUT);
 
+                ++parameters.inouts;
+                if (paramEntry.isBaseType()) {
+                    if (paramEntry.getBaseType().equals(outParamEntry.getBaseType())) {
+                        outputs.remove(outdex);
+                        p.setMode(Parameter.INOUT);
+
+                        ++parameters.inouts;
+                    }
+                }
+                else if (paramEntry.getRefType() != null) {
+                    if (paramEntry.getRefType().equals(outParamEntry.getRefType())) {
+                        outputs.remove(outdex);
+                        p.setMode(Parameter.INOUT);
+
+                        ++parameters.inouts;
+                    }
+                }
+                else {
+                    ++parameters.inputs;
+                }
+            }
+        */
+            else {
+                
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
                 // it's not really an inout....
