@@ -82,6 +82,7 @@ public class Wsdl2javaAntTask extends Task
     private String output = "." ;
     private String deployScope = "";
     private String url = "";
+    private String tm = "1.2";
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -96,6 +97,7 @@ public class Wsdl2javaAntTask extends Task
             log("\tdeployScope:" + deployScope, Project.MSG_VERBOSE);
             log("\tURL:" + url, Project.MSG_VERBOSE);
             log("\tall:" + all, Project.MSG_VERBOSE);
+            log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             WSDL2Java emitter = new WSDL2Java();
@@ -124,6 +126,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setOutputDir(output);
             emitter.generateSkeleton(skeleton);
             emitter.verbose(verbose);
+            emitter.setTypeMappingVersion(tm);
 
             Document doc;
 
@@ -190,6 +193,11 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "all" attribute
     public void setAll(String parameter) {
         this.all = Project.toBoolean(parameter);
+    }
+
+    // The setter for the "typeMappingVersion" attribute
+    public void setTypeMappingVersion(String parameter) {
+        this.tm = parameter;
     }
 
     /** the command arguments */

@@ -58,6 +58,9 @@ import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
 import java.util.HashMap;
 import java.io.StringWriter;
@@ -81,6 +84,7 @@ public class Java2WsdlAntTask extends Task
     private boolean useInheritedMethods = false;
     private String exclude = null;
     private String stopClasses = null;
+    private String tm = "1.1";
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -96,6 +100,7 @@ public class Java2WsdlAntTask extends Task
             log("\tinheritance:" + useInheritedMethods, Project.MSG_VERBOSE);
             log("\texcluded:" + exclude, Project.MSG_VERBOSE);
             log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
+            log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -115,6 +120,13 @@ public class Java2WsdlAntTask extends Task
                 emitter.setDisallowedMethods(exclude);
             if (stopClasses != null)
                 emitter.setStopClasses(stopClasses);
+
+            if (tm.equals("1.1")) {
+                emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.create());
+            } else {
+                emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
+            }
+
             emitter.setIntfNamespace(namespace);
             emitter.setLocationUrl(location);
             emitter.setUseInheritedMethods(useInheritedMethods);
@@ -182,6 +194,11 @@ public class Java2WsdlAntTask extends Task
         Mapping pkg = new Mapping();
         return pkg;
     }
+
+    // The setter for the "typeMappingVersion" attribute
+    public void setTypeMappingVersion(String parameter) {
+        this.tm = parameter;
+    } 
 
     /**
      * Used for nested package definitions.

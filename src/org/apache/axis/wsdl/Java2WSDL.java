@@ -62,6 +62,9 @@ import org.apache.avalon.excalibur.cli.CLUtil;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,6 +95,7 @@ public class Java2WSDL {
     protected static final int IMPL_CLASS_OPT = 'i';
     protected static final int METHODS_NOTALLOWED_OPT = 'x';
     protected static final int STOP_CLASSES_OPT = 'c';
+    protected static final int TYPEMAPPING_OPT = 'T';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -170,11 +174,15 @@ public class Java2WSDL {
         new CLOptionDescriptor("exclude",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_NOTALLOWED_OPT,
-                JavaUtils.getMessage("j2woptexclude00")),
+                 JavaUtils.getMessage("j2woptexclude00")),
         new CLOptionDescriptor("stopClasses",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 STOP_CLASSES_OPT,
-                JavaUtils.getMessage("j2woptstopClass00"))
+                JavaUtils.getMessage("j2woptstopClass00")),
+        new CLOptionDescriptor("typeMappingVersion",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                TYPEMAPPING_OPT,
+                JavaUtils.getMessage("j2wopttypeMapping00"))
     };
 
     
@@ -301,6 +309,19 @@ public class Java2WSDL {
                     case STOP_CLASSES_OPT:
                         emitter.setStopClasses(option.getArgument());
                         break;
+
+                    case TYPEMAPPING_OPT:
+                        String value = option.getArgument();
+                        if (option.equals("1.1")) {
+                            emitter.setDefaultTypeMapping(
+                                DefaultTypeMappingImpl.create());
+                        } else if (option.equals("1.2")) {
+                            emitter.setDefaultTypeMapping(
+                                DefaultSOAP12TypeMappingImpl.create());
+                        } else {
+                            System.out.println(JavaUtils.getMessage("j2wBadTypeMapping00"));
+                        }
+                        break;
                         
                 }
             }
@@ -316,6 +337,11 @@ public class Java2WSDL {
                 printUsage();
             }
 
+            // Default to SOAP 1.2 JAX-RPC mapping
+            if (emitter.getDefaultTypeMapping() == null) {
+                emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
+            }            
+                
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }

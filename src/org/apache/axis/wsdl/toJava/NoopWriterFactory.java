@@ -54,74 +54,63 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.util.HashMap;
+import org.apache.axis.utils.JavaUtils;
+
+import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+
+import java.io.File;
+import java.io.IOException;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Vector;
+import javax.wsdl.QName;
+
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
 /**
-* Writer and WriterFactory are part of the Writer framework.  Folks who want
-* to use the emitter to generate stuff from WSDL should do 3 things:
-* 1.  Write implementations of the Writer interface, one each for PortType,
-*     Binding, Service, and Type.  These implementations generate the stuff
-*     for each of these WSDL types.
-* 2.  Write an implementation of the WriterFactory interface that returns
-*     instantiations of these Writer implementations as appropriate.
-* 3.  Implement a class with a main method (like Wsdl2java) that instantiates
-*     an Emitter and passes it the WriterFactory implementation
-*/
-
-public interface WriterFactory {
-    /**
-     * Allow the Writer extension to make a pass through the symbol table doing any pre-writing
-     * logic, like creating the Java names for each object and constructing signature strings.
-     */
-    public void writerPass(Definition def, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate bindings for the given Message.
-     */
-    public Writer getWriter(Message message, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate bindings for the given PortType.
-     */
-    public Writer getWriter(PortType portType, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate bindings for the given Binding.
-     */
-    public Writer getWriter(Binding binding, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate bindings for the given Service.
-     */
-    public Writer getWriter(Service service, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate bindings for the given Type.
-     */
-    public Writer getWriter(TypeEntry type, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate anything that doesn't
-     * fit into the scope of any of the other writers.
-     */
-    public Writer getWriter(Definition definition, SymbolTable symbolTable);
-
-    /**
-     * Provide the Emitter to the factory.
-     */
-    public void setEmitter(Emitter emitter);
-
-    /**
-     * Get TypeMapping to use for translating
-     * QNames to java base types
-     */
-    public void setBaseTypeMapping(BaseTypeMapping btm);
-    public BaseTypeMapping getBaseTypeMapping();
-   
+ * This is WSDL2Java's implementation of the NoopWriterFactor
+ */
+class NoopWriterFactory extends JavaWriterFactory {
+    public void writerPass(Definition def, SymbolTable symbolTable) {}
+    public Writer getWriter(Message message, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public Writer getWriter(PortType portType, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public Writer getWriter(Binding binding, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public Writer getWriter(Service service, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public Writer getWriter(Definition definition, SymbolTable symbolTable) {
+        return new NoopWriter();
+    }
+    
+    public void setEmitter(Emitter emitter) {}
 }
