@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,11 +91,15 @@ public class AxisServlet extends AxisServletBase {
     public static final String INIT_PROPERTY_JWS_CLASS_DIR =
         "axis.jws.servletClassDir";
 
+    // This will turn off the list of available services
+    public static final String INIT_PROPERTY_DISABLE_SERVICES_LIST =
+        "axis.disableServiceList";
+
     // These have default values.
     private String transportName;
-    
+
     private Handler transport;
-    
+
     private ServletSecurityProvider securityProvider = null;
 
     /**
@@ -111,6 +115,11 @@ public class AxisServlet extends AxisServletBase {
      */
     private boolean enableList = false;
 
+    /**
+     * Should we turn off the list of services when we receive a GET
+     * at the servlet root?
+     */
+    private boolean disableServicesList = false;
 
     /**
      * Cached path to JWS output directory
@@ -151,6 +160,9 @@ public class AxisServlet extends AxisServletBase {
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
 
+        // Should we list services?
+        disableServicesList = JavaUtils.isTrue(getOption(context, INIT_PROPERTY_DISABLE_SERVICES_LIST, "false"));
+
         /**
          * There are DEFINATE problems here if
          * getHomeDir and/or getDefaultJWSClassDir return null
@@ -165,7 +177,7 @@ public class AxisServlet extends AxisServletBase {
         } else {
             jwsClassDir = getDefaultJWSClassDir();
         }
-        
+
         initQueryStringHandlers();
     }
 
@@ -187,7 +199,7 @@ public class AxisServlet extends AxisServletBase {
 
         PrintWriter writer = new FilterPrintWriter(response);
 
-        try 
+        try
         {
             AxisEngine engine = getEngine();
             ServletContext servletContext =
@@ -206,19 +218,19 @@ public class AxisServlet extends AxisServletBase {
             if(isJWSPage) {
                 pathInfo= request.getServletPath();
             }
-            
+
             // Try to execute a query string plugin and return upon success.
-            
+
             if (processQuery (request, response, writer) == true) {
                  return;
             }
-            
+
             boolean hasNoPath = (pathInfo == null || pathInfo.equals(""));
-            if (hasNoPath) {
+            if (!disableServicesList && hasNoPath) {
                 // If the user requested the servlet (i.e. /axis/servlet/AxisServlet)
                 // with no service name, present the user with a list of deployed
                 // services to be helpful
-                // Don't do this if we are doing WSDL or list.
+                // Don't do this if has been turned off
                 reportAvailableServices(response, writer, request);
             } else if (realpath != null) {
                 // We have a pathname, so now we perform WSDL or list operations
@@ -365,7 +377,7 @@ public class AxisServlet extends AxisServletBase {
         writer.println(axisFault.dumpToString());
         writer.println("</pre>");
     }
-    
+
     /**
      * print a snippet of service info.
      * @param service service
@@ -388,17 +400,17 @@ public class AxisServlet extends AxisServletBase {
                 Messages.getMessage("perhaps00") +
                 "</i>");
     }
-    
+
     /**
      * report that we have no WSDL
-     * 
+     *
      * This method was moved to the querystring handler QSWSDLHandler. The
      * method reportNoWSDL in AxisServlet is never called. Perhaps the method
-     * is overwritten in subclasses of AxisServlet so the method wasn't 
+     * is overwritten in subclasses of AxisServlet so the method wasn't
      * removed. See the discussion in
-     * 
+     *
      * http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23845
-     * 
+     *
      * @param res
      * @param writer
      * @param moreDetailCode optional name of a message to provide more detail
@@ -421,8 +433,10 @@ public class AxisServlet extends AxisServletBase {
     protected void reportAvailableServices(HttpServletResponse response,
                                        PrintWriter writer,
                                        HttpServletRequest request)
-            throws  ConfigurationException, AxisFault {
+            throws  ConfigurationException, AxisFault
+    {
         AxisEngine engine = getEngine();
+
         response.setContentType("text/html");
         writer.println("<h2>And now... Some Services</h2>");
 
@@ -657,7 +671,7 @@ public class AxisServlet extends AxisServletBase {
                 ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
             }
         }
-        
+
         if( tlog.isDebugEnabled() ) {
             t3=System.currentTimeMillis();
         }
@@ -838,7 +852,7 @@ public class AxisServlet extends AxisServletBase {
                       req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
             log.debug("Constants.MC_HOME_DIR:" + String.valueOf(getHomeDir()));
             log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
-            
+
             log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ String.valueOf(getWebInfPath()));
             log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" +
                       req.getPathInfo() );
@@ -948,58 +962,58 @@ public class AxisServlet extends AxisServletBase {
      * Initialize a Handler for the transport defined in the Axis server config.
      * This includes optionally filling in query string handlers.
      */
-    
+
     public void initQueryStringHandlers () {
           try {
                this.transport = getEngine().getTransport (this.transportName);
-               
+
                if (this.transport == null) {
                     // No transport by this name is defined.  Therefore, fill in default
                     // query string handlers.
-                    
+
                     this.transport = new SimpleTargetedChain();
-                    
+
                     this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
                     this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
                     this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
-                    
+
                     return;
                }
-               
+
                else {
                     // See if we should use the default query string handlers.
                     // By default, set this to true (for backwards compatibility).
-                    
+
                     boolean defaultQueryStrings = true;
                     String useDefaults = (String) this.transport.getOption ("useDefaultQueryStrings");
-                    
+
                     if ((useDefaults != null) && useDefaults.toLowerCase().equals ("false")) {
                          defaultQueryStrings = false;
                     }
-                    
+
                     if (defaultQueryStrings == true) {
                          // We should use defaults, so fill them in.
-                         
+
                          this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
                          this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
                          this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
                     }
                }
           }
-          
+
           catch (AxisFault e) {
                // Some sort of problem occurred, let's just make a default transport.
-               
+
                this.transport = new SimpleTargetedChain();
-               
+
                this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
                this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
                this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
-               
+
                return;
           }
     }
-    
+
     /**
      * Attempts to invoke a plugin for the query string supplied in the URL.
      *
@@ -1007,22 +1021,22 @@ public class AxisServlet extends AxisServletBase {
      * @param response the servlet's HttpServletResponse object.
      * @param writer the servlet's PrintWriter object.
      */
-    
+
     private boolean processQuery (HttpServletRequest request, HttpServletResponse response,
           PrintWriter writer) throws AxisFault {
           // Attempt to instantiate a plug-in handler class for the query string
           // handler classes defined in the HTTP transport.
-          
+
           String path = request.getServletPath();
           String queryString = request.getQueryString();
           String serviceName;
           AxisEngine engine = getEngine();
           Iterator i = this.transport.getOptions().keySet().iterator();
-          
+
           if (queryString == null) {
                return false;
           }
-          
+
         String servletURI = request.getContextPath() + path;
         String reqURI = request.getRequestURI();
         // chop off '/'.
@@ -1034,59 +1048,59 @@ public class AxisServlet extends AxisServletBase {
         }
           while (i.hasNext() == true) {
                String queryHandler = (String) i.next();
-               
+
                if (queryHandler.startsWith ("qs.") == true) {
                     // Only attempt to match the query string with transport
                     // parameters prefixed with "qs:".
-                    
+
                     String handlerName = queryHandler.substring
                          (queryHandler.indexOf (".") + 1).toLowerCase();
-                    
+
                     // Determine the name of the plugin to invoke by using all text
                     // in the query string up to the first occurence of &, =, or the
                     // whole string if neither is present.
-                    
+
                     int length = 0;
                     boolean firstParamFound = false;
-                    
+
                     while (firstParamFound == false && length < queryString.length()) {
                          char ch = queryString.charAt (length++);
-                         
+
                          if (ch == '&' || ch == '=') {
                               firstParamFound = true;
-                              
+
                               --length;
                          }
                     }
-                    
+
                     if (length < queryString.length()) {
                          queryString = queryString.substring (0, length);
                     }
-                    
+
                     if (queryString.toLowerCase().equals (handlerName) == true) {
                          // Query string matches a defined query string handler name.
-                         
+
                          // If the defined class name for this query string handler is blank,
                          // just return (the handler is "turned off" in effect).
-                         
+
                          if (this.transport.getOption (queryHandler).equals ("")) {
                               return false;
                          }
-                         
+
                          try {
                               // Attempt to dynamically load the query string handler
                               // and its "invoke" method.
-                              
+
                               MessageContext msgContext = createMessageContext (engine, request, response);
                               Class plugin = Class.forName ((String) this.transport.getOption (queryHandler));
                               Method pluginMethod = plugin.getDeclaredMethod ("invoke",
                                 new Class[] { msgContext.getClass() });
                               String url = request.getRequestURL().toString();
-                              
+
                               // Place various useful servlet-related objects in
                               // the MessageContext object being delivered to the
                               // plugin.
-                              
+
                               msgContext.setProperty (MessageContext.TRANS_URL, url);
                               msgContext.setProperty (HTTPConstants.PLUGIN_SERVICE_NAME, serviceName);
                               msgContext.setProperty (HTTPConstants.PLUGIN_NAME, handlerName);
@@ -1096,23 +1110,23 @@ public class AxisServlet extends AxisServletBase {
                               msgContext.setProperty (HTTPConstants.PLUGIN_WRITER, writer);
                               msgContext.setProperty (HTTPConstants.PLUGIN_LOG, log);
                               msgContext.setProperty (HTTPConstants.PLUGIN_EXCEPTION_LOG, exceptionLog);
-                              
+
                               // Invoke the plugin.
-                              
+
                               pluginMethod.invoke (plugin.newInstance(), new Object[] { msgContext });
-                              
+
                               writer.close();
-                              
+
                               return true;
                          }
-                         
+
                          catch (Exception e) {
                               reportTroubleInGet (e, response, writer);
                          }
                     }
                }
           }
-          
+
           return false;
      }
 }
