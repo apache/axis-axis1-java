@@ -195,18 +195,18 @@ public class HTTPDispatchHandler extends BasicHandler {
             .append(" " )
             .append( ((tmpURL.getFile() == null || 
                        tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) )
-            .append( " HTTP/1.0\n" )
+            .append( " HTTP/1.0\r\n" )
             .append( HTTPConstants.HEADER_CONTENT_LENGTH )
             .append( ": " )
             .append(reqEnv.length() )
-            .append( "\n" )
+            .append( "\r\n" )
             .append( HTTPConstants.HEADER_CONTENT_TYPE )
-            .append( ": text/xml\n" )
+            .append( ": text/xml\r\n" )
             .append( (otherHeaders == null ? "" : otherHeaders.toString()) )
             .append( HTTPConstants.HEADER_SOAP_ACTION )
             .append( ": \"" )
             .append( action )
-            .append( "\"\n\n" );
+            .append( "\"\r\n\r\n" );
 
       out.write( header.toString().getBytes() );
       out.write( reqEnv.getBytes() );
