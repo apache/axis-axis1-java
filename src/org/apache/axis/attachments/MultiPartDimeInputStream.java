@@ -60,7 +60,6 @@ import org.apache.axis.transport.http.HTTPConstants;
 
 import javax.activation.DataHandler;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
 import javax.mail.internet.MimeUtility;
