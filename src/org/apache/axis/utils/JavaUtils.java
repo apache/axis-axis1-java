@@ -197,6 +197,23 @@ public class JavaUtils
     static final char keywordPrefix = '_';
 
     /**
+     * isJavaId
+     * Returns true if the name is a valid java identifier.
+     * @param id to check
+     * @return boolean true/false
+     **/
+    public static boolean isJavaId(String id) {
+        if (id == null || id.equals("") || isJavaKeyword(id)) 
+            return false;
+        if (!Character.isJavaIdentifierStart(id.charAt(0)))
+            return false;
+        for (int i=1; i<id.length(); i++)
+            if (!Character.isJavaIdentifierPart(id.charAt(i)))
+                return false;
+        return true;
+    }
+
+    /**
      * checks if the input string is a valid java keyword.
      * @return boolean true/false
      */

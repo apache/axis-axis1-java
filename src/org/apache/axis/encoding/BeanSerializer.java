@@ -184,13 +184,18 @@ public class BeanSerializer extends Deserializer
     /**
      * Determine if the class is a JAX-RPC enum class.
      * An enumeration class is recognized by
-     * a getValue() method, a fromValue(type) method and the lack
+     * a getValue() method, a toString() method, a fromString(String) method
+     * a fromValue(type) method and the lack
      * of a setValue(type) method
      */
     protected static boolean isEnumClass(Class cls) {
         try {
-            java.lang.reflect.Method m = cls.getMethod("getValue", null);
-            if (m != null &&
+            java.lang.reflect.Method m  = cls.getMethod("getValue", null);
+            java.lang.reflect.Method m2 = cls.getMethod("toString", null);
+            java.lang.reflect.Method m3 = cls.getMethod("fromString",
+                                                        new Class[] {java.lang.String.class});
+
+            if (m != null && m2 != null && m3 != null &&
                 cls.getMethod("fromValue", new Class[] {m.getReturnType()}) != null) {
                 try {
                     if (cls.getMethod("setValue",  new Class[] {m.getReturnType()}) == null)

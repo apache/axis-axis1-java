@@ -61,6 +61,7 @@ import org.w3c.dom.NamedNodeMap;
 import javax.wsdl.QName;
 import javax.wsdl.Fault;
 import javax.wsdl.Message;
+import javax.xml.rpc.holders.BooleanHolder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
@@ -175,16 +176,15 @@ public class SchemaUtils {
                         // used to retrieve the proper java name of the type.
                         Node elementNode = elements.item(i);
                         QName nodeName = Utils.getNodeNameQName(elementNode);
-                        QName nodeType = Utils.getNodeTypeRefQName(elementNode);
-                        boolean typeAttr = false;
-                        if (Utils.getNodeTypeRefQName(elementNode, "type") != null)
-                            typeAttr = true;
+                        BooleanHolder forElement = new BooleanHolder();
+                        QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
                         if (nodeType == null) { // The element may use an anonymous type
                             nodeType = nodeName;
-                            typeAttr = false;
+                            forElement.value = false;
                         }
 
-                        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, !typeAttr);
+                        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, 
+                                                                              forElement.value);
                         if (type != null) {
                             v.add(type);
                             v.add(nodeName.getLocalPart());
@@ -316,15 +316,23 @@ public class SchemaUtils {
 
             // The restriction node indicates the type being restricted
             // (the base attribute contains this type).
-            // The base type must be a built-in type...and we only think
-            // this makes sense for string.
+            // The base type must be a built-in type, and not boolean
             TypeEntry baseEType = null;
             if (restrictionNode != null) {
                 QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
                 baseEType = symbolTable.getType(baseType);
-                if (baseEType != null && 
-                    !baseEType.getName().equals("java.lang.String")) {
-                    baseEType = null;
+                if (baseEType != null) {
+                    String javaName = baseEType.getName();
+                    if (javaName.equals("java.lang.String") ||
+                        javaName.equals("int") ||
+                        javaName.equals("long") ||
+                        javaName.equals("short") ||
+                        javaName.equals("float") ||
+                        javaName.equals("double") ||
+                        javaName.equals("byte"))
+                        ; // Okay Type
+                    else
+                        baseEType = null;
                 }
             }
 
@@ -391,7 +399,7 @@ public class SchemaUtils {
             // If different, return just the type (which is the collection element type).
             QName justTypeQName = Utils.getNodeTypeRefQName(node, "type");
             if (justTypeQName != null) {
-                QName fullTypeQName = Utils.getNodeTypeRefQName(node);
+                QName fullTypeQName = Utils.getNodeTypeRefQName(node, new BooleanHolder());
                 if (justTypeQName != fullTypeQName)
                     return justTypeQName;
             }

@@ -353,21 +353,27 @@ public class Types {
     
     /**
      * Returns true if indicated type matches the JAX-RPC enumeration class.
-     * (Only supports enumeration classes of string)
+     * Note: supports JSR 101 version 0.6 Public Draft
      */
-    private boolean isEnumClass(Class type) {
+    public static boolean isEnumClass(Class cls) {
         try {
-            if (type.getDeclaredConstructor( new Class[] {String.class} ) != null &&
-                type.getMethod ("getValue", null) != null &&
-                type.getDeclaredMethod ("fromValue", new Class[] {String.class}) != null &&
-                type.getDeclaredFields() != null)
-                return true;
-            else
-                return false;
-                
-        } catch (Exception e) {
-            return false;
-        }
+            java.lang.reflect.Method m  = cls.getMethod("getValue", null);
+            java.lang.reflect.Method m2 = cls.getMethod("toString", null);
+            java.lang.reflect.Method m3 = cls.getMethod("fromString",
+                                                        new Class[] {java.lang.String.class});
+
+            if (m != null && m2 != null && m3 != null &&
+                cls.getMethod("fromValue", new Class[] {m.getReturnType()}) != null) {
+                try {
+                    if (cls.getMethod("setValue",  new Class[] {m.getReturnType()}) == null)
+                        return true;
+                    return false;
+                } catch (java.lang.NoSuchMethodException e) {
+                    return true;  // getValue & fromValue exist.  setValue does not exist.  Thus return true. 
+                }
+            }
+        } catch (java.lang.NoSuchMethodException e) {}
+        return false;
     }
 
     /**
@@ -376,28 +382,36 @@ public class Types {
      * @param qname QName of type.
      * @param type class of type
      */
-    private void writeEnumType(QName qName, Class type)  throws Exception  {
-        if (!isEnumClass(type))
+    private void writeEnumType(QName qName, Class cls)  throws Exception  {
+        if (!isEnumClass(cls))
             return;
+        // Get the base type of the enum class
+        java.lang.reflect.Method m  = cls.getMethod("getValue", null);
+        Class base = m.getReturnType();
+
+        // Create simpleType, restriction elements
         Element simpleType = docHolder.createElement("simpleType");
         writeSchemaElement(qName, simpleType);
         simpleType.setAttribute("name", qName.getLocalPart());
         Element restriction = docHolder.createElement("restriction");
         simpleType.appendChild(restriction);
-        String stringType = writeType(String.class);
-        restriction.setAttribute("base", stringType);
-        Field[] fields= type.getDeclaredFields();
+        String baseType = writeType(base);
+        restriction.setAttribute("base", baseType);
+
+        // Create an enumeration using the field values
+        Field[] fields= cls.getDeclaredFields();
         for (int i=0; i < fields.length; i++) {
             Field field = fields[i];
             int mod = field.getModifiers();
 
-            // Inspect each public static final field of the same type as the class.
+            // Inspect each public static final field of the same type as the base
             if (Modifier.isPublic(mod) && 
                 Modifier.isStatic(mod) &&
                 Modifier.isFinal(mod) &&
-                field.getType() == type) {
+                field.getType() == base) {
+                // Create an enumeration using the value specified
                 Element enumeration = docHolder.createElement("enumeration");
-                enumeration.setAttribute("value", field.getName());
+                enumeration.setAttribute("value", field.get(null).toString());
                 restriction.appendChild(enumeration);
                 
             }
