@@ -377,7 +377,7 @@ public class Emitter {
                                               (name.length() - ".jws".length()));
                     }
                 }
-                if (name == null) {
+                if (name == null || name.equals("")) {
                     name = clsName;
                 }
                 setServiceName(name);
