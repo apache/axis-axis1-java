@@ -56,7 +56,6 @@
 package org.apache.axis.utils ;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetAddress;
@@ -83,7 +82,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetAddress;

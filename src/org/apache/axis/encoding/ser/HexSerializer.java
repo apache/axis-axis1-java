@@ -67,6 +67,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Element;
 /**
  * Serializer for hexBinary.
  *
@@ -98,7 +99,7 @@ public class HexSerializer implements SimpleValueSerializer {
     public String getValueAsString(Object value, SerializationContext context) {
         value = JavaUtils.convert(value, javaType);
         if (javaType == HexBinary.class) {
-            return ((HexBinary) value).toString();
+            return value.toString();
         } else {
             return HexBinary.encode((byte[]) value);
         }
@@ -108,14 +109,16 @@ public class HexSerializer implements SimpleValueSerializer {
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public Element writeSchema(Class javaType, Types types) throws Exception {
+        return null;
     }
 }

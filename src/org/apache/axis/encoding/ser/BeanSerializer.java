@@ -191,7 +191,6 @@ public class BeanSerializer implements Serializer, Serializable {
 
                 if (qname == null) {
                     // Use the default...
-                    propName = propName;
                     qname = new QName("", propName);
                 }
 
@@ -275,19 +274,19 @@ public class BeanSerializer implements Serializer, Serializable {
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
+    public Element writeSchema(Class javaType, Types types) throws Exception {
 
         // ComplexType representation of bean class
         Element complexType = types.createElement("complexType");
-        types.writeSchemaElement(xmlType, complexType);
-        complexType.setAttribute("name", xmlType.getLocalPart());
 
         // See if there is a super class, stop if we hit a stop class
         Element e = null;
@@ -334,6 +333,7 @@ public class BeanSerializer implements Serializer, Serializable {
         if (Modifier.isAbstract(javaType.getModifiers())) {
             complexType.setAttribute("abstract", "true");
         }
+
         // Serialize each property
         for (int i=0; i<propertyDescriptor.length; i++) {
             String propName = propertyDescriptor[i].getName();
@@ -357,6 +357,8 @@ public class BeanSerializer implements Serializer, Serializable {
                 continue;
             }
 
+            Class fieldType = propertyDescriptor[i].getType();
+
             // If we have type metadata, check to see what we're doing
             // with this field.  If it's an attribute, skip it.  If it's
             // an element, use whatever qname is in there.  If we can't
@@ -364,8 +366,12 @@ public class BeanSerializer implements Serializer, Serializable {
 
             if (typeDesc != null) {
                 FieldDesc field = typeDesc.getFieldByName(propName);
+
                 if (field != null) {
                     QName qname = field.getXmlName();
+                    QName fieldXmlType = field.getXmlType();
+                    boolean isAnonymous = fieldXmlType.getLocalPart().startsWith(">");
+
                     if (qname != null) {
                         // FIXME!
                         // Check to see if this is in the right namespace -
@@ -378,32 +384,33 @@ public class BeanSerializer implements Serializer, Serializable {
                     if (!field.isElement()) {
                         writeAttribute(types,
                                        propName,
-                                       propertyDescriptor[i].getType(),
+                                       fieldType,
+                                       field.getXmlType(),
                                        complexType);
                     } else {
                         writeField(types,
                                    propName,
-                                   propertyDescriptor[i].getType(),
+                                   fieldType,
                                    propertyDescriptor[i].isIndexed(),
                                    field.isMinOccursIs0(),
-                                   all);
+                                   all, isAnonymous);
                     }
                 } else {
                     writeField(types,
                                propName,
-                               propertyDescriptor[i].getType(),
-                               propertyDescriptor[i].isIndexed(), false, all);
+                               fieldType,
+                               propertyDescriptor[i].isIndexed(), false, all, false);
                 }
             } else {
                 writeField(types,
                            propName,
-                           propertyDescriptor[i].getType(),
-                           propertyDescriptor[i].isIndexed(), false, all);
+                           fieldType,
+                           propertyDescriptor[i].isIndexed(), false, all, false);
             }
         }
 
         // done
-        return true;
+        return complexType;
     }
 
     /**
@@ -416,24 +423,36 @@ public class BeanSerializer implements Serializer, Serializable {
      * @throws Exception
      */
     protected void writeField(Types types, String fieldName,
-                            Class fieldType,
-                            boolean isUnbounded,
-                            boolean isOmittable, Element where) throws Exception {
-        String elementType = types.writeType(fieldType);
-        if (elementType == null) {
-            // If writeType returns null, then emit an anytype in such situations.
-            QName anyQN = Constants.XSD_ANYTYPE;
-            String prefix = types.getNamespaces().getCreatePrefix(anyQN.getNamespaceURI());
-            elementType = prefix + ":" + anyQN.getLocalPart();
+                              Class fieldType,
+                              boolean isUnbounded,
+                              boolean isOmittable,
+                              Element where,
+                              boolean isAnonymous) throws Exception {
+        Element elem;
+        if (isAnonymous) {
+            elem = types.createElementWithAnonymousType(fieldName,
+            fieldType, isOmittable, where.getOwnerDocument());
+        } else {
+            String elementType = types.writeType(fieldType);
+
+            if (elementType == null) {
+                // If writeType returns null, then emit an anytype in such situations.
+                QName anyQN = Constants.XSD_ANYTYPE;
+                String prefix = types.getNamespaces().getCreatePrefix(anyQN.getNamespaceURI());
+                elementType = prefix + ":" + anyQN.getLocalPart();
+            }
+
+            elem = types.createElement(fieldName,
+                    elementType,
+                    types.isNullable(fieldType),
+                    isOmittable,
+                    where.getOwnerDocument());
         }
-        Element elem = types.createElement(fieldName,
-                                           elementType,
-                                           types.isNullable(fieldType),
-                                           isOmittable,
-                                           where.getOwnerDocument());
+
         if (isUnbounded) {
             elem.setAttribute("maxOccurs", "unbounded");
         }
+
         where.appendChild(elem);
     }
 
@@ -447,6 +466,7 @@ public class BeanSerializer implements Serializer, Serializable {
     protected void writeAttribute(Types types,
                                 String fieldName,
                                 Class fieldType,
+                                QName fieldXmlType,
                                 Element where) throws Exception {
 
         // Attribute must be a simple type.
@@ -455,9 +475,8 @@ public class BeanSerializer implements Serializer, Serializable {
                                                      fieldName,
                                                      fieldType.getName()));
         }
-        String elementType = types.writeType(fieldType);
         Element elem = types.createAttributeElement(fieldName,
-                                           elementType,
+                                           fieldType, fieldXmlType,
                                            false,
                                            where.getOwnerDocument());
         where.appendChild(elem);

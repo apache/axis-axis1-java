@@ -68,6 +68,7 @@ import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 
 import javax.xml.namespace.QName;
@@ -139,14 +140,16 @@ public class CastorSerializer implements Serializer {
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the &lt;types&gt; element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public Element writeSchema(Class javaType, Types types) throws Exception {
+        return null;
     }
 }

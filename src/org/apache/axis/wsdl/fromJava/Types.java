@@ -64,6 +64,7 @@ import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.EnumSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -88,12 +89,9 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,22 +153,22 @@ public class Types {
 
     /**
      * Return the namespaces object for the current context
-     */ 
+     */
     public Namespaces getNamespaces() {
         return namespaces;
     }
-    
+
     /**
      * Loads the types from the input schema file.
      * @param inputSchema file or URL
      */
     public void loadInputSchema(String inputSchema)
-        throws IOException, WSDLException, SAXException, 
+        throws IOException, WSDLException, SAXException,
                ParserConfigurationException
     {
         // Read the input wsdl file into a Document
         Document doc = XMLUtils.newDocument(inputSchema);
-        
+
         // Ensure that the root element is xsd:schema
         Element root = doc.getDocumentElement();
         if (root.getLocalName().equals("schema") &&
@@ -182,33 +180,33 @@ public class Types {
             wsdlTypesElem.appendChild(schema);
 
             // Create a symbol table and populate it with the input types
-            BaseTypeMapping btm = 
+            BaseTypeMapping btm =
                 new BaseTypeMapping() {
                         public String getBaseName(QName qNameIn) {
                             QName qName = new QName(
-                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getNamespaceURI(),
                                   qNameIn.getLocalPart());
                             Class cls = defaultTM.getClassForQName(qName);
                             if (cls == null)
                                 return null;
-                            else 
+                            else
                                 return JavaUtils.getTextClassName(cls.getName());
                         }
-                    }; 
+                    };
             SymbolTable symbolTable = new SymbolTable(btm,
                                                       true, false, false);
             symbolTable.populateTypes(new URL(inputSchema), doc);
 
-            // Walk the type/element entries in the symbol table and 
+            // Walk the type/element entries in the symbol table and
             // add each one to the list of processed types.  This prevents
             // the types from being duplicated.
             Vector v = symbolTable.getTypes();
             for (int i=0; i < v.size(); i++) {
                 TypeEntry te = (TypeEntry) v.elementAt(i);
-                if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
+                if (te instanceof org.apache.axis.wsdl.symbolTable.Element) {
                     addToElementsList(te.getQName());
                 } else if (te instanceof Type) {
-                    addToTypesList(te.getQName()); 
+                    addToTypesList(te.getQName());
                 }
             }
         } else {
@@ -232,11 +230,11 @@ public class Types {
 
         // Search for the 'types' element
         NodeList elements = doc.getChildNodes();
-        if (elements.getLength() > 0 && 
+        if (elements.getLength() > 0 &&
             elements.item(0).getLocalName().equals("definitions")) {
             elements = elements.item(0).getChildNodes();
             for (int i=0;
-                 i < elements.getLength() && wsdlTypesElem == null; 
+                 i < elements.getLength() && wsdlTypesElem == null;
                  i++) {
                 Node node = elements.item(i);
                 if (node.getLocalName() != null &&
@@ -252,38 +250,38 @@ public class Types {
         }
 
         // Import the types element into the Types docHolder document
-        wsdlTypesElem = 
+        wsdlTypesElem =
             (Element) docHolder.importNode(wsdlTypesElem, true);
         docHolder.appendChild(wsdlTypesElem);
 
         // Create a symbol table and populate it with the input wsdl document
-        BaseTypeMapping btm = 
+        BaseTypeMapping btm =
             new BaseTypeMapping() {
                     public String getBaseName(QName qNameIn) {
                         QName qName = new QName(
-                              qNameIn.getNamespaceURI(),                                 
+                              qNameIn.getNamespaceURI(),
                               qNameIn.getLocalPart());
                         Class cls = defaultTM.getClassForQName(qName);
                         if (cls == null)
                             return null;
-                        else 
+                        else
                             return JavaUtils.getTextClassName(cls.getName());
                     }
-                }; 
+                };
         SymbolTable symbolTable = new SymbolTable(btm,
                                                   true, false, false);
         symbolTable.populate(null, doc);
 
-        // Walk the type/element entries in the symbol table and 
+        // Walk the type/element entries in the symbol table and
         // add each one to the list of processed types.  This prevents
         // the types from being duplicated.
         Vector v = symbolTable.getTypes();
         for (int i=0; i < v.size(); i++) {
             TypeEntry te = (TypeEntry) v.elementAt(i);
-            if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
+            if (te instanceof org.apache.axis.wsdl.symbolTable.Element) {
                 addToElementsList(te.getQName());
             } else if (te instanceof Type) {
-                addToTypesList(te.getQName()); 
+                addToTypesList(te.getQName());
             }
         }
     }
@@ -315,25 +313,18 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
 
-        // Get the qname 
-        if (qname == null || 
+        // Get the qname
+        if (qname == null ||
             (Constants.isSOAP_ENC(qname.getNamespaceURI()) &&
              "Array".equals(qname.getLocalPart()))) {
             qname = getTypeQName(type);
             if (qname == null) {
-                throw new AxisFault("Class:" + type.getName()); 
+                throw new AxisFault("Class:" + type.getName());
             }
         }
 
-        // Make sure a types section is present
-        if (wsdlTypesElem == null) {
-            writeWsdlTypesElement();
-        }
+        makeTypeElement(type, qname, null);
 
-        // Write the type, if problems occur use ANYTYPE
-        if (writeType(type, qname) == null) {
-            qname = Constants.XSD_ANYTYPE;
-        }
         return qname;
     }
 
@@ -362,13 +353,13 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
 
-        // Get the qname 
-        if (qname == null || 
+        // Get the qname
+        if (qname == null ||
             (Constants.isSOAP_ENC(qname.getNamespaceURI()) &&
              "Array".equals(qname.getLocalPart()))) {
             qname = getTypeQName(type);
             if (qname == null) {
-                throw new AxisFault("Class:" +type.getName()); 
+                throw new AxisFault("Class:" +type.getName());
             }
         }
 
@@ -400,7 +391,7 @@ public class Types {
      * @param type is the QName of the type of the element.
      * @return true if the wrapperQName was created, false if it already exists.
      */
-    public boolean writeWrapperForPart(QName wrapper, String name, QName type)
+    public boolean writeWrapperForPart(QName wrapper, String name, QName type, Class javaType)
         throws AxisFault {
 
         // Make sure a types section is present
@@ -418,10 +409,10 @@ public class Types {
         // Create a type if this is a new wrapper
         if (isNew) {
             // Create an <element> for the wrapper
-            Element wrapperElement = 
+            Element wrapperElement =
                 docHolder.createElement("element");
             writeSchemaElement(wrapper, wrapperElement);
-            wrapperElement.setAttribute("name", 
+            wrapperElement.setAttribute("name",
                                          wrapper.getLocalPart());
 
             // Create an anonymous <complexType> for the wrapper
@@ -432,18 +423,28 @@ public class Types {
             sequence = docHolder.createElement("sequence");
             complexType.appendChild(sequence);
             wrapperMap.put(wrapper, sequence);
-            
+
         }
-        
-        // Create the child <element> and add it to the wrapper <sequence>
-        Element childElem = docHolder.createElement("element");
-        childElem.setAttribute("name", name);
-        String prefix = namespaces.getCreatePrefix(type.getNamespaceURI());
-        String prefixedName = prefix+":"+type.getLocalPart();
-        childElem.setAttribute("type", prefixedName);
+
+        Element childElem;
+        if (isAnonymousType(type)) {
+            childElem = createElementWithAnonymousType(name, javaType, false, docHolder);
+        } else {
+            // Create the child <element> and add it to the wrapper <sequence>
+            childElem = docHolder.createElement("element");
+            childElem.setAttribute("name", name);
+
+            String prefix = namespaces.getCreatePrefix(type.getNamespaceURI());
+            String prefixedName = prefix+":"+type.getLocalPart();
+            childElem.setAttribute("type", prefixedName);
+        }
         sequence.appendChild(childElem);
-        
+
         return isNew;
+    }
+
+    private boolean isAnonymousType(QName type) {
+        return type.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) != -1;
     }
 
     /**
@@ -457,9 +458,10 @@ public class Types {
             qName = getTypeQName(type);
         }
         QName typeQName = writeTypeNamespace(type, qName);
+
         String elementType = writeType(type, qName);
         if (elementType != null) {
-            Element element = createElementDecl(qName, elementType, isNullable(type));
+            Element element = createElementDecl(qName.getLocalPart(), type, qName, isNullable(type), false);
             if (element != null)
                 writeSchemaElement(typeQName,element);
             return qName;
@@ -566,6 +568,19 @@ public class Types {
     }
 
     /**
+     * Return a string suitable for representing a given QName in the context
+     * of this WSDL document.  If the namespace of the QName is not yet
+     * registered, we will register it up in the Definitions.
+     *
+     * @param qname a QName (typically a type)
+     * @return a String containing a standard "ns:localPart" rep of the QName
+     */
+    public String getQNameString(QName qname) {
+        String prefix = namespaces.getCreatePrefix(qname.getNamespaceURI());
+        return prefix + ":" + qname.getLocalPart();
+    }
+
+    /**
      * Utility method to get the package name from a fully qualified java class name
      * @param full input class name
      * @return package name
@@ -628,6 +643,8 @@ public class Types {
             Element importElem = docHolder.createElement("import");
             schemaElem.appendChild(importElem);
             importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
+
+            writeTypeNamespace(qName);
         }
         schemaElem.appendChild(element);
     }
@@ -676,101 +693,30 @@ public class Types {
             qName = getTypeQName(type);
         }
 
-        // Quick return if schema type
-        if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-            return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
-                    qName.getLocalPart();
-        } else if (Constants.isSOAP_ENC(qName.getNamespaceURI()) &&
-                      !"Array".equals(qName.getLocalPart())) {
-            return Constants.NS_PREFIX_SOAP_ENC + ":" +
-                    qName.getLocalPart();
-        }
+        makeTypeElement(type, qName, null);
+        return getQNameString(qName);
+    }
 
-        // look up the serializer in the TypeMappingRegistry
-        Serializer ser = null;
-        SerializerFactory factory = null;
-        if (tm != null) {
-            factory = (SerializerFactory)tm.getSerializer(type);
-        } else {
-            factory = (SerializerFactory)defaultTM.getSerializer(type);
-        }
+    public Element createArrayElement(String componentTypeName) {
+        // ComplexType representation of array
+        Element complexType = docHolder.createElement("complexType");
 
-        // If no factory is found, use the BeanSerializerFactory
-        // if applicable, otherwise issue errors and treat as an anyType
-        if (factory == null) {
-            if (isBeanCompatible(type, true)) {
-                factory = new BeanSerializerFactory(type, qName);
-            } else {
-                return null;  // Don't return an element name
-            }
-        }
+        Element complexContent = docHolder.createElement("complexContent");
+        complexType.appendChild(complexContent);
 
-        if (factory != null) {
-            ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
-        }
+        Element restriction = docHolder.createElement("restriction");
+        complexContent.appendChild(restriction);
+        restriction.setAttribute("base",
+                                 Constants.NS_PREFIX_SOAP_ENC + ":Array");
 
-        // if we can't get a serializer, that is bad.
-        if (ser == null) {
-            throw new AxisFault(
-                    Messages.getMessage("NoSerializer00", type.getName()));
-        }
+        Element attribute = docHolder.createElement("attribute");
+        restriction.appendChild(attribute);
+        attribute.setAttribute("ref",
+                               Constants.NS_PREFIX_SOAP_ENC +":arrayType");
+        attribute.setAttribute(Constants.NS_PREFIX_WSDL +":arrayType",
+                               componentTypeName);
 
-        // Write the namespace
-        writeTypeNamespace(type, qName);
-
-        // If an array the component type should be processed first
-        String componentTypeName = null;
-        Class componentType = null;
-        if (type.isArray()) {
-            String dimString = "[]";
-            componentType = type.getComponentType();
-            if (componentType.isArray()) {
-                while (componentType.isArray()) {
-                    dimString += "[]";
-                    componentType = componentType.getComponentType();
-                }
-            }
-            componentTypeName = writeType(componentType, null) + dimString;
-        }
-
-        String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
-        String prefixedName = prefix+":"+qName.getLocalPart();
-
-        // If processed before, or this is a known namespace, return
-        if (!addToTypesList(qName))
-          return prefixedName;
-        if (type.isArray()) {
-            // ComplexType representation of array
-            Element complexType = docHolder.createElement("complexType");
-            writeSchemaElement(qName, complexType);
-            complexType.setAttribute("name", qName.getLocalPart());
-
-            Element complexContent = docHolder.createElement("complexContent");
-            complexType.appendChild(complexContent);
-
-            Element restriction = docHolder.createElement("restriction");
-            complexContent.appendChild(restriction);
-            restriction.setAttribute("base",
-                                     Constants.NS_PREFIX_SOAP_ENC + ":Array");
-
-            Element attribute = docHolder.createElement("attribute");
-            restriction.appendChild(attribute);
-            attribute.setAttribute("ref",
-                                   Constants.NS_PREFIX_SOAP_ENC +":arrayType");
-            attribute.setAttribute(Constants.NS_PREFIX_WSDL +":arrayType",
-                                   componentTypeName );
-        } else {
-            try {
-                if (isEnumClass(type)) {
-                    writeEnumType(qName, type);
-                } else {
-                    ser.writeSchema(this);
-                }
-            } catch (Exception e) {
-                throw new AxisFault(Messages.getMessage("writeSchemaProblem00", type.getName()), e);
-            }
-        }
-        return prefixedName;
+        return complexType;
     }
 
     /**
@@ -816,17 +762,18 @@ public class Types {
      * @param qName QName of type.
      * @param cls class of type
      */
-    private void writeEnumType(QName qName, Class cls) 
+    public Element writeEnumType(QName qName, Class cls)
         throws NoSuchMethodException, IllegalAccessException, AxisFault  {
+
         if (!isEnumClass(cls))
-            return;
+            return null;
+
         // Get the base type of the enum class
         java.lang.reflect.Method m  = cls.getMethod("getValue", null);
         Class base = m.getReturnType();
 
         // Create simpleType, restriction elements
         Element simpleType = docHolder.createElement("simpleType");
-        writeSchemaElement(qName, simpleType);
         simpleType.setAttribute("name", qName.getLocalPart());
         Element restriction = docHolder.createElement("restriction");
         simpleType.appendChild(restriction);
@@ -849,33 +796,38 @@ public class Types {
                 Element enumeration = docHolder.createElement("enumeration");
                 enumeration.setAttribute("value", field.get(null).toString());
                 restriction.appendChild(enumeration);
-
             }
         }
 
+        return simpleType;
     }
 
     /**
      * Create Element
-     * @param qName the namespace of the created element
-     * @param elementType schema type representation of the element
-     * @param nullable nillable attribute of the element
+     * @param nillable nillable attribute of the element
      * @return the created Element
      */
-    private Element createElementDecl(QName qName,
-                                      String elementType,
-                                      boolean nullable) {
-        if (!addToElementsList(qName))
-            return null;
-
+    public Element createElementDecl(String name,
+                                     Class javaType,
+                                     QName typeQName,
+                                     boolean nillable,
+                                     boolean omittable) throws AxisFault {
         Element element = docHolder.createElement("element");
 
-        //Generate an element name that matches the type.
+        // Generate an element name that matches the type.
 
-        element.setAttribute("name", qName.getLocalPart());
-        if (nullable)
+        element.setAttribute("name", name);
+
+        if (nillable)
             element.setAttribute("nillable", "true");
-        element.setAttribute("type", elementType);
+        if (omittable) {
+            element.setAttribute("minOccurs", "0");
+            element.setAttribute("maxOccurs", "1");
+        }
+
+        // Write the type for this element, handling anonymous or named
+        // types appropriately.
+        makeTypeElement(javaType, typeQName, element);
         return element;
     }
 
@@ -899,7 +851,8 @@ public class Types {
             element.setAttribute("minOccurs", "0");
             element.setAttribute("maxOccurs", "1");
         }
-        element.setAttribute("type", elementType);
+        if (elementType != null)
+            element.setAttribute("type", elementType);
         return element;
     }
 
@@ -907,19 +860,20 @@ public class Types {
     /**
      * Create Attribute Element with a given name and type
      * @param elementName the name of the created element
-     * @param elementType schema type representation of the element
      * @param nullable nullable attribute of the element
      * @return the created Element
      */
     public Element createAttributeElement(String elementName,
-                                  String elementType,
+                                  Class javaType,
+                                  QName xmlType,
                                   boolean nullable,
-                                  Document docHolder) {
+                                  Document docHolder) throws AxisFault {
         Element element = docHolder.createElement("attribute");
         element.setAttribute("name", elementName);
         if (nullable)
             element.setAttribute("nillable", "true");
-        element.setAttribute("type", elementType);
+
+        makeTypeElement(javaType, xmlType, element);
         return element;
     }
 
@@ -998,6 +952,16 @@ public class Types {
     private boolean addToTypesList (QName qName) {
         boolean added = false;
         ArrayList types = (ArrayList)schemaTypes.get(qName.getNamespaceURI());
+
+        // Quick return if schema type (will never add these ourselves)
+        if (Constants.isSchemaXSD(qName.getNamespaceURI()) ||
+                (Constants.isSOAP_ENC(qName.getNamespaceURI()) &&
+                      !"Array".equals(qName.getLocalPart()))) {
+            // Make sure we do have the namespace declared, though...
+            writeTypeNamespace(qName);
+            return false;
+        }
+
         if (types == null) {
             types = new ArrayList();
             types.add(qName.getLocalPart());
@@ -1122,7 +1086,7 @@ public class Types {
     {
         return docHolder.createElement(elementName);
     }
-    
+
     /**
      * isBeanCompatible
      * @param javaType Class
@@ -1136,7 +1100,7 @@ public class Types {
         // Must be a non-primitive and non array
         if (javaType.isArray() ||
             javaType.isPrimitive()) {
-            if (issueErrors && 
+            if (issueErrors &&
                 !beanCompatErrs.contains(javaType)) {
                 log.warn(Messages.getMessage("beanCompatType00",
                                                javaType.getName()));
@@ -1144,12 +1108,12 @@ public class Types {
             }
             return false;
         }
-        
+
         // Anything in the java or javax package that
         // does not have a defined mapping is excluded.
         if (javaType.getName().startsWith("java.") ||
             javaType.getName().startsWith("javax.")) {
-            if (issueErrors && 
+            if (issueErrors &&
                 !beanCompatErrs.contains(javaType)) {
                 log.warn(Messages.getMessage("beanCompatPkg00",
                                                javaType.getName()));
@@ -1162,14 +1126,14 @@ public class Types {
         if (JavaUtils.isEnumClass(javaType)) {
             return true;
         }
- 
+
         // Must have a default public constructor if not
         // Throwable
         if (!java.lang.Throwable.class.isAssignableFrom(javaType)) {
             try {
                 javaType.getConstructor(new Class[] {});
             } catch (java.lang.NoSuchMethodException e) {
-                if (issueErrors && 
+                if (issueErrors &&
                     !beanCompatErrs.contains(javaType)) {
                     log.warn(Messages.getMessage("beanCompatConstructor00",
                                                    javaType.getName()));
@@ -1192,7 +1156,7 @@ public class Types {
 
             if (!isBeanCompatible(superClass, false)) {
 
-                if (issueErrors && 
+                if (issueErrors &&
                     !beanCompatErrs.contains(javaType)) {
                     log.warn(Messages.getMessage("beanCompatExtends00",
                                                    javaType.getName(),
@@ -1205,5 +1169,131 @@ public class Types {
         }
         return true;
     }
-    
+
+    /**
+     * Write an &lt;element&gt; with an anonymous internal ComplexType
+     *
+     * @param elementName
+     * @param fieldType
+     * @param omittable
+     * @param ownerDocument
+     */
+    public Element createElementWithAnonymousType(String elementName,
+                                                  Class fieldType,
+                                                  boolean omittable,
+                                                  Document ownerDocument) throws AxisFault {
+        Element element = docHolder.createElement("element");
+        element.setAttribute("name", elementName);
+        if (isNullable(fieldType))
+            element.setAttribute("nillable", "true");
+        if (omittable) {
+            element.setAttribute("minOccurs", "0");
+            element.setAttribute("maxOccurs", "1");
+        }
+
+        makeTypeElement(fieldType, null, element);
+
+        return element;
+    }
+
+    /**
+     * Create a schema type element (either simpleType or complexType) for
+     * the particular type/qName combination.  If the type is named, we
+     * handle inserting the new type into the appropriate &lt;schema&gt;
+     * in the WSDL types section.  If the type is anonymous, we append the
+     * definition underneath the Element which was passed as the container
+     * (typically a field of a higher-level type or a parameter in a wrapped
+     * operation).
+     *
+     * @param type Java type to write
+     * @param qName the desired type QName
+     * @param containingElement a schema element ("element" or "attribute")
+     *             which should either receive a type="" attribute decoration
+     *             (for named types) or a child element defining an anonymous
+     *             type
+     * @throws AxisFault
+     */
+    private void makeTypeElement(Class type,
+                                 QName qName,
+                                 Element containingElement) throws AxisFault {
+        // Get a corresponding QName if one is not provided
+        if (qName == null ||
+            Constants.equals(Constants.SOAP_ARRAY, qName)) {
+            qName = getTypeQName(type);
+        }
+
+        boolean anonymous = isAnonymousType(qName);
+
+        // Can't have an anonymous type outside of a containing element
+        if (anonymous && containingElement == null) {
+            throw new AxisFault(
+                    Messages.getMessage("noContainerForAnonymousType",
+                                        qName.toString()));
+        }
+
+        // If we've already got this type (because it's a native type or
+        // because we've already written it), just add the type="" attribute
+        // (if appropriate) and return.
+        if (!addToTypesList(qName)) {
+            if (containingElement != null)
+                containingElement.setAttribute("type", getQNameString(qName));
+            return;
+        }
+
+        // look up the serializer in the TypeMappingRegistry
+        Serializer ser = null;
+        SerializerFactory factory = null;
+        if (tm != null) {
+            factory = (SerializerFactory)tm.getSerializer(type);
+        } else {
+            factory = (SerializerFactory)defaultTM.getSerializer(type);
+        }
+
+        // If no factory is found, use the BeanSerializerFactory
+        // if applicable, otherwise issue errors and treat as an anyType
+        if (factory == null) {
+            if (isEnumClass(type)) {
+                factory = new EnumSerializerFactory(type, qName);
+            } else if (isBeanCompatible(type, true)) {
+                factory = new BeanSerializerFactory(type, qName);
+            } else {
+                return;
+            }
+        }
+
+        if (factory != null) {
+            ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
+        }
+
+        // if we can't get a serializer, that is bad.
+        if (ser == null) {
+            throw new AxisFault(
+                    Messages.getMessage("NoSerializer00", type.getName()));
+        }
+
+        Element typeEl;
+        try {
+            typeEl = ser.writeSchema(type, this);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
+
+        // If this is an anonymous type, just make the type element a child
+        // of containingElement.  If not, set the "type" attribute of
+        // containingElement to the right QName, and make sure the type is
+        // correctly written into the appropriate <schema> element.
+        if (anonymous) {
+            containingElement.appendChild(typeEl);
+        } else {
+            if (typeEl != null) {
+                typeEl.setAttribute("name", qName.getLocalPart());
+
+                // Write the type in the appropriate <schema>
+                writeSchemaElement(qName, typeEl);
+            }
+
+            if (containingElement != null)
+                containingElement.setAttribute("type", getQNameString(qName));
+        }
+    }
 }

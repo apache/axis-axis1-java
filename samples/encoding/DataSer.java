@@ -8,6 +8,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -46,16 +47,7 @@ public class DataSer implements Serializer
     }
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
-    /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
-     *
-     * @param types the Java2WSDL Types object which holds the context
-     *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
-     * @see org.apache.axis.wsdl.fromJava.Types
-     */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public Element writeSchema(Class javaType, Types types) throws Exception {
+        return null;
     }
 }

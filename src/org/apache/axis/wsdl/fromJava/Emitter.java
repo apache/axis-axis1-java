@@ -58,7 +58,6 @@ package org.apache.axis.wsdl.fromJava;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-import com.ibm.wsdl.extensions.soap.SOAPFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 import com.ibm.wsdl.BindingFaultImpl;
 
@@ -76,6 +75,7 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.xml.sax.SAXException;
 
@@ -1231,7 +1231,7 @@ public class Emitter {
                 // the parameter
                 if (types.writeWrapperForPart(wrapperQName,
                                               param.getName(),
-                                              typeQName)) {
+                                              typeQName, javaType)) {
                     // If wrapper element is written
                     // add <part name="parameters" element=wrapper_elem />
                     // Really shouldn't matter what name is used, but
@@ -1250,34 +1250,26 @@ public class Emitter {
             QName typeQName = 
                 types.writeTypeForPart(javaType,
                                        param.getTypeQName());
-            types.writeElementForPart(javaType, param.getTypeQName());
+            //types.writeElementForPart(javaType, param.getTypeQName());
             if (typeQName != null) {
                 part.setName(param.getName());
                 part.setTypeName(typeQName);
                 msg.addPart(part);
             }
         } else if (use == Use.LITERAL) {
-            // Write the type representing the param.
-            // Write the element representing the param
-            // If an element was written
-            //   Write <part name=param_name element=param_element>
-            // Else its a simple type, 
-            //   Write <part name=param_name type=param_type>
-            QName typeQName = 
-                types.writeTypeForPart(javaType,
-                                       param.getTypeQName());
-            QName elemQName = 
-                types.writeElementForPart(javaType,
-                                          param.getTypeQName());
-            if (elemQName != null) {
-                part.setName(param.getName());
-                part.setElementName(elemQName);
-                msg.addPart(part);
-            } else if (typeQName != null) {
-                part.setName(param.getName());
-                part.setTypeName(typeQName);
-                msg.addPart(part);
-            }
+            // This is doc/lit.  So we should write out an element
+            // declaration whose name and type may be found in the
+            // ParameterDesc.
+            QName qname = param.getQName();
+            Element el = types.createElementDecl(qname.getLocalPart(),
+                                                 param.getJavaType(),
+                                                 param.getTypeQName(),
+                                                 false, false);
+            types.writeSchemaElement(qname, el);
+            
+            part.setName(param.getName());
+            part.setElementName(qname);
+            msg.addPart(part);
         }
         return param.getName();
     }
