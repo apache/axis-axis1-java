@@ -55,7 +55,6 @@
 
 package org.apache.axis.components.i18n;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 
 
@@ -66,85 +65,9 @@ import java.util.MissingResourceException;
  * @author Richard A. Sitze
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public final class Messages {
-    // Message resource bundle.
-    private static MessageBundle messageBundle = null;
-
-
+public interface MessageBundle {
     /**
-     * Load the message service.
-     * This is ONLY done when it is needed.  If no messages are
-     * printed (for example, only Wsdl2java is being run in non-
-     * verbose mode) then there is no need to locate
-     * service or for service to load resources.
+     * Get the (raw) message with the given key.
      */
-    private static MessageBundle getMessageBundle() {
-        if (messageBundle == null) {
-            messageBundle = MessageBundleFactory.getMessageBundle();
-        }
-        return messageBundle;
-    } // initializeMessageBundle
-
-
-    
-    /**
-     * Get the message with the given key.
-     * There are no arguments for this message.
-     */
-    public static String getMessage(String key)
-            throws MissingResourceException {
-        return getMessageBundle().getMessage(key);
-    } // getMessage
-
-
-
-    /**
-     * Get the message with the given key.  If an argument is specified
-     * in the message (in the format of "{0}") then fill in that argument
-     * with the value of var.
-     */
-    public static String getMessage(String key, String var)
-            throws MissingResourceException {
-        String[] args = {var};
-        return MessageFormat.format(getMessage(key), args);
-    } // getMessage
-
-
-
-    /**
-     * Get the message with the given key.  If arguments are specified
-     * in the message (in the format of "{0} {1}") then fill them in
-     * with the values of var1 and var2, respectively.
-     */
-    public static String getMessage(String key, String var1, String var2)
-            throws MissingResourceException {
-        String[] args = {var1, var2};
-        return MessageFormat.format(getMessage(key), args);
-    } // getMessage
-
-
-
-    /**
-     * Get the message with the given key.  If arguments are specified
-     * in the message (in the format of "{0} {1}") then fill them in
-     * with the values of var1 and var2, respectively.
-     */
-    public static String getMessage(String key, String var1, String var2, String var3)
-            throws MissingResourceException {
-        return MessageFormat.format(getMessage(key), new String[]{var1, var2, var3});
-    } // getMessage
-
-
-
-    /**
-     * Get the message with the given key.  Replace each "{X}" in the
-     * message with vars[X].  If there are more vars than {X}'s, then
-     * the extra vars are ignored.  If there are more {X}'s than vars,
-     * then a java.text.ParseException (subclass of RuntimeException)
-     * is thrown.
-     */
-    public static String getMessage(String key, String[] vars)
-            throws MissingResourceException {
-        return MessageFormat.format(getMessage(key), vars);
-    } // getMessage
+    String getMessage(String key) throws MissingResourceException;
 }
