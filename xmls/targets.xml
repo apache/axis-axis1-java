@@ -633,7 +633,9 @@
   <target name="axis-clover-setup" depends="axis-clover-setenv" if="clover.present">
      <echo message="Registering clover tasks" />
      <taskdef resource="clovertasks"/>
-     <clover-setup initString="${axis.home}/axis_coverage.db">
+     <clover-setup initString="${axis.home}/axis_coverage.db"
+                   flushpolicy="interval"
+                   flushinterval="1000">
        <files>
         <include name="**/org/apache/axis/**/*.java"/>
        </files>
