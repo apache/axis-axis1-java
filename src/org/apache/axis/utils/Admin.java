@@ -70,18 +70,21 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class Admin {
-  private static HandlerRegistry  hr = null ;
-  private static HandlerRegistry  sr = null ;
+  private static  DefaultHandlerRegistry  hr = null ;
+  private static  DefaultServiceRegistry  sr = null ;
+  private boolean onServer = true ;
 
   private void init() {
     if ( hr == null ) {
       // hr = new SimpleRegistry("handlers.reg");
-      hr = new SupplierRegistry("handlers-supp.reg");
+      hr = new DefaultHandlerRegistry("handlers-supp.reg");
+      hr.setOnServer( onServer );
       hr.init();
     }
     if ( sr == null ) {
       // sr = new SimpleRegistry("services.reg");
-      sr = new SupplierRegistry("services-supp.reg");
+      sr = new DefaultServiceRegistry("services-supp.reg");
+      hr.setOnServer( onServer );
       sr.init();
     }
   }
@@ -105,8 +108,8 @@ public class Admin {
                   throws AxisFault
   {
     Debug.Print( 1, "Enter: Admin:AdminService" );
-    hr = (HandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
-    sr = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+    hr = (DefaultHandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
+    sr = (DefaultServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
     Document doc = process( xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
@@ -371,7 +374,8 @@ public class Admin {
     }
     catch( Exception e ) {
       e.printStackTrace();
-      throw new AxisFault( e );
+      if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
+      throw (AxisFault) e ;
     }
     return( doc );
   }
@@ -379,8 +383,9 @@ public class Admin {
   public static void main(String args[]) {
     int  i = 0 ;
 
-    if ( args.length == 0 ) {
-      System.err.println( "Usage: Admin <xml-file>\n" );
+    if ( args.length < 2 || !(args[0].equals("client") ||
+                             args[0].equals("server")) ) {
+      System.err.println( "Usage: Admin client|server <xml-file>\n" );
 
       System.err.println( "Where <xml-file> looks like:" );
       System.err.println( "<deploy>" );
@@ -402,8 +407,10 @@ public class Admin {
 
     Admin admin = new Admin();
 
+    if ( args[0].equals("client") ) admin.onServer = false ;
+
     try {
-      for ( i = 0 ; i < args.length ; i++ ) {
+      for ( i = 1 ; i < args.length ; i++ ) {
         System.out.println( "Processing '" + args[i] + "'" );
         admin.process(XMLUtils.newDocument( new FileInputStream( args[i] ) ));
       }
