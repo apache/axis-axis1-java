@@ -67,6 +67,9 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPDispatchHandler;
 
 /**
+ * This class is meant to be the interface that client/requestor code
+ * uses to access the SOAP server.  In this class, we'll use HTTP to
+ * connect to the server and send a Messaging SOAP request.
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
