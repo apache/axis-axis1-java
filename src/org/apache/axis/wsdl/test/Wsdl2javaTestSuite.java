@@ -54,10 +54,13 @@
  */
 package org.apache.axis.wsdl.test;
 
+import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-import junit.framework.Test;
+import junit.framework.AssertionFailedError;
 import org.apache.axis.wsdl.Emitter;
+import org.apache.axis.transport.http.SimpleAxisServer;
+import org.apache.axis.utils.Options;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -65,15 +68,14 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 
-import java.io.File;
-import java.io.Reader;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
-import java.util.Properties;
-import java.util.List;
-import java.util.Iterator;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Iterator;
+import java.util.List;
+import java.net.ServerSocket;
 
 /**
  * Set up the test suite for the tests.
@@ -86,7 +88,9 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private Project testSuiteProject;
     private List classNames = null;
 
-    public Wsdl2javaTestSuite() {
+    public Wsdl2javaTestSuite(String Name) {
+        super(Name);
+
         testSuiteProject = new Project();
         testSuiteProject.init();
         testSuiteProject.setName("Wsdl2javaTestSuite");
@@ -122,14 +126,9 @@ public class Wsdl2javaTestSuite extends TestSuite {
 
         delete.setDir(new File("/temp/"));
         delete.setVerbose(true);
-    }
-
-    public Wsdl2javaTestSuite(String Name) {
-        super(Name);
-        this();
     } //public Wsdl2javaTestSuite(String Name_)
 
-    protected void prepareTest(String fileName) {
+    protected void prepareTest(String fileName) throws Exception {
         Emitter wsdl2java = new Emitter();
         wsdl2java.setPackageName("org.apache.axisttest");
         wsdl2java.generatePackageName(true);
@@ -139,6 +138,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
         wsdl2java.generateTestCase(true);
 
         wsdl2java.emit(fileName);
+
         this.classNames = wsdl2java.getGeneratedClassNames();
 
         this.testSuiteProject.executeTarget(Wsdl2javaTestSuite.COMPILE_TASK);
@@ -156,43 +156,60 @@ public class Wsdl2javaTestSuite extends TestSuite {
 
     public void run(TestResult result) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
-                .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".properties")));
+                .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
 
-        String curLine = reader.readLine();
-        while (curLine != null) {
-            this.prepareTest(curLine);
-            //deploy
+        System.out.println("Starting test http server.");
+        SimpleAxisServer server = new SimpleAxisServer();
 
-            Iterator names = this.classNames.iterator();
-            while (names.hasNext()) {
-                String className = (String) names.next();
-                if (className.endsWith("TestCase")) {
-                    try {
-                        Class clazz = this.getClass().getClassLoader().loadClass(className);
+        try {
+            Options opts = new Options(new String[]{});
+            int port = opts.getPort();
+            ServerSocket ss = new ServerSocket(port);
+            server.setServerSocket(ss);
+            server.run();
 
-                        Method[] methods = clazz.getMethods();
-                        for (int i = 0; i < methods.length; i++) {
-                            String testName = methods[i].getName();
-                            if (Modifier.isPublic(methods[i].getModifiers()
-                                    && !Modifier.isStatic(methods[i].getModifiers())) {
-                                if (testName.startsWith("test")) {
-                                    Test test = (Test) clazz.getConstructor(new Class[] {String.class})
-                                            .newInstance(new Object[] {testName});
-                                    test.run(result);
+            String curLine = reader.readLine();
+            while (curLine != null) {
+                this.prepareTest(curLine);
+                //deploy
+
+                Iterator names = this.classNames.iterator();
+                while (names.hasNext()) {
+                    String className = (String) names.next();
+                    if (className.endsWith("TestCase")) {
+                        try {
+                            Class clazz = this.getClass().getClassLoader().loadClass(className);
+
+                            Method[] methods = clazz.getMethods();
+                            for (int i = 0; i < methods.length; i++) {
+                                String testName = methods[i].getName();
+                                if (Modifier.isPublic(methods[i].getModifiers())
+                                        && !Modifier.isStatic(methods[i].getModifiers())) {
+                                    if (testName.startsWith("test")) {
+                                        Test test = (Test) clazz.getConstructor(new Class[] {String.class})
+                                                .newInstance(new Object[] {testName});
+                                        test.run(result);
+                                    }
                                 }
                             }
-                        }
 
-                    } catch (Exception e) {
-                        System.err.println("Could not run test '" + className + "' due to an error");
-                        e.printStackTrace(System.err);
+                        } catch (Exception e) {
+                            System.err.println("Could not run test '" + className + "' due to an error");
+                            e.printStackTrace(System.err);
+                        }
                     }
                 }
+                //undeploy
+                this.cleanTest();
             }
-            //undeploy
-            this.cleanTest();
+
+            System.out.println("Stopping test http server.");
+            server.stop();
+
+            reader.close();
+        } catch (Exception e) {
+            throw new AssertionFailedError("The test suite failed with the following exception: " + e.getMessage());
         }
 
-        reader.close();
     }
 } //public class Wsdl2javaTestSuite extends TestCase
