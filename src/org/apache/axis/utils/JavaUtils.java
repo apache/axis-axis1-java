@@ -263,6 +263,7 @@ public class JavaUtils
                 if (destClass == String.class
                         || destClass == Image.class
                         || destClass == Source.class
+                        || destClass == DataHandler.class
                         || destName.equals("javax.mail.internet.MimeMultipart")) {
                     DataHandler handler;
                     if (arg instanceof AttachmentPart) {
@@ -297,6 +298,9 @@ public class JavaUtils
                         // StreamSource.
                         return new StreamSource(new StringReader(
                                 (String) handler.getContent()));
+                    }
+                    else if (destClass == DataHandler.class) {
+                        return handler;
                     }
                     else {
                         return handler.getContent();
