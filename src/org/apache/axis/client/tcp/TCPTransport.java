@@ -138,7 +138,6 @@ public class TCPTransport extends Transport
      * @param message the client service instance
      * @param engine the engine containing the registries
      * @param doLocal if true, we are setting up for local testing
-     * @throws AxisFault if service cannot be found
      */
     public void setupMessageContext (MessageContext mc, ServiceClient serv, Handler engine, boolean doLocal)
     {
