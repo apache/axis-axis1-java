@@ -173,6 +173,49 @@ public class Constants {
         return null;
     }
 
+    /**
+     * equals
+     * The first QName is the current version of the name.  The second qname is compared
+     * with the first considering all namespace uri versions.
+     * @param first Currently supported QName              
+     * @param second any qname                                                    
+     * @return true if the qnames represent the same qname (paster namespace uri versions considered
+     */
+    public static boolean equals(QName first, QName second) {
+        if (first == second) {
+            return true;
+        }
+        if (first==null || second==null) {
+            return false;
+        }
+        if (first.equals(second)) {
+            return true;
+        }
+        if (!first.getLocalPart().equals(second.getLocalPart())) {
+            return false;
+        }
+
+        String namespaceURI = first.getNamespaceURI();
+        String[] search = null;
+        if (namespaceURI.equals(URI_CURRENT_SOAP_ENC)) 
+            search = URIS_SOAP_ENC;
+        else if (namespaceURI.equals(URI_CURRENT_SOAP_ENV))
+            search = URIS_SOAP_ENV;
+        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSD))
+            search = URIS_SCHEMA_XSD;
+        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSI))
+            search = URIS_SCHEMA_XSI;
+        else
+            search = new String[] {namespaceURI};
+
+        for (int i=0; i < search.length; i++) {
+            if (search[i].equals(second.getNamespaceURI())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Misc SOAP Namespaces
     public static final String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
