@@ -16,22 +16,6 @@
 
 package org.apache.axis.message;
 
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.encoding.TypeMapping;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
@@ -48,6 +32,9 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,6 +47,21 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.encoding.TypeMapping;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /*
  * MessageElement is the base type of nodes of the SOAP message parse tree.
@@ -106,8 +108,7 @@ public class MessageElement implements SOAPElement,
     protected int endEventIndex = -1;
 
     // ...or as DOM
-    protected Element elementRep = null;
-    protected Text textRep = null;
+    protected CharacterData textRep = null;
 
     protected MessageElement parent = null;
 
@@ -163,12 +164,12 @@ public class MessageElement implements SOAPElement,
 
     public MessageElement(Element elem)
     {
-        elementRep = elem;
         namespaceURI = elem.getNamespaceURI();
         name = elem.getLocalName();
+        copyNode(elem);
     }
 
-    public MessageElement(Text text)
+    public MessageElement(CharacterData text)
     {
         textRep = text;
         namespaceURI = text.getNamespaceURI();
@@ -399,8 +400,7 @@ public class MessageElement implements SOAPElement,
      *  protected int startEventIndex = 0;                   N?
      *  protected int startContentsIndex = 0;                N?
      *  protected int endEventIndex = -1;                    N?
-     *  protected Element elementRep = null;                N?
-     *  protected Text textRep = null;                      Y?
+     *  protected CharacterData textRep = null;             Y?
      *  protected MessageElement parent = null;             N
      *  public ArrayList namespaces = null;                 Y
      *  protected String encodingStyle = null;              N?
@@ -608,7 +608,13 @@ public class MessageElement implements SOAPElement,
     
     public short getNodeType() {
         if(this.textRep != null) {
+            if(textRep instanceof Comment) {
+                return COMMENT_NODE;
+            } else if(textRep instanceof CDATASection) {
+                    return CDATA_SECTION_NODE;
+            } else { 
             return TEXT_NODE;
+            }
         }else if(false){
             return DOCUMENT_FRAGMENT_NODE;
         }else if(false){
@@ -908,11 +914,6 @@ public class MessageElement implements SOAPElement,
             log.error(Messages.getMessage("childPresent"), exc);
             throw exc;
         }
-        if (elementRep != null) {
-            SOAPException exc = new SOAPException(Messages.getMessage("xmlPresent"));
-            log.error(Messages.getMessage("xmlPresent"), exc);
-            throw exc;
-        }
         if (textRep != null) {
             SOAPException exc = new SOAPException(Messages.getMessage("xmlPresent"));
             log.error(Messages.getMessage("xmlPresent"), exc);
@@ -1165,18 +1166,20 @@ public class MessageElement implements SOAPElement,
      */
     protected void outputImpl(SerializationContext context) throws Exception 
     {
-        if (elementRep != null) {
-            boolean oldPretty = context.getPretty();
-            context.setPretty(false);
-            context.writeDOMElement(elementRep);
-            context.setPretty(oldPretty);
-            return;
-        }
-
         if (textRep != null) {
             boolean oldPretty = context.getPretty();
             context.setPretty(false);
-            context.writeSafeString(textRep.getData());
+            if (textRep instanceof CDATASection) {
+                context.writeString("<![CDATA[");
+                context.writeString(((Text)textRep).getData());
+                context.writeString("]]>");
+            } else if (textRep instanceof Comment) {
+                context.writeString("<!--");
+                context.writeString(((CharacterData)textRep).getData());
+                context.writeString("-->");
+            } else if (textRep instanceof Text) {
+                context.writeSafeString(((Text)textRep).getData());
+            }
             context.setPretty(oldPretty);
             return;
         }
@@ -1727,5 +1730,51 @@ public class MessageElement implements SOAPElement,
         if (obj == null || !(obj instanceof MessageElement))
             return false;
         return toString().equals(obj.toString());
+    }
+
+    private void copyNode(org.w3c.dom.Node element) {
+        copyNode(this, element);
+    }
+
+    private void copyNode(MessageElement parent, org.w3c.dom.Node element)
+    {
+        parent.setPrefix(element.getPrefix());
+        if(element.getLocalName() != null) {
+            parent.setQName(new QName(element.getNamespaceURI(), element.getLocalName()));
+        }
+
+        org.w3c.dom.NamedNodeMap attrs = element.getAttributes();
+        for(int i = 0; i < attrs.getLength(); i++){
+            org.w3c.dom.Node att = attrs.item(i);
+        if (att.getNamespaceURI() != null &&
+                att.getPrefix() != null &&
+                att.getNamespaceURI().equals(Constants.NS_URI_XMLNS) &&
+                att.getPrefix().equals("xmlns")) {
+                Mapping map = new Mapping(att.getNodeValue(), att.getLocalName());
+                addMapping(map);
+            }
+            parent.addAttribute(att.getPrefix(),
+                    att.getNamespaceURI(),
+                    att.getLocalName(),
+                    att.getNodeValue());
+        }
+
+        org.w3c.dom.NodeList children = element.getChildNodes();
+        for(int i = 0; i < children.getLength(); i++){
+            org.w3c.dom.Node child = children.item(i);
+            if(child.getNodeType()==TEXT_NODE || 
+               child.getNodeType()==CDATA_SECTION_NODE || 
+               child.getNodeType()==COMMENT_NODE ) {
+                MessageElement childElement = new MessageElement((CharacterData)child);
+                parent.appendChild(childElement);
+            } else {
+                PrefixedQName qname = new PrefixedQName(child.getNamespaceURI(),
+                        child.getLocalName(),
+                        child.getPrefix());
+                MessageElement childElement = new MessageElement(qname);
+                parent.appendChild(childElement);
+                copyNode(childElement, child);
+            }
+        }
     }
 }

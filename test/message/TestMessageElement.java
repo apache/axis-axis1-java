@@ -16,7 +16,6 @@
 
 package test.message;
 
-import junit.framework.TestCase;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
@@ -26,30 +25,37 @@ import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.CDATASection;
 import org.xml.sax.Attributes;
+import test.AxisTestBase;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
-import java.util.Iterator;
-import java.io.StringReader;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StringReader;
+import java.util.Iterator;
 
 /**
  * Test MessageElement class.
  *
  * @author Glyn Normington (glyn@apache.org)
  */
-public class TestMessageElement extends TestCase {
+public class TestMessageElement extends AxisTestBase {
 
     public TestMessageElement(String name) {
         super(name);
@@ -241,6 +247,65 @@ public class TestMessageElement extends TestCase {
 
         assertEquals("m1 is not the same as m2", m1, m2);
         assertEquals("m2 is not the same as m1", m2, m1);
+    }
+    
+    public void testElementConstructor() throws Exception {
+        String xmlIn = "<h:html xmlns:xdc=\"http://www.xml.com/books\"\n" +
+                       "        xmlns:h=\"http://www.w3.org/HTML/1998/html4\">\n" +
+                       " <h:head><h:title>Book Review</h:title></h:head>\n" +
+                       " <h:body>\n" +
+                       "  <xdc:bookreview>\n" +
+                       "   <xdc:title>XML: A Primer</xdc:title>\n" +
+                       "   <h:table>\n" +
+                       "    <h:tr align=\"center\">\n" +
+                       "     <h:td>Author</h:td><h:td>Price</h:td>\n" +
+                       "     <h:td>Pages</h:td><h:td>Date</h:td></h:tr>\n" +
+                       "     <!-- here is a comment -->\n" +
+                       "    <h:tr align=\"left\">\n" +
+                       "     <h:td><xdc:author>Simon St. Laurent</xdc:author></h:td>\n" +
+                       "     <h:td><xdc:price>31.98</xdc:price></h:td>\n" +
+                       "     <h:td><xdc:pages>352</xdc:pages></h:td>\n" +
+                       "     <h:td><xdc:date>1998/01</xdc:date></h:td>\n" +
+                       "     <h:td><![CDATA[text content]]></h:td>\n" +
+                       "    </h:tr>\n" +
+                       "   </h:table>\n" +
+                       "  </xdc:bookreview>\n" +
+                       " </h:body>\n" +
+                       "</h:html>";
+        
+        Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xmlIn.getBytes()));
+        MessageElement me = new MessageElement(doc.getDocumentElement());
+        String xmlOut = me.getAsString();
+        this.assertXMLEqual(xmlIn,xmlOut);
+    }
+    
+    public void testElementConstructor2() throws Exception {
+        String xmlIn = "<!-- This file can be used to deploy the echoAttachments sample -->\n" +
+                "<!-- using this command: java org.apache.axis.client.AdminClient attachdeploy.wsdd -->\n" +
+                "\n" +
+                "<!-- This deploys the echo attachment service.  -->\n" +
+                "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\" xmlns:ns1=\"urn:EchoAttachmentsService\" >\n" +
+                "  <service name=\"urn:EchoAttachmentsService\" provider=\"java:RPC\" >\n" +
+                "    <parameter name=\"className\" value=\"samples.attachments.EchoAttachmentsService\"/>\n" +
+                "    <parameter name=\"allowedMethods\" value=\"echo echoDir\"/>\n" +
+                "    <operation name=\"echo\" returnQName=\"returnqname\" returnType=\"ns1:DataHandler\" >\n" +
+                "        <parameter name=\"dh\" type=\"ns1:DataHandler\"/>\n" +
+                "      </operation>\n" +
+                "\n" +
+                " <typeMapping deserializer=\"org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory\"\n" +
+                "   languageSpecificType=\"java:javax.activation.DataHandler\" qname=\"ns1:DataHandler\"\n" +
+                "    serializer=\"org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory\"\n" +
+                "    encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"\n" +
+                "     />\n" +
+                "  </service>\n" +
+                "\n" +
+                "</deployment>";
+        
+        Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xmlIn.getBytes()));
+        MessageElement me = new MessageElement(doc.getDocumentElement());
+        String xmlOut = me.getAsString();
+        System.out.println(xmlOut);
+        this.assertXMLEqual(xmlIn,xmlOut);
     }
     
     public static void main(String[] args) throws Exception {
