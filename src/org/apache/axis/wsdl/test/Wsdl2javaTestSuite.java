@@ -67,11 +67,11 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Javac;
+import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.FileSet;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.util.ArrayList;
@@ -152,7 +152,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
             root.setPath(Wsdl2javaTestSuite.WORK_DIR);
             compile.setSrcdir(root);
             compile.setDestdir(workDir);
-            compile.setVerbose(true);
 
             /* Set up the CLEAN_TASK.  It has the "delete" task, and will clean up all
              * the working files.
@@ -190,13 +189,14 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 String curLine = reader.readLine();
                 int testNum = 0;
                 while (curLine != null) {
+                    curLine = curLine.trim();
                     if ( "".equals(curLine) ) {
                         curLine = reader.readLine();
                         continue;
                     }
                     // Run Wsdl2java on the WSDL file.
                     // The test number is used to keep each WSDL file in a different package.
-                    this.prepareTest(curLine.trim(), testNum);
+                    this.prepareTest(curLine, testNum);
 
                     // Setup Tests
                     Iterator names = ((List) Wsdl2javaTestSuite.classNames.get(testNum)).iterator();
@@ -237,13 +237,39 @@ public class Wsdl2javaTestSuite extends TestSuite {
      * testNum appended to it.  We also enablt skeleton generation and testcase generation.  We also turn on verbosity.
      */
     protected void prepareTest(String fileName, int testNum) throws Exception {
+        String packageName = fileName.replace('/', '.');
         Emitter wsdl2java = new Emitter();
-        wsdl2java.setPackageName("org.apache.axisttest" + testNum);
+        packageName = packageName.substring(0, fileName.lastIndexOf('/'));
+        wsdl2java.setPackageName(packageName);
         wsdl2java.generatePackageName(true);
         wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
         wsdl2java.verbose(true);
         wsdl2java.generateTestCase(true);
+
+        /* Copy concrete implementation files to the work directory.
+         */
+        File implDir = new File(fileName.substring(0, fileName.lastIndexOf('/')));
+        if (implDir.isDirectory()) {
+            File[] files = implDir.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].getName().endsWith("Impl.java")) {
+                    File subDir = new File(Wsdl2javaTestSuite.WORK_DIR, implDir.toString());
+                    subDir.mkdirs();
+                    File newFile = new File(subDir, files[i].getName());
+                    BufferedInputStream is = new BufferedInputStream(new FileInputStream(files[i]));
+                    BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(newFile));
+                    byte[] buffer = new byte[1024];
+                    int length = -1;
+                    while ((length = is.read(buffer)) != -1) {
+                        os.write(buffer, 0, length);
+                    }
+                    os.flush();
+                    is.close();
+                    os.close();
+                }
+            }
+        }
 
         wsdl2java.emit(fileName);
 
