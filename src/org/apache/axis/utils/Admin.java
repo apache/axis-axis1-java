@@ -225,7 +225,7 @@ public class Admin
         AxisEngine engine = msgContext.getAxisEngine();
         
         // If this is WSDD, process it correctly.
-        if (rootNS != null && rootNS.equals(WSDDConstants.NS_URI_WSDD)) {
+        if (rootNS != null && rootNS.equals(WSDDConstants.URI_WSDD)) {
             return processWSDD(msgContext, engine, root);
         }
 

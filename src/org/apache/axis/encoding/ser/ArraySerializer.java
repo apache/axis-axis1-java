@@ -204,11 +204,11 @@ public class ArraySerializer implements Serializer
                 attrs = new AttributesImpl();
             }
 
-            if (attrs.getIndex(Constants.NS_URI_CURRENT_SOAP_ENC,
+            if (attrs.getIndex(Constants.URI_DEFAULT_SOAP_ENC,
                                Constants.ATTR_ARRAY_TYPE) == -1) {
                 String encprefix =
-                       context.getPrefixForURI(Constants.NS_URI_CURRENT_SOAP_ENC);
-                attrs.addAttribute(Constants.NS_URI_CURRENT_SOAP_ENC,
+                       context.getPrefixForURI(Constants.URI_DEFAULT_SOAP_ENC);
+                attrs.addAttribute(Constants.URI_DEFAULT_SOAP_ENC,
                                    Constants.ATTR_ARRAY_TYPE,
                                    encprefix + ":arrayType",
                                    "CDATA",
@@ -229,14 +229,14 @@ public class ArraySerializer implements Serializer
             //          and may be useful for operation overloading.
             //   Cons:  More interop test failures (as of 2/6/2002).
             //
-            int typeI = attrs.getIndex(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+            int typeI = attrs.getIndex(Constants.URI_DEFAULT_SCHEMA_XSI,
                                        "type");
             if (typeI != -1) {
                 String qname = 
-                      context.getPrefixForURI(Constants.NS_URI_CURRENT_SCHEMA_XSI, 
+                      context.getPrefixForURI(Constants.URI_DEFAULT_SCHEMA_XSI,
                                               "xsi") + ":type";
                 attrs.setAttribute(typeI, 
-                                   Constants.NS_URI_CURRENT_SCHEMA_XSI,
+                                   Constants.URI_DEFAULT_SCHEMA_XSI,
                                    "type",
                                    qname,
                                    "CDATA",

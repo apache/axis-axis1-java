@@ -55,10 +55,10 @@ public class TestSer
                 SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
                 
                 TypeMappingRegistry reg = context.getTypeMappingRegistry();
-                TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.NS_URI_SOAP_ENC);
+                TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP11_ENC);
                 if (tm == null) {
                     tm = (TypeMapping) reg.createTypeMapping();
-                    reg.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
+                    reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
                 }
                 tm.register(Data.class, dataQName, new DataSerFactory(), new DataDeserFactory());
 

@@ -305,7 +305,7 @@ public class WSDDDeployment
         try {
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
-                encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
+                encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
@@ -353,9 +353,9 @@ public class WSDDDeployment
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-        context.registerPrefixForURI(NS_PREFIX_WSDD, NS_URI_WSDD);
+        context.registerPrefixForURI(NS_PREFIX_WSDD, URI_WSDD);
         
-        context.registerPrefixForURI(NS_PREFIX_WSDD_JAVA, NS_URI_WSDD_JAVA);
+        context.registerPrefixForURI(NS_PREFIX_WSDD_JAVA, URI_WSDD_JAVA);
                                      
         context.startElement(QNAME_DEPLOY, null);
 

@@ -116,7 +116,7 @@ public abstract class JavaProvider extends BasicProvider
         throws Exception
     {
         String serviceName = msgContext.getService().getName();
-        
+
         // scope can be "Request", "Session", "Application"
         // (as with Apache SOAP)
         String scope = (String)service.getOption("scope");
@@ -258,7 +258,7 @@ public abstract class JavaProvider extends BasicProvider
 
         if ((allowedMethods == null) || allowedMethods.equals("")) {
             throw new AxisFault("Server.NoMethodConfig",
-                JavaUtils.getMessage("noOption00", 
+                JavaUtils.getMessage("noOption00",
                                      OPTION_ALLOWEDMETHODS, serviceName),
                 null, null);
         }
@@ -314,17 +314,17 @@ public abstract class JavaProvider extends BasicProvider
             log.debug( JavaUtils.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         }
-        
+
         if (log.isDebugEnabled())
             log.debug("Exit: JavaProvider::invoke (" + this + ")");
     }
 
     /**
      * Generate the WSDL for this service.
-     * 
-     * Put in the "WSDL" property of the message context 
+     *
+     * Put in the "WSDL" property of the message context
      * as a org.w3c.dom.Document
-     */ 
+     */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled())
             log.debug("Enter: JavaProvider::generateWSDL (" + this + ")");
@@ -363,14 +363,14 @@ public abstract class JavaProvider extends BasicProvider
             if (axisConfig != null) {
                 allowedMethods = axisConfig.getAllowedMethods();
             }
-            
+
             Emitter emitter = new Emitter();
-            
+
             // service alias may be provided if exact naming is required,
-            // otherwise Axis will name it according to the implementing class name            
+            // otherwise Axis will name it according to the implementing class name
             String alias = (String)service.getOption("alias");
             if(alias != null) emitter.setServiceElementName(alias);
-            
+
             emitter.setMode(service.getStyle());
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
@@ -378,7 +378,7 @@ public abstract class JavaProvider extends BasicProvider
             emitter.setLocationUrl(url);
             emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
-                                   getTypeMapping(Constants.NS_URI_CURRENT_SOAP_ENC));
+                                   getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                           getDefaultTypeMapping());
             Document  doc = emitter.emit(Emitter.MODE_ALL);
@@ -391,7 +391,7 @@ public abstract class JavaProvider extends BasicProvider
             log.info( JavaUtils.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
-    
+
         if (log.isDebugEnabled())
             log.debug("Exit: JavaProvider::generateWSDL (" + this + ")");
     }
@@ -445,10 +445,10 @@ public abstract class JavaProvider extends BasicProvider
     {
         return OPTION_CLASSNAME;
     }
-    
+
     /**
      * Returns the Class info about the service class.
-     */ 
+     */
     protected Class getServiceClass(MessageContext msgContext, String clsName)
             throws Exception {
         ClassLoader cl     = msgContext.getClassLoader();

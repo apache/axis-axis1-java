@@ -175,7 +175,7 @@ public class SOAPService extends SimpleTargetedChain
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());
                         SOAPHeaderElement newHeader = new 
-                            SOAPHeaderElement(Constants.NS_URI_SOAP12_FAULT_NS,
+                            SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
                                               Constants.ELEM_MISUNDERSTOOD);
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,

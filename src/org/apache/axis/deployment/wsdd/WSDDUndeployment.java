@@ -223,7 +223,7 @@ public class WSDDUndeployment
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-        context.registerPrefixForURI(NS_PREFIX_WSDD, NS_URI_WSDD);
+        context.registerPrefixForURI(NS_PREFIX_WSDD, URI_WSDD);
         context.startElement(WSDDConstants.QNAME_UNDEPLOY, null);
         
         Iterator i = handlers.iterator();

@@ -10,7 +10,7 @@
   <schema
     targetNamespace="urn:types.import.test"
     xmlns:tns="urn:types.import.test"
-    xmlns="http://www.w3.org/2001/XMLSchema/">
+    xmlns="http://www.w3.org/2001/XMLSchema">
 
     <import
       schemaLocation="Phone.xsd"

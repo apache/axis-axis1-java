@@ -324,7 +324,7 @@ public class DeserializerImpl extends SOAPHandler
         // If the xsi:nil attribute, set the value to null and return since
         // there is nothing to deserialize.
         String nil = Constants.getValue(attributes,
-                                        Constants.NS_URIS_SCHEMA_XSI,
+                                        Constants.URIS_SCHEMA_XSI,
                                         "nil");
         if (nil != null && nil.equals("true")) {
           value = null;

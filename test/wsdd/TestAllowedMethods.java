@@ -26,7 +26,7 @@ public class TestAllowedMethods extends TestCase {
     // Two-part WSDD, with a space for scope option in the middle
     static final String doc1 =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
             " <service name=\"" + SERVICE_NAME + "\" " +
                       "provider=\"java:RPC\">\n" +
             "   <parameter name=\"allowedMethods\" value=\"allowed\"/>" +

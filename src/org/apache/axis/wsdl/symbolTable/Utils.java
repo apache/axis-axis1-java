@@ -99,11 +99,11 @@ public class Utils {
                 localName.equals("double") ||
                 localName.equals("boolean") ||
                 localName.equals("byte")) {
-                rc.setNamespaceURI(Constants.NS_URI_CURRENT_SOAP_ENC);
+                rc.setNamespaceURI(Constants.URI_DEFAULT_SOAP_ENC);
             }
             else if (localName.equals("base64Binary") ||
                      localName.equals("hexBinary")) {
-                rc.setNamespaceURI(Constants.NS_URI_CURRENT_SOAP_ENC);
+                rc.setNamespaceURI(Constants.URI_DEFAULT_SOAP_ENC);
                 rc.setLocalPart("base64");
             }
         }

@@ -183,7 +183,7 @@ public class MessageContext implements SOAPMessageContext {
     private int     operationStyle = ServiceDesc.STYLE_RPC;
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
-    private String  encodingStyle  = Constants.NS_URI_CURRENT_SOAP_ENC;
+    private String  encodingStyle  = Constants.URI_DEFAULT_SOAP_ENC;
 
     /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
     private SOAPConstants soapConstants = new SOAP11Constants();
@@ -362,7 +362,7 @@ public class MessageContext implements SOAPMessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return Constants.NS_URI_CURRENT_SOAP_ENC.equals(encodingStyle);
+        return Constants.URI_DEFAULT_SOAP_ENC.equals(encodingStyle);
     }
 
     /**
@@ -565,7 +565,7 @@ public class MessageContext implements SOAPMessageContext {
             setTypeMappingRegistry(tmr);
             setOperationStyle(service.getStyle());
             setEncodingStyle((service.getStyle() == ServiceDesc.STYLE_RPC) ?
-                                        Constants.NS_URI_CURRENT_SOAP_ENC : "");
+                                        Constants.URI_DEFAULT_SOAP_ENC : "");
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
@@ -943,7 +943,7 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Utility function to convert string to operation style constants
-     * 
+     *
      * @param operationStyle "rpc", "document", or "wrapped"
      * @return either STYLE_RPC, STYLE_DOCUMENT or STYLE_WRAPPED (all defined
      *         in org.apache.axis.description.ServiceDesc)

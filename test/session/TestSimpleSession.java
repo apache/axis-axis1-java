@@ -29,7 +29,7 @@ import javax.xml.rpc.ServiceException;
 public class TestSimpleSession extends TestCase implements ServiceLifecycle {
     static final String clientWSDD =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
             " <handler type=\"java:org.apache.axis.handlers.SimpleSessionHandler\" " +
                       "name=\"SimpleSessionHandler\"/>\n" +
             " <service name=\"sessionTest\">\n" +

@@ -6,7 +6,7 @@
              xmlns:typens="urn:ArrayTest2"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
              xmlns:soapy="http://xml.apache.org/xml-soap"
              xmlns="http://schemas.xmlsoap.org/wsdl/">

@@ -124,9 +124,9 @@ public class SOAPEnvelope extends MessageElement
 
             namespaces.add(new Mapping(soapConstants.getEnvelopeURI(),
                                        Constants.NS_PREFIX_SOAP_ENV));
-            namespaces.add(new Mapping(Constants.NS_URI_CURRENT_SCHEMA_XSD,
+            namespaces.add(new Mapping(Constants.URI_DEFAULT_SCHEMA_XSD,
                                        Constants.NS_PREFIX_SCHEMA_XSD));
-            namespaces.add(new Mapping(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+            namespaces.add(new Mapping(Constants.URI_DEFAULT_SCHEMA_XSI,
                                        Constants.NS_PREFIX_SCHEMA_XSI));
         }
         

@@ -35,8 +35,8 @@ public class TestSerializedRPC extends TestCase {
         "<soap:Envelope " +
              "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
              "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
-             "xmlns:xsi=\"" + Constants.NS_URI_CURRENT_SCHEMA_XSI + "\" " +
-             "xmlns:xsd=\"" + Constants.NS_URI_CURRENT_SCHEMA_XSD + "\">\n" +
+             "xmlns:xsi=\"" + Constants.URI_DEFAULT_SCHEMA_XSI + "\" " +
+             "xmlns:xsd=\"" + Constants.URI_DEFAULT_SCHEMA_XSD + "\">\n" +
              "<soap:Body>\n";
 
     private final String footer =
@@ -68,10 +68,10 @@ public class TestSerializedRPC extends TestCase {
         BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
 
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.NS_URI_CURRENT_SOAP_ENC);
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC);
         if (tm == null || tm == tmr.getDefaultTypeMapping()) {
             tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
+            tmr.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         }
         tm.register(javaType, xmlType, sf, df);
 

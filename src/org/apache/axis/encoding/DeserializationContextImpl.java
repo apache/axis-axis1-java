@@ -338,7 +338,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         QName typeQName = null;
         
         // Check for type
-        String type = Constants.getValue(attrs, Constants.NS_URIS_SCHEMA_XSI,
+        String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
                                          "type");
         if (type != null) {
             // Return the type attribute value converted to a QName
@@ -353,7 +353,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             // Else if the default type mapping accepts SOAP 1.1, then 
             // convert the SOAP-ENC type to the appropriate XSD Schema Type.
             QName myQName = new QName(namespace, localName);
-            if (Constants.NS_URI_CURRENT_SOAP_ENC.equals(Constants.NS_URI_SOAP12_ENC) &&
+            if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
                 Constants.isSOAP_ENC(namespace)) {
                 typeQName = myQName;
             } else if (myQName.equals(Constants.SOAP_ARRAY)) {
@@ -404,7 +404,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (attrs == null) {
             return false;
         }
-        String nil = Constants.getValue(attrs, Constants.NS_URIS_SCHEMA_XSI,
+        String nil = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
                                         "nil");
         return (nil != null && nil.equals("true"));
     }

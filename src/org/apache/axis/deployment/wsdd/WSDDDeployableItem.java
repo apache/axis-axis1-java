@@ -381,7 +381,7 @@ public abstract class WSDDDeployableItem
     {
         QName type = getType();
         if (type != null &&
-                NS_URI_WSDD_JAVA.equals(type.getNamespaceURI())) {
+                URI_WSDD_JAVA.equals(type.getNamespaceURI())) {
             return Class.forName(type.getLocalPart());
         }
         return null;

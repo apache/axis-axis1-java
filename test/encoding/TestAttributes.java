@@ -75,8 +75,8 @@ public class TestAttributes extends TestCase {
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
         // The "" namespace is literal (no encoding).
-        tm.setSupportedEncodings(new String[] {Constants.NS_URI_CURRENT_SOAP_ENC});
-        reg.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[] {Constants.URI_DEFAULT_SOAP_ENC});
+        reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
 
         QName beanQName = new QName("typeNS", "TheBean");
         tm.register(AttributeBean.class,
@@ -131,8 +131,8 @@ public class TestAttributes extends TestCase {
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
         // The "" namespace is literal (no encoding).
-        tm.setSupportedEncodings(new String[] {Constants.NS_URI_CURRENT_SOAP_ENC});
-        reg.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[] {Constants.URI_DEFAULT_SOAP_ENC});
+        reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
 
         QName beanQName = new QName("typeNS", "Bean");
         tm.register(SimpleBean.class,

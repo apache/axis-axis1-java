@@ -103,11 +103,11 @@ public class SOAPHeaderElement extends MessageElement
     public SOAPHeaderElement(Element elem)
     {
         super(elem);
-        String val = elem.getAttributeNS(Constants.NS_URI_SOAP_ENV,
+        String val = elem.getAttributeNS(Constants.URI_SOAP11_ENV,
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
-        actor = elem.getAttributeNS(Constants.NS_URI_SOAP_ENV,
+        actor = elem.getAttributeNS(Constants.URI_SOAP11_ENV,
                                     Constants.ATTR_ACTOR);
     }
 
@@ -150,7 +150,7 @@ public class SOAPHeaderElement extends MessageElement
 
         // Instead of doing this can we hang out until serialization time
         // and do it there, so that we can then resolve SOAP version?
-        setAttribute(Constants.NS_URI_SOAP_ENV,
+        setAttribute(Constants.URI_SOAP11_ENV,
                      Constants.ATTR_MUST_UNDERSTAND,
                      val);
     }
@@ -161,7 +161,7 @@ public class SOAPHeaderElement extends MessageElement
 
         // Instead of doing this can we hang out until serialization time
         // and do it there, so that we can then resolve SOAP version?
-        setAttribute(Constants.NS_URI_SOAP_ENV, Constants.ATTR_ACTOR, a);
+        setAttribute(Constants.URI_SOAP11_ENV, Constants.ATTR_ACTOR, a);
     }
 
     public void setProcessed(boolean value) {

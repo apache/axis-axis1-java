@@ -346,17 +346,17 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // Register all known flavors of the namespace.
         try {
             if (xmlType.getNamespaceURI().equals(
-                       Constants.NS_URI_CURRENT_SCHEMA_XSD)) {
-                for (int i=0; i < Constants.NS_URIS_SCHEMA_XSD.length; i++) {
-                    QName qName = new QName(Constants.NS_URIS_SCHEMA_XSD[i],
+                       Constants.URI_DEFAULT_SCHEMA_XSD)) {
+                for (int i=0; i < Constants.URIS_SCHEMA_XSD.length; i++) {
+                    QName qName = new QName(Constants.URIS_SCHEMA_XSD[i],
                                             xmlType.getLocalPart());
                     super.register(javaType, qName, sf, df);
                 }
             }
             else if (xmlType.getNamespaceURI().equals(
-                       Constants.NS_URI_CURRENT_SOAP_ENC)) {
-                for (int i=0; i < Constants.NS_URIS_SOAP_ENC.length; i++) {
-                    QName qName = new QName(Constants.NS_URIS_SOAP_ENC[i],
+                       Constants.URI_DEFAULT_SOAP_ENC)) {
+                for (int i=0; i < Constants.URIS_SOAP_ENC.length; i++) {
+                    QName qName = new QName(Constants.URIS_SOAP_ENC[i],
                                             xmlType.getLocalPart());
                     super.register(javaType, qName, sf, df);
                 }

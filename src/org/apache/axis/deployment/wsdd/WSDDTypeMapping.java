@@ -100,7 +100,7 @@ public class WSDDTypeMapping
         Attr attrNode = e.getAttributeNode(ATTR_ENCSTYLE);
 
         if (attrNode == null) {
-            encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
+            encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
         } else {
             encodingStyle = attrNode.getValue();
         }
@@ -207,11 +207,11 @@ public class WSDDTypeMapping
         throws ClassNotFoundException
     {
         if (typeQName != null) {
-            if (!NS_URI_WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
+            if (!URI_WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
                 throw new ClassNotFoundException(JavaUtils.
                              getMessage("badTypeNamespace00",
                                         typeQName.getNamespaceURI(),
-                                        NS_URI_WSDD_JAVA));
+                                        URI_WSDD_JAVA));
             }
             String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
             if (JavaUtils.getWrapper(loadName) != null) {
@@ -231,7 +231,7 @@ public class WSDDTypeMapping
     public void setLanguageSpecificType(Class javaType)
     {
         String type = javaType.getName();
-        typeQName = new QName(NS_URI_WSDD_JAVA, type);
+        typeQName = new QName(URI_WSDD_JAVA, type);
     }
 
     /**
@@ -241,7 +241,7 @@ public class WSDDTypeMapping
      */
     public void setLanguageSpecificType(String javaType)
     {
-        typeQName = new QName(NS_URI_WSDD_JAVA, javaType);
+        typeQName = new QName(URI_WSDD_JAVA, javaType);
     }
 
     /**

@@ -87,8 +87,8 @@ public class TestOmittedValues extends TestCase {
           "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
           "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
           "xmlns:me=\"urn:me\" " +
-          "xmlns:xsi=\"" + Constants.NS_URI_2001_SCHEMA_XSI + "\" " +
-          "xmlns:xsd=\"" + Constants.NS_URI_2001_SCHEMA_XSD + "\">\n" +
+          "xmlns:xsi=\"" + Constants.URI_2001_SCHEMA_XSI + "\" " +
+          "xmlns:xsd=\"" + Constants.URI_2001_SCHEMA_XSD + "\">\n" +
           "<soap:Body>\n" +
             "<method>\n";
 

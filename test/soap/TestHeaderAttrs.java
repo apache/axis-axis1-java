@@ -101,7 +101,7 @@ public class TestHeaderAttrs extends TestCase {
         assertTrue("Bad result from test", runTest(badHeader, false));
         
         // 2. MU header to NEXT -> should fail
-        badHeader.setActor(Constants.ACTOR_NEXT);
+        badHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
         badHeader.setMustUnderstand(true);
         
         // Test (should produce MU failure)
@@ -124,7 +124,7 @@ public class TestHeaderAttrs extends TestCase {
      */ 
     public void testNonMUBadHeader() throws Exception
     {
-        badHeader.setActor(Constants.ACTOR_NEXT);
+        badHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
         badHeader.setMustUnderstand(false);
 
         assertTrue("Non-MU bad header to next actor returned bad result!",
@@ -141,7 +141,7 @@ public class TestHeaderAttrs extends TestCase {
      */ 
     public void testGoodHeader() throws Exception
     {
-        goodHeader.setActor(Constants.ACTOR_NEXT);
+        goodHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
         assertTrue("Good header with next actor returned bad result!",
                    runTest(goodHeader, true));
     }
