@@ -55,10 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.types.HexBinary;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
@@ -69,46 +66,27 @@ import javax.xml.namespace.QName;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
  */
-public class HexDeserializer extends DeserializerImpl {
-
-    public QName xmlType;
-    public Class javaType;
-
-    StringBuffer buf = null;
+public class HexDeserializer extends SimpleDeserializer {
 
     public HexDeserializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
+        super(javaType, xmlType);
     }
+
     /**
-     * Handle any characters found in the data
+     * Convert the string that has been accumulated into an Object.  Subclasses
+     * may override this.  Note that if the javaType is a primitive, the returned
+     * object is a wrapper class.
+     * @param source the serialized value to be deserialized
+     * @throws Exception any exception thrown by this method will be wrapped
      */
-    public void characters(char [] chars, int start, int end)
-        throws SAXException
-    {
-        // Characters are collected in a buffer because 
-        // SAX may chunk the data.
-        if (buf == null) {
-            buf = new StringBuffer();
+    public Object makeValue(String source) throws Exception {
+        Object result;
+        if (javaType == byte[].class) {
+            result = HexBinary.decode(source);
+        } else {
+            result = new HexBinary(source);
         }
-        buf.append(chars, start, end);
-    }
-    
-    /**
-     * Return something even if no characters were found.
-     */
-    public void onEndElement(String namespace, String localName,
-                             DeserializationContext context)
-        throws SAXException
-    {
-        if (buf != null) {
-            if (javaType == byte[].class) {
-                value = HexBinary.decode(buf.toString());
-            } else {
-                value = new HexBinary(buf.toString());
-            }
-        }
-        super.onEndElement(namespace,localName, context);
-        if (value == null) value = new HexBinary("");
+        if (result == null) result = new HexBinary("");
+        return result;
     }
 }

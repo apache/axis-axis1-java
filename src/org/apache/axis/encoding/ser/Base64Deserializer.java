@@ -56,9 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.encoding.Base64;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
@@ -69,60 +66,38 @@ import javax.xml.namespace.QName;
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
-public class Base64Deserializer extends DeserializerImpl  {
-
-    public QName xmlType;
-    public Class javaType;
-
-    StringBuffer buf = null;
+public class Base64Deserializer extends SimpleDeserializer  {
 
     public Base64Deserializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
+        super(javaType, xmlType);
     }
 
     /**
-     * Handle any characters found in the data
+     * Convert the string that has been accumulated into an Object.  Subclasses
+     * may override this.  Note that if the javaType is a primitive, the returned
+     * object is a wrapper class.
+     * @param source the serialized value to be deserialized
+     * @throws Exception any exception thrown by this method will be wrapped
      */
-    public void characters(char [] chars, int start, int end)
-        throws SAXException
-    {
-        // Characters are collected in a buffer because 
-        // SAX may chunk the data.
-        if (buf == null) {
-            buf = new StringBuffer();
-        }
-        buf.append(chars, start, end); 
-    }
-    
-    /**
-     * Return something even if no characters were found.
-     */
-    public void onEndElement(String namespace, String localName,
-                             DeserializationContext context)
-        throws SAXException
-    {
-        // Decode the collected characters
-        if (buf != null) {
-            value = Base64.decode(buf.toString());
-            if (javaType == Byte[].class) {
-                Byte[] data = new Byte[ ((byte[])value).length ];
-                for (int i=0; i<data.length; i++) {
-                    byte b = ((byte[]) value)[i];
-                    data[i] = new Byte(b);
-                }
-                value = data;
-            }
-        }
-
-        super.onEndElement(namespace,localName, context);
-        // If no value was specified, return a zero length byte or Byte array
+    public Object makeValue(String source) throws Exception {
+        byte [] value = Base64.decode(source);
+        
         if (value == null) {
-            if (javaType == byte[].class) {
-                value = new byte[0];
+            if (javaType == Byte[].class) {
+                return new Byte[0];
             } else {
-                value = new Byte[0];
+                return new byte[0];
             }
         }
+        
+        if (javaType == Byte[].class) {
+            Byte[] data = new Byte[ value.length ];
+            for (int i=0; i<data.length; i++) {
+                byte b = value[i];
+                data[i] = new Byte(b);
+            }
+            return data;
+        }
+        return value;
     }
 }
