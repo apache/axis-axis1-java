@@ -56,7 +56,7 @@
 package samples.echo ;
 
 import java.lang.reflect.Array;
-import java.util.Hashtable;
+import java.util.Date;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
@@ -83,7 +83,8 @@ public class TestClient {
     private static String soapAction = "http://soapinterop.org/";
 
     /**
-     *
+     * Determine if two objects are equal.  Handles nulls and recursively
+     * verifies arrays are equal.
      */
     private static boolean equals(Object obj1, Object obj2) {
        if (obj1 == null) return (obj2 == null);
@@ -107,24 +108,30 @@ public class TestClient {
         String method = "echo" + type;
         String arg = "input" + type;
         String resultName = "output" + type;
-        RPCParam paramToSend = new RPCParam(arg, toSend);
         
+
         try {
-            // Default return type based on what we expect
-            ServiceDescription sd = new ServiceDescription(method, true);
-            sd.addOutputParam(resultName, map.getTypeQName(toSend.getClass()));
-            sd.addOutputParam("Return", map.getTypeQName(toSend.getClass()));
-            call.setServiceDescription(sd);
-            
-            String action = soapAction;
-            if (addMethodToAction) {
-                action += method;
+            // set up the argument list
+            Object args[];
+            if (toSend == null) {
+                args = new Object[] {};
+            } else {
+                args = new Object[] {new RPCParam(arg, toSend)};
+
+                // Default return type based on what we expect
+                ServiceDescription sd = new ServiceDescription(method, true);
+                sd.setOutputParam(map.getTypeQName(toSend.getClass()));
+                call.setServiceDescription(sd);
             }
+            
+            // set the SOAPAction, optionally appending the method name
+            String action = soapAction;
+            if (addMethodToAction) action += method;
             call.set(HTTPTransport.ACTION, action);
 
             // issue the request
             Object gotBack = call.invoke(
-                "http://soapinterop.org/", method, new Object[] {paramToSend} );
+                "http://soapinterop.org/", method, args);
 
             // verify the result
             if (equals(toSend,gotBack)) {
@@ -176,6 +183,8 @@ public class TestClient {
           new SOAPStruct(1, "one", 1.1F),
           new SOAPStruct(2, "two", 2.2F),
           new SOAPStruct(3, "three", 3.3F)});
+        test("Void", null);
+        test("Date", new Date());
     }
 
 }
