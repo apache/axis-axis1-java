@@ -184,7 +184,7 @@ public abstract class TestClient {
     }
 
     /**
-     * Execute all the 2A tests
+     * Execute both the 2A and 2B tests
      */
     public void executeAll() throws Exception {
         execute2A();
@@ -576,6 +576,7 @@ public abstract class TestClient {
 
         boolean testPerformance = opts.isFlagSet('k') > 0;
         boolean allTests = opts.isFlagSet('A') > 0;
+        boolean onlyB    = opts.isFlagSet('b') > 0;
         boolean testMode = opts.isFlagSet('t') > 0;
 
         // set up tests so that the results are sent to System.out
@@ -628,6 +629,8 @@ public abstract class TestClient {
             for (int i = 0; i < 10; i++) {
                 if (allTests) {
                     client.executeAll();
+                } else if (onlyB) {
+                    client.execute2B();
                 } else {
                     client.execute2A();
                 }
@@ -637,6 +640,8 @@ public abstract class TestClient {
         } else {
             if (allTests) {
                 client.executeAll();
+            } else if (onlyB) {
+                client.execute2B();
             } else {
                 client.execute2A();
             }
