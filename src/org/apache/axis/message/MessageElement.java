@@ -445,6 +445,7 @@ public class MessageElement
             StringWriter  writer = new StringWriter();
             SerializationContext serContext = new SerializationContext(writer, 
                                                                        null);
+            serContext.setSendDecl(false);
             this.output(serContext);
             return( writer.toString() );
         }
