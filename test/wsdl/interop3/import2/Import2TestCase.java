@@ -3,6 +3,8 @@ package test.wsdl.interop3.import2;
 import test.wsdl.interop3.import2.definitions.SoapInteropImport2PortType;
 import test.wsdl.interop3.import2.xsd.SOAPStruct;
 
+import java.net.URL;
+
 /*
     <!-- SOAP Builder's round III web services          -->
     <!-- interoperability testing:  import2             -->
@@ -24,6 +26,8 @@ import test.wsdl.interop3.import2.xsd.SOAPStruct;
 */
 
 public class Import2TestCase extends junit.framework.TestCase {
+    static URL url;
+
     public Import2TestCase(String name) {
         super(name);
     }
@@ -31,7 +35,11 @@ public class Import2TestCase extends junit.framework.TestCase {
     public void testStep3() {
         SoapInteropImport2PortType binding;
         try {
-            binding = new Import2Locator().getSoapInteropImport2Port();
+            if (url == null) {
+                binding = new Import2Locator().getSoapInteropImport2Port();
+            } else {
+                binding = new Import2Locator().getSoapInteropImport2Port(url);
+            }
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -39,8 +47,14 @@ public class Import2TestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            SOAPStruct value = null;
-            value = binding.echoStruct(new SOAPStruct());
+            SOAPStruct value = new SOAPStruct();
+            value.setVarString("import2 string");
+            value.setVarInt(5);
+            value.setVarFloat(4.5F);
+            SOAPStruct result = binding.echoStruct(value);
+            assertEquals("String members didn't match", value.getVarString(), result.getVarString());
+            assertEquals("int members didn't match", value.getVarInt(), result.getVarInt());
+            //assertEquals("float members didn't match", value.getVarFloat(), result.getVarFloat());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -87,7 +101,7 @@ public class Import2TestCase extends junit.framework.TestCase {
     }
 */
 
-/* 
+/*
    Not working right now.
     public void testAbsoluteStep3() {
         test.wsdl.interop3.absimport2.definitions.SoapInteropImport2PortType binding;
@@ -168,6 +182,13 @@ public class Import2TestCase extends junit.framework.TestCase {
 */
 
     public static void main(String[] args) {
+        if (args.length == 1) {
+            try {
+                url = new URL(args[0]);
+            } catch (Exception e) {
+            }
+        }
+
         junit.textui.TestRunner.run(new junit.framework.TestSuite(Import2TestCase.class));
     } // main
 
