@@ -139,10 +139,21 @@ public class TestJAXRPCSamples extends TestCase {
         }
     } // testGetInfo
 
+    public void testHello() throws Exception {
+        try {
+            log.info("Testing JAX-RPC hello sample.");
+            samples.jaxrpc.hello.HelloClient.main(new String[]{});
+            log.info("Test complete.");
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    }
+
     public static void main(String args[]) throws Exception {
         TestJAXRPCSamples tester = new TestJAXRPCSamples("tester");
-        tester.testGetQuote();
-        tester.testGetInfo();
+        tester.testHello();
     } // main
 }
 

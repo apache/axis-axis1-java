@@ -62,10 +62,16 @@ import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.rpc.handler.*;
+import javax.xml.namespace.*;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -163,6 +169,9 @@ public class AxisClient extends AxisEngine {
                 if ((h = getGlobalRequest()) != null )
                     h.invoke(msgContext);
 
+                /* Process the JAXRPC Handlers */
+                invokeJAXRPCHandlers(msgContext);
+
                 /** Process the Transport Specific stuff
                  *
                  * NOTE: Somewhere in here there is a handler which actually
@@ -174,6 +183,9 @@ public class AxisClient extends AxisEngine {
                     h.invoke(msgContext);
                 else
                     throw new AxisFault(JavaUtils.getMessage("noTransport00", hName));
+
+                /* Process the JAXRPC Handlers */
+                invokeJAXRPCHandlers(msgContext);
 
                 /* Process the Global Response Chain */
                 /***********************************/
@@ -203,6 +215,6 @@ public class AxisClient extends AxisEngine {
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisClient::invoke");
         }
-    };
+    }
 }
 

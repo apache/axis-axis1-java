@@ -188,6 +188,8 @@ public class Call implements javax.xml.rpc.Call {
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
+    public static final String JAXRPC_SERVICE    = "jaxrpc.service";
+    public static final String JAXRPC_PORTTYPE_NAME = "jaxrpc.porttype.name";
 
     // If true, the code will throw a fault if there is no
     // response message from the server.  Otherwise, the
@@ -1873,6 +1875,9 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.reset();
         msgContext.setResponseMessage(null);
         msgContext.setProperty( MessageContext.CALL, this );
+        msgContext.setProperty( JAXRPC_SERVICE, service );
+        msgContext.setProperty( JAXRPC_PORTTYPE_NAME, getPortTypeName() );
+
         if (username != null) {
             msgContext.setUsername(username);
         }
