@@ -58,6 +58,7 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.utils.Debug ;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
@@ -111,6 +112,11 @@ public class MessageContext {
      * The default classloader that this service should use
      */
     private AxisClassLoader  classLoader ;
+    
+    /**
+     * The AxisEngine which this context is involved with
+     */
+    private AxisEngine       axisEngine;
 
     /**
      *
@@ -126,9 +132,6 @@ public class MessageContext {
      */
     private TypeMappingRegistry mappingRegistry = null;
 
-    private static final SOAPTypeMappingRegistry soapTMR =
-        new SOAPTypeMappingRegistry();
-
     public void setTypeMappingRegistry(TypeMappingRegistry reg) {
         mappingRegistry = reg;
     }
@@ -136,7 +139,7 @@ public class MessageContext {
     public TypeMappingRegistry getTypeMappingRegistry() {
         if (mappingRegistry == null) {
             mappingRegistry = new TypeMappingRegistry();
-            mappingRegistry.setParent(soapTMR);
+            mappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
         }
         return mappingRegistry;
     }
@@ -200,6 +203,16 @@ public class MessageContext {
     public String getTargetService() {
       return( targetService );
     }
+    
+    public void setAxisEngine(AxisEngine engine)
+    {
+      this.axisEngine = engine;
+    }
+    
+    public AxisEngine getAxisEngine()
+    {
+      return axisEngine;
+    }
 
     /**
      * Set the target service for this message.
@@ -211,6 +224,7 @@ public class MessageContext {
      * @param tServ the name of the target service.
      */
     public void setTargetService(String tServ) {
+        Debug.Print(2, "MessageContext: setTargetService(" + tServ+")");
         targetService = tServ ;
 
         HandlerRegistry sr = (HandlerRegistry)
@@ -236,6 +250,7 @@ public class MessageContext {
     }
 
     public Handler getServiceHandler() {
+        Debug.Print(2, "MessageContext:getServiceHandler()");
         if (serviceHandler == null) {
             if (targetService != null) {
                 /** This is a bit kludgey for now - what might have
@@ -271,17 +286,17 @@ public class MessageContext {
                 }
             }
       }
+      Debug.Print(2, "MessageContext:getServiceHandler() returns " + serviceHandler);
       return( serviceHandler );
     }
     
     public void setServiceHandler(Handler sh)
     {
+      Debug.Print(2,"MessageContext: setServiceHandler("+sh+")");
       serviceHandler = sh;
       if (sh != null && sh instanceof SOAPService) {
         TypeMappingRegistry tmr = ((SOAPService)sh).getTypeMappingRegistry();
-        getTypeMappingRegistry().setParent(tmr);
-      } else {
-        getTypeMappingRegistry().setParent(soapTMR);
+        setTypeMappingRegistry(tmr);
       }
     }
 

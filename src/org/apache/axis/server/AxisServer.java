@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,10 +69,11 @@ import org.apache.axis.encoding.TypeMappingRegistry;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class AxisServer extends BasicHandler
+public class AxisServer extends AxisEngine
 {
     public AxisServer() {
-      // Debug.setDebugLevel(3);
+      super(Constants.SERVER_HANDLER_REGISTRY,
+            Constants.SERVER_SERVICE_REGISTRY);
     }
 
     /**
@@ -81,44 +82,7 @@ public class AxisServer extends BasicHandler
      */
     public AxisServer(HandlerRegistry handlers, HandlerRegistry services)
     {
-        Debug.Print( 1, "Enter: AxisServer::Constructor");
-        handlers.init();
-        services.init();
-        addOption(Constants.HANDLER_REGISTRY, handlers);
-        addOption(Constants.SERVICE_REGISTRY, services);
-        Debug.Print( 1, "Exit: AxisServer::Constructor");
-    }
-
-    /**
-     * Find/load the registries and save them so we don't need to do this
-     * each time we're called.
-     */
-    public void init() {
-        // Load the simple handler registry and init it
-        Debug.Print( 1, "Enter: AxisServer::init" );
-        DefaultHandlerRegistry  hr =
-          new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
-        hr.setOnServer( true );
-        hr.init();
-        addOption( Constants.HANDLER_REGISTRY, hr );
-
-        // Load the simple deployed services registry and init it
-        DefaultServiceRegistry  sr =
-          new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
-        sr.setHandlerRegistry( hr ); // needs to know about 'hr'
-        sr.setOnServer( true );
-        sr.init();
-        addOption( Constants.SERVICE_REGISTRY, sr );
-
-        // Load the registry of deployed types
-        TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
-        tmr.setParent(new SOAPTypeMappingRegistry());
-        addOption( Constants.TYPEMAP_REGISTRY, tmr );
-        Handler admin = sr.find("AdminService");
-        if (admin != null && admin instanceof SOAPService)
-          ((SOAPService)admin).setTypeMappingRegistry(tmr);
-
-        Debug.Print( 1, "Exit: AxisServer::init" );
+        super(handlers, services);
     }
 
     /**
@@ -134,18 +98,16 @@ public class AxisServer extends BasicHandler
         /* Do some prep-work.  Get the registries and put them in the */
         /* msgContext so they can be used by later handlers.          */
         /**************************************************************/
-        HandlerRegistry hr =
-            (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
-        HandlerRegistry sr =
-            (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
+        HandlerRegistry hr = getHandlerRegistry();
+        HandlerRegistry sr = getServiceRegistry();
         TypeMappingRegistry tmr =
             (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
 
-        msgContext.setProperty(Constants.AXIS_ENGINE, this );
+        msgContext.setAxisEngine( this );
         msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
-        msgContext.getTypeMappingRegistry().setParent(tmr);
+        msgContext.setTypeMappingRegistry(tmr);
 
         try {
           hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );

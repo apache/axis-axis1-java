@@ -103,7 +103,7 @@ public class SimpleAxisServer implements Runnable {
     // Axis specific constants
     private static String transportInName = "HTTPAction";
     private static String transportOutName = "HTTP.output";
-    private static final String AXIS_ENGINE = "AxisEngine" ;
+    //private static final String AXIS_ENGINE = "AxisEngine" ;
     
     // are we stopped?
     // latch to true if stop() is called

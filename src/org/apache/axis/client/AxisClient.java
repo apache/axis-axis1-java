@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,51 +70,16 @@ import org.apache.axis.registries.* ;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class AxisClient extends BasicHandler
+public class AxisClient extends AxisEngine
 {
-    public AxisClient() {}
-    
-    /**
-     * Allows the Listener to specify which handler/service registry
-     * implementation they want to use.
-     */
-    /*
-    public AxisClient(HandlerRegistry handlers, HandlerRegistry services)
+    public AxisClient()
     {
-        Debug.Print( 1, "Enter: AxisClient::Constructor");
-        handlers.init();
-        services.init();
-        addOption(Constants.HANDLER_REGISTRY, handlers);
-        addOption(Constants.SERVICE_REGISTRY, services);
-        Debug.Print( 1, "Exit: AxisClient::Constructor");
-     }*/
-    
-    /**
-     * Find/load the registries and save them so we don't need to do this
-     * each time we're called.
-     * Package access since this should be wrapped by ServiceClient...??? -- RobJ
-     */
-    public void init() {
-        // Load the simple handler registry and init it
-        Debug.Print( 1, "Enter: AxisClient::init" );
-        DefaultHandlerRegistry  hr =
-            new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
-        hr.setOnServer( false );
-        hr.init();
-        addOption( Constants.HANDLER_REGISTRY, hr );
-        
-        // Load the simple deployed services registry and init it
-        DefaultServiceRegistry  sr =
-            new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
-        sr.setHandlerRegistry( hr ); // Needs to know about 'hr'
-        sr.setOnServer( false );
-        sr.init();
-        addOption( Constants.SERVICE_REGISTRY, sr );
-        Debug.Print( 1, "Exit: AxisClient::init" );
+        super(Constants.CLIENT_HANDLER_REGISTRY,
+              Constants.CLIENT_SERVICE_REGISTRY);
     }
     
     /**
-     * Main routine of the AXIS server.  In short we locate the appropriate
+     * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
@@ -123,10 +88,8 @@ public class AxisClient extends BasicHandler
         String  hName = null ;
         Handler h     = null ;
         
-        HandlerRegistry hr =
-            (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
-        HandlerRegistry sr =
-            (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
+        HandlerRegistry hr = getHandlerRegistry();
+        HandlerRegistry sr = getServiceRegistry();
         
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
