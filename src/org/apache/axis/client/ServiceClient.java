@@ -116,19 +116,18 @@ public class ServiceClient {
      * Set it up yourself!
      */
     public ServiceClient () {
-        msgContext = new MessageContext();
         this.setupEngine();
+        msgContext = new MessageContext(engine);
     }
     
     /**
      * Construct a ServiceClient with the given Transport.
      */
     public ServiceClient (Transport transport) {
-        msgContext = new MessageContext();
         this.transport = transport;
         
         this.setupEngine();
-        msgContext.setAxisEngine(engine);
+        msgContext = new MessageContext(engine);
         
         // set up the message context with the transport
         try {

@@ -123,7 +123,9 @@ public class MessageContext {
      */
     private Hashtable bag ;
 
-    public MessageContext() { }
+    public MessageContext(AxisEngine engine) {
+      this.axisEngine = engine;
+    }
 
     
     /**
@@ -202,11 +204,6 @@ public class MessageContext {
 
     public String getTargetService() {
       return( targetService );
-    }
-    
-    public void setAxisEngine(AxisEngine engine)
-    {
-      this.axisEngine = engine;
     }
     
     public AxisEngine getAxisEngine()

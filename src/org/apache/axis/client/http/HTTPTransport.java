@@ -136,7 +136,6 @@ public class HTTPTransport extends Transport
     {
         if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
-        mc.setAxisEngine(engine);
         mc.setTargetService( (String)mc.getProperty(ACTION) );
         
         if ( doLocal && ((String)mc.getProperty(URL)).endsWith( ".jws") ) {

@@ -68,8 +68,7 @@ public class TestRPC extends TestCase {
         }
 
         // Create a message context with the action and message
-        MessageContext msgContext = new MessageContext();
-        msgContext.setAxisEngine(engine);
+        MessageContext msgContext = new MessageContext(engine);
         msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
         if (setService) {
             msgContext.setTargetService(SOAPAction);
