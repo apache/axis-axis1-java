@@ -71,6 +71,8 @@ import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 
+import org.apache.axis.providers.java.JavaProvider;
+
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.gen.GeneratorFactory;
@@ -91,12 +93,6 @@ import org.w3c.dom.Document;
  */
 public class Emitter extends Parser {
 
-    // Scope constants
-    public static final byte NO_EXPLICIT_SCOPE = 0x00;
-    public static final byte APPLICATION_SCOPE = 0x01;
-    public static final byte REQUEST_SCOPE     = 0x10;
-    public static final byte SESSION_SCOPE     = 0x11;
-
     protected HashMap namespaceMap = new HashMap();
     protected String typeMappingVersion = "1.2";
     protected BaseTypeMapping baseTypeMapping = null;
@@ -110,7 +106,7 @@ public class Emitter extends Parser {
     private boolean bGenerateAll = false;
     private boolean bHelperGeneration = false;
     private String packageName = null;
-    private byte scope = NO_EXPLICIT_SCOPE;
+    private byte scope = JavaProvider.BYTE_SCOPE_NOT_EXPLICIT;
     private GeneratedFileInfo fileInfo = new GeneratedFileInfo();
     private HashMap delayedNamespacesMap = new HashMap();
     private String outputDir = null;

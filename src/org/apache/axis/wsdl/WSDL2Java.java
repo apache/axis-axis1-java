@@ -60,10 +60,14 @@ import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.providers.java.JavaProvider;
+
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.gen.WSDL2;
 
 import org.apache.axis.wsdl.toJava.Emitter;
+
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 /**
  * Command line interface to the WSDL2Java utility
@@ -221,14 +225,14 @@ public class WSDL2Java extends WSDL2 {
 
             case SCOPE_OPT:
                 String scope = option.getArgument();
-                if ("Application".equals(scope)) {
-                    emitter.setScope(emitter.APPLICATION_SCOPE);
+                if (JavaProvider.OPTION_SCOPE_APPLICATION.equals(scope)) {
+                    emitter.setScope(JavaProvider.BYTE_SCOPE_APPLICATION);
                 }
-                else if ("Request".equals(scope)) {
-                    emitter.setScope(emitter.REQUEST_SCOPE);
+                else if (JavaProvider.OPTION_SCOPE_REQUEST.equals(scope)) {
+                    emitter.setScope(JavaProvider.BYTE_SCOPE_REQUEST);
                 }
-                else if ("Session".equals(scope)) {
-                    emitter.setScope(emitter.SESSION_SCOPE);
+                else if (JavaProvider.OPTION_SCOPE_SESSION.equals(scope)) {
+                    emitter.setScope(JavaProvider.BYTE_SCOPE_SESSION);
                 }
                 else {
                     System.err.println(

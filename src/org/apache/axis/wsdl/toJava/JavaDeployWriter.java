@@ -56,6 +56,7 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionType;
@@ -326,13 +327,13 @@ public class JavaDeployWriter extends JavaWriter {
             pw.println(methodList.substring(1) + "\"/>");
         }
 
-        if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
+        if (emitter.getScope() == JavaProvider.BYTE_SCOPE_APPLICATION) {
             pw.println("      <parameter name=\"scope\" value=\"Application\"/>");
         }
-        else if (emitter.getScope() == Emitter.REQUEST_SCOPE) {
+        else if (emitter.getScope() == JavaProvider.BYTE_SCOPE_REQUEST) {
             pw.println("      <parameter name=\"scope\" value=\"Request\"/>");
         }
-        else if (emitter.getScope() == Emitter.SESSION_SCOPE) {
+        else if (emitter.getScope() == JavaProvider.BYTE_SCOPE_SESSION) {
             pw.println("      <parameter name=\"scope\" value=\"Session\"/>");
         }
     } //writeDeployBinding

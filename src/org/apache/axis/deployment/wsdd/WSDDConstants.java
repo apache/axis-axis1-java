@@ -151,7 +151,6 @@ public class WSDDConstants
     public static final String ATTR_QNAME = "qname";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_TYPE = "type";
-    public static final String ATTR_SCOPE = "scope";
     public static final String ATTR_VALUE = "value";
     public static final String ATTR_LOCKED = "locked";
     public static final String ATTR_RETQNAME = "returnQName";
@@ -164,20 +163,4 @@ public class WSDDConstants
     public static final String ATTR_SERIALIZER = "serializer";
     public static final String ATTR_DESERIALIZER = "deserializer";
     public static final String ATTR_ENCSTYLE = "encodingStyle";
-    
-    public static final String ATTR_SCOPE_REQUEST = "Request";
-    public static final String ATTR_SCOPE_APPLICATION = "Application";
-    public static final String ATTR_SCOPE_SESSION = "Session";
-    
-    
-    public static boolean isValidScope(String scope)
-    {
-        return scope == null  ||
-               scope.length() == 0  ||
-               scope.equalsIgnoreCase(ATTR_SCOPE_REQUEST)  ||
-               scope.equalsIgnoreCase(ATTR_SCOPE_APPLICATION)  ||
-               scope.equalsIgnoreCase(ATTR_SCOPE_SESSION);
-    }
-    
-    public static final String NL = System.getProperty("line.separator");
 }
