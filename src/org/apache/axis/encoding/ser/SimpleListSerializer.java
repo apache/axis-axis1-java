@@ -76,9 +76,13 @@ public class SimpleListSerializer implements SimpleValueSerializer {
         if (value instanceof SimpleType)
             attributes = getObjectAttributes(value, attributes, context);
 
-        context.startElement(name, attributes);
+        String strValue = null;
         if (value != null) {
-            context.writeSafeString(getValueAsString(value, context));
+            strValue = getValueAsString(value, context);
+        }
+        context.startElement(name, attributes);
+        if (strValue != null) {
+            context.writeSafeString(strValue);
         }
         context.endElement();
     }
@@ -110,6 +114,9 @@ public class SimpleListSerializer implements SimpleValueSerializer {
           else {
             result.append(object.toString());
           }
+        } 
+        else if (object instanceof QName) {
+          result.append( context.qName2String((QName)object) );
         }
         else {
           result.append(object.toString());
