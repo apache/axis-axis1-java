@@ -70,7 +70,7 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
     /**
      * Default constructor
      **/
-    DefaultBuilderPortTypeClassRep() {};
+    public DefaultBuilderPortTypeClassRep() {};
     /**
      * Construct a ClassRep from a Class
      * @param cls is the Class 
