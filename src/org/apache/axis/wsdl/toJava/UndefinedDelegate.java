@@ -89,16 +89,27 @@ public class UndefinedDelegate implements Undefined {
      *  referrant TypeEntry's that were registered.
      */
     public void update(TypeEntry def) throws IOException {
-        // Process list until every TypeEntry is defined
         boolean done = false;
         while (!done) {
             done = true;  // Assume this is the last pass
 
             // Call updatedUndefined for all items on the list
+            // updateUndefined returns true if the state of the te TypeEntry
+            // is changed.  The outer loop is traversed until there are no more
+            // state changes.
             for (int i=0; i < list.size() ; i++) {
                 TypeEntry te = (TypeEntry) list.elementAt(i);
                 if (te.updateUndefined(undefinedType, def))
                     done = false;  // Items still undefined, need another pass
+            }
+        }
+        // It is possible that the def TypeEntry depends on an Undefined type.
+        // If so, register all of the entries with the undefined type.
+        TypeEntry uType = def.getUndefinedTypeRef();
+        if (uType != null) {
+            for (int i=0; i < list.size() ; i++) {
+                TypeEntry te = (TypeEntry) list.elementAt(i);
+                ((Undefined)uType).register(te);
             }
         }
     }

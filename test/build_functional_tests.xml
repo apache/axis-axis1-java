@@ -24,6 +24,7 @@ Copyright:
   <property name="test.functional.usefile" value="true"/>
   <property name="test.functional.reportdir" value="test-reports"/>
   <property name="test.functional.SimpleAxisPort" value="8080"/>
+  <property name="test.functional.fail" value="yes"/>
 
   <path id="test-classpath">
     <pathelement location="${build.dest}" />
@@ -84,7 +85,7 @@ Copyright:
     </java>
 
     <!-- now, run the actual test -->
-    <junit dir="." printsummary="yes" haltonfailure="yes" fork="yes">
+    <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="test-classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
@@ -207,7 +208,7 @@ Copyright:
   <!-- will find the classes in the IDE's build location.                  -->
   <!-- =================================================================== -->
   <target name="junit-functional-noserver" if="junit.present">
-    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+    <junit printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="test-classpath" />
       <formatter type="plain" />
       <batchtest>

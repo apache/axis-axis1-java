@@ -182,37 +182,6 @@ public abstract class TypeEntry extends SymTabEntry {
        
 
     /**
-     * UpdateUndefined is called when the ref TypeEntry is finally known.
-     */
-    protected boolean updateUndefined(TypeEntry oldRef, TypeEntry newRef) throws IOException {
-        // Replace refType with the new one if applicable
-        if (refType == oldRef) {
-            refType = newRef;
-            // Detect a loop
-            TypeEntry te = refType;
-            while(te != null && te != this) {
-                te = te.refType;
-            }
-            if (te == this) {
-                // Detected a loop.
-                undefined = false;
-                setName("");
-                isBaseType = false;
-                node = null;                   
-                throw new IOException(JavaUtils.getMessage("undefinedloop00", getQName().toString()));
-            }
-        }
-
-        // Update information if refType is now defined
-        if (refType != null && undefined && refType.undefined==false) {
-            undefined = false;
-            setName(refType.getName() + dims);             
-            isBaseType = (refType.getBaseType() != null && dims.equals(""));
-        }
-        return undefined;
-    }
-
-    /**
      * Query Java Mapping Name
      */
     public String getJavaName() {
@@ -239,6 +208,62 @@ public abstract class TypeEntry extends SymTabEntry {
             return null;
         }
     }
+
+    /**
+     * getUndefinedTypeRef returns the Undefined TypeEntry that this entry depends on or NULL.
+     */
+    protected TypeEntry getUndefinedTypeRef() {
+        if (this instanceof Undefined) 
+            return this;
+        if (undefined && refType != null) {
+            if (refType.undefined) {
+                TypeEntry uType = refType;
+                while (!(uType instanceof Undefined)) {
+                    uType = uType.refType;
+                }
+                return uType;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * UpdateUndefined is called when the ref TypeEntry is finally known.
+     * @param oldRef The TypeEntry representing the Undefined TypeEntry
+     * @param newRef The replacement TypeEntry
+     * @return true if TypeEntry is changed in any way.
+     */
+    protected boolean updateUndefined(TypeEntry oldRef, TypeEntry newRef) throws IOException {
+        boolean changedState = false;
+        // Replace refType with the new one if applicable
+        if (refType == oldRef) {
+            refType = newRef;
+            changedState = true;
+            // Detect a loop
+            TypeEntry te = refType;
+            while(te != null && te != this) {
+                te = te.refType;
+            }
+            if (te == this) {
+                // Detected a loop.
+                undefined = false;
+                setName("");
+                isBaseType = false;
+                node = null;                   
+                throw new IOException(JavaUtils.getMessage("undefinedloop00", getQName().toString()));
+            }
+        }
+
+        // Update information if refType is now defined
+        if (refType != null && undefined && refType.undefined==false) {
+            undefined = false;
+            changedState = true;
+            setName(refType.getName() + dims);             
+            isBaseType = (refType.getBaseType() != null && dims.equals(""));
+        }
+        return changedState;
+    }
+
 
     /**
      * Get string representation.
