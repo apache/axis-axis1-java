@@ -55,16 +55,11 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.message.Message;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.utils.QName;
-import org.apache.axis.utils.NSStack;
-
 /**
  * @author James Snell (jasnell@us.ibm.com)
  */
 public interface Serializer { 
     
-    public MessageElement serialize(QName name, Object value, NSStack nsStack, TypeMappingRegistry tmr, Message message);
+    //public MessageElement serialize(QName name, Object value, NSStack nsStack, TypeMappingRegistry tmr, Message message);
     
 }
