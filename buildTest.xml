@@ -227,24 +227,19 @@ Copyright:
       httpStopTarget="stop-functional-test-http-server" />
 
     <!-- now run security test -->
-    <runaxisfunctionaltests
-      url="http://localhost:8088"
-      tcpServerTarget="start-functional-test-tcp-server"
-      httpServerTarget="start-functional-test-http-server-secure"
-      testTarget="junit-functional-secure"
-      httpStopTarget="stop-functional-test-http-server-secure" />
+    <antcall target="functional-tests-secure"/>
 
   </target>
 
   <!-- =================================================================== -->
   <!-- Run secure functional tests ONLY                                    -->
   <!-- =================================================================== -->
-  <target name="functional-tests-secure-only" if="junit.present">
+  <target name="functional-tests-secure" if="security.present">
 
     <runaxisfunctionaltests
       url="http://localhost:8088"
       tcpServerTarget="start-functional-test-tcp-server"
-      httpServerTarget="start-functional-test-http-server"
+      httpServerTarget="start-functional-test-http-server-secure"
       testTarget="junit-functional-secure"
       httpStopTarget="stop-functional-test-http-server-secure" />
 
