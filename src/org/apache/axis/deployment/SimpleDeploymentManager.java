@@ -204,7 +204,7 @@ public class SimpleDeploymentManager
     }
 
     /**
-     * Return an instance of the deployed item
+     * Return an instance of the deployed handler
      * @param qname XXX
      * @return XXX
      * @throws DeploymentException XXX
@@ -223,6 +223,19 @@ public class SimpleDeploymentManager
         catch (Exception e) {
             throw new DeploymentException(e.getMessage());
         }
+    }
+    
+    /**
+     * Return a deployment item of the deployed handler
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public DeployableItem getHandlerDeployableItem(QName qname)
+        throws DeploymentException
+    {
+        DeployableItem item = (DeployableItem)handlers.get(qname);
+        return item;
     }
 
     /**
@@ -246,6 +259,19 @@ public class SimpleDeploymentManager
             throw new DeploymentException(e.toString());
         }
     }
+    
+    /**
+     * Return a deployment item of the deployed service
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public DeployableItem getServiceDeployableItem(QName qname)
+        throws DeploymentException
+    {
+        DeployableItem item = (DeployableItem)services.get(qname);
+        return item;
+    }
 
     /**
      * Return an instance of the deployed transport
@@ -267,6 +293,19 @@ public class SimpleDeploymentManager
         catch (Exception e) {
             throw new DeploymentException(e.getMessage());
         }
+    }
+    
+    /**
+     * Return a deployment item of the deployed transport
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public DeployableItem getTransportDeployableItem(QName qname)
+        throws DeploymentException
+    {
+        DeployableItem item = (DeployableItem)transports.get(qname);
+        return item;
     }
 
     /**

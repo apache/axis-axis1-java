@@ -103,12 +103,30 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * retrieve an instance of the named handler
+     * retrieve a deployment item of the named handler
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract DeployableItem getHandlerDeployableItem(QName qname)
+        throws DeploymentException;
+    
+    /**
+     * retrieve an instance of the named service
      * @param qname XXX
      * @return XXX
      * @throws DeploymentException XXX
      */
     public abstract Handler getService(QName qname)
+        throws DeploymentException;
+    
+    /**
+     * retrieve a deployment item of the named service
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract DeployableItem getServiceDeployableItem(QName qname)
         throws DeploymentException;
 
     /**
@@ -118,6 +136,15 @@ public abstract class DeploymentRegistry
      * @throws DeploymentException XXX
      */
     public abstract Handler getTransport(QName qname)
+        throws DeploymentException;
+    
+    /**
+     * retrieve a deployment item of the named transport
+     * @param qname XXX
+     * @return XXX
+     * @throws DeploymentException XXX
+     */
+    public abstract DeployableItem getTransportDeployableItem(QName qname)
         throws DeploymentException;
 
     /**
