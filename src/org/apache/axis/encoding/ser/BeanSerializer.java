@@ -27,6 +27,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.FieldPropertyDescriptor;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.commons.logging.Log;
@@ -316,14 +317,13 @@ public class BeanSerializer implements Serializer, Serializable {
                 continue;
             }
 
-            Class fieldType = propertyDescriptor[i].getType();
-
             // If we have type metadata, check to see what we're doing
             // with this field.  If it's an attribute, skip it.  If it's
             // an element, use whatever qname is in there.  If we can't
             // find any of this info, use the default.
 
             if (typeDesc != null) {
+                Class fieldType = propertyDescriptor[i].getType();
                 FieldDesc field = typeDesc.getFieldByName(propName);
 
                 if (field != null) {
@@ -363,11 +363,28 @@ public class BeanSerializer implements Serializer, Serializable {
                                propertyDescriptor[i].isIndexed(), false, all, false);
                 }
             } else {
-                writeField(types,
-                           propName,
-                           null,
-                           fieldType,
-                           propertyDescriptor[i].isIndexed(), false, all, false);
+                boolean done = false;
+                if(propertyDescriptor[i] instanceof FieldPropertyDescriptor){
+                    FieldPropertyDescriptor fpd = (FieldPropertyDescriptor) propertyDescriptor[i];
+                    Class clazz = fpd.getField().getType();
+                    if(types.getTypeQName(clazz)!=null) {
+                        writeField(types,
+                                   propName,
+                                   null,
+                                   clazz,
+                                   false, false, all, false);
+                   
+                        done = true;
+                    }
+                }
+                if(!done) {
+                    writeField(types,
+                               propName,
+                               null,
+                               propertyDescriptor[i].getType(),
+                               propertyDescriptor[i].isIndexed(), false, all, false);
+                }                    
+                
             }
         }
 
