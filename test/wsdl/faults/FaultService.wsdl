@@ -35,6 +35,18 @@
         </xsd:complexContent>
       </xsd:complexType>
 
+    <xsd:complexType name="extensionFault">
+        <xsd:sequence>
+          <xsd:element name="extension" type="tns:ExtensionType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+    <xsd:complexType name="ExtensionType">
+      <xsd:sequence>
+        <xsd:any namespace="##any"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
     </xsd:schema>
   </types>
 
@@ -59,6 +71,15 @@
   <message name="throwFaultFault">
     <part name="theFault" type="tns:derivedFault" />
   </message>
+  <message name="throwExtensionFaultResponse">
+    <part name="return" type="xsd:int"/>
+  </message>
+  <message name="throwExtensionFaultRequest">
+    <part name="description" type="xsd:string"/>
+  </message>
+  <message name="throwExtensionFaultFault">
+    <part name="theFault" type="tns:extensionFault" />
+  </message>
 
   <portType name="FaultServicePortType">
     <operation name="getQuote">
@@ -70,6 +91,11 @@
       <input message="serviceNS:throwFaultRequest"/>
       <output message="serviceNS:throwFaultResponse"/>
       <fault name="throwFaultFault" message="serviceNS:throwFaultFault"/>
+    </operation>
+    <operation name="throwExtensionFault">
+      <input message="serviceNS:throwExtensionFaultRequest"/>
+      <output message="serviceNS:throwExtensionFaultResponse"/>
+      <fault name="throwExtensionFaultFault" message="serviceNS:throwExtensionFaultFault"/>
     </operation>
   </portType>
   <binding name="FaultServiceSoapBinding" type="serviceNS:FaultServicePortType">
@@ -96,6 +122,18 @@
       </output>
       <fault name="throwFaultFault">
         <soap:fault name="throwFaultFault" use="encoded"/>
+      </fault>
+    </operation>
+     <operation name="throwExtensionFault">
+      <soap:operation soapAction="" style="rpc"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </output>
+      <fault name="throwExtensionFaultFault">
+        <soap:fault name="throwExtensionFaultFault" use="encoded"/>
       </fault>
     </operation>
   </binding>

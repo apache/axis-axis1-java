@@ -67,6 +67,21 @@ import org.xml.sax.helpers.DefaultHandler;
 public class SOAPHandler extends DefaultHandler
 {
     public MessageElement myElement = null;
+    private MessageElement[] myElements;
+    private int myIndex = 0;
+
+    public SOAPHandler() {
+    }
+
+   /**
+    * This constructor allows deferred setting of any elements
+    * @param elements array of message elements to be populated
+    * @param index position in array where the message element is to be created
+    */
+    public SOAPHandler(MessageElement[] elements, int index) {
+        myElements = elements;
+        myIndex = index;
+    }
     
     public void startElement(String namespace, String localName,
                              String prefix, Attributes attributes,
@@ -95,8 +110,12 @@ public class SOAPHandler extends DefaultHandler
                            DeserializationContext context)
         throws SAXException
     {
-        if (myElement != null)
+        if (myElement != null) {
+            if (myElements != null) {
+                myElements[myIndex] = myElement;
+            }
             myElement.setEndIndex(context.getCurrentRecordPos());
+        }
     }
     
     public SOAPHandler onStartChild(String namespace, 
