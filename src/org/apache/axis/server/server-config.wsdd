@@ -13,7 +13,17 @@
         <parameter name="scope" value="request"/>
         <parameter name="extension" value=".jwr"/>
      </handler>
+     <!-- uncomment this if you want the SOAP monitor -->
+     <!--
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+     -->
    </requestFlow>
+   <!-- uncomment this if you want the SOAP monitor -->
+   <!--
+   <responseFlow>
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+   </responseFlow>
+   -->
  </globalConfiguration>
 
  <handler type="java:org.apache.axis.providers.java.RPCProvider" name="RPCDispatcher"/>
