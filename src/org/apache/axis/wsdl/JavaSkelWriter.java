@@ -190,7 +190,7 @@ public class JavaSkelWriter extends JavaWriter {
             pw.print("        ");
         else
             pw.print("        Object ret = ");
-        String call = "impl." + operation.getName() + "(";
+        String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
         if (emitter.bMessageContext) {
             call = call + "ctx";
             if (parms.list.size() > 0)

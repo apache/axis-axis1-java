@@ -125,7 +125,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 continue;
             }
 
-            String portName = Utils.xmlNameToJava(p.getName());
+            String portName = Utils.xmlNameToJavaClass(p.getName());
 
             writeComment(pw, p.getDocumentationElement());
             writeServiceTestCode(portName, binding);
@@ -198,7 +198,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             }
 
             pw.print("binding.");
-            pw.print(op.getName());
+            pw.print(Utils.xmlNameToJava(op.getName()));
             pw.print("(");
 
             Iterator iparam = params.list.iterator();

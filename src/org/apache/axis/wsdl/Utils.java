@@ -406,7 +406,7 @@ public class Utils {
     static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
 
     /** Use this character as suffix */
-    static final char keywordSuffix = '_';
+    static final char keywordPrefix = '_';
 
     /**
      * checks if the input string is a valid java keyword.
@@ -421,7 +421,7 @@ public class Utils {
      * this simply means appending an underscore.)
      */
     public static String makeNonJavaKeyword(String keyword){
-        return  keyword + keywordSuffix;
+        return  keywordPrefix + keyword;
      }
 
     /**
@@ -430,12 +430,48 @@ public class Utils {
     public static String xmlNameToJava(String name)
     {
         char[] nameArray = name.toCharArray();
-        for(int j = 0, len = name.length(); j < len; ++j) {
-            char c = nameArray[j];
-            if( !Character.isLetterOrDigit(c) && c != '_' )
-                nameArray[j] = '_';
+        int len = name.length();
+        StringBuffer result = new StringBuffer(len);
+        
+        // First character, lower case
+        int i = 0;
+        while (i < name.length() 
+                && !Character.isLetter(nameArray[i])) {
+            i++;
         }
-        return capitalizeFirstChar(new String(nameArray));
+        result.append( Character.toLowerCase(nameArray[i]) );
+        
+        // The rest of the string
+        boolean wordStart = false;
+        for(int j = i + 1; j < len; ++j) {
+            char c = nameArray[j];
+
+            // if this is a bad char, skip it a remember to capitolize next
+            // good character we encounter
+            if( !Character.isLetterOrDigit(c)) {
+                wordStart = true;
+                continue;
+            }
+            result.append( wordStart ? Character.toUpperCase(c) : c );
+            wordStart = false;
+        }
+        
+        // covert back to a String
+        String newName = result.toString();
+        
+        // check for Java keywords
+        if (isJavaKeyword(newName))
+            newName = makeNonJavaKeyword(newName);
+        
+        return newName;
+    }
+
+    /**
+     * Map an XML name to a valid Java identifier w/ capitolized first letter 
+     */ 
+    public static String xmlNameToJavaClass(String name)
+    {
+        return capitalizeFirstChar(xmlNameToJava(name));
     }
 
     public static String makePackageName(String namespace)
@@ -535,9 +571,9 @@ public class Utils {
         String exceptionName;
         if (faultMessage != null) {
             String faultMessageName = faultMessage.getQName().getLocalPart();
-            exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(faultMessageName));
+            exceptionName = Utils.xmlNameToJavaClass(faultMessageName);
         } else {
-            exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(fault.getName()));
+            exceptionName = Utils.xmlNameToJavaClass(fault.getName());
         }
         return exceptionName;
     }

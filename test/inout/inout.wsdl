@@ -122,137 +122,137 @@
   <portType name="Inout">
 
     <!-- all permutations in order out, inout, in -->
-    <operation name="out0_inout0_in0">
+    <operation name="out0Inout0In0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg0"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inout0_in1">
+    <operation name="out0Inout0In1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg0"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inout0_inMany">
+    <operation name="out0Inout0InMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg0"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inout1_in0">
+    <operation name="out0Inout1In0">
       <input message="tns:Msg3"/>
       <output message="tns:Msg3"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inout1_in1">
+    <operation name="out0Inout1In1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg1"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inout1_inMany">
+    <operation name="out0Inout1InMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg3"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inoutMany_in0">
+    <operation name="out0InoutManyIn0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg2"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inoutMany_in1">
+    <operation name="out0InoutManyIn1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg2"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out0_inoutMany_inMany">
+    <operation name="out0InoutManyInMany">
       <input message="tns:Msg234"/>
       <output message="tns:Msg2"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout0_in0">
+    <operation name="out1Inout0In0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg4"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout0_in1">
+    <operation name="out1Inout0In1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg4"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout0_inMany">
+    <operation name="out1Inout0InMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg4"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout1_in0">
+    <operation name="out1Inout1In0">
       <input message="tns:Msg1"/>
       <output message="tns:Msg2"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout1_in1">
+    <operation name="out1Inout1In1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg15"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inout1_inMany">
+    <operation name="out1Inout1InMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg15"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inoutMany_in0">
+    <operation name="out1InoutManyIn0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg25"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inoutMany_in1">
+    <operation name="out1InoutManyIn1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg25"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="out1_inoutMany_inMany">
+    <operation name="out1InoutManyInMany">
       <input message="tns:Msg234"/>
       <output message="tns:Msg25"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout0_in0">
+    <operation name="outManyInout0In0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg2"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout0_in1">
+    <operation name="outManyInout0In1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg45"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout0_inMany">
+    <operation name="outManyInout0InMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg45"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout1_in0">
+    <operation name="outManyInout1In0">
       <input message="tns:Msg1"/>
       <output message="tns:Msg145"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout1_in1">
+    <operation name="outManyInout1In1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg145"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inout1_inMany">
+    <operation name="outManyInout1InMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg345"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inoutMany_in0">
+    <operation name="outManyInoutManyIn0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg245"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inoutMany_in1">
+    <operation name="outManyInoutManyIn1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg245"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
-    <operation name="outMany_inoutMany_inMany">
+    <operation name="outManyInoutManyInMany">
       <input message="tns:Msg236"/>
       <output message="tns:Msg245"/>
       <fault name="TestFailed" message="tns:TestFailed"/>
@@ -264,7 +264,7 @@
   <binding name="InoutSOAPBinding" type="tns:Inout">
     <soap:binding style="rpc" 
                   transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="out0_inout0_in0">
+    <operation name="out0Inout0In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -279,7 +279,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inout0_in1">
+    <operation name="out0Inout0In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -294,7 +294,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inout0_inMany">
+    <operation name="out0Inout0InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -309,7 +309,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inout1_in0">
+    <operation name="out0Inout1In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -324,7 +324,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inout1_in1">
+    <operation name="out0Inout1In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -339,7 +339,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inout1_inMany">
+    <operation name="out0Inout1InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -354,7 +354,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inoutMany_in0">
+    <operation name="out0InoutManyIn0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -369,7 +369,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inoutMany_in1">
+    <operation name="out0InoutManyIn1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -384,7 +384,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out0_inoutMany_inMany">
+    <operation name="out0InoutManyInMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -399,7 +399,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout0_in0">
+    <operation name="out1Inout0In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -414,7 +414,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout0_in1">
+    <operation name="out1Inout0In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -429,7 +429,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout0_inMany">
+    <operation name="out1Inout0InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -444,7 +444,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout1_in0">
+    <operation name="out1Inout1In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -459,7 +459,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout1_in1">
+    <operation name="out1Inout1In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -474,7 +474,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inout1_inMany">
+    <operation name="out1Inout1InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -489,7 +489,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inoutMany_in0">
+    <operation name="out1InoutManyIn0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -504,7 +504,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inoutMany_in1">
+    <operation name="out1InoutManyIn1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -519,7 +519,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="out1_inoutMany_inMany">
+    <operation name="out1InoutManyInMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -534,7 +534,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout0_in0">
+    <operation name="outManyInout0In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -549,7 +549,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout0_in1">
+    <operation name="outManyInout0In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -564,7 +564,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout0_inMany">
+    <operation name="outManyInout0InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -579,7 +579,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout1_in0">
+    <operation name="outManyInout1In0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -594,7 +594,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout1_in1">
+    <operation name="outManyInout1In1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -609,7 +609,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inout1_inMany">
+    <operation name="outManyInout1InMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -624,7 +624,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inoutMany_in0">
+    <operation name="outManyInoutManyIn0">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -639,7 +639,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inoutMany_in1">
+    <operation name="outManyInoutManyIn1">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
@@ -654,7 +654,7 @@
       <fault name="TestFailed">
       </fault>
     </operation>
-    <operation name="outMany_inoutMany_inMany">
+    <operation name="outManyInoutManyInMany">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
