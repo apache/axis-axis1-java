@@ -4,6 +4,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.RPCElement;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.custommonkey.xmlunit.XMLUnit;
 
 import javax.xml.soap.MessageFactory;
@@ -17,6 +18,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPBodyElement;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -142,6 +144,26 @@ public class TestDOM extends AxisTestBase {
             SOAPElement elem3 = (SOAPElement) it3.next();
             System.out.println("child = " + elem3);
         }
+    }
+    
+    public void testAddDocument() throws Exception {
+        String xml = "<bank:getBalance xmlns:bank=\"http://myservice.test.com/banking/\">\n" +
+                     "    <gb:getBalanceReq xmlns:gb=\"http://myservice.test.com/banking/getBalance\">\n" +
+                     "        <bt:account acctType=\"domestic\" customerId=\"654321\" xmlns:bt=\"http://myservice.test.com/banking/bankTypes\">\n" +
+                     "            <bt:accountNumber>1234567890</bt:accountNumber>\n" +
+                     "            <bt:currency>USD</bt:currency>\n" +
+                     "        </bt:account>\n" +
+                     "    </gb:getBalanceReq>\n" +
+                     "</bank:getBalance>";
+        Document document = XMLUtils.newDocument(new ByteArrayInputStream(xml.getBytes()));
+        
+        MessageFactory factory = new org.apache.axis.soap.MessageFactoryImpl();
+        SOAPMessage msg = factory.createMessage();
+        msg.getSOAPBody();
+        SOAPBody body = msg.getSOAPBody();
+        
+        SOAPBodyElement soapBodyElt = body.addDocument(document);
+        assertXMLEqual(xml, soapBodyElt.toString());
     }
 
     private String messageToString(SOAPMessage message) throws Exception {

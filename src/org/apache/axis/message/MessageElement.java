@@ -1415,10 +1415,17 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 Mapping map = new Mapping(att.getNodeValue(), att.getLocalName());
                 addMapping(map);
             }
-            parent.addAttribute(att.getPrefix(),
-                    att.getNamespaceURI(),
-                    att.getLocalName(),
-                    att.getNodeValue());
+            if(att.getLocalName() != null) {
+                parent.addAttribute(att.getPrefix(),
+                        att.getNamespaceURI(),
+                        att.getLocalName(),
+                        att.getNodeValue());
+            } else if (att.getNodeName() != null) {
+                parent.addAttribute(att.getPrefix(),
+                        att.getNamespaceURI(),
+                        att.getNodeName(),
+                        att.getNodeValue());
+            }
         }
 
         org.w3c.dom.NodeList children = element.getChildNodes();
