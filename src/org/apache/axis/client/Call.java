@@ -957,7 +957,9 @@ public class Call implements javax.xml.rpc.Call {
         if ( output  != null ) message = output.getMessage();
         if ( message != null ) parts   = message.getOrderedParts(null);
 
-        this.setReturnType( null );
+        this.setReturnType( null ); //Make sure we're restarting from fresh.
+        if(null != paramTypes) // attachments may have no parameters.
+          this.setReturnType( XMLType.AXIS_VOID );
         if ( parts != null ) {
             for( int i = 0 ;i < parts.size() ; i++ ) {
                 Part part  = (Part) parts.get( i );
