@@ -118,7 +118,7 @@ public class AdminClient {
         input.close();
         SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
         SOAPBodyElement body = envelope.getFirstBody();
-        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
+        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out), msgContext);
         body.output(ctx);
         // System.out.println( outMsg.getAs( "String" ) );
       }

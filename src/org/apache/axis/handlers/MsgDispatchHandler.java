@@ -126,7 +126,7 @@ public class MsgDispatchHandler extends BasicHandler {
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
       
       StringWriter writer = new StringWriter();
-      reqBody.output(new SerializationContext(writer));
+      reqBody.output(new SerializationContext(writer, msgContext));
       
       Reader reader = new StringReader(writer.getBuffer().toString());
       Document doc = XMLUtils.newDocument(new InputSource(reader));

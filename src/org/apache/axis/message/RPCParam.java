@@ -150,7 +150,7 @@ public class RPCParam extends MessageElement
             //     but haven't run them through a deserializer yet.
             StringWriter xml = new StringWriter();
             try {
-               SerializationContext xmlContext = new SerializationContext(xml);
+               SerializationContext xmlContext = new SerializationContext(xml, context.getMessageContext());
                ((ElementRecorder)value).outputChildren(xmlContext);
             } catch (Exception e) {
                if (DEBUG_LOG) e.printStackTrace();

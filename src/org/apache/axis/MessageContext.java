@@ -58,6 +58,8 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 /**
  * Some more general docs will go here.
@@ -113,8 +115,25 @@ public class MessageContext {
 
     public MessageContext() {}
 
+    
     public MessageContext( Message inMsg ) {
         setRequestMessage( inMsg );
+    }
+
+    /**
+     * Mappings of QNames to serializers/deserializers (and therfore
+     * to Java types).
+     */
+    private TypeMappingRegistry mappingRegistry = null;
+
+    public void setTypeMappingRegistry(TypeMappingRegistry reg) {
+        mappingRegistry = reg;
+    }
+
+    public TypeMappingRegistry getTypeMappingRegistry() {
+        if (mappingRegistry == null)
+            mappingRegistry = new SOAPTypeMappingRegistry();
+        return mappingRegistry;
     }
 
     /**

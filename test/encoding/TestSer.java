@@ -1,5 +1,6 @@
 package test.encoding;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -21,6 +22,7 @@ public class TestSer extends TestCase {
     }
 
     public void testData() throws Exception {
+        MessageContext msgContext = new MessageContext();
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
         
@@ -33,7 +35,7 @@ public class TestSer extends TestCase {
         msg.addBodyElement(body);
         
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContext(stringWriter);
+        SerializationContext context = new SerializationContext(stringWriter, msgContext);
         
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         QName dataQName = new QName("typeNS", "Data");
@@ -46,7 +48,7 @@ public class TestSer extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
+        SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), msgContext);
         reg = adapter.getContext().getTypeMappingRegistry();
         reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
         

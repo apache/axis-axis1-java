@@ -192,7 +192,7 @@ public class HTTPCall {
 
     if (DEBUG_LOG) {
         try {
-            SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
+            SerializationContext ctx = new SerializationContext(new PrintWriter(System.out), msgContext);
             System.out.println("");
             System.out.println("**DEBUG**");
             reqEnv.output(ctx);

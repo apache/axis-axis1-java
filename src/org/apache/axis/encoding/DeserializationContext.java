@@ -61,6 +61,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.QName;
+import org.apache.axis.MessageContext;
 
 /** Keeps track of the active typeMappings, element IDs, parser, and
  * SOAPSAXHandler in an ongoing parse.  Might want to move the
@@ -73,13 +74,16 @@ public class DeserializationContext
 {
     public SOAPSAXHandler baseHandler;
     public Hashtable idMappings = new Hashtable();
-    public TypeMappingRegistry mappingRegistry = null;
     public Hashtable fixups = new Hashtable();
     public boolean hasUnresolvedHrefs = false;
     
-    public DeserializationContext(SOAPSAXHandler baseHandler)
+    private MessageContext msgContext;
+
+    public DeserializationContext(SOAPSAXHandler baseHandler, 
+                                  MessageContext msgContext)
     {
         this.baseHandler = baseHandler;
+        this.msgContext  = msgContext;
     }
     
     public SOAPSAXHandler getSAXHandler()
@@ -172,16 +176,14 @@ public class DeserializationContext
         return getQNameFromString(type);
     }
     
-    public void setTypeMappingRegistry(TypeMappingRegistry reg)
-    {
-        mappingRegistry = reg;
-    }
-
     public TypeMappingRegistry getTypeMappingRegistry()
     {
-        if (mappingRegistry == null) 
-            mappingRegistry = new SOAPTypeMappingRegistry();
-        return mappingRegistry;
+        return msgContext.getTypeMappingRegistry();
+    }
+    
+    public MessageContext getMessageContext()
+    {
+        return msgContext;
     }
     
     public void registerID(String id, MessageElement element)

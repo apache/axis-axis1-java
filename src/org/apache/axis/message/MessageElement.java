@@ -105,7 +105,7 @@ public class MessageElement extends DeserializerBase
         }
       this.namespaceURI = namespace;
       this.name = localPart;
-      //this.context = context;
+      setDeserializationContext(context);
 
       if (attributes == null) {
         this.attributes = new AttributesImpl();

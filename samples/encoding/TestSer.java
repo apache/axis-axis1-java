@@ -1,5 +1,6 @@
 package samples.encoding;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -15,6 +16,7 @@ public class TestSer
     public static final String myNS = "urn:myNS";
     
     public static void main(String args[]) {
+        MessageContext msgContext = new MessageContext();
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
         QName dataQName = new QName("typeNS", "Data");
@@ -35,7 +37,7 @@ public class TestSer
             
             if (args.length == 0) {
                 Writer stringWriter = new StringWriter();
-                SerializationContext context = new SerializationContext(stringWriter);
+                SerializationContext context = new SerializationContext(stringWriter, msgContext);
                 
                 TypeMappingRegistry reg = context.getTypeMappingRegistry();
                 
@@ -55,7 +57,7 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
+            SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), new MessageContext());
             adapter.setServiceDescription(service);
             TypeMappingRegistry reg = adapter.getContext().getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
