@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
@@ -71,7 +72,9 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -109,7 +112,7 @@ public class CommonsHTTPSender extends BasicHandler {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        PostMethod method = null;
+        HttpMethodBase method = null;
         
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("enter00",
@@ -127,18 +130,31 @@ public class CommonsHTTPSender extends BasicHandler {
 
             HostConfiguration hostConfiguration = getHostConfiguration(httpClient, targetURL);
 
-            method = new PostMethod(targetURL.toString());
+            String webMethod = null;
+            boolean posting = true;
 
-            addContextInfo(method, httpClient, msgContext, targetURL);
-            Message reqMessage = msgContext.getRequestMessage();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            reqMessage.writeTo(baos);
-            method.setRequestBody(new ByteArrayInputStream(baos.toByteArray()));
-            method.setUseExpectHeader(false); // workaround for
-                                              // outbound chunking bug
-                                              // in httpclient
+            // If we're SOAP 1.2, allow the web method to be set from the
+            // MessageContext.
+            if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+                webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
+                if (webMethod != null) {
+                    posting = webMethod.equals(HTTPConstants.HEADER_POST);
+                }
+            }
             
+            Message reqMessage = msgContext.getRequestMessage();
+            if(posting) {
+                method = new PostMethod(targetURL.toString());
+                addContextInfo(method, httpClient, msgContext, targetURL);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                reqMessage.writeTo(baos);
+                ((PostMethod)method).setRequestBody(new ByteArrayInputStream(baos.toByteArray()));
+                ((PostMethod)method).setUseExpectHeader(false); // workaround for
+            } else {
+                method = new GetMethod(targetURL.toString());
+                addContextInfo(method, httpClient, msgContext, targetURL);
+            }
+
             int returnCode = httpClient.executeMethod(method);
             String contentType = null;
             String contentLocation = null;
@@ -282,7 +298,7 @@ public class CommonsHTTPSender extends BasicHandler {
      * @throws Exception
      */
     private void addContextInfo(
-        PostMethod method, HttpClient httpClient, MessageContext msgContext, URL tmpURL)
+        HttpMethodBase method, HttpClient httpClient, MessageContext msgContext, URL tmpURL)
         throws Exception {
 
         // optionally set a timeout for the request
@@ -299,8 +315,10 @@ public class CommonsHTTPSender extends BasicHandler {
             action = "";
         }
         Message msg = msgContext.getRequestMessage();
-        method.setRequestHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,
-                                           msg.getContentType(msgContext.getSOAPConstants())));
+        if (msg != null){
+            method.setRequestHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,
+                                               msg.getContentType(msgContext.getSOAPConstants())));
+        }
         method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, "\"" + action + "\""));
         String userID = msgContext.getUsername();
         String passwd = msgContext.getPassword();
