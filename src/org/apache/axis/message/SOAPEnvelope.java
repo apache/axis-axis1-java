@@ -427,7 +427,7 @@ public class SOAPEnvelope extends MessageElement
         context.setPretty(oldPretty);
     }
 
-    SOAPConstants getSOAPConstants() {
+    public SOAPConstants getSOAPConstants() {
         return soapConstants;
     }
 

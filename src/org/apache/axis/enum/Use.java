@@ -71,9 +71,11 @@ public class Use extends Enum {
 
     private static final Type type = new Type();
     
+    public static final String ENCODED12_STR = "encoded12";
     public static final String ENCODED_STR = "encoded";
     public static final String LITERAL_STR = "literal";
  
+    public static final Use ENCODED12 = type.getUse(ENCODED12_STR);
     public static final Use ENCODED = type.getUse(ENCODED_STR);
     public static final Use LITERAL = type.getUse(LITERAL_STR);
 
@@ -117,6 +119,8 @@ public class Use extends Enum {
                   Constants.URI_DEFAULT_SOAP_ENC),
             new Use(1, LITERAL_STR,
                   Constants.URI_LITERAL_ENC),
+            new Use(2, ENCODED12_STR,
+                  Constants.URI_SOAP12_ENC),
             });
         }
 
