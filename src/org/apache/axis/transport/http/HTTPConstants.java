@@ -91,4 +91,15 @@ public class HTTPConstants {
      *  have it.
      */
     public static String MC_HTTP_SOAPACTION     = "transport.http.soapAction";
+
+    /** HttpServlet
+     */
+    public static String MC_HTTP_SERVLET        = "transport.http.servlet" ;
+
+    /** HttpServletRequest
+     */
+    public static String MC_HTTP_SERVLETREQUEST = "transport.http.servletRequest";
+    /** HttpServletResponse
+     */
+    public static String MC_HTTP_SERVLETRESPONSE= "transport.http.servletRessponse";
 }
