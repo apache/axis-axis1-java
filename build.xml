@@ -103,9 +103,6 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
-      <exclude name="**/org/apache/axis/components/bytecode/BCEL*" unless="bcel.present"/>
-      <exclude name="**/org/apache/axis/components/bytecode/TechTrader*" unless="tt-bytecode.present"/>
-      <exclude name="**/org/apache/axis/components/bytecode/Serp*" unless="serp.present"/>
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/handler/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/server/Servlet*.java" unless="servlet.present"/>
@@ -146,7 +143,6 @@ Copyright:
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
     <copy file="${commons-discovery.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
-    <copy file="${tt-bytecode.jar}" toDir="${build.lib}"/>
 
 <!-- stub in my task generations -->
     <ant antfile="buildPreTestTaskdefs.xml" />
