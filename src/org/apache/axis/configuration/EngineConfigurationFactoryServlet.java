@@ -55,12 +55,11 @@
 
 package org.apache.axis.configuration;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.ServletContext;
-import org.apache.axis.AxisProperties;
-import org.apache.axis.ConfigurationException;
+
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
@@ -87,7 +86,7 @@ public class EngineConfigurationFactoryServlet
     protected static Log log =
         LogFactory.getLog(EngineConfigurationFactoryServlet.class.getName());
 
-    private ServletContext ctx;
+    private EngineConfiguration config;
     
     /**
      * Creates and returns a new EngineConfigurationFactory.
@@ -100,30 +99,25 @@ public class EngineConfigurationFactoryServlet
      * @see org.apache.axis.configuration.EngineConfigurationFactoryFinder
      */
     public static EngineConfigurationFactory newFactory(Object param) {
-        /**
-         * Default, let this one go through if we find a ServletContext.
-         * 
-         * The REAL reason we are not trying to make any
-         * decision here is because it's impossible
-         * (without refactoring FileProvider) to determine
-         * if a *.wsdd file is present or not until the configuration
-         * is bound to an engine.
-         * 
-         * FileProvider/EngineConfiguration pretend to be independent,
-         * but they are tightly bound to an engine instance...
-         */
-        return (param instanceof ServletContext)
-               ? new EngineConfigurationFactoryServlet((ServletContext)param)
-               : null;
+        if (param instanceof ServletContext) {
+            ServletContext ctx = (ServletContext)param;
+            EngineConfiguration config = getServerEngineConfig(ctx);
+
+            if (config != null) {
+                return new EngineConfigurationFactoryServlet(config);
+            }
+        }
+        
+        return null;
     }
 
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    protected EngineConfigurationFactoryServlet(ServletContext ctx) {
+    protected EngineConfigurationFactoryServlet(EngineConfiguration config) {
         super();
-        this.ctx = ctx;
+        this.config = config;
     }
 
     /**
@@ -132,7 +126,7 @@ public class EngineConfigurationFactoryServlet
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
-        return getServerEngineConfig(ctx);
+        return config;
     }
 
     /**
@@ -141,7 +135,7 @@ public class EngineConfigurationFactoryServlet
      * @param ctx a ServletContext
      * @return a server EngineConfiguration
      */
-    private EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+    private static EngineConfiguration getServerEngineConfig(ServletContext ctx) {
         /*
          * Use the WEB-INF directory (so the config files can't get
          * snooped by a browser)
@@ -160,6 +154,11 @@ public class EngineConfigurationFactoryServlet
             config = null;
         } else {
             config = new FileProvider(is);
+            try {
+                is.close();
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         return config;
