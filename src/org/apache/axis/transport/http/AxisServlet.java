@@ -616,7 +616,7 @@ public class AxisServlet extends AxisServletBase {
             writer.println("<h2>" +
                            Messages.getMessage("error00") +
                            "</h2>");
-            writer.println("<p><i>?list</i>" +
+            writer.println("<p><i>?list</i> " +
                            Messages.getMessage("disabled00") +
                            "</p>");
         }
