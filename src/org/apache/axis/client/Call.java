@@ -243,11 +243,11 @@ public class Call implements javax.xml.rpc.Call {
     public static final String JAXRPC_PORTTYPE_NAME = WSDL_PORT_NAME;
 
     /**
-     * If true, the code will throw a fault if there is no
+     * If this property is true, the code will throw a fault if there is no
      * response message from the server.  Otherwise, the
      * invoke method will return a null.
      */
-    public static final boolean FAULT_ON_NO_RESPONSE = false;
+    public static final String FAULT_ON_NO_RESPONSE = "call.FaultOnNoResponse";
 
     /**
      * Property for setting attachment format.
@@ -1723,7 +1723,7 @@ public class Call implements javax.xml.rpc.Call {
 
             msg = msgContext.getResponseMessage();
             if (msg == null) {
-              if (FAULT_ON_NO_RESPONSE) {
+              if (msgContext.isPropertyTrue(FAULT_ON_NO_RESPONSE, false)) {
                 throw new AxisFault(Messages.getMessage("nullResponse00"));
               } else {
                 return null;
@@ -1804,7 +1804,7 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
             msg = msgContext.getResponseMessage();
             if (msg == null) {
-              if (FAULT_ON_NO_RESPONSE) {
+              if (msgContext.isPropertyTrue(FAULT_ON_NO_RESPONSE, false)) {
                 throw new AxisFault(Messages.getMessage("nullResponse00"));
               } else {
                 return null;
@@ -2328,7 +2328,7 @@ public class Call implements javax.xml.rpc.Call {
         resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null) {
-          if (FAULT_ON_NO_RESPONSE) {
+          if (msgContext.isPropertyTrue(FAULT_ON_NO_RESPONSE, false)) {
             throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
             return null;
@@ -2653,7 +2653,7 @@ public class Call implements javax.xml.rpc.Call {
         Message resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null) {
-          if (FAULT_ON_NO_RESPONSE) {
+          if (msgContext.isPropertyTrue(FAULT_ON_NO_RESPONSE, false)) {
             throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
             return;

@@ -227,7 +227,7 @@ public abstract class BasicProvider extends BasicHandler {
             emitter.setStyle(serviceDesc.getStyle());
             emitter.setUse(serviceDesc.getUse());
 
-            if (serviceDesc instanceof ServiceDesc) {
+            if (serviceDesc instanceof JavaServiceDesc) {
                 emitter.setClsSmart(((JavaServiceDesc)serviceDesc).getImplClass(),
                                     locationUrl);
             }
