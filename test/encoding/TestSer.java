@@ -48,7 +48,7 @@ public class TestSer extends TestCase {
         
         SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
         reg = adapter.getContext().getTypeMappingRegistry();
-        reg.addDeserializerFactory(dataQName, DataSer.getFactory());
+        reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
         
         SOAPEnvelope env = adapter.getEnvelope();
         RPCElement rpcElem = (RPCElement)env.getFirstBody();
