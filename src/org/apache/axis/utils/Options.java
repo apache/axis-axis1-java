@@ -234,7 +234,7 @@ public class Options {
     }
 
     tmp = isValueSet( 'h' ); if ( host == null ) host = tmp ;
-    tmp = isValueSet( 'o' ); if ( port == null ) port = tmp ;
+    tmp = isValueSet( 'p' ); if ( port == null ) port = tmp ;
     tmp = isValueSet( 's' ); if ( servlet == null ) servlet = tmp ;
 
     if ( host == null ) host = "localhost" ;
