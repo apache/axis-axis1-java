@@ -55,7 +55,7 @@
 
 package org.apache.axis.attachments;
 import org.apache.log4j.Category;
-
+import org.apache.axis.InternalException;
 
 /**
  * @author Rick Rineholt 
@@ -500,7 +500,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
             if(debugEnabled) category.debug(hashCode() + "read(" + off + ", " + len +")");
             if(deleted) throw new java.io.IOException("Resource has been deleted.");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
-            if (b == null) throw new NullPointerException(
+            if (b == null) throw new InternalException(
                  "input buffer is null");
             if (off < 0)  throw new IndexOutOfBoundsException
                 ("Offset is negative: " + off);

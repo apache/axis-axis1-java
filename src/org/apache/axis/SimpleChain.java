@@ -59,6 +59,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.InternalException;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,11 +172,11 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     public void addHandler(Handler handler) {
         if (handler == null)
-            throw new NullPointerException(
+            throw new InternalException(
                     JavaUtils.getMessage("nullHandler00", "SimpleChain::addHandler"));
 
         if (invoked)
-            throw new NullPointerException(
+            throw new InternalException(
                     JavaUtils.getMessage("addAfterInvoke00", "SimpleChain::addHandler"));
         
         if ( handlers == null ) handlers = new Vector();
