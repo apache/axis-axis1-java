@@ -51,6 +51,7 @@ public class TestDeser extends TestCase {
               "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
               "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
               "xmlns:me=\"http://soapinterop.org/xsd\" " +
+              "xmlns:this=\"http://encoding.test\" " + 
               "xmlns:xsi=\"" + NS_XSI + "\" " +
               "xmlns:xsd=\"" + NS_XSD + "\">\n" +
               "<soap:Body>\n" +
@@ -93,6 +94,14 @@ public class TestDeser extends TestCase {
                     new org.apache.axis.encoding.ser.BeanDeserializerFactory(
                           samples.echo.SOAPStructStruct.class,
                           new QName("http://soapinterop.org/xsd", "SOAPStructStruct")));
+        tm.register(test.encoding.IndexPropBean.class, 
+                    new QName("http://encoding.test", "IndexPropBean"),
+                    new org.apache.axis.encoding.ser.BeanSerializerFactory(
+                          test.encoding.IndexPropBean.class,
+                          new QName("http://encoding.test", "IndexPropBean")),
+                    new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+                          test.encoding.IndexPropBean.class,
+                          new QName("http://encoding.test", "IndexPropBean")));
     }
 
     /**
@@ -533,7 +542,31 @@ public class TestDeser extends TestCase {
                     "</soapenc:Array>",
                     s, true);
     }
-
+    // Deserialize Bean with discreet names
+    public void testBeanWithIndexedPropA() throws Exception {
+        IndexPropBean s = new IndexPropBean();
+        s.setName(new String[] {"hello", "goodbye"});
+        deserialize("<result xsi:type=\"this:IndexPropBean\" " + "> " +
+                    "<name href=\"#ref-1\"/>" +
+                    "<name href=\"#ref-2\"/>" +
+                    "</result>" +
+                    "<item id=\"ref-1\" xsi:type=\"xsd:string\">hello</item>" +
+                    "<item id=\"ref-2\" xsi:type=\"xsd:string\">goodbye</item>",
+                    s, true);
+    }
+    // Deserialize Bean with names in an array
+    public void testBeanWithIndexedPropB() throws Exception {
+        IndexPropBean s = new IndexPropBean();
+        s.setName(new String[] {"hello", "goodbye"});
+        deserialize("<result xsi:type=\"this:IndexPropBean\" " + "> " +
+                    "<name href=\"#ref-0\" /> " +
+                    "</result>" +
+                    "<soapenc:Array id=\"ref-0\" soapenc:arrayType=\"xsd:string[2]\"> " +
+                    "<item xsi:type=\"xsd:string\">hello</item>" +
+                    "<item xsi:type=\"xsd:string\">goodbye</item>" +
+                    "</soapenc:Array>",
+                    s, true);
+    }
     // Struct within Struct
     public void testStructStruct() throws Exception {
 

@@ -258,15 +258,17 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         QName childXMLType = context.getTypeFromXSITypeAttr(namespace, 
                                                             localName,
                                                             attributes);
-        
-        // If no xsi:type, check the meta-data for the field
-        if (childXMLType == null && fieldDesc != null) {
+
+        String href = attributes.getValue("href");
+
+        // If no xsi:type or href, check the meta-data for the field
+        if (childXMLType == null && fieldDesc != null && href == null) {
             childXMLType = fieldDesc.getXmlType();
         }
         
         // Get Deserializer for child, default to using DeserializerImpl
         Deserializer dSer = getDeserializer(childXMLType, propDesc.getType(), 
-                                            attributes.getValue("href"),
+                                            href,
                                             context);
         // It is an error if the dSer is not found, the base
         // deserializer impl is returned so that it can generate the correct message.
@@ -415,6 +417,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         // See if we have a cached deserializer
         if (cacheStringDSer != null) {
             if (String.class.equals(javaType) &&
+                href == null &&
                 (cacheXMLType == null && xmlType == null ||
                  cacheXMLType != null && cacheXMLType.equals(xmlType))) {
                 cacheStringDSer.reset();
