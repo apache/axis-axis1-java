@@ -22,6 +22,8 @@ Group 3
 -------
 * Address roundtrip behaviour - with the exception of type promotion and param 
   naming differences
+   - this has been started see test/sequence
+
 * A mechanism to register types (class:serializer:deserializer)
 
 
