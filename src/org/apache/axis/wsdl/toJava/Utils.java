@@ -247,7 +247,8 @@ public class Utils {
                 QName kind = getNodeQName(search);
                 if (kind.getLocalPart().equals("schema")) {
                     search = null;
-                } else if (kind.getLocalPart().equals("element")) {
+                } else if (kind.getLocalPart().equals("element") ||
+                           kind.getLocalPart().equals("attribute")) {
                     localName = SymbolTable.ANON_TOKEN +
                         getNodeNameQName(search).getLocalPart();
                     search = search.getParentNode();
