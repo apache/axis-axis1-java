@@ -68,6 +68,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.message.DebugHeader;
+import org.apache.axis.transport.local.LocalDispatchHandler;
 
 import org.w3c.dom.* ;
 
@@ -298,6 +299,15 @@ public class ServiceClient {
     public void invoke() throws AxisFault {
         Debug.Print( 1, "Enter: ClientMessage::invoke(MessageContext)" );
         
+        // If local is specified, override the transport handlers Once there
+        // is a convenient way for the client to specify the transport 
+        // handler, we might want to consider removing this code and doLocal 
+        // entirely.
+        if (doLocal) {
+            msgContext.setProperty(MessageContext.TRANS_INPUT, "LocalSender");
+            msgContext.clearProperty(MessageContext.TRANS_OUTPUT);
+        }
+
         // set up message context if there is a transport
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, this.engine, doLocal);
