@@ -133,6 +133,7 @@ public class SOAPPart extends Part
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
         super();
+
         msgObject=parent;
         // originalMessage = initialContents;
         int form = FORM_STRING;
@@ -145,10 +146,16 @@ public class SOAPPart extends Part
         } else if (initialContents instanceof AxisFault) {
             form = FORM_FAULT;
         }
+
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "SOAPPart ctor(" + formNames[form] + ")"));
+            log.debug("Enter: SOAPPart ctor(" + formNames[form] + ")");
         }
+
         setCurrentMessage(initialContents, form);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: SOAPPart ctor()");
+        }
     }
     /* This could be rather costly with attachments.  
 
@@ -261,9 +268,9 @@ public class SOAPPart extends Part
      * array.  This will force buffering of the message.
      */
     public byte[] getAsBytes() throws AxisFault {
-    log.debug(JavaUtils.getMessage("enter00", "SOAPPart::getAsBytes"));
+	    log.debug("Enter: SOAPPart::getAsBytes");
         if ( currentForm == FORM_BYTES ) {
-            log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+            log.debug("Exit: SOAPPart::getAsBytes");
             return (byte[])currentMessage;
         }
 
@@ -272,6 +279,7 @@ public class SOAPPart extends Part
                 getAsSOAPEnvelope();
             } catch (Exception e) {
                 log.fatal(JavaUtils.getMessage("makeEnvFail00"), e);
+	            log.debug("Exit: SOAPPart::getAsBytes");
                 return null;
             }
         }
@@ -290,13 +298,13 @@ public class SOAPPart extends Part
                 // byte[]  buf = new byte[ len ];
                 // inp.read( buf );
                 setCurrentMessage( buf, FORM_BYTES );
-                log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+	            log.debug("Exit: SOAPPart::getAsBytes");
                 return (byte[])currentMessage;
             }
             catch( Exception e ) {
                 log.error(JavaUtils.getMessage("exception00"), e);
             }
-            log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+            log.debug("Exit: SOAPPart::getAsBytes");
             return null;
         }
 
@@ -305,6 +313,7 @@ public class SOAPPart extends Part
                 try{
                     return getAsString().getBytes("UTF-8");
                  }catch(UnsupportedEncodingException ue){
+	            log.debug("Exit: SOAPPart::getAsBytes");
                 return getAsString().getBytes();
             }
         }
@@ -317,15 +326,14 @@ public class SOAPPart extends Part
                setCurrentMessage( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
             }
-            log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+            log.debug("Exit: SOAPPart::getAsBytes");
             return (byte[])currentMessage;
         }
 
         log.error(JavaUtils.getMessage("cantConvert00", ""+currentForm));
 
-        log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+        log.debug("Exit: SOAPPart::getAsBytes");
         return null;
-
     }
 
     /**
@@ -333,10 +341,9 @@ public class SOAPPart extends Part
      * This will force buffering of the message.
      */
     public String getAsString() throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "SOAPPart::getAsString"));
+        log.debug("Enter: SOAPPart::getAsString");
         if ( currentForm == FORM_STRING ) {
-            log.debug(JavaUtils.getMessage("exitCurrMsg",
-                    "SOAPPart::getAsString", "" + currentMessage));
+            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             return (String)currentMessage;
         }
 
@@ -354,8 +361,7 @@ public class SOAPPart extends Part
             setCurrentMessage( new String((byte[]) currentMessage),
                                FORM_STRING );
                         }
-            log.debug(JavaUtils.getMessage("exitCurrMsg",
-                    "SOAPPart::getAsString", "" + currentMessage));
+            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             return (String)currentMessage;
         }
 
@@ -369,6 +375,7 @@ public class SOAPPart extends Part
                 return null;
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
+            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             return (String)currentMessage;
         }
 
@@ -381,12 +388,13 @@ public class SOAPPart extends Part
                 throw AxisFault.makeFault(e);
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
+            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
             return (String)currentMessage;
         }
 
         log.error( JavaUtils.getMessage("cantConvert01", ""+currentForm));
 
-        log.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsString"));
+        log.debug("Exit: SOAPPart::getAsString()");
         return null;
     }
 
@@ -398,8 +406,8 @@ public class SOAPPart extends Part
     public SOAPEnvelope getAsSOAPEnvelope()
         throws AxisFault
     {
-        log.debug(JavaUtils.getMessage("enter00", "SOAPPart::getAsSOAPEnvelope")
-                + JavaUtils.getMessage("currForm", formNames[currentForm]));
+        log.debug("Enter: SOAPPart::getAsSOAPEnvelope()");
+        log.debug(JavaUtils.getMessage("currForm", formNames[currentForm]));
 
         if ( currentForm == FORM_SOAPENVELOPE )
             return (SOAPEnvelope)currentMessage;
@@ -434,8 +442,8 @@ public class SOAPPart extends Part
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
-        log.debug(JavaUtils.getMessage(
-                "exit00", "SOAPPart::getAsSOAPEnvelope"));
+        
+        log.debug("Exit: SOAPPart::getAsSOAPEnvelope");
         return (SOAPEnvelope)currentMessage;
     }
 

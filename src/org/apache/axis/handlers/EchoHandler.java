@@ -76,7 +76,7 @@ public class EchoHandler extends BasicHandler {
         LogFactory.getLog(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );
+        log.debug("Enter: EchoHandler::invoke");
         try {
             Message  msg = msgContext.getRequestMessage();
             SOAPEnvelope env = (SOAPEnvelope) msg.getSOAPEnvelope();
@@ -86,7 +86,7 @@ public class EchoHandler extends BasicHandler {
             log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
-        log.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
+        log.debug("Exit: EchoHandler::invoke");
     }
 
     public String wsdlStart = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +

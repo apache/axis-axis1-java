@@ -144,8 +144,7 @@ public class ArrayDeserializer extends DeserializerImpl
         // default xsi:type value is used.
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage(
-               "enter00", "ArrayDeserializer.startElement()"));
+            log.debug("Enter: ArrayDeserializer::startElement()");
         }
 
         // Get the qname for the array type=, set it to null if
@@ -325,9 +324,7 @@ public class ArrayDeserializer extends DeserializerImpl
         }
         
         if (log.isDebugEnabled()) {
-            log.debug(
-                JavaUtils.getMessage("exit00",
-                                     "ArrayDeserializer.startElement()"));
+            log.debug("Exit: ArrayDeserializer::startElement()");
         }
     }
     
@@ -351,9 +348,7 @@ public class ArrayDeserializer extends DeserializerImpl
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(
-                JavaUtils.getMessage("enter00", 
-                                     "ArrayDeserializer.onStartChild()"));
+            log.debug("Enter: ArrayDeserializer.onStartChild()");
         }
 
         // If the position attribute is set, 
@@ -428,10 +423,9 @@ public class ArrayDeserializer extends DeserializerImpl
         curIndex++;
         
         if (log.isDebugEnabled()) {
-            log.debug(
-                JavaUtils.getMessage("exit00", 
-                                     "ArrayDeserializer.onStartChild()"));
+            log.debug("Exit: ArrayDeserializer.onStartChild()");
         }
+        
         return (SOAPHandler) dSer;
     }
 
@@ -460,10 +454,7 @@ public class ArrayDeserializer extends DeserializerImpl
     public void setValue(Object value, Object hint) throws SAXException
     { 
         if (log.isDebugEnabled()) {
-            log.debug(
-                JavaUtils.getMessage("gotValue00", 
-                                     "ArrayDeserializer", "[" + hint +
-                                     "] = " + value));
+            log.debug("Enter: ArrayDeserializer::setValue(" + value + ", " + hint + ")");
         }
         ArrayList list = (ArrayList)this.value;
         int offset = ((Integer)hint).intValue();

@@ -74,15 +74,13 @@ public class LocalResponder extends BasicHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "LocalResponder::invoke") );
+            log.debug("Enter: LocalResponder::invoke");
         }
 
         msgContext.getResponseMessage().getSOAPPart().getAsString();
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "LocalResponder::invoke") );
+            log.debug("Exit: LocalResponder::invoke");
         }
     }
 }

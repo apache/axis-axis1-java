@@ -110,7 +110,7 @@ public class JWSProcessor extends BasicHandler
             throws AxisFault
     {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("enter00", "JWSProcessor::invoke"));
+            log.debug("Enter: JWSProcessor::invoke");
         try {
             /* Grab the *.jws filename from the context - should have been */
             /* placed there by another handler (ie. HTTPActionHandler)     */
@@ -289,12 +289,12 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            log.debug( JavaUtils.getMessage("exception00"), e );
+            log.info(JavaUtils.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
 
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("exit00", "JWSProcessor::invoke") );
+            log.debug("Exit: JWSProcessor::invoke");
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {

@@ -76,7 +76,7 @@ public class DebugHandler extends BasicHandler {
         LogFactory.getLog(DebugHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "DebugHandler::invoke") );
+        log.debug("Enter: DebugHandler::invoke");
         try {
             Message       msg = msgContext.getRequestMessage();
 
@@ -100,12 +100,12 @@ public class DebugHandler extends BasicHandler {
             log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
-        log.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );
+        log.debug("Exit: DebugHandler::invoke");
     }
 
     public void onFault(MessageContext msgContext) {
-        log.debug(JavaUtils.getMessage("enter00", "DebugHandler::onFault") );
-        log.debug(JavaUtils.getMessage("exit00", "DebugHandler::onFault") );
+        log.debug("Enter: DebugHandler::onFault");
+        log.debug("Exit: DebugHandler::onFault");
     }
 
 };
