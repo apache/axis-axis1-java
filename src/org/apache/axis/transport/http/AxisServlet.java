@@ -96,53 +96,34 @@ public class AxisServlet extends HttpServlet {
         HandlerRegistry hr = engine.getHandlerRegistry();
 
         String realpath = context.getRealPath(req.getServletPath());
-        if (realpath != null) 
+        if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
         
-        if ((realpath!=null) && (realpath.endsWith(".jws"))) {
             try {
-                // !!! Kludge for right now to allow the JWSProcessor to
-                //     get the class without actually invoking it.
-                msgContext.setProperty("is-http-get", "yes");
-        
-                Handler handler = hr.find("JWSProcessor");
-                if (handler != null) {
-                    handler.invoke(msgContext);
-                    Handler serviceHandler = msgContext.getServiceHandler();
-                    if (serviceHandler != null) {
-                        res.getWriter().println("Got service " +
-                                                serviceHandler);
-                    }
-                    Class cls = (Class)msgContext.getProperty("JWSClass");
-                    
-                    // !!! Need to make this an absolute URI
-                    String url = req.getScheme() + "://" +
-                                 req.getServerName() + ":" +
-                                 req.getServerPort() + req.getRequestURI();
-                    
-                    // !!! This should be something reasonable
-                    String urn = "urn:service";
-                    
-                    // !!! This should come from the service itself
-                    String description = "Some service";
-                    
-                    if (req.getParameter("WSDL") != null) {
+                String url = req.getScheme() + "://" +
+                        req.getServerName() + ":" +
+                        req.getServerPort() + req.getRequestURI();
+
+                msgContext.setProperty(MessageContext.TRANS_URL, url);
+
+                if (req.getParameter("WSDL") != null) {
+                    engine.generateWSDL(msgContext);
+                    Document doc = (Document) msgContext.getProperty("WSDL");
+                    if (doc != null) {
                         res.setContentType("text/xml");
-                        WSDLUtils.writeWSDLDoc(cls, url, urn, description,
-                                          msgContext.getTypeMappingRegistry(),
-                                          res.getWriter());
-                        return;
-                    } else {
-                        res.setContentType("text/html");
-                        res.getWriter().println("<h1>" + cls.getName() +
-                                                "</h1>");
-                        res.getWriter().println(
-                               "<p>Hi there, this is an Axis service!</p>");
-                        res.getWriter().println(
-       "<i>Perhaps there'll be a form for invoking the service here...</i>");
+                        XMLUtils.DocumentToWriter(doc, res.getWriter());
                         res.getWriter().close();
-                        return;
                     }
+                } else {
+                    res.setContentType("text/html");
+                    res.getWriter().println("<h1>" + req.getRequestURI() +
+                            "</h1>");
+                    res.getWriter().println(
+                            "<p>Hi there, this is an Axis service!</p>");
+                    res.getWriter().println(
+                            "<i>Perhaps there'll be a form for invoking the service here...</i>");
+                    res.getWriter().close();
+                    return;
                 }
             } catch (AxisFault fault) {
                 res.getWriter().println("<pre>Fault - " + fault + " </pre>");

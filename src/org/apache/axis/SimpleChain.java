@@ -184,4 +184,18 @@ public class SimpleChain extends BasicHandler implements Chain {
         Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
         return( root );
     }
+
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleChain::editWSDL" );
+        try {
+            for ( int i = 0 ; handlers!= null && i<handlers.size() ; i++ )
+                ((Handler) handlers.elementAt( i )).generateWSDL( msgContext );
+        } catch( Exception e ) {
+            Debug.Print( 1, e );
+            if( !(e instanceof AxisFault ) )
+                e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
+        Debug.Print( 1, "Exit: SimpleChain::editWSDL" );
+    }
 };

@@ -134,7 +134,7 @@ public class AxisServer extends AxisEngine
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         Debug.Print( 1, "Enter: AxisServer::invoke" );
-        
+
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
                                 "This Axis server is not currently accepting requests.",
@@ -185,12 +185,12 @@ public class AxisServer extends AxisEngine
                 /*   Global Response Handler/Chain                              */
                 /*   Transport Specific Response Handler/Chain                  */
                 /**************************************************************/
-                
+
                 // When do we call init/cleanup??
                 Debug.Print(1, "Calling default logic in AxisServer" );
 
                 /*  This is what the entirety of this logic might evolve to:
-                
+
                 hName = msgContext.getStrProp(MessageContext.TRANSPORT);
                 if ( hName != null ) {
                 if ((h = hr.find( hName )) != null ) {
@@ -205,13 +205,13 @@ public class AxisServer extends AxisEngine
                 }
 
                 */
-                
+
                 /* Process the Transport Specific Request Chain */
                 /**********************************************/
                 hName = msgContext.getTransportName();
                 HandlerRegistry tr = getTransportRegistry();
                 SimpleTargetedChain transportChain = null;
-                
+
                 Debug.Print(3, "AxisServer.invoke: Transport = '" + hName +"'");
                 if ( hName != null && (h = tr.find( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
@@ -221,13 +221,13 @@ public class AxisServer extends AxisEngine
                             h.invoke(msgContext);
                     }
                 }
-                
+
                 /* Process the Global Request Chain */
                 /**********************************/
                 hName = Constants.GLOBAL_REQUEST ;
                 if ( hName != null  && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
-                
+
                 /**
                 * At this point, the service should have been set by someone
                 * (either the originator of the MessageContext, or one of the
@@ -252,13 +252,13 @@ public class AxisServer extends AxisEngine
                 }
 
                 h.invoke(msgContext);
-                
+
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;
                 if ( hName != null && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
-                
+
                 /* Process the Transport Specific Response Chain */
                 /***********************************************/
                 if (transportChain != null) {
@@ -274,7 +274,156 @@ public class AxisServer extends AxisEngine
             throw (AxisFault) e ;
         }
         Debug.Print( 1, "Exit: AxisServer::invoke" );
-    };
+    }
+
+    /**
+     *
+     */
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: AxisServer::editWSDL" );
+
+        if (!isRunning()) {
+            throw new AxisFault("Server.disabled",
+                                "This Axis server is not currently accepting requests.",
+                                null, null);
+        }
+
+        String  hName = null ;
+        Handler h     = null ;
+
+        /* Do some prep-work.  Get the registries and put them in the */
+        /* msgContext so they can be used by later handlers.          */
+        /**************************************************************/
+        HandlerRegistry hr = getHandlerRegistry();
+        HandlerRegistry sr = getServiceRegistry();
+
+        try {
+            hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
+            if ( hName != null ) {
+                if ( hr == null || (h = hr.find(hName)) == null ) {
+                    AxisClassLoader cl = msgContext.getClassLoader();
+                    try {
+                        Debug.Print( 2, "Trying to load class: " + hName );
+                        Class cls = cl.loadClass( hName );
+                        h = (Handler) cls.newInstance();
+                    }
+                    catch( Exception e ) {
+                        h = null ;
+                    }
+                }
+                if ( h != null )
+                    h.generateWSDL(msgContext);
+                else
+                    throw new AxisFault( "Server.error",
+                        "Can't locate handler: " + hName,
+                        null, null );
+            }
+            else {
+                // This really should be in a handler - but we need to discuss it
+                // first - to make sure that's what we want.
+                /* Now we do the 'real' work.  The flow is basically:         */
+                /*   Transport Specific Request Handler/Chain                   */
+                /*   Global Request Handler/Chain                               */
+                /*   Protocol Specific-Handler(ie. SOAP, XP)                  */
+                /*     ie. For SOAP Handler:                                  */
+                /*           - Service Specific Request Handler/Chain           */
+                /*           - SOAP Semantic Checks                           */
+                /*           - Service Specific Response Handler/Chain          */
+                /*   Global Response Handler/Chain                              */
+                /*   Transport Specific Response Handler/Chain                  */
+                /**************************************************************/
+
+                // When do we call init/cleanup??
+                Debug.Print(1, "Calling default logic in AxisServer" );
+
+                /*  This is what the entirety of this logic might evolve to:
+
+                hName = msgContext.getStrProp(MessageContext.TRANSPORT);
+                if ( hName != null ) {
+                if ((h = hr.find( hName )) != null ) {
+                h.editWSDL(msgContext);
+                } else {
+                System.err.println("Couldn't find transport " + hName);
+                }
+                } else {
+                // No transport set, so use the default (probably just
+                // calls the global->service handlers)
+                defaultTransport.editWSDL(msgContext);
+                }
+
+                */
+
+                /* Process the Transport Specific Request Chain */
+                /**********************************************/
+                hName = msgContext.getTransportName();
+                HandlerRegistry tr = getTransportRegistry();
+                SimpleTargetedChain transportChain = null;
+
+                Debug.Print(3, "AxisServer.editWSDL: Transport = '" + hName +"'");
+                if ( hName != null && (h = tr.find( hName )) != null ) {
+                    if (h instanceof SimpleTargetedChain) {
+                        transportChain = (SimpleTargetedChain)h;
+                        h = transportChain.getRequestHandler();
+                        if (h != null)
+                            h.generateWSDL(msgContext);
+                    }
+                }
+
+                /* Process the Global Request Chain */
+                /**********************************/
+                hName = Constants.GLOBAL_REQUEST ;
+                if ( hName != null  && (h = hr.find( hName )) != null )
+                    h.generateWSDL(msgContext);
+
+                /**
+                * At this point, the service should have been set by someone
+                * (either the originator of the MessageContext, or one of the
+                * transport or global Handlers).  If it hasn't been set, we
+                * fault.
+                */
+                h = msgContext.getServiceHandler();
+                if (h == null) {
+                    // It's possible that we haven't yet parsed the
+                    // message at this point.  This is a kludge to
+                    // make sure we have.  There probably wants to be
+                    // some kind of declarative "parse point" on the handler
+                    // chain instead....
+                    Message rm = msgContext.getRequestMessage();
+                    if (rm != null) {
+                        rm.getAsSOAPEnvelope().getFirstBody();
+                        h = msgContext.getServiceHandler();
+                    }
+                    if (h == null)
+                        throw new AxisFault("Server.NoService",
+                            "The Axis engine couldn't find a " +
+                            "target service to generate WSDL for! targetService is "+msgContext.getTargetService(),
+                            null, null );
+                }
+
+                h.generateWSDL(msgContext);
+
+                /* Process the Global Response Chain */
+                /***********************************/
+                hName = Constants.GLOBAL_RECEIVE ;
+                if ( hName != null && (h = hr.find( hName )) != null )
+                    h.generateWSDL(msgContext);
+
+                /* Process the Transport Specific Response Chain */
+                /***********************************************/
+                if (transportChain != null) {
+                    h = transportChain.getResponseHandler();
+                    if (h != null)
+                        h.generateWSDL(msgContext);
+                }
+            }
+        }
+        catch( Exception e ) {
+            // Should we even bother catching it ?
+            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
+        Debug.Print( 1, "Exit: AxisServer::editWSDL" );
+    }
 
     public void undo(MessageContext msgContext) {
         Debug.Print( 1, "Enter: AxisServer::undo" );

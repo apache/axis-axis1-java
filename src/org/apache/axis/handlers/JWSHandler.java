@@ -83,6 +83,10 @@ public class JWSHandler extends BasicHandler
         Debug.Print( 1, "Exit : JWSHandler::invoke" );
     }
 
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        invoke(msgContext);
+    }
+
     public void undo(MessageContext msgContext)
     {
         Debug.Print( 1, "Enter: JWSHandler::undo" );

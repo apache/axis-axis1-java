@@ -139,4 +139,13 @@ public interface Handler extends Serializable {
      * 'list' Admin function.
      */
     public Element getDeploymentData(Document doc);
+
+    /**
+     * Obtain WSDL information.  Some Handlers will implement this by
+     * merely setting properties in the MessageContext, others (providers)
+     * will take responsibility for doing the "real work" of generating
+     * WSDL for a given service.
+     *
+     */
+    public void generateWSDL(MessageContext msgContext) throws AxisFault;
 };

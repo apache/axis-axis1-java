@@ -83,6 +83,12 @@ public class JWSProcessor extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
+        invokeImpl(msgContext, false);
+    }
+
+    public void invokeImpl(MessageContext msgContext, boolean doWsdl)
+            throws AxisFault
+    {
         Debug.Print( 1, "Enter: JWSProcessor::invoke" );
         try {
             /* Grab the *.jws filename from the context - should have been */
@@ -132,7 +138,7 @@ public class JWSProcessor extends BasicHandler
                 Main              compiler = new Main( out, "javac" );
                 String            outdir   = f1.getParent();
                 String[]          args     = null ;
-                
+
                 if (outdir == null) outdir=".";
 
                 args = new String[] { "-d", outdir,
@@ -178,12 +184,6 @@ public class JWSProcessor extends BasicHandler
                 cl.registerClass( clsName, cFile );
             msgContext.setClassLoader( cl );
 
-            if (msgContext.getProperty("is-http-get") != null) {
-                Class c = cl.loadClass(clsName);
-                msgContext.setProperty("JWSClass", c);
-                return;
-            }
-
             /* Create a new RPCProvider - this will be the "service"   */
             /* that we invoke.                                                */
             /******************************************************************/
@@ -198,7 +198,10 @@ public class JWSProcessor extends BasicHandler
             rpc.addOption( "methodName", "*");
 
             rpc.init();   // ??
-            rpc.invoke( msgContext );
+            if (doWsdl)
+                rpc.generateWSDL(msgContext);
+            else
+                rpc.invoke( msgContext );
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
@@ -208,6 +211,10 @@ public class JWSProcessor extends BasicHandler
         }
 
         Debug.Print( 1, "Exit : JWSProcessor::invoke" );
+    }
+
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        invokeImpl(msgContext, true);
     }
 
     public void undo(MessageContext msgContext)
