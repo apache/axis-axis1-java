@@ -47,19 +47,14 @@ Table of Contents</h3>
 <li>
 <a href="#WSDL">Using WSDL with Axis</a></li>
 
-<ul>
-<li>
-&nbsp;<a href="#WSDL: Obtaining WSDL for deployed services">?WSDL: Obtaining
-WSDL for deployed services</a></li>
-
-<li>
-&nbsp;<a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java:
-Building stubs, skeletons, and data</a></li>
-
-<li>
-&nbsp;<a href="#Java2WSDL: Building WSDL from Java">Java2WSDL: Building
-WSDL from Java</a></li>
-</ul>
+  <ul>
+    <li> &nbsp;<a href="#WSDL: Obtaining WSDL for deployed services">?WSDL: Obtaining 
+      WSDL for deployed services</a></li>
+    <li> &nbsp;<a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java: 
+      Building stubs, skeletons, and data</a></li>
+    <li> &nbsp;<a href="#Java2WSDL: Building WSDL from Java">Java2WSDL: Building 
+      WSDL from Java</a></li>
+  </ul>
 
 <li>
 <a href="#published interfaces">Published Interfaces</a></li>
@@ -77,14 +72,13 @@ Welcome to Axis, the third generation of Apache SOAP! This is the <b>beta 2</b>
 version. 
 <h3>
 What is SOAP?</h3>
-SOAP is an XML<i>-</i>based communitcation protocol and encoding format
-for inter-application communication. Originally conceived by Microsoft
-and Userland software, it has evolved through several generations and the
-current spec, <a href="http://w3.org/TR/soap">SOAP 1.1</a>, is fast growing
-in popularity and usage. The W3C's XML Protocol working group is in the
-process of turning SOAP into a true open standard, and as of this writing
-has released a working draft of SOAP 1.2, which cleans up some of the more
-confusing areas of the 1.1 spec.
+SOAP is an XML<i>-</i>based communication protocol and encoding format for inter-application 
+communication. Originally conceived by Microsoft and Userland software, it has 
+evolved through several generations and the current spec, <a href="http://w3.org/TR/soap">SOAP 
+1.1</a>, is fast growing in popularity and usage. The W3C's <a href="http://www.w3.org/2000/xp/Group/">XML 
+Protocol working group</a> is in the process of turning SOAP into a true open 
+standard, and as of this writing has released a working draft of SOAP 1.2, which 
+cleans up some of the more confusing areas of the 1.1 spec. 
 <p>SOAP is widely viewed as the backbone to a new generation of cross-platform
 cross-language distributed computing applications, termed Web Services.
 <h3>
@@ -131,30 +125,34 @@ the Apache bug tracking and feature-request database.
 What's in this release?</h3>
 This release includes the following features:
 <ul>
-  <li> SOAP 1.1 compliant engine</li>
+  <li> SOAP 1.1 compliant engine (with some SOAP 1.2 support as well)</li>
   <li> Flexible configuration / deployment system</li>
   <li> Support for "drop-in" deployment of SOAP services (JWS)</li>
   <li> Support for all basic types, and a type mapping system for defining new 
     serializers/deserializers</li>
-  <li> Automatic serialization/deserialization of Java Beans</li>
-  <li> Automatic two-way conversions between Java "List" collections and SOAP 
-    Arrays</li>
+  <li> Automatic serialization/deserialization of Java Beans, including customizable 
+    mapping of fields to XML elements/attributes</li>
+  <li> Automatic two-way conversions between Java Collections and SOAP Arrays</li>
   <li> Providers for RPC and message based SOAP services</li>
   <li> Automatic WSDL generation from deployed services</li>
   <li> WSDL2Java tool for building Java proxies and skeletons from WSDL documents</li>
   <li> Java2WSDL tool for building WSDL from Java classes.</li>
   <li> Preliminary security extensions, which can integrate with Servlet 2.2 security/roles</li>
+  <li>Support for session-oriented services, via HTTP cookies or transport-independent 
+    SOAP headers</li>
   <li>Preliminary support for the <b>SOAP with Attachments</b> specification</li>
   <li> An EJB provider for accessing EJB's as Web Services</li>
   <li> HTTP servlet-based transport</li>
   <li> Standalone version of the server (with HTTP support)</li>
   <li> Examples, including a client and server for the soapbuilders community 
-    interoperability tests</li>
+    interoperability tests and experimental TCP and file-based transports.</li>
 </ul>
 
 <h3> What's missing?</h3>
 
-<p>TBD</p>
+<ul>
+  <li>Full SOAP 1.2 support</li>
+</ul>
 <h2>
 <a NAME="Installation"></a>Installing Axis and Using this Guide</h2>
 See the <a href="install.html">Axis Installation Guide</a>
@@ -167,7 +165,7 @@ that your CLASSPATH includes (note:  if you build axis from a CVS checkout, thes
 <li>xml-axis-beta1/lib/commons-logging.jar</li>
 <li>xml-axis-beta1/lib/tt-bytecode.jar</li>
 <li>xml-axis-beta1/lib/wsdl4j.jar</li>
-<li>xml-axis-beta1/ # for the sample code</li>
+  <li>xml-axis-beta1/ <i><font color="#9966FF">(for the sample code)</font></i></li>
   <li>A JAXP-1.1 compliant XML parser such as xerces or crimson</li>
 </ul>
 <h2>
@@ -191,9 +189,9 @@ method on the public Axis server at Apache.
 12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Call&nbsp;&nbsp;&nbsp;&nbsp; call&nbsp;&nbsp;&nbsp; = (Call) service.createCall();
 13&nbsp;&nbsp;
 14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setOperationName(new QName("http://soapinterop.org/", "echoString"));
+15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setOperationName(new QName("<font color="#009933">http://soapinterop.org/</font>", "<font color="#993333">echoString</font>"));
 16&nbsp;&nbsp;
-17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ret = (String) call.invoke( new Object[] { "Hello!" } );
+17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ret = (String) call.invoke( new Object[] { "<font color="#CC00CC">Hello!</font>" } );
 18&nbsp;&nbsp;
 19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("Sent 'Hello!', got '" + ret + "'");
 20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception e) {
@@ -233,11 +231,10 @@ responds with an identical String, which we deserialize and print.</p>
 SOAP client and server, you can use the included tcpmon tool. See the <a href="#tcpmon">appendix</a>
 for an overview.</i></p>
 <h3>Naming Parameters</h3>
-In the above example, the parameters are in the order in which we sent
-them, but since we only passed the objects themselves, Axis automatically
-named the XML-encoded arguments in the SOAP message "arg0", "arg1", etc.
-If you want to change this, it's easy! Before calling <tt>invoke()</tt>
-you need to call <tt>addParameter</tt> for each parameter, like so:
+In the above example, you can see that Axis automatically names the XML-encoded 
+arguments in the SOAP message "arg0", "arg1", etc. (in this case there's just 
+&quot;arg0&quot;) If you want to change this, it's easy! Before calling <tt>invoke()</tt> 
+you need to call <tt>addParameter</tt> for each parameter, like so: 
 <pre class="example">&nbsp; call.addParameter("testParam",&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; org.apache.axis.encoding.XMLType.XSD_STRING,
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.xml.rpc.ParameterMode.IN);</pre>
@@ -246,7 +243,7 @@ on the invoke call. This will also define the type of the parameter (<tt>org.apa
 and whether it is an input, output or inout parameter - in this case its
 an input parameter. Now when you run the program you'll get a message that
 looks like this:
-<pre class="example">&lt;?xml version="1.0" encoding="UTF-8"?>
+<pre class="xml">&lt;?xml version="1.0" encoding="UTF-8"?>
 &lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -345,13 +342,15 @@ Got result : 1
 J2EE server is running on)
 <h3>
 Custom Deployment - Introducing WSDD</h3>
-JWS files are great quick ways to get your classes out there as Web Services,
-but they're not always the best choice. For one thing, you need the source
-code - there might be times when you want to expose a pre-existing class
-on your system without source. Also, the amount of configuration you can
-do as to how the service gets accessed is pretty limited - you can't specify
-custom type mappings, or control which Handlers get invoked when people
-are using your service.
+JWS files are great quick ways to get your classes out there as Web Services, 
+but they're not always the best choice. For one thing, you need the source code 
+- there might be times when you want to expose a pre-existing class on your system 
+without source. Also, the amount of configuration you can do as to how the service 
+gets accessed is pretty limited - you can't specify custom type mappings, or control 
+which Handlers get invoked when people are using your service. <i>(note for the 
+future : the Axis team, and the Java SOAP community at large, are thinking about 
+ways to be able to embed this sort of metadata into your source files if desired 
+- stay tuned!)</i> 
 <h4>
 <a NAME="descriptors"></a>Deploying via descriptors</h4>
 <p>To really use the flexibility available to you in Axis, you should get
@@ -367,21 +366,38 @@ deployment descriptor for a basic service (this file is <a href="../samples/user
 &nbsp; &lt;parameter name="allowedMethods" value="*"/>
 &nbsp;&lt;/service>
 &lt;/deployment></pre>
-Pretty simple, really - the outermost element tells the engine that this
-is a WSDD deployment, and defines the "java" namespace. Then the service
-element actually defines the service for us. A service is a <b>targeted chain</b> (see the <a href="architecture-guide.html">Architecture Guide</a>), which means it may have
-any/all of: a request Handler, a pivot Handler (which for a service is
-called a "provider"), and a response Handler. In this case, our provider
-is "java:RPC", which is predefined to indicate a Java RPC service.
-<p>We need to tell the RPCDispatcher that it should instantiate and call
-the correct class (e.g. samples.userguide.example3.MyService), and we do
-so by including a &lt;parameter> tag, giving the service one parameter
-to configure the class name, and another to tell the engine that any public
-method on that class may be called via SOAP (that's what the "*" means;
-we could also have restricted the SOAP-accessible methods by using a space
-or comma separated list of available method names).
-<h4>
-Using the AdminClient</h4>
+Pretty simple, really - the outermost element tells the engine that this is a 
+WSDD deployment, and defines the "java" namespace. Then the service element actually 
+defines the service for us. A service is a <b>targeted chain</b> (see the <a href="architecture-guide.html">Architecture 
+Guide</a>), which means it may have any/all of: a request flow, a pivot Handler 
+(which for a service is called a "provider"), and a response flow. In this case, 
+our provider is "java:RPC", which is built into Axis, and indicates a Java RPC 
+service. The actual class which handles this is <b>org.apache.axis.providers.java.RPCProvider</b>. 
+<p>We need to tell the RPCProvider that it should instantiate and call the correct 
+  class (e.g. samples.userguide.example3.MyService), and we do so by including 
+  &lt;parameter> tags, giving the service one parameter to configure the class 
+  name, and another to tell the engine that any public method on that class may 
+  be called via SOAP (that's what the "*" means; we could also have restricted 
+  the SOAP-accessible methods by using a space or comma separated list of available 
+  method names).
+<h4>Advanced WSDD - specifying more options</h4>
+<p>WSDD descriptors can also contain other information about services, and also 
+  other pieces of Axis called &quot;Handlers&quot; which we'll cover in a later 
+  section.
+<h5>Scoped Services</h5>
+<p>Axis supports scoping service objects (the actual Java objects which implement 
+  your methods) three ways. &quot;Request&quot; scope, the default, will create 
+  a new object each time a SOAP request comes in for your service. &quot;Application&quot; 
+  scope will create a singleton shared object to service <b>all</b> requests. 
+  &quot;Session&quot; scope will create a new object for each session-enabled 
+  client who accesses your service. To specify the scope option, you add a &lt;parameter&gt; 
+  to your service like this (where &quot;<i><font color="#FF0000">value</font></i>&quot; 
+  is request, session, or application):</p>
+<pre class="xml">&lt;service name=&quot;MyService&quot;...&gt;
+  &lt;parameter name=&quot;scope&quot; value=&quot;<font color="#FF0000"><i>value</i></font>&quot;/&gt;
+  ...
+&lt;/service&gt;</pre>
+<h4>Using the AdminClient</h4>
 Once we have this file, we need to send it to an Axis server in order to
 actually deploy the described service. We do this with the AdminClient,
 or the "org.apache.axis.client.AdminClient" class. An invocation of the
@@ -512,20 +528,21 @@ Deploying custom mappings - the &lt;typeMapping> tag</h4>
 Now that you've built your serializers and deserializers, you need to tell
 Axis which types they should be used for. You do this with a typeMapping
 tag in WSDD, which looks like this:
-<pre class="example"><br>&lt;typeMapping qname="ns:local" xmlns:ns="someNamespace"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; languageSpecificType="java:my.java.thingy"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serializer="my.java.Serializer"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deserializer="my.java.DeserializerFactory"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></pre>
+<pre class="xml">&lt;typeMapping qname="ns:local" xmlns:ns="someNamespace"
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; languageSpecificType="java:my.java.thingy"
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serializer="my.java.Serializer"
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deserializer="my.java.DeserializerFactory"
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></pre>
 <p>This looks a lot like the &lt;beanMapping> tag we saw earlier, but there
 are three extra attributes. One, <b>serializer</b>, is the Java class name
 of the Serializer class which should be used to write the specified Java
 class (i.e. my.java.thingy) into XML. Two, <b>deserializer</b>, is
 the class name of a Deserializer <i>factory</i> that generates Deserializers
 which can be used to unmarshall XML into the correct Java class.  Finally, the encoding style, which is SOAP encoding.
-<p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping>
-tag with serializer="org.apache.axis.encoding.BeanSerializer", deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory", and encodingStyle="http://schemas.xmlsoap.org/soap/encoding/",
-but clearly it can save a lot of typing!)
+<p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping> tag 
+  with serializer="org.apache.axis.encoding.BeanSerializer", deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory", 
+  and encodingStyle="http://schemas.xmlsoap.org/soap/encoding/", but clearly it 
+  can save a lot of typing!) 
 <h2>
 <a NAME="WSDL"></a>Using WSDL with Axis</h2>
 The <a href="http://www.w3.org/TR/wsdl">Web Service Description Language</a>
@@ -664,6 +681,27 @@ public class Phone implements java.io.Serializable {
 &nbsp;&nbsp;&nbsp;&nbsp;public void setNumber(java.lang.String number) {...}
 }
 </pre>
+<h4>Mapping XML to Java types : Metadata</h4>
+<p>Notice in the mapping above, the XML type name is &quot;phone&quot; and the 
+  generated Java class is &quot;Phone&quot; - the capitalization of the first 
+  letter has changed to match the Java coding convention that classes begin with 
+  an uppercase letter. This sort of thing happens a lot, because the rules for 
+  expressing XML names/identifiers are much less restrictive than those for Java. 
+  For example, if one of the sub-elements in the &quot;phone&quot; type above 
+  was named &quot;new&quot;, we couldn't just generate a Java field called &quot;new&quot;, 
+  since that is a reserved word and the resultant source code would fail to compile.</p>
+<p>To support this kind of mapping, and also to enable the serialization/deserialization 
+  of XML attributes, we have a <b>type metadata</b> system which allows us to 
+  associate Java data classes with descriptors which control these things.</p>
+<p>When the WSDL2Java tool creates a data bean like the Phone class above, it 
+  notices if the schema contains any attributes, or any names which do not map 
+  directly to Java field/property names. If it finds any of these things, it will 
+  generate a static piece of code to supply a <b>type descriptor</b> for the class. 
+  The type descriptor is essentially a collection of <b>field descriptors</b>, 
+  each of which maps a Java field/property to an XML element or attribute.</p>
+<p>To see an example of this kind of metadata, look at the &quot;test.encoding.AttributeBean&quot; 
+  class in the Axis source, or generate your own bean from XML which uses attributes 
+  or names which would be illegal in Java.</p>
 <h4>Holders</h4>
 <p>This type may be used as an inout or out parameter.&nbsp; Java does not
 have the concept of inout/out parameters.&nbsp; In order to achieve this
@@ -995,7 +1033,9 @@ look something like:
 &nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="samples.addr.AddressBookSOAPBindingImpl"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
 &lt;/service></pre>
-<p>The default for this option is true.&nbsp; When you use this option, the --server-side option is assumed, so you don't have to explicitly specify --server-side as well.
+<p>The default for this option is false.&nbsp; When you use this option, the --server-side 
+  option is assumed, so you don't have to explicitly specify --server-side as 
+  well. 
 <h4>
 -N, --NStoPkg &lt;argument>=&lt;value></h4>
 By default, package names are generated from the namespace strings in the
@@ -1479,31 +1519,24 @@ before resending an edited request.
 <h2>
 Glossary</h2>
 
-<dl>
-<dt>
-<i>Handler</i></dt>
-
-<dd>
-&lt;definition></dd>
-
-<dt>
-<i>SOAP</i></dt>
-
-<dd>
-The Simple Object Access Protocol (yes, despite the fact that it sometimes
-doesn't seem so simple, and doesn't have anything to do with objects...
-:)). You can read the SOAP 1.1 specification at <a href="http://www.w3.org/TR/SOAP">http://www.w3.org/TR/SOAP</a>.
-The W3C is currently in the midst of work on SOAP 1.2, under the auspices
-of the <a href="http://www.w3.org/2000/xp/Group/">XML Protocol Group</a>.</dd>
-
-<dt>
-<i>Provider</i></dt>
-
-<dd>
-&lt;definition></dd>
-
-<dt>
-</dt>
+<dl> 
+  <dt> <i>Handler</i></dt>
+  <dd> A reusable class which is responsible for processing a MessageContext in 
+    some custom way. The Axis engine invokes a series of Handlers whenever a request 
+    comes in from a client or a transport listener.</dd>
+  <dt> <i>SOAP</i></dt>
+  <dd> The Simple Object Access Protocol (yes, despite the fact that it sometimes 
+    doesn't seem so simple, and doesn't have anything to do with objects... :)). 
+    You can read the SOAP 1.1 specification at <a href="http://www.w3.org/TR/SOAP">http://www.w3.org/TR/SOAP</a>. 
+    The W3C is currently in the midst of work on SOAP 1.2, under the auspices 
+    of the <a href="http://www.w3.org/2000/xp/Group/">XML Protocol Group</a>.</dd>
+  <dt> <i>Provider</i></dt>
+  <dd> A provider is the &quot;back-end&quot; Handler which is responsible for 
+    actually performing the &quot;meat&quot; of the desired SOAP operation. Typically 
+    this means calling a method on some back-end service object. The two commonly 
+    used providers are RPCProvider and MsgProvider, both in the org.apache.axis.providers.java 
+    package.</dd>
+  <dt> </dt>
 </dl>
 
 </body>
