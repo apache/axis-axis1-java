@@ -56,9 +56,16 @@
 package org.apache.axis.providers;
 
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.description.ServiceDesc;
 
 public class JWSProvider extends BasicProvider {
     
     public void invoke(MessageContext msgContext) {
+    }
+
+    public ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDesc)
+            throws AxisFault {
+        return serviceDesc;
     }
 }

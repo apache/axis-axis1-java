@@ -64,10 +64,12 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
@@ -504,11 +506,39 @@ public abstract class JavaProvider extends BasicProvider
      * Returns the Class info about the service class.
      */
     protected Class getServiceClass(MessageContext msgContext, String clsName)
-            throws Exception {
-        ClassLoader cl     = msgContext.getClassLoader();
-        ClassCache cache   = msgContext.getAxisEngine().getClassCache();
-        JavaClass  jc      = cache.lookup(clsName, cl);
-        return jc.getJavaClass();
+            throws AxisFault {
+        AxisEngine engine = null;
+        ClassLoader cl = null;
+        Class serviceClass = null;
+        
+        // If we have a message context, use that to get classloader and engine
+        // otherwise get the current threads classloader
+        if (msgContext == null) {
+            cl = Thread.currentThread().getContextClassLoader();
+        } else {
+            cl = msgContext.getClassLoader();
+            engine = msgContext.getAxisEngine();
+        }
+        // If we have an engine, use its class cache
+        if (engine != null) {
+            ClassCache cache     = engine.getClassCache();
+            try {
+                JavaClass jc = cache.lookup(clsName, cl);
+                serviceClass = jc.getJavaClass();
+            } catch (ClassNotFoundException e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
+            }
+        } else {
+            // if no engine, we don't have a cache, use Class.forName instead.
+            try {
+                serviceClass = ClassUtils.forName(clsName, true, cl);
+            } catch (ClassNotFoundException e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
+            }
+        }
+        return serviceClass;
     }
 
     /**
@@ -543,4 +573,48 @@ public abstract class JavaProvider extends BasicProvider
 
         return null;
     }
+
+    /**
+     * Fill in a service description with the correct impl class
+     * and typemapping set.  This uses methods that can be overridden by
+     * other providers (like the EJBProvider) to get the class from the
+     * right place.
+     * 
+     * @param msgContext message context
+     * @param serviceDescription service description to be updated
+     * @return updated service description
+     */ 
+    public ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDescription) 
+            throws AxisFault 
+    {
+        // Set up the Implimentation class for the service
+
+        String clsName = null;
+        if (msgContext != null) {
+            SOAPService service = msgContext.getService();
+            clsName = getServiceClassName(service);
+        } else {
+            // no service, try the local options
+            clsName = (String) getOption(getServiceClassNameOptionName());
+        }
+        
+        if (clsName != null) {
+            Class cls = getServiceClass(msgContext, clsName);
+            serviceDescription.setImplClass(cls);
+        }
+        
+        // Set up the type mapping for the service
+        TypeMapping tm;
+        if (msgContext == null) {
+            tm = DefaultTypeMappingImpl.getSingleton();
+        } else {
+            tm = msgContext.getTypeMapping();
+        }
+        serviceDescription.setTypeMapping(tm);
+
+        // return the updated ServiceDesc
+        return serviceDescription;
+    }
+    
+    
 }

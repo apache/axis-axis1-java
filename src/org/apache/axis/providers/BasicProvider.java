@@ -56,6 +56,9 @@
 package org.apache.axis.providers;
 
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.description.ServiceDesc;
 
 import javax.xml.namespace.QName;
 
@@ -67,6 +70,13 @@ import java.util.Hashtable;
  * provider.  I'm not exactly married to this though.
  */
 public abstract class BasicProvider extends BasicHandler {
+    
+    /**
+     * This method returns a ServiceDesc that contains the correct 
+     * implimentation class. 
+     */ 
+    public abstract ServiceDesc getServiceDesc(MessageContext msgContext, ServiceDesc serviceDesc) 
+            throws AxisFault;
     
     public void addOperation(String name, QName qname) {
         Hashtable operations = (Hashtable)getOption("Operations");
