@@ -272,17 +272,21 @@ public class JavaUtils
      */
     public static String xmlNameToJava(String name)
     {
+        // protect ourselves from garbage
+        if (name == null || name.equals(""))
+            return name;
+        
         char[] nameArray = name.toCharArray();
-        int len = name.length();
-        StringBuffer result = new StringBuffer(len);
+        int nameLen = name.length();
+        StringBuffer result = new StringBuffer(nameLen);
         
         // First character, lower case
         int i = 0;
-        while (i < name.length() 
+        while (i < nameLen
                 && !Character.isLetter(nameArray[i])) {
             i++;
         }
-        if (i < name.length()) {
+        if (i < nameLen) {
             result.append(Character.toLowerCase(nameArray[i]));
         }
         else {
@@ -291,10 +295,10 @@ public class JavaUtils
         
         // The rest of the string
         boolean wordStart = false;
-        for(int j = i + 1; j < len; ++j) {
+        for(int j = i + 1; j < nameLen; ++j) {
             char c = nameArray[j];
 
-            // if this is a bad char, skip it a remember to capitolize next
+            // if this is a bad char, skip it a remember to capitalize next
             // good character we encounter
             if( !Character.isLetterOrDigit(c)) {
                 wordStart = true;
