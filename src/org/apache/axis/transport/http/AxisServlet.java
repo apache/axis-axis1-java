@@ -61,6 +61,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
@@ -89,6 +91,8 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  *
@@ -227,6 +231,29 @@ public class AxisServlet extends HttpServlet
         msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                                jwsClassDir);
         msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
+
+        String pathInfo = req.getPathInfo();
+        if (pathInfo == null || pathInfo.equals("")) {
+            res.setContentType("text/html");
+            writer.println("<h2>And now... Some Services</h2>");
+            Iterator i = engine.getConfig().getDeployedServices();
+            writer.println("<ul>");
+            while (i.hasNext()) {
+                ServiceDesc sd = (ServiceDesc)i.next();
+                writer.println("<li>" + sd.getName());
+                ArrayList operations = sd.getOperations();
+                if (!operations.isEmpty()) {
+                    writer.println("<ul>");
+                    for (Iterator it = operations.iterator(); it.hasNext();) {
+                        OperationDesc desc = (OperationDesc) it.next();
+                        writer.println("<li>" + desc.getName());
+                    }
+                    writer.println("</ul>");
+                }
+            }
+            writer.println("</ul>");
+            return;
+        }
 
         String realpath = context.getRealPath(req.getServletPath());
         String configPath = webInfPath;

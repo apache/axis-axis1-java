@@ -65,6 +65,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * A do-nothing ConfigurationProvider
@@ -115,6 +116,13 @@ public class NullProvider implements EngineConfiguration
     }
 
     public Handler getHandler(QName qname) throws ConfigurationException {
+        return null;
+    }
+
+    /**
+     * Get an enumeration of the services deployed to this engine
+     */
+    public Iterator getDeployedServices() throws ConfigurationException {
         return null;
     }
 }

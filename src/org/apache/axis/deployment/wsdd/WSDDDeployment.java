@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.io.IOException;
 
 
@@ -168,11 +169,7 @@ public class WSDDDeployment
     {
         WSDDService service = (WSDDService)services.get(qname);
         if (service != null) {
-            Vector namespaces = service.getNamespaces();
-            for (Iterator i = namespaces.iterator(); i.hasNext();) {
-                String namespace = (String) i.next();
-                namespaceToServices.remove(namespace);
-            }
+            service.removeNamespaceMappings(this);
             services.remove(qname);
         }
     }
@@ -531,7 +528,19 @@ public class WSDDDeployment
     public Hashtable getGlobalOptions() throws ConfigurationException {
         return globalConfig.getParametersTable();
     }
-    
+
+    /**
+     * Get an enumeration of the services deployed to this engine
+     */
+    public Iterator getDeployedServices() throws ConfigurationException {
+        ArrayList serviceDescs = new ArrayList();
+        for (Iterator i = services.values().iterator(); i.hasNext();) {
+            WSDDService service = (WSDDService) i.next();
+            serviceDescs.add(service.getServiceDesc());
+        }
+        return serviceDescs.iterator();
+    }
+
     /**
      * Register a particular namepsace which maps to a given WSDDService.
      * This will be used for namespace-based dispatching.

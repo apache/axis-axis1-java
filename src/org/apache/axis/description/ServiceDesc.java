@@ -82,6 +82,9 @@ public class ServiceDesc {
     /** This becomes true once we've added some operations */
     private boolean hasOperationData = false;
 
+    /** The name of this service */
+    private String name = null;
+
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
     private ArrayList allowedMethods = null;
@@ -180,6 +183,14 @@ public class ServiceDesc {
         this.tm = tm;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void addOperationDesc(OperationDesc operation)
     {
         operations.add(operation);
@@ -197,6 +208,12 @@ public class ServiceDesc {
         }
 
         overloads.add(operation);
+    }
+
+    public ArrayList getOperations()
+    {
+        loadServiceDescByIntrospection();  // Just in case...
+        return operations;
     }
 
     public OperationDesc [] getOperationsByName(String methodName)
@@ -338,6 +355,9 @@ public class ServiceDesc {
      */
     public void loadServiceDescByIntrospection()
     {
+        if (implClass == null)
+            return;
+
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
