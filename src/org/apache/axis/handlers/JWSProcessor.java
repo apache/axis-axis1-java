@@ -304,7 +304,7 @@ public class JWSProcessor extends BasicHandler
                 sd.setTypeMappingRegistry(tmr);
                 sd.setTypeMapping(msgContext.getTypeMapping());
 
-                rpc.getInitializedServiceDesc();
+                rpc.getInitializedServiceDesc(msgContext);
 
                 soapServices.put(clsName, rpc);
 

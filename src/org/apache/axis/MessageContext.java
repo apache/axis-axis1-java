@@ -232,7 +232,7 @@ public class MessageContext implements SOAPMessageContext {
         }
 
         if (serviceHandler != null) {
-            ServiceDesc desc = serviceHandler.getInitializedServiceDesc();
+            ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
 
             if (desc != null) {
                 possibleOperations = desc.getOperationsByQName(qname);
@@ -619,7 +619,7 @@ public class MessageContext implements SOAPMessageContext {
             // new service.
             highFidelity = service.needsHighFidelityRecording();
 
-            ServiceDesc sd = service.getInitializedServiceDesc();
+            ServiceDesc sd = service.getInitializedServiceDesc(this);
 
             if (service.getStyle() == Style.MESSAGE) {
                 // There should be only one operation

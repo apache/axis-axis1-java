@@ -301,7 +301,7 @@ public abstract class JavaProvider extends BasicProvider
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         SOAPService service = msgContext.getService();
-        ServiceDesc serviceDesc = service.getInitializedServiceDesc();
+        ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
 
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
@@ -446,11 +446,14 @@ public abstract class JavaProvider extends BasicProvider
     /**
      * Returns the Class info about the service class.
      */
-    protected Class getServiceClass(String clsName, AxisEngine engine)
+    protected Class getServiceClass(String clsName,
+                                    SOAPService service,
+                                    MessageContext msgContext)
             throws AxisFault {
         ClassLoader cl = null;
         Class serviceClass = null;
-        
+        AxisEngine engine = service.getEngine();
+
         // If we have a message context, use that to get classloader and engine
         // otherwise get the current threads classloader
         cl = Thread.currentThread().getContextClassLoader();
@@ -483,7 +486,7 @@ public abstract class JavaProvider extends BasicProvider
      * other providers (like the EJBProvider) to get the class from the
      * right place.
      */
-    public void initServiceDesc(SOAPService service)
+    public void initServiceDesc(SOAPService service, MessageContext msgContext)
             throws AxisFault 
     {
         // Set up the Implementation class for the service
@@ -492,7 +495,7 @@ public abstract class JavaProvider extends BasicProvider
         ServiceDesc serviceDescription = service.getServiceDescription();
 
         if (clsName != null) {
-            Class cls = getServiceClass(clsName, service.getEngine());
+            Class cls = getServiceClass(clsName, service, msgContext);
             serviceDescription.setImplClass(cls);
         }
         

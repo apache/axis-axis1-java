@@ -58,6 +58,7 @@ package org.apache.axis.providers;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 
 import javax.xml.namespace.QName;
 
@@ -74,7 +75,8 @@ public abstract class BasicProvider extends BasicHandler {
      * This method returns a ServiceDesc that contains the correct 
      * implimentation class. 
      */ 
-    public abstract void initServiceDesc(SOAPService service)
+    public abstract void initServiceDesc(SOAPService service,
+                                         MessageContext msgContext)
             throws AxisFault;
     
     public void addOperation(String name, QName qname) {
