@@ -152,7 +152,7 @@ public class DefaultSocketFactory implements SocketFactory {
      * @return
      */
     protected String getGlobalProperty(String property) {
-        return AxisProperties.getGlobalProperty(property);
+        return AxisProperties.getProperty(property);
     }
 
     /**

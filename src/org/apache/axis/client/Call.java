@@ -1444,7 +1444,7 @@ public class Call implements javax.xml.rpc.Call {
     public static synchronized void addTransportPackage(String packageName) {
         if (transportPackages == null) {
             transportPackages = new ArrayList();
-            String currentPackages = AxisProperties.getGlobalProperty(TRANSPORT_PROPERTY);
+            String currentPackages = AxisProperties.getProperty(TRANSPORT_PROPERTY);
             if (currentPackages != null) {
                 StringTokenizer tok = new StringTokenizer(currentPackages,
                                                           "|");
@@ -1466,7 +1466,7 @@ public class Call implements javax.xml.rpc.Call {
             currentPackages.append('|');
         }
 
-        System.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
+        AxisProperties.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
     }
 
     /**

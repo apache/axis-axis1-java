@@ -54,9 +54,11 @@
  */
 package org.apache.axis.components.net;
 
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.lang.reflect.Constructor;
@@ -90,7 +92,7 @@ public class SocketFactoryFactory {
     public static synchronized SocketFactory getFactory(Hashtable attributes) {
 
         String socketFactoryClassName =
-                System.getProperty("axis.socketFactory",
+                AxisProperties.getProperty("axis.socketFactory",
                         "org.apache.axis.components.net.DefaultSocketFactory");
 
         log.debug("axis.socketFactory:" + socketFactoryClassName);
@@ -135,7 +137,7 @@ public class SocketFactoryFactory {
             Hashtable attributes) {
 
         String socketFactoryClassName =
-                System.getProperty("axis.socketSecureFactory",
+                AxisProperties.getProperty("axis.socketSecureFactory",
                         "org.apache.axis.components.net.JSSESocketFactory");
 
         log.debug("axis.socketSecureFactory:" + socketFactoryClassName);

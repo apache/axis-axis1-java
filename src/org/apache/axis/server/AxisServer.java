@@ -89,7 +89,7 @@ public class AxisServer extends AxisEngine
     public static AxisServer getServer(Map environment) throws AxisFault
     {
         if (factory == null) {
-            String factoryClassName = getGlobalProperty("axis.ServerFactory");
+            String factoryClassName = getProperty("axis.ServerFactory");
             if (factoryClassName != null) {
                 try {
                     Class factoryClass = ClassUtils.forName(factoryClassName);

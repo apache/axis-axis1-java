@@ -87,8 +87,6 @@ public class AxisFault extends java.rmi.RemoteException {
     protected static Log log =
         LogFactory.getLog(AxisFault.class.getName());
 
-    private static final String LS = System.getProperty("line.separator");
-
     protected QName     faultCode ;
     protected String    faultString = "";
     protected String    faultActor ;
@@ -227,15 +225,17 @@ public class AxisFault extends java.rmi.RemoteException {
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
-                details += LS + "\t" +  e.getLocalName() + ": " + XMLUtils.getInnerXMLString(e);
+                details += AxisProperties.LS
+                          + "\t" +  e.getLocalName() + ": "
+                          + XMLUtils.getInnerXMLString(e);
             }
         }
         
-        return "AxisFault" + LS
-            + " faultCode: " + faultCode + LS
-            + " faultString: " + faultString + LS
-            + " faultActor: " + faultActor + LS
-            + " faultDetail: " + details + LS
+        return "AxisFault" + AxisProperties.LS
+            + " faultCode: " + faultCode + AxisProperties.LS
+            + " faultString: " + faultString + AxisProperties.LS
+            + " faultActor: " + faultActor + AxisProperties.LS
+            + " faultDetail: " + details + AxisProperties.LS
             ;
     }
 

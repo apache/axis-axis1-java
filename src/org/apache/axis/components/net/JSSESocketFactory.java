@@ -55,6 +55,7 @@
 package org.apache.axis.components.net;
 
 import com.sun.net.ssl.SSLContext;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
@@ -103,7 +104,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
     private SSLSocketFactory sslFactory = null;
 
     /** Field defaultKeystoreFile           */
-    static String defaultKeystoreFile = System.getProperty("user.home")
+    static String defaultKeystoreFile = AxisProperties.getProperty("user.home")
             + "/.keystore";
 
     /** Field defaultKeyPass           */

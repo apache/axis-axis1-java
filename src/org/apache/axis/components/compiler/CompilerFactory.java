@@ -76,7 +76,7 @@ public class CompilerFactory {
 
         public static Compiler getCompiler()
         {
-            String compilerClassName = System.getProperty("axis.Compiler");
+            String compilerClassName = AxisProperties.getProperty("axis.Compiler");
             log.debug("axis.Compiler:" + compilerClassName);
             if (compilerClassName != null) {
                 try {
