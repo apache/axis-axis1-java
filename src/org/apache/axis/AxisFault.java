@@ -87,15 +87,6 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultDetails( details );
     }
 
-    public AxisFault(String code, String str,
-                     String actor, String details) {
-        super (str);
-        setFaultCode( new QFault(Constants.AXIS_NS, code));
-        setFaultString( str );
-        setFaultActor( actor );
-        setFaultDetailsString( details );
-    }
-
     public AxisFault(QFault code, String str,
                      String actor, Element[] details) {
         super (str);
