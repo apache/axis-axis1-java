@@ -1175,6 +1175,33 @@ public class SerializationContextImpl implements SerializationContext
         // !!! Write out a generic null, or get type info from somewhere else?
     }
 
+
+    /**
+     * Walk the interfaces of a class looking for a serializer for that
+     * interface.  Include any parent interfaces in the search also.
+     * 
+     */ 
+    private SerializerFactory getSerializerFactoryFromInterface(Class javaType, 
+                                                                QName xmlType, 
+                                                                TypeMapping tm)
+    {
+        SerializerFactory  serFactory  = null ;
+        Class [] interfaces = javaType.getInterfaces();
+        if (interfaces != null) {
+            for (int i = 0; i < interfaces.length; i++) {
+                Class iface = interfaces[i];
+                serFactory = (SerializerFactory) tm.getSerializer(iface,
+                                                                  xmlType);
+                if (serFactory == null)
+                    serFactory = getSerializerFactoryFromInterface(iface, xmlType, tm);
+                if (serFactory != null)
+                    break;
+                   
+            }
+        }
+        return serFactory;
+    }
+    
     /**
      * getSerializer
      * Attempts to get a serializer for the indicated javaType and xmlType.
@@ -1192,17 +1219,8 @@ public class SerializationContextImpl implements SerializationContext
                 break;
 
             // Walk my interfaces...
-            Class [] interfaces = javaType.getInterfaces();
-            if (interfaces != null) {
-                for (int i = 0; i < interfaces.length; i++) {
-                    Class iface = interfaces[i];
-                    serFactory = (SerializerFactory) tm.getSerializer(iface,
-                                                                      xmlType);
-                    if (serFactory != null)
-                        break;
-                }
-            }
-
+            serFactory = getSerializerFactoryFromInterface(javaType, xmlType, tm);
+            
             // Finally, head to my superclass
             if (serFactory != null)
                 break;
