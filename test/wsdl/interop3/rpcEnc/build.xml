@@ -15,6 +15,7 @@
   </taskdef>
 
   <target name="main">
+    <property name="test.dir" value="rpcEnc"/>
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.com/r3/InteropTestRpcEnc.wsdl"
@@ -23,13 +24,13 @@
     <mkdir dir="${root.dir}/${build.dest}"/>
 
     <copy file="WSDLInteropTestRpcEncPortBindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/rpcEnc"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/**/*.java" />
+      <include name="test/wsdl/interop3/${test.dir}/*.java" />
     </javac>
   </target>
 

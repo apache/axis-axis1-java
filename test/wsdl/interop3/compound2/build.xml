@@ -15,13 +15,14 @@
   </taskdef>
 
   <target name="main">
+    <property name="test.dir" value="compound2"/>
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.net/wsdl/r3/compound2.wsdl"
                output="${root.dir}/build/work" skeleton="yes"/>
 
     <copy file="SoapInteropCompound2BindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/compound2"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <copy file="Compound2TestCase.java"
           todir="${root.dir}/build/work/test/wsdl/interop3/compound2"/>
@@ -30,7 +31,7 @@
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/compound2/*.java" />
+      <include name="test/wsdl/interop3/${test.dir}/*.java" />
     </javac>
   </target>
 
