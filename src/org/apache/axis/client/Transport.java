@@ -55,13 +55,9 @@
 
 package org.apache.axis.client;
 
-import java.util.* ;
-import java.net.*;
-import java.io.IOException;
-import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.Handler;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 
 public class Transport {
 

@@ -55,9 +55,9 @@
 
 package org.apache.axis.transport.local;
 
-import org.apache.axis.*;
-import org.apache.axis.handlers.*;
-
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.log4j.Category;
 
 /**

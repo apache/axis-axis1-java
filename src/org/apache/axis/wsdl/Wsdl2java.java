@@ -54,12 +54,12 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.List;
-
 import org.apache.avalon.excalibur.cli.CLArgsParser;
 import org.apache.avalon.excalibur.cli.CLOption;
 import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
+
+import java.util.List;
 
 /**
  * Command line interface to the wsdl2java utility

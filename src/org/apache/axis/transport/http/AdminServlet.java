@@ -55,13 +55,14 @@
 
 package org.apache.axis.transport.http ;
 
-import java.io.*;
-import javax.servlet.* ;
-import javax.servlet.http.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.*;
-import org.apache.axis.server.* ;
-import org.apache.axis.utils.* ;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.server.AxisServer;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Proof-of-concept "management" servlet for Axis.

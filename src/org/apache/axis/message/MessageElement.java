@@ -56,23 +56,29 @@ package org.apache.axis.message;
  */
 
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-import org.w3c.dom.*;
 import org.apache.axis.Constants;
-import org.apache.axis.AxisFault;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.MessageContext;
-
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
-import java.util.*;
-import java.io.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class MessageElement
 {

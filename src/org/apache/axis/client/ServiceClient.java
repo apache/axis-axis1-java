@@ -55,27 +55,31 @@
 
 package org.apache.axis.client ;
 
-import java.util.* ;
-import java.net.*;
-import org.apache.axis.* ;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.message.*;
-import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.transport.http.HTTPTransport;
-import org.apache.axis.utils.* ;
-
-import org.w3c.dom.* ;
-
-import java.io.*;
-import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
+
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Allows an Axis service to be invoked from the client side.

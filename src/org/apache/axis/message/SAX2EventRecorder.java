@@ -1,10 +1,11 @@
 package org.apache.axis.message;
 
-import java.util.ArrayList;
+import org.apache.axis.encoding.DeserializationContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import org.apache.axis.encoding.DeserializationContext;
+
+import java.util.ArrayList;
 
 /**
  * This class records SAX2 Events and allows

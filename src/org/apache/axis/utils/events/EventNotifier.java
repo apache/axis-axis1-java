@@ -54,8 +54,14 @@
  */
 package org.apache.axis.utils.events;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * @author: James Snell (jasnell@us.ibm.com)

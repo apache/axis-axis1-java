@@ -55,7 +55,7 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.* ;
+
 
 /** 
  *

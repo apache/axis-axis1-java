@@ -55,9 +55,9 @@
 package org.apache.axis.server;
 
 import org.apache.axis.SimpleTargetedChain;
-
 import org.apache.log4j.Category;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Transport is a targeted chain that knows it's a transport.

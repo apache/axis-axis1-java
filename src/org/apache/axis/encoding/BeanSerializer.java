@@ -55,22 +55,20 @@
 
 package org.apache.axis.encoding;
 
-import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-
 import org.apache.axis.message.SOAPHandler;
-
-import org.apache.axis.utils.QName;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
-import org.xml.sax.*;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.ObjectStreamField;
+import java.io.Serializable;
+import java.util.Hashtable;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.

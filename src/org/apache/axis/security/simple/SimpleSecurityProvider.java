@@ -55,18 +55,17 @@
 
 package org.apache.axis.security.simple;
 
-import org.apache.axis.security.SecurityProvider;
-import org.apache.axis.security.AuthenticatedUser;
-import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.security.AuthenticatedUser;
+import org.apache.axis.security.SecurityProvider;
 import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
 
-import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * SimpleSecurityProvider

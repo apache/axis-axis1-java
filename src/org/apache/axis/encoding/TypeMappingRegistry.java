@@ -55,18 +55,18 @@
 
 package org.apache.axis.encoding;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
 import org.apache.axis.Constants;
-import org.apache.axis.utils.*;
-import org.apache.axis.utils.events.*;
-import org.apache.axis.message.*;
-import org.w3c.dom.Element;
+import org.apache.axis.utils.QName;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.*;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

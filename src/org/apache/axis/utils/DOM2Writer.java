@@ -57,10 +57,15 @@
 
 package org.apache.axis.utils;
 
-import java.io.*;
-import java.util.*;
-import org.w3c.dom.*;
-import org.apache.axis.utils.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * This class is a utility to serialize a DOM node as XML. This class

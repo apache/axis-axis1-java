@@ -55,13 +55,13 @@
 
 package org.apache.axis.handlers ;
 
-import java.io.* ;
-import java.util.* ;
-import java.sql.Time ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.handlers.* ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.log4j.Category;
+
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  *

@@ -55,17 +55,30 @@ package org.apache.axis.encoding;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.util.*;
-import javax.xml.parsers.SAXParser;
-import org.apache.axis.*;
-import org.apache.axis.message.*;
-
+import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.message.EnvelopeBuilder;
+import org.apache.axis.message.EnvelopeHandler;
+import org.apache.axis.message.HandlerFactory;
+import org.apache.axis.message.IDResolver;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.SAX2EventRecorder;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 
 /** 
  * @author Glen Daniels (gdaniels@macromedia.com)

@@ -55,14 +55,11 @@
 
 package org.apache.axis.handlers ;
 
-import java.io.* ;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.security.simple.SimpleSecurityProvider;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.security.simple.SimpleSecurityProvider;
 import org.apache.log4j.Category;
 
 /**

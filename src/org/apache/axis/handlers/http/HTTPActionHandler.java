@@ -54,14 +54,11 @@
 
 package org.apache.axis.handlers.http;
 
-import org.apache.axis.*;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
-
-import javax.servlet.* ;
-import javax.servlet.http.* ;
 
 /** An <code>HTTPActionHandler</code> simply sets the context's TargetService
  * property from the HTTPAction property.  We expect there to be a

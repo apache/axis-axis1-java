@@ -55,17 +55,7 @@
 
 package org.apache.axis.encoding;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-import java.util.Date;
-import java.util.Calendar;
-import java.text.DateFormat;
-
-import org.apache.axis.encoding.*;
-import org.apache.axis.utils.QName;
-
-import org.xml.sax.*;
+import org.xml.sax.SAXException;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.

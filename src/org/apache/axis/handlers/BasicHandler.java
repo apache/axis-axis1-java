@@ -54,15 +54,16 @@
 
 package org.apache.axis.handlers;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import org.apache.axis.*;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.utils.QName;
-
-import org.apache.axis.utils.XMLUtils ;
 import org.apache.log4j.Category;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import org.w3c.dom.* ;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler

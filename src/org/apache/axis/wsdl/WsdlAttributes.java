@@ -54,21 +54,20 @@
  */
 package org.apache.axis.wsdl;
 
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPBinding;
 import com.ibm.wsdl.extensions.http.HTTPBinding;
+import com.ibm.wsdl.extensions.soap.SOAPBinding;
+import com.ibm.wsdl.extensions.soap.SOAPBody;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
-import javax.wsdl.Binding;
 import javax.wsdl.PortType;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.BindingFault;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides attribute storage for elements in the WSDL document

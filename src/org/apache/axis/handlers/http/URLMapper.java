@@ -54,13 +54,13 @@
 
 package org.apache.axis.handlers.http;
 
-import org.apache.axis.*;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
 
-import javax.servlet.http.* ;
+import javax.servlet.http.HttpServletRequest;
 
 /** An <code>URLMapper</code> attempts to use the extra path info
  * of this request as the service name.

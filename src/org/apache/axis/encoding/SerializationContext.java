@@ -55,18 +55,30 @@ package org.apache.axis.encoding;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.util.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
-import org.w3c.dom.*;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
-import org.apache.axis.message.*;
-import org.apache.axis.utils.*;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.NSStack;
+import org.apache.axis.utils.QName;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Stack;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.

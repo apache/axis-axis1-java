@@ -54,12 +54,11 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import java.util.Enumeration;
-import org.w3c.dom.Element;
 import org.apache.axis.Handler;
-import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.QName;
+import org.w3c.dom.Element;
 
 /**
  * WSDD DeployableItem complexType

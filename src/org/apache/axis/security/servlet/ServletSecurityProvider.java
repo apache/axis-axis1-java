@@ -55,21 +55,15 @@
 
 package org.apache.axis.security.servlet;
 
-import org.apache.axis.security.SecurityProvider;
-import org.apache.axis.security.AuthenticatedUser;
-import org.apache.axis.security.simple.SimpleAuthenticatedUser;
 import org.apache.axis.MessageContext;
+import org.apache.axis.security.AuthenticatedUser;
+import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.io.File;
-import java.io.FileReader;
-import java.io.LineNumberReader;
 import java.security.Principal;
+import java.util.HashMap;
 
 /**
  * A ServletSecurityProvider, combined with the ServletAuthenticatedUser

@@ -62,15 +62,11 @@ package org.apache.axis.client ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import java.lang.String ;
-
-import org.apache.axis.AxisFault ;
-import org.apache.axis.Constants ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.encoding.ServiceDescription ;
-
-import org.apache.axis.rpc.namespace.QName ;
-import org.apache.axis.rpc.encoding.XMLType ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.rpc.encoding.XMLType;
+import org.apache.axis.rpc.namespace.QName;
 
 
 public class Call implements org.apache.axis.rpc.Call {

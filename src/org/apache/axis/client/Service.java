@@ -62,21 +62,17 @@ package org.apache.axis.client ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import java.net.URL ;
-import java.lang.String ;
-import java.util.List ;
-import java.util.Iterator ;
+import com.ibm.wsdl.xml.WSDLReader;
+import org.apache.axis.rpc.JAXRPCException;
+import org.apache.axis.rpc.namespace.QName;
+import org.apache.axis.utils.XMLUtils;
 
-import org.apache.axis.utils.XMLUtils ;
-
-import org.apache.axis.rpc.JAXRPCException ;
-import org.apache.axis.rpc.namespace.QName ;
-
-import javax.wsdl.Definition ;
-import javax.wsdl.PortType ;
-import javax.wsdl.Operation ;
-
-import com.ibm.wsdl.xml.WSDLReader ;
+import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 
 public class Service implements org.apache.axis.rpc.Service {
     private URL         wsdlLocation   = null ;

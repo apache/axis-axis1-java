@@ -55,16 +55,13 @@
 
 package org.apache.axis ;
 
-import java.util.*;
-import java.io.Serializable ;
-import org.apache.axis.* ;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.utils.* ;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
 
-import javax.xml.parsers.* ;
-import org.w3c.dom.* ;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * A <code>FaultableHandler</code> is essentially a wrapper for any other

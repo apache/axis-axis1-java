@@ -55,22 +55,22 @@
 
 package org.apache.axis.client ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
 import org.apache.axis.AxisEngine;
-import org.apache.axis.Message ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.Transport;
-import org.apache.axis.encoding.SerializationContext ;
+import org.apache.axis.Message;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.message.SOAPBodyElement ;
-import org.apache.axis.message.SOAPEnvelope ;
-import org.apache.axis.utils.Options ;
-
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.Options;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * An admin client object that can be used both from the command line

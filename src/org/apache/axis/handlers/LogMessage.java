@@ -55,8 +55,7 @@ package org.apache.axis.handlers;
  * <http://www.apache.org/>.
  */
 
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
+import org.apache.axis.MessageContext;
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 

@@ -55,10 +55,11 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import java.lang.reflect.*;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.QName;
+
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /** An RPC parameter
  *

@@ -55,8 +55,8 @@
 
 package org.apache.axis.utils.cache;
 
-import java.util.Hashtable;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
 
 /**
  * A simple cache of previously loaded classes, and their methods.

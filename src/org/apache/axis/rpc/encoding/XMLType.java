@@ -4,7 +4,7 @@
 // package javax.xml.rpc ;
 package org.apache.axis.rpc.encoding ;
 
-import org.apache.axis.rpc.namespace.QName ;
+import org.apache.axis.rpc.namespace.QName;
 
 public interface XMLType extends java.io.Serializable {
    public QName getType();

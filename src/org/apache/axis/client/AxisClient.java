@@ -55,14 +55,14 @@
 
 package org.apache.axis.client ;
 
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.*;
-
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
-import org.apache.axis.transport.http.HTTPSender;
-import org.apache.axis.transport.local.LocalSender;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.log4j.Category;
 
 /**

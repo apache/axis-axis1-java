@@ -60,17 +60,8 @@ package org.apache.axis.encoding ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import org.apache.axis.rpc.namespace.QName ;
-
 import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.rpc.namespace.QName;
-import org.xml.sax.*;
-
-import java.util.Date;
-import java.util.List;
-import java.math.BigDecimal;
-import java.io.IOException;
 
 
 public class XMLType implements org.apache.axis.rpc.encoding.XMLType {

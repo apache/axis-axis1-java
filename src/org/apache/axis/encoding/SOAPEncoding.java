@@ -1,14 +1,13 @@
 package org.apache.axis.encoding;
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.Constants;
-import java.util.Date;
-import java.util.Hashtable;
+import org.xml.sax.Attributes;
+
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Hashtable;
 
 public class SOAPEncoding implements Serializer { 
     private Hashtable typemap = new Hashtable();

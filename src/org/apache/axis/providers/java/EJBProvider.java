@@ -55,18 +55,14 @@
 
 package org.apache.axis.providers.java;
 
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.utils.cache.* ;
-import org.apache.axis.message.* ;
-import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 
-import java.rmi.*;
-import java.rmi.server.*;
-import java.util.*;
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
 /**
  * A basic EJB Provider

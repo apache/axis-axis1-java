@@ -55,9 +55,11 @@ package org.apache.axis.encoding;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /** A very simple service description class, to demonstrate one way
  * to get type information out of band.

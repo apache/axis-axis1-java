@@ -55,14 +55,17 @@
 
 package org.apache.axis.encoding;
 
-import java.util.*;
-import java.io.IOException;
-import org.xml.sax.*;
-
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.*;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A <code>MapSerializer</code> is be used to serialize and

@@ -55,7 +55,9 @@
 
 package org.apache.axis.transport.local;
 
-import java.net.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 
 /**
  * A stub URLStreamHandler, so the system will recognize our

@@ -1,11 +1,12 @@
 package org.apache.axis.message;
 
-import java.io.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-import java.util.*;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
 
 public class SAXOutputter extends DefaultHandler
 {

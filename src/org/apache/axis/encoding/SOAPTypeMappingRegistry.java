@@ -58,15 +58,13 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.QName;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.Date;
 import java.util.List;
-import java.math.BigDecimal;
-import java.io.IOException;
 
 public class SOAPTypeMappingRegistry extends TypeMappingRegistry { 
     

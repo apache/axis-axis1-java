@@ -55,15 +55,17 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import java.io.*;
-import java.util.*;
-import org.apache.axis.encoding.*;
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
-import org.apache.axis.AxisFault;
-import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class SOAPEnvelope extends MessageElement
 {

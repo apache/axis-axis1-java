@@ -55,23 +55,18 @@
 
 package org.apache.axis.server ;
 
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.FileProvider ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.handlers.http.*;
-import org.apache.axis.handlers.soap.* ;
-import org.apache.axis.registries.* ;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistry;
-
-// This is included in order to support getClientEngine()
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
-
-
-import org.apache.axis.transport.http.HTTPSender;
-import org.apache.axis.providers.java.*;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
 /**
  *

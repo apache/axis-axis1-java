@@ -55,16 +55,14 @@
 
 package org.apache.axis.handlers ;
 
-import java.util.* ;
-
-import org.apache.axis.* ;
-import org.apache.axis.encoding.*;
-import org.apache.axis.utils.* ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.log4j.Category;
-
-import org.w3c.dom.* ;
 
 /**
  *

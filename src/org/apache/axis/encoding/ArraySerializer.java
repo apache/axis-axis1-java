@@ -55,16 +55,18 @@ package org.apache.axis.encoding;
  * <http://www.apache.org/>.
  */
 
-import org.apache.axis.*;
+import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.*;
-import org.xml.sax.*;
+import org.apache.axis.utils.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import java.lang.reflect.Array;
+
 import java.io.IOException;
-import java.util.List;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
  * arrays.

@@ -55,14 +55,11 @@
 
 package org.apache.axis.transport.http;
 
-import java.util.* ;
-import org.apache.axis.* ;
-
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.client.Transport;
-import org.apache.axis.transport.http.HTTPConstants;
 
 /**
  * Extends Transport by implementing the setupMessageContext function to

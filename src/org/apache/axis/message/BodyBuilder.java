@@ -5,13 +5,12 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.ServiceDescription;
-
 import org.apache.log4j.Category;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class BodyBuilder extends SOAPHandler
 {

@@ -55,13 +55,10 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import java.io.IOException;
-import java.util.* ;
-import org.apache.axis.* ;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.SerializationContext;
-import org.xml.sax.Attributes;
 import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
 /** A simple header abstraction.  Extends MessageElement with header-specific
  * stuff like mustUnderstand, actor, and a 'processed' flag.
