@@ -208,13 +208,20 @@ public class SimpleAxisServer implements Runnable {
      * This will interrupt any pending accept().
      */
     public void stop() throws Exception {
+        /* The following code, before log.info, may be unnecessary given
+         * that we are about to kill the JVM.
+         */
         stopped = true;
         try {
             serverSocket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (worker != null) worker.interrupt();
+        if (worker != null) {
+            worker.interrupt();
+        }
+        log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
+        System.exit(0);
     }
 
     /**
