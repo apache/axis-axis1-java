@@ -106,7 +106,7 @@ public class SOAPHeaderElement extends MessageElement
         // TLS (SOAPConstants.getCurrentVersion() ?)
         SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
 
-        if (getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI()))
+        if (getNamespaceURI() != null && getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI()))
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
 
         String val = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
