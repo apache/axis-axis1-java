@@ -184,7 +184,8 @@ public class SOAPHeader extends MessageElement
             
             // Always process NEXT's, and then anything else in our list
             // For now, also always process ultimateReceiver role if SOAP 1.2
-            if (nextActor.equals(actor) ||
+            if (actor == null ||
+                    nextActor.equals(actor) ||
                 (isSOAP12 && 
                     Constants.URI_SOAP12_ULTIMATE_ROLE.equals(actor)) ||
                 (actors != null && actors.contains(actor))) {
