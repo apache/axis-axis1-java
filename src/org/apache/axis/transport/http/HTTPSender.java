@@ -108,31 +108,25 @@ public class HTTPSender extends BasicHandler {
             int port = targetURL.getPort();
             Socket sock = null;
 
-            try {
 
-                // create socket based on the url protocol type
-                if (targetURL.getProtocol().equalsIgnoreCase("https")) {
-                    sock = getSecureSocket(host, port, otherHeaders, useFullURL);
-                } else {
-                    sock = getSocket(host, port, otherHeaders, useFullURL);
-                }
-
-                // optionally set a timeout for the request
-                if (msgContext.getTimeout() != 0) {
-                    sock.setSoTimeout(msgContext.getTimeout());
-                }
-
-                // Send the SOAP request to the server
-                writeToSocket(sock, msgContext, targetURL,
-                        otherHeaders, host, port, useFullURL);
-            } finally {
-                // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
-                // for a direct (non-proxy) connection if this is enabled.
-                //if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
+            // create socket based on the url protocol type
+            if (targetURL.getProtocol().equalsIgnoreCase("https")) {
+                sock = getSecureSocket(host, port, otherHeaders, useFullURL);
+            } else {
+                sock = getSocket(host, port, otherHeaders, useFullURL);
             }
 
+            // optionally set a timeout for the request
+            if (msgContext.getTimeout() != 0) {
+                sock.setSoTimeout(msgContext.getTimeout());
+            }
+
+            // Send the SOAP request to the server
+            InputStream  inp= writeToSocket(sock, msgContext, targetURL,
+                        otherHeaders, host, port, useFullURL);
+
             // Read the response back from the server
-            readFromSocket(sock, msgContext);
+            readFromSocket(sock, msgContext, inp, null);
         } catch (Exception e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -192,7 +186,7 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private void writeToSocket(
+    private InputStream writeToSocket(
             Socket sock, MessageContext msgContext, URL tmpURL,
             StringBuffer otherHeaders, String host, int port,
             BooleanHolder useFullURL)
@@ -201,6 +195,7 @@ public class HTTPSender extends BasicHandler {
         String userID = null;
         String passwd = null;
         String reqEnv = null;
+        InputStream inp= null;  //In case it is necessary to read before the full respose.
 
         userID = msgContext.getUsername();
         passwd = msgContext.getPassword();
@@ -266,10 +261,15 @@ public class HTTPSender extends BasicHandler {
                     ? "/"
                     : tmpURL.getFile()));
         }
+
+
+
         Message reqMessage = msgContext.getRequestMessage();
 
-        boolean http10 = true;
-        boolean httpChunkStream = false;
+        boolean http10 = true; //True if this is to use HTTP 1.0 / false HTTP 1.1
+        boolean httpChunkStream = false; //Use HTTP chunking or not.
+        boolean httpContinueExpected = false; //Under HTTP 1.1 if false you *MAY* need to wait for a 100 rc,
+                                              //  if true the server MUST reply with 100 continue.
         String httpConnection = null;
 
         String httpver = msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
@@ -325,6 +325,12 @@ public class HTTPSender extends BasicHandler {
                     //HTTP 1.0 will always close.
                     //HTTP 1.1 will use persistent. //no need to specify
                 } else {
+                    if( !http10 && key.equalsIgnoreCase(HTTPConstants.HEADER_EXPECT)) {
+                        String val = me.getValue().toString();
+                        if (null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_EXPECT_100_Continue))
+                            httpContinueExpected = true;
+                    }        
+
                     otherHeaders.append(key).append(": ").append(me.getValue()).append("\r\n");
                 }
             }
@@ -337,16 +343,36 @@ public class HTTPSender extends BasicHandler {
         header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
                 HTTPConstants.HEADER_PROTOCOL_11)
                 .append("\r\n")
-                .append(HTTPConstants.HEADER_HOST)
-                .append(": ")
-                .append(host)
-                .append((port == -1)?(""):(":" + port))
-                .append("\r\n")
                 .append(HTTPConstants.HEADER_CONTENT_TYPE)
                 .append(": ")
                 .append(reqMessage.getContentType())
                 .append("\r\n")
-                .append(HTTPConstants.HEADER_SOAP_ACTION)
+                .append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
+                .append( ": ")
+                .append( HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME)
+                .append( ", ")
+                .append( HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)
+                .append( ", ")
+                .append( HTTPConstants.HEADER_ACCEPT_TEXT_ALL)
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_USER_AGENT)   //Tell who we are.
+                .append( ": ")
+                .append("Axis/beta3")
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_HOST)  //used for virtual connections
+                .append(": ")
+                .append(host)
+                .append((port == -1)?(""):(":" + port))
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_CACHE_CONTROL)   //Stop caching proxies from caching SOAP reqeuest.
+                .append(": ")
+                .append(HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE)
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_PRAGMA)
+                .append(": ")
+                .append(HTTPConstants.HEADER_CACHE_CONTROL_NOCACHE)
+                .append("\r\n")
+                .append(HTTPConstants.HEADER_SOAP_ACTION)  //The SOAP action.
                 .append(": \"")
                 .append(action)
                 .append("\"\r\n");
@@ -375,6 +401,7 @@ public class HTTPSender extends BasicHandler {
         if (null != otherHeaders)
             header.append(otherHeaders); //Add other headers to the end.
 
+
         header.append("\r\n"); //The empty line to start the BODY.
 
         OutputStream out = sock.getOutputStream();
@@ -382,7 +409,32 @@ public class HTTPSender extends BasicHandler {
         if (httpChunkStream) {
             out.write(header.toString()
                     .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
-            out.flush();
+            if(httpContinueExpected ){ //We need to get a reply from the server as to whether
+                                      // it wants us send anything more.
+                out.flush();
+                Hashtable cheaders= new Hashtable (); 
+                inp=readFromSocket(sock, msgContext, null, cheaders);
+                int returnCode= -1;
+                Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+                if(null != Irc) returnCode= Irc.intValue();
+                if(100 == returnCode){  // got 100 we may continue.
+                    //Need todo a little msgContext house keeping....
+                    msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+                    msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+                }
+                else{ //If no 100 Continue then we must not send anything!
+                    String statusMessage= (String) 
+                        msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+
+                    AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
+
+                    fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                            "" + returnCode, ""));
+                    throw fault;
+               }
+
+
+            }
             ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(out);
             out = new BufferedOutputStream(chunkedOutputStream, 8 * 1024);
             try {
@@ -393,6 +445,35 @@ public class HTTPSender extends BasicHandler {
             out.flush();
             chunkedOutputStream.eos();
         } else {
+            //No chunking...
+            if(httpContinueExpected ){ //We need to get a reply from the server as to whether
+                                      // it wants us send anything more.
+                out.flush();
+                Hashtable cheaders= new Hashtable (); 
+                inp=readFromSocket(sock, msgContext, null, cheaders);
+                int returnCode= -1;
+                Integer Irc=  (Integer) msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+                if(null != Irc) returnCode= Irc.intValue();
+                if(100 == returnCode){  // got 100 we may continue.
+                    //Need todo a little msgContext house keeping....
+                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
+                            null);
+                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
+                            null);
+                }
+                else{ //If no 100 Continue then we must not send anything!
+                    String statusMessage= (String)
+                        msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+
+                    AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
+
+                    fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                            "" + returnCode, ""));
+                    throw fault;
+               }
+
+
+            }
             out = new BufferedOutputStream(out, 8 * 1024);
             try {
                 out.write(header.toString()
@@ -409,6 +490,7 @@ public class HTTPSender extends BasicHandler {
             log.debug("---------------------------------------------------");
             log.debug(header + reqEnv);
         }
+        return inp;
     }
 
     /**
@@ -419,17 +501,22 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private void readFromSocket(Socket sock, MessageContext msgContext)
+    private InputStream readFromSocket(Socket sock, MessageContext msgContext,InputStream  inp, Hashtable headers )
             throws IOException {
         Message outMsg = null;
         byte b;
         int len = 0;
         int colonIndex = -1;
-        Hashtable headers = new Hashtable();
+        boolean headersOnly= false;
+        if(null != headers){
+            headersOnly= true;
+        }else{
+            headers=  new Hashtable();
+        }
         String name, value;
         String statusMessage = "";
         int returnCode = 0;
-        InputStream inp = new BufferedInputStream(sock.getInputStream());
+        if(null == inp) inp = new BufferedInputStream(sock.getInputStream());
 
         // Should help performance. Temporary fix only till its all stream oriented.
         // Need to add logic for getting the version # and the return code
@@ -511,6 +598,10 @@ public class HTTPSender extends BasicHandler {
             }
         }
 
+        if(headersOnly){
+           return inp;
+        }
+
         /* All HTTP headers have been read. */
         String contentType =
                 (String) headers
@@ -588,6 +679,7 @@ public class HTTPSender extends BasicHandler {
             handleCookie(HTTPConstants.HEADER_COOKIE2,
                     HTTPConstants.HEADER_SET_COOKIE2, headers, msgContext);
         }
+        return inp;
     }
 
     /**

@@ -210,12 +210,21 @@ public class EchoAttachment {
 
         Call     call    = (Call) service.createCall(); //Create a call to the service.
 
-        //call.setScopedProperty(MessageContext.HTTP_TRANSPORT_VERSION,HTTPConstants.HEADER_PROTOCOL_V11);
+        /*Un comment the below statement to do HTTP/1.1 protocol*/
+      //call.setScopedProperty(MessageContext.HTTP_TRANSPORT_VERSION,HTTPConstants.HEADER_PROTOCOL_V11);
         Hashtable myhttp= new Hashtable();
         myhttp.put("dddd","yyy");     //Send extra soap headers
         myhttp.put("SOAPAction","dyyy");
         myhttp.put("SOAPActions","prova");
-        //myhttp.put(HTTPConstants.HEADER_TRANSFER_ENCODING,HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
+
+        /*Un comment the below to do http chunking to avoid the need to calculate content-length. (Needs HTTP/1.1)*/
+      //myhttp.put(HTTPConstants.HEADER_TRANSFER_ENCODING, HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
+
+        /*Un comment the below to force a 100-Continue... This will cause  httpsender to wait for
+         * this response on a post.  If HTTP 1.1 and this is not set, *SOME* servers *MAY* reply with this anyway.
+         *  Currently httpsender won't handle this situation, this will require the resp. which it will handle.
+         */
+      //myhttp.put(HTTPConstants.HEADER_EXPECT, HTTPConstants.HEADER_EXPECT_100_Continue);
         call.setScopedProperty(HTTPConstants.REQUEST_HEADERS,myhttp);
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
