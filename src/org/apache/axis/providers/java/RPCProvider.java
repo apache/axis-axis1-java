@@ -361,7 +361,7 @@ public class RPCProvider extends JavaProvider
                     }
                     else if ("Multipart".equals(MIMEName)) {
                         value = instantiateDataHandler(
-                            "org.apache.axis.attachments.MultipartDataSource",
+                            "org.apache.axis.attachments.MimeMultipartDataSource",
                             "javax.mail.internet.MimeMultipart",
                             value);
                     }
@@ -405,6 +405,8 @@ public class RPCProvider extends JavaProvider
         }
         catch (Throwable t) {
             // If we have a problem, just return the input value
+            String realValueClass = value.getClass().getName();
+            log.debug(JavaUtils.getMessage("noDataHandler", realValueClass, realValueClass), t);
         }
         return value;
     } // instantiateDataHandler
