@@ -99,6 +99,7 @@ Copyright:
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${excalibur.jar}"/>
+    <pathelement location="${java.home}/../lib/tools.jar"/>
     <fileset dir="lib">
      <include name="*.jar"/>
     </fileset>
