@@ -69,6 +69,7 @@ public class DataSer extends DeserializerBase implements Serializer
         context.startElement(name, attributes);
         context.serialize(new QName("", STRINGMEMBER), null, data.stringMember);
         context.serialize(new QName("", FLOATMEMBER), null, data.floatMember);
+        context.serialize(new QName("", DATAMEMBER), null, data.dataMember);
         context.endElement();
     }
 }

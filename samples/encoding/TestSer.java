@@ -25,8 +25,14 @@ public class TestSer
         service.addInputParam("struct", dataQName);
         
         Data data = new Data();
+        Data data2 = new Data();
         data.stringMember = "String member";
-        data.floatMember = new Float("4.54");
+        data.floatMember = new Float("1.23");
+        data.dataMember = data2;
+        
+        data2.stringMember = "another str member";
+        data2.floatMember = new Float("4.56");
+        data2.dataMember = null;  // "data;" for loop-test of multi-refs
         
         RPCParam arg2 = new RPCParam("", "struct", data);
         RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[]{ arg1, arg2 });
