@@ -915,6 +915,11 @@ public class Emitter {
         String exceptionName = Utils.capitalize(xmlNameToJava(operation.getName()));
         String fileName = exceptionName + ".java";
 
+        // check to make sure we haven't already emitted this fault
+        if (this.classList.contains(exceptionName) ) {
+            return exceptionName;
+        }
+
         this.classList.add(exceptionName);
         this.fileList.add(fileName);
 
@@ -1178,7 +1183,8 @@ public class Emitter {
         firstSer = false ;
 
         QName qname = type.getQName();
-        pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        //pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
         pw.println("            cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
