@@ -90,37 +90,42 @@ public class SOAPFaultElement extends SOAPBodyElement
         throws IOException
     {
         context.registerPrefixForURI(prefix, namespaceURI);
-        context.startElement(new QName(this.getNamespaceURI(), this.getName()), attributes);
+        context.startElement(new QName(this.getNamespaceURI(),
+                                       this.getName()),
+                             attributes);
 
         if (fault.getFaultCode() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV, "faultcode"),
-                               null);
-          QFault code = fault.getFaultCode();
-          context.writeSafeString(context.qName2String(code));
-          context.endElement();
+            // Do this BEFORE starting the element, so the prefix gets
+            // registered if needed.
+            String faultCode = context.qName2String(fault.getFaultCode());
+            context.startElement(new QName(Constants.URI_SOAP_ENV,
+                                           "faultcode"),
+                                 null);
+            context.writeSafeString(faultCode);
+            context.endElement();
         }
-    
+        
         if (fault.getFaultString() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                         "faultstring"),
-                               null);
-          context.writeSafeString(fault.getFaultString());
-          context.endElement();
+            context.startElement(new QName(Constants.URI_SOAP_ENV,
+                                           "faultstring"),
+                                 null);
+            context.writeSafeString(fault.getFaultString());
+            context.endElement();
         }
-    
+        
         if (fault.getFaultActor() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                         "faultactor"),
-                               null);
-          context.writeSafeString(fault.getFaultActor());
-          context.endElement();
+            context.startElement(new QName(Constants.URI_SOAP_ENV,
+                                           "faultactor"),
+                                 null);
+            context.writeSafeString(fault.getFaultActor());
+            context.endElement();
         }
-    
+        
         Element[] faultDetails = fault.getFaultDetails();
         if (faultDetails != null) {
-          //*** TBD ***
+            //*** TBD ***
         }
-    
+        
         context.endElement();
     }
     
