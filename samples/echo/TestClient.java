@@ -206,7 +206,8 @@ public abstract class TestClient {
                 } else {
                     System.out.println(method + "\t Fail: " + gotBack);
                     if (gotBack instanceof Exception)
-                        ((Exception)gotBack).printStackTrace();
+                        if (!(gotBack instanceof AxisFault))
+                            ((Exception)gotBack).printStackTrace();
                 }
             }
         };
