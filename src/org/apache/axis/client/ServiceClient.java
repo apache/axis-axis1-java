@@ -258,7 +258,6 @@ public class ServiceClient {
         if ( encodingStyleURI != null )
             reqEnv.setEncodingStyleURI( encodingStyleURI );
         
-        msgContext.clearProperties();
         msgContext.setRequestMessage(reqMsg);
         
         reqEnv.addBodyElement(body);
@@ -328,7 +327,6 @@ public class ServiceClient {
      * (perhaps because you called this.setRequestMessage())
      */
     public void invoke() throws AxisFault {
-      Debug.setDebugLevel(5);
         Debug.Print( 1, "Enter: Service::invoke()" );
         
         msgContext.setServiceDescription(serviceDesc);
