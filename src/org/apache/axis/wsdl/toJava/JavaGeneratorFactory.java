@@ -172,6 +172,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
+        determineSEINames(symbolTable);
         if (emitter.isAllWanted()) {
             setAllReferencesToTrue();
         }
@@ -331,7 +332,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * Note: This method also ensures that anonymous types are 
      * given unique java type names.
      */
-    private void javifyNames(SymbolTable symbolTable) {
+    protected void javifyNames(SymbolTable symbolTable) {
         int uniqueNum = 0;
         HashMap anonQNames = new HashMap();
         Iterator it = symbolTable.getHashMap().values().iterator();
@@ -389,11 +390,36 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     } // javifyNames
 
+    protected void determineSEINames(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                if (entry instanceof BindingEntry) {
+                    // The SEI name is normally the portType name.
+                    // But the binding info MIGHT force the SEI
+                    // name to be the binding name.
+                    BindingEntry bEntry = (BindingEntry) entry;
+                    String seiName = null;
+                    if (bEntry.hasLiteral() && symbolTable.isWrapped()) {
+                        seiName = bEntry.getName();
+                    }
+                    else {
+                        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
+                                bEntry.getBinding().getPortType().getQName());
+                        seiName = ptEntry.getName();
+                    }                    bEntry.setDynamicVar(JavaBindingWriter.SEI_NAME, seiName);
+                }
+            }
+        }
+    } // determineSEINames
+
     /**
      * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
      * Definition, force their names to be suffixed with _PortType and _Service, respectively.
      */
-    private void resolveNameClashes(SymbolTable symbolTable) {
+    protected void resolveNameClashes(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
@@ -541,7 +567,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * on WSDL2Java). Set all symbols as referenced (except nonSOAP bindings
      * which we don't know how to deal with).
      */
-    private void setAllReferencesToTrue() {
+    protected void setAllReferencesToTrue() {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -563,7 +589,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * If a binding's type is not TYPE_SOAP, then we don't use that binding
      * or that binding's portType.
      */
-    private void ignoreNonSOAPBindings(SymbolTable symbolTable) {
+    protected void ignoreNonSOAPBindings(SymbolTable symbolTable) {
 
         // Look at all uses of the portTypes.  If none of the portType's bindings are of type
         // TYPE_SOAP, then turn off that portType's isReferenced flag.
@@ -614,7 +640,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     } // ignoreNonSOAPBindings
 
-    private void constructSignatures(SymbolTable symbolTable) {
+    protected void constructSignatures(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
@@ -702,7 +728,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * Find all inout/out parameters and add a flag to the Type of that parameter saying a holder
      * is needed.
      */
-    private void determineIfHoldersNeeded(SymbolTable symbolTable) {
+    protected void determineIfHoldersNeeded(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();

@@ -119,10 +119,7 @@ public class JavaImplWriter extends JavaWriter {
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
 
-        // If there is not literal use, the interface name is the portType name.
-        // Otherwise it is the binding name.
-        String portTypeName = bEntry.hasLiteral() ?
-                bEntry.getName() : ptEntry.getName();
+        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
         pw.print("public class " + className + " implements " + portTypeName);
         pw.println(" {");
 
