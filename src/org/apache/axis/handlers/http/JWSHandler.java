@@ -52,32 +52,28 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers;
+package org.apache.axis.handlers.http;
 
 import org.apache.axis.*;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 
 import javax.servlet.* ;
 import javax.servlet.http.* ;
 
-/** An <code>HTTPActionHandler</code> simply sets the context's TargetService
- * property from the HTTPAction property.  We expect there to be a
- * Router on the chain after us, to dispatch to the service named in
- * the SOAPAction.
- * 
- * In the real world, this might do some more complex mapping of
- * SOAPAction to a TargetService.
+/** A <code>JWSHandler</code> sets the target service and JWS filename
+ * in the context depending on the JWS configuration and the target URL.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class HTTPActionHandler extends BasicHandler
+public class JWSHandler extends BasicHandler
 {
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
-        String action = null ;
+        Debug.Print( 1, "Enter: JWSHandler::invoke" );
+        
         HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
                                              HTTPConstants.MC_HTTP_SERVLET);
         ServletConfig      config  = servlet.getServletConfig();
@@ -97,30 +93,15 @@ public class HTTPActionHandler extends BasicHandler
             String pathName = context.getRealPath( URL );
             Debug.Print(2, "Path: " + pathName );
             msgContext.setProperty( "JWSFileName", pathName );
-            action = Constants.JWSPROCESSOR_TARGET ;
-        }
-        else {
-            action = (String) msgContext.getProperty(
-                                             HTTPConstants.MC_HTTP_SOAPACTION);
-            Debug.Print( 2, "  HTTP SOAPAction: " + action );
-            if (action == null)
-                throw new AxisFault( "Server.NoHTTPAction",
-                                     "No HTTPAction property in context",
-                                     null, null );
-            action = action.trim();
-            if (action.charAt(0) == '\"') {
-                // assert(action.endsWith("\"")
-                action = action.substring(1, action.length() - 1);
-            }
+            msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET ) ;
         }
 
-        msgContext.setTargetService( action );
-        Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
+        Debug.Print( 1, "Exit : JWSHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext) 
     {
-        Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
-        Debug.Print( 1, "Exit: HTTPActionHandler::undo" );
+        Debug.Print( 1, "Enter: JWSHandler::undo" );
+        Debug.Print( 1, "Exit: JWSHandler::undo" );
     }
 }

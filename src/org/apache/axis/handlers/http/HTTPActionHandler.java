@@ -1,8 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,82 +52,59 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.handlers.http;
 
-import java.io.* ;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.*;
+import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 
-/**
- * Just a simple Authorization Handler to see if the user
- * specified in the Bag in the MessageContext is allowed to preform this
- * action.
- *
- * Just look for 'user' and 'action' in a file called 'perms.lst'
- *
- * Replace this with your 'real' Authorization code.
- *
+import javax.servlet.* ;
+import javax.servlet.http.* ;
+
+/** An <code>HTTPActionHandler</code> simply sets the context's TargetService
+ * property from the HTTPAction property.  We expect there to be a
+ * Router on the chain after us, to dispatch to the service named in
+ * the SOAPAction.
+ * 
+ * In the real world, this might do some more complex mapping of
+ * SOAPAction to a TargetService.
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class SimpleAuthorizationHandler extends BasicHandler {
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
-    File permFile = new File("perms.lst");
-    if (permFile.exists()) {
-      try {
-        String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-        String  action = msgContext.getTargetService();
+public class HTTPActionHandler extends BasicHandler
+{
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
+        String action = (String) msgContext.getProperty(
+                                            HTTPConstants.MC_HTTP_SOAPACTION);
+        Debug.Print( 2, "  HTTP SOAPAction: " + action );
+        
+        /** The idea is that this handler only goes in the chain IF this
+         * service does a mapping between SOAPAction and target.  Therefore
+         * if we get here with no action, we're in trouble.
+         */
+        if (action == null)
+            throw new AxisFault( "Server.NoHTTPAction",
+                "No HTTPAction property in context",
+                null, null );
+        
+        action = action.trim();
 
-        Debug.Print( 1, "User: '" + userID + "'" );
-        Debug.Print( 1, "Action: '" + action + "'" );
-
-        FileReader        fr   = new FileReader( permFile );
-        LineNumberReader  lnr  = new LineNumberReader( fr );
-        String            line = null ;
-        boolean           done = false ;
-
-        if ( userID == null || userID.equals("") )
-          throw new AxisFault( "Server.Unauthorized", 
-            "User not authorized",
-            null, null );
-
-        while ( (line = lnr.readLine()) != null ) {
-          StringTokenizer  st = new StringTokenizer( line );
-          String           u  = null ,
-            a  = null ;
-
-          if ( st.hasMoreTokens() ) u = st.nextToken();
-          if ( st.hasMoreTokens() ) a = st.nextToken();
-          Debug.Print( 2, "From file: '" + u + "':'" + a + "'" );
-
-          if ( !userID.equals(u) ) continue ;
-          if ( !action.equals(a) ) continue ;
-
-          Debug.Print( 1, "User '" + userID + "' authorized to: " + a );
-          done = true ;
-          break ;
+        if (action.charAt(0) == '\"') {
+            // assert(action.endsWith("\"")
+            action = action.substring(1, action.length() - 1);
         }
-        lnr.close();
-        fr.close();
-        if ( !done ) 
-          throw new AxisFault( "Server.Unauthorized", 
-            "User not authorized",
-            null, null );
-      }
-      catch( Exception e ) {
-        Debug.Print( 1, e );
-        if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-        throw (AxisFault) e ;
-      }
-    }
-    Debug.Print( 1, "Exit: SimpleAuthorizationHandler::invoke" );
-  }
 
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
-    Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
-  }
-};
+        msgContext.setTargetService( action );
+        Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
+    }
+
+    public void undo(MessageContext msgContext) 
+    {
+        Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
+        Debug.Print( 1, "Exit: HTTPActionHandler::undo" );
+    }
+}

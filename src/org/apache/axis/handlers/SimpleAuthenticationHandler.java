@@ -74,50 +74,54 @@ import org.apache.axis.message.* ;
 public class SimpleAuthenticationHandler extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
-    try {
-      String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-      String  passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-      Debug.Print( 1, "User: " + userID );
-      Debug.Print( 2, "Pass: " + passwd );
+    
+    File userFile = new File("users.lst");
+    if (userFile.exists()) {
+      try {
+        String  userID = (String) msgContext.getProperty( MessageContext.USERID );
+        String  passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
+        Debug.Print( 1, "User: " + userID );
+        Debug.Print( 2, "Pass: " + passwd );
 
-      FileReader        fr   = new FileReader( "users.lst" );
-      LineNumberReader  lnr  = new LineNumberReader( fr );
-      String            line = null ;
-      boolean           done = false ;
+        FileReader        fr   = new FileReader( userFile );
+        LineNumberReader  lnr  = new LineNumberReader( fr );
+        String            line = null ;
+        boolean           done = false ;
 
-      if ( userID == null || userID.equals("") )
-        throw new AxisFault( "Server.Unauthorized", 
-                             "User not authorized",
-                             null, null );
+        if ( userID == null || userID.equals("") )
+          throw new AxisFault( "Server.Unauthorized", 
+            "User not authorized",
+            null, null );
 
-      while ( (line = lnr.readLine()) != null ) {
-        StringTokenizer  st = new StringTokenizer( line );
-        String           u  = null ,
-                         p  = null ;
+        while ( (line = lnr.readLine()) != null ) {
+          StringTokenizer  st = new StringTokenizer( line );
+          String           u  = null ,
+            p  = null ;
 
-        if ( st.hasMoreTokens() ) u = st.nextToken();
-        if ( st.hasMoreTokens() ) p = st.nextToken();
-        Debug.Print( 2, "From file: " + u + ":" + p );
+          if ( st.hasMoreTokens() ) u = st.nextToken();
+          if ( st.hasMoreTokens() ) p = st.nextToken();
+          Debug.Print( 2, "From file: " + u + ":" + p );
 
-        if ( !userID.equals(u) ) continue ;
-        if ( passwd == null && p != null ) continue ;
-        if ( passwd != null && !passwd.equals(p) ) continue ;
+          if ( !userID.equals(u) ) continue ;
+          if ( passwd == null && p != null ) continue ;
+          if ( passwd != null && !passwd.equals(p) ) continue ;
 
-        Debug.Print( 1, "User '" + userID + "' authenticated to server" );
-        done = true ;
-        break ;
+          Debug.Print( 1, "User '" + userID + "' authenticated to server" );
+          done = true ;
+          break ;
+        }
+        lnr.close();
+        fr.close();
+        if ( !done ) 
+          throw new AxisFault( "Server.Unauthorized", 
+            "User not authenticated",
+            null, null );
       }
-      lnr.close();
-      fr.close();
-      if ( !done ) 
-        throw new AxisFault( "Server.Unauthorized", 
-                             "User not authenticated",
-                             null, null );
-    }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-      throw (AxisFault) e ;
+      catch( Exception e ) {
+        Debug.Print( 1, e );
+        if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
+        throw (AxisFault) e ;
+      }
     }
     Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
   }

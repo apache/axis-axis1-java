@@ -61,23 +61,34 @@ import javax.servlet.http.* ;
 import org.apache.axis.* ;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.encoding.Base64 ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisServlet extends HttpServlet {
+  // These have default values.
+  private String transportInName = "HTTP.Input";
+  private String transportOutName = "HTTP.Output";
 
   private static final String AXIS_ENGINE = "AxisEngine" ;
 
   public void init() {
+      ServletContext context = getServletConfig().getServletContext();
+      String param = context.getInitParameter("transport.input");
+      System.out.println("Got input name '" + param + "'");
+      if (param != null)
+          transportInName = param;
+      param = getInitParameter("transport.output");
+      if (param != null)
+          transportOutName = param;
   }
 
   public void doGet(HttpServletRequest req, HttpServletResponse res)
                 throws ServletException, IOException {
     res.setContentType("text/html");
     res.getWriter().println( "In doGet" );
+    res.getWriter().println(" Input = " + transportInName);
   }
 
   public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -88,7 +99,7 @@ public class AxisServlet extends HttpServlet {
 
     Handler  engine = null ;
 
-    // Debug.setDebugLevel( 2 );
+    //Debug.setDebugLevel( 6 );
 
     /* Get or 'new' the Axis engine object */
     /***************************************/
@@ -109,7 +120,7 @@ public class AxisServlet extends HttpServlet {
     /*******************************************************************/
     MessageContext    msgContext = new MessageContext();
     InputStream       inp        = req.getInputStream();
-    Message         msg        = new Message( inp, "InputStream" );
+    Message           msg        = new Message( inp, "InputStream" );
 
     /* Set the request(incoming) message field in the context */
     /**********************************************************/
@@ -117,8 +128,8 @@ public class AxisServlet extends HttpServlet {
 
     /* Set the Transport Specific Input/Output chains IDs */
     /******************************************************/
-    msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
-    msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
+    msgContext.setProperty(MessageContext.TRANS_INPUT , transportInName );
+    msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName );
 
     /* Save some HTTP specific info in the bag in case a handler needs it */
     /**********************************************************************/
@@ -131,42 +142,32 @@ public class AxisServlet extends HttpServlet {
     /* This will save us the trouble of having to parse the Request     */
     /* message - although we will need to double-check later on that    */
     /* the SOAPAction header does in fact match the URI in the body.    */
-    /* (is this last stmt true???)                                      */
+    /* (is this last stmt true??? (I don't think so - Glen))            */
     /* if SOAPAction is "" then use the URL                             */
     /* if SOAPAction is null then we'll we be forced to scan the body   */
     /*   for it.                                                        */
     /********************************************************************/
     String  tmp ;
     tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
-    if ( tmp != null && "".equals(tmp) )
-      tmp = req.getContextPath(); // Is this right?
-    if ( tmp != null ) 
-      msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
-
-    /* Process the Basic Auth stuff in the headers */
-    /***********************************************/
-    tmp = (String) req.getHeader( HTTPConstants.HEADER_AUTHORIZATION );
-    if ( tmp != null ) tmp = tmp.trim();
-    if ( tmp != null && tmp.startsWith("Basic ") ) {
-      String user=null ;
-      int  i ;
-
-      tmp = new String( Base64.decode( tmp.substring(6) ) );
-      i = tmp.indexOf( ':' );
-      if ( i == -1 ) user = tmp ;
-      else           user = tmp.substring( 0, i);
-      msgContext.setProperty( MessageContext.USERID, user );
-      if ( i != -1 )  {
-        String pwd = tmp.substring(i+1);
-        if ( pwd != null && pwd.equals("") ) pwd = null ;
-        if ( pwd != null )
-          msgContext.setProperty( MessageContext.PASSWORD, pwd );
-      }
-    }
-
-    /* Invoke the Axis engine... */
-    /*****************************/
+    
     try {
+      /** Technically, if we don't find this header, we should probably fault.
+      * It's required in the SOAP HTTP binding.
+      */
+      if ( tmp == null ) {
+          throw new AxisFault( "Client.NoSOAPAction",
+              "No SOAPAction header!",
+              null, null );
+      }
+      
+      if ( "".equals(tmp) )
+          tmp = req.getContextPath(); // Is this right?
+      
+      if ( tmp != null ) 
+        msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
+
+      /* Invoke the Axis engine... */
+      /*****************************/
       engine.invoke( msgContext );
     }
     catch( Exception e ) {
@@ -176,6 +177,8 @@ public class AxisServlet extends HttpServlet {
           res.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
         else
           res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+        // It's been suggested that a lack of SOAPAction should produce some
+        // other error code (in the 400s)...
       }
       else 
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );

@@ -161,6 +161,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     public void setServiceDescription(ServiceDescription serviceDesc)
     {
         this.serviceDesc = serviceDesc;
+        envelope.setServiceDescription(serviceDesc);
     }
     
     public int getState()
