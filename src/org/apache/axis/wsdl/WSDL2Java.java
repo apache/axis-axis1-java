@@ -437,7 +437,7 @@ public class WSDL2Java {
                 wsdlThread.join();
         } catch (InterruptedException e) {
         }
-        
+
         if (wsdlThread.isAlive()) {
             wsdlThread.interrupt();
             throw new Exception(JavaUtils.getMessage("timedOut"));
@@ -584,7 +584,7 @@ public class WSDL2Java {
 
                     case NETWORK_TIMEOUT_OPT:
                         String timeoutValue = option.getArgument();
-                        wsdl2java.setTimeout(Long.parseLong(timeoutValue));
+                        wsdl2java.setTimeout(Long.parseLong(timeoutValue)*1000);
                         break;
                 }
             }
