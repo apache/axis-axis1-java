@@ -186,8 +186,12 @@ public class SOAPPart extends Part
      * also cache the byte[] form of the SOAPPart.
      */
     public int getContentLength() {
-        byte[] bytes = this.getAsBytes();
-        return bytes.length;
+        try {
+            byte[] bytes = this.getAsBytes();
+            return bytes.length;
+        } catch (AxisFault fault) {
+            return 0;  // ?
+        }
     }
     /**
      * This set the SOAP Envelope for this part. 
@@ -257,7 +261,7 @@ public class SOAPPart extends Part
      * Get the contents of this Part (not the headers!), as a byte
      * array.  This will force buffering of the message.
      */
-    public byte[] getAsBytes() {
+    public byte[] getAsBytes() throws AxisFault {
     log.debug( "Enter: SOAPPart::getAsBytes" );
         if ( currentForm == FORM_BYTES ) {
             log.debug( "Exit: SOAPPart::getAsBytes" );
@@ -329,7 +333,7 @@ public class SOAPPart extends Part
      * Get the contents of this Part (not the headers!), as a String.
      * This will force buffering of the message.
      */
-    public String getAsString() {
+    public String getAsString() throws AxisFault {
         log.debug( "Enter: SOAPPart::getAsString" );
         if ( currentForm == FORM_STRING ) {
             log.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
@@ -375,15 +379,7 @@ public class SOAPPart extends Part
             try {
                 env.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
             } catch (Exception e) {
-                AxisFault fault = AxisFault.makeFault(e);
-                // Start over, write the fault...
-                writer = new StringWriter();
-                try {
-                    fault.output(new SerializationContextImpl(writer, getMessage().getMessageContext()));
-                } catch (Exception ex) {
-                    // OK, now we're *really* in trouble.
-                    return null;
-                }
+                throw AxisFault.makeFault(e);
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
             return (String)currentMessage;

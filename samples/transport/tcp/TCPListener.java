@@ -265,8 +265,22 @@ public class TCPListener implements Runnable {
             /* Send it back along the wire...  */
             /***********************************/
             msg = msgContext.getResponseMessage();
-            String response = (String) msg.getSOAPPart().getAsString();
-            if (msg == null) response="No data";
+            String response = null;
+            if (msg == null) {
+                response="No data";
+            } else {
+                try {
+                    response = (String) msg.getSOAPPart().getAsString();
+                } catch (AxisFault fault) {
+                    msg = new Message(fault);
+                    try {
+                        response = (String)msg.getSOAPPart().getAsString();
+                    } catch (AxisFault fault2) {
+                        response = fault2.dumpToString();
+                    }
+                }
+            }
+
             try {
                 OutputStream buf = new BufferedOutputStream(socket.getOutputStream());
                 // this should probably specify UTF-8, but for now, for Java interop,
