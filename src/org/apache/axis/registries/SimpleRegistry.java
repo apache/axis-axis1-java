@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,10 +63,17 @@ import org.apache.axis.registries.* ;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SimpleHandlerRegistry implements HandlerRegistry {
-  protected static String     fileName = "handlers.reg" ;
-  protected static Hashtable  handlers = null ;
+public class SimpleRegistry implements HandlerRegistry {
+  protected String     fileName;
+  protected Hashtable  handlers = null ;
+  
+  public SimpleRegistry(String fileName)
+  {
+    this.fileName = fileName;
+  }
+  
   /**
    * Init (ie. load settings...)
    */
@@ -116,7 +123,7 @@ public class SimpleHandlerRegistry implements HandlerRegistry {
     return( result );
   }
 
-  private void load() { 
+  private void load() {
     try {
       FileInputStream    fis = new FileInputStream( fileName );
       ObjectInputStream  ois = new ObjectInputStream( fis );

@@ -55,7 +55,7 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.*;
-import org.apache.axis.registries.SimpleServiceRegistry;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.Debug;
 
 /** A <code>Router</code> is a Handler which has only one purpose in life:
@@ -71,7 +71,7 @@ public class Router extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: Router::invoke" );
-        SimpleServiceRegistry registry = (SimpleServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+        HandlerRegistry registry = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
         if (registry == null)
             throw new AxisFault(new NullPointerException("Router: No registry property in context!"));
         
@@ -96,7 +96,7 @@ public class Router extends BasicHandler
     public void undo(MessageContext msgContext)
     {
         Debug.Print( 1, "Enter: Router::undo" );
-        SimpleServiceRegistry registry = (SimpleServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+        HandlerRegistry registry = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
         
         String target = (String)msgContext.getProperty(MessageContext.TARGET_SERVICE);
         

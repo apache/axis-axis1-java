@@ -104,8 +104,10 @@ public class Debug {
     if ( debugLevel < level ) return ;
     try {
       String msg = "Exception: " + exp ;
-      if ( toScreen )
+      if ( toScreen ) {
         System.err.println( msg );
+        exp.printStackTrace();
+      }
       if ( toFile ) {
         FileWriter   fw = new FileWriter( "AxisDebug.log", true );
         fw.write( msg, 0, msg.length() );

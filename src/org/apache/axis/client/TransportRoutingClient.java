@@ -96,7 +96,7 @@ public class TransportRoutingClient {
             
             /** The transport is http.
              */
-            msgContext.setProperty(MessageContext.TRANS_ID, HTTPConstants.TRANSPORT_ID);
+            msgContext.setProperty(MessageContext.TARGET_SERVICE, Constants.SERVLET_TARGET);
             
             /** If we were a real servlet, we might have made the SOAPAction
              * HTTP header available like this...
