@@ -99,8 +99,8 @@ public class RPCElement extends SOAPBodyElement
 
             // IF we're doc/literal... we can't count on the element name
             // being the method name.
-            elementIsFirstParam = (operation.getStyle() ==
-                                   ServiceDesc.STYLE_DOCUMENT);
+            elementIsFirstParam = ( (operation.getStyle() == ServiceDesc.STYLE_DOCUMENT) ||
+                                    (operation.getStyle() == ServiceDesc.STYLE_WRAPPED));
         }
     }
     

@@ -11,12 +11,12 @@
     </fileset>
   </path>
 
-  <taskdef name="wsdl2java" 
+  <taskdef name="wsdl2java"
            classname="test.wsdl.Wsdl2javaAntTask">
       <classpath refid="test-classpath" />
   </taskdef>
 
-  <taskdef name="java2wsdl" 
+  <taskdef name="java2wsdl"
            classname="test.wsdl.Java2WsdlAntTask">
       <classpath refid="test-classpath" />
   </taskdef>
@@ -135,7 +135,7 @@
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
 
- 
+
     <!-- Delete the intermediate files so we recreate over a clean slate -->
     <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
     <!-- Recreate Java files from the new WSDL -->
@@ -249,7 +249,7 @@
                testcase="no">
         <mapping namespace="urn:InheritanceTest2" package="test.wsdl.inheritance"/>
     </wsdl2java>
-    
+
     <!-- inheritance test (cont): Test the stopClass and exclude switches -->
     <!-- Compile class files -->
     <javac srcdir="${test.dir}/wsdl/inheritance" destdir="${build.dest}" debug="${debug}">
@@ -268,7 +268,7 @@
                location="http://localhost:8080/axis/services/StopExcludeTest">
         <mapping namespace="urn:InheritanceTest3" package="test.wsdl.inheritance"/>
     </java2wsdl>
-    
+
 
     <!-- MArrayTests Test -->
     <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
@@ -295,6 +295,15 @@
                serverSide="yes"
                testcase="yes">
         <mapping namespace="urn:Nested" package="test.wsdl.nested"/>
+    </wsdl2java>
+
+    <!-- Wrapped Sample Test -->
+    <wsdl2java url="test/wsdl/wrapped/CityBBB.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:CityBBB" package="test.wsdl.wrapped"/>
     </wsdl2java>
 
     <!-- Import Test 1:  some namespace->package mappings from the -->
@@ -664,7 +673,7 @@
                testcase="no">
         <mapping namespace="http://test.com/reference" package="test.wsdl.filegen"/>
     </wsdl2java>
-    
+
     <!-- Same test as above but this time the -a flag is turned on -->
     <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
                output="build/work"
@@ -672,7 +681,7 @@
                all="yes">
         <mapping namespace="http://test.com/reference" package="test.wsdl.filegenAll"/>
     </wsdl2java>
-    
+
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
@@ -699,7 +708,7 @@
     </wsdl2java>
 
     <!-- This tests .NET document/literal WSDL.
-         We get this WSDL file from the internet on purpose, 
+         We get this WSDL file from the internet on purpose,
          file is only for reference.
      -->
     <!-- <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL" -->
@@ -709,7 +718,7 @@
                serverSide="no"
                testcase="no">
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
-               
+
     </wsdl2java>
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->

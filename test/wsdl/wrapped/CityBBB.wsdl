@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="City_BBB" targetNamespace="urn:CityBBB"
+xmlns="http://schemas.xmlsoap.org/wsdl/"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:tns="urn:CityBBB" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <types>
+    <xsd:schema attributeFormDefault="qualified"
+    elementFormDefault="qualified" targetNamespace="urn:CityBBB">
+      <xsd:element name="getAttraction">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="attname"
+            type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="getAttractionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="_return"
+            type="tns:Attraction" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="Attraction">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="name"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="rating"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="price"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="hours"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="facts"
+          type="xsd:string" />
+
+          <xsd:element maxOccurs="1" minOccurs="0"
+          name="modifyDate" type="xsd:date" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="vendor"
+          type="tns:Vendor" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="map"
+          type="tns:Bitmap" />
+
+          <xsd:element maxOccurs="1" minOccurs="0"
+          name="background" type="tns:Bitmap" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="soundClip"
+          type="tns:Audio" />
+
+          <xsd:element maxOccurs="unbounded" minOccurs="0"
+          name="categories" type="tns:Category" />
+
+          <xsd:element maxOccurs="unbounded" minOccurs="0"
+          name="animation" type="tns:Bitmap" />
+
+          <xsd:element maxOccurs="unbounded" minOccurs="0"
+          name="media" type="tns:MediaData" />
+
+          <xsd:element maxOccurs="1" minOccurs="0" name="address"
+          type="tns:Address" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Vendor">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Bitmap">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Audio">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Category">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="MediaData">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="Address">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" minOccurs="0" name="_OID"
+          type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <message name="getAttractionIn">
+    <part element="tns:getAttraction" name="parameters" />
+  </message>
+
+  <message name="getAttractionOut">
+    <part element="tns:getAttractionResponse" name="parameters" />
+  </message>
+
+  <portType name="City_BBBPortType">
+    <operation name="getAttraction">
+      <input message="tns:getAttractionIn" />
+
+      <output message="tns:getAttractionOut" />
+    </operation>
+  </portType>
+
+  <binding name="City_BBBBinding" type="tns:City_BBBPortType">
+    <soap:binding style="document"
+    transport="http://schemas.xmlsoap.org/soap/http" />
+
+    <operation name="getAttraction">
+      <soap:operation soapAction="getAttraction" />
+
+      <input>
+        <soap:body use="literal" />
+      </input>
+
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="City_BBB">
+    <port binding="tns:City_BBBBinding" name="City_BBBPort">
+        <soap:address location="http://localhost:8080/axis/services/City_BBBPort"/>
+    </port>
+  </service>
+</definitions>
+
