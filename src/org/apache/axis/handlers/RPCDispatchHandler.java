@@ -77,7 +77,9 @@ public class RPCDispatchHandler implements Handler {
     System.err.println("In RPCDispatchHandler");
 
     // Find the service we're invoking
-    Handler service = (Handler) msgContext.getProperty( "ServiceHandler" );
+    Handler service ;
+
+    service = (Handler) msgContext.getProperty( Constants.MC_SVC_HANDLER );
 
     // Now get the service specific info 
     String  clsName    = (String) service.getOption( "className" );

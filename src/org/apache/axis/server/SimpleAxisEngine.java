@@ -84,7 +84,7 @@ public class SimpleAxisEngine implements Handler {
     HandlerRegistry  sr = new SimpleServiceRegistry();
     sr.init();
     
-    String action = (String) msgContext.getProperty( "SOAPAction" );
+    String action = (String) msgContext.getProperty( Constants.MC_TARGET );
     if ( action == null ) action = "EchoService" ;
 
     Handler h = sr.find( action );
@@ -97,7 +97,7 @@ public class SimpleAxisEngine implements Handler {
 
     // Place in the bag so that handlers down the line can have access to
     // it - ie. can look thru it's list of options
-    msgContext.setProperty( "ServiceHandler", h );
+    msgContext.setProperty( Constants.MC_SVC_HANDLER, h );
 
     h.init();
     try {
