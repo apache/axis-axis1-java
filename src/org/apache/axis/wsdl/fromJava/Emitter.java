@@ -55,10 +55,9 @@
 
 package org.apache.axis.wsdl.fromJava;
 
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPOperation;
+import com.ibm.wsdl.extensions.mime.MIMEContentImpl;
+import com.ibm.wsdl.extensions.mime.MIMEPartImpl;
+import com.ibm.wsdl.extensions.mime.MIMEMultipartRelatedImpl;
 
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
@@ -93,7 +92,20 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Fault;
 import javax.wsdl.WSDLException;
+
+import javax.wsdl.extensions.ExtensibilityElement;
+
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.extensions.mime.MIMEPart;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
+
 import javax.wsdl.factory.WSDLFactory;
+
 import javax.xml.namespace.QName;
 
 import java.io.File;
@@ -867,45 +879,27 @@ public class Emitter {
 
         bindingOper.addExtensibilityElement(soapOper);
 
-        // Input SOAP Body
-        SOAPBody soapBodyIn = new SOAPBodyImpl();
-        // for now, if its document, it is literal use.
-        if (mode == MODE_RPC) {
-            soapBodyIn.setUse("encoded");
-            soapBodyIn.setEncodingStyles(encodingList);
-        } else {
-            soapBodyIn.setUse("literal");
+        // Input clause
+        ExtensibilityElement input = null;
+        if (hasMIMEParameter(desc, ParameterDesc.IN)) {
+            input = writeMIMEMultipart(desc, ParameterDesc.IN,
+                    desc.getElementQName());
         }
-        if (targetService == null)
-            soapBodyIn.setNamespaceURI(intfNS);
-        else
-            soapBodyIn.setNamespaceURI(targetService);
-        QName operQName = desc.getElementQName();
-        if (operQName != null &&
-            !operQName.getNamespaceURI().equals("")) {
-            soapBodyIn.setNamespaceURI(operQName.getNamespaceURI());
+        else {
+            input = writeSOAPBody(desc.getElementQName());
         }
-        bindingInput.addExtensibilityElement(soapBodyIn);
+        bindingInput.addExtensibilityElement(input);
 
-        // Output SOAP Body
-        SOAPBody soapBodyOut = new SOAPBodyImpl();
-        // for now, if its document, it literal use.
-        if (mode == MODE_RPC) {
-            soapBodyOut.setUse("encoded");
-            soapBodyOut.setEncodingStyles(encodingList);
-        } else {
-            soapBodyOut.setUse("literal");
+        //Output clause
+        ExtensibilityElement output = null;
+        if (hasMIMEParameter(desc, ParameterDesc.OUT)) {
+            output = writeMIMEMultipart(desc, ParameterDesc.OUT,
+                    desc.getReturnQName());
         }
-        if (targetService == null)
-            soapBodyOut.setNamespaceURI(intfNS);
-        else
-            soapBodyOut.setNamespaceURI(targetService);
-        QName retQName = desc.getReturnQName();
-        if (retQName != null &&
-            !retQName.getNamespaceURI().equals("")) {
-            soapBodyOut.setNamespaceURI(retQName.getNamespaceURI());
+        else {
+            output = writeSOAPBody(desc.getReturnQName());
         }
-        bindingOutput.addExtensibilityElement(soapBodyOut);
+        bindingOutput.addExtensibilityElement(output);
 
         bindingOper.setBindingInput(bindingInput);
         bindingOper.setBindingOutput(bindingOutput);
@@ -914,6 +908,97 @@ public class Emitter {
 
         return bindingOper;
     }
+
+    private boolean hasMIMEParameter(OperationDesc oper, byte mode) {
+        ArrayList parameters = oper.getParameters();
+        for (int i = 0; i < parameters.size(); ++i) {
+            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+            if (parameter.getMIMEType() != null
+                    && (parameter.getMode() & mode) != 0) {
+                return true;
+            }
+        }
+        // We also have to look at the return if we want info about
+        // output parameters.
+        if (mode == ParameterDesc.OUT) {
+            ParameterDesc ret = oper.getReturnParamDesc();
+            if (ret != null && ret.getMIMEType() != null) {
+                return true;
+            }
+        }
+
+        return false;
+    } // hassMIMEParameter
+
+    private ExtensibilityElement writeMIMEMultipart(OperationDesc oper,
+            byte mode, QName operQName) {
+        MIMEMultipartRelated mprelated = new MIMEMultipartRelatedImpl();
+        ArrayList parameters = oper.getParameters();
+        for (int i = 0; i < parameters.size(); ++i) {
+            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+            if ((parameter.getMode() & mode) != 0) {
+                MIMEPart mimePart = writeMIMEPart(parameter, operQName);
+                mprelated.addMIMEPart(mimePart);
+            }
+        }
+
+        // We also have to look at the return if we want info about
+        // output parameters.
+        if (mode == ParameterDesc.OUT) {
+            ParameterDesc ret = oper.getReturnParamDesc();
+            if (ret != null) {
+                MIMEPart mimePart = writeMIMEPart(ret, operQName);
+                mprelated.addMIMEPart(mimePart);
+            }
+        }
+
+        return mprelated;
+    } // writeMIMEMultipart
+
+    private MIMEPart writeMIMEPart(ParameterDesc parameter, QName operQName) {
+        String mimeType = parameter.getMIMEType();
+        MIMEPart mimePart = new MIMEPartImpl();
+        ExtensibilityElement mimeContent = null;
+        if (mimeType == null) {
+            mimeContent = writeSOAPBody(operQName);
+        }
+        else {
+            mimeContent = writeMIMEContent(parameter.getName(), mimeType);
+        }
+        mimePart.addExtensibilityElement(mimeContent);
+        return mimePart;
+    } // writeMIMEPart
+
+    private MIMEContent writeMIMEContent(String part, String type) {
+        // If the part is null, then it MUST be a return part
+        if (part == null) {
+            part = "return";
+        }
+        MIMEContent mimeContent = new MIMEContentImpl();
+        mimeContent.setPart(part);
+        mimeContent.setType(type);
+        return mimeContent;
+    } // writeMIMEContent
+
+    private ExtensibilityElement writeSOAPBody(QName operQName) {
+        SOAPBody soapBody = new SOAPBodyImpl();
+        // for now, if its document, it is literal use.
+        if (mode == MODE_RPC) {
+            soapBody.setUse("encoded");
+            soapBody.setEncodingStyles(encodingList);
+        } else {
+            soapBody.setUse("literal");
+        }
+        if (targetService == null)
+            soapBody.setNamespaceURI(intfNS);
+        else
+            soapBody.setNamespaceURI(targetService);
+        if (operQName != null &&
+            !operQName.getNamespaceURI().equals("")) {
+            soapBody.setNamespaceURI(operQName.getNamespaceURI());
+        }
+        return soapBody;
+    } // writeSOAPBody
 
     /** Create a Request Message
      *
@@ -1071,6 +1156,15 @@ public class Emitter {
         if (param.getMode() != ParameterDesc.IN &&
             param.getIsReturn() == false) {
             javaType = JavaUtils.getHolderValueType(javaType);
+        }
+
+        // If this is a MIME type, make sure the MIME namespace is in
+        // the Definition
+        if (JavaUtils.javaToMIME(javaType) != null && def.getNamespace(Constants.NS_PREFIX_MIME) == null) {
+            def.addNamespace(Constants.NS_PREFIX_MIME,
+                    Constants.NS_URI_WSDL_MIME);
+            namespaces.putPrefix(Constants.NS_URI_WSDL_MIME,
+                    Constants.NS_PREFIX_MIME);
         }
 
         // Write the type representing the parameter type
