@@ -56,16 +56,17 @@
 package samples.echo;
  
 /**
- * Test structure used by the echo interop test.
+ * Test structure used by the echo interop test.  Note: this implementation
+ * does not allow null values for varInt or varFloat.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class SOAPStruct {
 
     // items of the structure.  Defined as Objects so as to permit nulls
-    private Integer varInt;
+    private int varInt;
     private String varString;
-    private Float varFloat;
+    private float varFloat;
 
     /**
      * null constructor
@@ -76,22 +77,22 @@ public class SOAPStruct {
      * convenience constructor that sets all of the fields
      */
     public SOAPStruct(int i, String s, float f) {
-        this.varInt=new Integer(i);
+        this.varInt=i;
         this.varString=s;
-        this.varFloat=new Float(f);
+        this.varFloat=f;
     }
 
     /**
      * bean getter for VarInt
      */
-    public Integer getVarInt() {
+    public int getVarInt() {
         return varInt;
     }
 
     /**
      * bean setter for VarInt
      */
-    public void setVarInt (Integer varInt) {
+    public void setVarInt (int varInt) {
         this.varInt=varInt;
     }
 
@@ -112,42 +113,32 @@ public class SOAPStruct {
     /**
      * bean getter for VarFloat
      */
-    public Float getVarFloat() {
+    public float getVarFloat() {
         return varFloat;
     }
 
     /**
      * bean setter for VarFloat
      */
-    public void setVarFloat (Float varFloat) {
+    public void setVarFloat (float varFloat) {
         this.varFloat=varFloat;
     }
 
     /**
-     * Equality comparison.  The implementation is very careful to
-     * check for nulls.
+     * Equality comparison.  
      */
     public boolean equals(Object object) {
         if (!(object instanceof SOAPStruct)) return false;
 
         SOAPStruct that= (SOAPStruct) object;
 
-        if (this.varInt == null) {
-            if (that.varInt != null) return false;
-        } else {
-            if (!this.varInt.equals(that.varInt)) return false;
-        }
+        if (this.varInt != that.varInt) return false;
+        if (this.varFloat != that.varFloat) return false;
 
         if (this.varString == null) {
             if (that.varString != null) return false;
         } else {
             if (!this.varString.equals(that.varString)) return false;
-        }
-
-        if (this.varFloat == null) {
-            if (that.varFloat != null) return false;
-        } else {
-            if (!this.varFloat.equals(that.varFloat)) return false;
         }
 
         return true;
