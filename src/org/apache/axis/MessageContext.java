@@ -63,6 +63,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.SOAP11Constants;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -176,6 +178,9 @@ public class MessageContext {
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
     private String  encodingStyle  = Constants.URI_CURRENT_SOAP_ENC;
+
+    /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
+    private SOAPConstants soapConstants = new SOAP11Constants();
 
     /**
      * Are we using SOAP encoding?  Default is true for RPC services,
@@ -300,6 +305,17 @@ public class MessageContext {
     public void setTransportName(String transportName)
     {
         this.transportName = transportName;
+    }
+
+    /**
+     * SOAP constants
+     */
+    public SOAPConstants getSOAPConstants() {
+        return soapConstants;
+    }
+
+    public void setSOAPConstants(SOAPConstants soapConstants) {
+        this.soapConstants = soapConstants;
     }
 
     /**

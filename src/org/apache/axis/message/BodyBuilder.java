@@ -127,7 +127,7 @@ public class BodyBuilder extends SOAPHandler
          * b) have a non-RPC service
          */
         if (localName.equals(Constants.ELEM_FAULT) &&
-            namespace.equals(Constants.URI_SOAP_ENV)) {
+            namespace.equals(msgContext.getSOAPConstants().getEnvelopeURI())) {
             element = new SOAPFaultElement(namespace, localName, prefix,
                                            attributes, context);
             handler = new SOAPFaultBuilder((SOAPFaultElement)element,

@@ -60,6 +60,9 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.Constants;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.SOAP11Constants;
+import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
@@ -71,18 +74,14 @@ public class EnvelopeBuilder extends SOAPHandler
 {
     private MessageElement element;
     private SOAPEnvelope envelope;
-    
+    private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+
     private boolean gotHeader = false;
     private boolean gotBody = false;
-    
-    private static final QName headerQName = new QName(Constants.URI_SOAP_ENV,
-                                                       Constants.ELEM_HEADER);
-    private static final QName bodyQName = new QName(Constants.URI_SOAP_ENV,
-                                                       Constants.ELEM_BODY);
-    
-    public EnvelopeBuilder(String messageType)
+
+    public EnvelopeBuilder(String messageType, SOAPConstants soapConstants)
     {
-        envelope = new SOAPEnvelope(false);
+        envelope = new SOAPEnvelope(false, soapConstants);
         envelope.setMessageType(messageType);
         myElement = envelope;
     }
@@ -104,13 +103,24 @@ public class EnvelopeBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
-        if (!namespace.equals(Constants.URI_SOAP_ENV))
-            throw new SAXException(
-                    JavaUtils.getMessage("badNamespace00", namespace));
-        
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new SAXException(
                     JavaUtils.getMessage("badTag00", localName));
+
+        if (namespace.equals(Constants.URI_SOAP_ENV)) {
+            // SOAP 1.1
+            soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+        } else if (namespace.equals(Constants.URI_SOAP12_ENV)) {
+            // SOAP 1.2
+            soapConstants = SOAPConstants.SOAP12_CONSTANTS;
+        } else {
+            throw new SAXException(
+                    JavaUtils.getMessage("badNamespace00", namespace));
+        }
+
+        // Indicate what version of SOAP we're using to anyone else involved
+        // in processing this message.
+        context.getMessageContext().setSOAPConstants(soapConstants);
 
         String prefix = "";
         int idx = qName.indexOf(":");
@@ -131,7 +141,7 @@ public class EnvelopeBuilder extends SOAPHandler
         throws SAXException
     {
         QName thisQName = new QName(namespace, localName);
-        if (thisQName.equals(headerQName)) {
+        if (thisQName.equals(soapConstants.getHeaderQName())) {
             if (gotHeader)
                 throw new SAXException(JavaUtils.getMessage("only1Header00"));
             
@@ -139,7 +149,7 @@ public class EnvelopeBuilder extends SOAPHandler
             return new HeaderBuilder(envelope);
         }
         
-        if (thisQName.equals(bodyQName)) {
+        if (thisQName.equals(soapConstants.getBodyQName())) {
             if (gotBody)
                 throw new SAXException(JavaUtils.getMessage("only1Body00"));
             

@@ -173,7 +173,7 @@ public class ArrayDeserializer extends DeserializerImpl
         // Now get the arrayType value 
         QName arrayTypeValue = context.getQNameFromString(
                       Constants.getValue(attributes,
-                                         Constants.URI_CURRENT_SOAP_ENC,
+                                         Constants.URIS_SOAP_ENC,
                                          Constants.ATTR_ARRAY_TYPE));
 
         // The first part of the arrayType expression is 
@@ -316,7 +316,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
         // If soapenc:offset specified, set the current index accordingly
         String offset = Constants.getValue(attributes,
-                                         Constants.URI_CURRENT_SOAP_ENC,
+                                         Constants.URIS_SOAP_ENC,
                                          Constants.ATTR_OFFSET);
         if (offset != null) {
             int leftBracketIndex = offset.lastIndexOf('[');
@@ -373,7 +373,7 @@ public class ArrayDeserializer extends DeserializerImpl
         if (attributes != null) {
             String pos =
                 Constants.getValue(attributes,
-                                   Constants.URI_CURRENT_SOAP_ENC,
+                                   Constants.URIS_SOAP_ENC,
                                    Constants.ATTR_POSITION);
             if (pos != null) {
                 int leftBracketIndex = pos.lastIndexOf('[');

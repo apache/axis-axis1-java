@@ -156,7 +156,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public DeserializationContextImpl(InputSource is, MessageContext ctx, 
                                   String messageType)
     {
-        EnvelopeBuilder builder = new EnvelopeBuilder(messageType);
+        EnvelopeBuilder builder = new EnvelopeBuilder(messageType,
+                                                      ctx.getSOAPConstants());
         
         msgContext = ctx;
         
@@ -316,7 +317,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         QName typeQName = null;
         
         // Check for type
-        String type = Constants.getValue(attrs, Constants.URI_CURRENT_SCHEMA_XSI, "type");
+        String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
+                                         "type");
         if (type != null) {
             // Return the type attribute value converted to a QName
             return getQNameFromString(type);
@@ -381,7 +383,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (attrs == null) {
             return false;
         }
-        String nil = Constants.getValue(attrs, Constants.URI_CURRENT_SCHEMA_XSI, "nil");
+        String nil = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
+                                        "nil");
         return (nil != null && nil.equals("true"));
     }
 

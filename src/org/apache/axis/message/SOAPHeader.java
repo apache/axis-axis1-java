@@ -55,6 +55,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.Constants;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Element;
@@ -104,12 +105,15 @@ public class SOAPHeader extends MessageElement {
                       Attributes attributes, DeserializationContext context) {
         super(namespace, localPart, prefix, attributes, context);
 
+        SOAPConstants soapConstants = context.getMessageContext().
+                                                          getSOAPConstants();
+
         // Check for mustUnderstand
-        String val = attributes.getValue(Constants.URI_SOAP_ENV,
+        String val = attributes.getValue(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
-        actor = attributes.getValue(Constants.URI_SOAP_ENV,
+        actor = attributes.getValue(soapConstants.getEnvelopeURI(),
                                     Constants.ATTR_ACTOR);
 
         processed = false;
@@ -119,6 +123,9 @@ public class SOAPHeader extends MessageElement {
     public void setMustUnderstand(boolean b) {
         mustUnderstand = b ;
         String val = b ? "1" : "0";
+
+        // Instead of doing this can we hang out until serialization time
+        // and do it there, so that we can then resolve SOAP version?
         setAttribute(Constants.URI_SOAP_ENV,
                      Constants.ATTR_MUST_UNDERSTAND,
                      val);
@@ -127,6 +134,9 @@ public class SOAPHeader extends MessageElement {
     public String getActor() { return( actor ); }
     public void setActor(String a) {
         actor = a ;
+
+        // Instead of doing this can we hang out until serialization time
+        // and do it there, so that we can then resolve SOAP version?
         setAttribute(Constants.URI_SOAP_ENV, Constants.ATTR_ACTOR, a);
     }
 

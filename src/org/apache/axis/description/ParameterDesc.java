@@ -55,6 +55,7 @@
 package org.apache.axis.description;
 
 import org.apache.axis.wsdl.toJava.TypeEntry;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
@@ -117,8 +118,8 @@ public class ParameterDesc {
             return "in";
         }
         
-        // FIXME - needs message
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException(
+                JavaUtils.getMessage("badParameterMode", Byte.toString(mode)));
     }
 
     public QName getQName() {
