@@ -192,7 +192,7 @@ Copyright:
     <path refid="classpath"/>
   </path>
 
-  <target name="buildTest" depends="compile" if="junit.present" unless="tests.built">
+  <target name="buildTest" depends="compile, samples" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
       <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
     <!--
