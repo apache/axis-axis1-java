@@ -224,6 +224,8 @@ public class EngineConfigurationFactoryFinder
         } else {
             try {
                 return (EngineConfigurationFactory)method.invoke(null, param);
+            } catch (NoClassDefFoundError e) {
+                //Ignore if servlet classes are not in classpath.
             } catch (Exception e) {
                 log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                               service.getName(),
