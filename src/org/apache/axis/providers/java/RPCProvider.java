@@ -89,6 +89,18 @@ public class RPCProvider extends JavaProvider
     protected static Log log =
         LogFactory.getLog(RPCProvider.class.getName());
 
+   /**
+     * Process the current message. 
+     * Result in resEnv.
+     *
+     * @param msgContext self-explanatory
+     * @param serviceName the class name of the ServiceHandler
+     * @param allowedMethods the 'method name' of ditto
+     * @param reqEnv the request envelope
+     * @param resEnv the response envelope
+     * @param jc the JavaClass of the service object
+     * @param obj the service object itself
+     */
     public void processMessage (MessageContext msgContext,
                                 String serviceName,
                                 String allowedMethods,
@@ -225,7 +237,9 @@ public class RPCProvider extends JavaProvider
         // OK!  Now we can invoke the method
         Object objRes = null;
         try {
-            objRes = operation.getMethod().invoke(obj, argValues);
+            objRes = invokeMethod(msgContext, 
+                                 operation.getMethod(),
+                                 obj, argValues);
         } catch (IllegalArgumentException e) {
             String methodSig = operation.getMethod().toString();
             String argClasses = "";
@@ -279,14 +293,31 @@ public class RPCProvider extends JavaProvider
         resEnv.addBodyElement(resBody);
     }
 
-    protected Method[] getMethod(MessageContext msgContext,
-                                 JavaClass jc,
-                                 String methodName)
-        throws Exception
-    {
-        return jc.getMethod(methodName);
-    }
+    /**
+     * This method is supposed to be used to get the
+     * the target method.  Currently the OperationDesc
+     * is used to get this information, and this method 
+     * is not used.  I commented out the code for now.
+     * @param MessageContext
+     * @param Method is the target method.   
+     * @param Object is the target object 
+     * @param Object[] are the method arguments
+     */
+    //protected Method[] getMethod(MessageContext msgContext,
+    //                             JavaClass jc,
+    //                             String methodName)
+    //    throws Exception
+    //{
+    //    return jc.getMethod(methodName);
+    //}
 
+    /**
+     * This method encapsulates the method invocation.             
+     * @param MessageContext
+     * @param Method is the target method.   
+     * @param Object is the target object 
+     * @param Object[] are the method arguments
+     */
     protected Object invokeMethod(MessageContext msgContext,
                                   Method method, Object obj,
                                   Object[] argValues)
@@ -295,6 +326,12 @@ public class RPCProvider extends JavaProvider
         return (method.invoke(obj, argValues));
     }
 
+    /**
+     * Throw an AxisFault if the requested method is not allowed.
+     * @param MessageContext
+     * @param String list of allowed methods
+     * @param String name of target method
+     */
     protected void checkMethodName(MessageContext msgContext,
                                    String allowedMethods,
                                    String methodName)
