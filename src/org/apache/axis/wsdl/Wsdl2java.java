@@ -59,6 +59,8 @@ import org.apache.avalon.excalibur.cli.CLOption;
 import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
 
+import org.apache.axis.utils.JavaUtils;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,39 +94,39 @@ public class Wsdl2java {
         new CLOptionDescriptor("help",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
-                "print this message and exit"),
+                JavaUtils.getMessage("optionHelp00")),
         new CLOptionDescriptor("verbose",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 VERBOSE_OPT,
-                "print informational messages"),
+                JavaUtils.getMessage("optionVerbose00")),
         new CLOptionDescriptor("skeleton",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 SKELETON_OPT,
-                "emit skeleton class for web service"),
+                JavaUtils.getMessage("optionSkel00")),
         new CLOptionDescriptor("messageContext",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 MESSAGECONTEXT_OPT,
-                "emit a MessageContext parameter to skeleton methods"),
+                JavaUtils.getMessage("optionMsgCtx00")),
         new CLOptionDescriptor("NStoPkg",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
-                "mapping of namespace to package"),
+                JavaUtils.getMessage("optionNStoPkg00")),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                "output dir for emitted files"),
+                JavaUtils.getMessage("optionOutput00")),
         new CLOptionDescriptor("deployScope",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SCOPE_OPT,
-                "add scope to deploy.xml: \"Application\", \"Request\", \"Session\""),
+                JavaUtils.getMessage("optionScope00")),
         new CLOptionDescriptor("testCase",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 TEST_OPT,
-                "emit junit testcase class for web service"),
+                JavaUtils.getMessage("optionTest00")),
         new CLOptionDescriptor("noImports",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
-                "only generate code for the immediate WSDL document")
+                JavaUtils.getMessage("optionImport00"))
     };
 
     /**
@@ -142,7 +144,8 @@ public class Wsdl2java {
 
         // Print parser errors, if any
         if (null != parser.getErrorString()) {
-            System.err.println("Error: " + parser.getErrorString());
+            System.err.println(
+                    JavaUtils.getMessage("error01", parser.getErrorString()));
             printUsage();
         }
 
@@ -209,7 +212,8 @@ public class Wsdl2java {
                             emitter.setScope(Emitter.SESSION_SCOPE);
                         }
                         else {
-                            System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
+                            System.err.println(
+                                    JavaUtils.getMessage("badScope00", scope));
                         }
                         break;
 
@@ -227,7 +231,7 @@ public class Wsdl2java {
             // validate argument combinations
             //
             if (bMessageContext && !bSkeleton) {
-                System.out.println("Error: --messageContext switch only valid with --skeleton");
+                System.out.println(JavaUtils.getMessage("badMsgCtx00"));
                 printUsage();
             }
             if (wsdlURI == null) {
@@ -256,9 +260,13 @@ public class Wsdl2java {
     private static void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append("Wsdl2java stub generator").append(lSep);
-        msg.append("Usage: java " + Wsdl2java.class.getName() + " [options] WSDL-URI").append(lSep);
-        msg.append("Options: ").append(lSep);
+        msg.append("Wsdl2java " +
+                JavaUtils.getMessage("emitter00")).append(lSep);
+        msg.append(
+                JavaUtils.getMessage("usage00",
+                "java " + Wsdl2java.class.getName() + " [options] WSDL-URI"))
+                .append(lSep);
+        msg.append(JavaUtils.getMessage("options00")).append(lSep);
         msg.append(CLUtil.describeOptions(Wsdl2java.options).toString());
         System.out.println(msg.toString());
         System.exit(1);

@@ -63,6 +63,8 @@ import java.util.HashMap;
 
 import javax.wsdl.QName;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.w3c.dom.Element;
 
 /**
@@ -124,7 +126,7 @@ public abstract class JavaWriter implements Writer {
         emitter.classList.add(packageName + "." + className);
         File file = new File(packageDirName, fileName);
         if (emitter.bVerbose) {
-            System.out.println(message + file.getPath());
+            System.out.println(message + ":  " + file.getPath());
         }
         pw = new PrintWriter(new FileWriter(file));
         writeFileHeader();
@@ -138,8 +140,8 @@ public abstract class JavaWriter implements Writer {
         pw.println("/**");
         pw.println(" * " + fileName);
         pw.println(" *");
-        pw.println(" * This file was auto-generated from WSDL");
-        pw.println(" * by the Apache Axis Wsdl2java emitter.");
+        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine00"));
+        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine01"));
         pw.println(" */");
         pw.println();
 

@@ -67,6 +67,8 @@ import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
 */
@@ -81,7 +83,7 @@ public class JavaDeployWriter extends JavaWriter {
                 new QName(definition.getTargetNamespace(), "deploy"),
                 "",
                 "xml",
-                "Generating deployment document:  ");
+                JavaUtils.getMessage("genDeploy00"));
         this.definition = definition;
     } // ctor
 
@@ -103,7 +105,7 @@ public class JavaDeployWriter extends JavaWriter {
             pw.close();
         }
         catch (IOException e) {
-            System.err.println("Failed to write deployment documents");
+            System.err.println(JavaUtils.getMessage("genDeployFail00"));
             e.printStackTrace();
         }
     } // writeFileBody
@@ -118,7 +120,9 @@ public class JavaDeployWriter extends JavaWriter {
             Service myService = (Service) mapIterator.next();
 
             pw.println();
-            pw.println("   <!-- Services from " + myService.getQName().getLocalPart() + " WSDL service -->");
+            pw.println("   <!-- " + JavaUtils.getMessage(
+                    "wsdlService00", myService.getQName().getLocalPart())
+                    + " -->");
             pw.println();
 
             for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {

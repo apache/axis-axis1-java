@@ -56,6 +56,8 @@ package org.apache.axis.wsdl;
 
 import java.io.IOException;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
 */
@@ -66,7 +68,8 @@ public class JavaHolderWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type.getQName(), "Holder", "java", "Generating type implementation holder:  ");
+        super(emitter, type.getQName(), "Holder", "java",
+                JavaUtils.getMessage("genHolder00"));
         this.type = type;
     } // ctor
 
@@ -85,7 +88,7 @@ public class JavaHolderWriter extends JavaWriter {
         pw.println("        this._value = value;");
         pw.println("    }");
         pw.println();
-        pw.println("    // ??? what else?");
+        pw.println("    // ?++?");
         pw.println("}");
         pw.close();
     } // writeOperation
