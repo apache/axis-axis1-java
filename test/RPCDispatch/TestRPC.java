@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import javax.xml.rpc.namespace.QName;
-import javax.xml.soap.SOAPException;
 import java.util.Vector;
 
 /**
@@ -62,7 +61,7 @@ public class TestRPC extends TestCase {
      * @return Deserialized result
      */
     private final Object rpc(String method, Object[] parms)
-        throws AxisFault, SAXException, SOAPException
+        throws AxisFault, SAXException
     {
 
         // Create the message context

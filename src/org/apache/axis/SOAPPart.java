@@ -66,8 +66,6 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.soap.SOAPException;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -409,12 +407,7 @@ public class SOAPPart extends Part
         if (currentForm == FORM_BODYINSTREAM) {
             InputStreamBody bodyEl =
                              new InputStreamBody((InputStream)currentMessage);
-            SOAPEnvelope env;
-            try {
-                env = new SOAPEnvelope();
-            } catch (SOAPException ex) {
-                throw new AxisFault(ex);
-            }
+            SOAPEnvelope env = new SOAPEnvelope();
             env.addBodyElement(bodyEl);
             setCurrentMessage(env, FORM_SOAPENVELOPE);
             return env;
@@ -427,17 +420,8 @@ public class SOAPPart extends Part
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
-
-        DeserializationContext dser;
-        try {
-            dser = new DeserializationContextImpl(is,
-                                                  getMessage().
-                                                  getMessageContext(),
-                                                  getMessage().
-                                                  getMessageType());
-        } catch (Exception ex) {
-            throw AxisFault.makeFault(ex);
-        }
+        DeserializationContext dser =
+            new DeserializationContextImpl(is, getMessage().getMessageContext(), getMessage().getMessageType());
 
         // This may throw a SAXException
         try {

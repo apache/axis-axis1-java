@@ -89,10 +89,14 @@ public class SOAPHeader extends MessageElement
 
     private SOAPConstants soapConstants;
 
-    SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts)
-        throws SOAPException {
+    SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts) {
         soapConstants = soapConsts;
-        setParentElement(env);
+        try {
+            setParentElement(env);
+        } catch (SOAPException ex) {
+            // class cast should never fail when parent is a SOAPEnvelope
+            log.fatal(JavaUtils.getMessage("exception00"), ex);
+        }
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {

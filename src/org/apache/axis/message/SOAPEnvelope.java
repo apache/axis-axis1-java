@@ -75,7 +75,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
-import javax.xml.soap.SOAPException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -102,18 +101,17 @@ public class SOAPEnvelope extends MessageElement
     // deserialization 
     public String messageType;
     
-    public SOAPEnvelope() throws SOAPException
+    public SOAPEnvelope()
     {
         this(true, SOAPConstants.SOAP11_CONSTANTS);
     }
 
-    public SOAPEnvelope(SOAPConstants soapConstants) throws SOAPException
+    public SOAPEnvelope(SOAPConstants soapConstants)
     {
         this(true, soapConstants);
     }
 
     public SOAPEnvelope(boolean registerPrefixes, SOAPConstants soapConstants)
-        throws SOAPException
     {
         this.soapConstants = soapConstants;
         header = new SOAPHeader(this, soapConstants);
@@ -133,7 +131,7 @@ public class SOAPEnvelope extends MessageElement
         setDirty(true);
     }
 
-    public SOAPEnvelope(InputStream input) throws SAXException, SOAPException {
+    public SOAPEnvelope(InputStream input) throws SAXException {
         InputSource is = new InputSource(input);
         header = new SOAPHeader(this, soapConstants); // soapConstants = null!
         DeserializationContext dser = null ;
@@ -193,7 +191,7 @@ public class SOAPEnvelope extends MessageElement
         }
     }
     
-    public void addHeader(SOAPHeaderElement hdr) throws SOAPException
+    public void addHeader(SOAPHeaderElement hdr)
     {
         if (header == null) {
             header = new SOAPHeader(this, soapConstants);
