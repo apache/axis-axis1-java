@@ -76,13 +76,13 @@ public class StockQuoteService {
 
   public float getQuote (String symbol) throws Exception {
     // get a real (delayed by 20min) stockquote from 
-    // http://www.xmltoday.com/examples/stockquote/. The IP addr 
+    // http://services.xmethods.net/axis/. The IP addr 
     // below came from the host that the above form posts to ..
 
     if ( symbol.equals("XXX") ) return( (float) 55.25 );
 
-    URL          url = new URL( "http://www.xmltoday.com/examples/" +
-                                "stockquote/getxmlquote.vep?s="+symbol );
+    URL          url = new URL( "http://services.xmethods.net/axis/getQuote?s="
+                                + symbol );
 
     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     DocumentBuilder        db  = dbf.newDocumentBuilder();

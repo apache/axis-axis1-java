@@ -71,7 +71,7 @@ import org.apache.axis.utils.XMLUtils ;
 public class StockQuoteService {
   public float getQuote (String symbol) throws Exception {
     // get a real (delayed by 20min) stockquote from 
-    // http://www.xmltoday.com/examples/stockquote/. The IP addr 
+    // http://services.xmethods.net/axis/. The IP addr 
     // below came from the host that the above form posts to ..
 
     // NOTE THAT THIS RETURNS 66.25 WHERE THE ORDINARY EXAMPLE RETURNS 55.25!
@@ -79,8 +79,8 @@ public class StockQuoteService {
 
     Document doc = null ;
     
-    doc = XMLUtils.newDocument( "http://www.xmltoday.com/examples/" +
-                                "stockquote/getxmlquote.vep?s="+symbol );
+    doc = XMLUtils.newDocument( "http://services.xmethods.net/axis/getQuote?s="
+                                +symbol );
 
     Element  elem = doc.getDocumentElement();
     NodeList list = elem.getElementsByTagName("stock_quote");
