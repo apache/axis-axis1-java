@@ -103,7 +103,7 @@ public class TestClient {
         // set up the call object
         Options opts = new Options(args);
         Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-        call = new ServiceClient(new HTTPTransport());
+        call = new ServiceClient(opts.getURL());
         call.set(HTTPTransport.URL, opts.getURL());
         call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Buy");
 

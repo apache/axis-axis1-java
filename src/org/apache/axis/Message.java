@@ -314,8 +314,13 @@ public class Message {
         // This may throw a SAXException
         try {
             parser.parse(is, dser);
-        } catch (Exception e) {
-            throw new AxisFault(e);
+        } catch (SAXException e) {
+            Exception real = e.getException();
+            if (real == null)
+                real = e;
+            throw new AxisFault(real);
+        } catch (IOException ioe) {
+            throw new AxisFault(ioe);
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
