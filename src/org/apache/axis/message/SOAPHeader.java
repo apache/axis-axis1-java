@@ -55,9 +55,7 @@
 
 package org.apache.axis.message;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
-import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
