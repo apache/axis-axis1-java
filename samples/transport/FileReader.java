@@ -114,7 +114,6 @@ public class FileReader extends Thread {
         }
 
         buf = (byte[]) msg.getAsBytes();
-        System.out.println("msg=" + new String(buf));
         fos.write( buf );
         fos.close();
 
