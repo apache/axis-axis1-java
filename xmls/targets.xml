@@ -140,7 +140,11 @@
     </condition>
 
     <condition property="axis-ant.present" >
-      <available classname="org.apache.axis.tools.ant.foreach.ForeachTask" classpathref="classpath" />
+      <available classname="org.apache.axis.tools.ant.foreach.ForeachTask">
+        <classpath>
+          <pathelement location="${build.lib}/axis-ant.jar"/>
+        </classpath>
+      </available>  
     </condition>
 
     <condition property="jimiAndAttachments.present">
