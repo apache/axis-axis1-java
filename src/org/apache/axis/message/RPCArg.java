@@ -83,6 +83,16 @@ public class RPCArg {
     value = elem.getFirstChild().getNodeValue();
   }
 
+  public RPCArg(String name) {
+    setName( name );
+  }
+
+  // should go away once we support more than just String
+  public RPCArg(String name, String value) {  
+    setName( name );
+    setValue( value );
+  }
+
   public String getNamespace() { return( namespace ); }
   public void   setNamespace(String ns) { namespace = ns ; }
 

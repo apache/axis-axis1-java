@@ -113,7 +113,7 @@ public class Message {
     if ( currentForm.equals( desiredType ) ) return( currentMessage );
 
     if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
-    if ( desiredType.equals( "Document" )) return( getAsDOMDocument() );
+    if ( desiredType.equals( "Document" )) return( getAsDocument() );
     if ( desiredType.equals( "String" )) return( getAsString() );
     if ( desiredType.equals( "SOAPEnvelope" )) return( getAsSOAPEnvelope() );
 
@@ -152,7 +152,7 @@ public class Message {
       }
     }
 
-    if ( currentForm.equals("DOMDocument") ||
+    if ( currentForm.equals("Document") ||
          currentForm.equals("SOAPEnvelope") ||
          currentForm.equals("AxisFault") )
       getAsString();
@@ -183,7 +183,7 @@ public class Message {
 
     if ( currentForm.equals("SOAPEnvelope") ||
          currentForm.equals("AxisFault") )
-      getAsDOMDocument();
+      getAsDocument();
 
     if ( currentForm.equals("Document") ) { 
       try {
@@ -204,7 +204,7 @@ public class Message {
     return( null );
   }
 
-  private Document getAsDOMDocument() {
+  private Document getAsDocument() {
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
     DOMParser  parser = new DOMParser();
@@ -256,7 +256,7 @@ public class Message {
   private SOAPEnvelope getAsSOAPEnvelope() {
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
-    getAsDOMDocument();
+    getAsDocument();
     setCurrentMessage( new SOAPEnvelope( (Document) currentMessage ),
                        "SOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );

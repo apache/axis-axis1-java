@@ -82,6 +82,12 @@ public class MessageContext {
    */
   private Hashtable bag ;
 
+  public MessageContext() {}
+
+  public MessageContext( Message inMsg ) {
+    setIncomingMessage( inMsg );
+  }
+
   /**
    * Placeholder.
    */

@@ -61,6 +61,8 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.client.HTTPCall ;
+
 /** 
  *
  * @author Doug Davis (dug@us.ibm.com.com)
@@ -69,32 +71,17 @@ public class GetQuote {
 
   public static void main(String args[]) {
 
-    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                 "Host: localhost:8080\n" +
-                 "Content-Type: text/xml;charset=utf-8\n" +
-                 "SOAPAction: urn:xmltoday-delayed-quotes\n";
-
-    String msg ;
-    String msg1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"" +
-                  "http://schemas.xmlsoap.org/soap/envelope/\" " +
-                  "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\"" + 
-                  " xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                  "<SOAP-ENV:Body>\n" ;
-    String head = "<m:getQuote xmlns:m=\"urn:xmltoday-delayed-quotes\">\n" +
-                  "<symbol>" ;
-    String tail = "</symbol>\n</m:getQuote>\n" ;
-    String msg2 = "</SOAP-ENV:Body>\n" +
-                  "</SOAP-ENV:Envelope>" ;
-
     try {
-      String  host   = "localhost" ;
-      int     port   = 8080 ;
-      boolean atLeastOne = false ;
+      String  symbol = null ;
 
-      msg = msg1 ;
+      /* Parse the command line  */
+      /***************************/
+      String  host    = "localhost" ;
+      String  servlet = "/axis/servlet/AxisServlet" ;
+      int     port    = 8080 ;
 
       for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) {
+        if ( args[i].charAt(0) == '-' ) 
           switch( args[i].toLowerCase().charAt(1) ) {
             case 'h': if ( args[i].length() > 2 )
                         host = args[i].substring(2);
@@ -102,35 +89,36 @@ public class GetQuote {
             case 'p': if ( args[i].length() > 2 )
                         port = Integer.parseInt(args[i].substring(2));
                       break ;
+            case 's': if ( args[i].length() > 2 )
+                        servlet = args[i].substring(2);
+                      if ( servlet != null && servlet.charAt(0) != '/' )
+                        servlet = "/" + servlet ;
+                      break ;
+            case 'u': if ( args[i].length() > 2 ) {
+                        URL tmpurl = new URL(args[i].substring(2));
+                        host = tmpurl.getHost();
+                        port = tmpurl.getPort();
+                        servlet = tmpurl.getPath() ;
+                      }
+                      break ;
             default: System.err.println( "Unknown option '" + 
                                          args[i].charAt(1) + "'" );
                      System.exit(1);
           }
-        }
-        else {
-          atLeastOne = true ;
-          msg += head + args[i] + tail ;
-        }
+        else 
+          symbol = args[i] ;
       }
-      msg += msg2 ;
 
-      if ( !atLeastOne ) {
+      if ( symbol == null ) {
         System.err.println( "Usage: GetQuote <symbol>" );
         System.exit(1);
       }
 
-      String         cl = "Content-Length: " + msg.length() + "\n\n" ;
-      Socket         sock = new Socket( host, port );
-      InputStream    inp = sock.getInputStream();
-      OutputStream   out = sock.getOutputStream();
-      byte           b ;
+      String url = "http://" + host + ":" + port + servlet ;
+      HTTPCall call = new HTTPCall( url, "urn:xmltoday-delayed-quotes" );
+      String res = (String) call.invoke( "getQuote", new Object[] {symbol} );
 
-      out.write( hdr.getBytes() );
-      out.write( cl.getBytes() );
-      out.write( msg.getBytes() );
-
-      while ( (b = (byte) inp.read()) != -1 ) 
-        System.out.write( b );
+      System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
       System.err.println( e );
