@@ -55,6 +55,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
@@ -147,8 +148,13 @@ public class SOAPHeaderElement extends MessageElement
         super.detachNode();
     }
 
-    public SOAPHeaderElement(String namespace, String localPart, String prefix,
-                      Attributes attributes, DeserializationContext context) {
+    public SOAPHeaderElement(String namespace,
+                             String localPart,
+                             String prefix,
+                             Attributes attributes,
+                             DeserializationContext context)
+            throws AxisFault
+    {
         super(namespace, localPart, prefix, attributes, context);
 
         SOAPConstants soapConstants = context.getMessageContext() == null ?

@@ -762,6 +762,11 @@ public class MessageContext implements SOAPMessageContext {
     /** The directory where in coming attachments are created. */
     public final static String ATTACHMENTS_DIR   = "attachments.directory" ;
 
+    /** A boolean param, to control whether we accept missing parameters
+     * as nulls or refuse to acknowledge them.
+     */
+    public final static String ACCEPTMISSINGPARAMS = "acceptMissingParams";
+
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      * For the service's interface namespace if not set TRANS_URL property is used.
      */

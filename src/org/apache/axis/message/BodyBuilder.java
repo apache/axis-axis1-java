@@ -111,8 +111,12 @@ public class BodyBuilder extends SOAPHandler
         if (!context.isDoneParsing()) {
             if (!context.isProcessingRef()) {
                 if (myElement == null) {
-                    myElement = new SOAPBody(namespace, localName, prefix,
-                                        attributes, context, envelope.getSOAPConstants());
+                    try {
+                        myElement = new SOAPBody(namespace, localName, prefix,
+                                            attributes, context, envelope.getSOAPConstants());
+                    } catch (AxisFault axisFault) {
+                        throw new SAXException(axisFault);
+                    }
                 }
                 context.pushNewElement(myElement);
             }
@@ -123,7 +127,8 @@ public class BodyBuilder extends SOAPHandler
     // FIX: do we need this method ?
     public MessageElement makeNewElement(String namespace, String localName,
                                          String prefix, Attributes attributes,
-                                         DeserializationContext context) {
+                                         DeserializationContext context)
+        throws AxisFault {
         SOAPConstants soapConstants = context.getMessageContext() == null ?
                                         SOAPConstants.SOAP11_CONSTANTS :
                                         context.getMessageContext().getSOAPConstants();
@@ -180,6 +185,9 @@ public class BodyBuilder extends SOAPHandler
         }
 
         Style style = operations == null ? Style.RPC : operations[0].getStyle();
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
 
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
@@ -187,8 +195,12 @@ public class BodyBuilder extends SOAPHandler
          */
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(msgContext.getSOAPConstants().getEnvelopeURI())) {
-            element = new SOAPFault(namespace, localName, prefix,
-                                           attributes, context);
+            try {
+                element = new SOAPFault(namespace, localName, prefix,
+                                               attributes, context);
+            } catch (AxisFault axisFault) {
+                throw new SAXException(axisFault);
+            }
             element.setEnvelope(context.getEnvelope());
             handler = new SOAPFaultBuilder((SOAPFault)element,
                                            context);
@@ -208,6 +220,27 @@ public class BodyBuilder extends SOAPHandler
                     throw new SAXException(e);
                 }
 
+                // SBFIX : If we're here with no operations, we're going to have
+                // a dispatch problem.  If SOAP12, fault.
+                /*  We need to put something like this in, but this currently
+                    breaks the soap12 deserialization test, since that's
+                    deserializing with no OperationDescs.  We should either
+                    change the test or figure out a way to switch on/off
+                    the idea of dispatching to an OperationDesc during
+                    deserialization (MessageContext property, etc). --Glen
+
+                if (operations == null &&
+                        (msgContext != null && !msgContext.isClient()) &&
+                        soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    AxisFault fault =
+                            new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                                    "No such procedure", null, null);
+                    fault.addFaultSubCode(
+                            Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
+                    throw new SAXException(fault);
+                }
+                */
+
                 // Only deserialize this way if there is a unique operation
                 // for this QName.  If there are overloads,
                 // we'll need to start recording.  If we're making a high-
@@ -224,16 +257,17 @@ public class BodyBuilder extends SOAPHandler
             }
         }
 
-        SOAPConstants soapConstants = context.getMessageContext() == null ?
-                                        SOAPConstants.SOAP11_CONSTANTS :
-                                        context.getMessageContext().getSOAPConstants();
         if (element == null) {
             if ((style == Style.RPC) &&
                 soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                 throw new SAXException(Messages.getMessage("onlyOneBodyFor12"));
             }
-            element = new SOAPBodyElement(namespace, localName, prefix,
-                                      attributes, context);
+            try {
+                element = new SOAPBodyElement(namespace, localName, prefix,
+                                          attributes, context);
+            } catch (AxisFault axisFault) {
+                throw new SAXException(axisFault);
+            }
             if (element.getFixupDeserializer() != null)
                 handler = (SOAPHandler)element.getFixupDeserializer();
         }

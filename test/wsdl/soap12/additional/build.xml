@@ -64,7 +64,7 @@ Copyright (c) 2002-2003 Apache Software Foundation.
         <copy todir="${build.dir}/work/test/wsdl/soap12/additional" overwrite="yes">
           <fileset dir="${axis.home}/test/wsdl/soap12/additional">
             <include name="*TestCase.java"/>
-            <include name="*Impl.java"/>
+            <include name="*Service.java"/>
           </fileset>
         </copy>
 

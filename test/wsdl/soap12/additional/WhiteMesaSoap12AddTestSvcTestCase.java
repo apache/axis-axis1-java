@@ -9,25 +9,25 @@ package test.wsdl.soap12.additional;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.PrefixedQName;
-import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.*;
 import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import test.wsdl.soap12.additional.xsd.SOAPStruct;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
 import java.util.Vector;
+import java.net.URL;
 
 /**
  * Additional SOAP 1.2 tests.
@@ -53,19 +53,75 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     // Endpoints
     // TODO : Shouldn't be hardcoded!
 //    public static final String HOST = "http://localhost:8080";
-    public static final String HOST = "http://www.whitemesa.net";
-    public static final String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
-    public static final String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
-    public static final String GET_DOC_ENDPOINT = HOST + "/soap12/add-test-doc/getTime";
-    public static final String GET_RPC_ENDPOINT = HOST + "/soap12/add-test-rpc/getTime";
-    public static final String DOC_INT_ENDPOINT = HOST + "/soap12/add-test-doc-int";
-    public static final String DOC_INT_UC_ENDPOINT = HOST + "/soap12/add-test-doc-int-uc";
+    public static String HOST = "http://www.whitemesa.net";
+    public static String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
+    public static String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
+    public static String GET_DOC_ENDPOINT = HOST + "/soap12/add-test-doc/getTime";
+    public static String GET_RPC_ENDPOINT = HOST + "/soap12/add-test-rpc/getTime";
+    public static String DOC_INT_ENDPOINT = HOST + "/soap12/add-test-doc-int";
+    public static String DOC_INT_UC_ENDPOINT = HOST + "/soap12/add-test-doc-int-uc";
     private QName SOAPSTRUCT_QNAME = new QName("http://example.org/ts-tests/xsd", "SOAPStruct");
+
+    static String configFile = null;
+
+    public static void main(String[] args) throws Exception {
+        // If we have an argument, it's a configuration file.
+        if (args.length > 0) {
+            configFile = args[0];
+        }
+        WhiteMesaSoap12AddTestSvcTestCase tester = new WhiteMesaSoap12AddTestSvcTestCase("testXMLP5");
+        tester.setUp();
+        tester.testXMLP19();
+        System.out.println("Done.");
+//        junit.textui.TestRunner.run(WhiteMesaSoap12AddTestSvcTestCase.class);
+    }
 
     public WhiteMesaSoap12AddTestSvcTestCase(java.lang.String name) {
         super(name);
     }
-    
+
+    protected void setUp() throws Exception {
+        if (configFile == null) {
+            configFile = System.getProperty("configFile");
+        }
+
+        if (configFile == null) {
+            return;
+        }
+
+        Document doc = XMLUtils.newDocument(configFile);
+        NodeList nl = doc.getDocumentElement().getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (!(node instanceof Element))
+                continue;
+            Element el = (Element) node;
+            String tag = el.getLocalName();
+            String data = XMLUtils.getChildCharacterData(el);
+            if ("host".equals(tag)) {
+                HOST = data;
+                RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
+                DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
+                GET_DOC_ENDPOINT = HOST + "/soap12/add-test-doc/getTime";
+                GET_RPC_ENDPOINT = HOST + "/soap12/add-test-rpc/getTime";
+                DOC_INT_ENDPOINT = HOST + "/soap12/add-test-doc-int";
+                DOC_INT_UC_ENDPOINT = HOST + "/soap12/add-test-doc-int-uc";
+            } else if ("rpcEndpoint".equals(tag)) {
+                RPC_ENDPOINT = data;
+            } else if ("docEndpoint".equals(tag)) {
+                DOC_ENDPOINT = data;
+            } else if ("getRpcEndpoint".equals(tag)) {
+                GET_RPC_ENDPOINT = data;
+            } else if ("getDocEndpoint".equals(tag)) {
+                GET_DOC_ENDPOINT = data;
+            } else if ("docIntEndpoint".equals(tag)) {
+                DOC_INT_ENDPOINT = data;
+            } else if ("docIntUcEndpoint".equals(tag)) {
+                DOC_INT_UC_ENDPOINT = data;
+            }
+        }
+    }
+
     /**
      * Test xmlp-1 - call echoString with no arguments (even though it expects
      * one).  Confirm bad arguments fault from endpoint.
@@ -125,7 +181,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         // gonna for now.
     }
     
-    public void textXMLP4() throws Exception {
+    public void testXMLP4() throws Exception {
         Call call = new Call(RPC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.registerTypeMapping(SOAPStruct.class, SOAPSTRUCT_QNAME,
@@ -183,10 +239,11 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     }
     
     public void testXMLP7() throws Exception {
+        URL url = new URL(DOC_ENDPOINT);
         test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
         try {
             binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPort();
+                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -214,31 +271,15 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     }
     
     public void testXMLP8() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
+        Call call = new Call(DOC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        QName qname = new QName(TEST_NS, "echoReceiverFault");
         try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        try {
-            binding.echoReceiverFault(STRING_VAL);
-        } catch (java.rmi.RemoteException e) {
-            if (e instanceof AxisFault) {
-                AxisFault af = (AxisFault)e;
-                assertEquals(Constants.FAULT_SOAP12_RECEIVER,
-                             af.getFaultCode());
-                return; // success
-            }
+            call.invoke(qname, null);
+        } catch (AxisFault af) {
+            assertEquals(Constants.FAULT_SOAP12_RECEIVER,
+                    af.getFaultCode());
+            return; // success
         }
         
         fail("Should have received receiver fault!");
@@ -267,7 +308,34 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         }
         fail("Didn't catch expected fault");                
     }
-    
+
+    /**
+     * Test xmlp-10 : reply with the schema types of the arguments, in order
+     */
+//    public void testXMLP10() throws Exception {
+//        Call call = new Call(RPC_ENDPOINT);
+//        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+//        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
+//        SOAPBodyElement body = new SOAPBodyElement(
+//                new PrefixedQName(TEST_NS,
+//                        "echoSimpleTypesAsStructOfSchemaTypes", "ns"));
+//        reqEnv.addBodyElement(body);
+//        MessageElement arg = new MessageElement("", "input1");
+//        arg.setObjectValue(new Integer(5));
+//        body.addChild(arg);
+//        arg = new MessageElement("", "input2");
+//        arg.setObjectValue(new Float(5.5F));
+//        body.addChild(arg);
+//        arg = new MessageElement("", "input3");
+//        arg.setObjectValue("hi there");
+//        body.addChild(arg);
+//        arg = new MessageElement("", "input4");
+//        Text text = new Text("untyped");
+//        arg.addChild(text);
+//        body.addChild(arg);
+//        call.invoke(reqEnv);
+//    }
+
     /**
      * Test xmlp-11 : send a string where an integer is expected, confirm
      * BadArguments fault.

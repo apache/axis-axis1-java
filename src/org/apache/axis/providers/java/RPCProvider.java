@@ -333,7 +333,7 @@ public class RPCProvider extends JavaProvider {
                 if (!operation.isReturnHeader()) {
                     // For SOAP 1.2 rpc style, add a result
                     if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS &&
-                            !(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
+                            (serviceDesc.getStyle().equals(Style.RPC))) {
                         RPCParam resultParam = new RPCParam(Constants.QNAME_RPC_RESULT, returnQName);
                         resultParam.setXSITypeGeneration(Boolean.FALSE);
                         resBody.addParam(resultParam);

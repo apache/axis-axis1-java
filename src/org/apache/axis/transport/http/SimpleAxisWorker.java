@@ -71,7 +71,9 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
+import javax.xml.namespace.QName;
 import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -92,6 +94,7 @@ public class SimpleAxisWorker implements Runnable {
     // HTTP status codes
     private static byte OK[] = ("200 " + Messages.getMessage("ok00")).getBytes();
     private static byte UNAUTH[] = ("401 " + Messages.getMessage("unauth00")).getBytes();
+    private static byte SENDER[] = "400".getBytes();
     private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
 
     // HTTP prefix
@@ -111,12 +114,12 @@ public class SimpleAxisWorker implements Runnable {
     private static byte SEPARATOR[] = "\r\n\r\n".getBytes();
 
     // Tiddly little response
-    private static final String responseStr =
-            "<html><head><title>SimpleAxisServer</title></head>" +
-            "<body><h1>SimpleAxisServer</h1>" +
-            Messages.getMessage("reachedServer00") +
-            "</html>";
-    private static byte cannedHTMLResponse[] = responseStr.getBytes();
+//    private static final String responseStr =
+//            "<html><head><title>SimpleAxisServer</title></head>" +
+//            "<body><h1>SimpleAxisServer</h1>" +
+//            Messages.getMessage("reachedServer00") +
+//            "</html>";
+//    private static byte cannedHTMLResponse[] = responseStr.getBytes();
 
     // ASCII character mapping to lower case
     private static final byte[] toLower = new byte[256];
@@ -189,7 +192,7 @@ public class SimpleAxisWorker implements Runnable {
 
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
-        Message requestMsg;
+        Message requestMsg = null;
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =
@@ -234,6 +237,8 @@ public class SimpleAxisWorker implements Runnable {
             // cookie for this session, if any
             String cooky = null;
 
+            String methodName = null;
+
             try {
                 // wipe cookies if we're doing sessions
                 if (server.isSessionUsed()) {
@@ -264,6 +269,10 @@ public class SimpleAxisWorker implements Runnable {
 
                     if ("wsdl".equalsIgnoreCase(params))
                         doWsdl = true;
+
+                    if (params.startsWith("method=")) {
+                        methodName = params.substring(7);
+                    }
                 }
 
                 // Real and relative paths are the same for the
@@ -316,7 +325,21 @@ public class SimpleAxisWorker implements Runnable {
                     out.write(HTTP);
                     out.write(status);
 
-                    if (doWsdl) {
+                    if (methodName != null) {
+                        String body =
+                            "<" + methodName + ">" +
+//                               args +
+                            "</" + methodName + ">";
+                        String msgtxt =
+                            "<SOAP-ENV:Envelope" +
+                            " xmlns:SOAP-ENV=\"" + Constants.URI_SOAP12_ENV + "\">" +
+                            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
+                            "</SOAP-ENV:Envelope>";
+
+                        ByteArrayInputStream istream =
+                            new ByteArrayInputStream(msgtxt.getBytes());
+                        requestMsg = new Message(istream);
+                    } else if (doWsdl) {
                         engine.generateWSDL(msgContext);
 
                         Document doc = (Document) msgContext.getProperty("WSDL");
@@ -331,53 +354,55 @@ public class SimpleAxisWorker implements Runnable {
                             out.flush();
                             return;
                         }
-                    }
-
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("<h2>And now... Some Services</h2>\n");
-                    Iterator i = engine.getConfig().getDeployedServices();
-                    out.write("<ul>\n".getBytes());
-                    while (i.hasNext()) {
-                        ServiceDesc sd = (ServiceDesc)i.next();
-                        sb.append("<li>\n");
-                        sb.append(sd.getName());
-                        sb.append(" <a href=\"../services/");
-                        sb.append(sd.getName());
-                        sb.append("?wsdl\"><i>(wsdl)</i></a></li>\n");
-                        ArrayList operations = sd.getOperations();
-                        if (!operations.isEmpty()) {
-                            sb.append("<ul>\n");
-                            for (Iterator it = operations.iterator(); it.hasNext();) {
-                                OperationDesc desc = (OperationDesc) it.next();
-                                sb.append("<li>" + desc.getName());
+                    } else {
+                        StringBuffer sb = new StringBuffer();
+                        sb.append("<h2>And now... Some Services</h2>\n");
+                        Iterator i = engine.getConfig().getDeployedServices();
+                        out.write("<ul>\n".getBytes());
+                        while (i.hasNext()) {
+                            ServiceDesc sd = (ServiceDesc)i.next();
+                            sb.append("<li>\n");
+                            sb.append(sd.getName());
+                            sb.append(" <a href=\"../services/");
+                            sb.append(sd.getName());
+                            sb.append("?wsdl\"><i>(wsdl)</i></a></li>\n");
+                            ArrayList operations = sd.getOperations();
+                            if (!operations.isEmpty()) {
+                                sb.append("<ul>\n");
+                                for (Iterator it = operations.iterator(); it.hasNext();) {
+                                    OperationDesc desc = (OperationDesc) it.next();
+                                    sb.append("<li>" + desc.getName());
+                                }
+                                sb.append("</ul>\n");
                             }
-                            sb.append("</ul>\n");
                         }
+                        sb.append("</ul>\n");
+
+                        byte [] bytes = sb.toString().getBytes();
+
+                        out.write(HTML_MIME_STUFF);
+                        putInt(buf, out, bytes.length);
+                        out.write(SEPARATOR);
+                        out.write(bytes);
+                        out.flush();
+                        return;
                     }
-                    sb.append("</ul>\n");
+                } else {
 
-                    byte [] bytes = sb.toString().getBytes();
-
-                    out.write(HTML_MIME_STUFF);
-                    putInt(buf, out, bytes.length);
-                    out.write(SEPARATOR);
-                    out.write(bytes);
-                    out.flush();
-                    return;
+                    // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
+                    // for now, do not complain if no SOAPAction at all
+                    String soapActionString = soapAction.toString();
+                    if (soapActionString != null) {
+                        msgContext.setUseSOAPAction(true);
+                        msgContext.setSOAPActionURI(soapActionString);
+                    }
+                    requestMsg = new Message(is,
+                            false,
+                            contentType.toString(),
+                            contentLocation.toString()
+                    );
                 }
 
-                // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
-                // for now, do not complain if no SOAPAction at all
-                String soapActionString = soapAction.toString();
-                if (soapActionString != null) {
-                    msgContext.setUseSOAPAction(true);
-                    msgContext.setSOAPActionURI(soapActionString);
-                }
-                requestMsg = new Message(is,
-                        false,
-                        contentType.toString(),
-                        contentLocation.toString()
-                );
                 msgContext.setRequestMessage(requestMsg);
 
                 // set up session, if any
@@ -415,8 +440,10 @@ public class SimpleAxisWorker implements Runnable {
                 if (e instanceof AxisFault) {
                     af = (AxisFault) e;
                     log.debug(Messages.getMessage("serverFault00"), af);
-
-                    if ("Server.Unauthorized".equals(af.getFaultCode())) {
+                    QName faultCode = af.getFaultCode();
+                    if (Constants.FAULT_SOAP12_SENDER.equals(faultCode)) {
+                        status = SENDER;
+                    } else if ("Server.Unauthorized".equals(af.getFaultCode().getLocalPart())) {
                         status = UNAUTH; // SC_UNAUTHORIZED
                     } else {
                         status = ISE; // SC_INTERNAL_SERVER_ERROR
@@ -432,6 +459,7 @@ public class SimpleAxisWorker implements Runnable {
                 responseMsg = msgContext.getResponseMessage();
                 if (responseMsg == null) {
                     responseMsg = new Message(af);
+                    responseMsg.setMessageContext(msgContext);
                 } else {
                     try {
                         SOAPEnvelope env = responseMsg.getSOAPEnvelope();
@@ -485,6 +513,10 @@ public class SimpleAxisWorker implements Runnable {
             } catch (Exception e) {
             }
         }
+
+    }
+
+    protected void invokeMethodFromGet(String methodName, String args) throws Exception {
 
     }
 
