@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -92,7 +93,7 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
 * file which contains the <bindingName>Stub class.
 */
-public class JavaStubWriter extends JavaWriter {
+public class JavaStubWriter extends JavaClassWriter {
     private BindingEntry bEntry;
     private Binding binding;
     private SymbolTable symbolTable;
@@ -104,17 +105,30 @@ public class JavaStubWriter extends JavaWriter {
             Emitter emitter,
             BindingEntry bEntry,
             SymbolTable symbolTable) {
-        super(emitter, bEntry, "Stub", "java",
-                JavaUtils.getMessage("genStub00"), "stub");
+        super(emitter, bEntry.getName() + "Stub", "stub");
         this.bEntry = bEntry;
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
+     * Returns "extends org.apache.axis.client.Stub ".
+     */
+    protected String getExtendsText() {
+        return "extends org.apache.axis.client.Stub ";
+    } // getExtendsText
+
+    /**
+     * Returns "implements <SEI> ".
+     */
+    protected String getImplementsText() {
+        return "implements " + bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME) + " ";
+    } // getImplementsText
+
+    /**
      * Write the body of the binding's stub file.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         PortType portType = binding.getPortType();
 
         String portTypeName = 
@@ -123,9 +137,6 @@ public class JavaStubWriter extends JavaWriter {
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;
         }
-
-        pw.println("public class " + className + " extends org.apache.axis.client.Stub implements " + portTypeName + " {");
-
         HashSet types = getTypesInPortType(portType);
         if (types.size() > 0) {
             pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
@@ -156,7 +167,7 @@ public class JavaStubWriter extends JavaWriter {
 
         Iterator it = types.iterator();
         while (it.hasNext()) {
-            writeSerializationInit((TypeEntry) it.next());
+            writeSerializationInit(pw, (TypeEntry) it.next());
         }
 
         pw.println("        }");
@@ -289,12 +300,10 @@ public class JavaStubWriter extends JavaWriter {
                 pw.println();
             }
             else {
-                writeOperation(
+                writeOperation(pw,
                         operation, parameters, soapAction, namespace, isRPC);
             }
         }
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
     /**
@@ -394,7 +403,7 @@ public class JavaStubWriter extends JavaWriter {
      */
     private boolean firstSer = true ;
 
-    private void writeSerializationInit(TypeEntry type) throws IOException {
+    private void writeSerializationInit(PrintWriter pw, TypeEntry type) throws IOException {
 
         // Note this same check is repeated in JavaDeployWriter.
         boolean process = true;
@@ -473,6 +482,7 @@ public class JavaStubWriter extends JavaWriter {
      * Write the stub code for the given operation.
      */
     private void writeOperation(
+            PrintWriter pw,
             BindingOperation operation,
             Parameters parms,
             String soapAction,
@@ -493,9 +503,9 @@ public class JavaStubWriter extends JavaWriter {
 
             // We need to use the Qname of the actual type, not the QName of the element
             TypeEntry type = p.getType();
-            if (type instanceof DefinedElement) {
-                if (type.getRefType() != null)
-                    type = type.getRefType();
+            if (type instanceof DefinedElement
+                    && type.getRefType() != null) {
+                type = type.getRefType();
             }
             QName qn = type.getQName();
             String javaType = type.getName();
@@ -535,7 +545,7 @@ public class JavaStubWriter extends JavaWriter {
             // We need to use the Qname of the actual type, not the QName of the element
             QName qn = parms.returnType.getQName();
             if (parms.returnType instanceof DefinedElement) {
-                TypeEntry type = ((DefinedElement)parms.returnType).getRefType();
+                TypeEntry type = ((DefinedElement) parms.returnType).getRefType();
                 if (type != null && type.getQName() != null) {
                     qn = type.getQName();
                 }
@@ -647,14 +657,14 @@ public class JavaStubWriter extends JavaWriter {
                                
                     pw.println("            java.util.Map output;");
                     pw.println("            output = call.getOutputParams();");
-                    writeOutputAssign(javifiedName + ".value =",
+                    writeOutputAssign(pw, javifiedName + ".value =",
                                       p.getType(),
                                       "output.get(" + qnameName + ")");
                 }
                 else {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
-                    writeOutputAssign("return ",
+                    writeOutputAssign(pw, "return ",
                                       parms.returnType, "resp");
                 }
             }
@@ -668,13 +678,13 @@ public class JavaStubWriter extends JavaWriter {
                     String qnameName = Utils.getNewQName(
                             Utils.getAxisQName(p.getQName()));
                     if (p.getMode() != Parameter.IN) {
-                        writeOutputAssign(javifiedName + ".value =",
+                        writeOutputAssign(pw, javifiedName + ".value =",
                                           p.getType(),
                                           "output.get(" + qnameName + ")");
                     }
                 }
                 if (parms.outputs > 0) {
-                    writeOutputAssign("return ",
+                    writeOutputAssign(pw, "return ",
                                       parms.returnType,
                                       "resp");
                 }
@@ -693,7 +703,7 @@ public class JavaStubWriter extends JavaWriter {
      * @param source (source String)   
      *
      */
-    private void writeOutputAssign(String target,
+    private void writeOutputAssign(PrintWriter pw, String target,
                                    TypeEntry type, 
                                    String source) {
         if (type != null && type.getName() != null) {

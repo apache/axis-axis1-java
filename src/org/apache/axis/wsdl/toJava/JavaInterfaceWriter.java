@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Iterator;
 
@@ -72,11 +73,9 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
 * which contains the <portTypeName> interface.
 */
-public class JavaInterfaceWriter extends JavaWriter {
-    protected PortType      portType;
-    protected PortTypeEntry ptEntry;
-    protected SymbolTable   symbolTable;
-    protected BindingEntry  bEntry;
+public class JavaInterfaceWriter extends JavaClassWriter {
+    protected PortType     portType;
+    protected BindingEntry bEntry;
 
     /**
      * Constructor.
@@ -84,15 +83,10 @@ public class JavaInterfaceWriter extends JavaWriter {
     protected JavaInterfaceWriter(
             Emitter emitter,
             PortTypeEntry ptEntry, BindingEntry bEntry, SymbolTable symbolTable) {
-        super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"), "interface");
-        this.ptEntry = ptEntry;
+        super(emitter, (String) bEntry.getDynamicVar(
+                JavaBindingWriter.INTERFACE_NAME), "interface");
         this.portType = ptEntry.getPortType();
-        this.symbolTable = symbolTable;
         this.bEntry = bEntry;
-
-        super.className = Utils.getJavaLocalName(
-                (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME));
-        super.fileName = className + ".java";
     } // ctor
 
     /**
@@ -100,7 +94,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      * of two bindings referencing the same portType
      */
     public void generate() throws IOException {
-        String fqClass = packageName + "." + className;
+        String fqClass = getPackage() + "." + getClassName();
 
         // Do not emit the same portType/interface twice
         if (!emitter.getGeneratedFileInfo().getClassNames().contains(fqClass)) {
@@ -109,25 +103,34 @@ public class JavaInterfaceWriter extends JavaWriter {
     } // generate
 
     /**
+     * Returns "interface ".
+     */
+    protected String getClassText() {
+        return "interface ";
+    } // getClassString
+
+    /**
+     * Returns "extends java.rmi.Remote ".
+     */
+    protected String getExtendsText() {
+        return "extends java.rmi.Remote ";
+    } // getExtendsText
+
+    /**
      * Write the body of the portType interface file.
      */
-    protected void writeFileBody() throws IOException {
-        pw.println("public interface " + className + " extends java.rmi.Remote {");
-
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         Iterator operations = portType.getOperations().iterator();
         while(operations.hasNext()) {
             Operation operation = (Operation) operations.next();
-            writeOperation(operation);
+            writeOperation(pw, operation);
         }
-
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
     /**
      * This method generates the interface signatures for the given operation.
      */
-    protected void writeOperation(Operation operation) throws IOException {
+    protected void writeOperation(PrintWriter pw, Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
         Parameters parms = bEntry.getParameters(operation);
         pw.println(parms.signature + ";");

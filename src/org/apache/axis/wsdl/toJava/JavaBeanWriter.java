@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Vector;
 
@@ -69,14 +70,15 @@ import org.w3c.dom.Node;
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
  */
-public class JavaBeanWriter extends JavaWriter {
+public class JavaBeanWriter extends JavaClassWriter {
     private TypeEntry type;
     private Vector elements;
     private Vector attributes;
     private TypeEntry extendType;
-    protected JavaWriter helper;
+    protected JavaBeanHelperWriter helper;
     protected Vector names = new Vector(); // even indices: types, odd: vars
     protected String simpleValueType = null;  // name of type of simple value
+    protected PrintWriter pw;
 
     // The following fields can be set by extended classes
     // to control processing
@@ -105,13 +107,12 @@ public class JavaBeanWriter extends JavaWriter {
             TypeEntry extendType,
             Vector attributes,
             JavaWriter helper) {
-        super(emitter, type, "", "java",
-              JavaUtils.getMessage("genType00"), "complexType");
+        super(emitter, type.getName(), "complexType");
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
         this.extendType = extendType;
-        this.helper = helper;
+        this.helper = (JavaBeanHelperWriter) helper;
         if (type.isSimpleType()) {
             enableSimpleConstructors = true;
             enableToString = true;
@@ -121,14 +122,14 @@ public class JavaBeanWriter extends JavaWriter {
     /**
      * Generate the binding for the given complex type.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
+
+        this.pw = pw;
+
         // Populate Names Vector with the names and types of the members.
         // The write methods use the names vector whenever they need to get
         // a member name or type.
         preprocess();
-
-        // Write the start of the class definition
-        writeClassStart(getAbstractText(), getExtendsText(), getImplementsText());
 
         // Write Member Fields
         writeMemberFields();
@@ -166,15 +167,11 @@ public class JavaBeanWriter extends JavaWriter {
 
         // Write the meta data into a Helper class or
         // embed it in the bean class
-        if (emitter.isHelperWanted()) {
-            helper.generate(); // separate Helper Class
-        } else {
-            helper.generate(pw); // embed in Bean Class
+        if (!emitter.isHelperWanted()) {
+            // Write the helper info into the bean class
+            helper.setPrintWriter(pw);
         }
-        
-        // Write end of class definition
-        writeClassStop();
-        pw.close();
+        helper.generate();
     } // writeFileBody
 
     /**
@@ -220,6 +217,22 @@ public class JavaBeanWriter extends JavaWriter {
     
     /**
      * Returns the appropriate extends text
+     * @return "" or "abstract "
+     */
+    protected String getClassModifiers() {
+        Node node = type.getNode();
+        if (node != null) {
+            String abstractValue = Utils.getAttribute(node, "abstract");
+            if (abstractValue != null && 
+                abstractValue.equalsIgnoreCase("true")) {
+                return super.getClassModifiers() + "abstract ";
+            }
+        }
+        return super.getClassModifiers();
+    } // getClassModifiers
+
+    /**
+     * Returns the appropriate extends text
      * @return "" or " extends <class> "
      */
     protected String getExtendsText() {
@@ -243,42 +256,6 @@ public class JavaBeanWriter extends JavaWriter {
         }
         implementsText += " ";
         return implementsText;
-    }
-
-    /**
-     * Returns the appropriate extends text
-     * @return "" or "abstract "
-     */
-    protected String getAbstractText() {
-        Node node = type.getNode();
-        if (node != null) {
-            String abstractValue = Utils.getAttribute(node, "abstract");
-            if (abstractValue != null && 
-                abstractValue.equalsIgnoreCase("true")) {
-                return "abstract ";
-            }
-        }
-        return "";
-    }
-
-    /**
-     * Writes the start of the class definition.
-     * @param String abstractText is the abstract keyword (or "")
-     * @param String extendsText is the extends clause (or "")
-     * @param String implementsText is the implements clause (or "")
-     */
-    protected void writeClassStart(String abstractText, 
-                                   String extendsText,
-                                   String implementsText) {
-        pw.println("public " + abstractText + "class " + className + extendsText +
-                   implementsText + " {");
-    }
-
-    /**
-     * Writes the end of the class definition.
-     */
-    protected void writeClassStop() {
-        pw.println("}");
     }
 
     /**

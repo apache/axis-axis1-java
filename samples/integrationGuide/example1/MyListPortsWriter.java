@@ -55,12 +55,12 @@
 package samples.integrationGuide.example1;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.wsdl.Port;
-import javax.wsdl.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
@@ -68,6 +68,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriter;
+import org.apache.axis.wsdl.toJava.Utils;
 
 /**
 * This is my example of a class that writes a list of a service's
@@ -88,6 +89,7 @@ import org.apache.axis.wsdl.toJava.JavaWriter;
 */
 public class MyListPortsWriter extends JavaWriter {
     private Service service;
+    private String fileName;
 
     /**
      * Constructor.
@@ -96,24 +98,30 @@ public class MyListPortsWriter extends JavaWriter {
             Emitter emitter,
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
-        super(emitter,
-                new QName(
-                    sEntry.getQName().getNamespaceURI(),
-                    sEntry.getQName().getLocalPart() + "Lst"),
-                "", "lst", "Generating service port list file", "service list");
+        super(emitter, "service list");
         this.service = sEntry.getService();
+
+        // Create the fully-qualified file name
+        String javaName = sEntry.getName();
+        fileName = emitter.getNamespaces().toDir(
+                Utils.getJavaPackageName(javaName))
+                + Utils.getJavaLocalName(javaName) + ".lst";
     } // ctor
+
+    protected String getFileName() {
+        return fileName;
+    } // getFileName
 
     /**
      * Override the common JavaWriter header to a no-op.
      */
-    protected void writeFileHeader() throws IOException {
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
     } // writeFileHeader
 
     /**
      * Write the service list file.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         Map portMap = service.getPorts();
         Iterator portIterator = portMap.values().iterator();
 

@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ import org.w3c.dom.Node;
 * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
 * file which contains the <bindingName>Impl class.
 */
-public class JavaImplWriter extends JavaWriter {
+public class JavaImplWriter extends JavaClassWriter {
     protected Binding binding;
     protected SymbolTable symbolTable;
     protected BindingEntry bEntry;
@@ -105,8 +106,7 @@ public class JavaImplWriter extends JavaWriter {
             Emitter emitter,
             BindingEntry bEntry,
             SymbolTable symbolTable) {
-        super(emitter, bEntry, "Impl", "java",
-                JavaUtils.getMessage("genImpl00"), "skeletonImpl");
+        super(emitter, bEntry.getName() + "Impl", "templateImpl");
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;
@@ -115,11 +115,7 @@ public class JavaImplWriter extends JavaWriter {
     /**
      * Write the body of the binding's stub file.
      */
-    protected void writeFileBody() throws IOException {
-
-        pw.print("public class " + className + getExtendsText() + getImplementsText());
-        pw.println(" {");
-
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
@@ -136,33 +132,25 @@ public class JavaImplWriter extends JavaWriter {
                 pw.println();
             }
             else {
-                writeOperation(parameters);
+                writeOperation(pw, parameters);
             }
         }
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
-    /**
-     * Returns the appropriate extends text
-     * @return "" or " extends <class> "
-     */
-    protected String getExtendsText() {
-        // See if this class extends another class
-        return "";
-    }
-    
     /**
      * Returns the appropriate implements text
      * @return " implements <classes>"
      */
     protected String getImplementsText() {
         String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
-        String implementsText = " implements " + portTypeName;
+        String implementsText = "implements " + portTypeName;
         return implementsText;
     }
 
-    protected void writeOperation(Parameters parms) throws IOException {
+    /**
+     * Write the implementation template for the given operation.
+     */
+    protected void writeOperation(PrintWriter pw, Parameters parms) throws IOException {
         pw.println(parms.signature + " {");
 
         // Fill in any out parameter holders
