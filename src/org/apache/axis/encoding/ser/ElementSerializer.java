@@ -58,11 +58,13 @@ package org.apache.axis.encoding.ser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -81,7 +83,7 @@ import org.apache.axis.utils.JavaUtils;
 
 public class ElementSerializer implements Serializer {
 
-    /** 
+    /**
      * Serialize a DOM Element
      */
     public void serialize(QName name, Attributes attributes,
@@ -97,4 +99,17 @@ public class ElementSerializer implements Serializer {
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

@@ -74,7 +74,10 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -86,12 +89,12 @@ import java.util.StringTokenizer;
 import java.beans.IntrospectionException;
 
 /**
- * An ArraySerializer handles serializing of arrays.               
+ * An ArraySerializer handles serializing of arrays.
  *
  * Some code borrowed from ApacheSOAP - thanks to Matt Duftler!
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
- * 
+ *
  * Multi-reference stuff:
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
@@ -99,7 +102,7 @@ public class ArraySerializer implements Serializer {
 
     static Category category =
             Category.getInstance(ArraySerializer.class.getName());
-    
+
     /**
      * Serialize an element that is an array.
      * @param name is the element name
@@ -113,10 +116,10 @@ public class ArraySerializer implements Serializer {
     {
         if (value == null)
             throw new IOException(JavaUtils.getMessage("cantDoNullArray00"));
-        
+
         Class cls = value.getClass();
         List list = null;
-        
+
         if (!cls.isArray()) {
             if (!(value instanceof List)) {
                 throw new IOException(
@@ -124,7 +127,7 @@ public class ArraySerializer implements Serializer {
             }
             list = (List)value;
         }
-        
+
         Class componentType;
         if (list == null) {
             componentType = cls.getComponentType();
@@ -137,9 +140,9 @@ public class ArraySerializer implements Serializer {
         }
 
         // Check to see if componentType is also an array.
-        // If so, set the componentType to the most nested non-array 
+        // If so, set the componentType to the most nested non-array
         // componentType.  Increase the dims string by "[]"
-        // each time through the loop.  
+        // each time through the loop.
         // Note from Rich Scheuerle:
         //    This won't handle Lists of Lists or
         //    arrays of Lists....only arrays of arrays.
@@ -149,7 +152,7 @@ public class ArraySerializer implements Serializer {
             dims += "[]";
         }
 
-       
+
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
             throw new IOException(
@@ -159,8 +162,8 @@ public class ArraySerializer implements Serializer {
         int len = (list == null) ? Array.getLength(value) : list.size();
 
         String arrayType = compType + dims + "[" + len + "]";
-        
-        
+
+
         // Discover whether array can be serialized directly as a two-dimensional
         // array (i.e. arrayType=int[2,3]) versus an array of arrays.
         // Benefits:
@@ -169,11 +172,11 @@ public class ArraySerializer implements Serializer {
         //   - Tests the deserialization of multi-dimensional arrays.
         // Drawbacks:
         //   - Is not safe!  It is possible that the arrays are multiply
-        //     referenced.  Transforming into a 2-dim array will cause the 
+        //     referenced.  Transforming into a 2-dim array will cause the
         //     multi-referenced information to be lost.  Plus there is no
         //     way to determine whether the arrays are multi-referenced.
         //     Thus the code is currently disabled (see enable2Dim below).
-        //   
+        //
         // In the future this code may be enabled for cases that we know
         // are safe.
         // (More complicated processing is necessary for 3-dim arrays, etc.
@@ -186,7 +189,7 @@ public class ArraySerializer implements Serializer {
                 boolean okay = true;
                 // Make sure all of the component arrays are the same size
                 for (int i=0; i < len && okay; i++) {
-                
+
                     Object elementValue = Array.get(value, i);
                     if (elementValue == null)
                         okay = false;
@@ -208,10 +211,10 @@ public class ArraySerializer implements Serializer {
                 }
             }
         }
-        
+
         // Are we encoded?
         boolean isEncoded = context.getMessageContext().isEncoded();
-        
+
         if (isEncoded) {
             AttributesImpl attrs;
             if (attributes != null) {
@@ -223,18 +226,18 @@ public class ArraySerializer implements Serializer {
             } else {
                 attrs = new AttributesImpl();
             }
-            
+
             if (attrs.getIndex(Constants.URI_CURRENT_SOAP_ENC,
                                Constants.ATTR_ARRAY_TYPE) == -1) {
-                String encprefix = 
+                String encprefix =
                        context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
-                attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
+                attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC,
                                    Constants.ATTR_ARRAY_TYPE,
                                    encprefix + ":arrayType",
                                    "CDATA",
                                    arrayType);
             }
-            
+
             // Force type to be SOAP_ARRAY for all array serialization.
             int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                        "type");
@@ -246,12 +249,12 @@ public class ArraySerializer implements Serializer {
                 attributes = attrs;
             }
         }
-        
+
         // For non-encoded (literal) use, each item is named with the QName
         // we got in the arguments.  For encoded, we write an element with
         // that QName, and then each item is an <item> inside that.
         QName elementName = name;
-        
+
         if (isEncoded) {
             context.startElement(name, attributes);
             elementName = new QName("","item");
@@ -262,7 +265,7 @@ public class ArraySerializer implements Serializer {
             for (int index = 0; index < len; index++) {
                 Object aValue = (list == null) ? Array.get(value, index) : list.get(index);
                 Class aClass = (aValue == null) ? null : aValue.getClass();
-                
+
                 context.serialize(elementName, null, aValue, aClass);
             }
         } else {
@@ -281,4 +284,17 @@ public class ArraySerializer implements Serializer {
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

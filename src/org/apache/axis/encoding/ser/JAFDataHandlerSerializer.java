@@ -75,6 +75,7 @@ import javax.activation.DataHandler;
 import org.apache.axis.Part;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -84,10 +85,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Category;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 /**
  * JAFDataHandler Serializer
- * @author Rick Rineholt 
+ * @author Rick Rineholt
  * Modified by Rich Scheuerle <scheu@us.ibm.com>
  */
 public class JAFDataHandlerSerializer implements Serializer {
@@ -95,7 +98,7 @@ public class JAFDataHandlerSerializer implements Serializer {
     static Category category =
             Category.getInstance(JAFDataHandlerSerializer.class.getName());
 
-    /** 
+    /**
      * Serialize a JAF DataHandler quantity.
      */
     public void serialize(QName name, Attributes attributes,
@@ -116,9 +119,9 @@ public class JAFDataHandlerSerializer implements Serializer {
         if((typeIndex = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                 "type")) != -1){
 
-            //Found a xsi:type which should not be there for attachments.                        
+            //Found a xsi:type which should not be there for attachments.
             attrs.removeAttribute(typeIndex);
-        }                        
+        }
 
         attrs.addAttribute("", Constants.ATTR_HREF, "href",
                                "CDATA", href);
@@ -128,4 +131,17 @@ public class JAFDataHandlerSerializer implements Serializer {
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

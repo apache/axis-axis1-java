@@ -57,26 +57,29 @@
 package org.apache.axis.encoding;
 
 import org.xml.sax.Attributes;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.apache.axis.wsdl.fromJava.Types;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 /**
  * This interface describes the AXIS Serializer.
- * An Axis compliant Serializer must provide one or more 
+ * An Axis compliant Serializer must provide one or more
  * of the following methods:
  *
  * public <constructor>(Class javaType, QName xmlType)
  * public <constructor>()
  *
- * This will allow for construction of generic factories that introspect the class 
+ * This will allow for construction of generic factories that introspect the class
  * to determine how to construct a deserializer.
- * The xmlType, javaType arguments are filled in with the values known by the factory. 
+ * The xmlType, javaType arguments are filled in with the values known by the factory.
  */
 public interface Serializer extends javax.xml.rpc.encoding.Serializer {
     /**
-     * Serialize an element named name, with the indicated attributes 
-     * and value.  
+     * Serialize an element named name, with the indicated attributes
+     * and value.
      * @param name is the element name
      * @param attributes are the attributes...serialize is free to add more.
      * @param value is the value
@@ -85,6 +88,17 @@ public interface Serializer extends javax.xml.rpc.encoding.Serializer {
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
         throws IOException;
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception;
 }
 
 

@@ -62,6 +62,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -77,12 +78,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Category;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 /**
  * A <code>MapSerializer</code> is be used to serialize and
  * deserialize Maps using the <code>SOAP-ENC</code>
  * encoding style.<p>
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich Scheuerle (scheu@us.ibm.com)
  */
@@ -98,10 +101,10 @@ public class MapSerializer implements Serializer {
     private static final QName QNAME_VALUE = new QName("", "value");
 
     /** Serialize a Map
-     * 
+     *
      * Walk the collection of keys, serializing each key/value pair
      * inside an <item> element.
-     * 
+     *
      * @param name the desired QName for the element
      * @param attributes the desired attributes for the element
      * @param value the Object to serialize
@@ -115,9 +118,9 @@ public class MapSerializer implements Serializer {
         if (!(value instanceof Map))
             throw new IOException(
                 JavaUtils.getMessage("noMap00", "MapSerializer", value.getClass().getName()));
-        
+
         Map map = (Map)value;
-        
+
         context.startElement(name, attributes);
 
         for (Iterator i = map.keySet().iterator(); i.hasNext(); )
@@ -135,6 +138,47 @@ public class MapSerializer implements Serializer {
 
         context.endElement();
     }
-    
+
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        Element complexType = types.createElement("complexType");
+        types.writeSchemaElement(types.getWsdlQName(Constants.SOAP_MAP),
+                                 complexType);
+        Element seq = types.createElement("sequence");
+        complexType.appendChild(seq);
+
+        Element element = types.createElement("element");
+        element.setAttribute("name", "item");
+        element.setAttribute("minOccurs", "0");
+        element.setAttribute("maxOccurs", "unbounded");
+        seq.appendChild(element);
+
+        Element subType = types.createElement("complexType");
+        element.appendChild(subType);
+
+        Element all = types.createElement("all");
+        subType.appendChild(all);
+
+        Element key = types.createElement("element");
+        key.setAttribute("name", "key");
+        key.setAttribute("type", "xsd:anyType");
+        all.appendChild(key);
+
+        Element value = types.createElement("element");
+        value.setAttribute("name", "value");
+        value.setAttribute("type", "xsd:anyType");
+        all.appendChild(value);
+
+        return true;
+    }
 }

@@ -62,6 +62,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.Serializer;
@@ -71,6 +72,8 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
  *
@@ -84,10 +87,10 @@ public class SimpleSerializer implements Serializer {
         this.xmlType = xmlType;
         this.javaType = javaType;
     }
-    /** 
+    /**
      * Serialize a primitive or simple value.
      * If the object to serialize is a primitive, the Object value below
-     * is the associated java.lang class.  
+     * is the associated java.lang class.
      * To determine if the original value is a java.lang class or a primitive, consult
      * the javaType class.
      */
@@ -97,11 +100,11 @@ public class SimpleSerializer implements Serializer {
     {
         if (value != null && value.getClass() == java.lang.Object.class) {
             throw new IOException(JavaUtils.getMessage("cantSerialize02"));
-        } 
+        }
         context.startElement(name, attributes);
         if (value != null) {
             // We could have separate serializers/deserializers to take
-            // care of Float/Double cases, but it makes more sence to 
+            // care of Float/Double cases, but it makes more sence to
             // put them here with the rest of the java lang primitives.
             if (value instanceof Float ||
                 value instanceof Double) {
@@ -129,6 +132,19 @@ public class SimpleSerializer implements Serializer {
         }
         context.endElement();
     }
-    
+
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }

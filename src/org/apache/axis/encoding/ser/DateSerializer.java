@@ -62,6 +62,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -69,6 +70,8 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -85,7 +88,7 @@ import java.util.TimeZone;
  */
 public class DateSerializer implements Serializer {
 
-    private static SimpleDateFormat zulu = 
+    private static SimpleDateFormat zulu =
        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                          //  0123456789 0 123456789
 
@@ -95,7 +98,7 @@ public class DateSerializer implements Serializer {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    /** 
+    /**
      * Serialize a Date.
      */
     public void serialize(QName name, Attributes attributes,
@@ -119,6 +122,19 @@ public class DateSerializer implements Serializer {
         context.writeString(fdate);
         context.endElement();
     }
-    
+
     public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
+    }
 }
