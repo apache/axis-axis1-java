@@ -37,6 +37,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -459,19 +460,6 @@ public class Message extends javax.xml.soap.SOAPMessage
                 soap12 = true;
             }
         }
-        int sendType = Attachments.SEND_TYPE_NOTSET;
-        if ((msgContext != null) && (msgContext.getService() != null)) {
-            sendType = msgContext.getService().getSendType();
-        }
-
-        if (sendType != Attachments.SEND_TYPE_NONE) {
-            //Force serialization if it hasn't happend it.
-            //Rick Rineholt fix this later.
-            //Heejune added null check.
-            if (mSOAPPart != null){
-                mSOAPPart.getAsBytes();
-            }
-        }
 
         // The origional logic is very simple
         // String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
@@ -538,19 +526,12 @@ public class Message extends javax.xml.soap.SOAPMessage
                 if(charEncoding == null){
                     charEncoding = "UTF-8";
                 }
-                Writer writer = new OutputStreamWriter(os,charEncoding);
-                writer = new BufferedWriter(writer);
-
                 // write the xml declaration header
                 String incXMLDecl = (String)getProperty(SOAPMessage.WRITE_XML_DECLARATION);
                 if(incXMLDecl == null){
                     incXMLDecl = "false";
                 }
-                if(incXMLDecl.equalsIgnoreCase("true")){
-                    writer.write("<?xml version=\"1.0\" encoding=\"" + charEncoding +"\"?>");
-                }
-                mSOAPPart.writeTo(writer);
-                writer.flush();
+                mSOAPPart.writeTo(os, charEncoding, incXMLDecl);
             } catch (java.io.IOException e) {
                 log.error(Messages.getMessage("javaIOException00"), e);
             }

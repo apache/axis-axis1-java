@@ -62,6 +62,10 @@ import java.io.Writer;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -245,6 +249,34 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
 
     /**
+     * Write the contents to the specified stream.
+     *
+     * @param os  the <code>java.io.OutputStream</code> to write to
+     * @param charEncoding  
+     * @param incXMLDecl  
+     */
+    public void writeTo(java.io.OutputStream os, String charEncoding,
+                         String incXMLDecl) throws IOException {
+        if ( currentForm == FORM_BYTES ) {
+            if(incXMLDecl.equalsIgnoreCase("true")){
+                os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding +
+                        "\"?>").getBytes());
+            }
+            os.write((byte[])currentMessage);
+        } else {
+            Writer writer = new OutputStreamWriter(os,charEncoding);
+            writer = new BufferedWriter(writer);
+            writer = new PrintWriter(new BufferedWriter(writer));
+    
+            if(incXMLDecl.equalsIgnoreCase("true")){
+                writer.write("<?xml version=\"1.0\" encoding=\"" + charEncoding +"\"?>");
+            }
+            writeTo(writer);
+            writer.flush();
+        }
+    }
+
+    /**
      * Write the contents to the specified writer.
      *
      * @param writer  the <code>Writer</code> to write to
@@ -381,9 +413,29 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT ){
-            // Set message to FORM_STRING and
-            // translate to bytes below
-            getAsString();
+            String encoding = null;
+            if (msgObject != null) {
+                try {
+                    encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                } catch (SOAPException e) {
+                }
+            }
+            if (encoding == null) {
+                encoding = "UTF-8";
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BufferedOutputStream os = new BufferedOutputStream(baos);
+            try {
+                this.writeTo(os,encoding,"false");
+                os.flush();
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+            setCurrentForm( baos.toByteArray(), FORM_BYTES );
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsBytes(): " + currentMessage);
+            }
+            return (byte[])currentMessage;
         }
 
         if ( currentForm == FORM_STRING ) {
@@ -894,7 +946,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * SOAPEnvelope is the Document Elements of this XML docuement
-     * @return
      */
     protected Document mDocument;
 
