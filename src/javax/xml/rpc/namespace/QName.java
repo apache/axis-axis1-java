@@ -139,7 +139,7 @@ public class QName {
      */
     public String toString() {
 
-        if (namespaceURI == null) {
+        if (namespaceURI == null || namespaceURI.equals("")) {
             return localPart;
         } else {
             return namespaceURI + ":" + localPart;
