@@ -67,6 +67,8 @@ import java.util.Vector;
 import java.util.Hashtable;
 import java.io.IOException;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
  * This class implements an Extractor using "TechTrader Bytecode Toolkit"
  * from <a href="http://tt-bytecode.sourceforge.net/">tt-bytecode</a>
@@ -106,7 +108,8 @@ public class TechTrader implements Extractor {
                 bclass = new BCClass(c);
                 ttClassCache.put(c, bclass);
             } catch (IOException e) {
-                // what now?
+                // bail out - no parameter names for you!
+                return null;
             }
         }
 
@@ -132,7 +135,7 @@ public class TechTrader implements Extractor {
         // the names in the right indices.
         LocalVariable [] vars = attr.getLocalVariables();
 
-        String [] argNames = new String[numParams + 1];
+        String [] argNames = new String[numParams];
         argNames[0] = null; // don't know return name
 
         // NOTE: we scan through all the variables here, because I have been
@@ -148,11 +151,10 @@ public class TechTrader implements Extractor {
         }
         int k = 0;
         for (int j = 0; j < temp.size(); j++) {
+            if(k == argNames.length)
+                break;
             if (temp.elementAt(j) != null) {
-                k++;
-                argNames[k] = (String)temp.elementAt(j);
-                if(k + 1 == argNames.length)
-                    break;
+                argNames[k++] = (String)temp.elementAt(j);
             }
         }
         return argNames;

@@ -86,7 +86,7 @@ public class Javap implements Extractor {
      * Get the return/parameter names for the indicated method.
      * Returns null if no parameter names are available or accessible.
      * @param method is the Method
-     * @return String[] of return followed by parameter names (or null)
+     * @return String[] of parameter names (or null)
      **/
     public String[] getParameterNamesFromDebugInfo(Method method) {
         // Get the javap output
@@ -95,11 +95,10 @@ public class Javap implements Extractor {
             return null;
 
         // Allocate the parameter + return names array
-        int numParams = method.getParameterTypes().length + 1;
+        int numParams = method.getParameterTypes().length;
+        if (numParams == 0)
+            return null;
         String[] paramNames = new String[numParams];
-        paramNames[0] = null;  // Don't know the return name
-        if (numParams == 1)
-            return paramNames;
 
         // Get the list of parameters
         String parms = method.toString();
@@ -149,7 +148,7 @@ public class Javap implements Extractor {
         //   java.lang.Object parameter2  pc=0, length=6, slot=3
         //   short parameter3  pc=0, length=6, slot=4
         //   int localvar  pc=3, length=3, slot=5
-        int paramIndex = 1;
+        int paramIndex = 0;
         index++;
         while(paramIndex < paramNames.length && index < text.size()) {
             String line = (String) text.elementAt(index++);

@@ -59,10 +59,13 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
 
 import java.lang.reflect.Method;
-import java.io.InputStream;
 import java.io.IOException;
+import java.util.Hashtable;
 
 /**
+ *  This class implements an Extractor using the interal ParamReader class
+ *
+ * @author <a href="mailto:tomj@macromedia.com">Tom Jordahl</a>
  *
  */ 
 public class Builtin implements Extractor {
@@ -70,25 +73,43 @@ public class Builtin implements Extractor {
     protected static Log log =
         LogFactory.getLog(Builtin.class.getName());
     
+    /**
+     * Cache of ParamReader objects which correspond to particular
+     * Java classes.
+     *
+     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
+     */
+    private static Hashtable paramCache = new Hashtable();
+    
     public String[] getParameterNamesFromDebugInfo(Method method) {
         // Don't worry about it if there are no params.
         int numParams = method.getParameterTypes().length;
         if (numParams == 0)
             return null;
-        
-        // get declaring class and a InputStream of the class bytecodes
-        Class c = method.getDeclaringClass();
-        String classPath = "/" + c.getName().replace('.', '/').concat(".class");
-        InputStream in =  c.getResourceAsStream(classPath);
 
-        String[] names = null;
-        try {
-            names = new ParamReader(in).getArgNames(method.getName());
-        } catch (IOException e) {
-            // log it and move on
-            log.info(JavaUtils.getMessage("error00") + ":" + e);
+        // get declaring class
+        Class c = method.getDeclaringClass();
+        
+        // Try to obtain a ParamReader class object from cache
+        ParamReader pr = (ParamReader)paramCache.get(c);
+
+        if (pr == null) {
+            try {
+                // get a parameter reader
+                pr = new ParamReader(c);
+                // cache it
+                paramCache.put(c, pr);
+            } catch (IOException e) {
+                // log it and leave
+                log.info(JavaUtils.getMessage("error00") + ":" + e);
+                return null;
+            }
         }
+
+        // get the paramter names
+        String[] names = pr.getParameterNames(method);
 
         return names;
     }
 }
+

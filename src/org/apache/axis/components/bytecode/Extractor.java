@@ -63,5 +63,15 @@ import java.lang.reflect.Method;
  * @version $Revision: 1.1 $ $Date: 2002/04/02 19:07:17 $
  */
 public interface Extractor {
+    
+    /**
+     * return the names of the declared parameters for the given method.
+     * If we cannot determine the names, return null.  The returned array will
+     * have one name per parameter.  The length of the array will be the same
+     * as the length of the Class[] array returned by Method.getParameterTypes().
+     * 
+     * @param method
+     * @return String[] array of names, one per parameter, or null
+     */
     public String[] getParameterNamesFromDebugInfo(Method method);
 }

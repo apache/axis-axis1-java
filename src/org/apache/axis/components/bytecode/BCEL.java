@@ -162,11 +162,10 @@ public class BCEL implements Extractor {
         }
         int k = 0;
         for (int j = 0; j < temp.size(); j++) {
+            if(k == argNames.length)
+                break;
             if (temp.elementAt(j) != null) {
-                k++;
-                argNames[k] = (String) temp.elementAt(j);
-                if (k + 1 == argNames.length)
-                    break;
+                argNames[k++] = (String) temp.elementAt(j);
             }
         }
         return argNames;
