@@ -111,6 +111,26 @@
         </xsd:complexContent>
       </xsd:complexType>
 
+
+      <!-- The following is a simple test of inheritance with types -->
+      <xsd:complexType name="Animal">
+        <xsd:all>
+          <xsd:element name="Name" nillable="true" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:element name="Animal" nillable="true" type="typens:Animal"/>
+      <xsd:complexType name="Cat">
+        <xsd:complexContent>
+          <xsd:extension base="typens:Animal">
+            <xsd:all>
+              <xsd:element name="Purr" nillable="true" type="xsd:string"/>
+            </xsd:all>
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="Cat" nillable="true" type="typens:Cat"/>
+
+
       <!-- The following test all of the valid enum basic types -->
       <xsd:simpleType name="enumString">
         <xsd:restriction base="xsd:string">
@@ -255,6 +275,14 @@
     <part name="any" type="xsd:anyType"/>
   </message>
 
+  <message name="animal">
+    <part name="animal" type="typens:Animal"/>
+  </message>
+
+  <message name="cat">
+    <part name="cat" type="typens:Cat"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="TypeTest">
     <operation name="allPrimitivesIn">
@@ -366,6 +394,30 @@
     <operation name="anyOut">
       <input message="tns:empty"/>
       <output message="tns:any"/>
+    </operation>
+    <operation name="animalIn">
+      <input message="tns:animal"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="animalInout">
+      <input message="tns:animal"/>
+      <output message="tns:animal"/>
+    </operation>
+    <operation name="animalOut">
+      <input message="tns:empty"/>
+      <output message="tns:animal"/>
+    </operation>
+    <operation name="catIn">
+      <input message="tns:cat"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="catInout">
+      <input message="tns:cat"/>
+      <output message="tns:cat"/>
+    </operation>
+    <operation name="catOut">
+      <input message="tns:empty"/>
+      <output message="tns:cat"/>
     </operation>
   </portType>
 
@@ -767,6 +819,96 @@
       </output>
     </operation>
     <operation name="anyOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="animalIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="animalInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="animalOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="catIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="catInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="catOut">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
