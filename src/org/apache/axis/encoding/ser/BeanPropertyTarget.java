@@ -65,6 +65,7 @@ import org.apache.commons.logging.Log;
 
 import org.xml.sax.SAXException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Array;
 
 /**
  * Class which knows how to update a bean property
@@ -100,21 +101,57 @@ public class BeanPropertyTarget implements Target {
         this.index  = i;
     }
     
+    /**
+     * set the bean property with specified value
+     * @param value is the value.
+     */
     public void set(Object value) throws SAXException {
+
         try {
-            if (index < 0)
+            // Set the value on the bean property. 
+            // Use the indexed property method if the 
+            // index is set.
+            if (index < 0) {
                 pd.set(object, value);
-            else
+            } else {
                 pd.set(object, index, value);
+            }
         } catch (Exception e) {
-            Class type = pd.getType();
-            value = JavaUtils.convert(value, type);
+
             try {
-                if (index < 0)
-                    pd.set(object, value);
-                else
-                    pd.set(object, index, value);
+                // If an exception occurred, 
+                // see it the value can be converted into
+                // the expected type.
+                Class type = pd.getType();
+                if (JavaUtils.isConvertable(value, type)) {
+                    value = JavaUtils.convert(value, type);
+                    if (index < 0)
+                        pd.set(object, value);
+                    else
+                        pd.set(object, index, value);
+                } else {
+                    // It is possible that an indexed
+                    // format was expected, but the
+                    // entire array was sent.  In such 
+                    // cases traverse the array and 
+                    // call the setter for each item.
+                    if (index == 0 &&
+                        value.getClass().isArray() &&
+                        !type.getClass().isArray()) {
+                        for (int i=0; i<Array.getLength(value); i++) {
+                            Object item = 
+                                JavaUtils.convert(Array.get(value, i), type);
+                            pd.set(object, i, item); 
+                        }
+                    } else {
+                        // Can't proceed.  Throw an exception that
+                        // will be caught in the catch block below.
+                        throw e;
+                    }
+                }
             } catch (Exception ex) {
+                // Throw a SAX exception with an informative
+                // message.
                 String field= pd.getName();
                 if (index >=0) {
                     field += "[" + index + "]";
