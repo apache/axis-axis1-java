@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <!--// 
             Web Services Deployment Descriptor (WSDD) Version 1.1 (Proposal)
 //-->
-<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2000/10/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
 	<xsd:complexType name="DeployableItem">
 		<xsd:annotation>
 			<xsd:documentation>A DeployableItem is any individual component which may be deployed into the Axis runtime 
@@ -15,11 +15,11 @@ The optional type attribute is used to reference the implementation of this Depl
 </xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element ref="wsdd:documentation" minOccurs="0"/>
-			<xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element ref="wsdd:documentation" minOccurs="0" />
+			<xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded" />
 		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:NCName" use="optional"/>
-		<xsd:attribute name="type" type="xsd:QName" use="optional"/>
+		<xsd:attribute name="name" type="xsd:NCName" use="optional" />
+		<xsd:attribute name="type" type="xsd:QName" use="optional" />
 	</xsd:complexType>
 	<xsd:complexType name="Flow">
 		<xsd:annotation>
@@ -36,12 +36,12 @@ The optional name attribute is usually used to qualify the chains for multiple f
 			<xsd:extension base="wsdd:DeployableItem">
 				<xsd:sequence>
 					<xsd:choice minOccurs="0" maxOccurs="unbounded">
-						<xsd:element ref="wsdd:chain"/>
-						<xsd:element ref="wsdd:handler"/>
+						<xsd:element ref="wsdd:chain" />
+						<xsd:element ref="wsdd:handler" />
 					</xsd:choice>
-					<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 				</xsd:sequence>
-				<xsd:anyAttribute namespace="##other"/>
+				<xsd:anyAttribute namespace="##other" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -57,12 +57,12 @@ any time.
 		</xsd:annotation>
 		<xsd:complexType mixed="true">
 			<xsd:sequence>
-				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
-			<xsd:attribute name="name" type="xsd:NCName" use="required"/>
-			<xsd:attribute name="locked" type="xsd:boolean" use="optional" value="false"/>
-			<xsd:attribute name="value" type="xsd:CDATA" use="optional"/>
-			<xsd:anyAttribute namespace="##other"/>
+			<xsd:attribute name="name" type="xsd:NCName" use="required" />
+			<xsd:attribute name="locked" type="xsd:boolean" use="optional" value="false" />
+			<xsd:attribute name="value" type="xsd:CDATA" use="optional" />
+			<xsd:anyAttribute namespace="##other" />
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="documentation">
@@ -74,9 +74,9 @@ handlers/chains as debug/administration aids.
 		</xsd:annotation>
 		<xsd:complexType mixed="true">
 			<xsd:choice minOccurs="0" maxOccurs="unbounded">
-				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:choice>
-			<xsd:anyAttribute namespace="##other"/>
+			<xsd:anyAttribute namespace="##other" />
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="service">
@@ -95,15 +95,16 @@ Service Description mechanism (such as WSDL).
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:element ref="wsdd:requestFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:provider"/>
-						<xsd:element ref="wsdd:responseFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="wsdd:requestFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:provider" />
+						<xsd:element ref="wsdd:responseFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:attribute name="description" type="xsd:uriReference" use="optional"/>
-					<xsd:anyAttribute namespace="##other"/>
+					<xsd:attribute name="description" type="xsd:uriReference" use="optional" />
+					<xsd:anyAttribute namespace="##other" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -118,9 +119,9 @@ handler component.
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:anyAttribute namespace="##other"/>
+					<xsd:anyAttribute namespace="##other" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -135,10 +136,10 @@ as a single unit.
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:anyAttribute namespace="##other"/>
+					<xsd:anyAttribute namespace="##other" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -160,27 +161,42 @@ from the Service Provider</xsd:documentation>
 			<xsd:documentation>The faultFlow Element is a DeployableItem that describes a fault-processing flow.</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="typeMapping">
+	<xsd:element name="beanMapping">
 		<xsd:annotation>
-			<xsd:documentation>This describes the mapping between XML and a programming language specific object.
-
-LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.
-
-Serializer and deserializer refer to type names in the programming language.
-</xsd:documentation>
+			<xsd:documentation>
+			This describes a default mapping between XML and a programming language specific object.
+			LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.  No
+			Serializers/Deserializers are specified, because this is shorthand for a default (i.e. bean for Java) mapping.
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="wsdd:documentation" minOccurs="0"/>
-				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="wsdd:documentation" minOccurs="0" />
+				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
-			<xsd:attribute name="name" type="xsd:NCName" use="optional"/>
-			<xsd:attribute name="ref" type="xsd:QName" use="optional"/>
-			<xsd:attribute name="encodingStyle" type="xsd:uriReference" use="optional"/>
-			<xsd:attribute name="qName" type="xsd:QName" use="optional"/>
-			<xsd:attribute name="languageSpecificType" type="xsd:QName" use="optional"/>
-			<xsd:attribute name="serializer" type="xsd:QName" use="optional"/>
-			<xsd:attribute name="deserializer" type="xsd:QName" use="optional"/>
+			<xsd:attribute name="encodingStyle" type="xsd:uriReference" use="optional" />
+			<xsd:attribute name="qName" type="xsd:QName" use="optional" />
+			<xsd:attribute name="languageSpecificType" type="xsd:QName" use="optional" />
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="typeMapping">
+		<xsd:annotation>
+			<xsd:documentation>
+			This describes the mapping between XML and a programming language specific object.
+			LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.
+			Serializer and deserializer refer to type names in the programming language.
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="wsdd:documentation" minOccurs="0" />
+				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="encodingStyle" type="xsd:uriReference" use="optional" />
+			<xsd:attribute name="qName" type="xsd:QName" use="optional" />
+			<xsd:attribute name="languageSpecificType" type="xsd:QName" use="optional" />
+			<xsd:attribute name="serializer" type="xsd:QName" use="optional" />
+			<xsd:attribute name="deserializer" type="xsd:QName" use="optional" />
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="provider">
@@ -191,10 +207,10 @@ Serializer and deserializer refer to type names in the programming language.
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:anyAttribute namespace="##other"/>
+					<xsd:anyAttribute namespace="##other" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -208,8 +224,8 @@ QName may or may not be the same as the required name attribute.
 </xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="name" type="xsd:NMTOKEN" use="required"/>
-			<xsd:attribute name="qName" type="xsd:QName" use="optional"/>
+			<xsd:attribute name="name" type="xsd:NMTOKEN" use="required" />
+			<xsd:attribute name="qName" type="xsd:QName" use="optional" />
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="transport">
@@ -222,13 +238,13 @@ fault Flows for a given transport mechanism.
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:element ref="wsdd:requestFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:responseFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="wsdd:requestFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:responseFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:attribute name="type" type="xsd:QName" use="prohibited"/>
-					<xsd:anyAttribute namespace="##other"/>
+					<xsd:attribute name="type" type="xsd:QName" use="prohibited" />
+					<xsd:anyAttribute namespace="##other" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -247,14 +263,14 @@ The provider element describes the deployment of the Axis Engine implementation.
 			<xsd:complexContent>
 				<xsd:extension base="wsdd:DeployableItem">
 					<xsd:sequence>
-						<xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:element ref="wsdd:requestFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:provider"/>
-						<xsd:element ref="wsdd:responseFlow" minOccurs="0"/>
-						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
-						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element ref="wsdd:requestFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:provider" />
+						<xsd:element ref="wsdd:responseFlow" minOccurs="0" />
+						<xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded" />
+						<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 					</xsd:sequence>
-					<xsd:attribute name="type" type="xsd:QName" use="prohibited"/>
+					<xsd:attribute name="type" type="xsd:QName" use="prohibited" />
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -265,19 +281,20 @@ The provider element describes the deployment of the Axis Engine implementation.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="wsdd:documentation" minOccurs="0"/>
-				<xsd:element ref="wsdd:globalConfiguration" minOccurs="0"/>
+				<xsd:element ref="wsdd:documentation" minOccurs="0" />
+				<xsd:element ref="wsdd:globalConfiguration" minOccurs="0" />
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
-					<xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="wsdd:chain" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="wsdd:service" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="wsdd:chain" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded" />
+					<xsd:element ref="wsdd:service" minOccurs="0" maxOccurs="unbounded" />
 				</xsd:choice>
-				<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
-			<xsd:attribute name="name" type="xsd:NCName" use="optional"/>
-			<xsd:anyAttribute namespace="##other"/>
+			<xsd:attribute name="name" type="xsd:NCName" use="optional" />
+			<xsd:anyAttribute namespace="##other" />
 		</xsd:complexType>
 	</xsd:element>
 </xsd:schema>
