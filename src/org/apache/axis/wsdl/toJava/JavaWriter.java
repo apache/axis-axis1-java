@@ -338,6 +338,17 @@ public abstract class JavaWriter implements Generator {
      * @param pw
      * @param element
      */
+    protected void writeComment(PrintWriter pw, Element element) {
+       writeComment(pw, element, true);
+    }
+
+    /**
+     * Output a documentation element as a Java comment.
+     *
+     * @param pw
+     * @param element
+     * @param addTab
+     */
     protected void writeComment(PrintWriter pw, Element element, boolean addTab) {
 
         if (element == null) {
