@@ -952,6 +952,15 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
+     *  Returns an Iterator view of the names of the properties 
+     *  in this MessageContext and any parents of the LockableHashtable
+     *  @return Iterator for the property names
+     */
+    public java.util.Iterator getAllPropertyNames() {
+        return bag.getAllKeys().iterator();
+    }
+
+    /**
      * Returns the value associated with the named property - or null if not
      * defined/set.
      *
