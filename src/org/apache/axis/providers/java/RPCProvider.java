@@ -242,10 +242,11 @@ public class RPCProvider extends JavaProvider {
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
             if ( objRes != null ) {
-                RPCParam param = new RPCParam("return", objRes);
+                RPCParam param = new RPCParam(mName + "Result", objRes);
                 resBody.addParam(param);
             }
             resEnv.addBodyElement( resBody );
+            resEnv.setEncodingStyleURI(Constants.URI_SOAP_ENC);
         }
     }
 }
