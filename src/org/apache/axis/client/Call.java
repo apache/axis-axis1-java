@@ -1832,7 +1832,6 @@ public class Call implements javax.xml.rpc.Call {
         // Set both the envelope and the RPCElement encoding styles
         try {
             body.setEncodingStyle(encodingStyle);
-            reqEnv.setEncodingStyle(encodingStyle);
 
             setRequestMessage(reqMsg);
 

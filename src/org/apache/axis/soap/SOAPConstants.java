@@ -79,6 +79,7 @@ public interface SOAPConstants extends Serializable {
      * Obtain the envelope namespace for this version of SOAP
      */
     public String getEnvelopeURI();
+
     /**
      * Obtain the encoding namespace for this version of SOAP
      */

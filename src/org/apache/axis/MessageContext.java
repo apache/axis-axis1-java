@@ -190,8 +190,9 @@ public class MessageContext implements SOAPMessageContext {
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
 
-    /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
-    private SOAPConstants soapConstants = new SOAP11Constants();
+    /** Our SOAP namespaces and such */
+    private SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
+
     /** Schema version information - defaults to 2001 */
     private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
@@ -614,7 +615,12 @@ public class MessageContext implements SOAPMessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setOperationStyle(service.getStyle());
-            setEncodingStyle(service.getStyle().getEncoding());
+
+            // styles are not "soap version aware" so compensate...
+            String encodingStyle = service.getStyle().getEncoding();
+            if (encodingStyle.equals(Constants.URI_DEFAULT_SOAP_ENC))
+               encodingStyle = soapConstants.getEncodingURI();
+            setEncodingStyle(encodingStyle);
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
