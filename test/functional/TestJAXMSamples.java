@@ -57,7 +57,6 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.jaxm.DelayedStockQuote;
@@ -68,9 +67,7 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
 import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBodyElement;
@@ -108,7 +105,9 @@ public class TestJAXMSamples extends TestCase {
             if (t != null) {
                 t.printStackTrace();
                 if (t instanceof AxisFault) {
-                    if (((AxisFault) t).detail instanceof SocketException) {
+                    AxisFault af = (AxisFault) t;
+                    if ((af.detail instanceof SocketException) ||
+                        (af.getFaultCode().getLocalPart().equals("HTTP")) ) {
                         System.out.println("Connect failure caused JAXM UddiPing to be skipped.");
                         return;
                     }
@@ -176,7 +175,7 @@ public class TestJAXMSamples extends TestCase {
 
     public static void main(String args[]) throws Exception {
         TestJAXMSamples tester = new TestJAXMSamples("tester");
-        tester.testJWSFault();
+        tester.testUddiPing();
     } // main
 }
 
