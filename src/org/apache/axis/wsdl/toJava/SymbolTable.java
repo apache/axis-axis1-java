@@ -1040,7 +1040,7 @@ public class SymbolTable {
     private void populateBindings(Definition def) throws IOException {
         Iterator i = def.getBindings().values().iterator();
         while (i.hasNext()) {
-            int bindingStyle = BindingEntry.STYLE_RPC;
+            int bindingStyle = BindingEntry.STYLE_DOCUMENT;
             int bindingType = BindingEntry.TYPE_UNKNOWN;
             Binding binding = (Binding) i.next();
             Iterator extensibilityElementsIterator = binding.getExtensibilityElements().iterator();
@@ -1050,8 +1050,8 @@ public class SymbolTable {
                     bindingType = BindingEntry.TYPE_SOAP;
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
-                    if (style.equalsIgnoreCase("document")) {
-                        bindingStyle = BindingEntry.STYLE_DOCUMENT;
+                    if ("rpc".equalsIgnoreCase(style)) {
+                        bindingStyle = BindingEntry.STYLE_RPC;
                     }
                 }
                 else if (obj instanceof HTTPBinding) {
