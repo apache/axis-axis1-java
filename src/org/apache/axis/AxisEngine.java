@@ -71,6 +71,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_BYTE_BUFFER_CACHE_INCREMENT = "axis.byteBuffer.cacheIncrement";
     public static final String PROP_BYTE_BUFFER_RESIDENT_MAX_SIZE = "axis.byteBuffer.residentMaxSize";
     public static final String PROP_BYTE_BUFFER_WORK_BUFFER_SIZE = "axis.byteBuffer.workBufferSize";
+    public static final String PROP_EMIT_ALL_TYPES = "emitAllTypesInWSDL";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
