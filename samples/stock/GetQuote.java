@@ -61,6 +61,7 @@ import java.util.*;
 
 import org.apache.axis.client.HTTPCall ;
 import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.Options ;
 
 /** 
  *
@@ -71,62 +72,22 @@ public class GetQuote {
   public static void main(String args[]) {
 
     try {
-      String  symbol = null ;
+      Options opts = new Options( args );
 
-      /* Parse the command line  */
-      /***************************/
-      String  host    = "localhost" ;
-      String  servlet = "/axis/servlet/AxisServlet" ;
-      String  user    = null ;
-      String  pwd     = null ;
-      int     port    = 8080 ;
+      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) 
-          switch( args[i].toLowerCase().charAt(1) ) {
-            case 'd': Debug.incDebugLevel();
-                      break ;
-            case 'h': if ( args[i].length() > 2 )
-                        host = args[i].substring(2);
-                      break ;
-            case 'l': if ( args[i].length() > 2 ) {
-                        URL tmpurl = new URL(args[i].substring(2));
-                        host = tmpurl.getHost();
-                        port = tmpurl.getPort();
-                        servlet = tmpurl.getFile() ;
-                      }
-                      break ;
-            case 'p': if ( args[i].length() > 2 )
-                        port = Integer.parseInt(args[i].substring(2));
-                      break ;
-            case 's': if ( args[i].length() > 2 )
-                        servlet = args[i].substring(2);
-                      if ( servlet != null && servlet.charAt(0) != '/' )
-                        servlet = "/" + servlet ;
-                      break ;
-            case 'u': if ( args[i].length() > 2 )
-                        user = args[i].substring(2);
-                      break ;
-            case 'w': if ( args[i].length() > 2 )
-                        pwd = args[i].substring(2);
-                      break ;
-            default: System.err.println( "Unknown option '" + 
-                                         args[i].charAt(1) + "'" );
-                     System.exit(1);
-          }
-        else 
-          symbol = args[i] ;
-      }
+      args = opts.getRemainingArgs();
 
-      if ( symbol == null ) {
+      if ( args == null ) {
         System.err.println( "Usage: GetQuote <symbol>" );
         System.exit(1);
       }
 
-      String url = "http://" + host + ":" + port + servlet ;
-      HTTPCall call = new HTTPCall( url, "urn:xmltoday-delayed-quotes" );
-      if ( user != null ) call.setUserID( user );
-      if ( pwd  != null ) call.setPassword( pwd );
+      String   symbol = args[0] ;
+      HTTPCall call   = new HTTPCall( opts.getURL(), 
+                                      "urn:xmltoday-delayed-quotes" );
+      call.setUserID( opts.getUser() );
+      call.setPassword( opts.getPassword() );
       String res = (String) call.invoke( "getQuote", new Object[] {symbol} );
 
       System.out.println( symbol + ": " + res );

@@ -59,6 +59,10 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.client.HTTPCall ;
+
 /** 
  *
  * @author Doug Davis (dug@us.ibm.com.com)
@@ -66,72 +70,27 @@ import java.util.*;
 public class GetInfo {
 
   public static void main(String args[]) {
-
-    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                 "Host: localhost:8080\n" +
-                 "Content-Type: text/xml;charset=utf-8\n" +
-                 "SOAPAction: urn:cominfo\n";
-
-    String msg ;
-    String msg1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"" +
-                  "http://schemas.xmlsoap.org/soap/envelope/\" " +
-                  "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\"" + 
-                  " xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                  "<SOAP-ENV:Body>\n" ;
-    String head = "<m:getInfo xmlns:m=\"urn:cominfo\">\n" ;
-    String tail = "</m:getInfo>\n" ;
-    String msg2 = "</SOAP-ENV:Body>\n" +
-                  "</SOAP-ENV:Envelope>" ;
-
     try {
-      String  host   = "localhost" ;
-      int     port   = 8080 ;
-      boolean atLeastOne = false ;
+      Options opts = new Options( args );
 
-      msg = msg1 ;
+      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) {
-          switch( args[i].toLowerCase().charAt(1) ) {
-            case 'h': if ( args[i].length() > 2 )
-                        host = args[i].substring(2);
-                      break ;
-            case 'p': if ( args[i].length() > 2 )
-                        port = Integer.parseInt(args[i].substring(2));
-                      break ;
-            default: System.err.println( "Unknown option '" + 
-                                         args[i].charAt(1) + "'" );
-                     System.exit(1);
-          }
-        }
-        else {
-          atLeastOne = true ;
-          msg += head + 
-                 "<symbol>" + args[i] + "</symbol>" +
-                 "<type>" + args[i+1] + "</type>" +
-                 tail ;
-          i++ ;
-        }
-      }
-      msg += msg2 ;
+      args = opts.getRemainingArgs();
 
-      if ( !atLeastOne ) {
+      if ( args.length % 2 != 0 ) {
         System.err.println( "Usage: GetInfo <symbol> <datatype>" );
         System.exit(1);
       }
 
-      String         cl = "Content-Length: " + msg.length() + "\n\n" ;
-      Socket         sock = new Socket( host, port );
-      InputStream    inp = sock.getInputStream();
-      OutputStream   out = sock.getOutputStream();
-      byte           b ;
+      String  symbol = args[0] ;
+      HTTPCall call = new HTTPCall( opts.getURL(), "urn:cominfo" );
 
-      out.write( hdr.getBytes() );
-      out.write( cl.getBytes() );
-      out.write( msg.getBytes() );
-
-      while ( (b = (byte) inp.read()) != -1 ) 
-        System.out.write( b );
+      call.setUserID( opts.getUser() );
+      call.setPassword( opts.getPassword() );
+      String res = (String) call.invoke( "getInfo",
+                                         new Object[] { args[0], args[1] } );
+      
+      System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
       System.err.println( e );
