@@ -254,7 +254,8 @@ public class AxisServlet extends HttpServlet
                                    req.getRemoteAddr());
 
             try {
-                String url = req.getRequestURL().toString();
+
+                String url = HttpUtils.getRequestURL(req).toString();
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
