@@ -89,7 +89,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
 import javax.wsdl.Input;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
@@ -1172,7 +1171,7 @@ public class Call implements javax.xml.rpc.Call {
      * @throws java.rmi.RemoteException if there's an error
      */
     public Object invoke(Object[] params) throws java.rmi.RemoteException {
-        long t0=0, t1=0, t2=0, t3=0;
+        long t0=0, t1=0;
         if( tlog.isDebugEnabled() ) {
             t0=System.currentTimeMillis();
         }
@@ -1272,7 +1271,6 @@ public class Call implements javax.xml.rpc.Call {
                                   throws java.rmi.RemoteException {
         try {
             Message msg = null ;
-            int     i ;
 
             msg = new Message( env );
             setRequestMessage( msg );
@@ -1622,19 +1620,6 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
-    /**
-     * Map a type for deserialization.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @param qName the xsi:type QName of an XML Schema type.
-     * @param _class the class of the associated Java data type.
-     * @param deserializerFactory a factory which can create deserializer
-     *                            instances for this type.
-     * @throws IntrospectionException _class is not compatible with the
-     *                            specified deserializer.
-     */
-
     /************************************************
      * Invocation
      */
@@ -1978,6 +1963,7 @@ public class Call implements javax.xml.rpc.Call {
                 log.debug(writer.getBuffer().toString());
             }
         }
+
         if(!invokeOneWay) {
             invokeEngine(msgContext);
         } else {
@@ -2017,7 +2003,7 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
-    private void invokeEngineOneWay(final MessageContext msgContext) throws AxisFault {
+    private void invokeEngineOneWay(final MessageContext msgContext) {
         Runnable runnable = new Runnable(){
             public void run() {
                 try {
