@@ -142,13 +142,13 @@ public class SerializationContext
     
     public QName getQNameForClass(Class cls)
     {
-        return getMappingRegistry().getTypeQName(cls);
+        return getTypeMappingRegistry().getTypeQName(cls);
     }
     
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
-        getMappingRegistry().serialize(qName, attributes, value, this);
+        getTypeMappingRegistry().serialize(qName, attributes, value, this);
     }
     
     public void startElement(QName qName, Attributes attributes)
