@@ -118,7 +118,10 @@ public class TestAxisFault extends TestCase {
         Element stackTrace;
         stackTrace = af.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE);
         assertNull(stackTrace);
-
+        String text=af.getFaultString();
+        assertNotNull(text);
+        text=af.toString();
+        assertNotNull(text);
     }
 
     /**
