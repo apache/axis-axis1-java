@@ -78,6 +78,16 @@ Copyright:
 
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
+
+    <!-- Uncomment following section to enable transparent Signing 
+         of SOAP Messages sent from the client -->
+    <!--
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecuritydeploy.wsdd"/>
+    </java>
+    -->
     
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
@@ -102,6 +112,17 @@ Copyright:
       <classpath refid="test-classpath" />
       <arg line="${undeploy.xml.property}"/>
     </java>
+
+    <!-- Uncomment following section to enable transparent Signing 
+         of SOAP Messages sent from the client -->
+    <!--
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecurityundeploy.wsdd"/>
+    </java>
+    -->
+
   </target>
 
   <!-- =================================================================== -->
