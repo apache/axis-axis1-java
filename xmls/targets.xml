@@ -373,6 +373,7 @@
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
         <fileset dir="${build.dest}">
+           <include name="${extraTestCases}/*TestCase.class" />
            <include name="${componentName}/*TestCase.class" />
            <include name="${componentName}/**/*TestCase.class" />
            <include name="${componentName}/**/PackageTests.class" />
