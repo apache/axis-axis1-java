@@ -1395,7 +1395,19 @@ public class Emitter {
             else {
                 pw.println(parms.signature + " {");
             }
-            pw.println("        throw new java.rmi.RemoteException (\"Not Yet Implemented\");");
+            if (!"void".equals(parms.returnType)) {
+                pw.print("        return ");
+
+                if (isPrimitiveType(parms.returnType)) {
+                    if ("boolean".equals(parms.returnType)) {
+                        pw.println("false;");
+                    } else {
+                        pw.println("-3;");
+                    }
+                } else {
+                    pw.println("null;");
+                }
+            }
             pw.println("    }");
         }
     } // writeImplOperation

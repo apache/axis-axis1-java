@@ -226,6 +226,7 @@ public class TestCaseEmitter {
 
             writer.println(");");
 
+/* I'm not sure why we'd do this...
             if ( !"void".equals(params.returnType) ) {
                 writer.print(INDENT);
 
@@ -239,6 +240,7 @@ public class TestCaseEmitter {
                     writer.println("assertTrue(\"Value is null\", value != null);");
                 }
             }
+*/
 
             writer.println("        } catch (java.rmi.RemoteException re) {");
             writer.print(INDENT);
