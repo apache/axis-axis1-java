@@ -457,16 +457,18 @@ public class SimpleAxisWorker implements Runnable {
             responseMsg.writeTo(out);
             // out.write(response);
             out.flush();
-
-            if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
-                // why then, quit!
-                server.stop();
-            }
         } catch (Exception e) {
             log.debug(JavaUtils.getMessage("exception00"), e);
         } finally {
             try {
                 if (socket != null) socket.close();
+            } catch (Exception e) {
+            }
+        }
+        if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+            // why then, quit!
+            try {
+                server.stop();
             } catch (Exception e) {
             }
         }
