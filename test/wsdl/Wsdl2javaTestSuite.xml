@@ -233,6 +233,32 @@
         <mapping namespace="http://www.capeclear.com/AirportWeather.xsd" package="test.clash.types"/>
     </wsdl2java>
 
+    <!-- UDDI 1.0 WSDL's -->
+    <!--
+    <wsdl2java url="http://www.uddi.org/wsdl/inquire_v1.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="no"
+               noimports="no">
+        <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
+        <mapping namespace="urn:uddi-org:inquiry" package="org.uddi.inquiry"/>
+    </wsdl2java>
+    <wsdl2java url="http://www.uddi.org/wsdl/publish_v1.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="no"
+               noimports="no">
+        <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
+        <mapping namespace="urn:uddi-org:publication" package="org.uddi.publication"/>
+    </wsdl2java>
+    -->
+
   </target>
 </project>
 
