@@ -133,11 +133,7 @@ public class ArraySerializer implements Serializer
         if (list == null) {
             componentType = cls.getComponentType();
         } else {
-            if (list.isEmpty()) {
-                componentType = Object.class;
-            } else {
-                componentType = list.get(0).getClass();
-            }
+            componentType = Object.class;
         }
 
         // Check to see if componentType is also an array.
@@ -186,7 +182,7 @@ public class ArraySerializer implements Serializer
         // More complicated processing is necessary for 3-dim arrays, etc.
         //
         int dim2Len = -1;
-        boolean enable2Dim = true;  // Disabled
+        boolean enable2Dim = true;  // Enabled 2-Dim processing
         if (enable2Dim && !dims.equals("")) {
             if (cls.isArray() && len > 0) {
                 boolean okay = true;
