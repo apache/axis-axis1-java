@@ -63,6 +63,8 @@ import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
 import javax.mail.internet.MimeUtility;
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * This simulates the multipart stream
@@ -145,65 +147,82 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
             // can be in real headers what needs to be escaped etc  let mail parse it.
             javax.mail.internet.ContentType ct =
                     new javax.mail.internet.ContentType(contentType);
-            String boundaryStr =
-                    "--"
-                    + ct.getParameter(
-                            "boundary");    // The boundary with -- add as always the case.
             String rootPartContentId =
                     ct.getParameter("start");       // Get the root part content.
+            if(ct.getParameter("boundary") != null) {
+                String boundaryStr =
+                        "--"
+                        + ct.getParameter(
+                                "boundary");    // The boundary with -- add as always the case.
 
-            if (rootPartContentId != null) {
-                rootPartContentId = rootPartContentId.trim();
+                if (rootPartContentId != null) {
+                    rootPartContentId = rootPartContentId.trim();
 
-                if (rootPartContentId.startsWith("<")) {
-                    rootPartContentId = rootPartContentId.substring(1);
+                    if (rootPartContentId.startsWith("<")) {
+                        rootPartContentId = rootPartContentId.substring(1);
+                    }
+
+                    if (rootPartContentId.endsWith(">")) {
+                        rootPartContentId = rootPartContentId.substring(0,
+                                rootPartContentId.length() - 1);
+                    }
+
+                  //  if (!rootPartContentId.startsWith("cid:")) {
+                  //      rootPartContentId = "cid:" + rootPartContentId;
+                  //  }
                 }
 
-                if (rootPartContentId.endsWith(">")) {
-                    rootPartContentId = rootPartContentId.substring(0,
-                            rootPartContentId.length() - 1);
-                }
+                // if start is null then the first attachment is the rootpart
+                // First read the start boundary -- this is done with brute force since the servlet may swallow the crlf between headers.
+                // after this we use the more efficient boundarydelimeted stream.  There should never be any data here anyway.
+                byte[][] boundaryMarker = new byte[2][boundaryStr.length() + 2];
 
-              //  if (!rootPartContentId.startsWith("cid:")) {
-              //      rootPartContentId = "cid:" + rootPartContentId;
-              //  }
-            }
+                is.read(boundaryMarker[0]);
 
-            // if start is null then the first attachment is the rootpart
-            // First read the start boundary -- this is done with brute force since the servlet may swallow the crlf between headers.
-            // after this we use the more efficient boundarydelimeted stream.  There should never be any data here anyway.
-            byte[][] boundaryMarker = new byte[2][boundaryStr.length() + 2];
+                boundary = (boundaryStr + "\r\n").getBytes("US-ASCII");
 
-            is.read(boundaryMarker[0]);
+                int current = 0;
 
-            boundary = (boundaryStr + "\r\n").getBytes("US-ASCII");
+                // This just goes brute force one byte at a time to find the first boundary.
+                // in most cases this just a crlf.
+                for (boolean found = false; !found; ++current) {
+                    if (!(found =
+                            java.util.Arrays.equals(boundaryMarker[current & 0x1],
+                                    boundary))) {
+                        System.arraycopy(boundaryMarker[current & 0x1], 1,
+                                boundaryMarker[(current + 1) & 0x1], 0,
+                                boundaryMarker[0].length - 1);
 
-            int current = 0;
-
-            // This just goes brute force one byte at a time to find the first boundary.
-            // in most cases this just a crlf.
-            for (boolean found = false; !found; ++current) {
-                if (!(found =
-                        java.util.Arrays.equals(boundaryMarker[current & 0x1],
-                                boundary))) {
-                    System.arraycopy(boundaryMarker[current & 0x1], 1,
-                            boundaryMarker[(current + 1) & 0x1], 0,
-                            boundaryMarker[0].length - 1);
-
-                    if (is.read(
-                            boundaryMarker[(current + 1) & 0x1],
-                            boundaryMarker[0].length - 1, 1) < 1) {
-                        throw new org.apache.axis.AxisFault(
-                                JavaUtils.getMessage(
-                                        "mimeErrorNoBoundary", new String(boundary)));
+                        if (is.read(
+                                boundaryMarker[(current + 1) & 0x1],
+                                boundaryMarker[0].length - 1, 1) < 1) {
+                            throw new org.apache.axis.AxisFault(
+                                    JavaUtils.getMessage(
+                                            "mimeErrorNoBoundary", new String(boundary)));
+                        }
                     }
                 }
-            }
 
-            // after the first boundary each boundary will have a cr lf at the beginning since after the data in any part there
-            // is a cr lf added to put the boundary at the begining of a line.
-            boundaryStr = "\r\n" + boundaryStr;
-            boundary = boundaryStr.getBytes("US-ASCII");
+                // after the first boundary each boundary will have a cr lf at the beginning since after the data in any part there
+                // is a cr lf added to put the boundary at the begining of a line.
+                boundaryStr = "\r\n" + boundaryStr;
+                boundary = boundaryStr.getBytes("US-ASCII");
+            } else {
+                // Since boundary is not specified, we try to find one.
+                String boundaryStr = "--";
+                byte [] boundaryBytes = boundaryStr.getBytes("US-ASCII");
+                byte [] readBytes = new byte[boundaryBytes.length];
+                is.read(readBytes);
+                for (boolean found = false; !found;) {
+                    found = java.util.Arrays.equals(boundaryBytes, readBytes);
+                    if(!found && is.read(readBytes) < 1){
+                        throw new org.apache.axis.AxisFault(
+                                JavaUtils.getMessage(
+                                        "mimeErrorNoBoundary", boundaryStr));
+                    }
+                }
+                boundary = readLine(is).getBytes("US-ASCII");
+            }
 
             // create the boundary delmited stream.
             boundaryDelimitedStream =
@@ -365,6 +384,32 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         }
     }
 
+    public final String readLine(InputStream is) throws IOException {
+
+        StringBuffer input = new StringBuffer();
+        int c = -1;
+        boolean eol = false;
+
+        while (!eol) {
+            switch (c = is.read()) {
+                case -1:
+                case '\n':
+                    eol = true;
+                    break;
+                case '\r':
+                    eol = true;
+                    break;
+                default:
+                    input.append((char)c);
+                    break;
+            }
+        }
+        if ((c == -1) && (input.length() == 0)) {
+            return null;
+        }
+        return input.toString();
+    }
+
     /**
      * Method getAttachmentByReference
      *
@@ -375,7 +420,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      * @throws org.apache.axis.AxisFault
      */
     public Part getAttachmentByReference(final String[] id)
-            throws org.apache.axis.AxisFault {    
+            throws org.apache.axis.AxisFault {
 
         // First see if we have read it in yet.
         Part ret = null;
@@ -448,8 +493,8 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
     /**
      * This will read streams in till the one that is needed is found.
-     * @param The id is the stream being sought. 
-     *         
+     * @param The id is the stream being sought.
+     *
      * @param id
      *
      * @return the part for the id
