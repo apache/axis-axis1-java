@@ -62,6 +62,7 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.message.MimeHeaders;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
@@ -84,7 +85,6 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -478,7 +478,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_FAULT ) {
             StringWriter writer = new StringWriter();
-            AxisFault env = (AxisFault)currentMessage;
             try {
                 this.writeTo(writer);
             } catch (Exception e) {

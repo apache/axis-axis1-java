@@ -363,5 +363,5 @@ public class MimeHeaders {
     }
 
     /**  */
-    private Vector headers;
+    protected Vector headers;
 }

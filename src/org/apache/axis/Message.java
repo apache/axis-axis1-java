@@ -58,6 +58,7 @@ package org.apache.axis;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.MimeHeaders;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
@@ -65,7 +66,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPHeader;
@@ -192,7 +192,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      *                     containing just the SOAP body (no SOAP-ENV).
      * @param headers Mime Headers.
      */
-    public Message(Object initialContents, boolean bodyInStream, MimeHeaders headers) {
+    public Message(Object initialContents, boolean bodyInStream, javax.xml.soap.MimeHeaders headers) {
         setup(initialContents, bodyInStream, null, null, headers);
     }
 
@@ -210,7 +210,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      * @param headers Mime Headers.
      */
     public Message(Object initialContents, MimeHeaders headers) {
-        setup(initialContents, true, (String) null, (String) null, headers);
+        setup(initialContents, true, null, null, headers);
     }
 
     /**
@@ -294,7 +294,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     private void setup(Object initialContents, boolean bodyInStream,
                        String contentType, String contentLocation,
-                       MimeHeaders mimeHeaders) {
+                       javax.xml.soap.MimeHeaders mimeHeaders) {
 
         if(contentType == null && mimeHeaders != null) {
             String contentTypes[] = mimeHeaders.getHeader("Content-Type");
@@ -348,7 +348,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         // The stream was not determined by a more complex type so default to
         if(mAttachments!=null) mAttachments.setRootPart(mSOAPPart);
 
-        headers = (mimeHeaders == null) ? new MimeHeaders() : mimeHeaders;
+        headers = (mimeHeaders == null) ? new MimeHeaders() : new MimeHeaders(mimeHeaders);
     }
 
     /**
@@ -548,7 +548,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      * @return a <CODE>MimeHeaders</CODE> object containing the
      *     <CODE>MimeHeader</CODE> objects
      */
-    public MimeHeaders getMimeHeaders() {
+    public javax.xml.soap.MimeHeaders getMimeHeaders() {
         return headers;
     }
 
@@ -601,7 +601,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      * @return an iterator over all attachments that have a header
      *     that matches one of the given headers
      */
-    public Iterator getAttachments(MimeHeaders headers){
+    public Iterator getAttachments(javax.xml.soap.MimeHeaders headers){
         return mAttachments.getAttachments(headers);
     }
 
