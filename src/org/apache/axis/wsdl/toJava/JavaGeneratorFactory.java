@@ -942,7 +942,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 Fault fault = (Fault) i.next();
                 String exceptionName =
                   Utils.getFullExceptionName(fault.getMessage(), symbolTable);
-                signature = signature + ", " + exceptionName;
+                if (exceptionName != null) {
+                    signature = signature + ", " + exceptionName;
+                }
             }
         }
         return signature;
