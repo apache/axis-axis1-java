@@ -166,7 +166,8 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * The name of this node, depending on its type; see the table above.
      */
     public String getNodeName() {
-        return (prefix != null) ? prefix + ":" + name : name;
+        return (prefix != null && prefix.length() > 0) ?
+                prefix + ":" + name : name;
     }
 
     /**
