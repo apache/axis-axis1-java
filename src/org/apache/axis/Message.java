@@ -72,6 +72,7 @@ import javax.xml.soap.AttachmentPart;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 /**
@@ -376,9 +377,18 @@ public class Message extends javax.xml.soap.SOAPMessage
     }
 
     public String getContentType(SOAPConstants sc) throws AxisFault {
-        //Force serialization if it hasn't happend it.
-        //Rick Rineholt fix this later.
-        mSOAPPart.getAsBytes();
+
+        int sendType = Attachments.SEND_TYPE_NOTSET;
+        if (msgContext.getService() != null) {
+            sendType = msgContext.getService().getSendType();
+        }
+
+        if (sendType != Attachments.SEND_TYPE_NONE) {
+            //Force serialization if it hasn't happend it.
+            //Rick Rineholt fix this later.
+            mSOAPPart.getAsBytes();
+        }
+
         String ret = sc.getContentType();
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
@@ -388,8 +398,6 @@ public class Message extends javax.xml.soap.SOAPMessage
 
     //This will have to give way someday to HTTP Chunking but for now kludge.
     public long getContentLength() throws org.apache.axis.AxisFault {
-        //Force serialization if it hasn't happend it.
-        //Rick Rineholt fix this later.
         long ret = mSOAPPart.getAsBytes().length;
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentLength();
@@ -417,7 +425,9 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                os.write(mSOAPPart.getAsBytes());
+                OutputStreamWriter writer = new OutputStreamWriter(os,"UTF-8");
+                mSOAPPart.writeTo(writer);
+                writer.flush();
             } catch (java.io.IOException e) {
                 log.error(JavaUtils.getMessage("javaIOException00"), e);
             }

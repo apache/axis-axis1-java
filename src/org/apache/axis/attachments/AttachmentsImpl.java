@@ -643,4 +643,16 @@ public class AttachmentsImpl implements Attachments {
     public int getSendType(){
       return sendtype;
     }
+
+    /**
+     * Determine how an object typically sent as attachments are to
+     * be represented.
+     */
+
+    public static int getSendType(String value) {
+        if (value.equalsIgnoreCase("MIME")) return SEND_TYPE_MIME;
+        if (value.equalsIgnoreCase("DIME")) return SEND_TYPE_DIME;
+        if (value.equalsIgnoreCase("NONE")) return SEND_TYPE_NONE;
+        return SEND_TYPE_NOTSET;
+    }
 }

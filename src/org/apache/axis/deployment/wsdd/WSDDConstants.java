@@ -160,6 +160,7 @@ public class WSDDConstants
     public static final String ATTR_MODE = "mode";
     public static final String ATTR_STYLE = "style";
     public static final String ATTR_STREAMING = "streaming";
+    public static final String ATTR_ATTACHMENT_FORMAT = "attachment";
     public static final String ATTR_PROVIDER = "provider";
     public static final String ATTR_PIVOT = "pivot";
     public static final String ATTR_SERIALIZER = "serializer";
