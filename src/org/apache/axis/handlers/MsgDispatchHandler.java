@@ -60,14 +60,14 @@ import java.util.* ;
 import java.lang.reflect.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
 
 import org.w3c.dom.* ;
+import org.xml.sax.*;
 
 /**
  *
@@ -103,14 +103,24 @@ public class MsgDispatchHandler extends BasicHandler {
 
       Message       reqMsg  = msgContext.getRequestMessage();
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
-      SOAPBody      reqBody = reqEnv.getFirstBody();
+      
+      System.err.println("Parsed the request message!");
+      
+      SOAPBodyElement reqBody = reqEnv.getFirstBody();
       Message       resMsg  = msgContext.getResponseMessage();
       SOAPEnvelope  resEnv  = (resMsg == null) ?
                               new SOAPEnvelope() :
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
-
-      Document doc = XMLUtils.newDocument();
-      doc.appendChild( doc.importNode(reqBody.getRoot(),true) );
+      
+      StringWriter writer = new StringWriter();
+      reqBody.output(new SerializationContext(writer));
+      
+      InputStream inStream = new StringBufferInputStream(writer.getBuffer().toString());
+      Document doc = XMLUtils.newDocument(inStream);
+      
+      // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
+      //     want DOM, but our examples should mostly lean towards the
+      //     SAX side of things....
 
       /* If no methodName was specified during deployment then get it */
       /* from the root of the Body element                            */
@@ -131,8 +141,14 @@ public class MsgDispatchHandler extends BasicHandler {
       Document retDoc = (Document) method.invoke( obj, argObjects );
   
       if ( retDoc != null ) {
-        SOAPBody resBody = new SOAPBody( retDoc );
-        resEnv.addBody(resBody);
+          // !!! This doesn't really work yet... need to figure out how to
+          //     inject XML into just the Body of a message.....
+          
+          SOAPBodyElement el = new SOAPBodyElement();
+          String retString = XMLUtils.DocumentToString(retDoc);
+          System.out.println(retString);
+          el.setValue(retString);
+          resEnv.addBodyElement(el);
       }
       
       if (resMsg == null) {
