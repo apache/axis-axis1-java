@@ -94,6 +94,7 @@ import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -1543,19 +1544,8 @@ public class SymbolTable {
                                                  new String[] {partName,
                                                                opName}));
                 }
-                setMIMEInfo(param, bindingEntry == null ? null :
-                        bindingEntry.getMIMEInfo(opName, partName));
-                if (bindingEntry != null &&
-                    bindingEntry.isInHeaderPart(opName, partName)) {
-                    param.setInHeader(true);
-                }
-                if (bindingEntry != null &&
-                        bindingEntry.isOutHeaderPart(opName, partName)) {
-                    param.setOutHeader(true);
-                }
-
+                fillParamInfo(param, bindingEntry, opName, partName);
                 v.add(param);
-
                 continue;   // next part
             }
 
@@ -1636,14 +1626,7 @@ public class SymbolTable {
                     Parameter p = new Parameter();
                     p.setQName(elem.getName());
                     p.setType(elem.getType());
-                    setMIMEInfo(p, bindingEntry == null ? null :
-                            bindingEntry.getMIMEInfo(opName, partName));
-                    if (bindingEntry.isInHeaderPart(opName, partName)) {
-                        p.setInHeader(true);
-                    }
-                    if (bindingEntry.isOutHeaderPart(opName, partName)) {
-                        p.setOutHeader(true);
-                    }
+                    fillParamInfo(p, bindingEntry, opName, partName);
                     v.add(p);
                 }
             } else {
@@ -1657,20 +1640,100 @@ public class SymbolTable {
                 } else if (elementName != null) {
                     param.setType(getElement(elementName));
                 }
-                setMIMEInfo(param, bindingEntry == null ? null :
-                        bindingEntry.getMIMEInfo(opName, partName));
-                if (bindingEntry.isInHeaderPart(opName, partName)) {
-                    param.setInHeader(true);
-                }
-                if (bindingEntry.isOutHeaderPart(opName, partName)) {
-                    param.setOutHeader(true);
-                }
-
+                fillParamInfo(param, bindingEntry, opName, partName);
                 v.add(param);
             }
         } // while
 
     } // getParametersFromParts
+
+    private void fillParamInfo(Parameter param, BindingEntry bindingEntry, String opName, String partName) {
+        setMIMEInfo(param, bindingEntry == null ? null :
+                bindingEntry.getMIMEInfo(opName, partName));
+        boolean isHeader = false;
+        if (bindingEntry != null && bindingEntry.isInHeaderPart(opName, partName)) {
+            isHeader = true;
+            param.setInHeader(true);
+        }
+        if (bindingEntry != null && bindingEntry.isOutHeaderPart(opName, partName)) {
+            isHeader = true;
+            param.setOutHeader(true);
+        }
+
+        if(isHeader && bindingEntry.getBinding() != null) {
+            List list = bindingEntry.getBinding().getBindingOperations();   
+            for(int i=0; list != null && i<list.size();i++){
+                BindingOperation operation = (BindingOperation)list.get(i);
+                if(operation.getName().equals(opName)) { 
+                    if(param.isInHeader()) {
+                        QName qName = getBindedParameterName(operation.getBindingInput().getExtensibilityElements(), param);
+                        param.setQName(qName);
+                    } else if (param.isOutHeader()) {
+                        QName qName = getBindedParameterName(operation.getBindingOutput().getExtensibilityElements(), param);
+                        param.setQName(qName);
+                    }
+                }
+            }
+        }
+    }
+    
+    private QName getBindedParameterName(List elements, Parameter p) {
+        // If the parameter can either be in the message header or in the
+        // message body.
+        // When it is in the header, there may be a SOAPHeader (soap:header)
+        // with its part name. The namespace used is the one of the soap:header.
+        // When it is in the body, if there is a SOAPBody with its part name,
+        // the namespace used is the one of this soap:body.
+        // 
+        // If the parameter is in the body and there is a soap:body with no parts,
+        // its namespace is used for the parameter.  
+    	
+        QName paramName = null;
+        String defaultNamespace = null;
+        String parameterPartName = p.getName();
+        for (Iterator k = elements.iterator(); k.hasNext();) {
+            ExtensibilityElement element = (ExtensibilityElement) k.next();
+            if (element instanceof SOAPBody) {
+                SOAPBody bodyElement = (SOAPBody) element;
+                List parts = bodyElement.getParts();
+                if ((parts == null) || (parts.size() == 0)) {
+                    defaultNamespace = bodyElement.getNamespaceURI();
+                } else {
+                    boolean found = false;
+                    for (Iterator l = parts.iterator(); l.hasNext();) {
+                        Object o = l.next();
+                        if(o instanceof Part) {
+                            Part part = (Part) o;
+                            if (parameterPartName.equals(part.getName())) {
+                                paramName = new QName(bodyElement.getNamespaceURI(), parameterPartName);
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (found)
+                        break;
+                }
+            } else if (element instanceof SOAPHeader) {
+                SOAPHeader headerElement = (SOAPHeader) element;
+                String part = headerElement.getPart();
+                if (parameterPartName.equals(part)) {
+                    paramName = new QName(headerElement.getNamespaceURI(), parameterPartName);
+                    break;
+                }
+            }
+        }
+
+        if ((paramName == null) && (!p.isInHeader()) && (!p.isOutHeader())) {
+            if (defaultNamespace != null) {
+                paramName = new QName(defaultNamespace, parameterPartName);
+            } else {
+                paramName = p.getQName();
+            }
+        }
+        return paramName;
+    }
+    
 
     /**
      * Set the MIME type.  This can be determine in one of two ways:
