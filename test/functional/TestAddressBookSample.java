@@ -60,7 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.http.AdminClient;
+import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
@@ -81,7 +81,7 @@ public class TestAddressBookSample extends TestCase {
     
     public void doTestDeploy () throws Exception {
         String[] args = { "samples/addressbook/deploy.xml" };
-        new AdminClient().doAdmin(args);
+        AdminClient.main(args);
     }
     
     public void doTest () throws Exception {
