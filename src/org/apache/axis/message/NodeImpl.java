@@ -478,21 +478,20 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     public Node removeChild(Node oldChild) throws DOMException {
         boolean removed = false;
         initializeChildren();
-        int position = children.indexOf(oldChild);
-        if (position < 0) {
+        final Iterator itr = children.iterator();
+        while (itr.hasNext()) {
+            final Node node = (Node) itr.next();
+            if (node.equals(oldChild)) {
+                removed = true;
+                itr.remove();
+            }
+        }
+        if (!removed) {
             throw new DOMException(DOMException.NOT_FOUND_ERR,
                     "NodeImpl Not found");
-        }
-        
-        while (position != -1) {
-            children.remove(position);
-            removed = true;
-            position = children.indexOf(oldChild);
-        }
-        if (removed) {
+        } else {
             setDirty(removed);
         }
-        
         return oldChild;
     }
 

@@ -1985,6 +1985,12 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         if (obj == null || !(obj instanceof MessageElement)) {
             return false;
         }
+        if (this == obj) {
+            return true;
+        }
+        if (!this.getLocalName().equals(((MessageElement) obj).getLocalName())) {
+            return false;
+        }
         return toString().equals(obj.toString());
     }
 
