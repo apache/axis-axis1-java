@@ -246,7 +246,7 @@ public class XMLUtils {
             SAXParser parser = saxFactory.newSAXParser();
             parser.getXMLReader().
                     setFeature("http://xml.org/sax/features/namespace-prefixes",
-                            true);
+                            false);
             return parser;
         } catch (ParserConfigurationException e) {
             log.error(JavaUtils.getMessage("parserConfigurationException00"), e);

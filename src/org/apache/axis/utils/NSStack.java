@@ -140,9 +140,9 @@ public class NSStack {
     public ArrayList cloneFrame() {
         ArrayList clone = new ArrayList();
 
-        topOfFrame();
-
-        while (iterator <= top) clone.add(stack[iterator++]);
+        for (Mapping map=topOfFrame(); map!=null; map=next()) {
+            clone.add(map);
+        }
 
         return clone;
     }
