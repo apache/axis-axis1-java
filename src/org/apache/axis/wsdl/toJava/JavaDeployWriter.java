@@ -72,6 +72,7 @@ import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.Part;
 
+import org.w3c.dom.Node;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
@@ -149,10 +150,36 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println();
         for (int i = 0; i < types.size(); ++i) {
             TypeEntry type = (TypeEntry) types.elementAt(i);
-            if (type.getBaseType() == null && type.isReferenced()
-                && !type.isOnlyLiteralReferenced()
-                && !(type instanceof CollectionType)
-                && !(type instanceof DefinedElement)) {
+
+            // Note this same check is repeated in JavaStubWriter.
+            boolean process = true;
+
+            // 1) Don't register types that are base (primitive) types.
+            //    If the baseType != null && getRefType() != null this
+            //    is a simpleType that must be registered.
+            // 2) Don't register the special types for collections
+            //    (indexed properties)
+            // 3) Don't register types that are not referenced
+            //    or only referenced in a literal context.
+            if ((type.getBaseType() != null && type.getRefType() == null) ||
+                type instanceof CollectionType ||
+                !type.isReferenced() ||
+                type.isOnlyLiteralReferenced()) {
+                process = false;
+            }
+
+
+            // 4) If the type is an element, the typemapping is only generated
+            // if the element has an anonymous type.  This is a quick fix
+            // until I add anonymous types as actual symbol table elements. Scheu
+            if (process && type instanceof Element) {
+                Node node = symbolTable.getTypeEntry(type.getQName(),
+                                                     true).getNode();
+                if (node == null ||
+                    Utils.getNodeTypeRefQName(node, "type") != null)
+                    process = false;
+            }
+            if (process) {
                 pw.println("      <typeMapping");
                 pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
@@ -167,6 +194,9 @@ public class JavaDeployWriter extends JavaWriter {
                     pw.println("        deserializer=\"org.apache.axis.encoding.ser.EnumDeserializerFactory\"");
                 } else if (type.isSimpleType()) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory\"");
+                    pw.println("        deserializer=\"org.apache.axis.encoding.ser.SimpleDeserializerFactory\"");
+                } else if (type.getBaseType() != null) {
+                    // Serializers are already defined for the simple types
                     pw.println("        deserializer=\"org.apache.axis.encoding.ser.SimpleDeserializerFactory\"");
                 } else {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");

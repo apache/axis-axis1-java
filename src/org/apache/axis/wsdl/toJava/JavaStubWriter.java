@@ -395,17 +395,35 @@ public class JavaStubWriter extends JavaWriter {
     private boolean firstSer = true ;
 
     private void writeSerializationInit(TypeEntry type) throws IOException {
-        // Don't need to register base types or
-        // our special collection types for indexed properties
-        // Note that we still have to register types derived from base types
-        // This is necessary to be able to properly identify such derived types
-        // during deserialization
+
+        // Note this same check is repeated in JavaDeployWriter.
+        boolean process = true;
+
+        // 1) Don't register types that are base (primitive) types.
+        //    If the baseType != null && getRefType() != null this
+        //    is a simpleType that must be registered.
+        // 2) Don't register the special types for collections
+        //    (indexed properties)
+        // 3) Don't register types that are not referenced
+        //    or only referenced in a literal context.
         if ((type.getBaseType() != null && type.getRefType() == null) ||
-            type instanceof CollectionType) {
-            return;
+            type instanceof CollectionType ||
+            !type.isReferenced() ||
+            type.isOnlyLiteralReferenced()) {
+            process = false;
         }
         
-        if (type instanceof Element) {
+        // 4) If the type is an element, the typemapping is only generated
+        // if the element has an anonymous type.  This is a quick fix
+        // until I add anonymous types as actual symbol table elements. Scheu
+        if (process && type instanceof Element) {
+            Node node = symbolTable.getTypeEntry(type.getQName(),
+                                                 true).getNode();
+            if (node == null ||
+                Utils.getNodeTypeRefQName(node, "type") != null)
+                process = false;
+        }
+        if (!process) {
             return;
         }
         
