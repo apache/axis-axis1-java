@@ -115,6 +115,7 @@ public class Emitter {
     private WsdlAttributes wsdlAttr = null;
     private boolean bEmitSkeleton = false;
     private boolean bMessageContext = false;
+    private boolean bEmitTestCase = false;
     private boolean bVerbose = false;
     private boolean bGeneratePackageName = false;
     String packageName = null;
@@ -151,6 +152,7 @@ public class Emitter {
 
         try {
             WSDLReader reader = new WSDLReader();
+            File outputFile = null;
 
             def = reader.readWSDL(null, doc);
 
@@ -160,10 +162,13 @@ public class Emitter {
             }
 
             // Make sure the directory that the files will go into exists
-            if (outputDir == null)
-                new File(packageDirName).mkdirs();
-            else
-                new File(outputDir + File.separatorChar + packageDirName).mkdirs();
+            if (outputDir == null) {
+                outputFile = new File(packageDirName);
+            } else {
+                outputFile = new File(outputDir, packageDirName);
+            }
+
+            outputFile.mkdirs();
 
             if (bVerbose && packageName != null) {
                 System.out.println("Using package name: " + packageName);
@@ -194,8 +199,9 @@ public class Emitter {
             writeServices();
 
             // Output deploy.xml and undeploy.xml
-            if (bEmitSkeleton)
+            if (bEmitSkeleton) {
                 writeDeploymentXML();
+            }
 
         }
         catch (WSDLException e) {
@@ -214,6 +220,14 @@ public class Emitter {
      */
     public void generateSkeleton(boolean value) {
         this.bEmitSkeleton = value;
+    }
+
+    /**
+     * Turn on/off server skeleton creation
+     * @param boolean value
+     */
+    public void generateTestCase(boolean value) {
+        this.bEmitTestCase = value;
     }
 
     /**
@@ -457,7 +471,7 @@ public class Emitter {
     /**
      * This class simply collects
      */
-    private static class Parameter {
+    protected static class Parameter {
 
         // constant values for the parameter mode.
         public static final byte IN = 1;
@@ -478,7 +492,7 @@ public class Emitter {
     /**
      * This class simply collects all the parameter or message data for an operation into one place.
      */
-    private static class Parameters {
+    protected static class Parameters {
 
         // This vector contains instances of the Parameter class
         public Vector list = new Vector();
@@ -525,7 +539,7 @@ public class Emitter {
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
      */
-    private Parameters parameters(Operation operation) throws IOException {
+    protected Parameters parameters(Operation operation) throws IOException {
         Parameters parameters = new Parameters();
         Vector inputs = new Vector();
         Vector outputs = new Vector();
@@ -1321,8 +1335,25 @@ public class Emitter {
         String serviceName = xmlNameToJava(service.getQName().getLocalPart());
         String fileName = serviceName + ".java";
         PrintWriter servicePW = printWriter(fileName);
-        if (bVerbose)
+        TestCaseFactory testFactory = null;
+
+        if (this.bVerbose) {
             System.out.println("Generating service class: " + fileName);
+        }
+
+        if (this.bEmitTestCase) {
+            testFactory = new TestCaseFactory(this.printWriter(serviceName + "TestCase.java"),
+                                              this.packageName,
+                                              serviceName + "TestCase",
+                                              this);
+
+            if (this.bVerbose) {
+                System.out.println("Generating service test class: " + serviceName + "TestCase.java");
+            }
+
+            testFactory.writeHeader(serviceName + "TestCase.java");
+            testFactory.writeInitCode();
+        }
 
         writeFileHeader(fileName, servicePW);
 
@@ -1331,6 +1362,9 @@ public class Emitter {
 
         // output comments
         writeComment(servicePW, service.getDocumentationElement());
+        if (this.bEmitTestCase) {
+            this.writeComment(testFactory.getWriter(), service.getDocumentationElement());
+        }
 
         // get ports
         Map portMap = service.getPorts();
@@ -1339,7 +1373,6 @@ public class Emitter {
         // write a get method for each of the ports with a SOAP binding
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
-            String portName = p.getName();
             Binding binding = p.getBinding();
 
             // If this isn't an SOAP binding, skip it
@@ -1347,6 +1380,7 @@ public class Emitter {
                 continue;
             }
 
+            String portName = p.getName();
             String stubClass = binding.getQName().getLocalPart() + "Stub";
             String bindingType = binding.getPortType().getQName().getLocalPart();
 
@@ -1387,9 +1421,17 @@ public class Emitter {
             servicePW.println("            return null; // ???");
             servicePW.println("        }");
             servicePW.println("    }");
+
+            if (this.bEmitTestCase) {
+                this.writeComment(testFactory.getWriter(), p.getDocumentationElement());
+                testFactory.writeServiceTestCode(portName, binding);
+        }
         }
 
         // write out standard service methods (available in all services)
+        if (this.bEmitTestCase) {
+            testFactory.finish();
+        }
 
         // all done
         servicePW.println("}");
@@ -1420,12 +1462,14 @@ public class Emitter {
     private void writeDeploymentXML() {
         try {
             PrintWriter deployPW = printWriter("deploy.xml");
-            if (bVerbose)
+            if (bVerbose) {
                 System.out.println("Generating deployment document: deploy.xml");
+            }
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = printWriter("undeploy.xml");
-            if (bVerbose)
+            if (bVerbose) {
                 System.out.println("Generating deployment document: undeploy.xml");
+            }
             initializeDeploymentDoc(undeployPW, "undeploy");
             writeDeployServices(deployPW, undeployPW);
             writeDeployTypes(deployPW);
