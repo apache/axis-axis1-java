@@ -43,8 +43,9 @@ JAX-RPC COMPATIBILITY
 
 SAAJ COMPATIBILITY
 ------------------
-* <Glyn/Davanum> Implement javax.xml.soap interfaces (in message subsystem).
+! <> Implement javax.xml.soap interfaces (in message subsystem).
          (Not forgetting: SOAPBody.addFault/getFault/hasFault)
+! <> Obtain and pass a SAAJ TCK (Technology Compatibility Kit).
 
 SOAP 1.2 SUPPORT
 ----------------
