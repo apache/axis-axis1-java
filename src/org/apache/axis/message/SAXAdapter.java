@@ -31,7 +31,6 @@ public class SAXAdapter extends SOAPSAXHandler
         _parser.parse(inputSource);
       } catch (Exception e) {
         e.printStackTrace();
-        System.exit(1);
       }
     }
     
