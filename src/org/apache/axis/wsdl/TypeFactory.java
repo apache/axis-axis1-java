@@ -65,19 +65,19 @@ import java.util.Vector;
 /**
  * This factory creates Type objects for the types supported by the WSDL2Java emitter.
  * The factory creates the Types by analyzing the XML Document.  The Type encapsulates
- * the QName, Java Name and defining Node for each Type. 
+ * the QName, Java Name and defining Node for each Type.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public class TypeFactory {
 
-    private HashMap types;                  // All Types        
-    private HashMap mapNamespaceToPackage;  // Mapping from Namespace to Java Package 
+    private HashMap types;                  // All Types
+    private HashMap mapNamespaceToPackage;  // Mapping from Namespace to Java Package
 
     /**
      * Create an Emit Type Factory
      */
-    public TypeFactory() { 
+    public TypeFactory() {
         types = new HashMap();
         mapNamespaceToPackage = new HashMap();
     }
@@ -87,7 +87,7 @@ public class TypeFactory {
      */
     public void map (String namespace, String pkg) {
         mapNamespaceToPackage.put(namespace, pkg);
-    } 
+    }
 
     /**
      * Invoke this method from the Emitter prior to emitting any code.
@@ -98,21 +98,36 @@ public class TypeFactory {
     }
 
     /**
-     * Access all of the emit types.                                      
+     * Access all of the emit types.
      */
     public HashMap getTypes() {
         return types;
     }
 
     /**
-     * Get the Type for the given QName                               
+     * Get the Type for the given QName
      */
     public Type getType(QName qName) {
         return (Type) types.get(qName);
     }
 
-    /**     
-     * Dump Types for debugging                                       
+    /**
+     * Get the Type for the given Java Name
+     * Return null if not found.
+     */
+    public Type getType(String javaName) {
+        Iterator i = types.values().iterator();
+        while (i.hasNext()) {
+            Type et = (Type) i.next();
+            if (et.getJavaName().equals(javaName)) {
+                return et;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Dump Types for debugging
      */
     public void dump() {
         Iterator i = types.values().iterator();
@@ -127,7 +142,7 @@ public class TypeFactory {
         }
     }
 
-    /**     
+    /**
      * If the specified node represents a supported JAX-RPC complexType,
      * a Vector is returned which contains the child element types and
      * child element names.  The even indices are the element types (Types) and
@@ -145,9 +160,9 @@ public class TypeFactory {
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
             Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-      
+
             // Under the complexType there should be a sequence or all group node.
-            // (There may be other #text nodes, which we will ignore).  
+            // (There may be other #text nodes, which we will ignore).
             NodeList children = node.getChildNodes();
             Node groupNode = null;
             for (int j = 0; j < children.getLength() && groupNode == null; j++) {
@@ -155,10 +170,13 @@ public class TypeFactory {
                 if (groupKind != null &&
                     (groupKind.getLocalPart().equals("sequence") ||
                      groupKind.getLocalPart().equals("all")) &&
-                    Utils.isSchemaNS(groupKind.getNamespaceURI())) 
+                    Utils.isSchemaNS(groupKind.getNamespaceURI()))
                     groupNode = children.item(j);
-            } 
-      
+            }
+
+            if (groupNode == null) {
+                return new Vector();
+            }
             if (groupNode != null) {
 
                 // Process each of the element nodes under the group node
@@ -169,7 +187,7 @@ public class TypeFactory {
                     if (elementKind != null &&
                         elementKind.getLocalPart().equals("element") &&
                         Utils.isSchemaNS(elementKind.getNamespaceURI())) {
-              
+
                         // Get the name and type qnames.
                         // The name of the element is the local part of the name's qname.
                         // The type qname is used to locate the Type, which is then
@@ -180,7 +198,7 @@ public class TypeFactory {
                         if (nodeType == null) { // The element may use an anonymous type
                             nodeType = nodeName;
                         }
-        
+
                         Type Type = (Type) types.get(nodeType);
                         if (Type != null) {
                             v.add(Type);
@@ -192,12 +210,12 @@ public class TypeFactory {
             }
         }
         return null;
-    } 
+    }
 
-    /**     
+    /**
      * If the specified node represents a supported JAX-RPC enumeration,
      * a Vector is returned which contains the base type and the enumeration values.
-     * The first element in the vector is the base type (an Type). 
+     * The first element in the vector is the base type (an Type).
      * Subsequent elements are values (Strings).
      * If this is not an enumeration, null is returned.
      */
@@ -211,20 +229,20 @@ public class TypeFactory {
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("simpleType") &&
             Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-      
+
             // Under the simpleType there should be a restriction.
-            // (There may be other #text nodes, which we will ignore).  
+            // (There may be other #text nodes, which we will ignore).
             NodeList children = node.getChildNodes();
             Node restrictionNode = null;
             for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
                 QName restrictionKind = Utils.getNodeQName(children.item(j));
                 if (restrictionKind != null &&
                     restrictionKind.getLocalPart().equals("restriction") &&
-                    Utils.isSchemaNS(restrictionKind.getNamespaceURI())) 
+                    Utils.isSchemaNS(restrictionKind.getNamespaceURI()))
                     restrictionNode = children.item(j);
-            } 
-      
-            // The restriction node indicates the type being restricted 
+            }
+
+            // The restriction node indicates the type being restricted
             // (the base attribute contains this type).
             // The base type must be a built-in type...and we only think
             // this makes sense for string.
@@ -249,7 +267,7 @@ public class TypeFactory {
                     if (enumKind != null &&
                         enumKind.getLocalPart().equals("enumeration") &&
                         Utils.isSchemaNS(enumKind.getNamespaceURI())) {
-              
+
                         // Put the enum value in the vector.
                         Node enumNode = enums.item(i);
                         String value = Utils.getAttribute(enumNode, "value");
@@ -262,7 +280,7 @@ public class TypeFactory {
             }
         }
         return null;
-    } 
+    }
 
     /**
      * Utility method which walks the Document and creates Types.
@@ -276,26 +294,26 @@ public class TypeFactory {
         // Get the kind of node (complexType, wsdl:part, etc.)
         QName nodeKind = Utils.getNodeQName(node);
 
-        
+
         if (nodeKind != null) {
             if (nodeKind.getLocalPart().equals("complexType") &&
                 Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-        
+
                 // This is a definition of a complex type.
                 // create the type and indicate within complexType
                 createTypeFromDef(node);
-                inner = true;  
-            } 
+                inner = true;
+            }
             if (nodeKind.getLocalPart().equals("simpleType") &&
                 Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-        
+
                 // This is a definition of a simple type, which could be an enum
                 // Create the type.
                 createTypeFromDef(node);
-            } 
+            }
             else if (nodeKind.getLocalPart().equals("element") &&
                    Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-        
+
                 // This is an element.  Currently we only process the
                 // elements that are inside a complex type.  This may need
                 // to be changed if we ever support "ref" attributes.
@@ -310,12 +328,12 @@ public class TypeFactory {
             }
             else if (nodeKind.getLocalPart().equals("part") &&
                      Utils.isWsdlNS(nodeKind.getNamespaceURI())) {
-        
+
                 // This is a wsdl part.  Create an Type from the reference
                 createTypeFromRef(node);
-            }  
-        } 
-        // Recurse through children nodes    
+            }
+        }
+        // Recurse through children nodes
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             addTypes(children.item(i), inner);
@@ -323,14 +341,14 @@ public class TypeFactory {
     }
 
     /**
-     * Create an Type from the indicated node, which defines a supported type.
+     * Create a Type from the indicated node, which defines a supported type.
      */
     private void createTypeFromDef(Node node) {
         // Get the QName of the node's name attribute value
         QName qName = Utils.getNodeNameQName(node);
         if (qName != null) {
             String javaName = getJavaName(qName);
-            // Since this is a defining context, force this Type into the 
+            // Since this is a defining context, force this Type into the
             // hash map and supply the defining node.
             types.put(qName, new Type(qName, javaName, node));
         }
@@ -341,11 +359,11 @@ public class TypeFactory {
      */
     private void createTypeFromRef(Node node) {
         // Get the QName of the node's type attribute value
-        QName qName = Utils.getNodeTypeQName(node); 
+        QName qName = Utils.getNodeTypeQName(node);
         if (qName != null) {
             String javaName = getJavaName(qName);
-            // An Type for this type may already have been encountered 
-            // via another reference or defining context.  Also note that if 
+            // An Type for this type may already have been encountered
+            // via another reference or defining context.  Also note that if
             // the Type represents a Base type, the Type will change
             // java name to the appropriate java base name.
             if (types.get(qName) == null) {
@@ -355,25 +373,25 @@ public class TypeFactory {
     }
 
 
-    /**     
-     * Get the Package name for the specified namespace                   
+    /**
+     * Get the Package name for the specified namespace
      */
     private String getPackage(String namespace) {
         return (String) mapNamespaceToPackage.get(namespace);
     }
 
-    /**     
-     * Get the Package name for the specified QName                       
+    /**
+     * Get the Package name for the specified QName
      */
     private String getPackage(QName qName) {
         return getPackage(qName.getNamespaceURI());
     }
 
-    /**     
-     * Convert the specified QName into a full Java Name.                 
+    /**
+     * Convert the specified QName into a full Java Name.
      */
     private String getJavaName(QName qName) {
-        String javaName = Utils.getJavaName(qName.getLocalPart());                      
+        String javaName = Utils.getJavaName(qName.getLocalPart());
         String pkg = getPackage(qName.getNamespaceURI());
         String fullJavaName = javaName;
         if (pkg != null) {
