@@ -80,6 +80,10 @@ import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -364,14 +368,33 @@ public class SOAPService extends SimpleTargetedChain
             super.generateWSDL(msgContext);
             return;
         }
+        InputStream instream = null;
 
         // Got a WSDL file in the service description, so try and read it
         try {
-            Document doc = XMLUtils.newDocument(
-                    new FileInputStream(serviceDescription.getWSDLFile()));
+            String filename= serviceDescription.getWSDLFile();
+            File file=new File(filename);
+            if(file.exists()) {
+                //if this resolves to a file, load it
+                instream = new FileInputStream(filename);
+            } else {
+                //else load a named resource in our classloader. 
+                instream = this.getClass().getResourceAsStream(filename);
+                if (instream == null) {
+                    String errorText=Messages.getMessage("wsdlFileMissing",filename);
+                    throw new AxisFault(errorText);
+                }
+            }
+            Document doc = XMLUtils.newDocument(instream);
             msgContext.setProperty("WSDL", doc);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
+        } finally {
+            if(instream!=null) {
+                try {
+                    instream.close();
+                } catch (IOException e) { }
+            }
         }
     }
     /*********************************************************************
