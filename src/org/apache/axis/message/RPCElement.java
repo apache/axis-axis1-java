@@ -94,7 +94,6 @@ public class RPCElement extends SOAPBodyElement
     protected String methodName;    
     protected Vector params = new Vector();
     protected Class  defaultParamTypes[] = null;
-    protected MessageContext msgContext;
     
     public RPCElement(String namespace, String localName, Attributes attrs,
                       DeserializationContext context)
@@ -142,7 +141,8 @@ public class RPCElement extends SOAPBodyElement
      *  *******************************************************
      */
 
-    public void setContext(MessageContext msgContext) {
+    private void determineDefaultParams() {
+        MessageContext msgContext = context.getMessageContext();
         Handler service    = msgContext.getServiceHandler();
         if (service == null) return;
 
@@ -183,7 +183,9 @@ public class RPCElement extends SOAPBodyElement
         RPCParam param = new RPCParam(namespace, name, attributes, context);
         
         // See if we can default xsi:type...
+        if (params.size()==0) determineDefaultParams();
         if (defaultParamTypes!=null && params.size()<defaultParamTypes.length) {
+            MessageContext msgContext = context.getMessageContext();
             TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
             param.setType(typeMap.getTypeQName(defaultParamTypes[params.size()]));
         }

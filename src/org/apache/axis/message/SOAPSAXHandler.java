@@ -138,8 +138,6 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                                                      attributes,
                                                      context);
 
-            body.setContext(context.getMessageContext());
-
             return body;
         }
     }
