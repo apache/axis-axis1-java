@@ -96,9 +96,11 @@ public class HTTPSender extends BasicHandler {
       // default SOAPAction to request namespaceURI/method
       String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
       if (action == null) {
+          /*
         Message rm = msgContext.getRequestMessage();
         MessageElement body = rm.getAsSOAPEnvelope().getFirstBody();
         action = body.getNamespaceURI() + "/" + body.getName();
+          */
       }
         
       host = tmpURL.getHost();

@@ -155,7 +155,7 @@ public class SOAPFaultElement extends SOAPBodyElement
 
         if (fault.getFaultCode() != null) {
           MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultcode", null, null);
+            MessageElement(Constants.URI_SOAP_ENV, "faultcode");
           QFault code = fault.getFaultCode();
           String prefix = context.getPrefixForURI(code.getNamespaceURI());
           element.setValue(prefix + ":" + code.getLocalPart());
@@ -164,14 +164,14 @@ public class SOAPFaultElement extends SOAPBodyElement
     
         if (fault.getFaultString() != null) {
           MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultstring", null, null);
+            MessageElement(Constants.URI_SOAP_ENV, "faultstring");
           element.setValue(fault.getFaultString());
           element.output(context);
         }
     
         if (fault.getFaultActor() != null) {
           MessageElement element = new 
-            MessageElement(Constants.URI_SOAP_ENV, "faultactor", null, null);
+            MessageElement(Constants.URI_SOAP_ENV, "faultactor");
           element.setValue(fault.getFaultActor());
           element.output(context);
         }

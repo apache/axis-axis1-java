@@ -180,7 +180,7 @@ public class RPCElement extends SOAPBodyElement
  
         params.addElement(param);
         
-        context.pushElementHandler(param);
+        context.pushElementHandler(param.getContentHandler());
     }
 
     public void output(SerializationContext context)

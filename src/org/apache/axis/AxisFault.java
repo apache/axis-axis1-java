@@ -173,8 +173,7 @@ public class AxisFault extends Exception {
     SOAPEnvelope envelope = new SOAPEnvelope();
 
     SOAPFaultElement fault = 
-      new SOAPFaultElement(Constants.URI_SOAP_ENV, "Fault", null, null);
-    fault.setAxisFault(this);
+      new SOAPFaultElement(this);
     envelope.addBodyElement(fault);
 
     envelope.output(context);
