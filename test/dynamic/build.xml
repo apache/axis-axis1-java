@@ -59,6 +59,7 @@ Copyright:
         <path refid="classpath"/>
     </classpath>
     <include name="test/dynamic/*.java"/>
+    <include name="samples/client/*.java"/>
   </javac>
 </target>
 
