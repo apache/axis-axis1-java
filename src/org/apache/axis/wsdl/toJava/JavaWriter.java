@@ -121,7 +121,7 @@ public abstract class JavaWriter implements Generator {
 
     /** This controls how many characters per line for javadoc comments */
     protected final static int LINE_LENGTH = 65;
-    
+
     /** Field emitter */
     protected Emitter emitter;
 
@@ -130,9 +130,9 @@ public abstract class JavaWriter implements Generator {
 
     /**
      * Constructor.
-     * 
-     * @param emitter 
-     * @param type    
+     *
+     * @param emitter
+     * @param type
      */
     protected JavaWriter(Emitter emitter, String type) {
         this.emitter = emitter;
@@ -141,8 +141,8 @@ public abstract class JavaWriter implements Generator {
 
     /**
      * Generate a file.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void generate() throws IOException {
 
@@ -175,8 +175,8 @@ public abstract class JavaWriter implements Generator {
      * This method must be implemented by a subclass.  It
      * returns the fully-qualified name of the file to be
      * generated.
-     * 
-     * @return 
+     *
+     * @return
      */
     protected abstract String getFileName();
 
@@ -184,9 +184,9 @@ public abstract class JavaWriter implements Generator {
      * You should not need to override this method. It checks
      * to see whether the given file is in the List returned
      * by emitter.getGeneratedFileNames.
-     * 
-     * @param file 
-     * @return 
+     *
+     * @param file
+     * @return
      */
     protected boolean isFileGenerated(String file) {
         return emitter.getGeneratedFileNames().contains(file);
@@ -196,8 +196,8 @@ public abstract class JavaWriter implements Generator {
      * You should not need to override this method.
      * It registers the given file by calling
      * emitter.getGeneratedFileInfo().add(...).
-     * 
-     * @param file 
+     *
+     * @param file
      */
     protected void registerFile(String file) {
         emitter.getGeneratedFileInfo().add(file, null, type);
@@ -206,9 +206,9 @@ public abstract class JavaWriter implements Generator {
     /**
      * Return the string:  "Generating <file>".  Override this
      * method if you want to provide more information.
-     * 
-     * @param file 
-     * @return 
+     *
+     * @param file
+     * @return
      */
     protected String verboseMessage(String file) {
         return Messages.getMessage("generating", file);
@@ -217,10 +217,10 @@ public abstract class JavaWriter implements Generator {
     /**
      * You should not need to override this method.
      * Given the file name, it creates a PrintWriter for it.
-     * 
-     * @param filename 
-     * @return 
-     * @throws IOException 
+     *
+     * @param filename
+     * @return
+     * @throws IOException
      */
     protected PrintWriter getPrintWriter(String filename) throws IOException {
 
@@ -236,9 +236,9 @@ public abstract class JavaWriter implements Generator {
      * This method is intended to be overridden as necessary
      * to generate file header information.  This default
      * implementation does nothing.
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected void writeFileHeader(PrintWriter pw)
             throws IOException {
@@ -247,18 +247,18 @@ public abstract class JavaWriter implements Generator {
     /**
      * This method must be implemented by a subclass.  This
      * is where the body of a file is generated.
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected abstract void writeFileBody(PrintWriter pw) throws IOException;
 
     /**
      * You may want to override this method.  This default
      * implementation generates nothing.
-     * 
-     * @param pw 
-     * @throws IOException 
+     *
+     * @param pw
+     * @throws IOException
      */
     protected void writeFileFooter(PrintWriter pw)
             throws IOException {
@@ -266,8 +266,8 @@ public abstract class JavaWriter implements Generator {
 
     /**
      * Close the print writer.
-     * 
-     * @param pw 
+     *
+     * @param pw
      */
     protected void closePrintWriter(PrintWriter pw) {
         pw.close();
@@ -289,7 +289,7 @@ public abstract class JavaWriter implements Generator {
             //nothing to do
             return doc;
         }
-        
+
         // make @ tags start a new line (for javadoc tags mostly)
         // it will have a bad impact on e-mail address and such, but oh well
         // you should probobly be spam proofing your e-mail anyway
@@ -305,13 +305,13 @@ public abstract class JavaWriter implements Generator {
             newComments = new StringBuffer(doc);
         }
         newComments.insert(0, addTab ? "    * " : " * ");
-        
-        // tweak comment ending tags by insterting a 
+
+        // tweak comment ending tags by insterting a
         // space between the star and the slash, BUG13407
-        int pos = newComments.indexOf("*/");
+        int pos = newComments.toString().indexOf("*/");
         while (pos >= 0) {
             newComments.insert(pos + 1, ' ');
-            pos = newComments.indexOf("*/");
+            pos = newComments.toString().indexOf("*/");
         }
         
         // now pretty it up based on column length
@@ -319,7 +319,7 @@ public abstract class JavaWriter implements Generator {
         int newlinePos = 0;
         while (lineStart < newComments.length()) {
             lineStart = newlinePos + 1;
-            newlinePos = newComments.indexOf("\n", lineStart);
+            newlinePos = newComments.toString().indexOf("\n", lineStart);
             if (newlinePos == -1) {
                 newlinePos = newComments.length();
             }
@@ -330,15 +330,15 @@ public abstract class JavaWriter implements Generator {
                 lineStart += addTab ? 7 : 3;
             }
         }
-        
+
         return newComments.toString();
     }
-    
+
     /**
      * Output a documentation element as a Java comment.
-     * 
-     * @param pw      
-     * @param element 
+     *
+     * @param pw
+     * @param element
      */
     protected void writeComment(PrintWriter pw, Element element, boolean addTab) {
 
