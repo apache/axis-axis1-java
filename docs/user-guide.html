@@ -197,7 +197,7 @@ Sent 'Hello!', got 'Hello!'
   call <code>addParameter</code> for each parameter, like so:
 
 <div class="example">
-<pre>  call.addParameter( "testParam", org.apache.axis.encoding.XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+<pre>  call.addParameter( "testParam", org.apache.axis.encoding.XMLType.XSD_STRING, Call.PARAM_MODE_IN );</pre>
 </div><p>
 
 This will assign the name <b>testParam</b> to the 1st (and only) parameter
@@ -579,6 +579,90 @@ made the classes available to your Axis engine.
   would also get a companion class &quot;MyDataTypeHolder&quot;. These classes 
   exist so that we have a reasonably clean mapping for WSDL's in/out and out parameters 
   in Java. See the examples for more details.</p>
+<h4>Wsdl2java details</h4>
+Wsdl2java has a number of options, some of which have already been detailed.
+<p>Usage:&nbsp; java org.apache.axis.wsdl.Wsdl2java [options] WSDL-URI
+<br>Options:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -h, --help
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+print this message and exit
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -v, --verbose
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+print informational messages
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s, --skeleton
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+emit skeleton class for web service
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -m, --messageContext
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+emit a MessageContext parameter to skeleton methods
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mapping of namespace to package
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output &lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+output directory for emitted files
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -d, --deployScope &lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+add scope to deploy.xml: "Application", "Request", "Session"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -t, --testCase
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+emit junit testcase class for web service
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n, --noImports
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+only generate code for the immediate WSDL document
+<br>&nbsp;
+<h5>
+-h, --help</h5>
+Print the usage statement and exit
+<h5>
+-v, --verbose</h5>
+See what the tool is generating as it is generating it.
+<h5>
+-s, --skeleton</h5>
+Detailed above.
+<h5>
+-m, --messageContext</h5>
+The AXIS runtime contains a MessageContext that is normally not available
+to the server-side implementation.&nbsp; Turning on this option adds a
+MessageContext argument to each operation in the server-side interface
+so that the implementation can be given the context.
+<h5>
+-N, --NStoPkg &lt;argument>=&lt;value></h5>
+By default, package names are generated from the namespace strings in the
+WSDL document.&nbsp; Users can provide their own mapping using the --NStoPkg
+argument, which can be repeated as often as necessary, once for each unique
+namespace mapping.&nbsp; For example, if there is a namespace in the WSDL
+document called "urn:AddressFetcher2", and you want files generated from
+the objects within this namespace to reside in the package samples.addr,
+you would provide the following option to Wsdl2java:
+<pre>--NStoPkg urn:AddressFetcher2=samples.addr</pre>
+If there are a number of namespaces in the WSDL document, listing a mapping
+for them all could become tedious.&nbsp; To help keep the command line
+terse, Wsdl2java will also look for mappings in a file called NStoPkg.properties
+residing in the default package (ie., no package).&nbsp; The entries in
+this file are of the same form as the arguments to the --NStoPkg command
+line option.&nbsp; For example, instead of providing the command line option
+as above, we could provide the same information in NStoPkg.properties:
+<pre>urn\:AddressFetcher2=samples.addr</pre>
+(Note that the colon must be escaped in the properties file.)
+<p>If an entry for a given mapping exists both on the command line and
+in the properties file, the command line entry takes precedence.
+<h5>
+-o, --output &lt;argument></h5>
+The root directory for all emitted files.
+<h5>
+-d, --deployScope &lt;argument></h5>
+Add scope to deploy.xml: "Application", "Request", or "Session".&nbsp;
+If this option does not appear, no scope tag appears in deploy.xml, which
+the AXIS runtime defaults to "Request".
+<h5>
+-t, --testCase</h5>
+Generate a client-side JUnit test case.
+<h5>
+-n, --noImports</h5>
+Only generate code for the WSDL document that appears on the command line.&nbsp;
+The default behaviour is to generate files for all WSDL documents, the
+immediate one and all imported ones.
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
 <i>Note: this reference reflects the state of the deploy.xml structure as of the 
 alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
