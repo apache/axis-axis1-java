@@ -99,4 +99,9 @@ public class Use extends Enum {
         super(type, value, name);
         this.encoding = encoding;
     }
-};
+
+    protected Use() {
+        super(type, DEFAULT.getValue(), DEFAULT.getName());
+        this.encoding = DEFAULT.getEncoding();
+    }
+}

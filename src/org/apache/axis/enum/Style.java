@@ -159,4 +159,9 @@ public class Style extends Enum {
         super(type, value, name);
         this.provider = provider;
     }
-};
+
+    protected Style() {
+        super(type, DEFAULT.getValue(), DEFAULT.getName());
+        this.provider = DEFAULT.getProvider();
+    }
+}

@@ -92,12 +92,12 @@ public class JavaStubWriter extends JavaClassWriter {
     static Map uses = new HashMap();
 
     static {
-        styles.put(Style.DOCUMENT, "org.apache.axis.enum.Style.DOCUMENT");
-        styles.put(Style.RPC, "org.apache.axis.enum.Style.RPC");
-        styles.put(Style.MESSAGE, "org.apache.axis.enum.Style.MESSAGE");
-        styles.put(Style.WRAPPED, "org.apache.axis.enum.Style.WRAPPED");
-        uses.put(Use.ENCODED, "org.apache.axis.enum.Use.ENCODED");
-        uses.put(Use.LITERAL, "org.apache.axis.enum.Use.LITERAL");
+        styles.put(Style.DOCUMENT, "org.apache.axis.constants.Style.DOCUMENT");
+        styles.put(Style.RPC, "org.apache.axis.constants.Style.RPC");
+        styles.put(Style.MESSAGE, "org.apache.axis.constants.Style.MESSAGE");
+        styles.put(Style.WRAPPED, "org.apache.axis.constants.Style.WRAPPED");
+        uses.put(Use.ENCODED, "org.apache.axis.constants.Use.ENCODED");
+        uses.put(Use.LITERAL, "org.apache.axis.constants.Use.LITERAL");
     }
 
     /** Field OPERDESC_PER_BLOCK */

@@ -96,4 +96,8 @@ public class Scope extends Enum {
     private Scope(int value, String name) {
         super(type, value, name);
     }
-};
+    
+    protected Scope() {
+        super(type, DEFAULT.getValue(), DEFAULT.getName());
+    }
+}
