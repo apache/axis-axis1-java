@@ -515,7 +515,6 @@
          file is only for reference.
      -->
     <!-- <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl" -->
-  <!-- Site is offline
     <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
                output="build/work"
                verbose="no"
@@ -524,7 +523,6 @@
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
                
     </wsdl2java>
-  -->
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 
