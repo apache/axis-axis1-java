@@ -63,6 +63,7 @@ import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
+import java.io.File;
 
 /**
  * Some more general docs will go here.
@@ -169,9 +170,36 @@ public class MessageContext {
     public static MessageContext getCurrentContext() {
        return AxisEngine.getCurrentMessageContext();
     }
+    protected static String systemTempDir= null;
+    static {
+            try{
+                systemTempDir=System.getProperty("axis.attachments.Directory");
+            } catch(Throwable t){systemTempDir= null;} 
+
+            if(systemTempDir== null)   
+                try{
+                    File tf= File.createTempFile("Axis", "Axis");
+                    File dir= tf.getParentFile();
+                    if(tf.exists()) tf.delete(); 
+                    if(dir != null){
+                      systemTempDir= dir.getCanonicalPath();
+                    }
+                }catch(Throwable t){systemTempDir= null;}
+    }
 
     public MessageContext(AxisEngine engine) {
         this.axisEngine = engine;
+
+        if(null != engine){
+            java.util.Hashtable opts= engine.getOptions();        
+            String attachmentsdir= null;
+            if(null!=opts) attachmentsdir= (String)
+                opts.get(AxisEngine.PROP_ATTACHMENT_DIR);
+            if(null == attachmentsdir) attachmentsdir= systemTempDir; 
+            if(attachmentsdir != null){
+                setProperty(ATTACHMENTS_DIR, attachmentsdir);
+            }
+        }
     }
     
     /**
@@ -453,6 +481,9 @@ public class MessageContext {
   
     /** If on the client - this is the Call object */
     public static String CALL                = "call_object" ;
+
+    /** The directory where in coming attachments are created. */
+    public static String ATTACHMENTS_DIR   = "attachments.directory" ;
 
     /** Just a util so we don't have to cast the result
      */
