@@ -96,14 +96,13 @@ public class TestArrays2TestCase extends junit.framework.TestCase {
                 new org.apache.axis.encoding.ser.BeanDeserializerFactory(
                         InnerDataType.class,
                         new javax.xml.namespace.QName("http://www.xyz.net/schemas/arraytest/innerdata/1.0", "innerDataType")));
-
-        tm.register(TrDescrType.class,
+        tm.register(String.class,
                 new javax.xml.namespace.QName("http://www.xyz.net/schemas/arraytest/innerdata/1.0", "trDescrType"),
-                new org.apache.axis.encoding.ser.BeanSerializerFactory(
-                        TrDescrType.class,
+                new org.apache.axis.encoding.ser.SimpleSerializerFactory(
+                        String.class,
                         new javax.xml.namespace.QName("http://www.xyz.net/schemas/arraytest/innerdata/1.0", "trDescrType")),
-                new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-                        TrDescrType.class,
+                new org.apache.axis.encoding.ser.SimpleDeserializerFactory(
+                        String.class,
                         new javax.xml.namespace.QName("http://www.xyz.net/schemas/arraytest/innerdata/1.0", "trDescrType")));
 
         tm.register(DataRequestType.class,
@@ -133,6 +132,6 @@ public class TestArrays2TestCase extends junit.framework.TestCase {
         InnerDataType inner[] = result.getInnerData();
         assertTrue(inner != null);
         assertEquals(inner.length, 10);
-        assertEquals(inner[9].getTrDescr().getValue().trim(),"desc#9 HELLO!");
+        assertEquals(inner[9].getTrDescr().trim(),"desc#9 HELLO!");
     }
 }
