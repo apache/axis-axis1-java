@@ -68,6 +68,7 @@ import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
+import junit.framework.AssertionFailedError;
 
 /** Test the stock sample code.
  */
@@ -113,9 +114,9 @@ public class TestTCPTransportSample extends TestCase {
             if (ret instanceof Float) {
                 res = (Float) ret;
                 // System.out.println( symbol + ": " + res );
-                assertEquals("TestTCPTransportSample: stock price should be 55.25", res.floatValue(), 55.25, 0.000001);
+                assertEquals("TestTCPTransportSample: stock price should be 55.25 +/- 0.000001", res.floatValue(), 55.25, 0.000001);
             } else {
-                throw new Exception("Bad return value from TCP stock test: "+ret);
+                throw new AssertionFailedError("Bad return value from TCP stock test: "+ret);
             }
         }
         
@@ -123,7 +124,7 @@ public class TestTCPTransportSample extends TestCase {
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
-            throw new Exception("Fault returned from TCP stock test: "+e);
+            throw new AssertionFailedError("Fault returned from TCP stock test: "+e);
         }
     }
     
@@ -152,7 +153,7 @@ public class TestTCPTransportSample extends TestCase {
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
+            throw new AssertionFailedError("Fault returned from test: "+e);
         }
     }
     
