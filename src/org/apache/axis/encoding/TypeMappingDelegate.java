@@ -56,8 +56,8 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;

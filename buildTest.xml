@@ -65,6 +65,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
                  <exclude name="test/wsdl/interop3/**/build.xml" />
                </patternset>
              </fileset>

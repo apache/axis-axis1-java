@@ -55,8 +55,8 @@
 
 package org.apache.axis.utils.bytecode;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

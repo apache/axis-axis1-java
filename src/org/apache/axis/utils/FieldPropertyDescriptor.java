@@ -60,6 +60,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Array;
 import java.beans.PropertyDescriptor;
 
+import org.apache.axis.components.i18n.*;
+
 /**
  *
  * @author Glen Daniels (gdaniels@apache.org)

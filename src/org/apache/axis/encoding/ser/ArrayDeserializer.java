@@ -63,9 +63,9 @@ import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;

@@ -59,8 +59,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.messaging.Endpoint;
 
 import org.apache.axis.client.Call;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.Messages;
 
 /**
  * SOAP Connection implementation

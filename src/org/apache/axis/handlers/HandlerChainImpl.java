@@ -55,9 +55,9 @@
 
 package org.apache.axis.handlers;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.handler.Handler;

@@ -59,11 +59,11 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.rpc.ServiceException;

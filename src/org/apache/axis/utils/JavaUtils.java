@@ -88,6 +88,7 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.components.image.ImageIO;
 import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.*;
 import org.apache.axis.types.HexBinary;
 import org.apache.commons.logging.Log;
 

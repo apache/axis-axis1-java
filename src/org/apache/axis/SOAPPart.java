@@ -62,11 +62,11 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
 import org.apache.axis.transport.http.HTTPConstants;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.InputSource;

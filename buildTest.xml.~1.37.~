@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:xmls/targets.xml">
+]>
+
+<project default="printEnv" basedir=".">
+<!-- =================================================================== -->
+<description>
+   Test Files Build file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Optional components:
+   SOAP Attachment support enablement:
+     activation.jar from http://java.sun.com/products/javabeans/glasgow/jaf.html
+     mailapi.jar    from http://java.sun.com/products/javamail/
+   Security support enablement:
+     xmlsec.jar from fresh build of CVS from http://xml.apache.org/security/
+     Other support jars from http://cvs.apache.org/viewcvs.cgi/xml-security/libs/
+
+Build Instructions:
+   To build, run
+
+     ant "target"
+
+   on the directory where this file is located with the target you want.
+
+Most useful targets:
+
+ - compile  : compiles the tests and WSDL files
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+<!-- ==================================================================== -->
+
+      &properties;
+      &paths;
+      &taskdefs;
+      &taskdefs_post_compile;
+      &targets;
+
+  <!-- Give user a chance to override without editing this file
+       (and without typing -D each time it compiles it) -->
+  <property file="test.properties"/>
+  <property file="${user.home}/test.properties"/>
+
+<!-- =========================================================================== -->
+  <target name="compile" depends="printEnv,copy">
+    <!-- Compile the code -->
+    <foreach target="component-compile" fork="${foreach.fork}">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+               <patternset>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
+               </patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the JUnit testcases -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit package testcases -->
+  <!-- =================================================================== -->
+  <target name="junit" if="junit.present">
+    <junit printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" />
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dir}/classes">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+          <include name="**/PackageTests.class" />
+          <!-- <include name="**/test/*TestSuite.class"/> -->
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Functional tests, no server (for testing under debugger)            -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-noserver">
+    <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
+      <property name="test.functional.usefile" value="${test.functional.usefile}"/>
+    </ant>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Interop 3                                                           -->
+  <!-- =================================================================== -->
+  <target name="interop3" depends="compile">
+    <ant dir="test/wsdl/interop3/import1"/>
+    <ant dir="test/wsdl/interop3/import2"/>
+    <ant dir="test/wsdl/interop3/import3"/>
+    <ant dir="test/wsdl/interop3/compound1"/>
+    <ant dir="test/wsdl/interop3/compound2"/>
+    <ant dir="test/wsdl/interop3/docLit"/>
+    <ant dir="test/wsdl/interop3/docLitParam"/>
+    <ant dir="test/wsdl/interop3/rpcEnc"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Cleans everything                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete dir="${build.dir}/test"/>
+  </target>
+
+  <target name="copy"/>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional-prepare" if="junit.present">
+          <path id="deploy.xml.files">
+                <fileset dir="${build.dir}/work">
+                  <include name="**/deploy.wsdd"/>
+                </fileset>
+          </path>
+
+          <path id="undeploy.xml.files">
+                <fileset dir="${build.dir}/work">
+                  <include name="**/undeploy.wsdd"/>
+                </fileset>
+          </path>
+          <property name="deploy.xml.property" refid="deploy.xml.files"/>
+          <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${deploy.xml.property}"/>
+    </java>
+
+    <!-- now, run the actual test -->
+    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <!-- Pass through the proxy parameters -->
+      <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
+      <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
+      <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
+      <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
+      <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
+      <!-- Pass the port for SimpleAxisServer -->
+      <jvmarg value="-Dtest.functional.SimpleAxisPort=${test.functional.SimpleAxisPort}"/>
+      <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
+      <classpath refid="classpath" />
+      <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dest}">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+              <include name="**/FunctionalTests.class" />
+              <include name="**/*TestCase.class" />
+              <exclude name="**/Interop3TestCase.class"/>
+              <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${undeploy.xml.property}"/>
+    </java>
+  </target>
+
+  <target name="junit-functional-secure" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+    <!-- now, run the actual test -->
+    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dest}">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+              <include name="**/TestBidBuySample.class" />
+              <exclude name="**/Interop3TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run functional tests                                                -->
+  <!-- =================================================================== -->
+  <target name="functional-tests" depends="printEnv,transport-layer" if="junit.present" >
+    <!-- This uses a custom Ant task.  See test/functional/ant/RunAxisFunctionalTests.java -->
+    <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
+
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+
+    <!-- now run security test -->
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional-secure"
+      stopTarget="stop-functional-test-http-server-secure" />
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run simple tests                                                -->
+  <!-- =================================================================== -->
+  <target name="simple-tests" depends="setenv" if="junit.present" >
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="printEnv"
+      stopTarget="stop-functional-test-http-server" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!--   This simply echos the component files, for sanity checks -->
+  <!-- =================================================================== -->
+  <target name="echoTest" >
+    <foreach target="echo-file" fork="${foreach.fork}">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+                <patternset>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <!-- =================================================================== -->
+  <!--    This runs each test component, instantiating the server each time -->
+  <!-- =================================================================== -->
+  <target name="componentTest" >
+    <foreach target="batch-component-run" fork="${foreach.fork}">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+                <patternset>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <!-- =================================================================== -->
+  <!--    This runs all the tests, but only execs the server ONCE -->
+  <!-- =================================================================== -->
+  <target name="batchTest" depends="transport-layer">
+    <runaxisfunctionaltests
+      url="http://localhost:${test.functional.TCPListenerPort}"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="batch-junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+
+    <ant antfile="${axis.home}/test/functional/build.xml" target="run"/>
+   </target>
+
+   <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
+    <foreach target="batch-component-test" fork="${foreach.fork}">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+                <patternset>
+                 <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/interop/build.xml" />
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
+    </target>
+
+    <!-- generate a report from all the tests. 
+        requires Xalan or other XSLT engine in ant\lib-->
+    <target name="create-test-report" >
+      <mkdir dir="${test.reports.dir}"/>
+      <junitreport todir="${test.functional.reportdir}">
+        <fileset dir="${test.functional.reportdir}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${test.reports.dir}"/>
+      </junitreport>
+    </target>
+
+</project>

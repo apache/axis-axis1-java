@@ -56,8 +56,8 @@ package org.apache.axis.types;
 
 import java.util.ArrayList;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedLong

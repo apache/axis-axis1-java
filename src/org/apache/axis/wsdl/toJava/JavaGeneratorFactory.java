@@ -74,11 +74,11 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.wsdl.Service;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.gen.NoopGenerator;
 import org.apache.axis.wsdl.gen.Generator;

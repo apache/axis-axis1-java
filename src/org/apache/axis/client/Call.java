@@ -84,9 +84,9 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;

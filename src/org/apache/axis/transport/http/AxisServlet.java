@@ -85,10 +85,10 @@ import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;

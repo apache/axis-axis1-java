@@ -21,7 +21,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 
-import org.apache.axis.utils.Messages;
+import org.apache.axis.components.i18n.Messages;
 
 /**
  * This TestCase verifies that content of the source files adheres

@@ -68,10 +68,10 @@ import org.apache.axis.soap.SOAP11Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.schema.SchemaVersion;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
