@@ -321,6 +321,9 @@ Copyright:
         <exclude name="**/CVS/**"/>
       </fileset>
     </copy>
+    <copy todir="${dist.dir}/docs/apiDocs">
+      <fileset dir="${build.javadocs}"/>
+    </copy>
     <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
   </target>
 
