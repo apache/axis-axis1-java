@@ -154,6 +154,7 @@ public class ServiceDesc {
     private HashMap name2OperationsMap = null;
     private HashMap qname2OperationsMap = null;
     private HashMap method2OperationMap = new HashMap();
+    private HashMap method2ParamsMap = new HashMap();
 
     /** Method names for which we have completed any introspection necessary */
     private ArrayList completedNames = new ArrayList();
@@ -959,8 +960,7 @@ public class ServiceDesc {
         operation.setReturnClass(retClass);
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
-        String [] paramNames =
-                ParamNameExtractor.getParameterNamesFromDebugInfo(method);
+        String [] paramNames = getParamNames(method);
 
         for (int k = 0; k < paramTypes.length; k++) {
             Class type = paramTypes[k];
@@ -1058,6 +1058,17 @@ public class ServiceDesc {
 
         addOperationDesc(operation);
         method2OperationMap.put(method, operation);
+    }
+
+    private String[] getParamNames(Method method) {
+        synchronized (method2ParamsMap) {
+            String [] paramNames = (String []) method2ParamsMap.get(method);
+            if(paramNames != null)
+                return paramNames;
+            paramNames = ParamNameExtractor.getParameterNamesFromDebugInfo(method);
+            method2ParamsMap.put(method, paramNames);
+            return paramNames;
+        }
     }
 
     public void setNamespaceMappings(List namespaces) {

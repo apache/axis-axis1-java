@@ -75,14 +75,6 @@ public class ParamNameExtractor {
             LogFactory.getLog(ParamNameExtractor.class.getName());
 
     /**
-     * Cache of ParamReader objects which correspond to particular
-     * Java classes.
-     *
-     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
-     */
-    private static Hashtable paramCache = new Hashtable();
-
-    /**
      * Retrieve a list of function parameter names from a method
      * Returns null if unable to read parameter names (i.e. bytecode not
      * built with debug).
@@ -95,27 +87,16 @@ public class ParamNameExtractor {
 
         // get declaring class
         Class c = method.getDeclaringClass();
-        
-        // Try to obtain a ParamReader class object from cache
-        ParamReader pr = (ParamReader) paramCache.get(c);
-
-        if (pr == null) {
-            try {
-                // get a parameter reader
-                pr = new ParamReader(c);
-                // cache it
-                paramCache.put(c, pr);
-            } catch (IOException e) {
-                // log it and leave
-                log.info(Messages.getMessage("error00") + ":" + e);
-                return null;
-            }
+        try {
+            // get a parameter reader
+            ParamReader pr = new ParamReader(c);
+            // get the paramter names
+            String[] names = pr.getParameterNames(method);
+            return names;
+        } catch (IOException e) {
+            // log it and leave
+            log.info(Messages.getMessage("error00") + ":" + e);
+            return null;
         }
-
-        // get the paramter names
-        String[] names = pr.getParameterNames(method);
-
-        return names;
     }
 }
-
