@@ -90,7 +90,6 @@ public class ArraySerializer implements Serializer
     protected static Log log =
         LogFactory.getLog(ArraySerializer.class.getName());
 
-    QName componentQName;
     /**
      * Serialize an element that is an array.
      * @param name is the element name
@@ -139,7 +138,7 @@ public class ArraySerializer implements Serializer
 
         // Get the QName of the componentType.  
         // If not found, look at the super classes
-        componentQName = context.getQNameForClass(componentType);
+        QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null) {
             Class searchCls = componentType;
             while(searchCls != null && componentQName == null) {
