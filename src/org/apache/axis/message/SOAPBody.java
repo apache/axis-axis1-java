@@ -80,8 +80,28 @@ public class SOAPBody {
       root = null ;
   }
 
+  public SOAPBody(org.w3c.dom.Document doc) {
+    if ( doc != null ) {
+      org.jdom.input.DOMBuilder builder = null ;
+      builder = new org.jdom.input.DOMBuilder();
+      root = builder.build( doc ).getRootElement();
+    }
+    else
+      root = null ;
+  }
+
   public SOAPBody(Element elem) {
     root = elem ;
+  }
+
+  public SOAPBody(org.w3c.dom.Element elem) {
+    if ( elem != null ) {
+      org.jdom.input.DOMBuilder builder = null ;
+      builder = new org.jdom.input.DOMBuilder();
+      root = builder.build( elem );
+    }
+    else
+      root = null ;
   }
 
   public Element getRoot() {
@@ -90,6 +110,13 @@ public class SOAPBody {
 
   public void setRoot(Element r) {
     this.root = r ;
+  }
+
+  public void setRoot(org.w3c.dom.Element elem) {
+    if ( elem == null ) return ;
+    org.jdom.input.DOMBuilder builder = null ;
+    builder = new org.jdom.input.DOMBuilder();
+    setRoot( builder.build(elem) );
   }
 
   public org.w3c.dom.Element getAsDOMElement() throws AxisFault {
