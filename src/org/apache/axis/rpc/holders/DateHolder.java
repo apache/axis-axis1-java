@@ -52,16 +52,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-public final class LongHolder implements java.io.Serializable {
+import java.util.Date;
 
-    public long _value;
+public final class DateHolder implements java.io.Serializable {
 
-    public LongHolder () {
+    public Date _value;
+
+    public DateHolder () {
     }
 
-    public LongHolder (long value) {
+    public DateHolder (Date value) {
         this._value = value;
     }
 }

@@ -52,16 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-public final class ByteHolder implements java.io.Serializable {
+public final class LongHolder implements java.io.Serializable {
 
-    public byte _value;
+    public long _value;
 
-    public ByteHolder () {
+    public LongHolder () {
     }
 
-    public ByteHolder (byte value) {
+    public LongHolder (long value) {
         this._value = value;
     }
 }

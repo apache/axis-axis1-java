@@ -52,23 +52,16 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl;
+package org.apache.axis.rpc.holders;
 
-import java.io.Serializable;
+public final class ShortHolder implements java.io.Serializable {
 
-import java.net.URL;
+    public short _value;
 
-import javax.naming.Referenceable;
+    public ShortHolder () {
+    }
 
-/**
- * Base class for generating Web Service stubs from WSDL.
- *
- * @
- */
-public abstract class Stub implements Serializable, Referenceable
-{
-    public abstract void _setProperty (String name, Object value);
-    public abstract Object _getProperty (String name);
-    public abstract void _setTargetEndpoint (URL address);
-    public abstract URL _getTargetEndpoint ();
-} // abstract class Stub
+    public ShortHolder (short value) {
+        this._value = value;
+    }
+}

@@ -52,16 +52,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.holders;
+package org.apache.axis.rpc.holders;
 
-public final class BooleanHolder implements java.io.Serializable {
+// NOTE!!!  QName is supposed to be javax.xml.rpc.namespace.QName, but until
+// support this type, QName will remain a String.
 
-    public boolean _value;
+public final class QNameHolder implements java.io.Serializable {
 
-    public BooleanHolder () {
+    public String _value;
+
+    public QNameHolder () {
     }
 
-    public BooleanHolder (boolean value) {
+    public QNameHolder (String value) {
         this._value = value;
     }
 }
