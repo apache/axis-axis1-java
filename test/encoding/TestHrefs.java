@@ -27,12 +27,12 @@ public class TestHrefs extends TestCase {
         this(name, Constants.URI_CURRENT_SCHEMA_XSI, 
                    Constants.URI_CURRENT_SCHEMA_XSD);
     }
-    
+
     public static void main(String [] args)
     {
         TestHrefs tester = new TestHrefs("me");
         try {
-            tester.testString();
+            tester.testStringReference();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,10 +85,10 @@ public class TestHrefs extends TestCase {
        assertNotNull("param", param);
 
        Object result = param.getValue();
-       assertEquals(expected, result);
+       assertEquals("case " + pos, expected, result);
     }
 
-    public void testString() {
+    public void testStringReference() {
         deserialize("<result id=\"1\" xsi:type=\"xsd:string\">abc</result>",
                     "abc", 0);
         deserialize("<result id=\"1\" xsi:type=\"xsd:string\">abc</result>",
