@@ -81,7 +81,6 @@ public class SimpleSecurityProvider implements SecurityProvider {
 
     // load the users list
     static {
-        category.setPriority(Priority.DEBUG);
         File userFile = new File("users.lst");
         if (userFile.exists()) {
             users = new HashMap();

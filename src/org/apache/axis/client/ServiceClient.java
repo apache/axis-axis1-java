@@ -184,6 +184,13 @@ public class ServiceClient {
     // The message context we use across invocations
     private MessageContext msgContext;
 
+    // Collection of properties to store and put in MessageContext at
+    // invoke() time
+    private Hashtable myProperties = null;
+
+    private int timeout;
+    private boolean maintainSession;
+
     // Our Transport, if any
     private Transport transport;
     private String    transportName;
@@ -320,7 +327,12 @@ public class ServiceClient {
      * @param value the value of the property.
      */
     public void set (String name, Object value) {
-        msgContext.setProperty(name, value);
+        if (name == null || value == null)
+            return;
+        if (myProperties == null) {
+            myProperties = new Hashtable();
+        }
+        myProperties.put(name, value);
     }
 
     /**
@@ -330,7 +342,8 @@ public class ServiceClient {
      * @return the property's value.
      */
     public Object get (String name) {
-        return msgContext.getProperty(name);
+        return (name == null || myProperties == null) ? null :
+                                                        myProperties.get(name);
     }
 
     /**
@@ -339,7 +352,7 @@ public class ServiceClient {
      * @param value the maximum amount of time, in milliseconds
      */
     public void setTimeout (int value) {
-        msgContext.setTimeout(value);
+        timeout = value;
     }
 
     /**
@@ -348,7 +361,7 @@ public class ServiceClient {
      * @return value the maximum amount of time, in milliseconds
      */
     public int getTimeout () {
-        return msgContext.getTimeout();
+        return timeout;
     }
 
     /**
@@ -381,7 +394,7 @@ public class ServiceClient {
      * @param yesno true if session state is desired, false if not.
      */
     public void setMaintainSession (boolean yesno) {
-        msgContext.setMaintainSession(yesno);
+        maintainSession = yesno;
     }
 
     /**
@@ -525,7 +538,6 @@ public class ServiceClient {
 
         msgContext.setRequestMessage(reqMsg);
         msgContext.setResponseMessage(resMsg);
-        msgContext.setServiceDescription(this.serviceDesc);
 
         reqEnv.addBodyElement(body);
         reqEnv.setMessageType(ServiceDescription.REQUEST);
@@ -618,7 +630,21 @@ public class ServiceClient {
     public void invoke() throws AxisFault {
         category.debug("Enter: Service::invoke()" );
 
+        msgContext.reset();
+
+        msgContext.setTimeout(timeout);
+
+        if (myProperties != null) {
+            Enumeration enum = myProperties.keys();
+            while (enum.hasMoreElements()) {
+                String name = (String) enum.nextElement();
+                Object value = myProperties.get(name);
+                msgContext.setProperty(name, value);
+            }
+        }
+
         msgContext.setServiceDescription(serviceDesc);
+        msgContext.setMaintainSession(maintainSession);
 
         // set up message context if there is a transport
         if (transport != null) {
@@ -629,6 +655,9 @@ public class ServiceClient {
 
         try {
             engine.invoke( msgContext );
+
+            if (transport != null)
+                transport.processReturnedMessageContext(msgContext);
         }
         catch( AxisFault fault ) {
             category.error( fault );

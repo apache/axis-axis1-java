@@ -81,7 +81,9 @@ public class HTTPTransport extends Transport
      */
     static public String URL = MessageContext.TRANS_URL;
     static public String ACTION = HTTPConstants.MC_HTTP_SOAPACTION;
-    
+
+    private String cookie;
+    private String cookie2;
     private String action;
     
     public HTTPTransport () {
@@ -111,12 +113,23 @@ public class HTTPTransport extends Transport
         throws AxisFault
     {
         if (action != null) mc.setProperty(ACTION, action);
-        
+
+        // Set up any cookies we know about
+        if (cookie != null)
+            mc.setProperty(HTTPConstants.HEADER_COOKIE, cookie);
+        if (cookie2 != null)
+            mc.setProperty(HTTPConstants.HEADER_COOKIE, cookie2);
+
         // Allow the SOAPAction to determine the service, if the service
         // (a) has not already been determined, and (b) if a service matching
         // the soap action has been deployed.
         if (mc.getServiceHandler() == null) {
             mc.setTargetService( (String)mc.getProperty(ACTION) );
         }
+    }
+
+    public void processReturnedMessageContext(MessageContext context) {
+        cookie = context.getStrProp(HTTPConstants.HEADER_COOKIE);
+        cookie2 = context.getStrProp(HTTPConstants.HEADER_COOKIE2);
     }
 }

@@ -188,6 +188,7 @@ public class Message {
             try {
                 getAsSOAPEnvelope();
             } catch (Exception e) {
+                category.fatal("Couldn't make envelope", e);
                 return null;
             }
         }
