@@ -456,6 +456,7 @@ public class Constants {
     public static final String ELEM_FAULT_NODE_SOAP12 = "Node" ;
     public static final String ELEM_FAULT_ROLE_SOAP12 = "Role" ;
     public static final String ELEM_FAULT_DETAIL_SOAP12 = "Detail" ;
+    public static final String ELEM_TEXT_SOAP12 = "Text" ;    
 
     public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
     public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
@@ -523,6 +524,8 @@ public class Constants {
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_SUBCODE_SOAP12);
     public static final QName QNAME_FAULTREASON_SOAP12 =
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_REASON_SOAP12);
+    public static final QName QNAME_TEXT_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_TEXT_SOAP12);
 
     public static final QName QNAME_FAULTNODE_SOAP12 =
                                          new QName(URI_SOAP12_ENV, ELEM_FAULT_NODE_SOAP12);
