@@ -180,7 +180,7 @@ public class RPCElement extends SOAPBodyElement
         }
 */
         if (encodingStyle != null) {
-            setAttribute(Constants.URI_SOAP_ENC,
+            setAttribute(Constants.URI_CURRENT_SOAP_ENC,
                          Constants.ATTR_ENCODING_STYLE,
                          encodingStyle);
         }
