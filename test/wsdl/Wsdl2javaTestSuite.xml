@@ -16,17 +16,33 @@
   </taskdef>
 
   <target name="main">
+
+    <!-- AddressBook Sample -->
     <wsdl2java url="samples/addr/AddressBook.wsdl"
                deployscope="session"
                output="build/work"
                testcase="no">
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
+
+    <!-- InOut Sample -->
     <wsdl2java url="test/inout/inout.wsdl"
                output="build/work"
                testcase="no">
         <mapping namespace="http://www.ibm.com/inout" package="test.inout"/>
     </wsdl2java>
+
+    <!-- SOAPBuilders Interoperability Lab "Round 1" -->
+    <!--     http://www.xmethods.net/ilab/           -->
+    <wsdl2java url="http://www.xmethods.net/tmodels/InteropTest.wsdl"
+               output="build/work"
+               testcase="no">
+        <mapping namespace="http://soapinterop.org/" package="net.xmethods"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="net.xmethods"/>
+    </wsdl2java>
+
+    <!-- SOAPBuilders Interoperability Lab "Round 2" -->
+    <!--     http://www.whitemesa.com/interop.htm    -->
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
                output="build/work"
                testcase="no">

@@ -87,6 +87,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -464,10 +466,12 @@ public class Emitter {
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
         HashMap portTypeInfo = new HashMap();
-        List operations = portType.getOperations();
-
-        for (int i = 0; i < operations.size(); ++i) {
-            Operation operation = (Operation) operations.get(i);
+        // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+        // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+        // TODO: Remove this patch...
+        Iterator operations = (new HashSet(portType.getOperations())).iterator();
+        while(operations.hasNext()) {
+            Operation operation = (Operation) operations.next();
             Parameters operationInfo = writeOperation(operation, portType.getQName().getNamespaceURI(), interfacePW);
 
             portTypeInfo.put(operation, operationInfo);
