@@ -128,11 +128,10 @@ public class Namespaces extends HashMap {
      * @param map packageName/namespace map
      */
     public void putAll(Map map) {
-        Iterator i = map.keySet().iterator();
+        Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
-            Object key = i.next();
-            String namespace = (String) map.get(key);
-            put(key, namespace, null);
+            Map.Entry entry = (Map.Entry) i.next();
+            put(entry.getKey(), entry.getValue(), null);
         }
     }
 
@@ -164,11 +163,10 @@ public class Namespaces extends HashMap {
      * @param map packageName/namespace map
      */
     public void putAllPrefix(Map map) {
-        Iterator i = namespacePrefixMap.keySet().iterator();
+        Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
-            Object key = i.next();
-            String prefix = (String) map.get(key);
-            put(key, prefix);
+            Map.Entry entry = (Map.Entry) i.next();
+            put(entry.getKey(), entry.getValue());
         }
     }
 

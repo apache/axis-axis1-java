@@ -71,6 +71,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -151,13 +152,14 @@ public class SimpleSessionHandler extends BasicHandler
         }
         
         if (reap) {
-            Set keys = activeSessions.keySet();
+            Set entries = activeSessions.entrySet();
             Set victims = new HashSet();
             Object key;
             Iterator i;
-            for (i = keys.iterator(); i.hasNext();) {
-                key = i.next();
-                SimpleSession session = (SimpleSession)activeSessions.get(key);
+            for (i = entries.iterator(); i.hasNext();) {
+                Map.Entry entry = (Map.Entry) i.next();
+                key = entry.getKey();
+                SimpleSession session = (SimpleSession) entry.getValue();
                 if ((curTime - session.getLastAccessTime()) >
                      (session.getTimeout() * 1000)) {
                     log.debug(JavaUtils.getMessage("timeout00",

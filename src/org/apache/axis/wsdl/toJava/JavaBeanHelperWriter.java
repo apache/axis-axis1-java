@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
@@ -182,10 +183,11 @@ public class JavaBeanHelperWriter extends JavaWriter {
             }
 
             if (elementMappings != null) {
-                Iterator i = elementMappings.keySet().iterator();
+                Iterator i = elementMappings.entrySet().iterator();
                 while (i.hasNext()) {
-                    String fieldName = (String)i.next();
-                    QName xmlName = (QName)elementMappings.get(fieldName);
+                    Map.Entry entry = (Map.Entry) i.next();
+                    String fieldName = (String)entry.getKey();
+                    QName xmlName = (QName) entry.getValue();
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");

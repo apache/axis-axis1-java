@@ -514,22 +514,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public Iterator getPorts() {
         if ( wsdlService == null ) return( null );
-        Map       map  = wsdlService.getPorts();
+        Map map = wsdlService.getPorts();
 
         if ( map == null ) return( null );
 
-        Set       set   = map.keySet();
-        Iterator  iter  = set.iterator();
-        Set       ports = null ;
-
-        while ( iter.hasNext() ) {
-            String name = (String) iter.next();
-            Port   port = (Port) map.get( name );
-            if ( ports == null ) ports = new HashSet();
-            ports.add( port );
-        }
-        if ( ports == null ) return( null );
-        return( ports.iterator() );
+        return map.values().iterator();
     }
 
     /**

@@ -115,10 +115,11 @@ public class JavaDefinitionWriter implements Writer {
         collectFaults(definition, faults);
 
         // iterate over fault list, emitting code.
-        Iterator fi = faults.keySet().iterator();
+        Iterator fi = faults.entrySet().iterator();
         while (fi.hasNext()) {
-            Fault fault = (Fault) fi.next();
-            QName faultQName = (QName) faults.get(fault);
+            Map.Entry entry = (Map.Entry) fi.next();
+            Fault fault = (Fault) entry.getKey();
+            QName faultQName = (QName) entry.getValue();
             new JavaFaultWriter(emitter, faultQName, fault, symbolTable).write();
         }
     } // writeFaults
@@ -130,9 +131,9 @@ public class JavaDefinitionWriter implements Writer {
     private void collectFaults(Definition def, Map faults) throws IOException {
         Vector faultList = new Vector();
         Map imports = def.getImports();
-        Object[] importKeys = imports.keySet().toArray();
-        for (int i = 0; i < importKeys.length; ++i) {
-            Vector v = (Vector) imports.get(importKeys[i]);
+        Object[] importValues = imports.values().toArray();
+        for (int i = 0; i < importValues.length; ++i) {
+            Vector v = (Vector) importValues[i];
             for (int j = 0; j < v.size(); ++j) {
                 Import imp = (Import) v.get(j);
                 if (!importedFiles.contains(imp.getLocationURI())) {
