@@ -66,7 +66,8 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
@@ -84,8 +85,8 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FileProvider implements EngineConfiguration {
-    private static Category category =
-       Category.getInstance(FileProvider.class.getName());
+    private static Log log =
+       LogFactory.getLog(FileProvider.class.getName());
 
     protected String sep = System.getProperty("file.separator");
 
@@ -126,7 +127,7 @@ public class FileProvider implements EngineConfiguration {
          * as configuration changes will not persist.
          */
         if (readOnly) {
-            category.info(JavaUtils.getMessage("readOnlyConfigFile"));
+            log.info(JavaUtils.getMessage("readOnlyConfigFile"));
         }
     }
 

@@ -57,7 +57,9 @@ package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
@@ -72,8 +74,8 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FaultableHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(FaultableHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(FaultableHandler.class.getName());
 
     protected Handler    workHandler ;
 
@@ -101,12 +103,12 @@ public class FaultableHandler extends BasicHandler {
      * and already done its fault processing - as needed.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::invoke"));
+        log.debug(JavaUtils.getMessage("enter00", "FaultableHandler::invoke"));
         try {
             workHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            category.error( e );
+            log.error( e );
             AxisFault fault = AxisFault.makeFault(e);
 
             AxisEngine engine = msgContext.getAxisEngine();
@@ -144,16 +146,16 @@ public class FaultableHandler extends BasicHandler {
                 throw fault;
             }
         }
-        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::invoke"));
+        log.debug(JavaUtils.getMessage("exit00", "FaultableHandler::invoke"));
     }
 
     /**
      * Some handler later on has faulted so we need to process the fault.
      */
     public void onFault(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::onFault"));
+        log.debug(JavaUtils.getMessage("enter00", "FaultableHandler::onFault"));
         workHandler.onFault( msgContext );
-        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::onFault"));
+        log.debug(JavaUtils.getMessage("exit00", "FaultableHandler::onFault"));
     };
 
     public boolean canHandleBlock(QName qname) {

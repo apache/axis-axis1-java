@@ -59,7 +59,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
@@ -72,11 +73,11 @@ import java.net.Socket;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class TCPSender extends BasicHandler {
-    static Category category =
-            Category.getInstance(TCPSender.class.getName());
+    static Log log =
+            LogFactory.getLog(TCPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.info( "Enter: TCPSender::invoke" );
+        log.info( "Enter: TCPSender::invoke" );
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -94,7 +95,7 @@ public class TCPSender extends BasicHandler {
             Socket             sock = null ;
 
             sock    = new Socket( host, port );
-            category.info( "Created an insecure HTTP connection");
+            log.info( "Created an insecure HTTP connection");
 
             reqEnv  = (String) msgContext.getRequestMessage().getSOAPPart().getAsString();
 
@@ -109,11 +110,11 @@ public class TCPSender extends BasicHandler {
             out.write( bytes );
             out.flush();
 
-            category.debug( "XML sent:" );
-            category.debug( "---------------------------------------------------");
-            category.debug( reqEnv );
+            log.debug( "XML sent:" );
+            log.debug( "---------------------------------------------------");
+            log.debug( reqEnv );
 
-            if ( category.isDebugEnabled() ) {
+            if ( log.isDebugEnabled() ) {
                 // Special case - if the debug level is this high then something
                 // really bad must be going on - so just dump the input stream
                 // to stdout.
@@ -124,20 +125,20 @@ public class TCPSender extends BasicHandler {
             }
 
             outMsg = new Message( inp );
-            if (category.isDebugEnabled()) {
-                category.debug( "\nNo Content-Length" );
-                category.debug( "\nXML received:" );
-                category.debug( "-----------------------------------------------");
-                category.debug( (String) outMsg.getSOAPPart().getAsString() );
+            if (log.isDebugEnabled()) {
+                log.debug( "\nNo Content-Length" );
+                log.debug( "\nXML received:" );
+                log.debug( "-----------------------------------------------");
+                log.debug( (String) outMsg.getSOAPPart().getAsString() );
             }
 
             msgContext.setResponseMessage( outMsg );
         }
         catch( Exception e ) {
-            category.error( e );
+            log.error( e );
             e.printStackTrace();
             throw AxisFault.makeFault(e);
         }
-        category.info( "Exit: TCPSender::invoke" );
+        log.info( "Exit: TCPSender::invoke" );
     }
 };

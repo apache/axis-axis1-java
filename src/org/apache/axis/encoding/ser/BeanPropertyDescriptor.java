@@ -60,7 +60,8 @@ import org.apache.axis.utils.JavaUtils;
 
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
@@ -70,8 +71,8 @@ import java.beans.PropertyDescriptor;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  **/
 class BeanPropertyDescriptor {
-    static Category category =
-            Category.getInstance(BeanPropertyDescriptor.class.getName());
+    static Log log =
+            LogFactory.getLog(BeanPropertyDescriptor.class.getName());
 
     private String name;
     private Method getter;

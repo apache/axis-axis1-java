@@ -1,6 +1,6 @@
 The address book sample requires that you generate the Java bindings from the AddressBook.wsdl file.
 
-First, set up the CLASSPATH.  It must contain an XML parser (ie., xerces.jar); all the jars in the lib directory:  axis.jar, clutil.jar, log4j-core.jar, and wsdl4j.jar; and the directory containing the samples subdirectory.
+First, set up the CLASSPATH.  It must contain an XML parser (ie., xerces.jar); all the jars in the lib directory:  axis.jar, clutil.jar, commons-logging.jar, log4j-core.jar, and wsdl4j.jar; and the directory containing the samples subdirectory.
 
 Now change directory to the directory that contains the samples subdirectory.
 

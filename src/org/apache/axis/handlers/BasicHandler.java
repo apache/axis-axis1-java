@@ -58,7 +58,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -75,8 +78,8 @@ import java.util.Hashtable;
  * @author Doug Davis (dug@us.ibm.com
  */
 public abstract class BasicHandler implements Handler {
-    static Category category =
-            Category.getInstance(BasicHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(BasicHandler.class.getName());
 
     protected Hashtable  options ;
     protected String name;
@@ -158,7 +161,7 @@ public abstract class BasicHandler implements Handler {
     }
 
     public Element getDeploymentData(Document doc) {
-        category.debug(JavaUtils.getMessage("enter00", "BasicHandler::getDeploymentData") );
+        log.debug(JavaUtils.getMessage("enter00", "BasicHandler::getDeploymentData") );
 
         Element  root = doc.createElementNS("", "handler");
 
@@ -175,7 +178,7 @@ public abstract class BasicHandler implements Handler {
                 root.appendChild( e1 );
             }
         }
-        category.debug(JavaUtils.getMessage("exit00", "BasicHandler::getDeploymentData") );
+        log.debug(JavaUtils.getMessage("exit00", "BasicHandler::getDeploymentData") );
         return( root );
     }
 

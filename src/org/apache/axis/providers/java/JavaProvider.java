@@ -69,7 +69,8 @@ import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import java.lang.reflect.Method;
@@ -85,8 +86,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Carl Woolf (cwoolf@macromedia.com)
  */
 public abstract class JavaProvider extends BasicProvider {
-    static Category category =
-            Category.getInstance(JavaProvider.class.getName());
+    static Log log =
+            LogFactory.getLog(JavaProvider.class.getName());
 
 
     // from the original stubbed-out JavaProvider...
@@ -194,8 +195,8 @@ public abstract class JavaProvider extends BasicProvider {
      * the message (via processMessage).
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled())
-            category.debug( JavaUtils.getMessage("enter00", "JavaProvider::invoke (" + this + ")"));
+        if (log.isDebugEnabled())
+            log.debug( JavaUtils.getMessage("enter00", "JavaProvider::invoke (" + this + ")"));
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -255,11 +256,11 @@ public abstract class JavaProvider extends BasicProvider {
                            resEnv, jc, obj);
         }
         catch( Exception exp ) {
-            category.error( exp );
+            log.error( exp );
             throw AxisFault.makeFault(exp);
         }
-        if (category.isDebugEnabled())
-            category.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
     }
 
     /**
@@ -269,8 +270,8 @@ public abstract class JavaProvider extends BasicProvider {
      * as a org.w3c.dom.Document
      */ 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled())
-            category.debug(JavaUtils.getMessage("enter00", "JavaProvider::editWSDL (" + this + ")"));
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("enter00", "JavaProvider::editWSDL (" + this + ")"));
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/

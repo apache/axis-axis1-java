@@ -57,7 +57,8 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
 import org.apache.axis.Message;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
 import java.io.InputStream;
@@ -81,7 +82,8 @@ import java.io.IOException;
 import org.apache.axis.transport.http.HTTPConstants ;
 
 public class AttachmentPart extends Part {
-    static Category category = Category.getInstance(Message.class.getName());
+    static Log log = LogFactory.getLog(Message.class.getName());
+
     javax.activation.DataHandler datahandler= null;
     
     /**

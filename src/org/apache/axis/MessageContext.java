@@ -62,7 +62,9 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Hashtable;
 import java.io.File;
@@ -91,8 +93,8 @@ import java.io.File;
  * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class MessageContext {
-    static Category category =
-            Category.getInstance(MessageContext.class.getName());
+    static Log log =
+            LogFactory.getLog(MessageContext.class.getName());
 
     /**
      * The request message.  If we're on the client, this is the outgoing
@@ -417,7 +419,7 @@ public class MessageContext {
      * @param tServ the name of the target service.
      */
     public void setTargetService(String tServ) throws AxisFault {
-        category.debug("MessageContext: setTargetService(" + tServ+")");
+        log.debug("MessageContext: setTargetService(" + tServ+")");
         targetService = tServ ;
 
         if (targetService == null)
@@ -445,7 +447,7 @@ public class MessageContext {
     
     public void setServiceHandler(Handler sh)
     {
-        category.debug("MessageContext: setServiceHandler("+sh+")");
+        log.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;
         if (sh != null && sh instanceof SOAPService) {
             SOAPService service = (SOAPService)sh;

@@ -58,14 +58,15 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.stock.GetQuote;
 
 /** Test the stock sample code.
  */
 public class TestStockSample extends TestCase {
-    static Category category =
-            Category.getInstance(TestStockSample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestStockSample.class.getName());
 
     public TestStockSample(String name) {
         super(name);
@@ -117,18 +118,18 @@ public class TestStockSample extends TestCase {
 
     public void testStockService () throws Exception {
         try {
-            category.info("Testing stock sample.");
-            category.info("Testing JWS...");
+            log.info("Testing stock sample.");
+            log.info("Testing JWS...");
             doTestStockJWS();
-            category.info("Testing deployment...");
+            log.info("Testing deployment...");
             doTestDeploy();
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTestStock();
-            category.info("Testing service with SOAPAction: \"\"...");
+            log.info("Testing service with SOAPAction: \"\"...");
             doTestStockNoAction();
-            category.info("Testing undeployment...");
+            log.info("Testing undeployment...");
             doTestUndeploy();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

@@ -59,7 +59,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Tiny Handler which just makes sure to Stringize the outgoing
@@ -68,19 +69,19 @@ import org.apache.log4j.Category;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class LocalResponder extends BasicHandler {
-    static Category category =
-            Category.getInstance(LocalResponder.class.getName());
+    static Log log =
+            LogFactory.getLog(LocalResponder.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "LocalResponder::invoke") );
         }
 
         msgContext.getResponseMessage().getSOAPPart().getAsString();
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "LocalResponder::invoke") );
         }
     }

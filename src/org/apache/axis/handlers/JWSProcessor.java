@@ -66,7 +66,10 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.compiler.Compiler;
 import org.apache.axis.utils.compiler.CompilerError;
 import org.apache.axis.utils.compiler.CompilerFactory;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -93,8 +96,8 @@ import java.util.jar.Manifest;
  */
 public class JWSProcessor extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(JWSProcessor.class.getName());
+    static Log log =
+            LogFactory.getLog(JWSProcessor.class.getName());
 
 
     public void invoke(MessageContext msgContext) throws AxisFault
@@ -105,8 +108,8 @@ public class JWSProcessor extends BasicHandler
     public void invokeImpl(MessageContext msgContext, boolean doWsdl)
             throws AxisFault
     {
-        if (category.isDebugEnabled())
-            category.debug(JavaUtils.getMessage("enter00", "JWSProcessor::invoke"));
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("enter00", "JWSProcessor::invoke"));
         try {
             /* Grab the *.jws filename from the context - should have been */
             /* placed there by another handler (ie. HTTPActionHandler)     */
@@ -148,17 +151,17 @@ public class JWSProcessor extends BasicHandler
                 outDirectory.mkdirs();
             }
 
-            if (category.isInfoEnabled())
-                category.info("jwsFile: " + jwsFile );
+            if (log.isInfoEnabled())
+                log.info("jwsFile: " + jwsFile );
             String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "java" ;
             String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "class" ;
 
-            if (category.isInfoEnabled()) {
-                category.info("jFile: " + jFile );
-                category.info("cFile: " + cFile );
-                category.info("outdir: " + outdir);
+            if (log.isInfoEnabled()) {
+                log.info("jFile: " + jFile );
+                log.info("cFile: " + cFile );
+                log.info("outdir: " + outdir);
             }
 
             File  f1 = new File( cFile );
@@ -175,8 +178,8 @@ public class JWSProcessor extends BasicHandler
             clsName = clsName.substring( 0, clsName.length()-4 );
             clsName = clsName.replace('/', '.');
 
-            if (category.isInfoEnabled())
-                category.info("ClsName: " + clsName );
+            if (log.isInfoEnabled())
+                log.info("ClsName: " + clsName );
 
             /* Check to see if we need to recompile */
             /****************************************/
@@ -185,8 +188,8 @@ public class JWSProcessor extends BasicHandler
                 /* java file then recompile the java file.                 */
                 /* Start by copying the *.jws file to *.java               */
                 /***********************************************************/
-                category.info(JavaUtils.getMessage("compiling00", jwsFile) );
-                category.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
+                log.info(JavaUtils.getMessage("compiling00", jwsFile) );
+                log.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
                 FileReader fr = new FileReader( jwsFile );
                 FileWriter fw = new FileWriter( jFile );
                 char[] buf = new char[4096];
@@ -198,7 +201,7 @@ public class JWSProcessor extends BasicHandler
 
                 /* Now run javac on the *.java file */
                 /************************************/
-                category.debug("javac " + jFile );
+                log.debug("javac " + jFile );
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
                 Compiler          compiler = CompilerFactory.getCompiler();
@@ -278,12 +281,12 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            category.error( "JWSProcessor Exception", e );
+            log.error( "JWSProcessor Exception", e );
             throw AxisFault.makeFault(e);
         }
 
-        if (category.isDebugEnabled())
-            category.debug(JavaUtils.getMessage("exit00", "JWSProcessor::invoke") );
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("exit00", "JWSProcessor::invoke") );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {

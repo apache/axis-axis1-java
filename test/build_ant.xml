@@ -27,6 +27,7 @@ Copyright:
     <pathelement location="${build.dir}" />
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
+    <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${log4j-core.jar}"/>
   </path>
 

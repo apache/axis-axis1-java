@@ -70,7 +70,9 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.providers.java.MsgProvider;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
@@ -87,8 +89,8 @@ import java.beans.IntrospectionException;
  */
 public abstract class AxisEngine extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(AxisEngine.class.getName());
+    static Log log =
+            LogFactory.getLog(AxisEngine.class.getName());
 
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";
@@ -176,8 +178,8 @@ public abstract class AxisEngine extends BasicHandler
      * (re)initialize - What should really go in here???
      */
     public void init() {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
         }
 
         // The SOAP/XSD stuff is in the default TypeMapping of the TypeMappingRegistry.
@@ -189,8 +191,8 @@ public abstract class AxisEngine extends BasicHandler
             throw new InternalException(e);
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
         }
 
         /*Set the default attachment implementation */
@@ -278,7 +280,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             tmr = config.getTypeMappingRegistry();
         } catch (ConfigurationException e) {
-            category.error(e);
+            log.error(e);
         }
 
         return tmr;

@@ -76,6 +76,7 @@ Copyright:
   <property name="test.dir" value="./test"/>
 
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
+  <property name="commons-logging.jar" value="lib/commons-logging.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
   <property name="clutil.jar" value="lib/clutil.jar"/>
   <property name="tt-bytecode.jar" value="lib/tt-bytecode.jar"/>
@@ -130,6 +131,10 @@ Copyright:
       classname="javax.wsdl.Definition"
       classpathref="classpath"/>
 
+    <available property="commons-logging.present"
+      classname="org.apache.commons.logging.Log"
+      classpathref="classpath"/>
+
     <available property="log4j.present"
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
@@ -177,6 +182,7 @@ Copyright:
     <echo message=""/>
     <echo message="=== Required Libraries ===" />
     <echo message="wsdl4j.present=${wsdl4j.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
     <echo message="log4j.present=${log4j.present}" />
     <echo message="clutil.present=${clutil.present}" />
     <echo message="tt-bytecode.present=${tt-bytecode.present}" />
@@ -254,6 +260,7 @@ Copyright:
       <include name="log4j.properties"/>
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
+    <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
     <copy file="${clutil.jar}" toDir="${build.lib}"/>
     <copy file="${tt-bytecode.jar}" toDir="${build.lib}"/>

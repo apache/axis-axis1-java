@@ -58,14 +58,15 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.encoding.testElement;
 
 /** Test the ElementService sample code.
  */
 public class TestElementSample extends TestCase {
-    static Category category =
-            Category.getInstance(TestElementSample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestElementSample.class.getName());
 
     public TestElementSample(String name) {
         super(name);
@@ -97,14 +98,14 @@ public class TestElementSample extends TestCase {
 
     public void testElementService () throws Exception {
         try {
-            category.info("Testing element sample.");
-            category.info("Testing deployment...");
+            log.info("Testing element sample.");
+            log.info("Testing deployment...");
             doTestDeploy();
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTestElement();
-            category.info("Testing undeployment...");
+            log.info("Testing undeployment...");
             doTestUndeploy();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

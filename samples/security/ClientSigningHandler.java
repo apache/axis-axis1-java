@@ -61,11 +61,12 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ClientSigningHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(ClientSigningHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(ClientSigningHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         /** Sign the SOAPEnvelope
@@ -94,7 +95,7 @@ public class ClientSigningHandler extends BasicHandler {
         try {
             // probably needs to fault.
         } catch (Exception e) {
-            category.error(e);
+            log.error(e);
         }
     }
 }

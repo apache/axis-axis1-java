@@ -64,7 +64,8 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -82,8 +83,8 @@ import java.util.Vector;
 
 public class MessageElement
 {
-    static Category category =
-            Category.getInstance(MessageElement.class.getName());
+    static Log log =
+            LogFactory.getLog(MessageElement.class.getName());
 
     protected String    name ;
     protected String    prefix ;
@@ -137,10 +138,10 @@ public class MessageElement
     public MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("newElem00", super.toString(), "" + qName));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("newElem00", super.toString(), "" + qName));
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
-                category.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
+                log.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
         this.namespaceURI = namespace;
@@ -299,8 +300,8 @@ public class MessageElement
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
         }
 
         return null;

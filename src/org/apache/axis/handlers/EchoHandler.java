@@ -61,7 +61,10 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 
 /**
@@ -69,21 +72,21 @@ import org.w3c.dom.Document;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class EchoHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(EchoHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );
         try {
             Message  msg = msgContext.getRequestMessage();
             SOAPEnvelope env = (SOAPEnvelope) msg.getSOAPEnvelope();
             msgContext.setResponseMessage( new Message( env ) );
         }
         catch( Exception e ) {
-            category.error( e );
+            log.error( e );
             throw AxisFault.makeFault(e);
         }
-        category.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
     }
 
     public String wsdlStart = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +

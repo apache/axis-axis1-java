@@ -64,7 +64,9 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
@@ -111,8 +113,8 @@ import java.util.HashSet;
  */
 public class SimpleSessionHandler extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(SimpleSessionHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(SimpleSessionHandler.class.getName());
 
     public static final String SESSION_ID = "SimpleSession.id";
     public static final String SESSION_NS = "http://xml.apache.org/axis/session";
@@ -158,7 +160,7 @@ public class SimpleSessionHandler extends BasicHandler
                 SimpleSession session = (SimpleSession)activeSessions.get(key);
                 if ((session.getTimeout() * 1000) >
                      (curTime - session.getLastAccessTime())) {
-                    category.debug(JavaUtils.getMessage("timeout00",
+                    log.debug(JavaUtils.getMessage("timeout00",
                                                         key.toString()));
 
                     // Don't modify the hashtable while we're iterating.

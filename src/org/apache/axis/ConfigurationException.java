@@ -55,7 +55,9 @@
 
 package org.apache.axis;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -68,8 +70,8 @@ import java.io.IOException;
  */
 public class ConfigurationException extends IOException {
 
-    private static Category category =
-                Category.getInstance(ConfigurationException.class.getName());
+    private static Log log =
+                LogFactory.getLog(ConfigurationException.class.getName());
 
     /**
      * Construct a ConfigurationException from a String.  The string is wrapped
@@ -89,10 +91,10 @@ public class ConfigurationException extends IOException {
 
         // Log the exception the first time it appears.
         if (!(e instanceof ConfigurationException)) {
-            category.debug(e);
+            log.debug(e);
             StringWriter writer = new StringWriter();
             e.printStackTrace(new PrintWriter(writer));
-            category.debug(writer.getBuffer().toString());
+            log.debug(writer.getBuffer().toString());
         }
     }
 }

@@ -57,13 +57,14 @@ package samples.addr;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** Test the address book sample code.
  */
 public class AddressBookTestCase extends TestCase {
-    static Category category =
-            Category.getInstance(AddressBookTestCase.class.getName());
+    static Log log =
+            LogFactory.getLog(AddressBookTestCase.class.getName());
 
     public AddressBookTestCase(String name) {
         super(name);
@@ -76,9 +77,9 @@ public class AddressBookTestCase extends TestCase {
 
     public void testAddressBookService () throws Exception {
         try {
-            category.info("Testing address book sample.");
+            log.info("Testing address book sample.");
             doTest();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

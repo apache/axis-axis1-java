@@ -71,7 +71,8 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -96,8 +97,8 @@ import java.util.Stack;
 
 public class DeserializationContextImpl extends DefaultHandler implements DeserializationContext
 {
-    static Category category =
-            Category.getInstance(DeserializationContextImpl.class.getName());
+    static Log log =
+            LogFactory.getLog(DeserializationContextImpl.class.getName());
     
     
     private NSStack namespaces = new NSStack();
@@ -618,8 +619,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     
     public void pushElementHandler(SOAPHandler handler)
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
         }
         
         handlerStack.push(handler);
@@ -641,14 +642,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         if (!handlerStack.empty()) {
             SOAPHandler handler = getTopHandler();
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("popHandler00", "" + handler));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("popHandler00", "" + handler));
             }
             handlerStack.pop();
             return handler;
         } else {
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("popHandler00", "(null)"));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("popHandler00", "(null)"));
             }
             return null;
         }
@@ -667,8 +668,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * endDocument is invoked at the end of the document.
      */
     public void endDocument() throws SAXException {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("endDoc00"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("endDoc00"));
         }
         if (recorder != null)
             recorder.endDocument();
@@ -703,8 +704,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             namespaces.add(uri, "");
         }
        
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("startPrefix00", prefix, uri));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("startPrefix00", prefix, uri));
         }
         
         SOAPHandler handler = getTopHandler();
@@ -715,8 +716,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void endPrefixMapping(String prefix)
         throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("endPrefix00", prefix));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("endPrefix00", prefix));
         }
         
         if (recorder != null)
@@ -775,8 +776,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         SOAPHandler nextHandler = null;
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("startElem00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("startElem00",
                     "['" + namespace + "' " + localName + "]"));
         }
         
@@ -820,8 +821,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void endElement(String namespace, String localName, String qName)
         throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("endElem00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("endElem00",
                     "['" + namespace + "' " + localName + "]"));
         }
         
@@ -836,8 +837,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 getTopHandler().onEndChild(namespace, localName, this);
             } else {
                 // We should be done!
-                if (category.isDebugEnabled()) {
-                    category.debug(JavaUtils.getMessage("endDoc01"));
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage("endDoc01"));
                 }
             }
             

@@ -54,7 +54,8 @@
  */
 
 package org.apache.axis.attachments;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Rick Rineholt 
@@ -64,6 +65,9 @@ import org.apache.log4j.Category;
   * This class takes the input stream and turns it multiple streams. 
   */
 public class BoundaryDelimitedStream extends java.io.FilterInputStream {
+    static Log log =
+            LogFactory.getLog(BoundaryDelimitedStream.class.getName());
+
     protected byte[] boundary = null;
     int boundaryLen = 0;  //The boundary length.
     int boundaryBufLen = 0; //The boundary length plus crlf. 
@@ -83,13 +87,11 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     static int streamCount= 0; //number of streams produced.
     protected synchronized static int newStreamNo(){
 
-     category.debug("New boundary stream no:" + (streamCount +1));
+     log.debug("New boundary stream no:" + (streamCount +1));
         return ++streamCount;
     }
     protected int streamNo=-1; //Keeps track of stream
 
-    static Category category =
-            Category.getInstance(BoundaryDelimitedStream.class.getName());
     static boolean isDebugEnabled= false;
 
     /**
@@ -148,7 +150,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      BoundaryDelimitedStream( java.io.InputStream is, byte[] boundary,
       int readbufsz) throws org.apache.axis.AxisFault {
         super (is);
-        isDebugEnabled= category.isDebugEnabled();
+        isDebugEnabled= log.isDebugEnabled();
         streamNo= newStreamNo();
         closed = false;
         this.is = is;
@@ -196,7 +198,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             }
             if (readBufPos == boundaryPos) {
                 eos = true; //hit the boundary so it the end of the stream.
-                category.debug("Boundary stream no:" + streamNo + " is at end of stream");
+                log.debug("Boundary stream no:" + streamNo + " is at end of stream");
             }
             else if ( bwritten < len) { //need to get more data.
                 byte[]dstbuf = readbuf;
@@ -224,12 +226,12 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         //read till we get the amount or the stream is finished.
         while ( !eos && bwritten < len );
 
-        if ( category.isDebugEnabled()) {
+        if ( log.isDebugEnabled()) {
             if (bwritten  > 0) {
                 byte tb[] = new byte[bwritten];
 
                 System.arraycopy(b, off, tb, 0, bwritten);
-                category.debug("Read " + bwritten +
+                log.debug("Read " + bwritten +
                 " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
                 new String(tb) + "\"");
                 
@@ -270,7 +272,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      */
     public synchronized void close() throws java.io.IOException {
         if (closed) return;
-        category.debug("Boundary stream no:" + streamNo + " is closed");
+        log.debug("Boundary stream no:" + streamNo + " is closed");
         closed = true; //mark it closed.
         if (!eos) { //We need get this off the stream.
                                 //Easy way to flush through the stream;

@@ -60,7 +60,10 @@ import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /** An <code>HTTPAuthHandler</code> simply sets the context's username
  * and password properties from the HTTP auth headers.
@@ -70,12 +73,12 @@ import org.apache.log4j.Category;
  */
 public class HTTPAuthHandler extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(HTTPAuthHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(HTTPAuthHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug(JavaUtils.getMessage("enter00", "HTTPAuthHandler::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "HTTPAuthHandler::invoke") );
         
         /* Process the Basic Auth stuff in the headers */
         /***********************************************/
@@ -90,17 +93,17 @@ public class HTTPAuthHandler extends BasicHandler
             if ( i == -1 ) user = tmp ;
             else           user = tmp.substring( 0, i);
             msgContext.setUsername( user );
-            category.debug( JavaUtils.getMessage("httpUser00", user) );
+            log.debug( JavaUtils.getMessage("httpUser00", user) );
             if ( i != -1 )  {
                 String pwd = tmp.substring(i+1);
                 if ( pwd != null && pwd.equals("") ) pwd = null ;
                 if ( pwd != null ) {
                     msgContext.setPassword( pwd );
-                    category.debug( JavaUtils.getMessage("httpPassword00", pwd) );
+                    log.debug( JavaUtils.getMessage("httpPassword00", pwd) );
                 }
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "HTTPAuthHandler::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "HTTPAuthHandler::invoke") );
     }
 }

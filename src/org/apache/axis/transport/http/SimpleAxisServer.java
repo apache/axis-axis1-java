@@ -68,7 +68,8 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Options;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
@@ -90,8 +91,8 @@ import java.util.Hashtable;
  * @author Rob Jellinghaus (robj@unrealities.com)
  */
 public class SimpleAxisServer implements Runnable {
-    static Category category =
-            Category.getInstance(SimpleAxisServer.class.getName());
+    static Log log =
+            LogFactory.getLog(SimpleAxisServer.class.getName());
 
 
     // session state.
@@ -166,7 +167,7 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        category.debug(JavaUtils.getMessage("start00", "SimpleAxisServer"));
+        log.debug(JavaUtils.getMessage("start00", "SimpleAxisServer"));
 
         // create an Axis server
         AxisServer engine = getAxisServer();
@@ -248,8 +249,8 @@ public class SimpleAxisServer implements Runnable {
                         // Got params
                         String params = fileName.substring(paramIdx + 1);
                         fileName.setLength(paramIdx);
-                        category.debug(JavaUtils.getMessage("filename00", "" + fileName.toString()));
-                        category.debug(JavaUtils.getMessage("params00", params));
+                        log.debug(JavaUtils.getMessage("filename00", "" + fileName.toString()));
+                        log.debug(JavaUtils.getMessage("params00", params));
                         if ("wsdl".equalsIgnoreCase(params))
                             doWsdl = true;
                     }
@@ -288,8 +289,8 @@ public class SimpleAxisServer implements Runnable {
                             }
                             authBuf.append((char)(decoded[i] & 0x7f));
                         }
-                        category.info(JavaUtils.getMessage("user00", userBuf.toString()));
-                        category.info(JavaUtils.getMessage("password00", pwBuf.toString()));
+                        log.info(JavaUtils.getMessage("user00", userBuf.toString()));
+                        log.info(JavaUtils.getMessage("password00", pwBuf.toString()));
                         msgContext.setUsername(userBuf.toString());
                         msgContext.setPassword(pwBuf.toString());
                     }
@@ -382,7 +383,7 @@ public class SimpleAxisServer implements Runnable {
                     AxisFault af;
                     if (e instanceof AxisFault) {
                         af = (AxisFault)e;
-                        category.error(JavaUtils.getMessage("serverFault00"), af);
+                        log.error(JavaUtils.getMessage("serverFault00"), af);
 
                         if ("Server.Unauthorized".equals(af.getFaultCode())) {
                             status = UNAUTH; // SC_UNAUTHORIZED
@@ -568,7 +569,7 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 fileName.append(c);
             }
-            category.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
+            log.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
@@ -578,7 +579,7 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 fileName.append(c);
             }
-            category.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
+            log.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
         } else {
             throw new IOException(JavaUtils.getMessage("badRequest00"));
         }

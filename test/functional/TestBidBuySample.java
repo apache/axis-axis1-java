@@ -58,14 +58,15 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.bidbuy.TestClient;
 
 /** Test the stock sample code.
  */
 public class TestBidBuySample extends TestCase {
-    static Category category =
-            Category.getInstance(TestBidBuySample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestBidBuySample.class.getName());
 
     public TestBidBuySample(String name) {
         super(name);
@@ -83,12 +84,12 @@ public class TestBidBuySample extends TestCase {
     
     public void testBidBuyService () throws Exception {
         try {
-            category.info("Testing bidbuy sample.");
-            category.info("Testing deployment...");
+            log.info("Testing bidbuy sample.");
+            log.info("Testing deployment...");
             doTestDeploy();
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTest();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

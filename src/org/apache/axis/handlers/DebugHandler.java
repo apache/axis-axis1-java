@@ -62,18 +62,21 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class DebugHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(DebugHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(DebugHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "DebugHandler::invoke") );
         try {
             Message       msg = msgContext.getRequestMessage();
 
@@ -88,21 +91,21 @@ public class DebugHandler extends BasicHandler {
                     throw new AxisFault(JavaUtils.getMessage("cantConvert03"));
 
                 int debugVal = i.intValue();
-                category.debug(JavaUtils.getMessage("debugLevel00", "" + debugVal) );
+                log.debug(JavaUtils.getMessage("debugLevel00", "" + debugVal) );
                 //Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
             }
         }
         catch( Exception e ) {
-            category.error( e );
+            log.error( e );
             throw AxisFault.makeFault(e);
         }
-        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );
     }
 
     public void onFault(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::onFault") );
-        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::onFault") );
+        log.debug(JavaUtils.getMessage("enter00", "DebugHandler::onFault") );
+        log.debug(JavaUtils.getMessage("exit00", "DebugHandler::onFault") );
     }
 
 };

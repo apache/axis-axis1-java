@@ -84,7 +84,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -95,8 +96,8 @@ import org.w3c.dom.Document;
  */
 public class JAFDataHandlerSerializer implements Serializer {
 
-    static Category category =
-            Category.getInstance(JAFDataHandlerSerializer.class.getName());
+    static Log log =
+            LogFactory.getLog(JAFDataHandlerSerializer.class.getName());
 
     /**
      * Serialize a JAF DataHandler quantity.

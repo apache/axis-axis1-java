@@ -57,7 +57,9 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -76,8 +78,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Rick Rineholt 
  */
 public class Message {
-    static Category category =
-            Category.getInstance(Message.class.getName());
+    static Log log =
+            LogFactory.getLog(Message.class.getName());
 
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
@@ -217,7 +219,7 @@ public class Message {
             }
         }
 
-        category.debug("Attachment support is enabled" + 
+        log.debug("Attachment support is enabled" + 
                        attachmentSupportEnabled);
         return attachmentSupportEnabled;
     }
@@ -247,13 +249,13 @@ public class Message {
                 //If it can't support it, it wont have a root part.
                 mSOAPPart = (SOAPPart) mAttachments.getRootPart(); 
             } catch (InvocationTargetException ex) {
-                category.fatal(ex);
+                log.fatal(ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (InstantiationException ex) {
-                category.fatal(ex);
+                log.fatal(ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (IllegalAccessException ex) {
-                category.fatal(ex);
+                log.fatal(ex);
                 throw new RuntimeException(ex.getMessage());
             }
         }

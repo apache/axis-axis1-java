@@ -72,7 +72,8 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -99,8 +100,8 @@ import java.beans.IntrospectionException;
 public class ArrayDeserializer extends DeserializerImpl 
     implements Deserializer  {
 
-    static Category category =
-            Category.getInstance(ArrayDeserializer.class.getName());
+    static Log log =
+            LogFactory.getLog(ArrayDeserializer.class.getName());
 
     public QName arrayType = null;
     public int curIndex = 0;
@@ -154,8 +155,8 @@ public class ArrayDeserializer extends DeserializerImpl
         // If the xsi:type attribute is missing for an element, the 
         // default xsi:type value is used.
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage(
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage(
                "enter00", "ArrayDeserializer.startElement()"));
         }
 
@@ -335,8 +336,8 @@ public class ArrayDeserializer extends DeserializerImpl
                                "badOffset00");
         }
         
-        if (category.isDebugEnabled()) {
-            category.debug(
+        if (log.isDebugEnabled()) {
+            log.debug(
                 JavaUtils.getMessage("exit00",
                                      "ArrayDeserializer.startElement()"));
         }
@@ -361,8 +362,8 @@ public class ArrayDeserializer extends DeserializerImpl
                                     DeserializationContext context)
         throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(
+        if (log.isDebugEnabled()) {
+            log.debug(
                 JavaUtils.getMessage("enter00", 
                                      "ArrayDeserializer.onStartChild()"));
         }
@@ -437,8 +438,8 @@ public class ArrayDeserializer extends DeserializerImpl
 
         curIndex++;
         
-        if (category.isDebugEnabled()) {
-            category.debug(
+        if (log.isDebugEnabled()) {
+            log.debug(
                 JavaUtils.getMessage("exit00", 
                                      "ArrayDeserializer.onStartChild()"));
         }
@@ -469,8 +470,8 @@ public class ArrayDeserializer extends DeserializerImpl
      **/
     public void setValue(Object value, Object hint) throws SAXException
     { 
-        if (category.isDebugEnabled()) {
-            category.debug(
+        if (log.isDebugEnabled()) {
+            log.debug(
                 JavaUtils.getMessage("gotValue00", 
                                      "ArrayDeserializer", "[" + hint +
                                      "] = " + value));

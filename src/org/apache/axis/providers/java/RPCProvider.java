@@ -64,7 +64,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.ParamList;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -78,8 +79,8 @@ import java.util.Vector;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class RPCProvider extends JavaProvider {
-    static Category category =
-            Category.getInstance(RPCProvider.class.getName());
+    static Log log =
+            LogFactory.getLog(RPCProvider.class.getName());
 
     public void processMessage (MessageContext msgContext,
                                 String serviceName,
@@ -90,15 +91,15 @@ public class RPCProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "RPCProvider.processMessage()"));
         }
 
         Vector          bodies = reqEnv.getBodyElements();
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
-            category.debug(JavaUtils.getMessage("bodyIs00", "" + bodies.get(0)));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
+            log.debug(JavaUtils.getMessage("bodyIs00", "" + bodies.get(0)));
         }
 
         /* Loop over each entry in the SOAPBody - each one is a different */
@@ -120,8 +121,8 @@ public class RPCProvider extends JavaProvider {
                 for ( int i = 0 ; i < args.size() ; i++ ) {
                     argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
                     
-                    if (category.isDebugEnabled()) {
-                        category.debug("  " + JavaUtils.getMessage("value00", 
+                    if (log.isDebugEnabled()) {
+                        log.debug("  " + JavaUtils.getMessage("value00", 
                             "" + argValues[i]) );
                     }
                 }
@@ -156,10 +157,10 @@ public class RPCProvider extends JavaProvider {
                             new String[] {mName, methodNameMatch, allowedMethods}),
                         null, null );  // should they??
             
-            if (category.isDebugEnabled()) {
-                category.debug( "mName: " + mName );
-                category.debug( "MethodNameMatch: " + methodNameMatch );
-                category.debug( "MethodName List: " + allowedMethods );
+            if (log.isDebugEnabled()) {
+                log.debug( "mName: " + mName );
+                log.debug( "MethodNameMatch: " + methodNameMatch );
+                log.debug( "MethodName List: " + allowedMethods );
             }
 
             ///////////////////////////////////////////////////////////////
@@ -278,8 +279,8 @@ public class RPCProvider extends JavaProvider {
                 throw ex;
             }
 
-            if (category.isDebugEnabled())
-                category.debug(JavaUtils.getMessage("result00", "" + objRes));
+            if (log.isDebugEnabled())
+                log.debug(JavaUtils.getMessage("result00", "" + objRes));
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/

@@ -58,14 +58,15 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.misc.TestClient;
 
 /** Test the proxy sample code.
  */
 public class TestProxySample extends TestCase {
-    static Category category =
-            Category.getInstance(TestProxySample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestProxySample.class.getName());
 
     public TestProxySample(String name) {
         super(name);
@@ -83,23 +84,23 @@ public class TestProxySample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            category.info("Testing proxy sample.");
+            log.info("Testing proxy sample.");
             
-            category.info("Testing deployment...");
+            log.info("Testing deployment...");
             
             // deploy the proxy service
             String[] args = { "samples/proxy/deploy.wsdd" };
             AdminClient.main(args);
             
-            category.info("Testing server-side client deployment...");
+            log.info("Testing server-side client deployment...");
             
             // deploy the proxy service
             String[] args2 = { "samples/proxy/client_deploy.xml" };
             AdminClient.main(args2);
             
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTest();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

@@ -59,7 +59,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -69,13 +72,13 @@ import java.io.PrintWriter;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class LogHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(LogHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(LogHandler.class.getName());
 
     long start = 0;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "LogHandler::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "LogHandler::invoke") );
         if (msgContext.getPastPivot() == false) {
            start = System.currentTimeMillis();
         } else {
@@ -97,15 +100,15 @@ public class LogHandler extends BasicHandler {
 
                 pw.close();
             } catch( Exception e ) {
-                category.error( e );
+                log.error( e );
                 throw AxisFault.makeFault(e);
             }
         }
-        category.debug(JavaUtils.getMessage("exit00", "LogHandler::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "LogHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "LogHandler::undo") );
+        log.debug(JavaUtils.getMessage("enter00", "LogHandler::undo") );
         try {
             FileWriter  fw   = new FileWriter( "axis.log", true );
             PrintWriter pw   = new PrintWriter( fw );
@@ -114,8 +117,8 @@ public class LogHandler extends BasicHandler {
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
-            category.error( e );
+            log.error( e );
         }
-        category.debug(JavaUtils.getMessage("exit00", "LogHandler::undo") );
+        log.debug(JavaUtils.getMessage("exit00", "LogHandler::undo") );
     }
 };

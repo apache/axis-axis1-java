@@ -65,7 +65,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.URL;
 
@@ -75,8 +76,8 @@ import java.net.URL;
  * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class LocalSender extends BasicHandler {
-    static Category category =
-            Category.getInstance(LocalSender.class.getName());
+    static Log log =
+            LogFactory.getLog(LocalSender.class.getName());
 
     private volatile AxisServer server;
 
@@ -88,16 +89,16 @@ public class LocalSender extends BasicHandler {
     }
 
     public void invoke(MessageContext clientContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "LocalSender::invoke") );
         }
 
         AxisServer targetServer = 
             (AxisServer)clientContext.getProperty(LocalTransport.LOCAL_SERVER);
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("usingServer00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("usingServer00", 
                 "LocalSender", "" + targetServer));
         }
 
@@ -115,9 +116,9 @@ public class LocalSender extends BasicHandler {
         // exercise the serializers.
         String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("sendingXML00", "LocalSender"));
-            category.debug(msgStr);
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("sendingXML00", "LocalSender"));
+            log.debug(msgStr);
         }
 
         serverContext.setRequestMessage(new Message(msgStr));
@@ -175,8 +176,8 @@ public class LocalSender extends BasicHandler {
         clientContext.setResponseMessage(serverContext.getResponseMessage());
         //clientContext.getResponseMessage().getAsString();
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "LocalSender::invoke"));
         }
     }

@@ -63,7 +63,8 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -75,8 +76,8 @@ import org.apache.log4j.Category;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class AxisClient extends AxisEngine {
-    static Category category =
-            Category.getInstance(AxisClient.class.getName());
+    static Log log =
+            LogFactory.getLog(AxisClient.class.getName());
 
     public AxisClient(EngineConfiguration config) {
         super(config);
@@ -99,8 +100,8 @@ public class AxisClient extends AxisEngine {
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "AxisClient::invoke") );
         }
 
@@ -115,8 +116,8 @@ public class AxisClient extends AxisEngine {
             setCurrentMessageContext(msgContext);
 
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
-            if (category.isDebugEnabled()) {
-                category.debug( "EngineHandler: " + hName );
+            if (log.isDebugEnabled()) {
+                log.debug( "EngineHandler: " + hName );
             }
 
             if ( hName != null ) {
@@ -193,7 +194,7 @@ public class AxisClient extends AxisEngine {
 
         } catch( Exception e ) {
             // Should we even bother catching it ?
-            category.error( e );
+            log.error( e );
             throw AxisFault.makeFault(e);
 
         } finally {
@@ -201,8 +202,8 @@ public class AxisClient extends AxisEngine {
             setCurrentMessageContext(previousContext);
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "AxisClient::invoke") );
         }
     };

@@ -588,8 +588,8 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             Options opts = new Options(args);
-//            Category category = Category.getInstance(org.apache.axis.transport.http.HTTPSender.class.getName());
-//            category.setPriority (Priority.DEBUG);
+//            Log log = LogFactory.getLog(org.apache.axis.transport.http.HTTPSender.class.getName());
+//            log.setPriority (Priority.DEBUG);
 
             TestRunner.main(new String[] {DetailedInoutTestCase.class.getName()});
         }

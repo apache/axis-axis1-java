@@ -61,7 +61,8 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xpath.CachedXPathAPI;
@@ -72,8 +73,8 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class LogHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(LogHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(LogHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         try {
@@ -129,7 +130,7 @@ public class LogHandler extends BasicHandler {
             pw.println("=====================");
             pw.close();
         } catch (Exception e) {
-            category.error(e);
+            log.error(e);
         }
     }
 }

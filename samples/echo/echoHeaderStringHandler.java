@@ -63,7 +63,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** This handler processes the SOAP header "echoMeString" defined in the 
  *  SOAPBuilder Round2C interop tests.
@@ -75,8 +76,8 @@ import org.apache.log4j.Category;
  */
 public class echoHeaderStringHandler extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(echoHeaderStringHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(echoHeaderStringHandler.class.getName());
 
     public static final String ECHOHEADER_STRING_ID = "echoHeaderStringHandler.id";
     public static final String HEADER_NS = "http://soapinterop.org/echoheader/";

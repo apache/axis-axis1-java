@@ -58,7 +58,9 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** An <code>HTTPActionHandler</code> simply sets the context's TargetService
  * property from the HTTPAction property.  We expect there to be a
@@ -73,18 +75,18 @@ import org.apache.log4j.Category;
  */
 public class HTTPActionHandler extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(HTTPActionHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(HTTPActionHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::invoke") );
 
         /** If there's already a targetService then just return.
         */
         if ( msgContext.getServiceHandler() == null ) {
             String action = (String) msgContext.getSOAPActionURI();
-            category.debug( "  HTTP SOAPAction: " + action );
+            log.debug( "  HTTP SOAPAction: " + action );
             
             /** The idea is that this handler only goes in the chain IF this
             * service does a mapping between SOAPAction and target.  Therefore
@@ -114,6 +116,6 @@ public class HTTPActionHandler extends BasicHandler
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::invoke") );
     }
 }

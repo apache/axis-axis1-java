@@ -60,7 +60,10 @@ import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.InternalException;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -81,8 +84,8 @@ import java.util.Vector;
  * @author Glyn Normington (norm@uk.ibm.com)
  */
 public class SimpleChain extends BasicHandler implements Chain {
-    static Category category =
-            Category.getInstance(SimpleChain.class.getName());
+    static Log log =
+            LogFactory.getLog(SimpleChain.class.getName());
 
     protected Vector handlers = new Vector();
     protected boolean invoked = false;
@@ -109,16 +112,16 @@ public class SimpleChain extends BasicHandler implements Chain {
      * rethrow the exception.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00",
                                                 "SimpleChain::invoke"));
         }
 
        invoked = true;
         doVisiting(msgContext, iVisitor);
  
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "SimpleChain::invoke"));
         }
    }
@@ -128,16 +131,16 @@ public class SimpleChain extends BasicHandler implements Chain {
      * contributing to a WSDL description.
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00",
                                                 "SimpleChain::generateWSDL"));
         }
 
         invoked = true;
         doVisiting(msgContext, wsdlVisitor);
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "SimpleChain::generateWSDL"));
         }
     }
@@ -153,7 +156,7 @@ public class SimpleChain extends BasicHandler implements Chain {
             }
         } catch( AxisFault f ) {
             // notify fault in reverse order and then rethrow
-            category.error( f );
+            log.error( f );
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw f;
@@ -167,16 +170,16 @@ public class SimpleChain extends BasicHandler implements Chain {
      * notified too!
      */
     public void onFault(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "SimpleChain::onFault"));
         }
 
         for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
             ((Handler) handlers.elementAt( i )).onFault( msgContext );
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00",
                                                 "SimpleChain::onFault"));
         }
     }
@@ -215,8 +218,8 @@ public class SimpleChain extends BasicHandler implements Chain {
     }
 
     public Element getDeploymentData(Document doc) {
-        if (category.isDebugEnabled()) {
-            category.debug( JavaUtils.getMessage("enter00",
+        if (log.isDebugEnabled()) {
+            log.debug( JavaUtils.getMessage("enter00",
                 "SimpleChain::getDeploymentData") );
         }
 
@@ -246,8 +249,8 @@ public class SimpleChain extends BasicHandler implements Chain {
             }
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "SimpleChain::getDeploymentData") );
         }
 

@@ -68,7 +68,8 @@ import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.BufferedOutputStream;
@@ -89,8 +90,8 @@ import java.net.URL;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class TCPListener implements Runnable {
-    static Category category =
-            Category.getInstance(TCPSender.class.getName());
+    static Log log =
+            LogFactory.getLog(TCPSender.class.getName());
 
     // These have default values.
     private String transportName = "TCPTransport";
@@ -125,18 +126,18 @@ public class TCPListener implements Runnable {
             Options options = new Options(args);
             port = new URL(options.getURL()).getPort();
         } catch (MalformedURLException ex) {
-            category.error("Hosed URL: "+ex);
+            log.error("Hosed URL: "+ex);
             System.exit(1);
         }
 
         try {
             srvSocket = new ServerSocket(port);
         } catch (IOException ex) {
-            category.error("Can't create server socket on port "+port);
+            log.error("Can't create server socket on port "+port);
             System.exit(1);
         }
 
-        category.info("TCPListener is listening on port "+port+".");
+        log.info("TCPListener is listening on port "+port+".");
     }
 
     public void run () {
@@ -148,13 +149,13 @@ public class TCPListener implements Runnable {
         while (!done) {
             try {
                 sock = srvSocket.accept();
-                category.info("TCPListener received new connection: "+sock);
+                log.info("TCPListener received new connection: "+sock);
                 new Thread(new SocketHandler(sock)).start();
             } catch (IOException ex) {
                 /** stop complaining about this! it seems to happen on quit,
                     and is not worth mentioning.  unless I am confused. -- RobJ
                  */
-                category.debug("Got IOException on srvSocket.accept: "+ex);
+                log.debug("Got IOException on srvSocket.accept: "+ex);
             }
         }
     }
@@ -185,7 +186,7 @@ public class TCPListener implements Runnable {
             try {
                 inp = socket.getInputStream();
             } catch (IOException ex) {
-                category.error("Couldn't get input stream from "+socket);
+                log.error("Couldn't get input stream from "+socket);
                 return;
             }
 
@@ -202,7 +203,7 @@ public class TCPListener implements Runnable {
                 }
                 // got to '\r', skip it and '\n'
                 if (inp.read() != '\n') {
-                    category.error("Length line "+line+" was not terminated with \r\n");
+                    log.error("Length line "+line+" was not terminated with \r\n");
                     return;
                 }
 
@@ -219,7 +220,7 @@ public class TCPListener implements Runnable {
                     // The following appears to deadlock.  It will get cleaned
                     // up on exit anyway...
                     // srvSocket.close();
-                    category.error("AxisListener quitting.");
+                    log.error("AxisListener quitting.");
                     System.exit(0);
                 }
 
@@ -238,7 +239,7 @@ public class TCPListener implements Runnable {
                 inp.read(mBytes);
                 msg = new Message(new ByteArrayInputStream(mBytes));
             } catch (IOException ex) {
-                category.error("Couldn't read from socket input stream: "+ex);
+                log.error("Couldn't read from socket input stream: "+ex);
                 return;
             }
 
@@ -273,7 +274,7 @@ public class TCPListener implements Runnable {
                 buf.write(response.getBytes());
                 buf.close();
             } catch (IOException ex) {
-                category.error("Can't write response to socket "+port+", response is: "+response);
+                log.error("Can't write response to socket "+port+", response is: "+response);
             }
         }
     }

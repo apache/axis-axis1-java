@@ -71,7 +71,10 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -90,8 +93,8 @@ import java.beans.IntrospectionException;
  */
 public class SOAPService extends SimpleTargetedChain
 {
-    static Category category =
-            Category.getInstance(SOAPService.class.getName());
+    static Log log =
+            LogFactory.getLog(SOAPService.class.getName());
 
     /** Valid transports for this service
      * (server side only!)
@@ -114,8 +117,8 @@ public class SOAPService extends SimpleTargetedChain
 
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("semanticCheck00"));
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("semanticCheck00"));
             }
 
             // This needs to be set to the merged list of service-specific and
@@ -274,8 +277,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void enableTransport(String transportName)
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage(
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage(
                 "enableTransport00", "" + this, transportName));
         }
 

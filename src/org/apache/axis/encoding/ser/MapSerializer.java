@@ -77,7 +77,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -92,8 +94,8 @@ import org.w3c.dom.Document;
 
 public class MapSerializer implements Serializer {
 
-    static Category category =
-            Category.getInstance(MapSerializer.class.getName());
+    static Log log =
+            LogFactory.getLog(MapSerializer.class.getName());
 
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");

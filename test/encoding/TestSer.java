@@ -13,7 +13,8 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 
 import javax.xml.rpc.namespace.QName;
@@ -24,8 +25,8 @@ import java.io.Writer;
 /** Little serialization test with a struct.
  */
 public class TestSer extends TestCase {
-    static Category category =
-            Category.getInstance(TestSer.class.getName());
+    static Log log =
+            LogFactory.getLog(TestSer.class.getName());
 
     public static final String myNS = "urn:myNS";
     
@@ -78,9 +79,9 @@ public class TestSer extends TestCase {
         
         String msgString = stringWriter.toString();
         
-        category.debug("---");
-        category.debug(msgString);
-        category.debug("---");
+        log.debug("---");
+        log.debug(msgString);
+        log.debug("---");
         
         StringReader reader = new StringReader(msgString);
         

@@ -55,7 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -78,8 +79,8 @@ import java.util.StringTokenizer;
 
 public class Jikes extends AbstractCompiler {
 
-    static Category category =
-            Category.getInstance(Jikes.class.getName());
+    static Log log =
+            LogFactory.getLog(Jikes.class.getName());
     
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;
@@ -190,7 +191,7 @@ public class Jikes extends AbstractCompiler {
             this.errors = new ByteArrayInputStream(tmpErr.toByteArray());
 
         } catch (InterruptedException somethingHappened) {
-            category.debug("Jikes.compile():SomethingHappened", somethingHappened);
+            log.debug("Jikes.compile():SomethingHappened", somethingHappened);
             return false;
         }
 
@@ -221,7 +222,7 @@ public class Jikes extends AbstractCompiler {
             // first line is not space-starting
             if (line == null) line = input.readLine();
             if (line == null) return errors;
-            category.debug(line);
+            log.debug(line);
             buffer.append(line);
 
             // all other space-starting lines are one error
@@ -233,7 +234,7 @@ public class Jikes extends AbstractCompiler {
                 // Continuation of previous error starts with ' '
                 if (line.length() > 0 && line.charAt(0) != ' ')
                     break;
-                category.debug(line);
+                log.debug(line);
                 buffer.append('\n');
                 buffer.append(line);
             }
@@ -272,7 +273,7 @@ public class Jikes extends AbstractCompiler {
             // FIXME: VG: This is not needed anymore?
             message.append("Please ensure that you have your JDK's rt.jar listed in your classpath. Jikes needs it to operate.");
             type="error";
-            category.error(message.toString(), e);
+            log.error(message.toString(), e);
         }
 
         if ("".equals(message)) {
