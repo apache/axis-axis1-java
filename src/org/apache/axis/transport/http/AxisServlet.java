@@ -299,6 +299,7 @@ public class AxisServlet extends HttpServlet {
         ServletConfig  config  = getServletConfig();
         ServletContext context = config.getServletContext();
         HttpSession    session = req.getSession();
+        res.setBufferSize(1024 * 8); //provide performance boost.       
 
         if (engine == null)
             engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
@@ -427,5 +428,6 @@ public class AxisServlet extends HttpServlet {
           res.setContentLength( msg.getContentLength() );
           msg.writeContentToStream(res.getOutputStream());
         }
+        res.flushBuffer(); //Force it right now.
     }
 }

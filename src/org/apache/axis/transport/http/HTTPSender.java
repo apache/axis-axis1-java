@@ -64,6 +64,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.log4j.Category;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -207,7 +208,8 @@ public class HTTPSender extends BasicHandler {
 
 
             BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
-            OutputStream  out  = sock.getOutputStream();
+                       //Should help performance. Temporary fix only till its all stream oriented.
+            OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
             StringBuffer  otherHeaders = new StringBuffer();
             String        userID = null ;
             String        passwd = null ;
@@ -284,6 +286,7 @@ public class HTTPSender extends BasicHandler {
 
             out.write( header.toString().getBytes() );
             reqMessage.writeContentToStream(out);
+            out.flush();
 
             category.debug( "XML sent:" );
             category.debug( "---------------------------------------------------");
