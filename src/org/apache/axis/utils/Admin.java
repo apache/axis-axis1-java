@@ -162,6 +162,10 @@ public class Admin {
           String   input   = elem.getAttribute( "input" );
           String   pivot   = elem.getAttribute( "pivot" );
           String   output  = elem.getAttribute( "output" );
+ 
+          String   hName ;
+          Handler  tmpH ;
+
           if ( flow != null && flow.length() > 0 ) {
             System.out.println( "Deploying chain: " + name );
             Chain    c       = (Chain) hr.find( name );
@@ -170,8 +174,13 @@ public class Admin {
             else             c.clear();
 
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
-            while ( st.hasMoreElements() )
-              c.addHandler( hr.find( st.nextToken() ) );
+            while ( st.hasMoreElements() ) {
+              hName = st.nextToken();
+              tmpH = hr.find( hName );
+              if ( tmpH == null )
+                Error( "Unknown handler: " + hName );
+              c.addHandler( tmpH );
+            }
             getOptions( elem, c );
             hr.add( name, c );
           }
@@ -189,16 +198,26 @@ public class Admin {
             st = new StringTokenizer( input, " \t\n\r\f," );
             c  = new SimpleChain();
             cc.setInputChain( c );
-            while ( st.hasMoreElements() )
-              c.addHandler( hr.find( st.nextToken() ) );
+            while ( st.hasMoreElements() ) {
+              hName = st.nextToken();
+              tmpH = hr.find( hName );
+              if ( tmpH == null )
+                Error( "Unknown handler: " + hName );
+              c.addHandler( tmpH );
+            }
           
             cc.setPivotHandler( hr.find( pivot ) );
   
             st = new StringTokenizer( output, " \t\n\r\f," );
             c  = new SimpleChain();
             cc.setOutputChain( c );
-            while ( st.hasMoreElements() )
-              c.addHandler( hr.find( st.nextToken() ) );
+            while ( st.hasMoreElements() ) {
+              hName = st.nextToken();
+              tmpH = hr.find( hName );
+              if ( tmpH == null )
+                Error( "Unknown handler: " + hName );
+              c.addHandler( tmpH );
+            }
             getOptions( elem, cc );
             hr.add( name, cc );
           }
