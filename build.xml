@@ -83,7 +83,7 @@ Copyright:
   <property name="wsdl4j.jar" location="lib/wsdl4j.jar"/>
   <property name="jsse.jar" location="lib/jsse.jar"/>
   <property name="commons-logging.jar" location="lib/commons-logging.jar"/>
-  <property name="log4j-core.jar" location="lib/log4j-core.jar"/>
+  <property name="log4j-core.jar" location="lib/log4j-1.2.4.jar"/>
   <property name="tt-bytecode.jar" location="lib/tt-bytecode.jar"/>
 
   <property name="regexp.jar" location="test/lib/jakarta-oro-2.0.5.jar"/>
