@@ -143,10 +143,9 @@ public class AxisClient extends AxisEngine {
                         if (!handlerImpl.handleRequest(msgContext)) {
                             msgContext.setPastPivot(true);
                         }
-                    } catch (javax.xml.rpc.JAXRPCException ex) {
-                        msgContext.setPastPivot(true);
-                        handlerImpl.handleFault(msgContext);
-                        return;
+                    } catch (RuntimeException re) {
+                        handlerImpl.destroy();  // WS4EE 1.1 6.2.2.1 Handler Life Cycle. "RuntimeException" --> destroy handler
+                        throw re;
                     }
                 }
 
@@ -165,12 +164,6 @@ public class AxisClient extends AxisEngine {
                         try {
                             h.invoke(msgContext);
                         } catch (AxisFault e) {
-                            // server-side processing went wrong
-                            msgContext.setPastPivot(true);
-                            if (handlerImpl != null) {
-                                // invoke handleFault on JAXRPC Handlers
-                                handlerImpl.handleFault(msgContext);
-                            }
                             throw e;
                         }
                     } else {
@@ -178,17 +171,27 @@ public class AxisClient extends AxisEngine {
                                 hName));
                     }
                 }
+                
+                msgContext.setPastPivot(true);
                 if (!msgContext.isPropertyTrue(Call.ONE_WAY)) {
                     if ((handlerImpl != null) &&
                             !msgContext.isPropertyTrue(Call.ONE_WAY)) {
-                        handlerImpl.handleResponse(msgContext);
+                        try {
+                            handlerImpl.handleResponse(msgContext);                            
+                        } catch (RuntimeException ex) {
+                            handlerImpl.destroy();  // WS4EE 1.1 6.2.2.1 Handler Life Cycle. "RuntimeException" --> destroy handler
+                            throw ex;    
+                        }                        
                     }
 
                     /* Process the Global Response Chain */
-                    /** ******************************** */
+                    /***********************************/
                     if ((h = getGlobalResponse()) != null) {
                         h.invoke(msgContext);
                     }
+                    
+                    /* Process the Service-Specific Response Chain */
+                    /***********************************************/
                     if (service != null) {
                         h = service.getResponseHandler();
                         if (h != null) {
@@ -213,8 +216,9 @@ public class AxisClient extends AxisEngine {
                 throw AxisFault.makeFault(e);
             }
         } finally {
-            if (handlerImpl != null)
+            if (handlerImpl != null) {
                 handlerImpl.destroy();
+            }
             // restore previous state
             setCurrentMessageContext(previousContext);
         }

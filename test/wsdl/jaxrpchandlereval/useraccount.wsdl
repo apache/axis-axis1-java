@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://customerinfo" xmlns:impl="http://customerinfo" xmlns:intf="http://customerinfo" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+ <wsdl:types>
+  <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://customerinfo">
+   <element name="updateInfo">
+    <complexType>
+     <sequence>
+      <element name="in0" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="updateInfoResponse">
+    <complexType>
+     <sequence>
+      <element name="updateInfoReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="updateInfoResponse">
+
+      <wsdl:part name="parameters" element="impl:updateInfoResponse"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateInfoRequest">
+
+      <wsdl:part name="parameters" element="impl:updateInfo"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="UserAccount">
+
+      <wsdl:operation name="updateInfo" parameterOrder="">
+
+         <wsdl:input name="updateInfoRequest" message="impl:updateInfoRequest"/>
+
+         <wsdl:output name="updateInfoResponse" message="impl:updateInfoResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="UserAccountSoapBinding" type="impl:UserAccount">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="updateInfo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateInfoRequest">
+
+            <wsdlsoap:body use="literal" namespace="http://customerinfo"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateInfoResponse">
+
+            <wsdlsoap:body use="literal" namespace="http://customerinfo"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="UserAccountService">
+
+      <wsdl:port name="UserAccount" binding="impl:UserAccountSoapBinding">
+
+         <wsdlsoap:address location="http://localhost:8080/axis/services/UserAccount"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
