@@ -218,8 +218,8 @@ public class WSDLUtils {
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName = new javax.wsdl.QName(namespace,
-                                        method.getName().concat("Request"));
+        javax.wsdl.QName qName 
+                = createMessageName(def, namespace, method.getName(), "Request");
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -247,8 +247,8 @@ public class WSDLUtils {
     {
         Message msg = def.createMessage();
 
-        javax.wsdl.QName qName = new javax.wsdl.QName(namespace,
-                                        method.getName().concat("Response"));
+        javax.wsdl.QName qName 
+                = createMessageName(def, namespace, method.getName(), "Response");
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -289,4 +289,26 @@ public class WSDLUtils {
 
         msg.addPart(part);
     }
+    /*
+     * Return a message QName which has not already been defined in the WSDL 
+     */
+    private static javax.wsdl.QName createMessageName(Definition def, 
+                                                   String namespace, 
+                                                   String methodName, 
+                                                   String suffix) {
+
+        javax.wsdl.QName qName = new javax.wsdl.QName(namespace,
+                                        methodName.concat(suffix));
+
+        // Check the make sure there isn't a message with this name already
+        int messageNumber = 1;
+        while (def.getMessage(qName) != null) {
+            StringBuffer namebuf = new StringBuffer(methodName.concat(suffix));
+            namebuf.append(messageNumber);
+            qName = new javax.wsdl.QName(namespace, namebuf.toString());
+            messageNumber++;
+        }
+        return qName;
+    }
+
 }
