@@ -14,13 +14,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.axis.utils.Messages;
-
 
 /**
  * This TestCase verifies:
  *   - the contents of axisNLS.properties for well-formedness, and
  *   - tests calls to Messages.getMessage.
+ *   - tests Messages extension mechanism
  */
 public class TestMessages extends TestCase {
     public TestMessages(String name) {
@@ -32,14 +31,19 @@ public class TestMessages extends TestCase {
     }
 
     /**
-     * Call getMessage for each key in axisNLS.properties to make sure they are all well formed.
+     * Call getMessage for each key in axisNLS.properties
+     * to make sure they are all well formed.
      */
+    private static final int expectedNumberKeysThreshold = 500;
     public void testAllMessages() {
         String arg0 = "arg0";
         String arg1 = "arg1";
         String[] args = {arg0, arg1, "arg2"};
+
+        int count = 0;
         Enumeration keys = Messages.getResourceBundle().getKeys();
         while (keys.hasMoreElements()) {
+            count++;
             String key = (String) keys.nextElement();
             try {
                 String message = Messages.getMessage(key);
@@ -51,6 +55,9 @@ public class TestMessages extends TestCase {
                 throw new AssertionFailedError("Test failure on key = " + key + ":  " + iae.getMessage());
             }
         }
+        
+        assertTrue("expected # keys greater than " + expectedNumberKeysThreshold + ", only got " + count + "!  VERIFY HIERARCHICAL MESSAGES WORK/LINKED CORRECTLY",
+                   count > expectedNumberKeysThreshold);
     } // testAllMessages
 
     /**
@@ -103,6 +110,21 @@ public class TestMessages extends TestCase {
             throw new AssertionFailedError("Test failure:  " + t.getMessage());
         }
     } // testTestMessages
+
+
+    /**
+     * Make sure the extended test messages come out as we expect them to.
+     */
+    public void testTestExtendedMessages() {
+        try {
+            String message = Messages.getMessage("extended.test00");
+            String expected = "message in extension file";
+            assertTrue("expected (" + expected + ") got (" + message + ")", expected.equals(message));
+        }
+        catch (Throwable t) {
+            throw new AssertionFailedError("Test failure:  " + t.getMessage());
+        }
+    } // testTestExtendedMessages
 
 
     private static final String LS = System.getProperty("line.separator");
