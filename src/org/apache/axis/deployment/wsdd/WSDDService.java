@@ -76,6 +76,8 @@ import java.util.Vector;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.io.IOException;
 import java.beans.IntrospectionException;
 
@@ -190,6 +192,15 @@ public class WSDDService
             }
         }
 
+        String allowedMethods = getParameter("allowedMethods");
+        if (allowedMethods != null) {
+            ArrayList methodList = new ArrayList();
+            StringTokenizer tokenizer = new StringTokenizer(allowedMethods, " ,");
+            while (tokenizer.hasMoreTokens()) {
+                methodList.add(tokenizer.nextToken());
+            }
+            //desc.setAllowedMethods(methodList);
+        }
     }
 
     /**

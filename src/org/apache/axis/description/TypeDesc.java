@@ -72,6 +72,10 @@ import java.lang.reflect.Method;
 public class TypeDesc {
     public static Class [] noClasses = new Class [] {};
 
+    public TypeDesc(Class javaClass) {
+        this.javaClass = javaClass;
+    }
+
     /**
      * Static function for centralizing access to type metadata for a
      * given class.  
@@ -109,6 +113,8 @@ public class TypeDesc {
         return null;
     }
 
+    private Class javaClass = null;
+    
     private FieldDesc [] fields;
 
     /** A cache of FieldDescs by name */
@@ -121,6 +127,24 @@ public class TypeDesc {
      * Obtain the current array of FieldDescs
      */
     public FieldDesc[] getFields() {
+        return fields;
+    }
+
+    public FieldDesc[] getFields(boolean searchParents) {
+        if (searchParents) {
+            // check superclasses if they exist
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    FieldDesc [] parentFields = superDesc.getFields(true);
+                    FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
+                    System.arraycopy(fields, 0, ret, 0, fields.length);
+                    System.arraycopy(parentFields, 0, ret, fields.length, parentFields.length);
+                }
+            }
+        }
+
         return fields;
     }
 
@@ -177,8 +201,18 @@ public class TypeDesc {
     public QName getElementNameForField(String fieldName)
     {
         FieldDesc desc = (FieldDesc)fieldNameMap.get(fieldName);
-        if (desc == null || !desc.isElement())
+        if (desc == null) {
+            // check superclasses if they exist
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    return superDesc.getElementNameForField(fieldName);
+                }
+            }
+        } else if (!desc.isElement()) {
             return null;
+        }
         return desc.getXmlName();
     }
     
@@ -189,8 +223,18 @@ public class TypeDesc {
     public QName getAttributeNameForField(String fieldName)
     {
         FieldDesc desc = (FieldDesc)fieldNameMap.get(fieldName);
-        if (desc == null || desc.isElement())
+        if (desc == null) {
+            // check superclasses if they exist
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    return superDesc.getAttributeNameForField(fieldName);
+                }
+            }
+        } else if (desc.isElement()) {
             return null;
+        }
         QName ret = desc.getXmlName();
         if (ret == null) {
             ret = new QName("", fieldName);
@@ -219,6 +263,15 @@ public class TypeDesc {
                         return field.getFieldName();
                     }
                 }
+            }
+        }
+        
+        // check superclasses if they exist
+        Class cls = javaClass.getSuperclass();
+        if (cls != null && !cls.getName().startsWith("java.")) {
+            TypeDesc superDesc = getTypeDescForClass(cls);
+            if (superDesc != null) {
+                return superDesc.getFieldNameForElement(qname, ignoreNS);
             }
         }
 
@@ -253,6 +306,17 @@ public class TypeDesc {
             }
         }
         
+        if (possibleMatch == null) {
+            // check superclasses if they exist
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    possibleMatch = superDesc.getFieldNameForAttribute(qname);
+                }
+            }
+        }
+        
         return possibleMatch;
     }
 
@@ -261,7 +325,17 @@ public class TypeDesc {
      */
     public FieldDesc getFieldByName(String name)
     {
-        return (FieldDesc)fieldNameMap.get(name);
+        FieldDesc ret = (FieldDesc)fieldNameMap.get(name);
+        if (ret == null) {
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    ret = superDesc.getFieldByName(name);
+                }
+            }
+        }
+        return ret;
     }
 
     /**

@@ -92,7 +92,7 @@ public class ServiceDesc {
 
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
-    private ArrayList allowedMethods = null;
+    private List allowedMethods = null;
 
     /** List if disallowed methods */
     private List disallowedMethods = null;
@@ -178,11 +178,11 @@ public class ServiceDesc {
         this.wsdlFileName = wsdlFileName;
     }
 
-    public ArrayList getAllowedMethods() {
+    public List getAllowedMethods() {
         return allowedMethods;
     }
 
-    public void setAllowedMethods(ArrayList allowedMethods) {
+    public void setAllowedMethods(List allowedMethods) {
         this.allowedMethods = allowedMethods;
     }
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,68 +54,58 @@
  */
 package test.encoding;
 
-import org.apache.axis.description.AttributeDesc;
-import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
-import org.apache.axis.encoding.SimpleType;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.AttributeDesc;
+import org.apache.axis.description.ElementDesc;
 
 import javax.xml.rpc.namespace.QName;
 
 /**
- * A simple type with attributes for testing
+ * @author Glen Daniels (gdaniels@apache.org)
  */
-public class SimpleBean implements SimpleType {
-    public String value;  // Our "actual" value
-    public float temp;   // An attribute
+public class ParentBean {
+    private float parentFloat; // attribute
+    private String parentStr;  // element
 
-    private static TypeDesc typeDesc = new TypeDesc(SimpleBean.class);
+    public float getParentFloat() {
+        return parentFloat;
+    }
+
+    public void setParentFloat(float parentFloat) {
+        this.parentFloat = parentFloat;
+    }
+
+    public String getParentStr() {
+        return parentStr;
+    }
+
+    public void setParentStr(String parentStr) {
+        this.parentStr = parentStr;
+    }
+
+    // Type metadata
+    private static TypeDesc typeDesc;
+    
     static {
-        FieldDesc fd = new AttributeDesc();
-        fd.setFieldName("temp");
-        fd.setXmlName(new QName("foo", "temp"));
-        typeDesc.addFieldDesc(fd);
-    }
-    public static TypeDesc getTypeDesc() { return typeDesc; }
+        typeDesc = new TypeDesc(ParentBean.class);
+        FieldDesc field;
 
-    /**
-     * String constructor
-     */
-    public SimpleBean(String val)
+        // An attribute with a specified QName
+        field = new AttributeDesc();
+        field.setFieldName("parentFloat");
+        field.setXmlName(new QName("", "parentAttr"));
+        typeDesc.addFieldDesc(field);
+
+        // An element with a specified QName
+        field = new ElementDesc();
+        field.setFieldName("parentStr");
+        field.setXmlName(new QName("", "parentElement"));
+        typeDesc.addFieldDesc(field);
+    }
+    
+    public static TypeDesc getTypeDesc()
     {
-        value = val;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public float getTemp() {
-        return temp;
-    }
-
-    public void setTemp(float temp) {
-        this.temp = temp;
-    }
-
-    public String toString() {
-        return value;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (obj == null || !(obj instanceof SimpleBean))
-            return false;
-        SimpleBean other = (SimpleBean)obj;
-        if (other.getTemp() != temp) {
-            return false;
-        }
-        if (value == null) {
-            return other.getValue() == null;
-        }
-        return value.equals(other.getValue());
+        return typeDesc;
     }
 }

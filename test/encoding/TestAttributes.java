@@ -15,6 +15,7 @@ import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
+import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.OperationDesc;
@@ -38,7 +39,7 @@ import java.util.Vector;
 
 /**
  *  Test the serialization of a bean with attributes
- * 
+ *
  * @author Tom Jordahl (tomj@macromedia.com)
  * @author Glen Daniels (gdaniels@apache.org)
  */
@@ -47,50 +48,50 @@ public class TestAttributes extends TestCase {
             LogFactory.getLog(TestAttributes.class.getName());
 
     public static final String myNS = "urn:myNS";
-    
+
     public static void main(String [] args) throws Exception
     {
         TestAttributes tester = new TestAttributes("TestAttributes");
         tester.testBean();
         tester.testSimpleType();
     }
-    
+
     public TestAttributes(String name) {
         super(name);
     }
-    
+
     public void testBean () throws Exception {
-        MessageContext msgContext = new MessageContext(new AxisServer());
+        MessageContext msgContext = new MessageContext(new AxisServer(new BasicServerConfig()));
         SOAPEnvelope msg = new SOAPEnvelope();
-        
+
         // Create bean with data
         AttributeBean bean = new AttributeBean();
         bean.setAge(35);
         bean.setID(1.15F);
         bean.setMale(true);
         bean.setName("James Bond");
-        
+
         RPCParam arg = new RPCParam("", "struct", bean);
         RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[]{ arg });
         msg.addBodyElement(body);
         body.setEncodingStyle(null);
-        
+
         Writer stringWriter = new StringWriter();
         SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
         context.setDoMultiRefs(false);  // no multirefs
         context.setPretty(false);
-        
+
         // Create a TypeMapping and register the Bean serializer/deserializer
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
         // The "" namespace is literal (no encoding).
         tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
         reg.register(Constants.URI_CURRENT_SOAP_ENC, tm);
-        
+
         QName beanQName = new QName("typeNS", "TheBean");
-        tm.register(AttributeBean.class, 
-                    beanQName, 
-                    new BeanSerializerFactory(AttributeBean.class, beanQName), 
+        tm.register(AttributeBean.class,
+                    beanQName,
+                    new BeanSerializerFactory(AttributeBean.class, beanQName),
                     new BeanDeserializerFactory(AttributeBean.class, beanQName));
 
         // Serialize the bean in to XML
@@ -124,7 +125,7 @@ public class TestAttributes extends TestCase {
         SimpleBean bean = new SimpleBean("test value");
         bean.temp = 85.0F;
 
-        MessageContext msgContext = new MessageContext(new AxisServer());
+        MessageContext msgContext = new MessageContext(new AxisServer(new BasicServerConfig()));
         SOAPEnvelope msg = new SOAPEnvelope();
 
         RPCParam arg = new RPCParam("", "simple", bean);

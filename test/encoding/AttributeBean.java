@@ -65,7 +65,7 @@ import javax.xml.rpc.namespace.QName;
 /**
  * Simple Java Bean with fields that should be serialized as attributes
  */ 
-public class AttributeBean implements java.io.Serializable {
+public class AttributeBean extends ParentBean {
     private int age;
     private float iD;
     private java.lang.String name;  // attribute
@@ -124,16 +124,27 @@ public class AttributeBean implements java.io.Serializable {
             return false;
         if (other.getMale() != male)
             return false;
-        if (name == null)
-            return other.getName() == null;
-        return name.equals(other.getName());
+        if (name == null) {
+            if (other.getName() != null) {
+                return false;
+            }
+        }
+        if (!name.equals(other.getName())) {
+            return false;
+        }
+        if (getParentFloat() != other.getParentFloat())
+            return false;
+        if (getParentStr() != null) {
+            return getParentStr().equals(other.getParentStr());
+        }
+        return other.getParentStr() == null;
     }
 
     // Type metadata
     private static TypeDesc typeDesc;
     
     static {
-        typeDesc = new TypeDesc();
+        typeDesc = new TypeDesc(AttributeBean.class);
         FieldDesc field;
 
         // An attribute with a specified QName

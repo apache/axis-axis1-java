@@ -152,7 +152,7 @@ public class RETURN implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc();
+        new org.apache.axis.description.TypeDesc(RETURN.class);
 
     static {
         org.apache.axis.description.FieldDesc field = new org.apache.axis.description.ElementDesc();
