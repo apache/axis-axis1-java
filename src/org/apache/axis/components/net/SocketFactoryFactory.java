@@ -95,7 +95,7 @@ public class SocketFactoryFactory {
                                        "axis.socketSecureFactory");
 
         AxisProperties.setClassDefault(SecureSocketFactory.class,
-                                       "org.apache.axis.components.net.DefaultSecureSocketFactory");
+                                       "org.apache.axis.components.net.JSSESocketFactory");
     }
     
     /**
