@@ -1277,7 +1277,7 @@ public class SerializationContextImpl implements SerializationContext
      * Attempts to get a serializer for the indicated javaType and xmlType.
      * @param javaType is the type of the object
      * @param xmlType is the preferred qname type.
-     * @param actualXmlType is set to a QNameHolder or null.  
+     * @param actualXMLType is set to a QNameHolder or null.  
      *                     If a QNameHolder, the actual xmlType is returned.
      * @return found class/serializer or null
      **/

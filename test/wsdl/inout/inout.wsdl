@@ -34,7 +34,7 @@
   </types>
 
   <!-- message declns -->
-  <message name="TestFailedMessage"/>
+  <message name="TestFailed"/>
 
   <message name="Msg0"/>
 

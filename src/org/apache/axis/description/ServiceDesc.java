@@ -56,6 +56,7 @@ package org.apache.axis.description;
 
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.InternalException;
+import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.components.logger.LogFactory;
@@ -1041,6 +1042,8 @@ public class ServiceDesc {
                 throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
             }
             operation.setMessageOperationStyle(messageOperType);
+            operation.setReturnClass(Object.class);
+            operation.setReturnType(Constants.XSD_ANYTYPE);
         } else {
             // For other styles, continue here.
             Class retClass = method.getReturnType();
