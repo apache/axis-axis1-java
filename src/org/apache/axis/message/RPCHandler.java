@@ -104,6 +104,7 @@ public class RPCHandler extends SOAPHandler
     private RPCParam currentParam = null;
     private boolean isResponse;
     private OperationDesc operation;
+    private boolean isHeaderElement;
 
     public RPCHandler(RPCElement rpcElem, boolean isResponse)
         throws SAXException
@@ -114,6 +115,15 @@ public class RPCHandler extends SOAPHandler
 
     public void setOperation(OperationDesc myOperation) {
         this.operation = myOperation;
+    }
+
+    /**
+     * Indicate RPCHandler is processing header elements
+     * @param value boolean indicating whether
+     * header elements are being processed.
+     */
+    public void setHeaderElement(boolean value) {
+        isHeaderElement = true;
     }
 
     /**
@@ -206,6 +216,7 @@ public class RPCHandler extends SOAPHandler
             } else {
                 paramDesc = operation.getInputParamByQName(qname);
             }
+
             
             // If that didn't work, try position
             // FIXME : Do we need to be in EITHER named OR positional
@@ -221,10 +232,19 @@ public class RPCHandler extends SOAPHandler
                 }
             }
             
-            
             if (paramDesc == null) {
                 throw new SAXException(Messages.getMessage("noParmDesc"));
             }
+            // Make sure that we don't find body parameters that should
+            // be in the header
+            if (!isHeaderElement &&
+                ((isResponse && paramDesc.isOutHeader()) ||
+                 (!isResponse && paramDesc.isInHeader()))) {
+                throw new SAXException(
+                    Messages.getMessage("expectedHeaderParam", 
+                                        paramDesc.getQName().toString()));
+            }
+
             destClass = paramDesc.getJavaType();
             
             // Keep the association so we can use it later
@@ -311,6 +331,10 @@ public class RPCHandler extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
+        // endElement may not be called in all circumstances.
+        // In addition, onStartChild may be called after endElement
+        // (for header parameter/response processing).  
+        // So please don't add important logic to this method.
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("setProp00",
                     "MessageContext", "RPCHandler.endElement()."));

@@ -79,20 +79,31 @@ public class Parameter {
     private TypeEntry type;
     private byte mode = IN;
 
+    // Flags indicating whether the parameter goes into the soap message as
+    // a header.
     private boolean inHeader = false;
+    private boolean outHeader = false;
 
     public String toString() {
         return "(" + type
                 + (mimeType == null ? "" : "(" + mimeType + ")")
                 + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)"
-                + (inHeader ? "(soap:header)" : ""));
+                + (inHeader ? "(IN soap:header)" : "")
+                + (outHeader ? "(OUT soap:header)" : ""));
     } // toString
 
+    /**
+     * Get the fully qualified name of this parameter.
+     */
     public QName getQName() {
         return qname;
     }
 
+    /**
+     * Get the name of this parameter.  This call is equivalent to
+     * getQName().getLocalPart().
+     */
     public String getName() {
         if (name == null && qname != null) {
             return qname.getLocalPart();
@@ -100,45 +111,94 @@ public class Parameter {
         return name;
     }
 
+    /**
+     * Set the name of the parameter.  This replaces both the
+     * name and the QName (the namespaces becomes "").
+     */
     public void setName(String name) {
         this.name = name;
         if (qname == null)
             this.qname = new QName("", name);
     }
 
+    /**
+     * Set the QName of the parameter.
+     */
     public void setQName(QName qname) {
         this.qname = qname;
     }
 
+    /**
+     * Get the MIME type of the parameter.
+     */
     public String getMIMEType() {
         return mimeType;
     } // getMIMEType
 
+    /**
+     * Set the MIME type of the parameter.
+     */
     public void setMIMEType(String mimeType) {
         this.mimeType = mimeType;
     } // setMIMEType
 
+    /**
+     * Get the TypeEntry of the parameter.
+     */
     public TypeEntry getType() {
         return type;
     }
 
+    /**
+     * Set the TypeEntry of the parameter.
+     */
     public void setType(TypeEntry type) {
         this.type = type;
     }
 
+    /**
+     * Get the mode (IN, INOUT, OUT) of the parameter.
+     */
     public byte getMode() {
         return mode;
     }
 
+    /**
+     * Set the mode (IN, INOUT, OUT) of the parameter.  If the input
+     * to this method is not one of IN, INOUT, OUT, then the value
+     * remains unchanged.
+     */
     public void setMode(byte mode) {
-        this.mode = mode;
+        if (mode <= INOUT & mode >= IN) {
+            this.mode = mode;
+        }
     }
 
-    public boolean inHeader() {
+    /**
+     * Is this parameter in the input message header?
+     */
+    public boolean isInHeader() {
         return inHeader;
-    } // inHeader
+    } // isInHeader
 
+    /**
+     * Set the inHeader flag for this parameter.
+     */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
     } // setInHeader
+
+    /**
+     * Is this parameter in the output message header?
+     */
+    public boolean isOutHeader() {
+        return outHeader;
+    } // isOutHeader
+
+    /**
+     * Set the outHeader flag for this parameter.
+     */
+    public void setOutHeader(boolean outHeader) {
+        this.outHeader = outHeader;
+    } // setOutHeader
 } // class Parameter

@@ -86,7 +86,7 @@ public class ParameterDesc implements Serializable {
     /** A TypeEntry corresponding to this parameter */
     public TypeEntry typeEntry;
     /** The Parameter mode (in, out, inout) */
-    public byte mode = IN;
+    private byte mode = IN;
     /** The XML type of this parameter */
     private QName typeQName;
     /** The Java type of this parameter */
@@ -97,6 +97,10 @@ public class ParameterDesc implements Serializable {
     private boolean isReturn = false;
     /** MIME type for this parameter, if there is one */
     private String mimeType = null;
+
+    /** Indicates whether input/output values are stored in the header */
+    private boolean inHeader = false;
+    private boolean outHeader = false; 
 
     public ParameterDesc() {
     }
@@ -137,10 +141,15 @@ public class ParameterDesc implements Serializable {
      * @param mode IN, OUT, INOUT
      * @param typeQName the parameter's XML type QName
      * @param javaType the parameter's javaType
+     * @param inHeader does this parameter go into the input message header?
+     * @param outHeader does this parameter go into the output message header?
      */
-    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType) {
+    public ParameterDesc(QName name, byte mode, QName typeQName,
+            Class javaType, boolean inHeader, boolean outHeader) {
         this(name,mode,typeQName);
         this.javaType = javaType;
+        this.inHeader = inHeader;
+        this.outHeader = outHeader;
     }
 
     public String toString() {
@@ -157,6 +166,8 @@ public class ParameterDesc implements Serializable {
         text+=indent + "isReturn:   " + isReturn + "\n";
         text+=indent + "typeQName:  " + typeQName + "\n";
         text+=indent + "javaType:   " + javaType + "\n";
+        text+=indent + "inHeader:   " + inHeader + "\n";
+        text+=indent + "outHeader:  " + outHeader+ "\n";
         return text;
     } // toString
     
@@ -266,6 +277,22 @@ public class ParameterDesc implements Serializable {
         this.order = order;
     }
 
+    public void setInHeader(boolean value) {
+        this.inHeader = value;
+    }
+
+    public boolean isInHeader() {
+        return this.inHeader;
+    }
+
+    public void setOutHeader(boolean value) {
+        this.outHeader = value;
+    }
+
+    public boolean isOutHeader() {
+        return this.outHeader;
+    }
+
     /**
      * Indicates ParameterDesc represents return of OperationDesc
      * @return true if return parameter of OperationDesc
@@ -316,4 +343,5 @@ public class ParameterDesc implements Serializable {
         }
         in.defaultReadObject();
     }
+
 } // class ParameterDesc

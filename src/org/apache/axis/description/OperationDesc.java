@@ -63,6 +63,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 
 
 /**
@@ -105,8 +106,9 @@ public class OperationDesc {
     /** The actual Java method associated with this operation, if known */
     private Method method;
 
-    /** This operation's style.  If null, we default to our parent's */
+    /** This operation's style/use. If null, we default to our parent's */
     private Style style = null;
+    private Use   use = null;
 
     /** The number of "in" params (i.e. IN or INOUT) for this operation */
     private int numInParams = 0;
@@ -227,6 +229,27 @@ public class OperationDesc {
         return style;
     }
 
+    public void setUse(Use use)
+    {
+        this.use = use;
+    }
+
+    /**
+     * Return the use of the operation, defaulting to the parent
+     * ServiceDesc's use if we don't have one explicitly set.
+     */
+    public Use getUse()
+    {
+        if (use == null) {
+            if (parent != null) {
+                return parent.getUse();
+            }
+            return Use.DEFAULT; // Default
+        }
+
+        return use;
+    }
+
     public void addParameter(ParameterDesc param)
     {
         // Should we enforce adding INs then INOUTs then OUTs?
@@ -281,6 +304,20 @@ public class OperationDesc {
 
     public void setMethod(Method method) {
         this.method = method;
+    }
+
+    /**
+     * Is the return value in the header of the response message?
+     */
+    public boolean isReturnHeader() {
+        return returnDesc.isOutHeader();
+    }
+
+    /**
+     * Set whether the return value is in the response message.
+     */
+    public void setReturnHeader(boolean value) {
+        returnDesc.setOutHeader(value);
     }
 
     public ParameterDesc getParamByQName(QName qname)
@@ -418,6 +455,7 @@ public class OperationDesc {
         text+=indent+"elementQName:" + getElementQName() + "\n";
         text+=indent+"soapAction:  " + getSoapAction() + "\n";
         text+=indent+"style:       " + getStyle().getName() + "\n";
+        text+=indent+"use:         " + getUse().getName() + "\n";
         text+=indent+"numInParams: " + getNumInParams() + "\n";
         text+=indent+"method:" + getMethod() + "\n";
         for (int i=0; i<parameters.size(); i++) {

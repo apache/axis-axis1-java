@@ -67,6 +67,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.RPCHeaderParam;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -161,7 +162,7 @@ public class RPCProvider extends JavaProvider
        // arguments (which is a strange thing to have, but whatever)
         if (body == null) {
             // throw an error if this isn't a document style service
-            if (!serviceDesc.getStyle().equals(Style.DOCUMENT)) {
+            if (!(serviceDesc.getStyle().equals(Style.DOCUMENT))) {
                 throw new Exception(Messages.getMessage("noBody00"));
             }
 
@@ -320,38 +321,57 @@ public class RPCProvider extends JavaProvider
         resBody.setNamespaceURI( body.getNamespaceURI() );
         resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
-        // Return first
-        if ( operation.getMethod().getReturnType() != Void.TYPE ) {
-            QName returnQName = operation.getReturnQName();
-            if (returnQName == null) {
-                returnQName = new QName("", methodName + "Return");
+        try {
+            // Return first
+            if ( operation.getMethod().getReturnType() != Void.TYPE ) {
+                QName returnQName = operation.getReturnQName();
+                if (returnQName == null) {
+                    returnQName = new QName("", methodName + "Return");
+                }
+
+                // For SOAP 1.2, add a result
+                if (msgContext.getSOAPConstants() ==
+                        SOAPConstants.SOAP12_CONSTANTS)
+                {
+                    RPCParam result = new RPCParam
+                      (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
+                    if (!operation.isReturnHeader()) {
+                        resBody.addParam(result);
+                    } else {
+                        resEnv.addHeader(new RPCHeaderParam(result));
+                    }
+
+                }
+
+                RPCParam param = new RPCParam(returnQName, objRes);
+                param.setParamDesc(operation.getReturnParamDesc());
+                if (!operation.isReturnHeader()) {
+                    resBody.addParam(param);
+                } else { 
+                    resEnv.addHeader(new RPCHeaderParam(param));
+                }
+
             }
 
-            // For SOAP 1.2, add a result
-            if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
-            {
-                RPCParam result = new RPCParam
-                   (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
-                resBody.addParam(result);
+            // Then any other out params
+            if (!outs.isEmpty()) {
+                for (Iterator i = outs.iterator(); i.hasNext();) {
+                    // We know this has a holder, so just unwrap the value
+                    RPCParam param = (RPCParam) i.next();
+                    Holder holder = (Holder)param.getValue();
+                    Object value = JavaUtils.getHolderValue(holder);
+                    ParameterDesc paramDesc = param.getParamDesc();
+
+                    param.setValue(value);
+                    if (paramDesc != null && paramDesc.isOutHeader()) {
+                        resEnv.addHeader(new RPCHeaderParam(param));
+                    } else {
+                        resBody.addParam(param);
+                    }
+                }
             }
-
-            RPCParam param = new RPCParam(returnQName, objRes);
-            param.setParamDesc(operation.getReturnParamDesc());
-            resBody.addParam(param);
-        }
-
-        // Then any other out params
-        if (!outs.isEmpty()) {
-            for (Iterator i = outs.iterator(); i.hasNext();) {
-                // We know this has a holder, so just unwrap the value
-                RPCParam param = (RPCParam) i.next();
-                Holder holder = (Holder)param.getValue();
-                Object value = JavaUtils.getHolderValue(holder);
-                ParameterDesc paramDesc = param.getParamDesc();
-
-                param.setValue(value);
-                resBody.addParam(param);
-            }
+        } catch (Exception e) {
+            throw e;
         }
 
         resEnv.addBodyElement(resBody);

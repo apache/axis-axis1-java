@@ -108,7 +108,7 @@ public class InheritanceTestCase extends junit.framework.TestCase {
     public void testInheritanceTest() {
         test.wsdl.inheritance.InheritancePortType binding;
         try {
-            binding = new InheritanceTestLocator().getInheritanceTest();
+            binding = new InheritancePortTypeServiceLocator().getInheritanceTest();
         } catch (ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }

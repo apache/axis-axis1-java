@@ -58,6 +58,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -90,6 +91,15 @@ public class WSDDParameter extends WSDDElement
         String modeStr = e.getAttribute(ATTR_MODE);
         if (modeStr != null && !modeStr.equals("")) {
             parameter.setMode(ParameterDesc.modeFromString(modeStr));
+        }
+
+        String inHStr = e.getAttribute(ATTR_INHEADER);
+        if (inHStr != null) {
+            parameter.setInHeader(JavaUtils.isTrueExplicitly(inHStr));
+        }
+        String outHStr = e.getAttribute(ATTR_OUTHEADER);
+        if (outHStr != null) {
+            parameter.setOutHeader(JavaUtils.isTrueExplicitly(outHStr));
         }
         
         String typeStr = e.getAttribute(ATTR_TYPE);
@@ -130,6 +140,16 @@ public class WSDDParameter extends WSDDElement
         if (mode != ParameterDesc.IN) {
             String modeStr = ParameterDesc.getModeAsString(mode);
             attrs.addAttribute("", ATTR_MODE, ATTR_MODE, "CDATA", modeStr);
+        }
+
+        if (parameter.isInHeader()) {
+            attrs.addAttribute("", ATTR_INHEADER, ATTR_INHEADER,
+                               "CDATA", "true");
+        }
+
+        if (parameter.isOutHeader()) {
+            attrs.addAttribute("", ATTR_OUTHEADER, ATTR_OUTHEADER,
+                               "CDATA", "true");
         }
         
         QName typeQName = parameter.getTypeQName();

@@ -67,6 +67,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
@@ -270,11 +271,11 @@ public class SerializationContextImpl implements SerializationContext
                     sendXSIType = false ;
             }
 
-            // A Document-style service overrides the above settings. Don't
+            // A Literal use service overrides the above settings. Don't
             // send xsi:type, and don't do multiref in that case.
             SOAPService service = msgContext.getService();
             if (service != null) {
-                if (service.getStyle() != Style.RPC) {
+                if (service.getUse() != Use.ENCODED) {
                     sendXSIType = false;
                     doMultiRefs = false;
                 }

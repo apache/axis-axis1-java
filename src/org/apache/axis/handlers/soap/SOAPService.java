@@ -65,6 +65,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
@@ -298,6 +299,14 @@ public class SOAPService extends SimpleTargetedChain
 
     public void setStyle(Style style) {
         serviceDescription.setStyle(style);
+    }
+
+    public Use getUse() {
+        return serviceDescription.getUse();
+    }
+
+    public void setUse(Use style) {
+        serviceDescription.setUse(style);
     }
 
     public ServiceDesc getServiceDescription() {

@@ -210,7 +210,8 @@ public class TestRef {
 
         call.setPassword( opts.getPassword() );
 
-        call.setOperationStyle(org.apache.axis.enum.Style.DOCUMENT_STR);
+        call.setOperationStyle("document");
+        call.setOperationUse("literal");
 
         //Now do the call....
         Object ret = call.invoke(new Object[]{

@@ -110,6 +110,8 @@ import javax.xml.rpc.holders.IntHolder;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
@@ -997,7 +999,7 @@ public class SymbolTable {
                 }
             }
         }
-    } // populate Parameters
+    } // populateParameters
 
     /**
      * For the given operation, this method returns the parameter info conveniently collated.
@@ -1037,8 +1039,8 @@ public class SymbolTable {
         boolean literalInput = false;
         boolean literalOutput = false;
         if (bindingEntry != null) {
-            literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
-            literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
+            literalInput = (bindingEntry.getInputBodyType(operation) == Use.LITERAL);
+            literalOutput = (bindingEntry.getOutputBodyType(operation) == Use.LITERAL);
         }
 
         // Collect all the input parameters
@@ -1113,6 +1115,7 @@ public class SymbolTable {
         // out parameters.
         if (outputs.size() == 1) {
             parameters.returnParam = (Parameter)outputs.get(0);
+            parameters.returnParam.setMode(Parameter.OUT);
             if (parameters.returnParam.getType() instanceof DefinedElement) {
                 parameters.returnParam.setQName(
                         ((DefinedElement)parameters.returnParam.getType())
@@ -1335,8 +1338,12 @@ public class SymbolTable {
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
                 if (bindingEntry != null &&
-                        bindingEntry.isHeaderParameter(opName, partName)) {
+                    bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
+                }
+                if (bindingEntry != null &&
+                        bindingEntry.isOutHeaderPart(opName, partName)) {
+                    param.setOutHeader(true);
                 }
 
                 v.add(param);
@@ -1418,8 +1425,11 @@ public class SymbolTable {
                     p.setType(elem.getType());
                     setMIMEType(p, bindingEntry == null ? null :
                             bindingEntry.getMIMEType(opName, partName));
-                    if (bindingEntry.isHeaderParameter(opName, partName)) {
+                    if (bindingEntry.isInHeaderPart(opName, partName)) {
                         p.setInHeader(true);
+                    }
+                    if (bindingEntry.isOutHeaderPart(opName, partName)) {
+                        p.setOutHeader(true);
                     }
                     v.add(p);
                 }
@@ -1436,8 +1446,11 @@ public class SymbolTable {
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
-                if (bindingEntry.isHeaderParameter(opName, partName)) {
+                if (bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
+                }
+                if (bindingEntry.isOutHeaderPart(opName, partName)) {
+                    param.setOutHeader(true);
                 }
 
                 v.add(param);
@@ -1493,7 +1506,7 @@ public class SymbolTable {
                     SOAPBinding sb = (SOAPBinding) obj;
                     String style = sb.getStyle();
                     if ("rpc".equalsIgnoreCase(style)) {
-                        bEntry.setBindingStyle(BindingEntry.STYLE_RPC);
+                        bEntry.setBindingStyle(Style.RPC);
                     }
                 }
                 else if (obj instanceof HTTPBinding) {
@@ -1515,7 +1528,6 @@ public class SymbolTable {
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
             HashMap faultMap = new HashMap(); // name to SOAPFault from WSDL4J
-            
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
                 Operation operation = bindOp.getOperation();
@@ -1614,8 +1626,8 @@ public class SymbolTable {
                 // Add this fault name and info to the map
                 faultMap.put(bindOp, faults);
                 
-                int inputBodyType = bEntry.getInputBodyType(operation);
-                int outputBodyType = bEntry.getOutputBodyType(operation);
+                Use inputBodyType = bEntry.getInputBodyType(operation);
+                Use outputBodyType = bEntry.getOutputBodyType(operation);
 
                 // Associate the portType operation that goes with this binding
                 // with the body types.
@@ -1624,8 +1636,8 @@ public class SymbolTable {
 
                 // If the input or output body uses literal, flag the binding as using literal.
                 // NOTE:  should I include faultBodyType in this check?
-                if (inputBodyType == BindingEntry.USE_LITERAL ||
-                        outputBodyType == BindingEntry.USE_LITERAL) {
+                if (inputBodyType == Use.LITERAL ||
+                    outputBodyType == Use.LITERAL) {
                     bEntry.setHasLiteral(true);
                 }
                 bEntry.setFaultBodyTypeMap(operation, faultMap);
@@ -1655,9 +1667,10 @@ public class SymbolTable {
                 // parts come from messages used in the portType's operation
                 // input/output clauses - it does not work for implicit
                 // headers - those whose parts come from messages not used in
-                // the portType-s operation's input/output clauses.
-                bEntry.setHeaderParameter(operation.getName(), header.getPart(),
-                        true);
+                // the portType's operation's input/output clauses.  I don't
+                // know what we're supposed to emit for implicit headers.
+                bEntry.setHeaderPart(operation.getName(), header.getPart(),
+                        input ? BindingEntry.IN_HEADER : BindingEntry.OUT_HEADER);
             }
             else if (obj instanceof MIMEMultipartRelated) {
                 bEntry.setBodyType(operation,
@@ -1677,7 +1690,7 @@ public class SymbolTable {
                     "noUse", operation.getName()));
         }
         if (use.equalsIgnoreCase("literal")) {
-            bEntry.setBodyType(operation, BindingEntry.USE_LITERAL,
+            bEntry.setBodyType(operation, Use.LITERAL,
                     input);
         }
     } // setBodyType
@@ -1687,9 +1700,9 @@ public class SymbolTable {
      * A side effect is to return the body Type of the given
      * MIMEMultipartRelated object.
      */
-    private int addMIMETypes(BindingEntry bEntry, MIMEMultipartRelated mpr,
+    private Use addMIMETypes(BindingEntry bEntry, MIMEMultipartRelated mpr,
             Operation op) throws IOException {
-        int bodyType = BindingEntry.USE_ENCODED;
+        Use bodyType = Use.ENCODED;
         List parts = mpr.getMIMEParts();
         Iterator i = parts.iterator();
         while (i.hasNext()) {
@@ -1709,7 +1722,7 @@ public class SymbolTable {
                                 "noUse", op.getName()));
                     }
                     if (use.equalsIgnoreCase("literal")) {
-                        bodyType = BindingEntry.USE_LITERAL;
+                        bodyType = Use.LITERAL;
                     }
                 }
             }
@@ -1942,9 +1955,9 @@ public class SymbolTable {
             boolean literalOutput = false;
             if (bEntry != null) {
                 literalInput = bEntry.getInputBodyType(operation) ==
-                        BindingEntry.USE_LITERAL;
+                        Use.LITERAL;
                 literalOutput = bEntry.getOutputBodyType(operation) ==
-                        BindingEntry.USE_LITERAL;
+                        Use.LITERAL;
             }
 
             // Query the input message

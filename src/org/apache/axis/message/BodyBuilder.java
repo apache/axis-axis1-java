@@ -146,8 +146,9 @@ public class BodyBuilder extends SOAPHandler
         MessageContext msgContext = context.getMessageContext();
         OperationDesc [] operations = null;
         try {
-            if(msgContext != null)
-                operations = msgContext.getPossibleOperationsByQName(qname);
+            if(msgContext != null) {
+                 operations = msgContext.getPossibleOperationsByQName(qname);
+            }
 
             // If there's only one match, set it in the MC now
             if ((operations != null) && (operations.length == 1))
@@ -206,7 +207,7 @@ public class BodyBuilder extends SOAPHandler
                                         SOAPConstants.SOAP11_CONSTANTS :
                                         context.getMessageContext().getSOAPConstants();
         if (element == null) {
-            if (style == Style.RPC &&
+            if ((style == Style.RPC) &&
                 soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                 throw new SAXException(Messages.getMessage("onlyOneBodyFor12"));
             }

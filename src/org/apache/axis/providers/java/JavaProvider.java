@@ -66,6 +66,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
@@ -75,8 +76,6 @@ import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
 import org.apache.axis.session.Session;
 import org.apache.axis.description.ServiceDesc;
@@ -375,6 +374,9 @@ public abstract class JavaProvider extends BasicProvider
             if(alias != null) emitter.setServiceElementName(alias);
 
             Style style = serviceDesc.getStyle();
+
+            // The emitter should be fixed to support all 
+            // the Style/Use flavors.
             if (style == Style.RPC) {
                 emitter.setMode(Emitter.MODE_RPC);
             } else if (style == Style.DOCUMENT) {

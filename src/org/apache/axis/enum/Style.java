@@ -65,13 +65,66 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
  * @author rsitze
  */
 public class Style extends Enum {
+
+    /**
+     * Description of the different styles
+     * 
+     * style=rpc use=encoded
+     *   First element of the SOAP body is the
+     *   operation.  The operation contains
+     *   elements describing the parameters, which 
+     *   are serialized as encoded (possibly multi-ref)
+     *   <soap:body>
+     *      <operation>
+     *         <arg1>...</arg1>
+     *         <arg2>...</arg2>
+     *      </operation>
+     *
+     * style=RPC use=literal
+     *   First element of the SOAP body is the 
+     *   operation.  The operation contains elements
+     *   describing the parameters, which are serialized
+     *   as encoded (no multi-ref)
+     *   <soap:body>
+     *      <operation>
+     *         <arg1>...</arg1>
+     *         <arg2>...</arg2>
+     *      </operation>
+     *
+     * style=document use=literal
+     *   Elements of the SOAP body are the names of the parameters
+     *   (there is no wrapper operation...no multi-ref)
+     *
+     *   <soap:body>
+     *         <arg1>...</arg1>
+     *         <arg2>...</arg2>
+     *
+     * 
+     * style=wrapped
+     *    Special case of DOCLIT where there is only one parameter
+     *    and it has the same qname as the operation.  In
+     *    such cases, there is no actual type with the name...the
+     *    elements are treated as parameters to the operation
+     *
+     *   <soap:body>
+     *      <one-arg-same-name-as-operation>
+     *         <elemofarg1>...</elemofarg1>
+     *         <elemofarg2>...</elemofarg2>
+     * 
+     * style=document use=encoded
+     *    This mode doesn't seem to make any sense...
+     *    Like DOCLIT but the parms are encoded?
+     *
+     */
+
     private static final Type type = new Type();
     
     public static final String RPC_STR = "rpc";
     public static final String DOCUMENT_STR = "document";
     public static final String WRAPPED_STR = "wrapped";
     public static final String MESSAGE_STR = "message";
-    
+   
+ 
     public static final Style RPC = type.getStyle(RPC_STR);
     public static final Style DOCUMENT = type.getStyle(DOCUMENT_STR);
     public static final Style WRAPPED = type.getStyle(WRAPPED_STR);
@@ -83,18 +136,10 @@ public class Style extends Enum {
 
         
     private QName provider;
-    private String encoding;
-    
-
-    // public int     getValue();
-    // public String  getName();
-    // public Type    getType();
-
 
     public static Style getDefault() { return (Style)type.getDefault(); }
     
     public final QName getProvider() { return provider; }
-    public final String getEncoding() { return encoding; }
 
     public static final Style getStyle(int style) {
         return type.getStyle(style);
@@ -124,17 +169,13 @@ public class Style extends Enum {
         private Type() {
             super("style", new Enum[] {
             new Style(0, RPC_STR,
-                  WSDDConstants.QNAME_JAVARPC_PROVIDER,
-                  Constants.URI_DEFAULT_SOAP_ENC),
+                      WSDDConstants.QNAME_JAVARPC_PROVIDER),
             new Style(1, DOCUMENT_STR,
-                  WSDDConstants.QNAME_JAVARPC_PROVIDER,
-                  Constants.URI_LITERAL_ENC),
+                      WSDDConstants.QNAME_JAVARPC_PROVIDER),  
             new Style(2, WRAPPED_STR,
-                  WSDDConstants.QNAME_JAVARPC_PROVIDER,
-                  Constants.URI_LITERAL_ENC),
+                      WSDDConstants.QNAME_JAVARPC_PROVIDER),
             new Style(3, MESSAGE_STR,
-                  WSDDConstants.QNAME_JAVAMSG_PROVIDER,
-                  Constants.URI_LITERAL_ENC)
+                      WSDDConstants.QNAME_JAVAMSG_PROVIDER),
             });
         }
 
@@ -149,19 +190,10 @@ public class Style extends Enum {
         public final Style getStyle(String style, Style dephault) {
             return (Style)this.getEnum(style, dephault);
         }
-
-        // public final   String getName();
-        // public boolean isValid(String enumName);
-        // public final int size();
-        // public final String[] getEnumNames();
-        // public final Enum getEnum(int enum);
-        // public final Enum getEnum(String enumName);
-        // public final Enum getEnum(String enumName, Enum dephault);
     }
 
-    private Style(int value, String name, QName provider, String encoding) {
+    private Style(int value, String name, QName provider) {
         super(type, value, name);
         this.provider = provider;
-        this.encoding = encoding;
     }
 };

@@ -65,6 +65,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.bytecode.ParamNameExtractor;
@@ -111,8 +112,9 @@ public class ServiceDesc {
     /** List if disallowed methods */
     private List disallowedMethods = null;
 
-    /** Style */
+    /** Style/Use */
     private Style style = Style.RPC;
+    private Use   use   = Use.ENCODED;
 
     /** Implementation class */
     private Class implClass = null;
@@ -192,6 +194,18 @@ public class ServiceDesc {
     }
 
     /**
+     * What kind of use is this?
+     * @return
+     */
+    public Use getUse() {
+        return use;
+    }
+
+    public void setUse(Use use) {
+        this.use = use;
+    }
+
+    /**
      * Determine whether or not this is a "wrapped" invocation, i.e. whether
      * the outermost XML element of the "main" body element represents a
      * method call, with the immediate children of that element representing
@@ -202,7 +216,8 @@ public class ServiceDesc {
      */
     public boolean isWrapped()
     {
-        return ((style == Style.RPC) || (style == Style.WRAPPED));
+        return ((style == Style.RPC) || 
+                (style == Style.WRAPPED));
     }
 
     /**
@@ -432,9 +447,10 @@ public class ServiceDesc {
 
         if (overloads == null) {
             // Nothing specifically matching this QName.
-            if (((style == Style.RPC) || ((style==Style.MESSAGE) && 
-                                          (getDefaultNamespace() == null))) &&
-                    (name2OperationsMap != null)) {
+            if ((isWrapped() ||
+                 ((style==Style.MESSAGE) && 
+                  (getDefaultNamespace() == null))) &&
+                (name2OperationsMap != null)) {
                 // Try ignoring the namespace....?
                 overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
             }
