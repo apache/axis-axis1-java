@@ -6,17 +6,17 @@
 <!--   java org.apache.axis.client.http.AdminClient deploy.xml  -->
 <!--      after the axis server is running                      -->
 
- <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
-			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
-			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
   <service name="urn:xmltoday-delayed-quotes" provider="java:RPC">
-    <parameter name="className" value="samples.stock.StockQuoteService" />
-    <parameter name="methodName" value="getQuote test" />
+    <parameter name="className" value="samples.stock.StockQuoteService"/>
+    <parameter name="methodName" value="getQuote test"/>
     <parameter name="allowedRoles" value="user1,user2"/>
 
     <requestFlow name="checks">
-      <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" />
-      <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler" />
+      <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+      <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler"/>
     </requestFlow>
   </service>
 
@@ -24,8 +24,7 @@
     <parameter name="className" value="samples.stock.ComInfoService" />
     <parameter name="methodName" value="getInfo" />
     <parameter name="allowedRoles" value="user3"/>
-
     <requestFlow type="checks"/>
   </service>
- </deployment>
 
+</deployment>
