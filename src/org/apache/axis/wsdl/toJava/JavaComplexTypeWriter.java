@@ -346,8 +346,11 @@ public class JavaComplexTypeWriter extends JavaWriter {
                     pw.print("            " + variable + " == other.get" + 
                             Utils.capitalizeFirstChar(variable) + "()");
                 } else {
-                    pw.print("            " + variable + ".equals(other.get" + 
-                            Utils.capitalizeFirstChar(variable) + "())");
+                    pw.println("            ((" + variable + "==null && other.get" +
+                               Utils.capitalizeFirstChar(variable) + "()==null) || ");
+                    pw.println("             (" + variable + "!=null &&");
+                    pw.print("              " + variable + ".equals(other.get" + 
+                             Utils.capitalizeFirstChar(variable) + "())))");
                 }
                 if (i == (names.size() - 2))
                     pw.println(";");
