@@ -16,9 +16,11 @@
 
 package org.apache.axis.message;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.SOAPPart;
+import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -234,9 +236,110 @@ implements org.w3c.dom.Document, java.io.Serializable {
         "createEntityReference");
     }
 
-    public Node importNode(Node importedNode, boolean deep)
-    throws DOMException {
-        throw new java.lang.UnsupportedOperationException("importNode");
+    // implemented by yoonforh 2004-07-30 02:48:50
+    public Node importNode(Node importedNode, boolean deep) throws DOMException {
+    	Node targetNode = null;
+    
+    	int type = importedNode.getNodeType();
+    	switch (type) {
+    	case ELEMENT_NODE :
+    	    Element el = (Element) importedNode;
+    	    if (deep) {
+        		targetNode = new SOAPBodyElement(el);
+        		break;
+    	    }
+    
+    	    SOAPBodyElement target = new SOAPBodyElement();
+    	    org.w3c.dom.NamedNodeMap attrs = el.getAttributes();
+    	    for (int i = 0; i < attrs.getLength(); i++) {
+        		org.w3c.dom.Node att = attrs.item(i);
+        		if (att.getNamespaceURI() != null &&
+        		    att.getPrefix() != null &&
+        		    att.getNamespaceURI().equals(Constants.NS_URI_XMLNS) &&
+        		    att.getPrefix().equals("xmlns")) {
+        		    Mapping map = new Mapping(att.getNodeValue(), att.getLocalName());
+        		    target.addMapping(map);
+        		}
+        		if (att.getLocalName() != null) {
+        		    target.addAttribute(att.getPrefix(),
+        					att.getNamespaceURI(),
+        					att.getLocalName(),
+        					att.getNodeValue());
+        		} else if (att.getNodeName() != null) {
+        		    target.addAttribute(att.getPrefix(),
+        					att.getNamespaceURI(),
+        					att.getNodeName(),
+        					att.getNodeValue());
+        		}
+    	    }
+    
+    	    if (el.getLocalName() == null) {
+    	        target.setName(el.getNodeName());
+    	    } else {
+    	        target.setQName(new QName(el.getNamespaceURI(), el.getLocalName()));
+    	    }
+    	    targetNode = target;
+    	    break;
+    
+    	case ATTRIBUTE_NODE :
+    	    if (importedNode.getLocalName() == null) {
+    	        targetNode = createAttribute(importedNode.getNodeName());
+    	    } else {
+    	        targetNode = createAttributeNS(importedNode.getNamespaceURI(),
+    					       importedNode.getLocalName());
+    	    }
+    	    break;
+    
+    	case TEXT_NODE :
+    	    targetNode = createTextNode(importedNode.getNodeValue());
+    	    break;
+    
+    	case CDATA_SECTION_NODE :
+    	    targetNode = createCDATASection(importedNode.getNodeValue());
+    	    break;
+    
+    	case COMMENT_NODE :
+    	    targetNode = createComment(importedNode.getNodeValue());
+    	    break;
+    
+    	case DOCUMENT_FRAGMENT_NODE :
+    	    targetNode = createDocumentFragment();
+    	    if (deep) {
+        		org.w3c.dom.NodeList children = importedNode.getChildNodes();
+        		for (int i = 0; i < children.getLength(); i++){
+        		    targetNode.appendChild(importNode(children.item(i), true));
+        		}
+    	    }
+    	    break;
+    
+    	case ENTITY_REFERENCE_NODE :
+    	    targetNode = createEntityReference(importedNode.getNodeName());
+    	    break;
+    
+    	case PROCESSING_INSTRUCTION_NODE :
+    	    ProcessingInstruction pi = (ProcessingInstruction) importedNode;
+    	    targetNode = createProcessingInstruction(pi.getTarget(), pi.getData());
+    	    break;
+    
+    	case ENTITY_NODE :
+    	    // TODO : ...
+    	    throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Entity nodes are not supported.");
+    
+    	case NOTATION_NODE :
+    	    // TODO : any idea?
+    	    throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Notation nodes are not supported.");
+    
+    	case DOCUMENT_TYPE_NODE :
+    	    throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DocumentType nodes cannot be imported.");
+    
+    	case DOCUMENT_NODE :
+    	    throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Document nodes cannot be imported.");
+    
+    	default :
+    	    throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "Node type (" + type + ") cannot be imported.");
+    	}
+    
+    	return targetNode;
     }
 
     /**

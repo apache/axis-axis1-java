@@ -31,6 +31,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -40,6 +41,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -622,9 +624,21 @@ public class SOAPEnvelope extends MessageElement
         super.setOwnerDocument(sp);
         if(body != null) {
             body.setOwnerDocument(sp);
+            setOwnerDocumentForChildren(((NodeImpl)body).getChildNodes(), sp);
         }
         if(header != null){
             header.setOwnerDocument(sp);
+            setOwnerDocumentForChildren(((NodeImpl)body).getChildNodes(), sp);
         }
+    }
+    
+    private void setOwnerDocumentForChildren(NodeList children, org.apache.axis.SOAPPart sp) {
+    	if (children == null)
+    		return;
+        for (int i = 0; i < children.getLength(); i++) {
+            NodeImpl node = (NodeImpl) children.item(i);
+    		node.setOwnerDocument(sp);
+            setOwnerDocumentForChildren(node.getChildNodes(), sp);  // recursively
+    	}
     }
 }
