@@ -102,7 +102,7 @@ public class SOAPBodyElement extends MessageElement
             log.warn(Messages.getMessage("bodyElementParent"));
             parent = ((SOAPEnvelope)parent).getBody();
         }
-        if (!(parent instanceof SOAPBody)) {
+        if (!(parent instanceof SOAPBody) && !(parent instanceof RPCElement)) {
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
         }
         
