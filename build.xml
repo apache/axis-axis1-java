@@ -35,7 +35,11 @@ Most useful targets:
  - javadocs : creates the javadocs in "./build/javadocs"
  - dist     : creates the complete binary distribution
  - srcdist  : creates the complete src distribution
- - functional-tests : attempts to build Ant task and then run client-server functional test
+ - functional-tests : attempts to build Ant task and then run 
+              client-server functional test
+ - war      : create the web application as a WAR file
+ - clean    : clean up files and directories
+ 
 
 Custom post-compilation work:
 
@@ -568,7 +572,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates a war file for testing                                      -->
   <!-- =================================================================== -->
-  <target name="war" depends="compile, samples" >
+  <target name="war" depends="compile, samples" 
+      description="Create the web application" >
     <mkdir dir="${build.webapp}"/>
     <copy todir="${build.webapp}">
       <fileset dir="${webapp}"/>
