@@ -96,6 +96,7 @@ public class Java2WSDL {
     protected static final int STOP_CLASSES_OPT = 'c';
     protected static final int TYPEMAPPING_OPT = 'T';
     protected static final int SOAPACTION_OPT = 'A';
+    protected static final int STYLE_OPT = 'y';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -182,7 +183,12 @@ public class Java2WSDL {
         new CLOptionDescriptor("soapAction",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 SOAPACTION_OPT,
-                JavaUtils.getMessage("j2woptsoapAction00"))
+                JavaUtils.getMessage("j2woptsoapAction00")),
+        new CLOptionDescriptor("style",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                STYLE_OPT,
+                JavaUtils.getMessage("j2woptStyle00"))
+        
     };
 
     protected Emitter emitter;
@@ -230,6 +236,8 @@ public class Java2WSDL {
      * @param CLOption is the option 
      */
     protected void parseOption(CLOption option) {
+        String value;
+        
         switch (option.getId()) {
         case CLOption.TEXT_ARGUMENT:
             if (className != null) {
@@ -320,7 +328,7 @@ public class Java2WSDL {
             break;
             
         case TYPEMAPPING_OPT:
-            String value = option.getArgument();
+            value = option.getArgument();
             if (value.equals("1.1")) {
                 emitter.setDefaultTypeMapping(
                                               DefaultTypeMappingImpl.getSingleton());
@@ -345,6 +353,18 @@ public class Java2WSDL {
             }
             break;
 
+        case STYLE_OPT:
+                value = option.getArgument();
+                if (value.equalsIgnoreCase("DOCUMENT")) {
+                    emitter.setMode(Emitter.MODE_DOCUMENT);
+                } else if (value.equalsIgnoreCase("RPC")) {
+                    emitter.setMode(Emitter.MODE_RPC);
+                } else {
+                    System.out.println(JavaUtils.getMessage("j2wBadSoapAction00"));
+                }
+            break;
+
+                
         default: 
             break;
         }
