@@ -68,69 +68,87 @@ import java.util.Iterator;
 public interface TypeMappingRegistry extends java.io.Serializable {
 
     /**
-     * The method register adds a TypeMapping instance for a specific 
-     * namespace                        
+     * Registers a TypeMapping instance with the TypeMappingRegistry. This
+     * method replaces any existing registered TypeMapping instance for the
+     * specified namespaceURI.
      *
-     * @param namespaceURI
-     * @param mapping - TypeMapping for specific type namespaces
+     * @param namespaceURI - An encoding style or XML schema namespace specified
+     *                       as an URI. An example is
+     *                       "http://schemas.xmlsoap.org/soap/encoding/"
+     * @param mapping - TypeMapping instance
      *
-     * @throws JAXRPCException - If there is any error in the registration
-     * of the TypeMapping for the specified namespace URI
-     * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
-     */
-    public void register(String namespace, TypeMapping maping)
-        throws JAXRPCException;
-
-
-    /**
-     * The method register adds a default TypeMapping instance.  If a specific
-     * TypeMapping is not found, the default TypeMapping is used.  
-     *
-     * @param mapping - TypeMapping for specific type namespaces
+     * @return Previous TypeMapping associated with the specified namespaceURI,
+     * or null if there was no TypeMapping associated with the specified namespaceURI
      *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
-     * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public void registerDefault(TypeMapping mapping)
-        throws JAXRPCException;
+    public TypeMapping register(String namespace, TypeMapping mapping);
+
 
     /**
-     * Return the default TypeMapping
+     * Registers the TypeMapping instance that is default for all encoding
+     * styles and XML schema namespaces supported by the TypeMappingRegistry. A
+     * default TypeMapping should include serializers and deserializers that are
+     * independent of and usable with any encoding style or XML namespaces. The
+     * successive invocations of the registerDefault method replace any existing
+     * default TypeMapping instance.
+     * <p>
+     * If the default TypeMapping is registered, any other TypeMapping instances
+     * registered through the TypeMappingRegistry.register method (for a set of
+     * namespace URIs) override the default TypeMapping.
+     *
+     * @param mapping - TypeMapping instance
+     *
+     * @throws JAXRPCException - If there is any error in the registration
+     * of the TypeMapping for the specified namespace URI
+     */
+    public void registerDefault(TypeMapping mapping);
+
+    /**
+     * Return the registered default TypeMapping instance
      * @return TypeMapping or null
      **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+    public TypeMapping getDefaultTypeMapping();
 
     /**
-     * Gets the TypeMapping namespace.  If not found, the default TypeMapping 
-     * is returned.
+     * Returns the registered TypeMapping for the specified namespace URI. If
+     * there is no registered TypeMapping for the specified namespaceURI, this
+     * method returns null.
      *
-     * @param namespaceURI - The namespace URI
-     * @return The registered TypeMapping (which may be the default TypeMapping) or null.
+     * @param namespaceURI - Encoding style or XML schema namespace specified
+     *                       as an URI
+     * @return TypeMapping for the specified namespace URI or null
      */
     public TypeMapping getTypeMapping(String namespaceURI);
 
     /**
-     * Unregisters the TypeMapping for the namespace.
+     * Unregisters a TypeMapping instance, if present, from the specified
+     * namespaceURI.
      *
-     * @param namespaceURI - The namespace URI
+     * @param namespaceURI - Encoding style or XML schema namespace specified
+     *                       as an URI
      * @return The registered TypeMapping or null.
      */
     public TypeMapping unregisterTypeMapping(String namespaceURI);
 
     /**
-     * Remove TypeMapping by unregistering it from all namespaces.
+     * Removes a TypeMapping from the TypeMappingRegistry. A TypeMapping is
+     * associated with 1 or more namespaceURIs. This method unregisters the
+     * specified TypeMapping instance from all associated namespaceURIs and then
+     * removes this TypeMapping instance from the registry.
      *
-     * @param mapping - The mapping to remove
-     * @return true if found and removed.  false if not found
+     * @param mapping - TypeMapping to remove
+     * @return true if specified TypeMapping is removed from the TypeMappingRegistry;
+     *         false if the specified TypeMapping was not in the TypeMappingRegistry
      */
-    public boolean removeTypeMapping(TypeMapping namespaceURI);
+    public boolean removeTypeMapping(TypeMapping mapping);
 
 
     /**
-     * Creates a new empty TypeMapping object for the specified encoding style or XML schema namespace.
+     * Creates a new empty TypeMapping object.
      *
-     * @return An empty generic TypeMapping object
+     * @return TypeMapping instance.
      */
     public TypeMapping createTypeMapping();
 
@@ -143,9 +161,9 @@ public interface TypeMappingRegistry extends java.io.Serializable {
 
 
     /**
-     * Removes all registered TypeMappings from the registery                   
+     * Removes all TypeMappings and namespaceURIs from this TypeMappingRegistry.
      */
-    public void clear(String namespaceURI);
+    public void clear();
 
 }
 

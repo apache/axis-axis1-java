@@ -65,20 +65,6 @@ public class ParameterMode {
     public static final ParameterMode INOUT = new ParameterMode("INOUT");
     public static final ParameterMode OUT = new ParameterMode("OUT");
 
-    /**
-     * @deprecated  Use ParameterMode.IN instead.
-     */
-//    public static final ParameterMode PARAM_MODE_IN = IN;
-    /**
-     * @deprecated  Use ParameterMode.INOUT instead.
-     */
-//    public static final ParameterMode PARAM_MODE_INOUT = INOUT;
-    /**
-     * @deprecated  Use ParameterMode.OUT instead.
-     */
-//    public static final ParameterMode PARAM_MODE_OUT = OUT;
-
-
     private ParameterMode(String mode) {
         this.mode = mode;
     } // ctor

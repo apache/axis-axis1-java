@@ -109,9 +109,8 @@ public interface TypeMapping {
      *
      * @throws JAXRPCException - If any error during the registration
      */
-    public void register(
-        Class javaType, QName xmlType, SerializerFactory sf,
-            DeserializerFactory dsf) throws JAXRPCException;
+    public void register(Class javaType, QName xmlType, SerializerFactory sf,
+           DeserializerFactory dsf);
 
     /**
      * Gets the SerializerFactory registered for the specified pair
@@ -120,15 +119,9 @@ public interface TypeMapping {
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @return Registered SerializerFactory
-     *
-     * @throws JAXRPCException - If there is no registered SerializerFactory 
-     * for this pair of Java type and XML data type 
-     * java.lang.IllegalArgumentException - If invalid or unsupported
-     * XML/Java type is specified
+     * @return Registered SerializerFactory or null if there is no registered factory.
      */
-    public SerializerFactory getSerializer(Class javaType, QName xmlType)
-        throws JAXRPCException;
+    public SerializerFactory getSerializer(Class javaType, QName xmlType);
 
     /**
      * Gets the DeserializerFactory registered for the specified pair 
@@ -137,15 +130,9 @@ public interface TypeMapping {
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @return Registered DeserializerFactory
-     *
-     * @throws JAXRPCException - If there is no registered DeserializerFactory
-     * for this pair of Java type and  XML data type 
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
+     * @return Registered DeserializerFactory or null if there is no registered factory.
      */
-    public DeserializerFactory getDeserializer(Class javaType, QName xmlType)
-        throws JAXRPCException;
+    public DeserializerFactory getDeserializer(Class javaType, QName xmlType);
 
     /**
      * Removes the SerializerFactory registered for the specified 
@@ -156,11 +143,8 @@ public interface TypeMapping {
      *
      * @throws JAXRPCException - If there is error 
      * in removing the registered SerializerFactory 
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
      */
-    public void removeSerializer(Class javaType, QName xmlType)
-        throws JAXRPCException;
+    public void removeSerializer(Class javaType, QName xmlType);
 
     /**
      * Removes the DeserializerFactory registered for the specified 
@@ -171,11 +155,8 @@ public interface TypeMapping {
      *
      * @throws JAXRPCException - If there is error in removing 
      * the registered DeserializerFactory
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
      */
-    public void removeDeserializer(Class javaType, QName xmlType)
-        throws JAXRPCException;
+    public void removeDeserializer(Class javaType, QName xmlType);
 }
 
 

@@ -122,8 +122,7 @@ import java.util.*;
  * It can be prefilled by a WSDL document (on the constructor to the Service
  * object) or you can fill in the data yourself.
  * <pre>
- * Standard properties defined by JAX-RPC (NOTE!  These have been deprecated
- * and will be going away in favor of the javax.xml.rpc.Call constants:
+ * Standard properties defined by in JAX-RPC's javax..xml.rpc.Call interface:
  *     USERNAME_PROPERTY        - User name for authentication
  *     PASSWORD_PROPERTY        - Password for authentication
  *     SESSION_PROPERTY         - Participate in a session with the endpoint?
@@ -187,43 +186,6 @@ public class Call implements javax.xml.rpc.Call {
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
-
-    // Constants for the standard properties
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.USERNAME_PROPERTY instead.
-     */
-    public static final String USERNAME_PROPERTY =
-            javax.xml.rpc.Call.USERNAME_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.PASSWORD_PROPERTY instead.
-     */
-    public static final String PASSWORD_PROPERTY =
-            javax.xml.rpc.Call.PASSWORD_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY instead.
-     */
-    public static final String SESSION_PROPERTY =
-            javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.OPERATION_STYLE_PROPERTY instead.
-     */
-    public static final String OPERATION_STYLE_PROPERTY =
-            javax.xml.rpc.Call.OPERATION_STYLE_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.SOAPACTION_USE_PROPERTY instead.
-     */
-    public static final String SOAPACTION_USE_PROPERTY =
-            javax.xml.rpc.Call.SOAPACTION_USE_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY instead.
-     */
-    public static final String SOAPACTION_URI_PROPERTY =
-            javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY;
-    /**
-     * @deprecated  Use javax.xml.rpc.Call.ENCODINGSTYLE_URI_PROPERTY instead.
-     */
-    public static final String ENCODING_STYLE_PROPERTY =
-            javax.xml.rpc.Call.ENCODINGSTYLE_URI_PROPERTY;
 
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)

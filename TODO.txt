@@ -21,9 +21,7 @@ JAX-RPC COMPATIBILITY
 ! <> Implement generated Services' getCalls() method.
 ! <> Implement Service.getHandlerRegistry() method.
 ! <> Implement ServiceFactory.createService methods.
-! <> Remove standard property constants from org.apache.axis.client.Call after beta2.
-! <> Remove ParameterMode.PARAM_MODE_* constants after beta2.
-! <> Remove ServiceException/JAXRPCException getCause methods after beta2.
+! <> Implement TypeMapping and TypeMappingRegistry ala JAX-RPC 0.8
 
 SOAP 1.2 SUPPORT
 ----------------
