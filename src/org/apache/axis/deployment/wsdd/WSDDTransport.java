@@ -61,6 +61,7 @@ import org.w3c.dom.Node;
 import org.apache.axis.Handler;
 import org.apache.axis.Chain;
 import org.apache.axis.TargetedChain;
+import org.apache.axis.utils.QName;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
 
@@ -224,7 +225,7 @@ public class WSDDTransport
      *
      * @return XXX
      */
-    public String getType()
+    public QName getType()
     {
         return null;
     }

@@ -60,6 +60,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import org.apache.axis.Handler;
+import org.apache.axis.utils.QName;
 import org.apache.axis.deployment.DeploymentRegistry;
 
 
@@ -351,7 +352,7 @@ public class WSDDGlobalConfiguration
      *
      * @return XXX
      */
-    public String getType()
+    public QName getType()
     {
         return null;
     }
