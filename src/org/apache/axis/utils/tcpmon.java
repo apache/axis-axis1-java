@@ -54,10 +54,12 @@
  */
 package org.apache.axis.utils ;
 
+import javax.swing.border.TitledBorder;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -78,6 +80,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicButtonListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.ButtonGroup ;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,6 +90,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -109,13 +114,16 @@ public class tcpmon extends JFrame {
     static private int OUTHOST_COLUMN  = 3 ;
 
     class AdminPage extends JPanel {
-        public JTextField  port, host, tport ;
-        public JTabbedPane noteb ;
-        public JCheckBox   proxyBox ;
+        public JRadioButton  listenerButton, proxyButton ;
+        public JLabel        hostLabel, tportLabel;
+        public JTextField    port, host, tport ;
+        public JTabbedPane   noteb ;
+        public JCheckBox     HTTPProxyBox ;
+        public JTextField    HTTPProxyHost, HTTPProxyPort ;
+        public JLabel        HTTPProxyHostLabel, HTTPProxyPortLabel ;
 
         public AdminPage( JTabbedPane notebook, String name ) {
             JPanel     mainPane  = null ;
-            JPanel     buttons   = null ;
             JButton    addButton = null ;
 
             this.setLayout( new BorderLayout() );
@@ -129,18 +137,57 @@ public class tcpmon extends JFrame {
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER;
             mainPane.add( new JLabel("Create a new TCP/IP Monitor... "), c );
+
+            // Add some blank space
+            mainPane.add( Box.createRigidArea(new Dimension(1,5)), c );
             
+            // The listener info
+            ///////////////////////////////////////////////////////////////////
+            JPanel   tmpPanel = new JPanel(new GridBagLayout());
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
-            mainPane.add( new JLabel("Listen Port # "), c );
-            
+            tmpPanel.add( new JLabel("Listen Port # "), c );
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
-            mainPane.add( port = new JTextField(3), c );
+            tmpPanel.add( port = new JTextField(4), c );
+
+            mainPane.add( tmpPanel, c );
+
+            mainPane.add( Box.createRigidArea(new Dimension(1,5)), c );
             
+            // Group for the radio buttons
+            ButtonGroup btns = new ButtonGroup();
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            mainPane.add( new JLabel("Act as a..." ), c );
+
+            // Target Host/Port section
+            ///////////////////////////////////////////////////////////////////
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+
+            mainPane.add( listenerButton  = new JRadioButton( "Listener" ), c );
+            btns.add( listenerButton );
+            listenerButton.setSelected( true );
+
+            listenerButton.addActionListener( new ActionListener(){
+                public void actionPerformed(ActionEvent event) {
+                    if ("Listener".equals(event.getActionCommand())) {
+                        boolean state = listenerButton.isSelected();
+                        tport.setEnabled( state );
+                        host.setEnabled( state );
+                        hostLabel.setForeground(state?Color.black:Color.gray);
+                        tportLabel.setForeground(state?Color.black:Color.gray);
+                    }
+                }
+            });
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
-            mainPane.add( new JLabel("Target Hostname "), c );
+            mainPane.add( Box.createRigidArea(new Dimension(25,0)) );
+            mainPane.add( hostLabel = new JLabel("Target Hostname "), c );
             
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
@@ -148,51 +195,151 @@ public class tcpmon extends JFrame {
             
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
-            mainPane.add( new JLabel("Target Port # "), c );
+            mainPane.add( Box.createRigidArea(new Dimension(25,0)) );
+            mainPane.add( tportLabel = new JLabel("Target Port # "), c );
             
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
-            mainPane.add( tport = new JTextField(3), c );
+            mainPane.add( tport = new JTextField(4), c );
+            
+            // Act as proxy section
+            ///////////////////////////////////////////////////////////////////
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            mainPane.add( proxyButton = new JRadioButton( "Proxy" ),c);
+            btns.add( proxyButton );
+
+            proxyButton.addActionListener( new ActionListener(){
+                public void actionPerformed(ActionEvent event) {
+                    if ("Proxy".equals(event.getActionCommand())) {
+                        boolean state = proxyButton.isSelected();
+                        tport.setEnabled( !state );
+                        host.setEnabled( !state );
+                        hostLabel.setForeground(state?Color.gray:Color.black);
+                        tportLabel.setForeground(state?Color.gray:Color.black);
+                    }
+                }
+            });
+
+            // Spacer
+            /////////////////////////////////////////////////////////////////
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            mainPane.add( Box.createRigidArea(new Dimension(1,10)), c );
+
+            // Options section
+            ///////////////////////////////////////////////////////////////////
+            JPanel       opts = new JPanel(new GridBagLayout());
+            opts.setBorder( new TitledBorder("Options") );
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            mainPane.add( opts, c );
+
+            // HTTP Proxy Support section
+            ///////////////////////////////////////////////////////////////////
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            opts.add(HTTPProxyBox = new JCheckBox("HTTP Proxy Support"), c);
+
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = 1 ;
+            opts.add( HTTPProxyHostLabel = new JLabel("Hostname "), c );
+            HTTPProxyHostLabel.setForeground( Color.gray );
+            
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            opts.add( HTTPProxyHost = new JTextField(30), c );
+            HTTPProxyHost.setEnabled( false );
             
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
+            opts.add( HTTPProxyPortLabel = new JLabel("Port # "), c );
+            HTTPProxyPortLabel.setForeground( Color.gray );
+            
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
+            opts.add( HTTPProxyPort = new JTextField(4), c );
+            HTTPProxyPort.setEnabled( false );
+
+            HTTPProxyBox.addActionListener( new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    if ("HTTP Proxy Support".equals(event.getActionCommand())) {
+                        boolean b = HTTPProxyBox.isSelected();
+                        Color   c = b ? Color.black : Color.gray ;
+
+                        HTTPProxyHost.setEnabled( b );
+                        HTTPProxyPort.setEnabled( b );
+                        HTTPProxyHostLabel.setForeground( c );
+                        HTTPProxyPortLabel.setForeground( c );
+                    }
+                };
+            });
+
+            // Set default proxy values...
+            String tmp = System.getProperty( "http.proxyHost" );
+            if ( tmp != null && tmp.equals("") )
+                tmp = null ;
+
+            HTTPProxyBox.setSelected( tmp != null );
+            HTTPProxyHost.setEnabled( tmp != null );
+            HTTPProxyPort.setEnabled( tmp != null );
+            HTTPProxyHostLabel.setForeground( tmp!=null?Color.black:Color.gray);
+            HTTPProxyPortLabel.setForeground( tmp!=null?Color.black:Color.gray);
+                
+            if ( tmp != null ) {
+                HTTPProxyBox.setSelected( true );
+                HTTPProxyHost.setText( tmp );
+                tmp = System.getProperty( "http.HTTPProxyPort" );
+                if ( tmp != null && tmp.equals("") ) tmp = null ;
+                if ( tmp == null ) tmp = "80" ;
+                HTTPProxyPort.setText( tmp );
+            }
+
+            // Spacer
+            //////////////////////////////////////////////////////////////////
+            mainPane.add( Box.createRigidArea(new Dimension(1,10)), c );
+            
+            // ADD Button
+            ///////////////////////////////////////////////////////////////////
+            c.anchor    = GridBagConstraints.WEST ;
+            c.gridwidth = GridBagConstraints.REMAINDER ;
             mainPane.add( addButton = new JButton( "Add" ), c );
-            
-            c.anchor    = GridBagConstraints.WEST ;
-            c.gridwidth = 1 ;
-            mainPane.add( proxyBox = new JCheckBox( "Act As A Proxy" ), c );
+
             
             this.add( new JScrollPane( mainPane ), BorderLayout.CENTER );
 
             // addButton.setEnabled( false );
             addButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ( "Add".equals(event.getActionCommand()) ) {
-                String tmp ;
-                int    lPort = Integer.parseInt(port.getText());
-                String tHost = host.getText();
-                int    tPort = 0 ;
-                tmp = tport.getText();
-                if ( tmp != null && !tmp.equals("") )
-                tPort = Integer.parseInt(tmp );
-                new Listener( noteb, null, lPort, tHost, tPort, 
-                proxyBox.isSelected() );
+                    if ( "Add".equals(event.getActionCommand()) ) {
+                        String   tmp ;
+                        Listener l = null ;
+                        int      lPort = Integer.parseInt(port.getText());
+                        String   tHost = host.getText();
+                        int      tPort = 0 ;
 
-                port.setText(null);
-                host.setText(null);
-                tport.setText(null);
-                }
+                        tmp = tport.getText();
+                        if ( tmp != null && !tmp.equals("") )
+                            tPort = Integer.parseInt(tmp );
+                        l = new Listener( noteb, null, lPort, tHost, tPort, 
+                                          proxyButton.isSelected() );
+
+                        // Pick-up the HTTP Proxy settings
+                        ///////////////////////////////////////////////////
+                        tmp = HTTPProxyHost.getText();
+                        if ( "".equals(tmp) ) tmp = null ;
+                        l.HTTPProxyHost = tmp ;
+                        tmp = HTTPProxyPort.getText();
+                        if ( "".equals(tmp) ) tmp = null ;
+                        if( tmp != null )
+                            l.HTTPProxyPort = Integer.parseInt(tmp);
+
+                        port.setText(null);
+                        host.setText(null);
+                        tport.setText(null);
+                    }
                 };
-                });
-
-            proxyBox.addChangeListener( new BasicButtonListener(proxyBox) {
-                public void stateChanged(ChangeEvent event) {
-                JCheckBox box = (JCheckBox) event.getSource();
-                boolean state = box.isSelected();
-                tport.setEnabled( !state );
-                host.setEnabled( !state );
-                }
-                });
+            });
 
             notebook.addTab( name, this );
             notebook.repaint();
@@ -215,6 +362,7 @@ public class tcpmon extends JFrame {
         public void run() {
             try {
                 listener.setLeft( new JLabel(" Waiting for Connection..." ) );
+                listener.repaint();
                 sSocket = new ServerSocket( port );
                 for(;;) {
                     Socket inSocket = sSocket.accept();
@@ -224,11 +372,13 @@ public class tcpmon extends JFrame {
                 }
             }
             catch( Exception exp ) {
-                JLabel tmp = new JLabel( exp.toString() );
-                tmp.setForeground( Color.red );
-                listener.setLeft( tmp );
-                listener.setRight( new JLabel("") );
-                listener.stop();
+                if ( !"socket closed".equals(exp.getMessage()) ) {
+                    JLabel tmp = new JLabel( exp.toString() );
+                    tmp.setForeground( Color.red );
+                    listener.setLeft( tmp );
+                    listener.setRight( new JLabel("") );
+                    listener.stop();
+                }
             }
         }
 
@@ -377,18 +527,23 @@ public class tcpmon extends JFrame {
         SocketRR     rr2 = null ;
         InputStream  inputStream ;
 
-        String       proxyHost = null ;
-        int          proxyPort = 80 ;
+        String       HTTPProxyHost = null ;
+        int          HTTPProxyPort = 80 ;
 
+        public Connection(Listener l) {
+            listener = l ;
+            HTTPProxyHost = l.HTTPProxyHost ;
+            HTTPProxyPort = l.HTTPProxyPort ;
+        }
 
         public Connection(Listener l, Socket s ) {
-            listener = l ;
+            this(l);
             inSocket = s ;
             start();
         }
 
         public Connection(Listener l, InputStream in ) {
-            listener = l ;
+            this(l);
             inputStream = in ;
             start();
         }
@@ -397,15 +552,15 @@ public class tcpmon extends JFrame {
             try {
                 active        = true ;
 
-                proxyHost = System.getProperty( "http.proxyHost" );
-                if ( proxyHost != null && proxyHost.equals("") )
-                    proxyHost = null ;
+                HTTPProxyHost = System.getProperty( "http.proxyHost" );
+                if ( HTTPProxyHost != null && HTTPProxyHost.equals("") )
+                    HTTPProxyHost = null ;
                 
-                if ( proxyHost != null ) {
-                    String tmp = System.getProperty( "http.proxyPort" );
+                if ( HTTPProxyHost != null ) {
+                    String tmp = System.getProperty( "http.HTTPProxyPort" );
                     if ( tmp != null && tmp.equals("") ) tmp = null ;
-                    if ( tmp == null ) proxyPort = 80 ;
-                    else proxyPort = Integer.parseInt( tmp );
+                    if ( tmp == null ) HTTPProxyPort = 80 ;
+                    else HTTPProxyPort = Integer.parseInt( tmp );
                 }
 
                 if ( inSocket != null ) {
@@ -464,7 +619,7 @@ public class tcpmon extends JFrame {
                 String         bufferedData = null ;
                 StringBuffer   buf = null ;
 
-                if ( listener.isProxyBox.isSelected() || proxyHost != null ) {
+                if ( listener.isProxyBox.isSelected() || HTTPProxyHost != null ) {
                     // Check if we're a proxy
                     int          ch ;
                     byte[]       b = new byte[1];
@@ -520,8 +675,8 @@ public class tcpmon extends JFrame {
                                            url.toExternalForm() + 
                                            bufferedData.substring( end );
 
-                            targetHost = proxyHost ;
-                            targetPort = proxyPort ;
+                            targetHost = HTTPProxyHost ;
+                            targetPort = HTTPProxyPort ;
                         }
 
                     }
@@ -574,18 +729,26 @@ public class tcpmon extends JFrame {
                     listener.tableModel.setValueAt( "Done", 1+index, STATE_COLUMN );
             }
             catch( Exception e ) {
-                e.printStackTrace();
+                StringWriter st = new StringWriter();
+                PrintWriter  wr = new PrintWriter(st);
+                int index = listener.connections.indexOf( this );
+                if ( index >= 0 )
+                    listener.tableModel.setValueAt( "Error", 1+index, STATE_COLUMN );
+                e.printStackTrace(wr);
+                wr.close();
+                outputText.append( st.toString() );
+                halt();
             }
         }
 
         public void halt() {
             try {
-                // if ( inSocket  != null ) inSocket.close();
-                // inSocket = null ;
-                // if ( outSocket != null ) outSocket.close();
-                // outSocket = null ;
                 if ( rr1 != null ) rr1.halt();
                 if ( rr2 != null ) rr2.halt();
+                if ( inSocket  != null ) inSocket.close();
+                inSocket = null ;
+                if ( outSocket != null ) outSocket.close();
+                outSocket = null ;
             }
             catch( Exception e ) {
                 e.printStackTrace();
@@ -628,6 +791,8 @@ public class tcpmon extends JFrame {
         public  JPanel      leftPanel       = null ;
         public  JPanel      rightPanel      = null ;
         public  JTabbedPane notebook        = null ;
+        public  String      HTTPProxyHost   = null ;
+        public  int         HTTPProxyPort   = 80 ;
 
         final public Vector connections = new Vector();
 
@@ -648,11 +813,11 @@ public class tcpmon extends JFrame {
             top.add( stopButton = new JButton( "Start" ) );
             top.add( Box.createRigidArea(new Dimension(5,0)) );
             top.add( new JLabel( "  Listen Port: ", SwingConstants.RIGHT ) );
-            top.add( portField = new JTextField( ""+listenPort, 3 ) );
+            top.add( portField = new JTextField( ""+listenPort, 4 ) );
             top.add( new JLabel( "  Host:", SwingConstants.RIGHT ) );
             top.add( hostField = new JTextField( host, 30 ) );
             top.add( new JLabel( "  Port: ", SwingConstants.RIGHT ) );
-            top.add( tPortField = new JTextField( ""+targetPort, 3 ) );
+            top.add( tPortField = new JTextField( ""+targetPort, 4 ) );
             top.add( Box.createRigidArea(new Dimension(5,0)) );
             top.add( isProxyBox = new JCheckBox("Proxy") );
 
@@ -675,10 +840,10 @@ public class tcpmon extends JFrame {
 
             stopButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ( "Stop".equals(event.getActionCommand()) ) stop();
-                if ( "Start".equals(event.getActionCommand()) ) start();
+                  if ( "Stop".equals(event.getActionCommand()) ) stop();
+                  if ( "Start".equals(event.getActionCommand()) ) start();
                 };
-                });
+            });
 
             this.add( top, BorderLayout.NORTH );
 
@@ -813,36 +978,36 @@ public class tcpmon extends JFrame {
             saveButton.setEnabled( false );
             saveButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ( "Save".equals(event.getActionCommand()) ) save();
+                    if ( "Save".equals(event.getActionCommand()) ) save();
                 };
-                });
+            });
 
             resendButton.setEnabled( false );
             resendButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ( "Resend".equals(event.getActionCommand()) ) resend();
+                    if ( "Resend".equals(event.getActionCommand()) ) resend();
                 };
-                });
+            });
 
             switchButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ("Switch Layout".equals(event.getActionCommand()) ) {
-                int v = outPane.getOrientation();
-                if ( v == 0 )  // top/bottom
-                outPane.setOrientation(1);
-                else  // left/right
-                outPane.setOrientation(0);
-                outPane.setDividerLocation(0.5);
-                }
+                    if ("Switch Layout".equals(event.getActionCommand()) ) {
+                        int v = outPane.getOrientation();
+                        if ( v == 0 )  // top/bottom
+                            outPane.setOrientation(1);
+                        else  // left/right
+                            outPane.setOrientation(0);
+                        outPane.setDividerLocation(0.5);
+                    }
                 };
-                });
+            });
 
             closeButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                if ("Close".equals(event.getActionCommand()) )
-                close();
+                    if ("Close".equals(event.getActionCommand()) )
+                        close();
                 };
-                });
+            });
 
             JSplitPane  pane1 = new JSplitPane( 0 );
             pane1.setDividerSize(4);
@@ -852,7 +1017,7 @@ public class tcpmon extends JFrame {
             this.add( pane1, BorderLayout.CENTER );
 
             // 
-            /////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
             sel.setSelectionInterval(0,0);
             outPane.setDividerLocation( 150 );
             notebook.addTab( name, this );
@@ -995,13 +1160,25 @@ public class tcpmon extends JFrame {
         new AdminPage( notebook, "Admin" );
 
         if ( listenPort != 0 ) {
+            Listener l = null ;
             if ( targetHost == null )
-                new Listener( notebook, null, listenPort, 
+                l= new Listener( notebook, null, listenPort, 
                               targetHost, targetPort, true );
             else
-                new Listener( notebook, null, listenPort, 
+                l = new Listener( notebook, null, listenPort, 
                               targetHost, targetPort, false );
             notebook.setSelectedIndex( 1 );
+
+            l.HTTPProxyHost = System.getProperty( "http.proxyHost" );
+            if ( l.HTTPProxyHost != null && l.HTTPProxyHost.equals("") )
+                l.HTTPProxyHost = null ;
+                
+            if ( l.HTTPProxyHost != null ) {
+                String tmp = System.getProperty( "http.HTTPProxyPort" );
+                if ( tmp != null && tmp.equals("") ) tmp = null ;
+                if ( tmp == null ) l.HTTPProxyPort = 80 ;
+                else l.HTTPProxyPort = Integer.parseInt( tmp );
+            }
         }
 
         this.pack();
