@@ -55,6 +55,7 @@
 
 package org.apache.axis.client ;
 
+import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
@@ -1293,7 +1294,7 @@ public class Call implements javax.xml.rpc.Call {
     public static synchronized void addTransportPackage(String packageName) {
         if (transportPackages == null) {
             transportPackages = new ArrayList();
-            String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
+            String currentPackages = AxisEngine.getGlobalProperty(TRANSPORT_PROPERTY);
             if (currentPackages != null) {
                 StringTokenizer tok = new StringTokenizer(currentPackages,
                                                           "|");

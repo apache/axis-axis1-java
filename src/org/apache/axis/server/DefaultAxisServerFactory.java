@@ -175,7 +175,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         if (config == null) {
             // A default engine configuration class may be set in a system
             // property. If so, try creating an engine configuration.
-            String configClass = System.getProperty(AxisEngine.PROP_CONFIG_CLASS);
+            String configClass = AxisEngine.getGlobalProperty(AxisEngine.PROP_CONFIG_CLASS);
             if (configClass != null) {
                 try {
                     // Got one - so try to make it (which means it had better have

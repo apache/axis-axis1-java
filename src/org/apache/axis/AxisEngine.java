@@ -184,7 +184,7 @@ public abstract class AxisEngine extends BasicHandler
 
         /*Set the default attachment implementation */
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION,
-                         System.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
+                         AxisEngine.getGlobalProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
 
@@ -397,5 +397,13 @@ public abstract class AxisEngine extends BasicHandler
 
     public ClassCache getClassCache() {
         return classCache;
+    }
+    
+    /**
+     * Central access point for AXIS to obtain "global" configuration properties.
+     * To be extended in the future... or replaced with non-global properties.
+     */
+    public static String getGlobalProperty(String property) {
+        return System.getProperty(property);
     }
 };
