@@ -23,6 +23,7 @@ import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -98,6 +99,10 @@ public class JavaBeanWriter extends JavaClassWriter {
 
     /** Field isAny */
     protected boolean isAny = false;
+
+    /** Field isMixed */
+    protected boolean isMixed = false;
+    
 
     /**
      * Constructor.
@@ -285,6 +290,19 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
         }
 
+	if (!type.isSimpleType()) {
+	    Node node = type.getNode();
+	    String mixed = ((Element)node).getAttribute("mixed");
+	    if ("true".equalsIgnoreCase(mixed) ||
+		"1".equals(mixed)) {
+		isMixed = true;
+		if (!isAny) {
+		    names.add("org.apache.axis.message.MessageElement []");
+		    names.add(Constants.ANYCONTENT);
+		}
+	    }
+	}
+
         // Add attribute names
         if (attributes != null) {
             for (int i = 0; i < attributes.size(); i += 2) {
@@ -403,6 +421,10 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         if (isAny) {
             implementsText += ", org.apache.axis.encoding.AnyContentType";
+        }
+
+	if (isMixed) {
+            implementsText += ", org.apache.axis.encoding.MixedContentType";
         }
 
         implementsText += " ";
