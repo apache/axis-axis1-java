@@ -59,6 +59,7 @@ import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -86,6 +87,6 @@ public class ServiceMapping implements DeploymentDocument {
     }
     
     public void importItem(DeployableItem item) throws DeploymentException {
-        throw new DeploymentException("ImportItem not implemented!");
+        throw new DeploymentException(JavaUtils.getMessage("notImplemented00", "importItem"));
     }
 }
