@@ -323,31 +323,13 @@
     </wsdl2java>
     
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
-
-    <!-- We have a problem. This test contains                               -->
-    <!-- operations "new" and "public".  These are Java keywords so the      -->
-    <!-- method names become "_new" and "_public".  But "new"/"public" are   -->
-    <!-- sent over the wire and "new"/"public" are in deploy.wsdd.  When the -->
-    <!-- server-side is handed these we get a method not found error.  We    -->
-    <!-- COULD send "_new"/"_public" over the wire and put them into         -->
-    <!-- deploy.wsdd (this DOES work) but that's BAD.  If the server is      -->
-    <!-- written in a language that doesn't have the keywords "new" and      -->
-    <!-- "public", then it would not have prepended underscores onto its     -->
-    <!-- method names.                                                       -->
-    <!--                                                                     -->
-    <!-- What we need is some sort of method mapping, probably in            -->
-    <!-- deploy.wsdd, that the server-side runtime can use.                  -->
-    <!--                                                                     -->
-    <!-- Short term solution, turn off testcase generation to prevent any    -->
-    <!-- client/server opertations from taking place                         -->
-
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
                noimports="no"
                verbose="no"
-               testcase="no">
+               testcase="yes">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
 

@@ -171,12 +171,11 @@ public class RPCProvider extends JavaProvider {
 			int			numberOfBodyArgs = args.size();
             Method      method = getMethod(jc, mName, args);
 
-            // if the method wasn't found, try again with msgContext as an
-			//   additional, initial argument...
-            if ( method == null ) {
-	              args.add( 0, msgContext );
-	              method = getMethod(jc, mName, args);
-	        }
+            // If the method wasn't found, maybe the name is a Java keyword and needs mapping...
+            if (method == null && JavaUtils.isJavaKeyword(mName)) {
+                mName = JavaUtils.makeNonJavaKeyword(mName);
+                method = getMethod(jc, mName, args);
+            }
 
             if ( method == null )
                 throw new AxisFault( "AxisServer.error",

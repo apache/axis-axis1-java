@@ -95,7 +95,7 @@
   <!-- service decln -->
   <service name="JavaNames-Service;test">
     <port name="JavaNames" binding="tns:Java-Names_SOAP:Binding">
-      <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
+      <soap:address location="http://localhost:8080/axis/services/JavaNames"/>
     </port>
   </service>
 
