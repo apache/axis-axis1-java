@@ -402,6 +402,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         for(int i=0;i<attachments.length;i++){
             call.addAttachmentPart(attachments[i]);
         }
+        clearAttachments();
     }  
 
     /**
