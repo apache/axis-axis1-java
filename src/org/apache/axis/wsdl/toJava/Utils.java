@@ -450,12 +450,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     } // isPrimitiveType
 
     /**
-     * Return the XML Element which will trigger a particular operation
-     * or null if the default case (localPart equals operation name) will
-     * work fine.
+     * Return the operation QName.  The namespace is determined from
+     * the soap:body namespace, if it exists, otherwise it is "".
      * 
      * @param operation the operation
-     * @return element QName for doc/lit operation or null
+     * @return the operation QName
      */ 
     public static QName getOperationQName(BindingOperation bindingOper) {
         Operation operation = bindingOper.getOperation();
@@ -463,10 +462,11 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
         QName elementQName = null;
 
+        String ns = null;
+
         // Get a namespace from the soap:body tag, if any
         // example:
         //   <soap:body namespace="this_is_what_we_want" ..>
-        String ns = null;
         BindingInput bindInput = bindingOper.getBindingInput();
         if (bindInput != null) {
             Iterator it = bindInput.getExtensibilityElements().iterator();
@@ -479,6 +479,15 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 }
             }
         }
+
+        // If we didn't get a namespace from the soap:body, then
+        // use "".  We should probably use the targetNamespace,
+        // but the target namespace of what?  binding?  portType?
+        // Also, we don't have enough info for to get it.
+        if (ns == null) {
+            ns = "";
+        }
+
         // Get the qname from the first message part, if it is an element
         // example:
         //   <part name="paramters" element="ns:myelem">
@@ -498,16 +507,23 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         
         // If we didn't find an element declared in the part (assume it's a
         // type), so the QName will be the operation name with the
-        // namespace (if any) from the binding soap:body tag..
+        // namespace (if any) from the binding soap:body tag.
         if (elementQName == null) {
-            // We don't need to even set the QName in the meta data if we don't
-            // have a namespace or we didn't mangle the XML name to a java name
-            if (ns != null || !javaOperName.equals(operationName)) {
-                elementQName = new QName(ns, operationName);
-            }
+            elementQName = new QName(ns, operationName);
         }
 
         return elementQName;
     }
 
+    /**
+     * Common code for generating a QName in emitted code.  Note that there's
+     * no semicolon at the end, so we can use this in a variety of contexts.
+     */ 
+    public static String getNewQName(javax.xml.rpc.namespace.QName qname)
+    {
+        return "new javax.xml.rpc.namespace.QName(\"" +
+                qname.getNamespaceURI() + "\", \"" +
+                qname.getLocalPart() + "\")";
+    }
+    
 } // class Utils
