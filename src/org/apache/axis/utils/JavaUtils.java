@@ -268,6 +268,42 @@ public class JavaUtils
      }
 
     /**
+     * Converts text of the form
+     * Foo[] to the proper class name for loading [LFoo
+     */
+    public static String getLoadableClassName(String text) {
+        if (text == null || 
+            text.indexOf("[") < 0 ||
+            text.charAt(0) == '[')
+            return text;
+        String className = text.substring(0,text.indexOf("["));
+        if (className.equals("byte"))
+            className = "B";
+        else if (className.equals("char"))
+            className = "C";
+        else if (className.equals("double"))
+            className = "D";
+        else if (className.equals("float"))
+            className = "F";
+        else if (className.equals("int"))
+            className = "I";
+        else if (className.equals("long"))
+            className = "J";
+        else if (className.equals("short"))
+            className = "S";
+        else if (className.equals("boolean"))
+            className = "Z";
+        else
+            className = "L" + className + ";";
+        int i = text.indexOf("]");
+        while (i > 0) {
+            className = "[" + className;
+            i = text.indexOf("]", i+1);
+        }
+        return className;
+    }
+
+    /**
      * Map an XML name to a valid Java identifier
      */
     public static String xmlNameToJava(String name)

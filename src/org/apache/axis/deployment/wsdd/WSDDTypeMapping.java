@@ -225,9 +225,9 @@ public class WSDDTypeMapping
                                         typeQName.getNamespaceURI(),
                                         WSDDConstants.WSDD_JAVA));
             }
-            
+            String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            return cl.loadClass(typeQName.getLocalPart());
+            return cl.loadClass(loadName);
         }
         
         throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));
