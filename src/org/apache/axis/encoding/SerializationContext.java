@@ -166,12 +166,17 @@ public class SerializationContext
     private HashSet secondLevelObjects = null;
     private Object forceSer = null;
     private boolean outputMultiRefsFlag = false;
-
+    
+    public SerializationContext(Writer writer)
+    {
+        this.writer = writer;
+    }
+    
     public SerializationContext(Writer writer, MessageContext msgContext)
     {
         this.writer = writer;
         this.msgContext = msgContext;
-        // if (msgContext==null) throw new NullPointerException();
+
         AxisEngine engine = null ;
         if ( msgContext != null ) {
             engine = msgContext.getAxisEngine();
@@ -196,38 +201,66 @@ public class SerializationContext
     }
     
     /**
-     * Set whether we are doing multirefs, overriding property setting.
+     * Set whether we are doing multirefs
      */ 
     public void setDoMultiRefs (boolean shouldDo)
     {
         doMultiRefs = shouldDo;
     }
 
+    /**
+     * Set whether or not we should write XML declarations
+     */ 
     public void setSendDecl(boolean sendDecl)
     {
         sendXMLDecl = sendDecl;
     }
 
+    /**
+     * Set whether or not to write xsi:type attributes
+     */ 
     public boolean shouldSendXSIType() {
         return sendXSIType;
     }
 
+    /**
+     * Obtain a copy of the TypeMappingRegistry we're using
+     */ 
     public TypeMappingRegistry getTypeMappingRegistry()
     {
+        if (msgContext == null)
+            return null;
+        
         return msgContext.getTypeMappingRegistry();
     }
 
+    /**
+     * Get a prefix for a namespace URI.  This method will ALWAYS
+     * return a valid prefix - if the given URI is already mapped in this
+     * serialization, we return the previous prefix.  If it is not mapped,
+     * we will add a new mapping and return a generated prefix of the form
+     * "ns<num>".
+     */ 
     public String getPrefixForURI(String uri)
     {
         return getPrefixForURI(uri, "ns" + lastPrefixIndex++);
     }
     
-
-    public Message getCurrentMessage(){
-
-         return msgContext.getCurrentMessage();
+    /**
+     * Return the current message
+     */ 
+    public Message getCurrentMessage()
+    {
+        if (msgContext == null)
+            return null;
+        return msgContext.getCurrentMessage();
     }
 
+    /**
+     * Get a prefix for the given namespace URI.  If one has already been
+     * defined in this serialization, use that.  Otherwise, map the passed
+     * default prefix to the URI, and return that.
+     */ 
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
         if ((uri == null) || (uri.equals("")))
