@@ -826,7 +826,7 @@ public class MessageElement implements SOAPElement, Serializable
         return doc;
     }
 
-    private String getAsString() throws Exception {
+    public String getAsString() throws Exception {
         SerializationContext serializeContext = null;
         StringWriter writer = new StringWriter();
         MessageContext msgContext;
