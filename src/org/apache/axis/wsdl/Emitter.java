@@ -197,6 +197,7 @@ public class Emitter {
 
         // Generate types from doc
         if (doc != null) {
+            emitFactory.setNamespacePrefix(packageName);
             emitFactory.map(def.getTargetNamespace(), packageName);
             emitFactory.buildTypes(doc);
             if (bVerbose) {
@@ -2096,12 +2097,7 @@ public class Emitter {
           else
               dir = new File(outputDir, pkgDirName);
           if (!dir.exists()) {
-            StringTokenizer st = new StringTokenizer(pkgDirName, "/");
-            dir = new File(outputDir);
-            while (st.hasMoreTokens()) {
-              dir = new File(dir, st.nextToken());
-              dir.mkdir();
-            }
+              dir.mkdirs();
           }
         }
 
