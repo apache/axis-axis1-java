@@ -105,7 +105,11 @@ public abstract class MessageExchangeProvider
             new UnsupportedOperationException(
                 Messages.getMessage("unsupportedOperationException00")));
     }
-              
+            
+    public void cleanup()
+            throws InterruptedException {
+        WORKERS.cleanup();
+    }  
 
     public void init() {
         init(DEFAULT_THREAD_COUNT);
