@@ -88,7 +88,10 @@ public class Wsdl2javaAntTask extends Task
     private String tm = "1.2";
     private long timeout = 45000;
 
-    // The method executing the task
+    /**
+     * The method executing the task
+     * @throws  BuildException  if validation or execution failed
+     */
     public void execute() throws BuildException {
         try {
             log("Running Wsdl2javaAntTask with parameters:", Project.MSG_VERBOSE);
@@ -159,42 +162,65 @@ public class Wsdl2javaAntTask extends Task
         }
     }
 
-    // The setter for the "verbose" attribute
+    /**
+     *  flag for verbose output; default=false
+     *
+     *@param  verbose  The new verbose value
+     */   
     public void setVerbose(String parameter) {
         this.verbose = Project.toBoolean(parameter);
     }
 
-    // The setter for the "server-side" attribute
+    /**
+     *  emit server-side bindings for web service; default=false
+     */
     public void setServerSide(String parameter) {
         this.server = Project.toBoolean(parameter);
     }
 
-    // The setter for the "skeletonDeploy" attribute
+    /**
+     * deploy skeleton (true) or implementation (false) in deploy.wsdd. 
+     * Default is false.  Assumes server-side="true".     
+     */
     public void setSkeletonDeploy(String parameter) {
         this.skeletonDeploy = Project.toBoolean(parameter);
     }
 
-    // The setter for the "testcase" attribute
+    /**
+     * flag for automatic Junit testcase generation
+     * default is false
+     */
     public void setTestCase(String parameter) {
         this.testCase = Project.toBoolean(parameter);
     }
 
-    // The setter for the "helperGen" attribute
+    /**
+     * Turn on/off Helper class generation;
+     * default is false
+     */
     public void setHelperGen(String parameter) {
         this.helperGen = Project.toBoolean(parameter);
     }
 
-    // The setter for the "factory" attribute
+    /**
+     * name of the Java2WSDLFactory class for 
+     * extending WSDL generation functions
+     */
     public void setFactory(String parameter) {
         this.factory = parameter;
     }
 
-    // The setter for the "noimports" attribute
+    /**
+     * only generate code for the immediate WSDL document,
+     * and not imports; default=false;
+     */
     public void setNoImports(String parameter) {
         this.noImports = Project.toBoolean(parameter);
     }
 
-    // The setter for the "output" attribute
+    /**
+     * output directory for emitted files 
+     */
     public void setOutput(File parameter) {
         try {
             this.output = parameter.getCanonicalPath();
@@ -203,27 +229,42 @@ public class Wsdl2javaAntTask extends Task
         }
     }
 
-    // The setter for the "deployscope" attribute
+    /**
+     * add scope to deploy.xml: "Application", "Request", "Session" 
+     * optional; 
+     */
     public void setDeployScope(String parameter) {
         this.deployScope = parameter;
     }
     
-    // The setter for the "url" attribute
+    /**
+     * url to fetch and generate WSDL for. Can be remote or a local file.
+     * required.
+     */
     public void setURL(String parameter) {
         this.url = parameter;
     }
 
-    // The setter for the "all" attribute
+    /**
+     * flag to generate code for all elements, even unreferenced ones
+     * default=false;
+     */
     public void setAll(String parameter) {
         this.all = Project.toBoolean(parameter);
     }
 
-    // The setter for the "typeMappingVersion" attribute
+    /**
+     * set the type mapping version. default is "1.2"
+     */
     public void setTypeMappingVersion(String parameter) {
         this.tm = parameter;
     }
 
-    // The setter for the "timeout" attribute
+    /**
+     * timeout in seconds for URL retrieval; default is 45 seconds.
+     * Set this to -1 to disable timeouts altogether: other negative values
+     * are not allowed)
+     */
     public void setTimeout(String parameter) {
         try {
             this.timeout = new Long(parameter).longValue();
@@ -245,12 +286,18 @@ public class Wsdl2javaAntTask extends Task
         private String namespace;
         private String packageName;
 
+        /**
+         * namespace to map to a package
+         */        
         public void setNamespace(String value) {
             namespace = value;
             if(namespace != null && packageName != null)
                 namespaceMap.put(namespace, packageName);
         }
-
+        
+        /**
+         * java package to generate for the namespace's classes
+         */
         public void setPackage(String value) {
             packageName = value;
             if(namespace != null && packageName != null)
