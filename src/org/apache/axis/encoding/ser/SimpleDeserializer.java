@@ -61,6 +61,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.Iterator;
 
 import org.apache.axis.InternalException;
 import org.apache.axis.message.SOAPHandler;
@@ -96,6 +98,7 @@ public class SimpleDeserializer extends DeserializerImpl {
     private Constructor constructor = null;
     private BeanPropertyDescriptor[] pd = null;
     private HashMap propertyMap = new HashMap();
+    private HashMap attributeMap = null;
 
     public QName xmlType;
     public Class javaType;
@@ -175,6 +178,9 @@ public class SimpleDeserializer extends DeserializerImpl {
         } catch (Exception e) {
             throw new SAXException(e);
         }
+        
+        // If this is a SimpleType, set attributes we have stashed away
+        setSimpleTypeAttributes();
     }
     
     /**
@@ -268,16 +274,22 @@ public class SimpleDeserializer extends DeserializerImpl {
                     !beanAttributeNames.contains(attrNameLo))
                     continue;
 
-                // look for the attribute property
+                if (attributeMap == null)
+                    attributeMap = new HashMap();
+                
+                // look for the attribute property, save the name
+                attrName = attrNameUp;
                 BeanPropertyDescriptor bpd = 
                     (BeanPropertyDescriptor) propertyMap.get(attrNameUp);
-                if (bpd == null)
+                if (bpd == null) {
+                    attrName = attrNameLo;
                     bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
-                if (bpd == null)
+                }
+                if (bpd == null) {
+                    attrName = mangledName;
                     bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
+                }
                 if (bpd != null) {
-                    if (bpd.getWriteMethod() == null ) continue ;
-                    
                     // determine the QName for this child element
                     TypeMapping tm = context.getTypeMapping();
                     Class type = bpd.getType();
@@ -293,20 +305,17 @@ public class SimpleDeserializer extends DeserializerImpl {
                             JavaUtils.getMessage("noDeser00", type.toString()));
                     if (! (dSer instanceof SimpleDeserializer))
                         throw new SAXException(
-                            JavaUtils.getMessage("AttrNotSimpleType00", 
-                                                 bpd.getName(), 
-                                                 type.toString()));
-                
-                    if (bpd.getWriteMethod().getParameterTypes().length == 1) {
-                        // Success!  Create an object from the string and set
-                        // it in the bean
-                        try {
-                            Object val = ((SimpleDeserializer)dSer).
+                                JavaUtils.getMessage("AttrNotSimpleType00", 
+                                        bpd.getName(), 
+                                        type.toString()));
+                    
+                    // Success!  Store name, value in HashMap for later
+                    try {
+                        Object val = ((SimpleDeserializer)dSer).
                                 makeValue(attributes.getValue(i));
-                            bpd.getWriteMethod().invoke(value, new Object[] {val} );
-                        } catch (Exception e) {
-                            throw new SAXException(e);
-                        }
+                        attributeMap.put(attrName, val);
+                    } catch (Exception e) {
+                        throw new SAXException(e);
                     }
                 
                 } // if bpd != null
@@ -314,5 +323,31 @@ public class SimpleDeserializer extends DeserializerImpl {
         } // if attributes exist
     } // onStartElement
 
+    /**
+     * Process any attributes we may have encountered (in onStartElement)
+     */ 
+    private void setSimpleTypeAttributes() throws SAXException {
+        // if this isn't a simpleType bean, wont have attributes
+        if (! SimpleType.class.isAssignableFrom(javaType))
+            return;
+        
+        // loop through map
+        Set keys = attributeMap.keySet();
+        for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
+            String name = (String) iterator.next();
+            Object val = attributeMap.get(name);
+            
+            BeanPropertyDescriptor bpd = 
+                    (BeanPropertyDescriptor) propertyMap.get(name);
+            if (bpd.getWriteMethod() == null) continue;
+            try {
+                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
+                    bpd.getWriteMethod().invoke(value, new Object[] {val} );
+                }
+            } catch (Exception e) {
+                throw new SAXException(e);
+            }
+        }
+    }
 
 }
