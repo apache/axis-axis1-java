@@ -591,8 +591,7 @@ public class SOAPEnvelope extends MessageElement
      */ 
     public javax.xml.soap.Name createName(String localName)
         throws SOAPException {
-        // Ok to use the SOAP envelope's namespace URI and prefix?
-        return new PrefixedQName(namespaceURI, localName, prefix);
+        return new PrefixedQName(null, localName,  null);
     }
 
     /**
