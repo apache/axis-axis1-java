@@ -107,8 +107,13 @@ public class SimpleChain extends BasicHandler implements Chain {
         Debug.Print( 1, "Enter: SimpleChain::invoke" );
         int i = 0 ;
         try {
-            for ( i = 0 ; handlers!= null && i<handlers.size() ; i++ )
-                visitor.visit((Handler)handlers.elementAt( i ), msgContext);
+            Vector localHandlers;
+            // copies handlers to a local variable for thread-safe
+            if ((localHandlers = handlers) != null) {
+                Enumeration enum = localHandlers.elements();
+                while (enum.hasMoreElements())
+                    visitor.visit((Handler)enum.nextElement(), msgContext);
+            }
         }
         catch( Exception e ) {
             // undo in reverse order - rethrow

@@ -178,8 +178,9 @@ public class SOAPService extends SimpleTargetedChain
         SOAPEnvelope env = msgContext.getRequestMessage().getAsSOAPEnvelope();
         Vector headers = env.getHeaders();
         Vector misunderstoodHeaders = null;
-        for (int i = 0; i < headers.size(); i++) {
-            SOAPHeader header = (SOAPHeader)headers.elementAt(i);
+        Enumeration enum = headers.elements();
+        while (enum.hasMoreElements()) {
+            SOAPHeader header = (SOAPHeader)enum.nextElement();
             if (header.isMustUnderstand() && !header.isProcessed()) {
                 if (misunderstoodHeaders == null)
                     misunderstoodHeaders = new Vector();
@@ -200,9 +201,9 @@ public class SOAPService extends SimpleTargetedChain
                     msgContext.setResponseMessage(respMsg);
                 }
                 env = respMsg.getAsSOAPEnvelope();
-                for (int i = 0; i < misunderstoodHeaders.size(); i++) {
-                    SOAPHeader badHeader = (SOAPHeader)misunderstoodHeaders.
-                                                                elementAt(i);
+                enum = misunderstoodHeaders.elements();
+                while (enum.hasMoreElements()) {
+                    SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
                     QName badQName = new QName(badHeader.getNamespaceURI(),
                                                badHeader.getName());
                     SOAPHeader newHeader = new SOAPHeader(
