@@ -64,6 +64,8 @@ import java.lang.reflect.Field;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -216,6 +218,11 @@ public class JavaUtils
         } else if (arg instanceof byte[] &&
                    destClass == Hex.class) {
             return new Hex((byte[]) arg);
+        }
+
+        // Convert between Calendar and Date
+        if (arg instanceof Calendar && destClass == Date.class) {
+            return ((Calendar) arg).getTime();
         }
 
 

@@ -392,6 +392,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
                                  BigInteger in1,
                                  BigDecimal in2,
                                  Calendar in35,
+                                 Calendar in36,
                                  boolean in4,
                                  byte in5,
                                  short in6,
@@ -469,6 +470,10 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         }
 
     } // methodDateTime
+
+    public Calendar methodDate(Calendar in0) throws RemoteException {
+        return methodDateTime(in0);
+    } // methodDate
 
     public BigDecimal methodBigDecimal(BigDecimal in0) throws RemoteException {
 
