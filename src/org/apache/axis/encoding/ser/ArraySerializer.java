@@ -125,14 +125,17 @@ public class ArraySerializer implements Serializer
 
         // Get the QName of the componentType.
         // If not found, look at the super classes
-        QName componentQName = context.getCurrentXMLType();
-        if (componentQName != null) {
-            if ((componentQName.equals(xmlType) ||
-                    componentQName.equals(soap.getArrayType()))) {
-                componentQName = null;
+        QName componentQName = null;
+        if (!encoded) {
+            componentQName = context.getCurrentXMLType();
+            if (componentQName != null) {
+                if ((componentQName.equals(xmlType) ||
+                     componentQName.equals(soap.getArrayType()))) {
+                         componentQName = null;
+                     }
             }
         }
-        
+
         if (componentQName == null) {
             componentQName = context.getQNameForClass(componentType);
         }
@@ -292,29 +295,37 @@ public class ArraySerializer implements Serializer
             //          and may be useful for operation overloading.
             //   Cons:  More interop test failures (as of 2/6/2002).
             //
+            String qname =
+                    context.getPrefixForURI(schema.getXsiURI(),
+                                            "xsi") + ":type";
+            QName soapArray;
+            if (soap == SOAPConstants.SOAP12_CONSTANTS) {
+                soapArray = Constants.SOAP_ARRAY12;
+            } else {
+                soapArray = Constants.SOAP_ARRAY;
+            }
+
             int typeI = attrs.getIndex(schema.getXsiURI(),
                                        "type");
             if (typeI != -1) {
-                String qname =
-                      context.getPrefixForURI(schema.getXsiURI(),
-                                              "xsi") + ":type";
-                QName soapArray;
-                if (soap == SOAPConstants.SOAP12_CONSTANTS) {
-                    soapArray = Constants.SOAP_ARRAY12;
-                } else {
-                    soapArray = Constants.SOAP_ARRAY;
-                }
-
                 attrs.setAttribute(typeI,
                                    schema.getXsiURI(),
                                    "type",
                                    qname,
                                    "CDATA",
                                    context.qName2String(soapArray));
+            } else {
+                attrs.addAttribute(schema.getXsiURI(),
+                                   "type",
+                                   qname,
+                                   "CDATA",
+                                   context.qName2String(soapArray));
             }
+
             attributes = attrs;
         }
 
+        Boolean sendType = null;
         // For the maxOccurs case, each item is named with the QName
         // we got in the arguments.  For normal array case, we write an element with
         // that QName, and then serialize each item as <item>
@@ -324,7 +335,10 @@ public class ArraySerializer implements Serializer
             serializeAttr = null;  // since we are putting them here
             context.startElement(name, attributes);
             elementName = Constants.QNAME_LITERAL_ITEM;
+            // If we are doing SOAP encoded arrays, no need to add xsi:type to the items
+            sendType = Boolean.FALSE;
         }
+
 
         if (dim2Len < 0) {
             // Normal case, serialize each array element
@@ -336,7 +350,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      null);  // Respect default type config
+                                      sendType);  // Add xsi:type?
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -346,7 +360,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      null);  // Respect default type config
+                                      sendType);  // Add xsi:type?
 
                 }
             }
@@ -355,7 +369,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue, componentQName, true, null);
+                    context.serialize(elementName, null, aValue, componentQName, true, sendType);
                 }
             }
         }
