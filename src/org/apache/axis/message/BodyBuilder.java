@@ -105,12 +105,15 @@ public class BodyBuilder extends SOAPHandler
     public MessageElement makeNewElement(String namespace, String localName,
                                          String prefix, Attributes attributes,
                                          DeserializationContext context) {
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
         return new SOAPBody(namespace,
                             localName,
                             prefix,
                             attributes,
                             context,
-                            context.getMessageContext().getSOAPConstants());
+                            soapConstants);
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -144,7 +147,8 @@ public class BodyBuilder extends SOAPHandler
         MessageContext msgContext = context.getMessageContext();
         OperationDesc [] operations = null;
         try {
-             operations = msgContext.getPossibleOperationsByQName(qname);
+             if(msgContext != null)
+                operations = msgContext.getPossibleOperationsByQName(qname);
         } catch (org.apache.axis.AxisFault e) {
             // SAXException is already known to this method, so I
             // don't have an exception-handling propogation explosion.
@@ -183,7 +187,7 @@ public class BodyBuilder extends SOAPHandler
                 // for this QName.  If there are overloads,
                 // we'll need to start recording.  If we're making a high-
                 // fidelity recording anyway, don't bother (for now).
-                if (!msgContext.isHighFidelity() &&
+                if (msgContext != null && !msgContext.isHighFidelity() &&
                         (operations == null || operations.length == 1)) {
                     ((RPCElement)element).setNeedDeser(false);
                     handler = new RPCHandler((RPCElement)element, false);
@@ -195,10 +199,12 @@ public class BodyBuilder extends SOAPHandler
             }
         }
 
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
         if (element == null) {
             if (style == Style.RPC &&
-                    context.getMessageContext().getSOAPConstants() ==
-                    SOAPConstants.SOAP12_CONSTANTS) {
+                soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                 throw new SAXException(Messages.getMessage("onlyOneBodyFor12"));
             }
             element = new SOAPBodyElement(namespace, localName, prefix,

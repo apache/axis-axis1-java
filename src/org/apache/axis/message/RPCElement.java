@@ -97,7 +97,7 @@ public class RPCElement extends SOAPBodyElement
         MessageContext msgContext = context.getMessageContext();
 
         // Obtain our possible operations
-        if (operations == null) {
+        if (operations == null && msgContext != null) {
             SOAPService service    = msgContext.getService();
             if (service != null) {
                 ServiceDesc serviceDesc =

@@ -141,8 +141,9 @@ public class SOAPHeaderElement extends MessageElement
                       Attributes attributes, DeserializationContext context) {
         super(namespace, localPart, prefix, attributes, context);
 
-        SOAPConstants soapConstants = context.getMessageContext().
-                                                          getSOAPConstants();
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
 
         // Check for mustUnderstand
         String val = attributes.getValue(soapConstants.getEnvelopeURI(),

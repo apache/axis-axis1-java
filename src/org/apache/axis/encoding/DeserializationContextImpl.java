@@ -82,6 +82,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.apache.axis.AxisFault;
+import org.apache.axis.soap.SOAPConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParser;
@@ -164,11 +165,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                                       MessageContext ctx,
                                       String messageType)
     {
-        EnvelopeBuilder builder = new EnvelopeBuilder(messageType,
-                                                      ctx.getSOAPConstants());
-
         msgContext = ctx;
-
+        EnvelopeBuilder builder = new EnvelopeBuilder(messageType, getSOAPConstants());
         // If high fidelity is required, record the whole damn thing.
         if (ctx == null || ctx.isHighFidelity())
             recorder = new SAX2EventRecorder();
@@ -179,6 +177,18 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         pushElementHandler(new EnvelopeHandler(builder));
 
         inputSource = is;
+    }
+
+    /**
+     * returns the soap constants.
+     */
+    private SOAPConstants getSOAPConstants(){
+        SOAPConstants constants = null;
+        if(msgContext != null)
+            constants = msgContext.getSOAPConstants();
+        if(constants == null)
+            constants = SOAPConstants.SOAP11_CONSTANTS;
+        return constants;
     }
 
     /**
