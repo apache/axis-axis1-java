@@ -193,7 +193,8 @@ public class AttachmentsImpl implements Attachments {
         if (mpartStream != null) {
             Collection atts = mpartStream.getAttachments();
 
-            contentLocation= mpartStream.getContentLocation();
+            if(contentLocation == null)
+                contentLocation= mpartStream.getContentLocation();
 
             mpartStream = null;
 
@@ -340,7 +341,6 @@ public class AttachmentsImpl implements Attachments {
     public Part getAttachmentByReference(String reference)
             throws org.apache.axis.AxisFault {
 
-
         if (null == reference) {
             return null;
         }
@@ -359,9 +359,8 @@ public class AttachmentsImpl implements Attachments {
         Part ret = (Part) attachments.get(reference);
         if( null != ret) return ret;
 
-        String referenceLC = reference.toLowerCase();
 
-        if (!referenceLC.startsWith(Attachments.CIDprefix) && (null != contentLocation)) {
+        if (!reference.startsWith(Attachments.CIDprefix) && (null != contentLocation)) {
             //Not a content-id check to see if its a relative location id.
 
                 String fqreference = contentLocation;

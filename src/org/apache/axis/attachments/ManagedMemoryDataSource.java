@@ -476,6 +476,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         deleted = true;
 
+        memorybuflist = null;
+
         if (diskCacheFile != null) {
             if (cachediskstream != null) {
                 try {
@@ -517,7 +519,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             }
         }
 
-        memorybuflist = null;
 
         return ret;
     }
