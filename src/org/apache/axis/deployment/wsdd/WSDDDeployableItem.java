@@ -310,25 +310,20 @@ public abstract class WSDDDeployableItem
     protected Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
-        try {
-            Class   c = getJavaClass();
-            Handler h = null;
-
-            if (c != null) {
-                h = (Handler)createInstance(c);
-
-                if (h != null) {
-                    h.setOptions(getParametersTable());
-                }
-            } else {
-                h = registry.getHandler(getType());
+        Class   c = getJavaClass();
+        Handler h = null;
+        
+        if (c != null) {
+            h = (Handler)createInstance(c);
+            
+            if (h != null) {
+                h.setOptions(getParametersTable());
             }
-
-            return h;
+        } else {
+            h = registry.getHandler(getType());
         }
-        catch (Exception e) {
-            throw e;
-        }
+        
+        return h;
     }
 
     /**
