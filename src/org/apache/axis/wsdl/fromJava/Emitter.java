@@ -956,7 +956,7 @@ public class Emitter {
         // Write the part
         ParameterDesc retParam = new ParameterDesc();
         if (desc.getReturnQName() == null) {
-            retParam.setName("return");
+            retParam.setName(desc.getName()+"Return");
         } else {
             retParam.setQName(desc.getReturnQName());
         }
