@@ -138,7 +138,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             return;
         }
 
-        SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
+        SecurityProvider provider = (SecurityProvider)msgContext.getProperty(MessageContext.SECURITY_PROVIDER);
         if (provider == null)
             throw new AxisFault(Messages.getMessage("noSecurity00"));
 

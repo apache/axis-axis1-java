@@ -799,6 +799,8 @@ public class MessageContext implements SOAPMessageContext {
      */
     public final static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
 
+    public static final String SECURITY_PROVIDER = "securityProvider";
+
     /*
      * IMPORTANT.
      * If adding any new constants to this class. Make them final. The

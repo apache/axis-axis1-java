@@ -802,7 +802,7 @@ public class AxisServlet extends AxisServletBase {
             // ? where it would also be picked up for 'doGet()' ?
             if (securityProvider != null) {
                 if (isDebug) log.debug("securityProvider:" + securityProvider);
-                msgContext.setProperty("securityProvider", securityProvider);
+                msgContext.setProperty(MessageContext.SECURITY_PROVIDER, securityProvider);
             }
 
             /* Get request message
