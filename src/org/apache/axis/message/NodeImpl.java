@@ -652,18 +652,19 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      */
     public void setValue(String value) {
         if (this instanceof org.apache.axis.message.Text) {
-            this.setNodeValue(value);
-            return;
-        }
-        if (children != null)
-            for (int i = 0; i < children.size(); i++) {
-                NodeImpl child = (NodeImpl) children.get(i);
-                if (child instanceof org.apache.axis.message.Text) {
-                    child.setValue(value);
-                    return;
-                }
+            setNodeValue(value);
+        } else if (children != null) {
+            if (children.size() != 1) {
+                throw new IllegalStateException( "setValue() may not be called on a non-Text node with more than one child." );
             }
-        throw new IllegalStateException("Cannot call set for Non Text Node");
+            javax.xml.soap.Node child = (javax.xml.soap.Node) children.get(0);
+            if (!(child instanceof org.apache.axis.message.Text)) {
+                throw new IllegalStateException( "setValue() may not be called on a non-Text node with a non-Text child." );
+            }
+            ((javax.xml.soap.Text)child).setNodeValue(value);
+        } else {
+            appendChild(new org.apache.axis.message.Text(value));
+        }
     }
 
     /**

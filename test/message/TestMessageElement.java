@@ -18,17 +18,18 @@ package test.message;
 
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.PrefixedQName;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.MessageFactoryImpl;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.CDATASection;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import test.AxisTestBase;
 
 import javax.xml.namespace.QName;
@@ -40,17 +41,20 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
+import javax.xml.soap.Text;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
+import java.io.OutputStream;
 import java.util.Iterator;
 
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
+
 /**
- * Test MessageElement class.
+ * Test {@link MessageElement} class.
  *
  * @author Glyn Normington (glyn@apache.org)
  */
@@ -101,6 +105,7 @@ public class TestMessageElement extends AxisTestBase {
         assertEquals("Child 1 not found", child1, c1only.next());
         assertTrue("Unexpected child", !c1only.hasNext());
     }
+
     public void testDetachNode() throws Exception {
         SOAPConstants sc = SOAPConstants.SOAP11_CONSTANTS;
         EnvelopeBuilder eb = new EnvelopeBuilder(Message.REQUEST, sc);
@@ -193,9 +198,6 @@ public class TestMessageElement extends AxisTestBase {
             String A_PREFIX = "a";
             String A_NAMESPACE_URI = "http://schemas.com/a";
             String AA_TAG = "AA";
-            String B_TAG = "B";
-            String B_PREFIX = "b";
-            String B_NAMESPACE_URI = "http://schemas.com/b";
 
             MessageFactory messageFactory = MessageFactory.newInstance();
             SOAPMessage message = messageFactory.createMessage();
@@ -207,7 +209,7 @@ public class TestMessageElement extends AxisTestBase {
 
             Name aName = envelope.createName(A_TAG, A_PREFIX, A_NAMESPACE_URI);
             SOAPBodyElement aBodyElement = body.addBodyElement(aName);
-            SOAPElement bElement = aBodyElement.addChildElement(AA_TAG, A_PREFIX);
+            aBodyElement.addChildElement(AA_TAG, A_PREFIX);
             String data = envelope.toString();
 
             MessageContext ctx = new MessageContext(new AxisClient());
@@ -219,8 +221,8 @@ public class TestMessageElement extends AxisTestBase {
             MessageElement elem = dser.getEnvelope().getBodyByName(A_NAMESPACE_URI, A_TAG);
             Iterator iterator = elem.getChildElements();
             while(iterator.hasNext()){
-                MessageElement elem2 = (MessageElement)iterator.next();
-                Name name = elem2.getElementName();
+                MessageElement childElem = (MessageElement)iterator.next();
+                Name name = childElem.getElementName();
                 assertEquals(A_NAMESPACE_URI, name.getURI());
                 assertEquals(AA_TAG, name.getLocalName());
             }    
@@ -304,9 +306,82 @@ public class TestMessageElement extends AxisTestBase {
         System.out.println(xmlOut);
         this.assertXMLEqual(xmlIn,xmlOut);
     }
-    
+
+    /**
+     * Test setting the text value on a MessageElement in various ways.
+     *
+     * @throws Exception on error
+     */ 
+    public void testSetValue() throws Exception
+    {
+        MessageElement me;
+        final QName name = new QName( "urn:xyz", "foo", "xyz" );
+        final String value = "java";
+        // Test #1: set value via MessageElement(name, value) constructor
+        me = new MessageElement( name, value );
+        assertEquals( value, me.getValue() );
+        assertEquals( value, me.getObjectValue() );
+        // Test #2a: set value via setValue(value)
+        me = new MessageElement( name );
+        me.setValue( value );
+        assertEquals( value, me.getValue() );
+        assertEquals( value, me.getObjectValue() );
+        // Test #2b: call setValue(value) on SOAPElement w/ more than one child (illegal)
+        me = new MessageElement( name );
+        me.addTextNode("cobol");
+        me.addTextNode("fortran");
+        try
+        {
+            me.setValue( value );
+            fail("setValue() should throw an IllegalStateException when called on a SOAPElement with more than one child");
+        }
+        catch ( RuntimeException re )
+        {
+            assertTrue(re instanceof IllegalStateException);
+        }
+        // Test #2c: call setValue(value) on SOAPElement w/ a non-Text child (illegal)
+        me = new MessageElement( name );
+        me.addChildElement("pascal");
+        try
+        {
+            me.setValue( value );
+            fail("setValue() should throw an IllegalStateException when called on a SOAPElement with a non-Text child");
+        }
+        catch ( RuntimeException re )
+        {
+            assertTrue(re instanceof IllegalStateException);
+        }
+        // Test #2d: set value via setValue(value) on Text child
+        me = new MessageElement( name );
+        me.addTextNode( "c++" );
+        Object child = me.getChildren().get(0);
+        assertTrue( child instanceof Text );
+        ((Text)child).setValue( value );
+        assertEquals( value, me.getValue());
+        assertEquals( null, me.getObjectValue());
+        // Test #3: set value via setObjectValue(value)
+        me = new MessageElement( name );
+        me.setObjectValue( value );
+        assertEquals( value, me.getValue());
+        assertEquals( value, me.getObjectValue());
+        // Test #4: set value via addTextNode(value)
+        me = new MessageElement( name );
+        me.addTextNode( value );
+        assertEquals( value, me.getValue());
+        assertEquals( null, me.getObjectValue());
+        // Test #5: set value via dser.parse()
+        SOAPMessage msg = MessageFactoryImpl.newInstance().createMessage();
+        msg.getSOAPBody().addChildElement(new org.apache.axis.message.SOAPBodyElement(name, value));
+        OutputStream os = new ByteArrayOutputStream( );
+        msg.writeTo(os);
+        DeserializationContext dser = new DeserializationContext(new InputSource(new StringReader(os.toString())), new MessageContext(new AxisServer()),Message.REQUEST);
+        dser.parse();
+        me = (MessageElement) dser.getEnvelope().getBodyElements().get( 0 );
+        assertEquals( value, me.getValue());
+        assertEquals( value, me.getObjectValue());
+    }
+
     public static void main(String[] args) throws Exception {
-        TestMessageElement tester = new TestMessageElement("TestMessageElement");
-        tester.testQNameAttrTest();
+        new TestRunner().doRun( new TestMessageElement( "TestMessageElement" ) );
     }
 }

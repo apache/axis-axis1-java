@@ -2079,4 +2079,17 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
         return null;
     }
+
+    public void setValue( String value )
+    {
+        // if possible, get objectValue in sync with Node value
+        if (children==null) {
+            try {
+                setObjectValue(value);
+            } catch ( SOAPException soape ) {
+                log.debug("setValue()", soape);
+            }
+        }
+        super.setValue(value);
+    }
 }
