@@ -15,16 +15,16 @@
         targetNamespace="urn:attachments.wsdl.test">
       <element name="GetCompanyInfo">
         <complexType>
-          <all>
+          <sequence>
             <element name="tickerSymbol" type="xsd:string"/>
-          </all>
+          </sequence>
         </complexType>
       </element>
       <element name="GetCompanyInfo2">
         <complexType>
-          <all>
+          <sequence>
             <element name="result" type="xsd:float"/>
-          </all>
+          </sequence>
         </complexType>
       </element>
     </schema>
