@@ -66,6 +66,7 @@ import org.apache.axis.message.SOAPEnvelope;
 public class ServiceHandler extends BasicHandler {
     public static final String OUTPARAM1 = "Output param value";
     public static final Float OUTPARAM2 = new Float(4.56);
+    public static final Integer RESPONSE = new Integer(5);
 
     /** Must implement this in subclasses.
      */
@@ -75,7 +76,7 @@ public class ServiceHandler extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         SOAPEnvelope env = new SOAPEnvelope();
 
-        RPCParam retVal = new RPCParam("return", new Integer(5));
+        RPCParam retVal = new RPCParam("return", RESPONSE);
         RPCParam outParam1 = new RPCParam("out1", OUTPARAM1);
         RPCParam outParam2 = new RPCParam("out2", OUTPARAM2);
 

@@ -2,10 +2,11 @@ package test.outparams;
 
 import junit.framework.TestCase;
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -37,7 +38,7 @@ public class TestOutParams extends TestCase {
              "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    private ServiceClient client = new ServiceClient();
+    private Call client = new Call();
     private AxisServer server = new AxisServer();
 
     private HandlerRegistry hr;
@@ -72,6 +73,7 @@ public class TestOutParams extends TestCase {
         SOAPEnvelope envelope = new SOAPEnvelope();
         msgContext.setRequestMessage(new Message(envelope));
 
+        client.setReturnType(XMLType.XSD_INT);
         // Invoke the Axis server
         Object ret = client.invoke(serviceURN, "method",
                                 new Object [] { "test" });
@@ -84,6 +86,8 @@ public class TestOutParams extends TestCase {
 
         param = (RPCParam)outParams.get(1);
         assertEquals("Param 1 does not equal expected value", param.getValue(), ServiceHandler.OUTPARAM2);
+
+        assertEquals("Return value does not equal expected value", ((Integer)ret).intValue(), ServiceHandler.RESPONSE.intValue());
     }
 
     public static void main(String args[])
