@@ -260,6 +260,9 @@ public class SOAPEnvelope extends MessageElement
      * @param hdr
      */ 
     public void setHeader(SOAPHeader hdr) {
+        if(this.header != null) {
+            removeChild(this.header);
+        }
         header = hdr;
         try {
             header.setParentElement(this);
@@ -296,6 +299,9 @@ public class SOAPEnvelope extends MessageElement
      * @param body
      */ 
     public void setBody(SOAPBody body) {
+        if(this.body != null) {
+            removeChild(this.body);
+        }
         this.body = body;
         try {
             body.setParentElement(this);

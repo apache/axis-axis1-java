@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPElement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Iterator;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -342,12 +343,20 @@ public class RPCElement extends SOAPBodyElement
             context.startElement(new QName(getNamespaceURI(), name), attributes);
         }
 
-        for (int i = 0; i < params.size(); i++) {
-            RPCParam param = (RPCParam)params.elementAt(i);
-            if (!hasOperationElement && encodingStyle != null && encodingStyle.equals("")) {
-                context.registerPrefixForURI("", param.getQName().getNamespaceURI());
+        if(noParams) {
+            if (children != null) {
+                for (Iterator it = children.iterator(); it.hasNext();) {
+                    ((NodeImpl)it.next()).output(context);
+                }
             }
-            param.serialize(context);
+        } else {
+            for (int i = 0; i < params.size(); i++) {
+                RPCParam param = (RPCParam)params.elementAt(i);
+                if (!hasOperationElement && encodingStyle != null && encodingStyle.equals("")) {
+                    context.registerPrefixForURI("", param.getQName().getNamespaceURI());
+                }
+                param.serialize(context);
+            }
         }
 
         if (hasOperationElement || noParams) {

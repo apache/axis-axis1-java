@@ -466,6 +466,20 @@ public class SerializationContextImpl implements SerializationContext
     {
         String prefix = null;
         String namespaceURI = qName.getNamespaceURI();
+        String localPart = qName.getLocalPart();
+        
+        if(localPart != null && localPart.length() > 0) {
+            int index = localPart.indexOf(':');
+            if(index!=-1){
+                prefix = localPart.substring(0,index);
+                if(prefix.length()>0 && !prefix.equals("urn")){
+                    registerPrefixForURI(prefix, namespaceURI);
+                    localPart = localPart.substring(index+1);
+                } else {
+                    prefix = null;
+                }
+            }
+        }
 
         if (namespaceURI.length() == 0) {
             if (writeNS) {
@@ -481,9 +495,9 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if ((prefix == null) || (prefix.length() == 0))
-           return qName.getLocalPart();
+           return localPart;
 
-        return prefix + ':' + qName.getLocalPart();
+        return prefix + ':' + localPart;
     }
 
     public String qName2String(QName qName)

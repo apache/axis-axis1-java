@@ -27,6 +27,9 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
+import org.w3c.dom.Node;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -322,7 +325,7 @@ public class SOAPHeader extends MessageElement
             Iterator enumeration = headers.iterator();
             while (enumeration.hasNext()) {
                 // Output this header element
-                ((SOAPHeaderElement)enumeration.next()).output(context);
+                ((NodeImpl)enumeration.next()).output(context);
             }
             // Output </SOAP-ENV:Header>
             context.endElement();
@@ -382,5 +385,19 @@ public class SOAPHeader extends MessageElement
         child.addNamespaceDeclaration(prefix, uri);
         addChildElement(child);
         return child;
+    }
+
+    public Node appendChild(Node newChild) throws DOMException {
+        SOAPHeaderElement headerElement = null;
+        if(newChild instanceof SOAPHeaderElement)
+            headerElement = (SOAPHeaderElement)newChild;
+        else 
+            headerElement = new SOAPHeaderElement((Element)newChild);
+        try {
+            addChildElement(headerElement);
+        } catch (SOAPException e) {
+            throw new DOMException(DOMException.INVALID_STATE_ERR,e.toString());
+        }
+        return headerElement;
     }
 }

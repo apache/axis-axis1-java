@@ -22,7 +22,9 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -78,10 +80,7 @@ public class SOAPHeaderElement extends MessageElement
 
         // FIXME : This needs to come from someplace reasonable, perhaps
         // TLS (SOAPConstants.getCurrentVersion() ?)
-        SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
-
-        if (getNamespaceURI() != null && getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI()))
-            soapConstants = SOAPConstants.SOAP12_CONSTANTS;
+        SOAPConstants soapConstants = getSOAPConstants();
 
         String val = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
@@ -134,9 +133,7 @@ public class SOAPHeaderElement extends MessageElement
     {
         super(namespace, localPart, prefix, attributes, context);
 
-        SOAPConstants soapConstants = context.getMessageContext() == null ?
-                                        SOAPConstants.SOAP11_CONSTANTS :
-                                        context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = getSOAPConstants();
 
         // Check for mustUnderstand
         String val = attributes.getValue(soapConstants.getEnvelopeURI(),
@@ -227,7 +224,7 @@ public class SOAPHeaderElement extends MessageElement
      */
     protected void outputImpl(SerializationContext context) throws Exception {
         if (!alreadySerialized) {
-            SOAPConstants soapVer = getEnvelope().getSOAPConstants();
+            SOAPConstants soapVer = getSOAPConstants();
             QName roleQName = soapVer.getRoleAttributeQName();
 
             if (actor != null) {
@@ -252,5 +249,48 @@ public class SOAPHeaderElement extends MessageElement
         }
 
         super.outputImpl(context);
+    }
+
+    public NamedNodeMap getAttributes() {
+        makeAttributesEditable();
+        SOAPConstants soapConstants = getSOAPConstants();
+        String mustUnderstand = attributes.getValue(soapConstants.getEnvelopeURI(),
+                                         Constants.ATTR_MUST_UNDERSTAND);
+        QName roleQName = soapConstants.getRoleAttributeQName();
+        String actor = attributes.getValue(roleQName.getNamespaceURI(),roleQName.getLocalPart());
+        
+        if(mustUnderstand == null){
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                setAttributeNS(soapConstants.getEnvelopeURI(), 
+                            Constants.ATTR_MUST_UNDERSTAND,"false");
+            } else {
+                setAttributeNS(soapConstants.getEnvelopeURI(), 
+                            Constants.ATTR_MUST_UNDERSTAND,"0");
+            }
+        }
+        if(actor == null){
+            setAttributeNS(roleQName.getNamespaceURI(),
+                         roleQName.getLocalPart(), this.actor);
+        }
+        return super.getAttributes();
+    }
+
+    private SOAPConstants getSOAPConstants() {
+        SOAPConstants soapConstants = null;
+        if (getNamespaceURI() != null &&
+                getNamespaceURI().equals(SOAPConstants.SOAP12_CONSTANTS.getEnvelopeURI())) {
+            soapConstants = SOAPConstants.SOAP12_CONSTANTS;
+        }
+        if (soapConstants == null && getEnvelope() != null) {
+            soapConstants = getEnvelope().getSOAPConstants();
+        }
+        if (soapConstants == null && context != null &&
+                context.getMessageContext() != null) {
+            soapConstants = context.getMessageContext().getSOAPConstants();
+        }
+        if (soapConstants == null) {
+            soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+        }
+        return soapConstants;
     }
 }
