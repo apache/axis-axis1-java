@@ -146,9 +146,14 @@ public class Types {
      * @return the QName of the generated Schema type, null if void
      */
     public QName writePartType(Class type, javax.xml.namespace.QName qname) throws Exception {
+        //patch by costin to fix an NPE; commented out till we find out what the problem is
+        //if you get NullPointerExceptions in this class, turn it on and submit some
+        //replicable test data to the Axis team via bugzilla
+        /*
         if( type==null ) {
             return null;
         }
+        */
         if (type.getName().equals("void")) {
           return null;
         }
