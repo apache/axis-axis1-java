@@ -181,11 +181,27 @@ public class TestCaseEmitter {
             writer.println("        try {");
             Operation op = (Operation) ops.next();
             Emitter.Parameters params = this.emitter.parameters(op);
+
+            if ( !"void".equals( params.returnType ) ) {
+                writer.print(INDENT);
+                writer.print(params.returnType);
+                writer.print(" value = ");
+
+                if (  this.emitter.isPrimitiveType( params.returnType ) ) {
+                    if ( "boolean".equals( params.returnType ) ) {
+                        writer.println("false;");
+                    } else {
+                        writer.println("-3;");
+                    }
+                } else {
+                    writer.println("null;");
+                }
+            }
+
             writer.print(INDENT);
 
             if ( !"void".equals(params.returnType) ) {
-                writer.print(params.returnType);
-                writer.print(" value = ");
+                writer.print("value = ");
             }
 
             writer.print("binding.");
@@ -206,7 +222,7 @@ public class TestCaseEmitter {
                 String paramType = param.type;
                 if ( this.emitter.isPrimitiveType(paramType) ) {
                     if ( "boolean".equals(paramType) ) {
-                        writer.print("false");
+                        writer.print("true");
                     } else {
                         writer.print("0");
                     }
@@ -221,7 +237,16 @@ public class TestCaseEmitter {
 
             if ( !"void".equals(params.returnType) ) {
                 writer.print(INDENT);
-                writer.println("assertTrue(value != null);");
+
+                if ( this.emitter.isPrimitiveType( params.returnType ) ) {
+                    if ( "boolean".equals( params.returnType ) ) {
+                        writer.println("assertTrue(value != false);");
+                    } else {
+                        writer.println("assertTrue(value != -3);");
+                    }
+                } else {
+                    writer.println("assertTrue(value != null);");
+                }
             }
 
             writer.println("        } catch (java.rmi.RemoteException re) {");
