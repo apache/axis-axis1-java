@@ -302,7 +302,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // In this case, we want to use the collectionIndex and make sure
             // the deserialized value for the child element goes into the
             // right place in the collection.
-            if (propDesc.isIndexed() && !(dSer instanceof ArrayDeserializer)) {
+            if (propDesc.isIndexed() && (
+                    !(dSer instanceof ArrayDeserializer) || 
+                    propDesc.getType().isArray())) {
                     collectionIndex++;
                     dSer.registerValueTarget(new BeanPropertyTarget(value,
                                                     propDesc, collectionIndex));
