@@ -616,6 +616,12 @@ public class Message extends javax.xml.soap.SOAPMessage
             }
         }
         saveRequired = false;
+        try {
+            /* Fix for Bug 16418 - Start from scratch */ 
+            getSOAPPartAsString();
+        } catch (AxisFault axisFault) {
+            log.error(Messages.getMessage("exception00"), axisFault);
+        }
     }
 
     /**
