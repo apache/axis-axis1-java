@@ -112,10 +112,20 @@ public class TestDOM extends TestCase {
         SOAPBodyElement body = new SOAPBodyElement(XMLUtils.newDocument().createElement("tmp"));
         assertEquals("<tmp/>",body.toString());
     }
+
+    public void testNodeWithAttribute() throws Exception 
+    {
+        org.w3c.dom.Element element = XMLUtils.newDocument().createElement("tmp");
+        element.setAttribute("attrib", "foo");
+        SOAPBodyElement body = new SOAPBodyElement(element);
+        assertEquals("<tmp attrib=\"foo\"/>",body.toString());
+    }
     
     public static void main(String [] args) throws Exception
     {
         TestDOM tester = new TestDOM("TestDOM");
+        tester.testNodeWithAttribute();
+        tester.testEmptyNode();
         tester.testDOM();
     }
 

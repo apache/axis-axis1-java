@@ -503,6 +503,8 @@ public class SerializationContext
                     }
                 } else {
                     qname = attributes.getLocalName(i);
+                    if(qname == null)
+                        qname = attributes.getQName(i);
                 }
 
                 writer.write(qname);
