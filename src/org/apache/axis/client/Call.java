@@ -200,8 +200,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     private static Hashtable transportImpls = new Hashtable();
 
-    private static boolean   initialized = false;
-
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -213,7 +211,7 @@ public class Call implements javax.xml.rpc.Call {
         this.service = service ;
         msgContext = new MessageContext( service.getEngine() );
         maintainSession = service.getMaintainSession();
-        if ( !initialized ) initialize();
+        initialize();
     }
 
     /**
@@ -1094,16 +1092,12 @@ public class Call implements javax.xml.rpc.Call {
      * Note: Not part of JAX-RPC specification.
      */
     public static synchronized void initialize() {
-        if (!initialized) {
-            addTransportPackage("org.apache.axis.transport");
+        addTransportPackage("org.apache.axis.transport");
 
-            setTransportForProtocol("local",
-                         org.apache.axis.transport.local.LocalTransport.class);
-            setTransportForProtocol("http", HTTPTransport.class);
-            setTransportForProtocol("https", HTTPTransport.class);
-
-            initialized = true;
-        }
+        setTransportForProtocol("local",
+                org.apache.axis.transport.local.LocalTransport.class);
+        setTransportForProtocol("http", HTTPTransport.class);
+        setTransportForProtocol("https", HTTPTransport.class);
     }
 
     /** Add a package to the system protocol handler search path.  This
