@@ -238,7 +238,7 @@ public class HTTPSender extends BasicHandler {
                         .append(cookie2).append("\r\n");
             }
         }
-        
+
         StringBuffer header = new StringBuffer();
 
         String webMethod = null;
@@ -254,7 +254,7 @@ public class HTTPSender extends BasicHandler {
         } else {
             posting = webMethod.equals(HTTPConstants.HEADER_POST);
         }
-        
+
         header.append(webMethod).append(" ");
         if (useFullURL.value) {
             header.append(tmpURL.toExternalForm());
@@ -404,7 +404,7 @@ public class HTTPSender extends BasicHandler {
                         .append("\r\n");
             }
         }
-        
+
         if (null != httpConnection) {
             header.append(HTTPConstants.HEADER_CONNECTION);
             header.append(": ");
@@ -416,28 +416,28 @@ public class HTTPSender extends BasicHandler {
             //Add other headers to the end.
             //for pre java1.4 support, we have to turn the string buffer argument into
             //a string before appending.
-            header.append(otherHeaders.toString()); 
+            header.append(otherHeaders.toString());
         }
 
 
         header.append("\r\n"); //The empty line to start the BODY.
 
         OutputStream out = sock.getOutputStream();
-        
+
         if (!posting) {
             out.write(header.toString()
                     .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
             out.flush();
             return null;
         }
-        
+
         InputStream inp = null;
 
         if (httpChunkStream) {
             out.write(header.toString()
                     .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
         }
-        
+
         if(httpContinueExpected ){ //We need to get a reply from the server as to whether
             // it wants us send anything more.
             out.flush();
@@ -456,9 +456,9 @@ public class HTTPSender extends BasicHandler {
             else{ //If no 100 Continue then we must not send anything!
                 String statusMessage= (String)
                         msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
-                
+
                 AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
-                
+
                 fault.setFaultDetailString(Messages.getMessage("return01",
                                                                "" + returnCode, ""));
                 throw fault;
@@ -491,14 +491,14 @@ public class HTTPSender extends BasicHandler {
             log.debug("---------------------------------------------------");
             log.debug(header + reqEnv);
         }
-        
+
         return inp;
     }
-    
+
     private InputStream readHeadersFromSocket(Socket sock,
                                               MessageContext msgContext,
                                               InputStream inp,
-                                              Hashtable headers) 
+                                              Hashtable headers)
             throws IOException {
         byte b = 0;
         int len = 0;
@@ -508,7 +508,7 @@ public class HTTPSender extends BasicHandler {
         if(null == inp) {
             inp = new BufferedInputStream(sock.getInputStream());
         }
-        
+
         if (headers == null) {
             headers = new Hashtable();
         }
@@ -590,7 +590,7 @@ public class HTTPSender extends BasicHandler {
                 len = 0;
             }
         }
-        
+
         return inp;
     }
 
@@ -609,7 +609,7 @@ public class HTTPSender extends BasicHandler {
             throws IOException {
         Message outMsg = null;
         byte b;
-        
+
         Integer rc = (Integer)msgContext.getProperty(
                                             HTTPConstants.MC_HTTP_STATUS_CODE);
         int returnCode = 0;
@@ -659,29 +659,29 @@ public class HTTPSender extends BasicHandler {
         String contentLocation =
                 (String) headers
                 .get(HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
-        
+
         contentLocation = (null == contentLocation)
                 ? null
                 : contentLocation.trim();
-        
+
         String contentLength =
                 (String) headers
                 .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
-        
+
         contentLength = (null == contentLength)
                 ? null
                 : contentLength.trim();
-        
+
         String transferEncoding =
-                (String) headers
-                .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
+                ((String) headers
+                .get(HTTPConstants.HEADER_TRANSFER_ENCODING)).toLowerCase();
         if (null != transferEncoding
                 && transferEncoding.trim()
                 .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
             inp = new ChunkedInputStream(inp);
         }
-        
-        
+
+
         outMsg = new Message( new SocketInputStream(inp, sock), false,
                               contentType, contentLocation);
         outMsg.setMessageType(Message.RESPONSE);
