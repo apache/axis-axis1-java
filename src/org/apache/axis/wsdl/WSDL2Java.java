@@ -111,11 +111,11 @@ public class WSDL2Java {
     public static final byte SESSION_SCOPE     = 0x11;
 
     // The emitter framework Emitter class.
-    private Emitter emitter;
+    protected Emitter emitter;
     // Timeout, in milliseconds, to let the Emitter do its work
     private long timeoutms = 45000; // 45 sec default
 
-    JavaWriterFactory writerFactory = null;
+    protected JavaWriterFactory writerFactory = null;
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:

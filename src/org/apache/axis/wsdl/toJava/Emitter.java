@@ -143,6 +143,7 @@ public class Emitter {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             writerFactory = (WriterFactory) 
                 Class.forName(className, true,cl).newInstance();
+            writerFactory.setEmitter(this);
         }
         catch (Exception ex) {
             ex.printStackTrace();

@@ -185,7 +185,7 @@ public abstract class BaseSerializerFactory
             if (getSerializer == null && firstCall) {
                 try {
                     getSerializer = 
-                        javaType.getMethod("getSerialier",
+                        javaType.getMethod("getSerializer",
                                            new Class[] {String.class, 
                                                         Class.class, 
                                                         QName.class});
