@@ -1962,6 +1962,7 @@ public class SymbolTable {
         // - That part is an element
         // - That element has the same name as the operation
         // - That element has no attributes (check done below)
+        
         if (!nowrap && literal && (numberOfElements == 1) && possiblyWrapped) {
             wrapped = true;
         }
@@ -2054,22 +2055,12 @@ public class SymbolTable {
             }
 
             Vector vTypes = null;
-
+            
             // If we have nothing at this point, we're in trouble.
             if (node == null) {
-                if (bindingEntry.isInHeaderPart(opName, partName)) {
-                    wrapped = false;
-                } else {
-
-                    /*
-                     * throw new IOException(
-                     *   Messages.getMessage("badTypeNode",
-                     *                        new String[] {
-                     *                            partName,
-                     *                            opName,
-                     *                            elementName.toString()}));
-                     */
-                }
+              // If node is null, that means the element in question has no type declaration, 
+              // therefore is not a wrapper element.
+              wrapped = false;
             } else {
 
                 // check for attributes
@@ -2080,6 +2071,10 @@ public class SymbolTable {
 
                     // can't do wrapped mode
                     wrapped = false;
+                }
+                
+                if (!SchemaUtils.isWrappedType(node, this)) {
+                  wrapped = false;
                 }
 
                 // Get the nested type entries.

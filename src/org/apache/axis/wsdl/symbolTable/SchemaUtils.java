@@ -54,18 +54,19 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import org.apache.axis.Constants;
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
+
+import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
@@ -77,6 +78,92 @@ public class SchemaUtils {
     /** Field VALUE_QNAME */
     static final QName VALUE_QNAME = Utils.findQName("", "value");
 
+  /**
+   * This method checks out if the given node satisfies the 3rd condition
+   * of the "wrapper" style:
+   * such an element (a wrapper) must be of a complex type defined using the
+   * xsd:sequence compositor and containing only elements declarations.
+   * (excerpt from JAX-RPC spec 1.1 Maintenanace Review 2 Chapter 6 Section 4.1.)
+   * 
+   * @param node        
+   * @param symbolTable 
+   * @return 
+   */
+  public static boolean isWrappedType(Node node, SymbolTable symbolTable) {
+    
+    if (node == null) {
+      return false;
+    }
+
+    // If the node kind is an element, dive into it.
+    if (isXSDNode(node, "element")) {
+      NodeList children = node.getChildNodes();
+      boolean hasComplexType = false;
+      for (int j = 0; j < children.getLength(); j++) {
+        Node kid = children.item(j);
+        if (isXSDNode(kid, "complexType")) {
+          node = kid;
+          hasComplexType = true;
+          break;
+        }
+      }
+      if (!hasComplexType) {
+        return false;
+      }
+    }
+
+    // Expecting a schema complexType
+    if (isXSDNode(node, "complexType")) {
+      // Under the complexType there could be complexContent/simpleContent
+      // and extension elements if this is a derived type.
+      // A wrapper element must be complex-typed.
+      
+      NodeList children = node.getChildNodes();
+
+      for (int j = 0; j < children.getLength(); j++) {
+        Node kid = children.item(j);
+
+        if (isXSDNode(kid, "complexContent")) {
+          return false;
+        } else if (isXSDNode(kid, "simpleContent")) {
+          return false;
+        }
+      }
+
+      // Under the complexType there may be choice, sequence, group and/or all nodes.
+      // (There may be other #text nodes, which we will ignore).
+      // The complex type of a wrapper element must have only sequence 
+      // and again element declarations in the sequence. 
+      children = node.getChildNodes();
+      for (int j = 0; j < children.getLength(); j++) {
+        QName subNodeKind = Utils.getNodeQName(children.item(j));
+        if ((subNodeKind != null)
+          && Constants.isSchemaXSD(
+          subNodeKind.getNamespaceURI())) {
+          if (subNodeKind.getLocalPart().equals("sequence")) {
+            Node sequenceNode = children.item(j);
+            NodeList sequenceChildren = sequenceNode.getChildNodes();
+            for (int k = 0; k < sequenceChildren.getLength(); k++) {
+              QName sequenceSubNodeKind = Utils.getNodeQName(sequenceChildren.item(k));
+              if ((sequenceSubNodeKind != null)
+                && Constants.isSchemaXSD(sequenceSubNodeKind.getNamespaceURI())) {
+                if (!sequenceSubNodeKind.getLocalPart().equals("element")) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          }
+          else {
+            return false;
+          }
+        }
+      }
+    } 
+    // allows void type
+    return true;
+  }
+  
     /**
      * If the specified node represents a supported JAX-RPC complexType or
      * simpleType, a Vector is returned which contains ElementDecls for the
