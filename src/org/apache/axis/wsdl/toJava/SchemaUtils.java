@@ -324,17 +324,40 @@ public class SchemaUtils {
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
         QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
-        if (nodeType == null) { // The element may use an anonymous type
-             nodeType = nodeName;
-             forElement.value = false;
+        if (nodeType == null) { // The element may use an anonymous type       
+            nodeType = getElementAnonQName(elementNode);            
+            forElement.value = false;
         }
-
+        
         TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, forElement.value);
         if (type != null) {
             v.add(type);
             v.add(nodeName.getLocalPart());
         }
         return v;
+    }
+
+    /**
+     * Returns the WSDL2Java QName for the anonymous type of the element
+     * or null.
+     */
+    public static QName getElementAnonQName(Node node) {
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                QName kind = Utils.getNodeQName(children.item(j));
+                if (kind != null &&
+                    (kind.getLocalPart().equals("complexType") ||
+                     kind.getLocalPart().equals("simpleType")) &&
+                    Constants.isSchemaXSD(kind.getNamespaceURI())) {
+                    return Utils.getNodeNameQName(children.item(j));
+                }
+            }
+        }
+        return null;
     }
 
     /**

@@ -157,28 +157,18 @@ public class JavaDeployWriter extends JavaWriter {
             // 1) Don't register types that are base (primitive) types.
             //    If the baseType != null && getRefType() != null this
             //    is a simpleType that must be registered.
-            // 2) Don't register the special types for collections
-            //    (indexed properties)
+            // 2) Don't register the special types for collections 
+            //    (indexed properties) or element types
             // 3) Don't register types that are not referenced
             //    or only referenced in a literal context.
             if ((type.getBaseType() != null && type.getRefType() == null) ||
                 type instanceof CollectionType ||
+                type instanceof Element ||
                 !type.isReferenced() ||
                 type.isOnlyLiteralReferenced()) {
                 process = false;
             }
 
-
-            // 4) If the type is an element, the typemapping is only generated
-            // if the element has an anonymous type.  This is a quick fix
-            // until I add anonymous types as actual symbol table elements. Scheu
-            if (process && type instanceof Element) {
-                Node node = symbolTable.getTypeEntry(type.getQName(),
-                                                     true).getNode();
-                if (node == null ||
-                    Utils.getNodeTypeRefQName(node, "type") != null)
-                    process = false;
-            }
             if (process) {
                 pw.println("      <typeMapping");
                 pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");

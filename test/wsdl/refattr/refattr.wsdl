@@ -28,13 +28,33 @@
         <xsd:all>
           <xsd:element name="areaCode" type="xsd:int"/>
           <xsd:element name="exchange" type="xsd:string"/>
-          <xsd:element name="number" type="xsd:string"/>
+          <xsd:element name="number">
+             <xsd:complexType>
+                <xsd:simpleContent>
+                   <xsd:extension base = "xsd:string">
+                      <xsd:attribute name= "length" type="xsd:int" />
+                   </xsd:extension>
+                </xsd:simpleContent>
+             </xsd:complexType>
+          </xsd:element>
         </xsd:all>
       </xsd:complexType>
 
       <xsd:complexType name="example">
         <xsd:all>
           <xsd:element name="address" type="soapenc:string"/>
+          <!-- both example and phone contain anonymous types of number elements. -->
+          <!-- This should result in two Number classes...one which has a mangled name -->
+          <xsd:element name="number">
+             <xsd:complexType>
+                <xsd:simpleContent>
+                   <xsd:extension base = "xsd:string">
+                      <xsd:attribute name= "theLength" type="xsd:int" />
+                   </xsd:extension>
+                </xsd:simpleContent>
+             </xsd:complexType>
+          </xsd:element>
+
         </xsd:all>
       </xsd:complexType>
 
