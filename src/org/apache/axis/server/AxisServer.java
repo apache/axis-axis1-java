@@ -112,15 +112,14 @@ public class AxisServer extends AxisEngine
 
     public AxisServer()
     {
-        this((new DefaultEngineConfigurationFactory()).
-             getServerEngineConfig());
+        this((new DefaultEngineConfigurationFactory()).getServerEngineConfig());
     }
 
     public AxisServer(EngineConfiguration config)
     {
         super(config);
         // Server defaults to persisting configuration
-        shouldSaveConfig = true;
+        setShouldSaveConfig(true);
     }
 
     /** Is this server active?  If this is false, any requests will
@@ -163,14 +162,13 @@ public class AxisServer extends AxisEngine
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "AxisServer::invoke") );
+            log.debug("Enter: AxisServer::invoke");
         }
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                    JavaUtils.getMessage("serverDisabled00"),
-                    null, null);
+                                JavaUtils.getMessage("serverDisabled00"),
+                                null, null);
         }
 
         String  hName = null ;
@@ -200,8 +198,8 @@ public class AxisServer extends AxisEngine
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Server.error",
-                        JavaUtils.getMessage("noHandler00", hName),
-                        null, null );
+                                         JavaUtils.getMessage("noHandler00", hName),
+                                         null, null );
             }
             else {
                 // This really should be in a handler - but we need to discuss it
@@ -263,11 +261,11 @@ public class AxisServer extends AxisEngine
                     h.invoke(msgContext);
 
                 /**
-                * At this point, the service should have been set by someone
-                * (either the originator of the MessageContext, or one of the
-                * transport or global Handlers).  If it hasn't been set, we
-                * fault.
-                */
+                 * At this point, the service should have been set by someone
+                 * (either the originator of the MessageContext, or one of the
+                 * transport or global Handlers).  If it hasn't been set, we
+                 * fault.
+                 */
                 h = msgContext.getService();
                 if (h == null) {
                     // It's possible that we haven't yet parsed the
@@ -280,9 +278,9 @@ public class AxisServer extends AxisEngine
                     h = msgContext.getService();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                            JavaUtils.getMessage("noService05",
-                                    "" + msgContext.getTargetService()),
-                            null, null );
+                                            JavaUtils.getMessage("noService05",
+                                                                 "" + msgContext.getTargetService()),
+                                            null, null );
                 }
 
                 h.invoke(msgContext);
@@ -312,8 +310,7 @@ public class AxisServer extends AxisEngine
         }
         
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "AxisServer::invoke") );
+            log.debug("Exit: AxisServer::invoke");
         }
     }
 
@@ -322,14 +319,13 @@ public class AxisServer extends AxisEngine
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "AxisServer::generateWSDL") );
+            log.debug("Enter: AxisServer::generateWSDL");
         }
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
-                    JavaUtils.getMessage("serverDisabled00"),
-                    null, null);
+                                JavaUtils.getMessage("serverDisabled00"),
+                                null, null);
         }
 
         String  hName = null ;
@@ -419,11 +415,11 @@ public class AxisServer extends AxisEngine
                     h.generateWSDL(msgContext);
 
                 /**
-                * At this point, the service should have been set by someone
-                * (either the originator of the MessageContext, or one of the
-                * transport or global Handlers).  If it hasn't been set, we
-                * fault.
-                */
+                 * At this point, the service should have been set by someone
+                 * (either the originator of the MessageContext, or one of the
+                 * transport or global Handlers).  If it hasn't been set, we
+                 * fault.
+                 */
                 h = msgContext.getService();
                 if (h == null) {
                     // It's possible that we haven't yet parsed the
@@ -438,9 +434,9 @@ public class AxisServer extends AxisEngine
                     }
                     if (h == null)
                         throw new AxisFault("Server.NoService",
-                                JavaUtils.getMessage("noService05",
-                                        "" + msgContext.getTargetService()),
-                                null, null );
+                                            JavaUtils.getMessage("noService05",
+                                                                 "" + msgContext.getTargetService()),
+                                            null, null );
                 }
 
                 h.generateWSDL(msgContext);
@@ -469,8 +465,7 @@ public class AxisServer extends AxisEngine
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "AxisServer::generateWSDL") );
+            log.debug("Exit: AxisServer::generateWSDL");
         }
     }
 }
