@@ -752,7 +752,18 @@ a global configuration section,
 which supports parameter name/value pairs as nested elements. Here are
 the options that we currently document, though there may be more
 (consult the source, as usual). </p>
-<pre>&lt;globalConfiguration&gt;<br>    &lt;parameter name="adminPassword" value="admin"/&gt;<br>    &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;<br>    &lt;parameter name="sendMultiRefs" value="true"/&gt;<br>    &lt;parameter name="sendXsiTypes" value="true"/&gt;<br>    &lt;parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/&gt;<br>    &lt;parameter name="sendXMLDeclaration" value="true"/&gt;<br>    &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;<br>&lt;/globalConfiguration&gt;<br></pre>
+<pre>
+&lt;globalConfiguration&gt;
+    &lt;parameter name="adminPassword" value="admin"/&gt;
+    &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;
+    &lt;parameter name="sendMultiRefs" value="true"/&gt;
+    &lt;parameter name="sendXsiTypes" value="true"/&gt;
+    &lt;parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/&gt; 
+    &lt;parameter name="sendXMLDeclaration" value="true"/&gt;
+    &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;
+    &lt;parameter name="dotnetsoapencfix" value="false"/&gt;
+&lt;/globalConfiguration&gt;
+</pre>
 <table>
   <tbody>
     <tr>
@@ -848,6 +859,14 @@ engine using another version will result in a fault.</td>
       <td><b>use-servlet-security</b></td>
       <td>Set this flag to hand authentication off to the servlet
 container. </td>
+    </tr>
+    <tr>
+      <td><b>DotNetSoapEncFix</b></td>
+      <td>Set this flag to true to turn on a preference for the XML Schema (xsd) types in the
+	  Axis engine.  This improved interop with .NET. In particular, .NET seems to have problems
+	  accepting SOAP encoded types (soapenc) in arrays.  Due to bugs in the Axis 1.1 type mapping
+	  system, Axis generally perferred the schema types.  Axis 1.2 now correctly uses the SOAP
+	  encoded types when it is using SOAP encoding for a service.  See JAX-RPC 1.1, section 4.2.1. </td>
     </tr>
 <!-- end table -->
   </tbody>

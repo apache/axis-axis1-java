@@ -19,6 +19,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -71,6 +72,14 @@ public class TypeMappingImpl implements TypeMapping
 {
     protected static Log log =
         LogFactory.getLog(TypeMappingImpl.class.getName());
+
+    /**
+     * Work around a .NET bug with soap encoded types.
+     * This is a static property of the type mapping that will
+     * cause the class to ignore SOAPENC types when looking up
+     * QNames of java types.  See getTypeQNameExact().
+     */
+    public static boolean dotnet_soapenc_bugfix = false;
 
     public static class Pair {
         public Class javaType;
@@ -547,6 +556,17 @@ public class TypeMappingImpl implements TypeMapping
        
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
+        if (dotnet_soapenc_bugfix && pair != null ) {
+            // Hack alert!
+            // If we are in .NET bug compensation mode, skip over any
+            // SOAP Encoded types we my find and prefer XML Schema types
+            xmlType = pair.xmlType;
+            if (Constants.isSOAP_ENC(xmlType.getNamespaceURI()) &&
+                    !xmlType.getLocalPart().equals("Array")) {
+                pair = null;
+            }
+        }
+
         if (pair == null && delegate != null) {
             xmlType = delegate.getTypeQNameExact(javaType);
         } else if (pair != null) {

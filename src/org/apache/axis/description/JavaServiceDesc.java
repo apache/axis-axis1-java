@@ -19,10 +19,7 @@ import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.*;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.message.SOAPBodyElement;
@@ -143,7 +140,11 @@ public class JavaServiceDesc implements ServiceDesc {
     private ArrayList completedNames = new ArrayList();
 
     /** Our typemapping for resolving Java<->XML type issues */
-    private TypeMapping tm = DefaultTypeMappingImpl.getSingleton();
+    private TypeMapping tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+
+    // If someone has explicitly set the type mapping, don't mess with it
+    // when use is set.
+    private boolean tmSet = false;
 
     private TypeMappingRegistry tmr = null;
 
@@ -169,6 +170,11 @@ public class JavaServiceDesc implements ServiceDesc {
         if (!useSet) {
             // Use hasn't been explicitly set, so track style
             use = style == Style.RPC ? Use.ENCODED : Use.LITERAL;
+            if (!tmSet && use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
+                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else {
+                tm = DefaultTypeMappingImpl.getSingleton();
+            }
         }
     }
 
@@ -183,6 +189,11 @@ public class JavaServiceDesc implements ServiceDesc {
     public void setUse(Use use) {
         useSet = true;
         this.use = use;
+        if (!tmSet && use == Use.ENCODED && ! (tm instanceof DefaultSOAPEncodingTypeMappingImpl)) {
+            tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+        } else {
+            tm = DefaultTypeMappingImpl.getSingleton();
+        }
     }
 
     /**
@@ -296,6 +307,7 @@ public class JavaServiceDesc implements ServiceDesc {
     }
 
     public void setTypeMapping(TypeMapping tm) {
+        tmSet = true;
         this.tm = tm;
     }
 

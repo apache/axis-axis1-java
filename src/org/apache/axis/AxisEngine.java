@@ -18,6 +18,7 @@ package org.apache.axis;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingImpl;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
@@ -73,6 +74,12 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_BYTE_BUFFER_RESIDENT_MAX_SIZE = "axis.byteBuffer.residentMaxSize";
     public static final String PROP_BYTE_BUFFER_WORK_BUFFER_SIZE = "axis.byteBuffer.workBufferSize";
     public static final String PROP_EMIT_ALL_TYPES = "emitAllTypesInWSDL";
+    /**
+     * Set this property to 'true' when you want Axis to avoid soap encoded
+     * types to work around a .NET problem where it wont accept soap encoded
+     * types for a (soap encoded!) array.
+     */
+    public static final String PROP_DOTNET_SOAPENC_FIX = "dotNetSoapEncFix";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
@@ -169,6 +176,17 @@ public abstract class AxisEngine extends BasicHandler
                          AxisProperties.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
+
+        // Check for the property "dotnetsoapencfix" which will turn
+        // off soap encoded types to work around a bug in .NET where
+        // it wont accept soap encoded array types.
+        final Object dotnet = getOption(PROP_DOTNET_SOAPENC_FIX);
+        if (JavaUtils.isTrue(dotnet)) {
+            // This is a static property of the type mapping
+            // that will ignore SOAPENC types when looking up
+            // QNames of java types.
+            TypeMappingImpl.dotnet_soapenc_bugfix = true;
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisEngine::init");
