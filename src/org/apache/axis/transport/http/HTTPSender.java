@@ -656,7 +656,7 @@ public class HTTPSender extends BasicHandler {
             while (-1 != (b = (byte) inp.read())) {
                 buf.write(b);
             }
-            AxisFault fault = new AxisFault("HTTP", statusMessage, null, null);
+            AxisFault fault = new AxisFault("HTTP", "(" + returnCode + ")" + statusMessage, null, null);
 
             fault.setFaultDetailString(JavaUtils.getMessage("return01",
                     "" + returnCode, buf.toString()));
