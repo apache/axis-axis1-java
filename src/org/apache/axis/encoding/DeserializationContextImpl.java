@@ -89,7 +89,6 @@ import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Stack;
 
 /** 
  * @author Glen Daniels (gdaniels@macromedia.com)
@@ -138,7 +137,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param initialHandler is the EnvelopeBuilder handler
      */
     public DeserializationContextImpl(MessageContext ctx,
-                                      EnvelopeBuilder initialHandler)
+                                      SOAPHandler initialHandler)
     {
         msgContext = ctx;
 
@@ -146,9 +145,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (ctx == null || ctx.isHighFidelity())
             recorder = new SAX2EventRecorder();
 
-        envelope = initialHandler.getEnvelope();
-        envelope.setRecorder(recorder);
-        
+        if (initialHandler instanceof EnvelopeBuilder) {
+            envelope = ((EnvelopeBuilder)initialHandler).getEnvelope();
+            envelope.setRecorder(recorder);
+        }
+
         pushElementHandler(new EnvelopeHandler(initialHandler));
     }
     
@@ -931,7 +932,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             if (curElement != null)
                 curElement = (MessageElement)curElement.getParentElement();
 
-            namespaces.pop();
+            // This breaks the types.VerifyTestCase for some reason....
+            // namespaces.pop();
 
 	        if (log.isDebugEnabled()) {
                 String name = curElement != null ?
