@@ -29,6 +29,7 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
@@ -788,29 +789,6 @@ public class SimpleAxisWorker implements Runnable {
      * One method for all host name lookups.
      */
     public static String getLocalHost() {
-        // This doesn't return anything but 0.0.0.0
-        //  String hostname = serverSocket.getInetAddress().getHostAddress();
-        // And this returns the hostname of the host on the other
-        // end of the socket:
-        //  String hostname = socket.getInetAddress().getHostName();
-        // This works for 99% of the uses of SimpleAxisServer,
-        // but is very stupid. One challenge is that a machine may
-        // have >1 network card, as on each attached network it will have a different
-        // hostname.
-        // The other challenge is that unmanaged networks lack reverse DNS. 
-        InetAddress address;
-        String hostname;
-        try {
-            address = InetAddress.getLocalHost();
-            //force a best effort reverse DNS lookup
-            hostname = address.getHostName();
-            if (hostname == null || hostname.length() == 0) {
-                hostname = address.toString();
-            }
-        } catch (UnknownHostException noIpAddrException) {
-            //bail out here
-            hostname = "127.0.0.1";
-        }
-        return hostname;
+        return NetworkUtils.getLocalHostname();
     }
 }
