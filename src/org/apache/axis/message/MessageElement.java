@@ -1330,18 +1330,18 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     {
         NodeList children = parent.getChildNodes();
         NodeListImpl matches = new NodeListImpl();
-        // Add fisrt the imeediate child
+
         for(int i =0; i < children.getLength();  i++){
-            Element child = (Element)children.item(i);
-            if(! (child instanceof Text)){
-                if(namespaceURI.equals(child.getNamespaceURI()) &&
-                        localName.equals(child.getLocalName())){
-                    matches.addNode(child);
-                }
-                // search the grand-children.
-                matches.addNodeList(
-                        child.getElementsByTagNameNS(namespaceURI, localName));
+            if(children.item(i) instanceof Text)
+                continue;
+            Element child = (Element) children.item(i);
+            if (namespaceURI.equals(child.getNamespaceURI()) &&
+                    localName.equals(child.getLocalName())) {
+                matches.addNode(child);
             }
+            // search the grand-children.
+            matches.addNodeList(child.getElementsByTagNameNS(namespaceURI,
+                    localName));
         }
         return matches;
     }
