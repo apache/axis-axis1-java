@@ -79,9 +79,7 @@ public class MimeMultipartDataSource implements DataSource {
         this.name = name;
         os = new ByteArrayOutputStream();
         try {
-            for (int i = 0; i < data.getCount(); ++i) {
-                data.getBodyPart(i).writeTo(os);
-            }
+            data.writeTo(os);
         }
         catch (Exception e) {
             // Is this sufficient?

@@ -1227,7 +1227,6 @@ public class SymbolTable {
                 // We're either RPC or literal + not wrapped.
                 
                 param.setName(partName);
-                param.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
 
                 // Add this type or element name
                 if (typeName != null) {
@@ -1246,6 +1245,8 @@ public class SymbolTable {
                                                  new String[] {partName, 
                                                                opName}));
                 }
+                setMIMEType(param, bindingEntry == null ? null :
+                        bindingEntry.getMIMEType(opName, partName));
                                 
                 v.add(param);
                 
@@ -1322,8 +1323,9 @@ public class SymbolTable {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                     Parameter p = new Parameter();
                     p.setQName(elem.getName());
-                    p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
                     p.setType(elem.getType());
+                    setMIMEType(p, bindingEntry == null ? null :
+                            bindingEntry.getMIMEType(opName, partName));
                     v.add(p);
                 }
             } else {
@@ -1331,19 +1333,48 @@ public class SymbolTable {
                 // we can't use wrapped mode.
                 Parameter p = new Parameter();
                 p.setName(partName);
-                p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(opName, partName));
                 
                 if (typeName != null) {
                     p.setType(getType(typeName));
                 } else if (elementName != null) {
                     p.setType(getElement(elementName));
                 }
+                setMIMEType(p, bindingEntry == null ? null :
+                        bindingEntry.getMIMEType(opName, partName));
                 
                 v.add(p);
             }
         } // while
 
     } // getParametersFromParts
+
+    /**
+     * Set the MIME type.  This can be determine in one of two ways:
+     * 1.  From WSDL 1.1 MIME constructs on the binding (passed in);
+     * 2.  From AXIS-specific xml MIME types.
+     */
+    private void setMIMEType(Parameter p, String mimeType) {
+        // If there is no binding MIME construct (ie., the mimeType parameter is
+        // null), then get the MIME type from the AXIS-specific xml MIME type.
+        if (mimeType == null) {
+            QName mimeQName = p.getType().getQName();
+            if (mimeQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
+                if (Constants.MIME_IMAGE.equals(mimeQName)) {
+                    mimeType = "image/jpeg";
+                }
+                else if (Constants.MIME_PLAINTEXT.equals(mimeQName)) {
+                    mimeType = "text/plain";
+                }
+                else if (Constants.MIME_MULTIPART.equals(mimeQName)) {
+                    mimeType = "multipart/related";
+                }
+                else if (Constants.MIME_SOURCE.equals(mimeQName)) {
+                    mimeType = "text/xml";
+                }
+            }
+        }
+        p.setMIMEType(mimeType);
+    } // setMIMEType
 
     /**
      * Populate the symbol table with all of the BindingEntry's from the Definition.
