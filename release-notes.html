@@ -14,17 +14,24 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Beta 3 Release Notes</h2>
+<h2>Axis 1.0 RC1 Release Notes</h2>
 
-<p>This is the <a href="http://xml.apache.org/axis/releases.html">beta 3 release</a> 
+<p>This is the <a href="http://xml.apache.org/axis/releases.html">RC1 release</a> 
   of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>.</p>
 
-<h3>General Beta 3 Information</h3>
+<h3>General 1.0 RC1 Information</h3>
 
-<p>This is a beta release.  Most of the functionality is there.  There is still a chance that a few interfaces may change, but we will do our best to keep that from happening.  See the User's Guide for a list of the published interfaces that we believe are stable.</p>
+<p>This is a near-final release.  We believe Axis is suitable for use in
+production systems.  While we know there may be outstanding bugs, the
+functionality and features are sufficiently complete that a 1.0 release is warrented.
+See the User's Guide for a list of the published interfaces that we believe are stable.</p>
 
 <h3>JAX-RPC</h3>
-<p>This beta release is intended to be 100% compliant with the <a href="http://java.sun.com/xml/jaxrpc">JAX-RPC</a> and <a href="http://java.sun.com/xml/saaj/">SAAJ</a> specifications from Sun, though there are still a few known issues.  The Axis team is currently working on getting the codebase to pass the TCK (Technology Compatibility Kit) tests, which involves both tweaks to our code and resolving perceived issues with the TCK or the specs - since these are v1.0 specs, there are some interesting conversations going on, but we'll get to compliance as soon as possible!</p>
+<p>This release is intended to be 100% compliant with the 
+<a href="http://java.sun.com/xml/jaxrpc">JAX-RPC</a> and 
+<a href="http://java.sun.com/xml/saaj/">SAAJ</a> specifications from Sun.
+The Axis code has successfully passed the all of the JAX-RPC and SAAJ 
+TCK (Technology Compatibility Kit) tests.</p>
 
 <h3>Why AXIS over SOAP 2.2?</h3>
 
@@ -41,10 +48,17 @@ h1 {  margin-left: -30px}
 </ul>
 
 <h3>What's New?</h3>
+<p>Changes since beta-3</p>
+<ul>
+ <li>Axis now passes the JAX-RPC and SAAJ TCK test suite.
+ <li>Many bugs have been fixed.
+ <li>Axis now supports (almost) all XML Schema types in WSDL
+ <li>Some basic performance tuning has been done
+ <li>Attachments are now supported in WSDL2Java
+</ul>
 <p>Changes since beta-2:</p>
 <ul>
  <li>Support for the new version of the DIME spec
- <li><i>More...</i>
 </ul>
 <p>Changes since alpha-3:</p>
 <ul>
