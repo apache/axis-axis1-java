@@ -75,7 +75,16 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
-    private boolean jaxrpc11Compliance = false;
+    private static boolean jaxrpc11Compliance = false;
+    
+    static {
+        try {
+            jaxrpc11Compliance =
+                    System.getProperty("axis.jaxrpc11Compliance", "false")
+                    .equalsIgnoreCase("true");
+        } catch (Throwable t) {
+        }
+    }
 
     /**
      * Obtain the singleton default typemapping.
