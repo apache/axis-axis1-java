@@ -170,7 +170,11 @@ public class DateSerializer implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        context.writeString(zulu.format((Date)value));
+        String fdate;
+        synchronized (zulu) {
+            fdate = zulu.format((Date)value);
+        }
+        context.writeString(fdate);
         context.endElement();
     }
 }
