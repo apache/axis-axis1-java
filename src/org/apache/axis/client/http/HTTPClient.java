@@ -121,7 +121,7 @@ public class HTTPClient extends AxisClient
         String userID, passwd;
         if ( (userID = serviceClient.get(AxisClient.USER)) != null ) {
             mc.setProperty( MessageContext.USERID, userID );
-            if ( (passwd  = serviceClient.get(AxisClient.USER))!= null )
+            if ( (passwd  = serviceClient.get(AxisClient.PASSWORD))!= null )
                 mc.setProperty( MessageContext.PASSWORD, passwd );
         }
         

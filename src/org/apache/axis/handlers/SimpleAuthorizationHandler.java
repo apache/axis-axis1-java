@@ -125,7 +125,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
    * Authorize the user and targetService from the msgContext
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
+    Debug.Print( 1, "Enter: SimpleAuthorizationHandler::invoke" );
 
     String userID = (String) msgContext.getProperty( MessageContext.USERID );
     String action = msgContext.getTargetService();
@@ -138,7 +138,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
       Hashtable authlist = (Hashtable) entries.get(userID);
       if ( authlist == null || !authlist.containsKey(action) ) {
         throw new AxisFault( "Server.Unauthorized", 
-          "User not authorized",
+          "User '" + userID + "' not authorized to '" + action + "'",
           null, null );
       }
     }
@@ -152,7 +152,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
    * Nothing to undo
    */
   public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
-    Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
+    Debug.Print( 1, "Enter: SimpleAuthorizationHandler::undo" );
+    Debug.Print( 1, "Exit: SimpleAuthorizationHandler::undo" );
   }
 };

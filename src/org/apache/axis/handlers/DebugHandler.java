@@ -77,7 +77,8 @@ public class DebugHandler extends BasicHandler {
             Message       msg = msgContext.getRequestMessage();
             
             SOAPEnvelope message = (SOAPEnvelope)msg.getAs("SOAPEnvelope");
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, "Debug");
+            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, 
+                                                        "Debug");
             if ((header != null) && (header instanceof DebugHeader)) {
                 int debugVal = ((DebugHeader)header).getDebugLevel();
                 Debug.Print( 1, "Setting debug level to: " + debugVal );

@@ -123,8 +123,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
       // in order to authenticate, the user must exist
       if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
-        throw new AxisFault( "Server.Unauthorized", 
-          "User not authorized",
+        throw new AxisFault( "Server.Unauthenticated", 
+          "User '" + userID + "' not authenticated (unknown user)",
           null, null );
   
       String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
@@ -133,8 +133,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
   
       // if a password is defined, then it must match
       if ( valid.length()>0 && !valid.equals(passwd) ) 
-        throw new AxisFault( "Server.Unauthorized", 
-          "User not authenticated",
+        throw new AxisFault( "Server.Unauthenticated", 
+          "User '" + userID + "' not authenticated (bad password)",
           null, null );
 
       Debug.Print( 1, "User '", userID, "' authenticated to server" );
