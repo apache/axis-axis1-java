@@ -109,7 +109,7 @@ public class JavaMethod {
      * will be picked randomly.  If the name is unique, it is simply
      * returned without checking as attempts to invoke a method based
      * on this will undoubtably fail anyway.
-     * @param numargs number of arguments
+     * @param numargs number of arguments.  Use -1 to indicate "don't care".
      * @return closest match
      */
     public Method getMethod(int numargs) {
@@ -120,8 +120,7 @@ public class JavaMethod {
                 }
             }
         } 
-        if ( unique.getParameterTypes().length != numargs )
-          return null ;
+
         return unique;
     }
 };
