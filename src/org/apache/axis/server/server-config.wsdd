@@ -6,7 +6,13 @@
 
  <globalConfiguration>
    <requestFlow>
-     <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="session"/>
+     </handler>
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="request"/>
+        <parameter name="extension" value=".jwr"/>
+     </handler>
    </requestFlow>
  </globalConfiguration>
 
@@ -22,7 +28,7 @@
   <parameter name="enableRemoteAdmin" value="false"/>
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
  </service>
- 
+
  <service name="Version" provider="java:RPC">
   <parameter name="allowedMethods" value="getVersion"/>
   <parameter name="className" value="org.apache.axis.Version"/>
@@ -34,7 +40,7 @@
    <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
   </requestFlow>
  </transport>
- 
+
  <transport name="local">
   <responseFlow>
    <handler type="java:org.apache.axis.transport.local.LocalResponder"/>
