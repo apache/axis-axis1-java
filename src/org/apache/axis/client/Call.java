@@ -1684,7 +1684,7 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (operation != null && returnType == null) {
+        if (operation.getNumParams() > 0 && returnType == null) {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
