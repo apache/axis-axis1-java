@@ -16,7 +16,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
-    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
@@ -27,7 +26,18 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_LONG = new QName(Constants.URI_SOAP_ENC, "long");
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
+
+    public static       QName XSD_DATE;
     
+    static {
+        if (Constants.URI_CURRENT_SCHEMA_XSD.equals(Constants.URI_1999_SCHEMA_XSD))
+            XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
+        else if (Constants.URI_CURRENT_SCHEMA_XSD.equals(Constants.URI_2000_SCHEMA_XSD))
+            XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
+        else
+            XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
+    }
+
     public static abstract class BasicDeser extends DeserializerBase {
         public void characters(char [] chars, int start, int end)
             throws SAXException
@@ -106,11 +116,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         for (int i=0; i<Constants.URIS_SCHEMA_XSD.length; i++) {
             if (!Constants.URIS_SCHEMA_XSD[i].equals(base.getNamespaceURI())) {
                QName qname = new QName(Constants.URIS_SCHEMA_XSD[i], localPart);
-
-               // The schema wizards changed the name of timeInstanct in 2001.
-               if (localPart.equals("dateTime") &&
-                   Constants.URIS_SCHEMA_XSD[i].substring(0,4).compareTo("2001")<0)
-                   qname = new QName(Constants.URIS_SCHEMA_XSD[i], "timeInstant");
                addDeserializerFactory(qname, cls, factory);
             }
         }
@@ -142,6 +147,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
     
     public SOAPTypeMappingRegistry() {
+    System.out.println(XSD_DATE);
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
         addSerializer(java.lang.Boolean.class, XSD_BOOLEAN, se);
@@ -160,8 +166,20 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_INT, java.lang.Integer.class, new IntDeserializerFactory());
         addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
-        addDeserializersFor(XSD_DATE, java.util.Date.class, new DateSerializer.DateDeserializerFactory());
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
+        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
+
+        addSerializer(java.util.Date.class, 
+          new QName(Constants.URI_1999_SCHEMA_XSD, "timeInstant"),
+          new DateSerializer());
+
+        addSerializer(java.util.Date.class, 
+          new QName(Constants.URI_2000_SCHEMA_XSD, "timeInstant"),
+          new DateSerializer());
+
+        addSerializer(java.util.Date.class, 
+          new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
+          new DateSerializer());
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
