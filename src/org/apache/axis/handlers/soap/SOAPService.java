@@ -470,13 +470,20 @@ public class SOAPService extends SimpleTargetedChain
         HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) this.getOption(Constants.ATTR_HANDLERINFOCHAIN);
         HandlerChainImpl handlerImpl = null;
         if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
-        if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
-
-        super.invoke(msgContext);
-
+        boolean result = true;
+        
+        if (handlerImpl != null) {
+            result = handlerImpl.handleRequest(msgContext);
+        }
+        if (result) {
+            super.invoke(msgContext);
+        } else {
+            msgContext.setPastPivot(true);
+        }
+ 
         if ( handlerImpl != null) {
             handlerImpl.handleResponse(msgContext);
-                handlerImpl.destroy();
+            handlerImpl.destroy();
         }
     }
 }
