@@ -96,19 +96,19 @@ public abstract class WSDDDeployableItem
         LogFactory.getLog(WSDDDeployableItem.class.getName());
 
     /** Our parameters */
-    LockableHashtable parameters;
+    protected LockableHashtable parameters;
 
     /** Our name */
-    QName qname;
+    protected QName qname;
     
     /** Our type */
-    QName type;
+    protected QName type;
     
     /** Scope for this item (default is singleton) */
-    int scope = SCOPE_SINGLETON;
+    protected int scope = SCOPE_SINGLETON;
     
     /** Placeholder for hanging on to singleton object */
-    Handler singletonInstance = null;
+    protected Handler singletonInstance = null;
 
     /**
      * Default constructor

@@ -107,12 +107,12 @@ public class WSDDDeployment
     private HashMap namespaceToServices = new HashMap();
     private AxisEngine engine;
 
-    void addHandler(WSDDHandler handler)
+    protected void addHandler(WSDDHandler handler)
     {
         handlers.put(handler.getQName(), handler);
     }
     
-    void addService(WSDDService service)
+    protected void addService(WSDDService service)
     {
         WSDDService oldService = (WSDDService)services.get(service.getQName());
         if (oldService != null) {
@@ -121,7 +121,7 @@ public class WSDDDeployment
         services.put(service.getQName(), service);
     }
     
-    void addTransport(WSDDTransport transport)
+    protected void addTransport(WSDDTransport transport)
     {
         transports.put(transport.getQName(), transport);
     }
