@@ -55,24 +55,20 @@
 
 package samples.jms;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.configuration.XMLStringProvider;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.encoding.XMLType;
+import org.apache.axis.transport.jms.JMSConstants;
+import org.apache.axis.transport.jms.JMSTransport;
+import org.apache.axis.transport.jms.SimpleJMSListener;
 import org.apache.axis.utils.Options;
 
-import org.apache.axis.transport.jms.JMSTransport;
-import org.apache.axis.transport.jms.JMSConstants;
-import org.apache.axis.transport.jms.SimpleJMSListener;
-
-import java.util.HashMap;
-
-import javax.xml.rpc.ParameterMode;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ParameterMode;
+import java.util.HashMap;
 
 /** Tests the JMS transport.  To run:
  *      java org.apache.axis.utils.Admin client client_deploy.xml

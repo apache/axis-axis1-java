@@ -55,17 +55,17 @@
 
 package samples.message;
 
-import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.Options;
 import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Element;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.net.URL;
 import java.util.Vector;
 

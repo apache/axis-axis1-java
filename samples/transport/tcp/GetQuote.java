@@ -58,16 +58,15 @@ package samples.transport.tcp ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.ParameterMode;
 import javax.xml.namespace.QName;
-
+import javax.xml.rpc.ParameterMode;
 import java.net.URL;
 
 /**

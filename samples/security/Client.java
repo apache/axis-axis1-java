@@ -55,7 +55,6 @@
 
 package samples.security;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;

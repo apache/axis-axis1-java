@@ -54,11 +54,10 @@
  */
 package samples.integrationGuide.example1;
 
-import javax.wsdl.Service;
-
 import org.apache.axis.wsdl.WSDL2Java;
-
 import org.apache.axis.wsdl.toJava.JavaGeneratorFactory;
+
+import javax.wsdl.Service;
 
 public class MyWSDL2Java extends WSDL2Java {
 

@@ -59,20 +59,13 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.SimpleTargetedChain;
-import org.apache.axis.ConfigurationException;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.providers.java.MsgProvider;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Options;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import javax.xml.namespace.QName;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

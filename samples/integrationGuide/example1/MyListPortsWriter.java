@@ -54,21 +54,18 @@
  */
 package samples.integrationGuide.example1;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriter;
 import org.apache.axis.wsdl.toJava.Utils;
+
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
 * This is my example of a class that writes a list of a service's

@@ -56,7 +56,6 @@
 package samples.echo ;
 
 import org.apache.axis.AxisFault;
-
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
@@ -64,14 +63,18 @@ import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.PositiveInteger;
 import org.apache.axis.types.Token;
-import org.apache.axis.types.UnsignedLong;
-import org.apache.axis.types.UnsignedInt;
-import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.UnsignedByte;
-
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.holders.FloatHolder;
+import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.StringHolder;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -82,12 +85,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-
-import javax.xml.rpc.holders.StringHolder;
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.holders.FloatHolder;
 
 
 /**
