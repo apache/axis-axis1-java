@@ -105,10 +105,6 @@ public class AxisServer extends AxisEngine
         /**************************************************************/
         HandlerRegistry hr = getHandlerRegistry();
         HandlerRegistry sr = getServiceRegistry();
-        TypeMappingRegistry tmr =
-            (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
-
-        msgContext.setTypeMappingRegistry(tmr);
 
         try {
           hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
