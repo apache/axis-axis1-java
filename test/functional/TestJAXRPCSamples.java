@@ -123,11 +123,11 @@ public class TestJAXRPCSamples extends TestCase {
             log.info("Testing deployment...");
             doTestDeploy();
             log.info("Testing service...");
-            String[] args = {"IBM", "symbol"};
+            String[] args = {"-uuser3", "-wpass3", "IBM", "symbol"};
             GetInfo.main(args);
-            args = new String[] {"ALLR", "name"};
+            args = new String[] {"-uuser3", "-wpass3", "MACR", "name"};
             GetInfo.main(args);
-            args = new String[] {"CSCO", "address"};
+            args = new String[] {"-uuser3", "-wpass3", "CSCO", "address"};
             GetInfo.main(args);
             log.info("Testing undeployment...");
             doTestUndeploy();

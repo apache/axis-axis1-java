@@ -69,8 +69,8 @@ public class ComInfoService {
                          "International Business Machines",
                           "Armonk, NY" },
 
-                         {"ALLR",
-                          "Allaire",
+                         {"MACR",
+                          "Macromedia",
                           "Newton, MA" },
 
                          {"CSCO", 
