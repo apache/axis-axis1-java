@@ -56,10 +56,15 @@
 package test.functional;
 
 import junit.framework.TestCase;
+
 import org.apache.axis.AxisFault;
+
 import org.apache.axis.client.AdminClient;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import samples.jaxrpc.GetInfo;
 import samples.jaxrpc.GetQuote1;
 
 /**
@@ -85,7 +90,7 @@ public class TestJAXRPCSamples extends TestCase {
     } // doTestGetQuoteXXX
     
     public void doTestGetQuoteMain() throws Exception {
-        String[] args = {"-uuser1", "-wpass1", "IBM"};
+        String[] args = {"-uuser1", "-wpass1", "XXX"};
         GetQuote1.main(args);
     } // doTestGetQuoteMain
 
@@ -94,14 +99,9 @@ public class TestJAXRPCSamples extends TestCase {
         AdminClient.main(args);
     } // doTestStockNoAction
 
-    public static void main(String args[]) throws Exception {
-        TestJAXRPCSamples tester = new TestJAXRPCSamples("tester");
-        tester.testGetQuote();
-    } // main
-
     public void testGetQuote() throws Exception {
         try {
-            log.info("Testing JAX-RPC GetQuote sample.");
+            log.info("Testing JAX-RPC GetQuote1 sample.");
             log.info("Testing deployment...");
             doTestDeploy();
             log.info("Testing service...");
@@ -117,6 +117,35 @@ public class TestJAXRPCSamples extends TestCase {
             throw new Exception("Fault returned from test: " + t);
         }
     } // testGetQuote
+
+    public void testGetInfo() throws Exception {
+        try {
+            log.info("Testing JAX-RPC GetInfo sample.");
+            log.info("Testing deployment...");
+            doTestDeploy();
+            log.info("Testing service...");
+            String[] args = {"IBM", "symbol"};
+            GetInfo.main(args);
+            args = new String[] {"ALLR", "name"};
+            GetInfo.main(args);
+            args = new String[] {"CSCO", "address"};
+            GetInfo.main(args);
+            log.info("Testing undeployment...");
+            doTestUndeploy();
+            log.info("Test complete.");
+        }
+        catch (Throwable t) {
+            if (t instanceof AxisFault) ((AxisFault)t).dump();
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    } // testGetInfo
+
+    public static void main(String args[]) throws Exception {
+        TestJAXRPCSamples tester = new TestJAXRPCSamples("tester");
+        tester.testGetQuote();
+        tester.testGetInfo();
+    } // main
 }
 
 
