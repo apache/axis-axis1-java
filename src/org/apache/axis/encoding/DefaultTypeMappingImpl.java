@@ -596,6 +596,22 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
+        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
+        myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
+        myRegister(Constants.SOAP_ARRAY12,     java.util.ArrayList.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        myRegister(Constants.SOAP_ARRAY12,     Object[].class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
         myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
@@ -616,23 +632,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
         );
-
-        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
-        myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
-        myRegister(Constants.SOAP_ARRAY12,     java.util.ArrayList.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-
-        myRegister(Constants.SOAP_ARRAY12,     Object[].class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-
 
         //
         // Now register the schema specific types

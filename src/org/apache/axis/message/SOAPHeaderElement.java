@@ -79,7 +79,7 @@ public class SOAPHeaderElement extends MessageElement
     implements javax.xml.soap.SOAPHeaderElement {
     protected boolean   processed = false;
 
-    protected String    actor = "";
+    protected String    actor = null;
     protected boolean   mustUnderstand = false;
     protected boolean   relay = false;
 
