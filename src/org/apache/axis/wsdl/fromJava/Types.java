@@ -358,7 +358,12 @@ public class Types {
             factory = (SerializerFactory)defaultTM.getSerializer(type);
         }
         if (factory == null) {
-            factory = new BeanSerializerFactory(type, getTypeQName(type));
+            // If no factory is found, try the BeanSerializerFactory if
+            // the type is not Throwable.  (There is no mapping for
+            // java types that extend Throwable.)
+            if (!Throwable.class.isAssignableFrom(type)) {
+                factory = new BeanSerializerFactory(type, getTypeQName(type));
+            }
         }
         if (factory != null) {
             ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
