@@ -113,12 +113,18 @@ public class TypeMappingImpl implements TypeMapping
                 p.javaType == this.javaType) {
                 return true;
             }
-            // Note xmlType and javaType are always non-null
             return (p.xmlType.equals(this.xmlType) &&
                     p.javaType.equals(this.javaType));
         }
         public int hashCode() {
-            return javaType.hashCode() ^ xmlType.hashCode();
+            int hashcode = 0;
+            if (javaType != null) {
+                hashcode ^= javaType.hashCode();
+            }
+            if (xmlType != null) {
+                hashcode ^= xmlType.hashCode();
+            }
+            return hashcode;
         }
     }
 
