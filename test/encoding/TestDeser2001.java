@@ -18,13 +18,35 @@ public class TestDeser2001 extends TestDeser {
     /** 
      * Test deserialization of Date responses
      */
-    public void testDate() {
+    public void testMinDate() {
+        Calendar date = Calendar.getInstance();
+        date.set(1999,04,31,12,01,30);
+        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        date.set(Calendar.MILLISECOND,0);
+        deserialize("<result xsi:type=\"xsd:dateTime\">" + 
+                       "1999-05-31T12:01:30" + 
+                     "</result>",
+                     date.getTime());
+    }
+
+    public void testDateZ() {
         Calendar date = Calendar.getInstance();
         date.set(1999,04,31,12,01,30);
         date.setTimeZone(TimeZone.getTimeZone("GMT"));
         date.set(Calendar.MILLISECOND,150);
         deserialize("<result xsi:type=\"xsd:dateTime\">" + 
                        "1999-05-31T12:01:30.150Z" + 
+                     "</result>",
+                     date.getTime());
+    }
+
+    public void testDateTZ() {
+        Calendar date = Calendar.getInstance();
+        date.set(1999,04,31,12,01,30);
+        date.setTimeZone(TimeZone.getTimeZone("GMT-05:00"));
+        date.set(Calendar.MILLISECOND,150);
+        deserialize("<result xsi:type=\"xsd:dateTime\">" + 
+                       "1999-05-31T12:01:30.150-05:00" + 
                      "</result>",
                      date.getTime());
     }
