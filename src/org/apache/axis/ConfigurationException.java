@@ -70,6 +70,11 @@ import java.io.IOException;
  */
 public class ConfigurationException extends IOException {
 
+    /**
+     * Copy the orginal execption by default
+     */
+    protected static boolean copyStackByDefault= true;
+
     protected static Log log =
         LogFactory.getLog(ConfigurationException.class.getName());
 
@@ -87,11 +92,35 @@ public class ConfigurationException extends IOException {
      * @param exception original exception which was unexpected
      */
     public ConfigurationException(Exception e) {
-        super(e.toString());
+        super(e.toString()  + (copyStackByDefault? ("\n"
+           + stackToString(e)) : "" ));
 
         // Log the exception the first time it appears.
         if (!(e instanceof ConfigurationException)) {
             log.debug("Exception: ", e);
         }
+    }
+
+    /**
+     * Construct a ConfigurationException from an Exception.
+     * @param exception original exception which was unexpected
+     * @param copyStack set to true to copy the orginal exception's stack
+     */
+    public ConfigurationException(Exception e, final boolean copyStack) {
+        super(e.toString()  + (copyStack ? "\n"
+           + stackToString(e) : "" ));
+
+        // Log the exception the first time it appears.
+        if (!(e instanceof ConfigurationException)) {
+            log.debug("Exception: ", e);
+        }
+    }
+
+    protected static String stackToString(Exception e){
+      java.io.StringWriter sw= new java.io.StringWriter(1024); 
+      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
+      e.printStackTrace(pw);
+      pw.close();
+      return sw.toString();
     }
 }
