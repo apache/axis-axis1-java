@@ -176,6 +176,11 @@ timers, clean up resources, etc.
 as well as implementing the Handler interface as shown in the following
 diagram:
 <br><img SRC="chainclasses.jpg" height=297 width=267>
+<p>A Chain also has similarities to the Chain of Responsibility design pattern
+in which a request flows along a sequence of Handlers until it is processed.
+Although an Axis Chain may process a request in stages over a succession of
+Handlers, it has the same advantages as Chain of Responsibility:
+flexibility and the ease with which new function can be added.
 <p>Back to message processing -- a message is processed by passing through
 the appropriate Chains. A message context is used to pass the message and
 associated environment through the sequence of Handlers. The model is that
