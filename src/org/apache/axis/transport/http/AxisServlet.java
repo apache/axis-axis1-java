@@ -282,7 +282,13 @@ public class AxisServlet extends HttpServlet
                 writer.println("<ul>");
                 while (i.hasNext()) {
                     ServiceDesc sd = (ServiceDesc)i.next();
-                    writer.println("<li>" + sd.getName());
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("<li>");
+                    sb.append(sd.getName());
+                    sb.append(" <a href=\"../services/");
+                    sb.append(sd.getName());
+                    sb.append("?wsdl\"><i>(wsdl)</i></a></li>");
+                    writer.println(sb.toString());
                     ArrayList operations = sd.getOperations();
                     if (!operations.isEmpty()) {
                         writer.println("<ul>");
@@ -451,7 +457,8 @@ public class AxisServlet extends HttpServlet
                     writer.println("<p>" +
                                    JavaUtils.getMessage("somethingWrong00") +
                                    "</p>");
-                    writer.println("<pre>" + fault.toString() + " </pre>");
+                    writer.println("<pre>Fault - " + fault.toString() + " </pre>");
+                    writer.println("<pre>" + fault.dumpToString() + " </pre>");
                 } catch (Exception e) {
                     res.setContentType("text/html");
                     writer.println("<h2>" +
