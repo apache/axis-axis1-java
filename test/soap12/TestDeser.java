@@ -118,6 +118,7 @@ public class TestDeser extends TestCase {
         Message message = new Message(soap);
         MessageContext context = new MessageContext(server);
         context.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+        context.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
 
         message.setMessageContext(context);
 

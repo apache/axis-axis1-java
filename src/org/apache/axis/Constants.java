@@ -675,6 +675,12 @@ public class Constants {
     // When invoked from a servlet, per JAX-RPC, we need  a
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
+    
+    // If we're SOAP 1.2, the default behavior in org.apache.axis.message.BodyBuilder
+    // is to throw a ProcedureNotPresent fault if we can't dispatch to an
+    // OperationDesc during deserialization.  Set this property to any non-null
+    // value to prevent this behavior (only used by test.soap12.
+    public static final String MC_NO_OPERATION_OK = "NoOperationOK";
 
     /**
      * what the extension of JWS files is. If changing this, note that

@@ -222,15 +222,9 @@ public class BodyBuilder extends SOAPHandler
 
                 // SBFIX : If we're here with no operations, we're going to have
                 // a dispatch problem.  If SOAP12, fault.
-                /*  We need to put something like this in, but this currently
-                    breaks the soap12 deserialization test, since that's
-                    deserializing with no OperationDescs.  We should either
-                    change the test or figure out a way to switch on/off
-                    the idea of dispatching to an OperationDesc during
-                    deserialization (MessageContext property, etc). --Glen
-
                 if (operations == null &&
-                        (msgContext != null && !msgContext.isClient()) &&
+                        (msgContext != null && !msgContext.isClient() &&
+                            (msgContext.getProperty(Constants.MC_NO_OPERATION_OK) == null)) &&
                         soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                     AxisFault fault =
                             new AxisFault(Constants.FAULT_SOAP12_SENDER,
@@ -239,7 +233,6 @@ public class BodyBuilder extends SOAPHandler
                             Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
                     throw new SAXException(fault);
                 }
-                */
 
                 // Only deserialize this way if there is a unique operation
                 // for this QName.  If there are overloads,

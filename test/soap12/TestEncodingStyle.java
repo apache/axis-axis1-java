@@ -152,6 +152,7 @@ public class TestEncodingStyle extends TestCase {
         Message message = new Message(req);
         MessageContext context = new MessageContext(server);
         context.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+        context.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
 
         message.setMessageContext(context);
 
@@ -208,6 +209,7 @@ public class TestEncodingStyle extends TestCase {
 
         Message message = new Message(req);
         MessageContext context = new MessageContext(server);
+        context.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
 
         // Set the "invalid" encoding style
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
