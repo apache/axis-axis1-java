@@ -576,6 +576,13 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             // is will be used to javify the name
             QName typeQName = tEntry.getQName();
             
+            // In case of <xsd:list itemType="...">, 
+            // set typeQName to the value of the itemType attribute.
+            QName itemType = SchemaUtils.getListItemType(tEntry.getNode());
+            if (itemType != null) {
+                typeQName = itemType;
+            }
+            
             if ((typeQName.getLocalPart().
                     indexOf(SymbolTable.ANON_TOKEN) < 0)) {
                 // Normal Case: The ref'd type is not anonymous
