@@ -437,6 +437,8 @@ public class ServiceDesc {
                     continue;
                 }
 
+                oper.setReturnClass(method.getReturnType());
+
                 // At some point we might want to check here to see if this
                 // Method is already associated with another Operation, but
                 // this doesn't seem critital.
