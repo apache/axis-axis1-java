@@ -64,7 +64,7 @@ Copyright:
 
   <property name="wsdl4j.jar" value="../../wsdl4j/build/lib/wsdl4j.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
-  <property name="clutil.jar" value="lib/log4j-core.jar"/>
+  <property name="clutil.jar" value="lib/clutil.jar"/>
 
   <property name="packages" value="org.*"/>
 
