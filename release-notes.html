@@ -14,28 +14,16 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Alpha 3 Release Notes</h2>
+<h2>Axis Beta 1 Release Notes</h2>
 
-<p>This is the <a href="http://xml.apache.org/axis/releases.html"> alpha 3 release</a> 
+<p>This is the <a href="http://xml.apache.org/axis/releases.html"> beta 1 release</a> 
   of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>. (Wondering 
   what Axis is? Please see our <a href="http://xml.apache.org/axis/faq.html">FAQ</a>.)</p>
-<h3>General Alpha Information</h3>
+<h3>General Beta 1 Information</h3>
 
-<p>This is an alpha release, and hence is not feature complete.  The main
-missing features include:</p>
+<p>This is a beta release.  Most of the functionality is there.  There is still a chance that a few interfaces may change, but we will do our best to keep that from happening.  See the User's Guide for a list of the published interfaces that we believe are stable.  This beta release is closer to JAX-RPC compliance than the alpha, but JAX-RPC is still a moving target, so those interfaces still have the potential to change.</p>
 
-<ul>
-<li>Incomplete Apache SOAP 2.2 deployment descriptor support
-<li>Minimal testing in EJB / application server frameworks
-  <li>No support for XML-RPC, SMTP 
-  <li>Limited documentation
-</ul>
-
-<p>The Axis team is working on all of these missing features.</p>
-
-<p>So, why an alpha release?</p>
-
-<p>The Axis code already has:</p>
+<p>Why AXIS over SOAP 2.2?  The Axis code has:</p>
 
 <ul>
   <li>Significantly higher performance than Apache SOAP 2.2 
@@ -49,17 +37,16 @@ missing features include:</p>
 
 <p>Early adopters and advanced SOAP developers will find this release to be of 
   interest. Most Apache SOAP users, and those who need a fully featured next-version 
-  replacement for Apache SOAP 2.2, should hold off at least until Axis's beta 
-  release. Progress towards that beta release may be viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html"> 
+  replacement for Apache SOAP 2.2, may wish to use this beta, but they should be aware that, as a beta, functionality and interfaces may change, though we will do our best to minimize the impact of such changes. Progress towards that beta release may be viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html"> 
   requirements and status page</a>.</p>
 <h3>What's New?</h3>
-<p>Changes since alpha-2:</p>
+<p>Changes since alpha-3:</p>
 <ul>
-  <li>Added a <a href="docs/user-guide.html#Java2WSDLReference">java2wsdl</a> tool for building WSDL from Java files!</li>
-  <li>Many enhancement for the <a href="docs/user-guide.html#WSDL2JavaReference">wsdl2java</a> JAX-RPC compliant
-  emitter.</li>
-  <li>Deployment syntax now finalized using <a href="docs/user-guide.html#DeploymentReference">WSDD</a> files.</li>
-  <li>Preliminary support for <A href="docs/user-guide.html#AttachmentsReference">SOAP Messages with Attachments</a>.</li>
+  <li>Closer to JAX-RPC compliance.</li>
+  <li>Support for <A href="docs/user-guide.html#AttachmentsReference">SOAP Messages with Attachments</a>.</li>
+  <li>Much better XML schema type support.</li>
+  <li>Document/literal support.</li>
+  <li>Now using the org.apache.common.logging APIs as a common logging interface.</li>
   <li>Many minor bug fixes.</li>
 </ul>
 </body>
