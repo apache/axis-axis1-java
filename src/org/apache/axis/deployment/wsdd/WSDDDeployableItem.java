@@ -71,6 +71,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.io.IOException;
 
@@ -251,16 +252,17 @@ public abstract class WSDDDeployableItem
     {
         if (parameters == null)
             return;
-        
-        Set keys = parameters.keySet();
-        Iterator i = keys.iterator();
+
+        Set entries = parameters.entrySet();
+        Iterator i = entries.iterator();
         while (i.hasNext()) {
-            String name = (String)i.next();
+            Map.Entry entry = (Map.Entry) i.next();
+            String name = (String) entry.getKey();
             AttributesImpl attrs = new AttributesImpl();
             
             attrs.addAttribute("", "name", "name", "CDATA", name);
             attrs.addAttribute("", "value", "value", "CDATA", 
-                                   parameters.get(name).toString());
+                                   entry.getValue().toString());
             if (parameters.isKeyLocked(name)) {
                 attrs.addAttribute("", "locked", "locked", "CDATA", "true");
             }

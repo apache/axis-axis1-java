@@ -161,10 +161,11 @@ public class Namespaces extends HashMap {
      * also makes sure the value strings are javified.
      */
     public void putAll(Map map) {
-        Iterator i = map.keySet().iterator();
+        Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
-            Object key = i.next();
-            String pkg = (String) map.get(key);
+            Map.Entry entry = (Map.Entry) i.next();
+            Object key = entry.getKey();
+            String pkg = (String) entry.getValue();
             pkg = javify(pkg);
             put(key, pkg);
         }

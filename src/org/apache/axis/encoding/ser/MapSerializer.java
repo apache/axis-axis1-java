@@ -125,10 +125,11 @@ public class MapSerializer implements Serializer
 
         context.startElement(name, attributes);
 
-        for (Iterator i = map.keySet().iterator(); i.hasNext(); )
+        for (Iterator i = map.entrySet().iterator(); i.hasNext(); )
         {
-            Object key = i.next();
-            Object val = map.get(key);
+            Map.Entry entry = (Map.Entry) i.next();
+            Object key = entry.getKey();
+            Object val = entry.getValue();
 
             context.startElement(QNAME_ITEM, null);
 

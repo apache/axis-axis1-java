@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.toJava;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.wsdl.QName;
 
@@ -156,10 +157,11 @@ public abstract class SymTabEntry {
             indent + "name:          " + name + '\n' + 
             indent + "isReferenced?  " + isReferenced + '\n';
         String prefix = indent + "dynamicVars:   ";
-        Iterator keys = dynamicVars.keySet().iterator();
-        while (keys.hasNext()) {
-            Object key = keys.next();
-            string += prefix + key + " = " + dynamicVars.get(key) + '\n';
+        Iterator entries = dynamicVars.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            string += prefix + key + " = " + entry.getValue() + '\n';
             prefix = indent + "               ";
         }
         return string;

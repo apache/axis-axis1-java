@@ -62,6 +62,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 
@@ -339,10 +340,11 @@ public class SimpleDeserializer extends DeserializerImpl {
             return;
         
         // loop through map
-        Set keys = attributeMap.keySet();
-        for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
-            String name = (String) iterator.next();
-            Object val = attributeMap.get(name);
+        Set entries = attributeMap.entrySet();
+        for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String name = (String) entry.getKey();
+            Object val = entry.getValue();
             
             BeanPropertyDescriptor bpd = 
                     (BeanPropertyDescriptor) propertyMap.get(name);
