@@ -99,6 +99,7 @@ public abstract class JavaWriter implements Writer {
     protected String      packageName;
     protected PrintWriter pw;
     protected String      message;
+    protected String      type;
 
     /**
      * Constructor.  Use this one to pass in a Type.  Type contains QName and java name.
@@ -108,7 +109,8 @@ public abstract class JavaWriter implements Writer {
             SymTabEntry entry,
             String suffix,
             String extension,
-            String message) {
+            String message, 
+            String type) {
         this.emitter     = emitter;
         this.qname       = entry.getQName();
         this.namespaces  = emitter.getNamespaces();
@@ -117,6 +119,7 @@ public abstract class JavaWriter implements Writer {
         this.fileName    = className + '.' + extension;
         this.packageName = Utils.getJavaPackageName(entry.getName());
         this.message     = message;
+        this.type        = type;
     } // ctor
 
 
@@ -128,7 +131,8 @@ public abstract class JavaWriter implements Writer {
             QName qname,
             String suffix,
             String extension,
-            String message) {
+            String message, 
+            String type) {
         this.emitter     = emitter;
         this.qname       = qname;
         this.namespaces  = emitter.getNamespaces();
@@ -136,6 +140,7 @@ public abstract class JavaWriter implements Writer {
         this.fileName    = className + '.' + extension;
         this.packageName = namespaces.getCreate(qname.getNamespaceURI());
         this.message     = message;
+        this.type        = type;
     } // ctor
 
     /**
@@ -147,15 +152,14 @@ public abstract class JavaWriter implements Writer {
         String fqClass = packageName + "." + className;
         
         // Check for duplicates, probably the result of namespace mapping
-        if (emitter.classList.contains(fqClass)) {
+        if (emitter.fileInfo.getClassNames().contains(fqClass)) {
             throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
         }
-        if (emitter.fileList.contains(path)) {
+        if (emitter.fileInfo.getFileNames().contains(path)) {
             throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
         }
         
-        emitter.fileList.add(path);
-        emitter.classList.add(fqClass);
+        emitter.fileInfo.add(path, fqClass, type);
         namespaces.mkdir(packageName);
         File file = new File(packageDirName, fileName);
         if (emitter.bVerbose) {

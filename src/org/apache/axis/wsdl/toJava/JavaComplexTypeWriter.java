@@ -83,7 +83,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             Emitter emitter,
             TypeEntry type, Vector elements, TypeEntry extendType) {
         super(emitter, type, "", "java",
-                JavaUtils.getMessage("genType00"));
+                JavaUtils.getMessage("genType00"), "complexType");
         this.type = type;
         this.elements = elements;
         this.extendType = extendType;

@@ -77,7 +77,7 @@ public class JavaHolderWriter extends JavaWriter {
                         Utils.xmlNameToJavaClass(type.getQName().getLocalPart())),
                 "Holder",
                 "java",
-                JavaUtils.getMessage("genHolder00"));
+                JavaUtils.getMessage("genHolder00"), "holder");
         this.type = type;
     } // ctor
 

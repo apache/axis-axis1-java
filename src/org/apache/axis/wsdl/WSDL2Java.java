@@ -63,6 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriterFactory;
+import org.apache.axis.wsdl.toJava.GeneratedFileInfo;
 
 import org.w3c.dom.Document;
 
@@ -292,6 +293,37 @@ public class WSDL2Java {
     //
     ///////////////////////////////////////////////////
 
+    /**
+     * Returns an object which contains of information on all generated files
+     * including the class name, filename and a type string.
+     * 
+     * @return A org.apache.axis.wsdl.toJava.GeneratedFileInfo object
+     * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
+     */ 
+    public GeneratedFileInfo getGeneratedFileInfo()
+    {
+        return emitter.getGeneratedFileInfo();
+    }
+
+    /**
+     * Return a list of all generated class names.
+     * 
+     * @return list of class names (strings)
+     */
+    public List getGeneratedClassNames() {
+        return emitter.getGeneratedClassNames();
+    }
+
+    /**
+     * Return a list of all generated file names.
+     * 
+     * @return list of relative path names (strings)
+     */
+    public List getGeneratedFileNames() {
+        return emitter.getGeneratedFileNames();
+    }
+
+    
     /**
      * Call this method if you have a uri for the WSDL document
      * @param String wsdlURI the location of the WSDL file.
