@@ -94,6 +94,13 @@ public class AdminClient {
             case 'h': if ( args[i].length() > 2 )
                         host = args[i].substring(2);
                       break ;
+            case 'l': if ( args[i].length() > 2 ) {
+                        URL tmpurl = new URL(args[i].substring(2));
+                        host = tmpurl.getHost();
+                        port = tmpurl.getPort();
+                        servlet = tmpurl.getFile();
+                      }
+                      break ;
             case 'p': if ( args[i].length() > 2 )
                         port = Integer.parseInt(args[i].substring(2));
                       break ;
@@ -101,13 +108,6 @@ public class AdminClient {
                         servlet = args[i].substring(2);
                       if ( servlet != null && servlet.charAt(0) != '/' )
                         servlet = "/" + servlet ;
-                      break ;
-            case 'u': if ( args[i].length() > 2 ) {
-                        URL tmpurl = new URL(args[i].substring(2));
-                        host = tmpurl.getHost();
-                        port = tmpurl.getPort();
-                        servlet = tmpurl.getFile();
-                      }
                       break ;
             default: System.err.println( "Unknown option '" +
                                          args[i].charAt(1) + "'" );
