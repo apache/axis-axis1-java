@@ -85,7 +85,12 @@ SOAP is an XML <i></i>
   <li>An HTTP servlet-based transport</li>
   <li>A standalone version of the server (HTTP)</li>
   <li>Examples, including a client and server for the soapbuilders community interoperability 
-    tests </li>
+    tests</li>
+</ul>
+<h3>What's missing?</h3>
+<ul>
+  <li>Nuttin.</li>
+  <li>Well, OK, sumpin.</li>
 </ul>
 <h2><a name="Installation"></a>Installing Axis</h2>
 See the <a href="file:///E|/Documents/Axis/install.html">Axis Installation Guide</a> for instructions on 
@@ -220,6 +225,8 @@ Got result : 1
   system without source. Also, the amount of configuration you can do as to how 
   the service gets accessed is pretty limited - you can't specify custom type 
   mappings, or control which Handlers get invoked when people are using your service.</p>
+<h4>Deploying via descriptors</h4>
+One way blah blah blah. 
 <pre>&lt;admin:deploy xmlns:admin=&quot;AdminService&quot;&gt;
  &lt;service name=&quot;MyService&quot; pivot=&quot;RPCDispatcher&quot;&gt;
   &lt;option name=&quot;classname&quot; value=&quot;MyService&quot;/&gt;
@@ -228,20 +235,43 @@ Got result : 1
 &lt;/admin:deploy&gt;</pre>
 <p>Pretty simple, really - the outermost element tells the engine that this is 
   a deployment (other options are &quot;undeploy&quot; and &quot;list&quot; - 
-  see the deployment reference). Then we deploy a service</p>
+  see the deployment reference). Then we deploy a service.</p>
+<h4>Using the AdminClient</h4>
+<p>Once we've got this file, we need to send it to an Axis server in order to 
+  actually deploy the described service. We do this with the AdminClient, or the 
+  &quot;org.apache.axis.client.AdminClient&quot; class. An invocation of the AdminClient 
+  looks like this:</p>
+<pre>% java org.apache.axis.client.AdminClient deploy.xml
+&lt;??&gt;&lt;admin&gt;done processing&lt;/admin&gt;</pre>
+<p>This </p>
+<h4>More deployment - Handlers and Chains</h4>
 <p>Now let's start to explore some of the more powerful features of the Axis engine. 
-  Let's say you want to track how many times your service has been called, and 
-  by whom.</p>
+  Let's say you want to track how many times your service has been called. We've 
+  included a sample handler in the samples/log directory to do just this. To use 
+  a handler class like this, you first need to deploy the Handler itself, and 
+  then use the name that you give it in deploying a service. Here's a sample deploy.xml 
+  file: </p>
 <pre>&lt;admin:deploy xmlns:admin=&quot;AdminService&quot;&gt;
  &lt;!-- define the logging handler configuration --&gt;
- &lt;handler name=&quot;track&quot; class=&quot;org.apache.axis.handlers.LogHandler&quot;&gt;
+ &lt;handler name=&quot;track&quot; class=&quot;samples.log.LogHandler&quot;&gt;
   &lt;option name=&quot;filename&quot; value=&quot;MyService.log&quot;/&gt;
  &lt;/handler&gt;
 
  &lt;!-- define the service, using the log handler we just defined --&gt;
- &lt;service name=&quot;MyService&quot; request=&quot;track&quot; pivot=&quot;RPCDispatcher&quot;&gt;
- &lt;/service&gt;
+ &lt;service name=&quot;MyService&quot; <b>request=&quot;track&quot;</b> pivot=&quot;RPCDispatcher&quot;&gt;
+  &lt;option name=&quot;className&quot; value=&quot;samples.log.Service&quot;/&gt;
+  &lt;option name=&quot;methodName&quot; value=&quot;*&quot;/&gt;
+&lt;/service&gt;
 &lt;/admin:deploy&gt;</pre>
+<p>The first section defines a Handler called &quot;track&quot; which is implemented 
+  by the class &quot;samples.log.LogHandler&quot;. We give this Handler an option 
+  to let it know which file to write its messages into.</p>
+<p>Then we define a service, &quot;MyService&quot;, which is an RPC server just 
+  like we saw above in our first example. The difference is the &quot;request&quot; 
+  attribute - this indicates a Handler (or set of Handlers) which should be invoked 
+  when the service is invoked, before the pivot handler. By setting this to &quot;track&quot;, 
+  we ensure that the message will be logged each time this service is invoked.<br>
+</p>
 <h4>Remote Administration</h4>
 <p>Note that by default, the Axis server is configured to only accept administration 
   requests from the machine on which it resides - if you wish to enable remote 
@@ -263,14 +293,40 @@ Got result : 1
   the standard JavaBean pattern of get/set accessors. All you need to do is tell 
   Axis which Java classes map to which XML Schema types. Configuring a bean mapping 
   looks like this:</p>
-<p>&lt;beanMapping&gt;</p>
-<p>Let's take a look at how this works. Go look at the docs/examples/example4/BeanService.java 
-  file. (we won't reproduce it here, it's pretty basic) The key thing to notice 
-  is that the argument to the service method is an Order object. Since Order is 
-  not a basic type which Axis understands by default, trying to run the service 
-  without a type mapping will result in a fault (if you want to try this for yourself, 
-  you can use the simple-deploy.xml file in the example4 directory). But if we 
-  put a beanMapping into our deployment, all will be well.</p>
+<pre class="xml">&lt;beanMappings&gt;
+ &lt;ns:local xmlns:ns=&quot;someNamespace&quot; classname=&quot;my.java.thingy&quot;/&gt;
+&lt;/beanMappings&gt;</pre>
+<p>Inside the &lt;beanMappings&gt; element is an arbitrary number of other elements, 
+  each of which maps a Java class (presumably a bean) to an XML QName. The QName 
+  of the element itself is the XML QName, and the value of the classname attribute 
+  is the Java class name. So in this case, we'd be mapping the &quot;my.java.thingy&quot; 
+  class to the XML QName [someNamespace]:[local].</p>
+<p>Let's take a look at how this works in practice. Go look at the docs/examples/example4/BeanService.java 
+  file. (we won't reproduce it here, it's pretty straightforward) The key thing 
+  to notice is that the argument to the service method is an Order object. Since 
+  Order is not a basic type which Axis understands by default, trying to run this 
+  service without a type mapping will result in a fault (if you want to try this 
+  for yourself, you can use the bad-deploy.xml file in the example4 directory). 
+  But if we put a beanMapping into our deployment, all will be well. Here's how 
+  to run this example (from the example4 directory):</p>
+<pre class="example">% java org.apache.axis.client.AdminClient -llocal:// deploy.xml
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;Admin&gt;Done processing&lt;/Admin&gt;
+
+
+% java Client -llocal:// -n &quot;Glen&quot;
+Hi, Glen!
+
+
+You seem to have ordered the following:
+
+
+1 of item : mp3jukebox
+4 of item : 1600mahBattery
+
+
+If this had been a real order processing system, we'd probably have charged you about now.
+%<br>
+</pre>
 <h3>When Beans Are Not Enough - Custom Serialization</h3>
 <p>Just as JWS deployment is sometimes not flexible enough to meet all needs, 
   the default bean serialization model isn't robust enough to handle every case 
