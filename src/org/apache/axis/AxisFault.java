@@ -55,6 +55,16 @@
 
 package org.apache.axis ;
 
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.rpc.soap.SOAPFaultException;
+
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
@@ -66,21 +76,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.rpc.soap.SOAPFaultException;
-import javax.xml.soap.Detail;
-
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
