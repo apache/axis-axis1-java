@@ -67,6 +67,12 @@ import javax.xml.rpc.namespace.QName;
 public class ElementDecl {
     private QName name;
     private TypeEntry type;
+    // The following property is set if minOccurs=0.
+    // An item that is not set and has minOccurs=0 
+    // should not be passed over the wire.  This
+    // is slightly different than nillable=true which
+    // causes nil=true to be passed over the wire.
+    private boolean minOccursIs0=false;   
 
     public ElementDecl() {
     }
@@ -90,5 +96,13 @@ public class ElementDecl {
 
     public void setName(QName name) {
         this.name = name;
+    }
+
+    public boolean getMinOccursIs0() {
+        return minOccursIs0;
+    }
+
+    public void setMinOccursIs0(boolean minOccursIs0) {
+        this.minOccursIs0 = minOccursIs0;
     }
 }
