@@ -68,7 +68,7 @@ public class TypeMappingImpl implements TypeMapping
     protected static Log log =
         LogFactory.getLog(TypeMappingImpl.class.getName());
 
-    public class Pair {
+    public static class Pair {
         public Class javaType;
         public QName xmlType;
         public Pair(Class javaType, QName xmlType) {
