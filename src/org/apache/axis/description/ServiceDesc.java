@@ -657,16 +657,18 @@ public class ServiceDesc {
                             paramClass = tm.getClassForQName(param.getTypeQName());
                         }
 
-                        // This is a match if the paramClass is somehow
-                        // convertable to the "real" parameter type.  If not,
-                        // break out of this loop.
-                        if (!JavaUtils.isConvertable(paramClass, actualType)) {
-                            break;
-                        }
-                        
-                        if (!actualType.isAssignableFrom(paramClass)) {
-                            // This doesn't fit without conversion
-                            conversionNecessary = true;
+                        if (paramClass != null) {
+                            // This is a match if the paramClass is somehow
+                            // convertable to the "real" parameter type.  If not,
+                            // break out of this loop.
+                            if (!JavaUtils.isConvertable(paramClass, actualType)) {
+                                break;
+                            }
+                            
+                            if (!actualType.isAssignableFrom(paramClass)) {
+                                // This doesn't fit without conversion
+                                conversionNecessary = true;
+                            }
                         }
                     }
                     // In all scenarios the ParameterDesc javaType is set to
