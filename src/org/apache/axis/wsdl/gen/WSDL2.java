@@ -54,18 +54,17 @@
  */
 package org.apache.axis.wsdl.gen;
 
-import java.net.Authenticator;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-
-import java.util.List;
-
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
+import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.utils.JavaUtils;
+
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 public class WSDL2 {
 
@@ -142,7 +141,7 @@ public class WSDL2 {
 
     /**
      * Parse an option
-     * @param CLOption is the option 
+     * @param CLOption is the option
      */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
@@ -218,7 +217,7 @@ public class WSDL2 {
             } else {
                 parser.setUsername(userInfo);
             }
-        } 
+        }
     }
 
     /**
@@ -239,7 +238,7 @@ public class WSDL2 {
     } // printUsage
 
     /**
-     * run 
+     * run
      * checkes the command-line arguments and runs the tool.
      * @param String[] command-line arguments.
      */
@@ -269,7 +268,7 @@ public class WSDL2 {
             validateOptions();
 
             parser.run(wsdlURI);
-            
+
             // everything is good
             System.exit(0);
         }
@@ -288,29 +287,4 @@ public class WSDL2 {
         WSDL2 wsdl2 = new WSDL2();
         wsdl2.run(args);
     } // main
-
-    /**
-     * This class is used by WSDL2 main() only
-     * Supports the http.proxyUser and http.proxyPassword properties.
-     */
-    public static class DefaultAuthenticator extends Authenticator {
-        private String user;
-        private String password;
-        
-        DefaultAuthenticator(String user, String pass) {
-            this.user = user;
-            this.password = pass;
-        }
-        protected PasswordAuthentication getPasswordAuthentication() {
-            // if user and password weren't provided, check the system properties
-            if (user == null) {
-                user = System.getProperty("http.proxyUser","");
-            }
-            if (password == null) {
-                password = System.getProperty("http.proxyPassword","");
-            }
-            
-            return new PasswordAuthentication (user, password.toCharArray());
-        }
-    }
 } // class WSDL2

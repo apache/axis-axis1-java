@@ -109,10 +109,7 @@ public class DelayedStockQuote {
             Iterator it2 = bodyElement.getChildElements();
             while (it2.hasNext()) {
                 SOAPElement element2 = (SOAPElement) it2.next();
-                System.out.println(((org.apache.axis.message.MessageElement)element2).toString());
-                // TODO: Find out why getValue returns null.
-                String lastPrice = element2.getValue();
-                return lastPrice;
+                return element2.getValue();
             }
         }
         return null;
