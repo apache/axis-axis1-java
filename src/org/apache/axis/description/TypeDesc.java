@@ -180,11 +180,7 @@ public class TypeDesc {
     public void addFieldDesc(FieldDesc field)
     {
         if (field == null) {
-            //XXX TypeDesc is published and should not throw NPEs
-            // An exception has been coded in the source code checks
-            // in test.utils.TestSrcContent which should be removed
-            // when this NPE is removed.
-            throw new NullPointerException(
+            throw new IllegalArgumentException(
                     JavaUtils.getMessage("nullFieldDesc"));
         }
         

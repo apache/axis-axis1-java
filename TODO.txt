@@ -49,7 +49,7 @@ _ 9882 - nice - Russell
 X 9952 - must - Glyn
 _ 9966 - nice - Tom (like 9717)
 _ 9967 - nice - Tom (like 9717 and 9966)
-M 9987 - must - Glen
+X 9987 - must - Glyn
 X 9992 - must - dims
 _ 10003 - post
 
