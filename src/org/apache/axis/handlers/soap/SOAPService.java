@@ -199,11 +199,11 @@ public class SOAPService extends SimpleTargetedChain
     
 
     /**
-     * SOAPResponseHandler is used to inject SOAP semantics just before
+     * MustUnderstandChecker is used to inject SOAP semantics just before
      * the pivot handler.
      */
-    private class SOAPResponseHandler extends BasicHandler {
-        public SOAPResponseHandler() {}
+    private class MustUnderstandChecker extends BasicHandler {
+        public MustUnderstandChecker() {}
 
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
@@ -291,7 +291,7 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService(Handler reqHandler, Handler pivHandler,
                        Handler respHandler) {
         this();
-        init(reqHandler, null, pivHandler, new SOAPResponseHandler(), respHandler);
+        init(reqHandler, new MustUnderstandChecker(), pivHandler, null, respHandler);
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -304,7 +304,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler serviceHandler)
     {
-        init(null, null, serviceHandler, new SOAPResponseHandler(), null);
+        init(null, new MustUnderstandChecker(), serviceHandler, null, null);
     }
     
     /** Tell this service which engine it's deployed to.

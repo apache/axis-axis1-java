@@ -300,6 +300,7 @@ public class JWSHandler extends BasicHandler
             SOAPService rpc = (SOAPService)soapServices.get(clsName);
             if (rpc == null) {
                 rpc = new SOAPService(new RPCProvider());
+                rpc.setName(clsName);
                 rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
                 rpc.setEngine(msgContext.getAxisEngine());
                 

@@ -68,6 +68,7 @@ Copyright:
    <path id="deploy.xml.files">
        <fileset dir="${build.dir}">
           <include name="work/samples/**/deploy.wsdd"/>
+          <include name="work/test/rpc/deploy.wsdd"/>
        </fileset>
    </path>
 
