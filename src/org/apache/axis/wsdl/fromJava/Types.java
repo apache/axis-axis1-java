@@ -60,6 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
@@ -429,22 +430,29 @@ public class Types {
         try {
             java.lang.reflect.Method m  = cls.getMethod("getValue", null);
             java.lang.reflect.Method m2 = cls.getMethod("toString", null);
-            java.lang.reflect.Method m3 =
-                    cls.getMethod("fromString",
-                                  new Class[] {java.lang.String.class});
+            if (m != null && m2 != null) {
+                java.lang.reflect.Method m3 =
+                    cls.getDeclaredMethod("fromString",
+                                          new Class[] {java.lang.String.class});
+                java.lang.reflect.Method m4 =
+                    cls.getDeclaredMethod("fromValue",
+                                          new Class[] {m.getReturnType()});
 
-            if (m != null && m2 != null && m3 != null &&
-                cls.getMethod("fromValue",
-                              new Class[] {m.getReturnType()}) != null) {
-                try {
-                    if (cls.getMethod("setValue",
-                                      new Class[] {m.getReturnType()}) == null)
+                if (m3 != null &&
+                    Modifier.isStatic(m3.getModifiers()) &&
+                    Modifier.isPublic(m3.getModifiers()) &&
+                    m4 != null &&
+                    Modifier.isStatic(m4.getModifiers()) &&
+                    Modifier.isPublic(m4.getModifiers())) {
+                    // Return false if there is a setValue member method
+                    try {
+                        if (cls.getMethod("setValue",
+                                          new Class[] {m.getReturnType()}) == null)
+                            return true;
+                        return false;
+                    } catch (java.lang.NoSuchMethodException e) {
                         return true;
-                    return false;
-                } catch (java.lang.NoSuchMethodException e) {
-                    // getValue & fromValue exist.  setValue does not exist.
-                    // Thus return true.
-                    return true;
+                    }
                 }
             }
         } catch (java.lang.NoSuchMethodException e) {}
@@ -621,6 +629,31 @@ public class Types {
                 isSimpleSoapEncodingType(type));
     }
 
+    /**
+     * Is the given class acceptable as an attribute 
+     * @param type input Class
+     * @return true if the type is a simple, enum type or extends SimpleType
+     */
+    public boolean isAcceptableAsAttribute(Class type) {
+        return isSimpleType(type) || 
+            isEnumClass(type) ||
+            implementsSimpleType(type);
+    }
+
+    /**
+     * Does the class implement SimpleType
+     * @param type input Class
+     * @return true if the type implements SimpleType
+     */
+    boolean implementsSimpleType(Class type) {
+        Class[] impls = type.getInterfaces();
+        for(int i=0; i<impls.length; i++) {
+            if (impls[i] == SimpleType.class) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Generates a unique element name for a given namespace of the form
      * el0, el1 ....

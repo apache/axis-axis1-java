@@ -350,7 +350,8 @@ public class Utils {
             if (getAttribute(node, "ref") == null &&
                 getAttribute(node, "base") == null && 
                 getAttribute(node, "element") == null &&
-                SchemaUtils.getElementAnonQName(node) == null) {
+                SchemaUtils.getElementAnonQName(node) == null &&
+                SchemaUtils.getAttributeAnonQName(node) == null) {
                 QName nodeName = getNodeQName(node);
                 if (nodeName != null &&
                     Constants.isSchemaXSD(nodeName.getNamespaceURI()) &&
@@ -520,6 +521,14 @@ public class Utils {
             }
         }
 
+        // Get the anonymous type of an attribute
+        anonQName = SchemaUtils.getAttributeAnonQName(node);
+        if (anonQName != null) {
+            TypeEntry anonType = symbolTable.getType(anonQName);
+            if (anonType != null && !types.contains(anonType)) {
+                types.add(anonType);
+            }
+        }
         // Process extended types
         TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(node, symbolTable);
         if (extendType != null) {

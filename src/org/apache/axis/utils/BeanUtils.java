@@ -255,23 +255,25 @@ public class BeanUtils {
                 // add it if not.
                 for (int i=0; i < fields.length; i++) {
                     Field f = fields[i];
-                    // skip field if it is declared final
-                    if (Modifier.isFinal(f.getModifiers()))
-                        continue;
-                    String fName = f.getName();
-                    boolean found = false;
-                    for (int j=0; j<pd.size() && !found; j++) {
-                        String pName = 
-                            ((BeanPropertyDescriptor)pd.get(i)).getName();
-                        if (pName.length() == fName.length() &&
-                            pName.substring(0,1).equalsIgnoreCase(
-                               fName.substring(0,1))) {
-                            found = pName.length() == 1 ||
-                                pName.substring(1).equals(fName.substring(1));
+                    // skip field if it is final, transient, or static 
+                    if (!(Modifier.isStatic(f.getModifiers()) ||
+                          Modifier.isFinal(f.getModifiers()) ||
+                          Modifier.isTransient(f.getModifiers()))) {
+                        String fName = f.getName();
+                        boolean found = false;
+                        for (int j=0; j<pd.size() && !found; j++) {
+                            String pName = 
+                                ((BeanPropertyDescriptor)pd.get(j)).getName();
+                            if (pName.length() == fName.length() &&
+                                pName.substring(0,1).equalsIgnoreCase(
+                                fName.substring(0,1))) {
+                                found = pName.length() == 1 ||
+                                    pName.substring(1).equals(fName.substring(1));
+                            }
                         }
-                    }
-                    if (!found) {
-                        pd.add(new BeanPropertyDescriptor(f.getName(), f));
+                        if (!found) {
+                            pd.add(new BeanPropertyDescriptor(f.getName(), f));
+                        }
                     }
                 }
             }
