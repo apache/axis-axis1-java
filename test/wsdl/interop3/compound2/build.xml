@@ -20,6 +20,9 @@
     <wsdl2java url="http://www.whitemesa.net/wsdl/r3/compound2.wsdl"
                output="${root.dir}/build/work" skeleton="yes"/>
 
+    <copy file="SoapInteropCompound2BindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/interop3/compound2"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
