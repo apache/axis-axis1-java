@@ -80,22 +80,23 @@ public interface MessageExchange {
             throws AxisFault;
 
     /**
-     * Will attempt to cancel the outbound MessageExchange 
-     * process for a given message context. Returns true if 
-     * an only if the MessageContext was canceled.  A false 
-     * response indicates that the MessageContext could not 
-     * be removed from the outbound channel for whatever 
-     * reason.
-     * @param MessageExchangeCorrelator The correlator for the message being canceled
-     * @return MessageContext The canceled MessageContext
+     * Send an outbound message.  (Impl's of this method
+     * need to create a new MessageExchangeCorrelator and 
+     * put it into the MessageContext if one does not already
+     * exist.)
+     * @param MessageContext The Axis MessageContext being sent
+     * @param MessageContextListener The listener to which responses, faults, and status updates should be delivered
+     * @return MessageExchangeCorrelator The correlator for the sent MessageContext
      * @throws AxisFault
      */
-    public MessageContext cancel(
-            MessageExchangeCorrelator correlator)
+    public MessageExchangeCorrelator send(
+            MessageContext context,
+            MessageContextListener listener)
             throws AxisFault;
 
     /**
      * Waits indefinitely for a message to be received
+     * (blocking)
      * @return MessageContext The received MessageContext
      * @throws AxisFault
      */
@@ -105,6 +106,7 @@ public interface MessageExchange {
     /**
      * Waits the specified amount of time for a message to 
      * be received
+     * (blocking)
      * @param long The amount of time (ms) to wait
      * @return MessageContext The received MessageContext
      * @throws AxisFault
@@ -114,29 +116,51 @@ public interface MessageExchange {
             throws AxisFault;
 
     /**
-     * Will instruct the MessageExchange provider to 
-     * wait for a message to be received.
+     * Waits indefinitely for a message matching the 
+     * specified correlator
+     * (blocking)
+     * @param MessageExchangeCorrelator
+     * @return MessageContext
      * @throws AxisFault
      */
-    public void startListening()
-            throws AxisFault;
-
-    /**
-     * Will instruct the MessageExchange provider to
-     * wait for a specific MessageExchangeCorrelator
-     * @param MessageExchangeCorrelator The correlator of the MessageContext to listen for
-     * @throws AxisFault
-     */
-    public void startListening(
+    public MessageContext receive(
             MessageExchangeCorrelator correlator)
             throws AxisFault;
 
     /**
-     * Will instruct the MessageExchange provider to 
-     * stop listening
+     * Waits the specified amount of time for a message matching the 
+     * specified correlator
+     * (blocking)
+     * @param MessageExchangeCorrelator
+     * @param long timeout
+     * @returns MessageContext
      * @throws AxisFault
      */
-    public void stopListening()
+    public MessageContext receive(
+            MessageExchangeCorrelator correlator,
+            long timeout)
+            throws AxisFault;
+
+    /**
+     * Registers a listener for receiving messages
+     * (nonblocking)
+     * @param MessageContextListener
+     * @throws AxisFault
+     */
+    public void receive(
+            MessageContextListener listener)
+            throws AxisFault;
+
+    /**
+     * Registers a listener for receiving messages
+     * (nonblocking)
+     * @param MessageExchangeCorrelator
+     * @param MessageContextListener
+     * @throws AxisFault
+     */            
+    public void receive(
+            MessageExchangeCorrelator correlator,
+            MessageContextListener listener)
             throws AxisFault;
 
     /**
@@ -161,49 +185,14 @@ public interface MessageExchange {
             long timeout)
             throws AxisFault;
 
-    /**
-     * Allows applications to listen for changes to
-     * the current disposition of the MessageExchange operation
-     * (push model)
-     * @param MessageExchangeStatusListener
-     * @throws AxisFault
-     */
-    public void setMessageExchangeStatusListener(
-            MessageExchangeStatusListener listener)
-            throws AxisFault;
-
-    /**
-     * Allows applications to listen for inbound messages
-     * (push model)
-     * @param MessageExchangeReceiveListener
-     * @throws AxisFault
-     */
-    public void setMessageExchangeReceiveListener(
-            MessageExchangeReceiveListener listener)
-            throws AxisFault;
-
-    /**
-     * Allows applications to listen for faults/exceptions
-     * (push model)
-     * @param MessageExchangeFaultListener
-     * @throws AxisFault
-     */
     public void setMessageExchangeFaultListener(
-            MessageExchangeFaultListener listener)
-            throws AxisFault;
-
-    /**
-     * Allows MessageExchange consumers low level access
-     * to the Send message channel
-     * @return MessageChannel
-     */
-    public MessageChannel getSendChannel();
-
-    /**
-     * Allows MessageExchange consumers low level access
-     * to the Receive message channel
-     * @return MessageChannel
-     */
-    public MessageChannel getReceiveChannel();
-
+            MessageExchangeFaultListener listener);
+            
+    public MessageExchangeFaultListener getMessageExchangeFaultListener();
+    
+    public void setMessageExchangeStatusListener(
+            MessageExchangeStatusListener listener);
+            
+    public MessageExchangeStatusListener getMessageExchangeStatusListener();
+        
 }

@@ -53,40 +53,37 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.internal.util;
 
 import org.apache.axis.i18n.Messages;
-import org.apache.axis.ime.MessageChannel;
-import org.apache.axis.ime.MessageExchangeContext;
-
 import java.util.Vector;
 
 /**
- * Creates a non-persistent message channel.  Queued messages
- * are stored in memory. If the Channel instance is destroyed,
+ * Creates a non-persistent KeyedBuffer.  Queued messages
+ * are stored in memory. If the buffer instance is destroyed,
  * so is the Queue.
  * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class NonPersistentMessageChannel
-        implements MessageChannel {
+public class NonPersistentKeyedBuffer
+        implements KeyedBuffer {
 
     private final KeyedQueue messages = new KeyedQueue();
 
-    private MessageWorkerGroup WORKERS;
+    private WorkerPool WORKERS;
 
-    public NonPersistentMessageChannel(
-            MessageWorkerGroup workers) {
+    public NonPersistentKeyedBuffer(
+            WorkerPool workers) {
         this.WORKERS = workers;
     }
 
-    public MessageExchangeContext peek() {
+    public Object peek() {
         KeyedNode node = null;
         synchronized (messages) {
             node = messages.peek();
         }
         if (node != null) {
-            return (MessageExchangeContext) node.value;
+            return node.value;
         } else {
             return null;
         }
@@ -94,33 +91,33 @@ public class NonPersistentMessageChannel
 
     public void put(
             Object key,
-            MessageExchangeContext context) {
+            Object object) {
 
         if (key == null ||
-                context == null)
+                object == null)
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
 
         synchronized (messages) {
-            messages.put(new KeyedNode(key, context));
+            messages.put(new KeyedNode(key, object));
             messages.notify();
         }
     }
 
-    public MessageExchangeContext cancel(Object key) {
+    public Object cancel(Object key) {
         if (key == null)
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
-        MessageExchangeContext context = null;
+        Object object = null;
         synchronized (messages) {
-            KeyedNode node = messages.select(key); // will attempt to find an remove
+            KeyedNode node = messages.select(key); // will attempt to find and remove
             if (node != null)
-                context = (MessageExchangeContext) node.value;
+                object = node.value;
             node.key = null;
             node.value = null;
         }
-        return context;
+        return object;
     }
 
-    public MessageExchangeContext[] selectAll() {
+    public Object[] selectAll() {
         Vector v = new Vector();
         KeyedNode node = null;
         synchronized (messages) {
@@ -130,13 +127,13 @@ public class NonPersistentMessageChannel
                 node.value = null;
             }
         }
-        MessageExchangeContext[] contexts = new
-                MessageExchangeContext[v.size()];
-        v.copyInto(contexts);
-        return contexts;
+        Object[] objects = new
+                Object[v.size()];
+        v.copyInto(objects);
+        return objects;
     }
 
-    public MessageExchangeContext select()
+    public Object select()
             throws InterruptedException {
         for (; ;) {
             if (WORKERS.isShuttingDown())
@@ -146,17 +143,17 @@ public class NonPersistentMessageChannel
                 node = messages.select();
             }
             if (node != null) {
-                MessageExchangeContext context = (MessageExchangeContext) node.value;
+                Object object = node.value;
                 node.key = null;
                 node.value = null;
-                return context;
+                return object;
             } else {
                 messages.wait();
             }
         }
     }
 
-    public MessageExchangeContext select(long timeout)
+    public Object select(long timeout)
             throws InterruptedException {
         for (; ;) {
             if (WORKERS.isShuttingDown())
@@ -166,17 +163,17 @@ public class NonPersistentMessageChannel
                 node = messages.select();
             }
             if (node != null) {
-                MessageExchangeContext context = (MessageExchangeContext) node.value;
+                Object object = node.value;
                 node.key = null;
                 node.value = null;
-                return context;
+                return object;
             } else {
                 messages.wait(timeout);
             }
         }
     }
 
-    public MessageExchangeContext select(Object key)
+    public Object select(Object key)
             throws InterruptedException {
         for (; ;) {
             if (WORKERS.isShuttingDown())
@@ -186,17 +183,17 @@ public class NonPersistentMessageChannel
                 node = messages.select(key);
             }
             if (node != null) {
-                MessageExchangeContext context = (MessageExchangeContext) node.value;
+                Object object = node.value;
                 node.key = null;
                 node.value = null;
-                return context;
+                return object;
             } else {
                 messages.wait();
             }
         }
     }
 
-    public MessageExchangeContext select(Object key, long timeout)
+    public Object select(Object key, long timeout)
             throws InterruptedException {
         for (; ;) {
             if (WORKERS.isShuttingDown())
@@ -206,16 +203,44 @@ public class NonPersistentMessageChannel
                 node = messages.select(key);
             }
             if (node != null) {
-                MessageExchangeContext context = (MessageExchangeContext) node.value;
+                Object object = node.value;
                 node.key = null;
                 node.value = null;
-                return context;
+                return object;
             } else {
                 messages.wait(timeout);
             }
         }
     }
 
+    public Object get() {
+        KeyedNode node = null;
+        Object object = null;
+        synchronized (messages) {
+            node = messages.select();
+        }
+        if (node != null) {
+            object = node.value;
+            node.key = null;
+            node.value = null;
+        }
+        return object;
+    }
+
+    public Object get(Object key) {
+        KeyedNode node = null;
+        Object object = null;
+        synchronized (messages) {
+            node = messages.select(key);
+        }
+        if (node != null) {
+            object = node.value;
+            node.key = null;
+            node.value = null;
+        }
+        return object;
+    }
+    
 /// Support Classes ///
     protected static class KeyedNode {
         public Object key;

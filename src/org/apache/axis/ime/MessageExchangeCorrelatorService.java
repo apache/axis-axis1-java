@@ -61,9 +61,9 @@ public interface MessageExchangeCorrelatorService {
 
     public void put(
             MessageExchangeCorrelator correlator,
-            MessageExchangeContext context);
+            Object context);
 
-    public MessageExchangeContext get(
+    public Object get(
             MessageExchangeCorrelator correlator);
 
 }

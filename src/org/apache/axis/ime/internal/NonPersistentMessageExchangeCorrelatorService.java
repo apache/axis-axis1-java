@@ -55,7 +55,6 @@
 
 package org.apache.axis.ime.internal;
 
-import org.apache.axis.ime.MessageExchangeContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeCorrelatorService;
 
@@ -74,7 +73,7 @@ public class NonPersistentMessageExchangeCorrelatorService
      */
     public void put(
             MessageExchangeCorrelator correlator,
-            MessageExchangeContext context) {
+            Object context) {
         synchronized (contexts) {
             contexts.put(correlator, context);
         }
@@ -83,9 +82,9 @@ public class NonPersistentMessageExchangeCorrelatorService
     /**
      * @see org.apache.axis.ime.MessageExchangeCorrelatorService#get(MessageExchangeCorrelator)
      */
-    public MessageExchangeContext get(MessageExchangeCorrelator correlator) {
+    public Object get(MessageExchangeCorrelator correlator) {
         synchronized (contexts) {
-            return (MessageExchangeContext) contexts.remove(correlator);
+            return contexts.remove(correlator);
         }
     }
 

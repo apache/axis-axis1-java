@@ -54,18 +54,25 @@
  */
 package org.apache.axis.ime;
 
-import org.apache.axis.MessageContext;
-
 import java.io.Serializable;
+import org.apache.axis.MessageContext;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public interface MessageExchangeReceiveListener
-        extends Serializable {
+public abstract class MessageContextListener
+        implements Serializable {
+
+    public void onFault(
+            MessageExchangeCorrelator correlator,
+            Throwable exception) {}
 
     public void onReceive(
             MessageExchangeCorrelator correlator,
-            MessageContext context);
+            MessageContext context) {}
+
+    public void onStatus(
+            MessageExchangeCorrelator correlator,
+            MessageExchangeStatus status) {}
 
 }

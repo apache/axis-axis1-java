@@ -52,72 +52,63 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.ime.internal;
 
-package org.apache.axis.ime.internal.util.handler;
-
-import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.ime.MessageExchangeContext;
-import org.apache.axis.ime.MessageExchangeContextListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeFaultListener;
-import org.apache.axis.ime.internal.MessageExchangeProvider2;
+import org.apache.axis.ime.MessageExchangeStatusListener;
+
+import java.io.Serializable;
 
 /**
- * Used to wrap synchronous handlers (e.g. Axis 1.0 transports)
+ * Note: the only challenge with making this class serializable
+ * is that org.apache.axis.MessageContext is currently NOT
+ * serializable.  MessageContext needs to change in order to 
+ * take advantage of persistent Channels and CorrelatorServices
+ * 
+ * For thread safety, instances of this class are immutable
  * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class HandlerWrapper2
-        extends MessageExchangeProvider2 {
+public final class MessageExchangeSendContext
+        implements Serializable {
 
-    private Handler handler;
-
-    public HandlerWrapper2(Handler handler) {
-        this.handler = handler;
+    public static MessageExchangeSendContext newInstance(
+            MessageExchangeCorrelator correlator,
+            MessageContext context,
+            MessageExchangeFaultListener faultListener,
+            MessageExchangeStatusListener statusListener) {
+        MessageExchangeSendContext mectx =
+                new MessageExchangeSendContext();
+        mectx.correlator = correlator;
+        mectx.context = context;
+        mectx.faultListener = faultListener;
+        mectx.statusListener = statusListener;
+        return mectx;
     }
 
-    /**
-     * @see org.apache.axis.ime.internal.MessageExchangeProvider1#createSendMessageContextListener()
-     */
-    protected MessageExchangeContextListener createSendMessageContextListener() {
-        return new SendListener(handler);
+    protected MessageExchangeCorrelator correlator;
+    protected MessageExchangeFaultListener faultListener;
+    protected MessageExchangeStatusListener statusListener;
+    protected MessageContext context;
+
+    protected MessageExchangeSendContext() {
     }
 
-
-    public class SendListener
-            implements MessageExchangeContextListener {
-
-        private Handler handler;
-
-        public SendListener(Handler handler) {
-            this.handler = handler;
-        }
-
-        /**
-         * @see org.apache.axis.ime.MessageExchangeContextListener#onMessageExchangeContext(MessageExchangeContext)
-         */
-        public void onMessageExchangeContext(
-                MessageExchangeContext context) {
-            try {
-                MessageContext msgContext =
-                        context.getMessageContext();
-                MessageExchangeCorrelator correlator =
-                        context.getMessageExchangeCorrelator();
-            
-                // should I do init's and cleanup's in here?  
-                handler.invoke(msgContext);
-
-
-                RECEIVE.put(correlator, context);
-            } catch (Exception exception) {
-                MessageExchangeFaultListener listener =
-                        context.getMessageExchangeFaultListener();
-                if (listener != null)
-                    listener.onFault(
-                            context.getMessageExchangeCorrelator(),
-                            exception);
-            }
-        }
+    public MessageExchangeCorrelator getMessageExchangeCorrelator() {
+        return this.correlator;
     }
+
+    public MessageContext getMessageContext() {
+        return this.context;
+    }
+
+    public MessageExchangeFaultListener getMessageExchangeFaultListener() {
+        return this.faultListener;
+    }
+
+    public MessageExchangeStatusListener getMessageExchangeStatusListener() {
+        return this.statusListener;
+    }    
 }

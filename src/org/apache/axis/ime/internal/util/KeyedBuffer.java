@@ -52,43 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime;
+package org.apache.axis.ime.internal.util;
 
 /**
- * A MessageChannel is a low level hybrid FIFO Queue and Keyed map
- * that serves as the storage for inbound or outbound messages.
+ * A KeyedBuffer is a low level hybrid FIFO Queue and Keyed map
  * Each MessageExchange implementation will create at least two
- * MessageChannels, one for messages being sent, and another for
+ * KeyedBuffer's, one for messages being sent, and another for
  * messages that have been received.
  * 
- * MessageChannels differ from traditional FIFO Queues in that 
+ * KeyedBuffers differ from traditional FIFO Queues in that 
  * elements put in are keyed and can be taken out of order.
  * 
  * Different implementations may allow for variations on 
- * how the MessageChannel model is implemented.  For instance,
- * the code will ship with a NonPersistentMessageChannel that
+ * how the KeyedBuffer model is implemented.  For instance,
+ * the code will ship with a NonPersistentKeyedBuffer that
  * will store all contained objects in memory.  The fact that 
- * everything is stored in memory means that the Channel is not 
+ * everything is stored in memory means that the buffer is not 
  * fault tolerant.  If fault tolerance is required, then a 
- * PersistentMessageChannel must be created that stores the 
- * MessageContext objects somehow.
+ * Persistent KeyedBuffer must be created that persists the 
+ * objects somehow.
  * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public interface MessageChannel {
+public interface KeyedBuffer {
 
     /**
      * Select, but do not remove the next message on the
      * channel.  If one does not exist, return null
      */
-    public MessageExchangeContext peek();
+    public Object peek();
 
     /**
      * Put a message onto the channel
      */
     public void put(
             Object key,
-            MessageExchangeContext context);
+            Object context);
 
     /**
      * Cancel a message that has been put on the channel.
@@ -96,7 +95,7 @@ public interface MessageChannel {
      * and wait for a message with the specified key to be
      * put onto the MessageChannel.
      */
-    public MessageExchangeContext cancel(
+    public Object cancel(
             Object key);
 
     /**
@@ -108,13 +107,13 @@ public interface MessageChannel {
      * put new MessageContexts into the channel before this
      * operation completes)
      */
-    public MessageExchangeContext[] selectAll();
+    public Object[] selectAll();
 
     /**
      * Select and remove the next message in the channel
      * If a message is not available, wait indefinitely for one
      */
-    public MessageExchangeContext select()
+    public Object select()
             throws InterruptedException;
 
     /**
@@ -122,7 +121,7 @@ public interface MessageChannel {
      * If a message is not available, wait the specified amount
      * of time for one
      */
-    public MessageExchangeContext select(
+    public Object select(
             long timeout)
             throws InterruptedException;
 
@@ -131,7 +130,7 @@ public interface MessageChannel {
      * If the message is not available, wait indefinitely 
      * for one to be available
      */
-    public MessageExchangeContext select(
+    public Object select(
             Object key)
             throws InterruptedException;
 
@@ -140,8 +139,21 @@ public interface MessageChannel {
      * If the message is not available, wait the specified 
      * amount of time for one
      */
-    public MessageExchangeContext select(
+    public Object select(
             Object key,
             long timeout)
             throws InterruptedException;
+    
+    /**
+     * Select and remove the next object in the buffer
+     * (does not wait for a message to be put into the buffer)
+     */        
+    public Object get();
+
+    /**
+     * Select and remove the specified object in the buffer
+     * (does not wait for a message to be put into the buffer)
+     */            
+    public Object get(Object key);
+    
 }

@@ -52,32 +52,14 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.ime.internal;
 
-import org.apache.axis.i18n.Messages;
-import org.apache.axis.ime.MessageExchangeContextListener;
-
 /**
- * Serves as a base class for MessageExchangeProviders that
- * need to thread pooling only on  send message flows (as 
- * opposed to MessageExchangeProvider1 which does thread 
- * pooling on send AND receive flows)
- * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public abstract class MessageExchangeProvider2
-        extends MessageExchangeProvider {
+public interface ReceivedMessageDispatchPolicy {
 
-    protected abstract MessageExchangeContextListener createSendMessageContextListener();
-
-    public void init(long THREAD_COUNT) {
-        if (initialized)
-            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
-        for (int n = 0; n < THREAD_COUNT; n++) {
-            WORKERS.addWorker(SEND, createSendMessageContextListener());
-        }
-        initialized = true;
-    }
+    public void dispatch(
+            MessageExchangeSendContext context);
 
 }
