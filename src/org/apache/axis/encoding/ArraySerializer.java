@@ -134,17 +134,22 @@ public class ArraySerializer extends Deserializer
                     JavaUtils.getMessage("badArrayType00", "" + arrayTypeValue));
         }
 
+        Class componentType = null;
         String componentTypeName =
                         arrayTypeValueLocalPart.substring(0, leftBracketIndex);
-
+        
         if (componentTypeName.endsWith("]"))
         {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("noArrayArray00", "" + arrayTypeValue));
+            // If the componentTypeName is an array, use soap_enc:Array
+            // with a componentType of ArrayList.class
+            arrayItemType = new QName(Constants.URI_SOAP_ENC, "Array");
+            componentType = ArrayList.class;
+            //throw new IllegalArgumentException(
+            //        JavaUtils.getMessage("noArrayArray00", "" + arrayTypeValue));
         }
-        
-        arrayItemType = new QName(arrayTypeValueNamespaceURI,
-                                  componentTypeName);
+        else
+            arrayItemType = new QName(arrayTypeValueNamespaceURI,
+                                      componentTypeName);
 
         String lengthStr =
                        arrayTypeValueLocalPart.substring(leftBracketIndex + 1,
@@ -161,12 +166,17 @@ public class ArraySerializer extends Deserializer
             try
             {
                 length = Integer.parseInt(lengthStr);
-                Class componentType = context.getTypeMappingRegistry().
+
+                // If the componentType was not already determined to be an 
+                // array, go and get it.
+                if (componentType == null)
+                    componentType = context.getTypeMappingRegistry().
                                               getClassForQName(arrayItemType);
                 
                 if (componentType == null)
                     throw new SAXException(
                             JavaUtils.getMessage("noComponent00",  "" + arrayItemType));
+                
                 
                 ArrayList list = new ArrayList(length);
                 // ArrayList lacks a setSize(), so...
@@ -315,6 +325,20 @@ public class ArraySerializer extends Deserializer
                 componentType = list.get(0).getClass();
             }
         }
+
+        // Check to see if componentType is also an array.
+        // If so, set the componentType to the most nested non-array 
+        // componentType.  Increase the dims string by "[]"
+        // each time through the loop.  
+        // Note from Rich Scheuerle:
+        //    This won't handle Lists of Lists or
+        //    arrays of Lists....only arrays of arrays.
+        String dims = "";
+        while (componentType.isArray()) {
+            componentType = componentType.getComponentType();
+            dims += "[]";
+        }
+
         
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
@@ -324,7 +348,7 @@ public class ArraySerializer extends Deserializer
         String arrayType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
         
-        arrayType += "[" + len + "]";
+        arrayType += dims + "[" + len + "]";
         
         Attributes attrs = attributes;
         
