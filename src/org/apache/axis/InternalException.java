@@ -73,6 +73,28 @@ public class InternalException extends RuntimeException {
                 Category.getInstance(InternalException.class.getName());
 
     /**
+     * Attribute which controls whether or not logging of such events should
+     * occur.  Default is true and is recommended.  Sometimes this may be
+     * turned off in unit tests when internal errors are intentionally
+     * provoked.
+     */
+    private static boolean shouldLog = true;
+
+    /**
+     * Setter for logging.
+     */
+    public static void setLogging(boolean logging) {
+        shouldLog = logging;
+    }
+    
+    /**
+     * Getter for logging property.
+     */
+    public static boolean getLogging() {
+        return shouldLog;
+    }
+
+    /**
      * Construct an Internal Exception from a String.  The string is wrapped
      * in an exception, enabling a stack traceback to be obtained.
      * @param message String form of the error
@@ -88,19 +110,21 @@ public class InternalException extends RuntimeException {
     public InternalException(Exception e) {
         super(e.toString());
 
-        // if the exception is merely bubbling up the stack, only log the
-        // event if debug is turned on.
-        if (!(e instanceof InternalException)) {
-            category.fatal(e);
-        } else {
-            category.debug(e);
-        }
+        if (shouldLog) {
+            // if the exception is merely bubbling up the stack, only log the
+            // event if debug is turned on.
+            if (!(e instanceof InternalException)) {
+                category.fatal(e);
+            } else {
+                category.debug(e);
+            }
 
-        // if the debug is enabled, add a stack trace.
-        if (category.isDebugEnabled()) {
-            StringWriter writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            category.debug(writer.getBuffer().toString());
+            // if the debug is enabled, add a stack trace.
+            if (category.isDebugEnabled()) {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                category.debug(writer.getBuffer().toString());
+            }
         }
     }
 }
