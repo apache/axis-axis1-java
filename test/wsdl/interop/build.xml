@@ -178,7 +178,7 @@ Copyright:
     </wsdl2java>
     <!-- SOAPBuilders Interoperability Lab "Round 2" -->
     <!--     http://www.whitemesa.com/interop.htm    -->
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/std/interop.wsdl"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -189,7 +189,7 @@ Copyright:
         <mapping namespace="http://soapinterop.org/" package="interop.test"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/std/interopB.wsdl"
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
@@ -263,7 +263,7 @@ Copyright:
     <!-- Step 8.  Test second generated client against  -->
     <!--          pre-built server                      -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import1.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/r3/import1.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
@@ -303,7 +303,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import2    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/r3/import2.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
@@ -378,7 +378,7 @@ Copyright:
     <!-- SOAP Builder's round III web services -->
     <!-- interoperability testing:  import3    -->
     <!-- Steps 1, 2 and 4: -->
-    <wsdl2java url="http://www.whitemesa.com/r3/import3.wsdl"
+    <wsdl2java url="http://www.whitemesa.net/wsdl/r3/import3.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>
