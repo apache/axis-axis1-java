@@ -1,0 +1,60 @@
+<project name="EmptySATest" default="main" basedir="../../..">
+
+  <target name="check">
+    <echo message="${build.dest}"/>
+  </target>
+
+  <path id="test-classpath">
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+    <pathelement location="${java.home}/../lib/tools.jar"/>
+    <fileset dir="../java/lib">
+     <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <taskdef name="wsdl2java"
+           classname="test.wsdl.Wsdl2javaAntTask">
+      <classpath refid="test-classpath" />
+  </taskdef>
+
+  <taskdef name="java2wsdl"
+           classname="test.wsdl.Java2WsdlAntTask">
+      <classpath refid="test-classpath" />
+  </taskdef>
+
+  <target name="main">
+    <property file="axis.properties"/>
+
+    <!-- EmptySA -->
+    <!-- Steps 1, 2 and 4: -->
+    <wsdl2java url="http://www.whitemesa.com/r3/emptysa.wsdl"
+               output="${basedir}/build/work"
+               skeleton="yes">
+        <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa"/>
+    </wsdl2java>
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
+      <classpath refid="test-classpath" />
+      <include name="test/wsdl/interop3/emptysa/*.java" />
+    </javac>
+
+    <!-- Step 3:  see test/wsdl/interop3/Import1TestCase.java -->
+    <!-- Step 5:  see test/wsdl/interop3/Import1TestCase.java -->
+
+    <!-- Step 6:  -->
+    <java2wsdl output="${basedir}/build/work/test/wsdl/interop3/emptysa.wsdl"
+               className= "test.wsdl.interop3.emptysa.SoapInteropEmptySAPortType"
+               namespace="http://soapinterop/"
+           location="http://localhost:8080/axis/services/SoapInteropImport1Port">
+        <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa"/>
+    </java2wsdl>
+    <wsdl2java url="${basedir}/build/work/test/wsdl/interop3/emptysa.wsdl"
+               output="${basedir}/build/work"
+               skeleton="yes">
+        <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa.step6"/>
+    </wsdl2java>
+
+    <!-- Step 7:  see test/wsdl/interop3/Import1TestCase.java -->
+    <!-- Step 8:  see test/wsdl/interop3/Import1TestCase.java -->
+    </target>
+</project>
