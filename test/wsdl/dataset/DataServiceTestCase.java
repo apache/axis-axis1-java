@@ -33,7 +33,7 @@ public class DataServiceTestCase extends junit.framework.TestCase {
         
         try {
             // Test operation
-            test.wsdl.dataset.GetTitleAuthorsResult value = null;
+            test.wsdl.dataset._GetTitleAuthorsResponse_GetTitleAuthorsResult value = null;
             value = binding.getTitleAuthors();
             assertTrue(value != null);
             // TBD - validate results

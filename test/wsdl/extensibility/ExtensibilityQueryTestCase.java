@@ -53,7 +53,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
 
         try {
             ExtensibilityType expression = new ExtensibilityType(); 
-            FindBooksQueryExpressionElement bookQuery = new FindBooksQueryExpressionElement(); 
+            _FindBooksQueryExpressionElement bookQuery = new _FindBooksQueryExpressionElement(); 
             BookType book = new BookType();
             book.setSubject("all");
             bookQuery.setBookQuery(book);
@@ -64,7 +64,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             // validate results
             MessageElement [] anyContent = any.get_any();
             assertEquals(1, anyContent.length);
-            QueryResultElement resEl = (QueryResultElement )anyContent[0].getObjectValue();
+            _QueryResultElement resEl = (_QueryResultElement )anyContent[0].getObjectValue();
             assertNotNull("QueryResultElement back from anyContent[0].getObjectValue()", resEl);
             ResultListType result = resEl.getResultList();
             assertNotNull("ResultListType back from getResultList()", result);
@@ -91,11 +91,11 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     private void addDynamicTypeMappings(AxisEngine engine) throws Exception {
         TypeMappingRegistry registry = engine.getTypeMappingRegistry(); 
         TypeMapping mapping = registry.createTypeMapping();
-        addBeanMapping(mapping, "FindBooksQueryExpressionElement", FindBooksQueryExpressionElement.class);
+        addBeanMapping(mapping, "FindBooksQueryExpressionElement", _FindBooksQueryExpressionElement.class);
         addBeanMapping(mapping, "BookType", BookType.class);
         addBeanMapping(mapping, "ResultListType", ResultListType.class);
         addBeanMapping(mapping, "QueryResultType", QueryResultType.class);
-        addBeanMapping(mapping, "QueryResultElement", QueryResultElement.class);
+        addBeanMapping(mapping, "QueryResultElement", _QueryResultElement.class);
         registry.register("",mapping);
         EngineConfiguration config = engine.getConfig();
         config.writeEngineConfig(engine);

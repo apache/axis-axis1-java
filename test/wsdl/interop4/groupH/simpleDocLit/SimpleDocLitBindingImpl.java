@@ -8,30 +8,30 @@
 package test.wsdl.interop4.groupH.simpleDocLit;
 
 public class SimpleDocLitBindingImpl implements test.wsdl.interop4.groupH.simpleDocLit.SimpleDocLitPortType{
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoEmptyFaultResponse echoEmptyFault(test.wsdl.interop4.groupH.simpleDocLit.EchoEmptyFaultRequest param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.EmptyPart {
-        throw new EmptyPart();
+    public test.wsdl.interop4.groupH.simpleDocLit._echoEmptyFaultResponse echoEmptyFault(test.wsdl.interop4.groupH.simpleDocLit._echoEmptyFaultRequest param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit._EmptyPart {
+        throw new _EmptyPart();
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoStringFaultResponse echoStringFault(String param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoStringFaultResponse echoStringFault(String param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
         throw new StringFault(param);
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoIntArrayFaultResponse echoIntArrayFault(test.wsdl.interop4.groupH.simpleDocLit.ArrayOfInt param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfInt {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoIntArrayFaultResponse echoIntArrayFault(test.wsdl.interop4.groupH.simpleDocLit.ArrayOfInt param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfInt {
         throw param;
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults1Response echoMultipleFaults1(test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults1Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfFloat, test.wsdl.interop4.groupH.simpleDocLit.StringFault, test.wsdl.interop4.groupH.simpleDocLit.EmptyPart {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults1Response echoMultipleFaults1(test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults1Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfFloat, test.wsdl.interop4.groupH.simpleDocLit.StringFault, test.wsdl.interop4.groupH.simpleDocLit._EmptyPart {
         switch (param.getWhichFault()) {
             case 2:
                 throw new StringFault(param.getParam1());
             case 3:
                 throw new ArrayOfFloat(param.getParam2().getValue());
             default:
-                throw new EmptyPart();
+                throw new _EmptyPart();
         }
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults2Response echoMultipleFaults2(test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults2Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfString, test.wsdl.interop4.groupH.simpleDocLit.FloatFault, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults2Response echoMultipleFaults2(test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults2Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.ArrayOfString, test.wsdl.interop4.groupH.simpleDocLit.FloatFault, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
         switch (param.getWhichFault()) {
              case 2:
                  throw new StringFault(param.getParam1());
@@ -42,7 +42,7 @@ public class SimpleDocLitBindingImpl implements test.wsdl.interop4.groupH.simple
          }
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults3Response echoMultipleFaults3(test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults3Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.String2Fault, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults3Response echoMultipleFaults3(test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults3Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.String2Fault, test.wsdl.interop4.groupH.simpleDocLit.StringFault {
         switch (param.getWhichFault()) {
             case 2:
                 throw new String2Fault(param.getParam2());
@@ -51,7 +51,7 @@ public class SimpleDocLitBindingImpl implements test.wsdl.interop4.groupH.simple
         }
     }
 
-    public test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults4Response echoMultipleFaults4(test.wsdl.interop4.groupH.simpleDocLit.EchoMultipleFaults4Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.EnumFault, test.wsdl.interop4.groupH.simpleDocLit.IntFault {
+    public test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults4Response echoMultipleFaults4(test.wsdl.interop4.groupH.simpleDocLit._echoMultipleFaults4Request param) throws java.rmi.RemoteException, test.wsdl.interop4.groupH.simpleDocLit.EnumFault, test.wsdl.interop4.groupH.simpleDocLit.IntFault {
         switch (param.getWhichFault()) {
             case 2:
                 throw new EnumFault(param.getParam2());

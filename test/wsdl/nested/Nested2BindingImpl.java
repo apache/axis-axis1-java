@@ -7,14 +7,14 @@
 
 package test.wsdl.nested;
 import org.apache.axis.message.MessageElement;
-import test.wsdl.nested.holders.PE_ADDRESSHolder;
-import test.wsdl.nested.holders.RETURNHolder;
+import test.wsdl.nested.holders._PE_ADDRESSHolder;
+import test.wsdl.nested.holders._RETURNHolder;
 
 import javax.xml.namespace.QName;
 
 public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
-    public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PE_ADDRESSHolder pE_ADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {
-        PE_ADDRESS address = new PE_ADDRESS();
+    public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, _PE_ADDRESSHolder _PE_ADDRESS, _RETURNHolder rETURN) throws java.rmi.RemoteException {
+        _PE_ADDRESS address = new _PE_ADDRESS();
         address.setFORM_OF_AD("Company");
         address.setFIRST_NAME("");
         address.setNAME("Becker Berlin");
@@ -42,7 +42,7 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
                                                "Test Any");
         address.set_any(new MessageElement [] { me });
 
-        RETURN ret = new RETURN();
+        _RETURN ret = new _RETURN();
         ret.setTYPE("");
         ret.setCODE("");
         ret.setMESSAGE("");
@@ -53,7 +53,7 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
         ret.setMESSAGE_V3("");
         ret.setMESSAGE_V4("");
 
-        pE_ADDRESS.value = address;
+        _PE_ADDRESS.value = address;
         rETURN.value = ret;
     }
 
