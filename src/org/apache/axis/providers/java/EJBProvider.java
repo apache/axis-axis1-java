@@ -59,6 +59,7 @@ import org.apache.commons.logging.Log;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
+import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.ClassUtils;
@@ -82,6 +83,12 @@ public class EJBProvider extends RPCProvider
 {
     protected static Log log =
         LogFactory.getLog(EJBProvider.class.getName());
+
+    // The enterprise category is for stuff that an enterprise product might
+    // want to track, but in a simple environment (like the AXIS build) would
+    // be nothing more than a nuisance.
+    protected static Log entLog =
+        LogFactory.getLog(Constants.ENTERPRISE_LOG_CATEGORY);
 
     public static final String OPTION_BEANNAME = "beanJndiName";
     public static final String OPTION_HOMEINTERFACENAME = "homeInterfaceName";
@@ -303,7 +310,7 @@ public class EJBProvider extends RPCProvider
         }
         // Should probably catch javax.naming.NameNotFoundException here 
         catch (Exception exception) {
-            log.info(JavaUtils.getMessage("toAxisFault00"), exception);
+            entLog.info(JavaUtils.getMessage("toAxisFault00"), exception);
             throw AxisFault.makeFault(exception);
         }
 

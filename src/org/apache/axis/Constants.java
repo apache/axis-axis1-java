@@ -105,6 +105,12 @@ public class Constants {
         URI_SOAP12_ENV,
     };
 
+    // Constant name of the enterprise-style logging category.
+    // The enterprise category is for stuff that an enterprise product might
+    // want to track, but in a simple environment (like the AXIS build) would
+    // be nothing more than a nuisance.
+    public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
+
     /**
      * Returns true if SOAP_ENV Namespace
      */

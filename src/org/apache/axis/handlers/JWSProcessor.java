@@ -104,6 +104,12 @@ public class JWSProcessor extends BasicHandler
     protected static Log log =
         LogFactory.getLog(JWSProcessor.class.getName());
 
+    // The enterprise category is for stuff that an enterprise product might
+    // want to track, but in a simple environment (like the AXIS build) would
+    // be nothing more than a nuisance.
+    protected static Log entLog =
+        LogFactory.getLog(Constants.ENTERPRISE_LOG_CATEGORY);
+
     protected static HashMap soapServices = new HashMap();
 
     public void invoke(MessageContext msgContext) throws AxisFault
@@ -310,7 +316,7 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            log.debug(JavaUtils.getMessage("toAxisFault00"), e );
+            entLog.debug(JavaUtils.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
 
