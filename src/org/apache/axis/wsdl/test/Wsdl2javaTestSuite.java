@@ -239,7 +239,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
             int port = opts.getPort();
             ServerSocket ss = new ServerSocket(port);
             server.setServerSocket(ss);
-            server.run();
+            new Thread(server).start();
 
             Iterator testIterator = Wsdl2javaTestSuite.fileNames.iterator();
             while (testIterator.hasNext()) {
@@ -248,7 +248,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 Iterator files = ((List) testIterator.next()).iterator();
                 while (files.hasNext()) {
                     String fileName = (String) files.next();
-                    if (fileName.endsWith("deploy.xml")) {
+                    if (fileName.endsWith("/deploy.xml")) {
                         deploy = fileName;
                     }
                 }
@@ -267,7 +267,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 Iterator files = ((List) testIterator.next()).iterator();
                 while (files.hasNext()) {
                     String fileName = (String) files.next();
-                    if (fileName.endsWith("undeploy.xml")) {
+                    if (fileName.endsWith("/undeploy.xml")) {
                         undeploy = fileName;
                     }
                 }
