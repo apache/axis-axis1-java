@@ -104,12 +104,17 @@ public class AxisServlet extends HttpServlet
     protected static Log log =
         LogFactory.getLog(AxisServlet.class.getName());
 
-    // These have default values.
-    private String transportName = "http";
-    private AxisEngine engine = null;
-    private ServletSecurityProvider securityProvider = null;
+    public static final String INIT_PROPERTY_TRANSPORT_NAME = "transport.name";
+    public static final String INIT_PROPERTY_USE_SECURITY = "use-servlet-security";
+    public static final String INIT_PROPERTY_ENABLE_LIST = "axis.enableListQuery";
+    public static final String INIT_PROPERTY_JWS_CLASS_DIR = "axis.jws.servletClassDir";
+    
+    private static final String ATTR_AXIS_ENGINE = "AxisEngine" ;
 
-    private static final String AXIS_ENGINE = "AxisEngine" ;
+    // These have default values.
+    private String transportName;
+    private AxisServer axisServer = null;
+    private ServletSecurityProvider securityProvider = null;
 
     private static boolean isDebug = false;
 
@@ -145,28 +150,18 @@ public class AxisServlet extends HttpServlet
         isDebug= log.isDebugEnabled();
         if(isDebug) log.debug("In servlet init");
 
-        String param = getInitParameter("transport.name");
+        transportName = getOption(context, INIT_PROPERTY_TRANSPORT_NAME,
+                                  HTTPTransport.DEFAULT_TRANSPORT_NAME);
 
-        if (param == null)
-            param = context.getInitParameter("transport.name");
-        if (param != null)
-            transportName = param;
-
-        param = getInitParameter("use-servlet-security");
-        if ((param != null) && (param.equalsIgnoreCase("true"))) {
+        if (isTrue(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
             securityProvider = new ServletSecurityProvider();
         }
 
-        param = System.getProperty("axis.enableListQuery");
-        if (!(param == null) && (param.equalsIgnoreCase("true"))) {
-            enableList = true;
-        }
+        enableList = isTrue(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
 
-        // Allow system property to override our default placement of
-        // JWS class files.
-        param = System.getProperty("axis.jws.servletClassDir");
-        if (param != null) {
-            jwsClassDir = homeDir + param;
+        jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
+        if (jwsClassDir != null) {
+            jwsClassDir = homeDir + jwsClassDir;
         } else {
             jwsClassDir = getDefaultJWSClassDir();
         }
@@ -174,18 +169,21 @@ public class AxisServlet extends HttpServlet
 
     /**
      * Destroy method is called when the servlet is going away.  Pass this
-     * down to the AxisEngine to let it clean up.
+     * down to the AxisEngine to let it clean up...  But don't create the
+     * engine if it hasn't already been created.
      */
     public void destroy() {
         super.destroy();
-        try {
-            getEngine().cleanup();
-        } catch (AxisFault fault) {
-            log.error(JavaUtils.getMessage("faultDuringCleanup"), fault);
+        if (axisServer != null) {
+            axisServer.cleanup();
         }
     }
 
-    public AxisServer getEngine() throws AxisFault { return getEngine(this); }
+    public AxisServer getEngine() throws AxisFault {
+    	if (axisServer == null)
+    	    axisServer = getEngine(this);
+    	return axisServer;
+    }
 
     /**
      * This is a uniform method of initializing AxisServer in a servlet
@@ -198,20 +196,8 @@ public class AxisServlet extends HttpServlet
 
         ServletContext context = servlet.getServletContext();
 
-        if (context.getAttribute("AxisEngine") == null) {
-            String webInfPath = context.getRealPath("/WEB-INF");
-
-            EngineConfiguration config =
-                (new ServletEngineConfigurationFactory(context)).getServerEngineConfig();
-
-            Map environment = new HashMap();
-            environment.put(AxisEngine.ENV_SERVLET_CONTEXT, context);
-            String attdir= servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
-            if(attdir != null) environment.put(AxisEngine.ENV_ATTACHMENT_DIR, attdir);
-            if(null != webInfPath){
-                environment.put(AxisEngine.ENV_SERVLET_REALPATH, webInfPath + File.separator + "attachments");
-            }
-            environment.put(EngineConfiguration.PROPERTY_NAME, config);
+        if (context.getAttribute(ATTR_AXIS_ENGINE) == null) {
+            Map environment = getEngineEnvironment(servlet);
 
             // Obtain an AxisServer by using whatever AxisServerFactory is
             // registered.  The default one will just use the provider we
@@ -224,15 +210,38 @@ public class AxisServlet extends HttpServlet
             // container, and pre-registered in JNDI at deployment time.  It
             // also means we put the standard configuration pattern in one
             // place.
-            context.setAttribute("AxisEngine", 
-                                 AxisServer.getServer(environment));
+            context.setAttribute(ATTR_AXIS_ENGINE, AxisServer.getServer(environment));
         }
 
         if (isDebug) 
             log.debug("Exit: getEngine()");
 
-        return (AxisServer)context.getAttribute("AxisEngine");
+        return (AxisServer)context.getAttribute(ATTR_AXIS_ENGINE);
     }
+
+    
+    private static Map getEngineEnvironment(HttpServlet servlet) {
+        Map environment = new HashMap();
+        
+		String attdir= servlet.getInitParameter(AxisEngine.ENV_ATTACHMENT_DIR);
+		if (attdir != null)
+            environment.put(AxisEngine.ENV_ATTACHMENT_DIR, attdir);
+
+        ServletContext context = servlet.getServletContext();
+        environment.put(AxisEngine.ENV_SERVLET_CONTEXT, context);
+
+		String webInfPath = context.getRealPath("/WEB-INF");
+		if (webInfPath != null)
+		    environment.put(AxisEngine.ENV_SERVLET_REALPATH,
+                            webInfPath + File.separator + "attachments");
+		
+		EngineConfiguration config =
+		    (new ServletEngineConfigurationFactory(context)).getServerEngineConfig();
+        environment.put(EngineConfiguration.PROPERTY_NAME, config);
+		
+		return environment;
+	}
+
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException
@@ -244,29 +253,23 @@ public class AxisServlet extends HttpServlet
 
         try
         {
-            if (engine == null) {
-                try {
-                    engine = getEngine();
-                } catch (AxisFault fault) {
-                    res.setContentType("text/html");
-                    writer.println("<h2>" +
-                                   JavaUtils.getMessage("error00") + "</h2>");
-                    writer.println("<p>" +
-                                   JavaUtils.getMessage("somethingWrong00") + "</p>");
-                    writer.println("<pre>" + fault.toString() + " </pre>");
-                    return;
-                }
+            AxisEngine engine = getEngine();
+            try {
+                engine = getEngine();
+            } catch (AxisFault fault) {
+                res.setContentType("text/html");
+                writer.println("<h2>" +
+                               JavaUtils.getMessage("error00") + "</h2>");
+                writer.println("<p>" +
+                               JavaUtils.getMessage("somethingWrong00") + "</p>");
+                writer.println("<pre>" + fault.toString() + " </pre>");
+                return;
             }
 
-            ServletContext context = getServletConfig().getServletContext();
-            MessageContext msgContext = new MessageContext(engine);
-
-            msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
-                                   jwsClassDir);
-            msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
-
+            ServletContext servletContext = getServletConfig().getServletContext();
+            
             String pathInfo = req.getPathInfo();
-            String realpath = context.getRealPath(req.getServletPath());
+            String realpath = servletContext.getRealPath(req.getServletPath());
             if ((pathInfo == null || pathInfo.equals("")) &&
                 !realpath.endsWith(".jws")) {
                 res.setContentType("text/html");
@@ -287,42 +290,22 @@ public class AxisServlet extends HttpServlet
                     }
                 }
                 writer.println("</ul>");
-                return;
-            }
-
-            String configPath = webInfPath;
-            if (realpath != null) {
-                msgContext.setProperty(Constants.MC_RELATIVE_PATH,
-                                       req.getServletPath());
-                msgContext.setProperty(Constants.MC_REALPATH, realpath);
-                msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
-
-                /* Set the Transport */
-                /*********************/
-                msgContext.setTransportName(transportName);
-
-                /* Save some HTTP specific info in the bag in case we need it */
-                /**************************************************************/
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res);
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
-                                       webInfPath);
-                msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
-                                       req.getPathInfo() );
-                msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
-                                       req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
-                msgContext.setProperty(Constants.MC_REMOTE_ADDR,
-                                       req.getRemoteAddr());
-
+            } else if (realpath != null) {
+	            /**
+                 * get message context w/ various properties set
+	             */
+	            MessageContext msgContext = getMessageContext(engine, req, res);
+	
                 try {
                     // NOTE:  HttpUtils.getRequestURL has been deprecated.
                     // This line SHOULD be:
                     //    String url = req.getRequestURL().toString()
                     // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
                     // req.getRequestURL that is not in HttpUtils.getRequestURL
-                    // req.getRequestURL returns"localhost" in the remote
+                    // req.getRequestURL returns "localhost" in the remote
                     // scenario rather than the actual host name.
+                    //
+                    // ? Still true?  For which JVM's?
                     String url = HttpUtils.getRequestURL(req).toString();
 
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
@@ -388,6 +371,7 @@ public class AxisServlet extends HttpServlet
                                     "</" + param + ">";
                             }
                         }
+                        
                         if (method == null) {
                             writer.println("<h2>" +
                                            JavaUtils.getMessage("error00") +
@@ -396,31 +380,31 @@ public class AxisServlet extends HttpServlet
                                            "</h2>");
                             writer.println("<p>" +
                                            JavaUtils.getMessage("noMethod01") + "</p>");
-                            return;
-                        }
-                        String body = "<" + method + ">" + args +
-                            "</" + method + ">";
-                        String msgtxt = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
-                            "</SOAP-ENV:Envelope>";
-                        ByteArrayInputStream istream = new ByteArrayInputStream(
-                                msgtxt.getBytes());
-                        Message msg = new Message(istream, false);
-                        msgContext.setRequestMessage(msg);
-                        //                    if (msg != null) {
-                        //                        writer.println(msg.getAsString());
-                        //                        return;
-                        //                    }
-                        engine.invoke(msgContext);
-                        Message respMsg = msgContext.getResponseMessage();
-                        if (respMsg != null) {
-                            writer.println("<p>" +
-                                           JavaUtils.getMessage("gotResponse00") +
-                                           "</p>");
-                            writer.println(respMsg.getSOAPPartAsString());
                         } else {
-                            writer.println("<p>" +
-                                           JavaUtils.getMessage("noResponse01") + "</p>");
+	                        String body = "<" + method + ">" + args +
+	                            "</" + method + ">";
+	                        String msgtxt = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+	                            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
+	                            "</SOAP-ENV:Envelope>";
+	                        ByteArrayInputStream istream = new ByteArrayInputStream(
+	                                msgtxt.getBytes());
+	                        Message msg = new Message(istream, false);
+	                        msgContext.setRequestMessage(msg);
+	                        //                    if (msg != null) {
+	                        //                        writer.println(msg.getAsString());
+	                        //                        return;
+	                        //                    }
+	                        engine.invoke(msgContext);
+	                        Message respMsg = msgContext.getResponseMessage();
+	                        if (respMsg != null) {
+	                            writer.println("<p>" +
+	                                           JavaUtils.getMessage("gotResponse00") +
+	                                           "</p>");
+	                            writer.println(respMsg.getSOAPPartAsString());
+	                        } else {
+	                            writer.println("<p>" +
+	                                           JavaUtils.getMessage("noResponse01") + "</p>");
+	                        }
                         }
                     } else {
                         res.setContentType("text/html");
@@ -462,10 +446,10 @@ public class AxisServlet extends HttpServlet
             }
         } finally {
             writer.close();
-        }
 
-        if (isDebug) 
-            log.debug("Exit: doGet()");
+	        if (isDebug) 
+	            log.debug("Exit: doGet()");
+        }
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -474,220 +458,253 @@ public class AxisServlet extends HttpServlet
         if (isDebug) 
             log.debug("Enter: doPost()");
 
-        if (engine == null) {
-            try {
-                engine = getEngine();
-            } catch (AxisFault fault) {
-                log.error(JavaUtils.getMessage("axisFault00"), fault);
-                Message msg = new Message(fault);
-                res.setContentType( msg.getContentType() );
-                res.setContentLength( msg.getContentLength() );
-                try {
-                    msg.writeTo(res.getOutputStream());
-                } catch (SOAPException e){
-                    log.error(JavaUtils.getMessage("exception00"), e);
-                }
-                return;
-            }
-        }
-
-        ServletConfig  config  = getServletConfig();
-        ServletContext context = config.getServletContext();
-        res.setBufferSize(1024 * 8); //provide performance boost.       
-
-        if (engine == null) {
-            log.debug("No engine, looking in servlet context");
-            engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
-        }
-
-        if (engine == null) {
-            // !!! should return a SOAP fault...
-            ServletException se =
-                    new ServletException(JavaUtils.getMessage("noEngine00"));
-            log.debug("No Engine!", se);
-            throw se; 
-        }
-
-        /* Place the Request message in the MessagContext object - notice */
-        /* that we just leave it as a 'ServletRequest' object and let the  */
-        /* Message processing routine convert it - we don't do it since we */
-        /* don't know how it's going to be used - perhaps it might not     */
-        /* even need to be parsed.                                         */
-        /*******************************************************************/
-        MessageContext    msgContext = new MessageContext(engine);
-        if(isDebug) log.debug("MessageContext:" + msgContext );
-
-        if(isDebug) log.debug("HEADER_CONTENT_TYPE:" +  
-          req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
-        if(isDebug) log.debug("HEADER_CONTENT_LOCATION:" +
-          req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
-
-        Message msg = new Message( req.getInputStream(),
-                       false,
-                       req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE),
-                       req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
-        if(isDebug) log.debug("Message:" + msg);
-
-        /* Set the request(incoming) message field in the context */
-        /**********************************************************/
-        msgContext.setRequestMessage( msg );
-
-        /* Set the Transport */
-        /*********************/
-        msgContext.setTransportName(transportName);
-
-        /* Save some HTTP specific info in the bag in case someone needs it */
-        /********************************************************************/
-        msgContext.setProperty(Constants.MC_JWS_CLASSDIR, jwsClassDir);
-        msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
-        msgContext.setProperty(Constants.MC_RELATIVE_PATH,
-                               req.getServletPath());
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
-                               webInfPath );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
-                               req.getPathInfo() );
-        msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
-                          req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
-        msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
-
-
-        if (securityProvider != null)
-            msgContext.setProperty("securityProvider", securityProvider);
-
-        if(isDebug){
-            log.debug("Constants.MC_HOME_DIR:" + context.getRealPath("/"));
-            log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
-            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+
-                           webInfPath );
-            log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" + req.getPathInfo() );
-            log.debug("HTTPConstants.HEADER_AUTHORIZATION:" + req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
-            log.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
-            log.debug("securityProvider:"+securityProvider );
-        }
-
-        /* Save the SOAPAction header in the MessageContext bag - this will */
-        /* be used to tell the Axis Engine which service is being invoked.  */
-        /* This will save us the trouble of having to parse the Request     */
-        /* message - although we will need to double-check later on that    */
-        /* the SOAPAction header does in fact match the URI in the body.    */
-        /* (is this last stmt true??? (I don't think so - Glen))            */
-        /* if SOAPAction is "" then use the URL                             */
-        /* if SOAPAction is null then we'll we be forced to scan the body   */
-        /*   for it.                                                        */
-        /********************************************************************/
-        String  tmp ;
-        tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
-        if(isDebug) log.debug("HEADER_SOAP_ACTION:" + tmp);
-
+        Message responseMsg = null;
+        
         try {
-            /** Technically, if we don't find this header, we should probably fault.
-            * It's required in the SOAP HTTP binding.
-            */
-            if ( tmp == null ) {
-                AxisFault af=  new AxisFault( "Client.NoSOAPAction",
-                    JavaUtils.getMessage("noHeader00", "SOAPAction"),
-                    null, null );
-
-                log.error(JavaUtils.getMessage("genFault00"), af);
-
-                throw af; 
+            AxisEngine engine = getEngine();
+            
+            if (engine == null) {
+	            // !!! should return a SOAP fault...
+	            ServletException se =
+	                new ServletException(JavaUtils.getMessage("noEngine00"));
+	            log.debug("No Engine!", se);
+	            throw se; 
             }
+        
+            res.setBufferSize(1024 * 8); // provide performance boost.       
 
-            if ( "".equals(tmp) )
-                tmp = req.getContextPath(); // Is this right?
+            /** get message context w/ various properties set
+             */
+	        MessageContext msgContext = getMessageContext(engine, req, res);
+	
+	        // ? OK to move this to 'getMessageContext',
+            // ? where it would also be picked up for 'doGet()' ?
+	        if (securityProvider != null) {
+	            if (isDebug) log.debug("securityProvider:" + securityProvider);
+	            msgContext.setProperty("securityProvider", securityProvider);
+	        }
 
-            if ( tmp != null ) {
-                msgContext.setUseSOAPAction( true );
-                msgContext.setSOAPActionURI( tmp );
+            /* Get request message
+             */	
+	        Message requestMsg =
+	            new Message(req.getInputStream(),
+	                        false,
+	                        req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE),
+	                        req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION));
+	                       
+	        if(isDebug) log.debug("Request Message:" + requestMsg);
+	        
+	        /* Set the request(incoming) message field in the context */
+	        /**********************************************************/
+	        msgContext.setRequestMessage(requestMsg);
+        
+	        try {
+		        /* Save the SOAPAction header in the MessageContext bag - this will */
+		        /* be used to tell the Axis Engine which service is being invoked.  */
+		        /* This will save us the trouble of having to parse the Request     */
+		        /* message - although we will need to double-check later on that    */
+		        /* the SOAPAction header does in fact match the URI in the body.    */
+		        /* (is this last stmt true??? (I don't think so - Glen))            */
+		        /********************************************************************/
+	            String soapAction = getSoapAction(req);
+	
+	            if (soapAction != null) {
+	                msgContext.setUseSOAPAction(true);
+	                msgContext.setSOAPActionURI(soapAction);
+	            }
+	
+	            // Create a Session wrapper for the HTTP session.
+	            // These can/should be pooled at some point.  (Sam is Watching! :-)
+	            msgContext.setSession(new AxisHttpSession(req));
+	
+	            /* Invoke the Axis engine... */
+	            /*****************************/
+	            if(isDebug) log.debug("Invoking Axis Engine.");
+	            engine.invoke(msgContext);
+	            if(isDebug) log.debug("Return from Axis Engine.");
+            
+                responseMsg = msgContext.getResponseMessage();
+	        } catch (AxisFault e) {
+	            log.error(JavaUtils.getMessage("exception00"), e);
+		        // It's been suggested that a lack of SOAPAction should produce some
+		        // other error code (in the 400s)...
+	            res.setStatus(e.getHttpServletResponseStatus());
+                responseMsg = generateFaultResponse(msgContext.getRequestMessage(), e);
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                responseMsg = generateFaultResponse(msgContext.getRequestMessage(),
+                                                    AxisFault.makeFault(e));
             }
-
-            // Create a Session wrapper for the HTTP session.
-            // These can/should be pooled at some point.  (Sam is Watching! :-)
-            msgContext.setSession(new AxisHttpSession(req));
-
-            /* Save the real path */
-            /**********************/
-            String realpath = context.getRealPath(req.getServletPath());
-            if (realpath != null)
-                msgContext.setProperty(Constants.MC_REALPATH, realpath);
-
-            String configPath = webInfPath;
-            if(isDebug) log.debug("configPath:" + configPath);
-
-            msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
-
-            /* Invoke the Axis engine... */
-            /*****************************/
-            if(isDebug) log.debug("Invoking Axis Engine.");
-            engine.invoke( msgContext );
-            if(isDebug) log.debug("Return from Axis Engine.");
+        } catch (AxisFault fault) {
+            log.error(JavaUtils.getMessage("axisFault00"), fault);
+            responseMsg = new Message(fault);
         }
-        catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e);
 
-            if ( e instanceof AxisFault ) {
-                AxisFault  af = (AxisFault) e ;
-                // Should really be doing this with explicit AxisFault
-                // subclasses... --Glen
-                if ( "Server.Unauthorized".equals(af.getFaultCode().getLocalPart() ) )
-                    res.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
-                else
-                    res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
-                // It's been suggested that a lack of SOAPAction should produce some
-                // other error code (in the 400s)...
-            }
-            else
-                res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
-            if ( !(e instanceof AxisFault) )
-                e = AxisFault.makeFault(e);
-            if (msg == null) {
-                msg = new Message((AxisFault)e);
-                msgContext.setResponseMessage(msg);
-            } else {
-                try {
-                    SOAPEnvelope env = msg.getSOAPEnvelope();
-                    env.clearBody();
-                    env.addBodyElement(new SOAPFaultElement((AxisFault)e));
-                    msgContext.setResponseMessage(msg);
-                } catch (AxisFault af) {
-                    // Should never reach here!
-                }
-            }
-        }
-
-        /* Send it back along the wire...  */
+        /* Send response back along the wire...  */
         /***********************************/
-
-
-        if(null== (msg = msgContext.getResponseMessage())) {
-          if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
-          String resp= JavaUtils.getMessage("noData00");
-          res.setContentLength(resp.getBytes().length );
-          res.getWriter().print(resp);
-        } else {
-
-          if(isDebug) log.debug("Returned Content-Type:" + msg.getContentType());
-          int respContentlength=0;
-          res.setContentType( msg.getContentType() );
-          res.setContentLength(respContentlength=  msg.getContentLength() );
-          if(isDebug) log.debug("Returned Content-Length:" + respContentlength);
-          try {
-              msg.writeTo(res.getOutputStream());
-          } catch (SOAPException e){
-              log.error(JavaUtils.getMessage("exception00"), e);
-          }
-        }
-        if(!res.isCommitted()) {
-            res.flushBuffer(); //Force it right now.
-        }
-
+        if (responseMsg != null)
+            sendResponse(res, responseMsg);
+            
         if (isDebug) {
             log.debug("Response sent.");
             log.debug("Exit: doPost()");
         }
+    }
+    
+    /**
+     * Should never generate an exception, but if it does
+     * we want to be able to see evidence of it for tracing purpose
+     */
+    private Message generateFaultResponse(Message msg, AxisFault responseFault)
+        throws AxisFault
+    {
+        SOAPEnvelope env = msg.getSOAPEnvelope();
+        env.clearBody();
+        env.addBodyElement(new SOAPFaultElement(responseFault));
+        
+        return msg;
+    }
+    
+    private void sendResponse(HttpServletResponse res, Message responseMsg)
+        throws AxisFault, IOException
+    {
+        if (responseMsg == null) {
+            if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
+            String resp = JavaUtils.getMessage("noData00");
+            res.setContentLength(resp.getBytes().length);
+            res.getWriter().print(resp);
+        } else {
+            if(isDebug) {
+                log.debug("Returned Content-Type:" + responseMsg.getContentType());
+                log.debug("Returned Content-Length:" + responseMsg.getContentLength());
+            }
+
+            res.setContentType(responseMsg.getContentType());
+            res.setContentLength(responseMsg.getContentLength());
+            
+            try {
+                responseMsg.writeTo(res.getOutputStream());
+            } catch (SOAPException e){
+                log.error(JavaUtils.getMessage("exception00"), e);
+            }
+        }
+        
+        if (!res.isCommitted()) {
+            res.flushBuffer(); // Force it right now.
+        }
+    }
+
+    /**    
+     * Place the Request message in the MessagContext object - notice
+     * that we just leave it as a 'ServletRequest' object and let the
+     * Message processing routine convert it - we don't do it since we
+     * don't know how it's going to be used - perhaps it might not
+     * even need to be parsed.
+     */
+	private MessageContext getMessageContext(AxisEngine engine,
+                                             HttpServletRequest req,
+                                             HttpServletResponse res)
+    {
+        MessageContext msgContext = new MessageContext(engine);
+        
+        if(isDebug) {
+            log.debug("MessageContext:" + msgContext);
+            log.debug("HEADER_CONTENT_TYPE:" +
+                      req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
+            log.debug("HEADER_CONTENT_LOCATION:" +
+                      req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
+            log.debug("Constants.MC_HOME_DIR:" +
+                      getServletConfig().getServletContext().getRealPath("/"));
+            log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
+            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ webInfPath );
+            log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" + req.getPathInfo() );
+            log.debug("HTTPConstants.HEADER_AUTHORIZATION:" +
+                      req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
+            log.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
+            log.debug("configPath:" + webInfPath);
+        }
+
+        /* Set the Transport */
+		/*********************/
+		msgContext.setTransportName(transportName);
+
+		/* Save some HTTP specific info in the bag in case someone needs it */
+		/********************************************************************/
+		msgContext.setProperty(Constants.MC_JWS_CLASSDIR, jwsClassDir);
+		msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
+		msgContext.setProperty(Constants.MC_RELATIVE_PATH, req.getServletPath());
+		msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
+		msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
+		msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+		msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, webInfPath );
+		msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
+		                       req.getPathInfo() );
+		msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
+		                               req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
+		msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
+
+        /* Save the real path */
+        /**********************/
+        String realpath = getServletConfig().getServletContext().getRealPath(req.getServletPath());
+        if (realpath != null)
+            msgContext.setProperty(Constants.MC_REALPATH, realpath);
+            
+        msgContext.setProperty(Constants.MC_CONFIGPATH, webInfPath);
+
+        return msgContext;
+	}
+
+    /**
+     * if SOAPAction is null then we'll we be forced to scan the body for it.
+     * if SOAPAction is "" then use the URL
+     */
+    private String getSoapAction(HttpServletRequest req)
+        throws AxisFault
+    {
+        String soapAction = (String)req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+        if(isDebug) log.debug("HEADER_SOAP_ACTION:" + soapAction);
+
+        /**
+         * Technically, if we don't find this header, we should probably fault.
+         * It's required in the SOAP HTTP binding.
+         */
+        if (soapAction == null) {
+            AxisFault af = new AxisFault("Client.NoSOAPAction",
+                                         JavaUtils.getMessage("noHeader00", "SOAPAction"),
+                                         null, null);
+
+            log.error(JavaUtils.getMessage("genFault00"), af);
+
+            throw af; 
+        }
+
+        if (soapAction.length()==0)
+            soapAction = req.getContextPath(); // Is this right?
+                
+        return soapAction;
+    }
+    
+    /**
+     * Retrieve option, in order of precedence:
+     * System property, servlet init param, context init param.
+     * Use of system properties is discouraged in production environments,
+     * as it overrides everything else.
+     */
+    private String getOption(ServletContext context, String param, String dephault) {
+        String value = System.getProperty(param);
+
+        if (value == null)
+            value = getInitParameter(param);
+
+        if (value == null)
+            value = context.getInitParameter(param);
+		    
+        return (value != null) ? value : dephault;
+    }
+	
+    private static boolean isTrue(String value) {
+        return (value != null) && value.equalsIgnoreCase("true");
     }
 
     /**
