@@ -150,7 +150,11 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      * @return the value of a named property.
      */
     public Object _getProperty(String name) {
-        if (name != null) {
+        if (name == null) {
+            throw new JAXRPCException(
+                    Messages.getMessage("badProp05", name));
+        }
+        else {
             if (name.equals(Call.USERNAME_PROPERTY)) {
                 return cachedUsername;
             }
@@ -170,9 +174,6 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             else {
                 return cachedProperties.get(name);
             }
-        }
-        else {
-            return null;
         }
     } // _getProperty
 
