@@ -1046,8 +1046,7 @@ public class SymbolTable {
                                    input.getMessage().getOrderedParts(null),
                                    literalInput,
                                    operation.getName(),
-                                   bindingEntry,
-                                   false);
+                                   bindingEntry);
         }
 
         // Collect all the output parameters
@@ -1057,8 +1056,7 @@ public class SymbolTable {
                                    output.getMessage().getOrderedParts(null),
                                    literalOutput,
                                    operation.getName(),
-                                   bindingEntry,
-                                   true);  // output parts
+                                   bindingEntry); 
         }
 
         if (parameterOrder != null) {
@@ -1158,12 +1156,23 @@ public class SymbolTable {
         // then it's an inout parameter.
         // Don't bother doing this if the parameters are wrapped  since their
         // names won't be the part names.
-        if (outdex >= 0 && !wrapped) {
+        
+         if (outdex >= 0) {
             Parameter outParam = (Parameter)outputs.get(outdex);
             if (p.getType().equals(outParam.getType())) {
-                outputs.remove(outdex);
-                p.setMode(Parameter.INOUT);
-                ++parameters.inouts;
+                
+                // Some special case logic for JAX-RPC, but also to make things
+                // nicer for the user.
+                // If we have a single output, always make it the return value
+                //   instead of: void echo(StringHolder inout)
+                //   Do this:  string echo(string in)
+                if (wrapped && outputs.size() == 1) {
+                    ++parameters.inputs;
+                } else {
+                    outputs.remove(outdex);
+                    p.setMode(Parameter.INOUT);
+                    ++parameters.inouts;
+                }
             } else {
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
@@ -1222,10 +1231,8 @@ public class SymbolTable {
                                        Collection parts,
                                        boolean literal,
                                        String opName,
-                                       BindingEntry bindingEntry,
-                                       boolean outputParts)
+                                       BindingEntry bindingEntry)
             throws IOException {
-        Iterator i = parts.iterator();
 
         // Determine if there's only one element.  For wrapped
         // style, we normally only have 1 part which is an
@@ -1235,6 +1242,7 @@ public class SymbolTable {
         // the operation, we can unwrap it.
         int numberOfElements = 0;
         boolean possiblyWrapped = false;
+        Iterator i = parts.iterator();
         while (i.hasNext()) {
             Part part = (Part) i.next();
             if (part.getElementName() != null) {
@@ -1355,17 +1363,6 @@ public class SymbolTable {
                 wrapped = false;
             }
 
-            // More conditions for wrapped mode to track JAX-RPC RI behavior
-            // If we are dealing with output parameters:
-            // - wrapped operations "dig into" the structure of the returned element
-            //   and return the inner element type IF:
-            //  1) there are no attributes on the "wrapper" element
-            //  2) there is a single element inside the "wrapper" (the return type)
-            //
-            // - wrapped operations return a bean mapped to the entire return
-            //   element otherwise
-
-
             // Get the nested type entries.
             // TODO - If we are unable to represent any of the types in the
             // element, we need to use SOAPElement/SOAPBodyElement.
@@ -1373,12 +1370,9 @@ public class SymbolTable {
             Vector vTypes =
                     SchemaUtils.getContainedElementDeclarations(node, this);
 
-            // IF we got the types entries and we didn't find attributes
-            // AND either we are not doing output params OR
-            //     there is only one element in a wrapped output param
+            // IF we got the type entries and we didn't find attributes
             // THEN use the things in this element as the parameters
-            if (vTypes != null && wrapped &&
-                    (!outputParts) || (vTypes.size() <= 1 && outputParts)) {
+            if (vTypes != null && wrapped) {
                 // add the elements in this list
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
@@ -1391,27 +1385,14 @@ public class SymbolTable {
                 }
             } else {
                 // - we were unable to get the types OR
-                // - we found attributes OR
-                // - we are doing output parameters (and there is more than 1)
+                // - we found attributes 
                 // so we can't use wrapped mode.
                 param.setName(partName);
 
                 if (typeName != null) {
                     param.setType(getType(typeName));
                 } else if (elementName != null) {
-
-                    // An ugly hack here to set the referenced flag on the
-                    // element and the anonymous type that the element defines
-                    // There must be a better way to get this done.
-                    Element element = getElement(elementName);
-                    element.setIsReferenced(true);
-                    QName anonQName = SchemaUtils.getElementAnonQName(element.getNode());
-                    if (anonQName != null) {
-                        TypeEntry anonType = getType(anonQName);
-                        anonType.setIsReferenced(true);
-                    }
-
-                    param.setType(element);
+                    param.setType(getElement(elementName));
                 }
                 setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
