@@ -210,6 +210,7 @@ public class JavaWriterFactory implements WriterFactory {
                     if (eType != null && eType.equals(e.getQName()))
                         resolve = false;
                 }
+
                 // Other Special Case:
                 // If the names are already different, no mangling is needed.
                 if (resolve) {
@@ -229,14 +230,14 @@ public class JavaWriterFactory implements WriterFactory {
                     }
                 }
 
-                    
                 // Full Mangle if resolution is necessary.
                 if (resolve) {
                     boolean firstType = true;
                     for (int i = 0; i < v.size(); ++i) {
                         SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                         if (entry instanceof Element) {
-                            entry.setName(mangleName(entry.getName() , "_ElemType"));
+                            entry.setName(mangleName(entry.getName(),
+                                    "_ElemType"));
                         }
                         else if (entry instanceof TypeEntry) {
                             // Search all other types for java names that match this one.
@@ -246,30 +247,44 @@ public class JavaWriterFactory implements WriterFactory {
                                 firstType = false;
                                 Vector types = symbolTable.getTypes();
                                 for (int j = 0; j < types.size(); ++j) {
-                                    TypeEntry type = (TypeEntry) types.elementAt(j);
+                                    TypeEntry type = (TypeEntry)
+                                            types.elementAt(j);
                                     if (type != entry && 
-                                        !(type instanceof Element) &&
-                                        type.getBaseType() == null &&
-                                        sameJavaClass(((Type)entry).getName(), type.getName())) {
+                                            !(type instanceof Element) &&
+                                            type.getBaseType() == null &&
+                                            sameJavaClass(
+                                                    ((Type) entry).getName(),
+                                                    type.getName())) {
                                         v.add(type);  
                                     }
                                 }
                             }
-                            entry.setName(mangleName(entry.getName() , "_Type"));
+                            entry.setName(mangleName(entry.getName(), "_Type"));
                         }
                         else if (entry instanceof PortTypeEntry) {
-                            entry.setName(mangleName(entry.getName() , "_Port"));
+                            entry.setName(mangleName(entry.getName(), "_Port"));
                         }
                         else if (entry instanceof ServiceEntry) {
-                            entry.setName(mangleName(entry.getName() , "_Service"));
+                            entry.setName(mangleName(entry.getName(),
+                                    "_Service"));
                         }
                         // else if (entry instanceof MessageEntry) {
                         //     we don't care about messages
                         // }
-                        // else if (entry instanceof BindingEntry) {
-                        //     since files generated from bindings all append strings to the name,
-                        //     we don't care about bindings
-                        // }
+                         else if (entry instanceof BindingEntry) {
+                             BindingEntry bEntry = (BindingEntry) entry;
+
+                             // If there is no literal use, then we never see a
+                             // class named directly from the binding name.  They
+                             // all have suffixes:  Stub, Skeleton, Impl.
+                             // If there IS literal use, then the SDI will be
+                             // named after the binding name, so there is the
+                             // possibility of a name clash.
+                             if (bEntry.hasLiteral()) {
+                                 entry.setName(mangleName(entry.getName(),
+                                         "_Binding"));
+                             }
+                        }
                     }
                 }
             }

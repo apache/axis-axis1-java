@@ -346,16 +346,11 @@
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopc"/>
     </wsdl2java>
 
-    <!-- PortType/Service name clash test -->
-    <wsdl2java url="test/clash/AirportWeather.xml"
+    <!-- Name clash test -->
+    <wsdl2java url="test/wsdl/clash/clash.wsdl"
                output="build/work"
                testcase="yes"
-               deployscope="none"
-               skeleton="yes"
-               verbose="no"
-               noimports="no">
-        <mapping namespace="http://www.capeclear.com/AirportWeather.wsdl" package="test.clash"/>
-        <mapping namespace="http://www.capeclear.com/AirportWeather.xsd" package="test.clash.types"/>
+               skeleton="yes">
     </wsdl2java>
 
     <!-- WSDL fault generation test -->

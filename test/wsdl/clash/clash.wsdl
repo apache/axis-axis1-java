@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="name clash test"
+    targetNamespace="clash.wsdl.test"
+    xmlns:tns="clash.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="clash.wsdl.test"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="sharedName">
+        <xsd:all>
+          <xsd:element name="sharedName" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <message name="sharedName">
+    <part name="sharedName" type="tns:sharedName"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="sharedName">
+    <operation name="sharedName">
+      <input name="sharedName" message="tns:empty"/>
+      <output name="sharedName" message="tns:sharedName"/>
+    </operation>
+<!-- a bug in WSDL4J doesn't allow overloaded operations 
+    <operation name="sharedName">
+      <input name="sharedName" message="tns:sharedName"/>
+      <output name="empty" message="tns:empty"/>
+    </operation>
+    <operation name="sharedName">
+      <input name="empty" message="tns:empty"/>
+      <output name="sharedName" message="tns:sharedName"/>
+    </operation>
+-->
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="nonSharedName" type="tns:sharedName">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+<!-- a bug in WSDL4J doesn't allow overloaded operations 
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="empty">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+    <operation name="sharedName">
+      <input name="empty">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+-->
+  </binding>
+
+  <binding name="sharedName" type="tns:sharedName">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="literal"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+<!-- a bug in WSDL4J doesn't allow overloaded operations 
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="literal"/>
+      </input>
+      <output name="empty">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+    <operation name="sharedName">
+      <input name="empty">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+-->
+  </binding>
+
+  <binding name="anotherNonSharedName" type="tns:sharedName">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+<!-- a bug in WSDL4J doesn't allow overloaded operations 
+    <operation name="sharedName">
+      <input name="sharedName">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="empty">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+    <operation name="sharedName">
+      <input name="empty">
+        <soap:body use="encoded"/>
+      </input>
+      <output name="sharedName">
+        <soap:body use="encoded"/>
+      </output>
+    </operation>
+-->
+  </binding>
+
+  <!-- service decln -->
+  <service name="sharedName">
+    <port name="nonSharedName" binding="tns:nonSharedName">
+      <soap:address location="http://localhost:8080/axis/services/nonSharedName"/>
+    </port>
+    <port name="anotherNonSharedName" binding="tns:anotherNonSharedName">
+      <soap:address location="http://localhost:8080/axis/services/anotherNonSharedName"/>
+    </port>
+    <port name="sharedName" binding="tns:sharedName">
+      <soap:address location="http://localhost:8080/axis/services/sharedName"/>
+    </port>
+  </service>
+
+</definitions>
+
