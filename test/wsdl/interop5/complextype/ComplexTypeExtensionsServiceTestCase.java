@@ -7,14 +7,33 @@
 
 package test.wsdl.interop5.complextype;
 
+import java.net.URL;
+
 public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCase {
+    public static URL url = null;
+    
+    protected void setUp() throws Exception {
+        if(url == null) {
+            url = new URL(new test.wsdl.interop4.groupG.dime.doc.DimeDOCInteropLocator().getDimeDOCSoapPortAddress());
+        }
+    }    
+
+    public static void main(String[] args) throws Exception {
+        if (args.length == 1) {
+            url = new URL(args[0]);
+        } else {
+            url = new URL(new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPortAddress());
+        }
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(ComplexTypeExtensionsServiceTestCase.class));
+    } // main
+
     public ComplexTypeExtensionsServiceTestCase(java.lang.String name) {
         super(name);
     }
     public void test1ComplexTypeExtensionsPortEchoBaseType_1() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -38,7 +57,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test2ComplexTypeExtensionsPortEchoBaseType_2() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -64,7 +83,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test3ComplexTypeExtensionsPortEchoBaseType_3() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -92,7 +111,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test4ComplexTypeExtensionsPortEchoBaseType_4() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -120,7 +139,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test5ComplexTypeExtensionsPortEchoBaseType_5() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -150,7 +169,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test6ComplexTypeExtensionsPortEchoL1DerivedType_1() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -176,7 +195,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test7ComplexTypeExtensionsPortEchoL1DerivedType_2() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -204,7 +223,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test8ComplexTypeExtensionsPortEchoL2DerivedType1_1() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -232,7 +251,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test9ComplexTypeExtensionsPortEchoL1DerivedTypeAsBaseType() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -256,7 +275,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test10ComplexTypeExtensionsPortEchoL2DerivedType1AsBaseType() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -281,7 +300,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test11ComplexTypeExtensionsPortEchoBaseTypeAsL1DerivedType() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -306,7 +325,7 @@ public class ComplexTypeExtensionsServiceTestCase extends junit.framework.TestCa
     public void test12ComplexTypeExtensionsPortEchoBaseTypeAsL2DerivedType1() throws Exception {
         test.wsdl.interop5.complextype.ComplexTypeExtensionsPortType binding;
         try {
-            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort();
+            binding = new test.wsdl.interop5.complextype.ComplexTypeExtensionsServiceLocator().getComplexTypeExtensionsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
