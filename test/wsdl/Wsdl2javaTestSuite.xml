@@ -430,9 +430,12 @@
                testcase="yes">
     </wsdl2java>
 
-    <!-- This tests .NET document/literal WSDL.  -->
-    <!-- <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL" -->
-    <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl"
+    <!-- This tests .NET document/literal WSDL.
+         We get this WSDL file from the internet on purpose, 
+         file is only for reference.
+     -->
+    <!-- <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl" -->
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
                output="build/work"
                verbose="no"
                skeleton="no"
