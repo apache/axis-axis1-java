@@ -313,6 +313,28 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         }
         return tm;
     }
+    
+    /**
+     * Obtain a type mapping for the given namespaceURI.  If no specific
+     * mapping exists for this namespaceURI, we will create and register
+     * one before returning it.
+     * 
+     * @param namespaceURI
+     * @return a registered TypeMapping for the given namespaceURI
+     */ 
+    public TypeMapping getOrMakeTypeMapping(String namespaceURI) {
+        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
+        TypeMapping tm = null;
+        if (del != null) {
+            tm = del.getDelegate();
+        }
+        if (tm == null) {
+            tm = (TypeMapping)createTypeMapping();
+            tm.setSupportedEncodings(new String[] {namespaceURI});
+            register(namespaceURI, tm);
+        }
+        return tm;
+    }
 
     /**
      * Unregisters the TypeMapping for the namespace.

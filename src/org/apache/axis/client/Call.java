@@ -1792,14 +1792,7 @@ public class Call implements javax.xml.rpc.Call {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
 
         // If a TypeMapping is not available, add one.
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(getEncodingStyle());
-        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-        if (tm == null || tm == defaultTM ) {
-            tm = (TypeMapping) tmr.createTypeMapping();
-            tm.setSupportedEncodings(new String[] {getEncodingStyle()});
-            tmr.register(getEncodingStyle(), tm);
-        }
-        return tm;
+        return tmr.getOrMakeTypeMapping(getEncodingStyle());
     }
 
     /**

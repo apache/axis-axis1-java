@@ -68,6 +68,16 @@ public interface TypeMappingRegistry
      * their corresponding types in the secondary TMR.
      */
     public void delegate(TypeMappingRegistry secondaryTMR);
+    
+    /**
+     * Obtain a type mapping for the given namespaceURI.  If no specific
+     * mapping exists for this namespaceURI, we will create and register
+     * one before returning it.
+     * 
+     * @param namespaceURI
+     * @return a registered TypeMapping for the given namespaceURI
+     */ 
+    public TypeMapping getOrMakeTypeMapping(String namespaceURI);
 }
 
 
