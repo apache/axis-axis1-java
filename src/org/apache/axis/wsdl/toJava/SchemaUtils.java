@@ -479,8 +479,7 @@ public class SchemaUtils {
             // Process the enumeration elements underneath the restriction node
             if (baseEType != null && restrictionNode != null) {
 
-                Vector v = new Vector();
-                v.add(baseEType);
+                Vector v = new Vector();                
                 NodeList enums = restrictionNode.getChildNodes();
                 for (int i=0; i < enums.getLength(); i++) {
                     QName enumKind = Utils.getNodeQName(enums.item(i));
@@ -496,6 +495,12 @@ public class SchemaUtils {
                         }
                     }
                 }
+                
+                // is this really an enumeration?
+                if(v.isEmpty()) return null;
+                
+                // The first element in the vector is the base type (an TypeEntry).
+                v.add(0,baseEType);
                 return v;
             }
         }

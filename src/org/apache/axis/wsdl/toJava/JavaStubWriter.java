@@ -397,7 +397,10 @@ public class JavaStubWriter extends JavaWriter {
     private void writeSerializationInit(TypeEntry type) throws IOException {
         // Don't need to register base types or
         // our special collection types for indexed properties
-        if (type.getBaseType() != null ||
+        // Note that we still have to register types derived from base types
+        // This is necessary to be able to properly identify such derived types
+        // during deserialization
+        if ((type.getBaseType() != null && type.getRefType() == null) ||
             type instanceof CollectionType) {
             return;
         }
@@ -437,6 +440,17 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            cachedDeserFactories.add(enumdf);");
         } else if (type.isSimpleType()) {
             pw.println("            cachedSerFactories.add(simplesf);");
+            pw.println("            cachedDeserFactories.add(simpledf);");
+        } else if (type.getBaseType() != null) {
+            // serializers are not required for types derived from base types
+            // java type to qname mapping is anyway established by default
+            // note that we have to add null to the serfactories vector to
+            // keep the order of other entries, this is not going to screw
+            // up because if type mapping returns null for a serialization
+            // factory, it is assumed to be not-defined and the delegate
+            // will be checked, the end delegate is DefaultTypeMappingImpl
+            // that'll get it right with the base type name
+            pw.println("            cachedSerFactories.add(null);");
             pw.println("            cachedDeserFactories.add(simpledf);");
         } else {
             pw.println("            cachedSerFactories.add(beansf);");
