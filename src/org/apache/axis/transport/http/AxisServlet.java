@@ -233,7 +233,9 @@ public class AxisServlet extends HttpServlet
         msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
 
         String pathInfo = req.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("")) {
+        String realpath = context.getRealPath(req.getServletPath());
+        if ((pathInfo == null || pathInfo.equals("")) &&
+            !realpath.endsWith(".jws")) {
             res.setContentType("text/html");
             writer.println("<h2>And now... Some Services</h2>");
             Iterator i = engine.getConfig().getDeployedServices();
@@ -255,7 +257,6 @@ public class AxisServlet extends HttpServlet
             return;
         }
 
-        String realpath = context.getRealPath(req.getServletPath());
         String configPath = webInfPath;
         if (realpath != null) {
             msgContext.setProperty(Constants.MC_RELATIVE_PATH,
