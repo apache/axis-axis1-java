@@ -476,6 +476,153 @@ to your configuration!</b>
 <h2>
 <a NAME="DataMapping"></a>XML &lt;-> Java Data Mapping in Axis</h2>
 
+<h3>How your Java types map to SOAP/XML types</h3>
+
+The JAX-RPC specification determines how Java types are mapped to WSDL and vice versa. 
+So read chapters 4 and 5 of the <a href="http://java.sun.com/xml/jaxrpc/">
+specification</a> to fully understand how things are converted. Here are
+some of the salient points. 
+
+
+<h4>Standard mappings from WSDL to Java</h4>
+<table>
+<tr><td>xsd:base64Binary </td><td><tt>byte[]</tt></td></tr>
+<tr><td>xsd:boolean </td><td><tt>boolean</tt></td></tr>
+<tr><td>xsd:byte </td><td><tt>byte</tt></td></tr>
+<tr><td>xsd:dateTime </td><td><tt>java.util.Calendar</tt></td></tr>
+<tr><td>xsd:decimal </td><td><tt>java.math.BigDecimal</tt></td></tr>
+<tr><td>xsd:double </td><td><tt>double</tt></td></tr>
+<tr><td>xsd:float </td><td><tt>float</tt></td></tr>
+<tr><td>xsd:hexBinary </td><td><tt>byte[]</tt></td></tr>
+<tr><td>xsd:int</td><td><tt> int</tt></td></tr>
+<tr><td>xsd:integer</td><td><tt>java.math.BigInteger</tt></td></tr>
+<tr><td>xsd:long </td><td><tt>long</tt></td></tr>
+<tr><td>xsd:QName </td><td><tt>javax.xml.namespace.QName</tt></td></tr>
+<tr><td>xsd:short </td><td><tt>short</tt></td></tr>
+<tr><td>xsd:string</td><td><tt>java.lang.String</tt></td></tr>
+</table>
+<p>
+
+If the WSDL says that an object can be <tt>nillable</tt>, that is the
+caller may choose to return a value of <tt>nil</tt>, then the primitive
+data types are replaced by their wrapper classes, such as Byte, Double,
+Boolean, etc. 
+
+<p>
+
+Alongside the XSD datatypes are the SOAP 'section 5' datatypes that are
+all nillable, and so only ever map to the wrapper classes. These
+datatypes date from an era before XML Schema; now that XSD is final and
+support is common, there should be no reason to write services that
+serve the SOAP datatypes rather than the XSD alternatives. 
+
+<h3>Exceptions</h3>
+
+This is an area which causes plenty of confusion, and indeed, the author
+of this section is not entirely sure how everything works, especially
+from an interop perspective. This means treat this section as
+incomplete and potentially inaccurate. See also section 5.5.5 and
+chapter 14 in the JAX-RPC specification
+
+<h4>RemoteExceptions map to SOAP Faults</h4>
+
+If the server method throws a <tt>java.rmi.RemoteException</tt> then
+this will be mapped into a SOAP Fault. The <tt>faultcode</tt> of this will contain
+the classname of the fault. The recipient is expected to deserialize the
+body of the fault against the classname. 
+
+<p>
+
+Obviously, if the recipient does not know how to create an instance of
+the received fault, this mechanism does not work. Unless you include
+information about the exception class in the WSDL description of the
+service, or sender and receiver share the implementation, 
+you can only reliably throw <tt>java.rmi.RemoteException</tt>
+instances, rather than subclasses.
+
+<p>
+
+When an implementation in another language receives such an exception,
+it should see the name of the class as the faultCode, but still be left
+to parse the body of the exception. You need to experiment to find out
+what happens there. 
+
+<h4>Exceptions are represented as <tt>wsdl:fault</tt> elements</h4>
+ 
+If a method is marked as throwing an <tt>Exception</tt>, that is not
+an instance or a subclass of <tt>java.rmi.RemoteException</tt>, then
+things are subtly different. The exception is no longer a SOAP Fault, but
+described as a <tt>wsdl:fault</tt> in the WSDL of the method. 
+
+According to the JAX-RPC specification, your subclass of Exception 
+must have accessor methods to access all the fields in the object to be
+marshalled <i>and</i> a constructor that takes as parameters all the 
+same fields (i.e arguments of the same name and type). This is a kind of
+immutable variant of a normal JavaBean. The fields in the object must be
+of the datatypes that can be reliably mapped into WSDL.
+
+<p>
+
+If your exception meet this specification, then the WSDL describing the
+method will describe the exception too, enabling callers to create stub
+implementations of the exception , regardless of platform. 
+
+<p>
+
+Again, to be sure of interoperability, you need to be experiment a bit.
+Remember, the calling language may not have the notion of Exceptions, or
+at least not be as rigorous as Java in the rules as to how exceptions
+must be handled. 
+
+<h4>What Axis can not send via SOAP</h4>
+
+<h5>Unsigned data</h5>
+
+You cannot consume or generate services that use unsigned datatypes with
+JAX-RPC or Axis. This can be an issue if you are consuming Web Services
+written in other languages, or implementing a service against a WSDL
+specification or XSD schema that uses them. Axis may add support for
+unsigned datatypes if we can come up with an elegant solution and
+somebody (it could be you...) invests the time to implement it, or when
+a revision of JAX-RPC adds this. The fundamental problem is of course
+the lack of unsigned datatypes in Java.
+
+
+
+<h5>Arbitrary Objects without registration</h5>
+
+You cannot send arbitrary Java objects over the wire and expect them to
+be understood at the far end. With RMI you can send and receive
+<tt>Serializable</tt> Java objects, but that is because you are running
+Java at both ends. Axis will only send objects for which there is a
+registered Axis serializer. This document will shortly show how to use
+the BeanSerializer to serialize any class that follows the JavaBean
+pattern of accessor and mutator. To serve up objects you must either
+register your classes with this BeanSerializer, or there must be
+serialization support built in to Axis.
+
+
+<h5>Java Collections</h5>
+
+Some of the Collection classes, such as <tt>HashTable</tt> do have
+serializers, but there is no formal interoperability with other SOAP
+implementations, and nothing in the SOAP specifications which covers
+complex objects. The most reliable way to send aggregate objects is to
+use arrays. 
+
+This is an ongoing issue with SOAP interop; expect it to slowly improve
+over time.
+
+<h5>Remote References</h5>
+
+This is neither part of the SOAP specification, or the JAX-RPC
+specification. You cannot return some object reference and expect the
+caller to be able to use it as an endpoint for SOAP calls or as a
+parameter in other calls. Instead you must use some other reference
+mechanism, such as storing them in a <tt>HashMap</tt> with numeric or
+string keys that can be passed over the wire. 
+
+
 <h3>
 Encoding Your Beans - the BeanSerializer</h3>
 Axis includes the ability to serialize/deserialize, without writing any
