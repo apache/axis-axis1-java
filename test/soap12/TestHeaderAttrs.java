@@ -52,70 +52,25 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.soap;
-
-import org.apache.axis.Constants;
-
-import javax.xml.namespace.QName;
 
 /**
- * SOAP 1.2 constants
- *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class SOAP12Constants implements SOAPConstants {
-    private static QName headerQName = new QName(Constants.URI_SOAP12_ENV,
-                                                 Constants.ELEM_HEADER);
-    private static QName bodyQName = new QName(Constants.URI_SOAP12_ENV,
-                                               Constants.ELEM_BODY);
-    private static QName faultQName = new QName(Constants.URI_SOAP12_ENV,
-                                                Constants.ELEM_FAULT);
-    private static QName roleQName = new QName(Constants.URI_SOAP12_ENV,
-                                                Constants.ATTR_ROLE);
-    
-    // Public constants for SOAP 1.2
-    
-    /** MessageContext property name for webmethod */
-    public static final String PROP_WEBMETHOD = "soap12.webmethod";
+package test.soap12;
 
-    public String getEnvelopeURI() {
-        return Constants.URI_SOAP12_ENV;
-    }
+import org.apache.axis.soap.SOAPConstants;
 
-    public String getEncodingURI() {
-        return Constants.URI_SOAP12_ENC;
-    }
+public class TestHeaderAttrs extends test.soap.TestHeaderAttrs {
 
-    public QName getHeaderQName() {
-        return headerQName;
-    }
-
-    public QName getBodyQName() {
-        return bodyQName;
-    }
-
-    public QName getFaultQName() {
-        return faultQName;
+    public TestHeaderAttrs(String name) {
+        super(name);
     }
 
     /**
-     * Obtain the QName for the role attribute (actor/role)
+     * Use SOAP version 1.2.  Otherwise, run the same tests.
      */
-    public QName getRoleAttributeQName() {
-        return roleQName;
-    }
-
-    /**
-     * Obtain the MIME content type
-     */
-    public String getContentType() {
-        return "application/soap+xml; charset=utf-8";
-    }
-
-    /**
-     * Obtain the "next" role/actor URI
-     */
-    public String getNextRoleURI() {
-        return Constants.URI_SOAP12_NEXT_ACTOR;
+    public void setUp() throws Exception {
+        soapVersion = SOAPConstants.SOAP12_CONSTANTS;
+        super.setUp();
     }
 }
