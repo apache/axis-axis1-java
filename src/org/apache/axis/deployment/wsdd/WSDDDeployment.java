@@ -382,6 +382,14 @@ public class WSDDDeployment
     }
 
     /**
+     * Return the WSDD description for a given named service
+     */ 
+    public WSDDService getWSDDService(QName qname)
+    {
+        return (WSDDService)services.get(qname);
+    }
+    
+    /**
      *
      * @param name XXX
      * @return XXX
