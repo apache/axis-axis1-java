@@ -67,6 +67,7 @@ import org.apache.commons.logging.Log;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import java.util.StringTokenizer;
+import java.io.IOException;
 
 
 /**
