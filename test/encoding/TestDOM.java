@@ -6,10 +6,10 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-
-
+import org.apache.axis.utils.XMLUtils;
 
 /**
 
@@ -105,6 +105,12 @@ public class TestDOM extends TestCase {
 
        assertEquals("Request is not the same as the result.", request, result);
 
+    }
+    
+    public void testEmptyNode() throws Exception 
+    {
+        SOAPBodyElement body = new SOAPBodyElement(XMLUtils.newDocument().createElement("tmp"));
+        assertEquals("<tmp/>",body.toString());
     }
     
     public static void main(String [] args) throws Exception
