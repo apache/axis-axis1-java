@@ -330,8 +330,16 @@ DeserializationContextImpl ('DCI') which inherits most of its methods from the
 DeserializationContext interface.
 DCI manages the construction of the parse tree and
 maintains a stack of SAX handlers, a reference to the MessageElement that
-is currently being deserialized, a stack of namespace mappings, and a SAX event
-recorder.
+is currently being deserialized, a stack of namespace mappings, a mapping from IDs to elements, a set of type mappings for deserialization (see 
+<a href="#Encoding Subsystem">Encoding Subsystem</a>) and a SAX event recorder.
+<p>Elements that we scan over, or ones for which we don't have a particular
+deserializer, are recorded - in other words, the SAX events are placed into
+a queue which may be 'played back' at a later time to any SAX ContentHandler.
+<p>Once a SOAPEnvelope has been built, either through a parse or manual
+construction by the user, it may be output using a SerializationContext (also
+see <a href="#Encoding Subsystem">Encoding Subsystem</a>).
+MessageElements all have an output() method which lets them write out their
+contents.
 <p>The SAX handlers form a class hierarchy:
 <br><img SRC="SAXHandlerClasses.jpg">
 <p>and stack up as shown in the following diagram:
