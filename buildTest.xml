@@ -204,10 +204,6 @@ Copyright:
 
   <target name="copy"/>
 
-  <target name="mattTest">
-     <ant inheritAll="true" antfile="test/mattTest/build.xml"/>
-  </target>
-
   <!-- =================================================================== -->
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
@@ -263,16 +259,6 @@ Copyright:
         </fileset>
       </batchtest>
     </junit>
-
-    <foreach target="runThem">
-        <param name="file">
-             <fileset dir="." >
-                <patternset>
-                 <include name="test/wsdl/refattr/**/buildComponent.xml"/>
-                </patternset>
-             </fileset>
-        </param>
-    </foreach>
 
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
@@ -332,17 +318,44 @@ Copyright:
   </target>
 
 
-  <target name="matt" depends="printEnv" >
+  <target name="echoTest" >
     <foreach target="echoThem">
         <param name="file">
              <fileset dir="." >
                 <patternset>
                  <include name="test/wsdl/**/buildComponent.xml"/>
-                 <include name="test/functional//buildComponent.xml"/>
+                 <include name="test/functional/buildComponent.xml"/>
+		 <exclude name="test/wsdl/inout/buildComponent.xml"/>
                 </patternset>
              </fileset>
         </param>
      </foreach>
   </target>
+
+  <target name="batchTest" depends="transport-layer">
+    <runaxisfunctionaltests
+      url="http://localhost:${test.functional.TCPListenerPort}"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="batch-junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+
+    <echo message="Return to buildTest.xml"/>
+
+    <ant antfile="${axis.home}/test/functional/buildComponent.xml" target="run"/>
+   </target>
+
+   <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
+    <foreach target="runThem">
+        <param name="file">
+             <fileset dir="." >
+                <patternset>
+                 <include name="test/wsdl/**/buildComponent.xml"/>
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
+    </target>
+
 
 </project>
