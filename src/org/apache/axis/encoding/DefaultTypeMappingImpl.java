@@ -121,9 +121,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Since the last-registered type wins, I want to add the mime
         // String FIRST.
-        myRegister(Constants.MIME_PLAINTEXT, java.lang.String.class,
-                new JAFDataHandlerSerializerFactory(),
-                new JAFDataHandlerDeserializerFactory(), false);
+        if (JavaUtils.isAttachmentSupported()) {
+            myRegister(Constants.MIME_PLAINTEXT, java.lang.String.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory(), false);
+        }
 
         // SOAP Encoded strings are treated as primitives.
         // Everything else is not.
@@ -360,18 +362,20 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Register all the supported MIME types
         // (note that MIME_PLAINTEXT was registered near the top)
-        myRegister(Constants.MIME_IMAGE, java.awt.Image.class,
-                new JAFDataHandlerSerializerFactory(),
-                new JAFDataHandlerDeserializerFactory(), false);
-        myRegister(Constants.MIME_MULTIPART, javax.mail.internet.MimeMultipart.class,
-                new JAFDataHandlerSerializerFactory(),
-                new JAFDataHandlerDeserializerFactory(), false);
-        myRegister(Constants.MIME_SOURCE, javax.xml.transform.Source.class,
-                new JAFDataHandlerSerializerFactory(),
-                new JAFDataHandlerDeserializerFactory(), false);
-        myRegister(Constants.MIME_DATA_HANDLER, javax.activation.DataHandler.class,
-                new JAFDataHandlerSerializerFactory(),
-                new JAFDataHandlerDeserializerFactory(), false);
+        if (JavaUtils.isAttachmentSupported()) {
+            myRegister(Constants.MIME_IMAGE, java.awt.Image.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory(), false);
+            myRegister(Constants.MIME_MULTIPART, javax.mail.internet.MimeMultipart.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory(), false);
+            myRegister(Constants.MIME_SOURCE, javax.xml.transform.Source.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory(), false);
+            myRegister(Constants.MIME_DATA_HANDLER, javax.activation.DataHandler.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory(), false);
+        }
 
         // xsd:token
         myRegister(Constants.XSD_TOKEN, org.apache.axis.types.Token.class,
