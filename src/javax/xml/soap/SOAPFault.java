@@ -63,9 +63,9 @@ package javax.xml.soap;
  *   in processing, such as the inability to communicate with an
  *   upstream server.
  *   <P>
- *   The <CODE>SOAPFaultException</CODE> interface provides methods for
+ *   The <CODE>SOAPFault</CODE> interface provides methods for
  *   retrieving the information contained in a <CODE>
- *   SOAPFaultException</CODE> object and for setting the fault code, the
+ *   SOAPFault</CODE> object and for setting the fault code, the
  *   fault actor, and a string describing the fault. A fault code is
  *   one of the codes defined in the SOAP 1.1 specification that
  *   describe the fault. An actor is an intermediate recipient to
@@ -77,7 +77,7 @@ package javax.xml.soap;
 public interface SOAPFault extends SOAPBodyElement {
 
     /**
-     * Sets this <CODE>SOAPFaultException</CODE> object with the given
+     * Sets this <CODE>SOAPFault</CODE> object with the given
      *   fault code.
      *
      *   <P>Fault codes, which given information about the fault,
@@ -88,42 +88,45 @@ public interface SOAPFault extends SOAPBodyElement {
      * @throws  SOAPException if there was an error in
      *     adding the <CODE>faultCode</CODE> to the underlying XML
      *     tree.
+     * @see #getFaultCode() getFaultCode()
      */
     public abstract void setFaultCode(String faultCode) throws SOAPException;
 
     /**
-     * Gets the fault code for this <CODE>SOAPFaultException</CODE>
+     * Gets the fault code for this <CODE>SOAPFault</CODE>
      * object.
      * @return a <CODE>String</CODE> with the fault code
+     * @see #setFaultCode(java.lang.String) setFaultCode(java.lang.String)
      */
     public abstract String getFaultCode();
 
     /**
-     *  Sets this <CODE>SOAPFaultException</CODE> object with the given
+     *  Sets this <CODE>SOAPFault</CODE> object with the given
      *   fault actor.
      *
      *   <P>The fault actor is the recipient in the message path who
      *   caused the fault to happen.</P>
      * @param   faultActor a <CODE>String</CODE>
      *     identifying the actor that caused this <CODE>
-     *     SOAPFaultException</CODE> object
+     *     SOAPFault</CODE> object
      * @throws  SOAPException  if there was an error in
      *     adding the <CODE>faultActor</CODE> to the underlying XML
      *     tree.
+     * @see #getFaultActor() getFaultActor()
      */
     public abstract void setFaultActor(String faultActor) throws SOAPException;
 
     /**
-     * Gets the fault actor for this <CODE>SOAPFaultException</CODE>
+     * Gets the fault actor for this <CODE>SOAPFault</CODE>
      * object.
      * @return  a <CODE>String</CODE> giving the actor in the message
-     *     path that caused this <CODE>SOAPFaultException</CODE> object
+     *     path that caused this <CODE>SOAPFault</CODE> object
      * @see #setFaultActor(java.lang.String) setFaultActor(java.lang.String)
      */
     public abstract String getFaultActor();
 
     /**
-     * Sets the fault string for this <CODE>SOAPFaultException</CODE>
+     * Sets the fault string for this <CODE>SOAPFault</CODE>
      * object to the given string.
      *
      * @param faultString a <CODE>String</CODE>
@@ -137,7 +140,7 @@ public interface SOAPFault extends SOAPBodyElement {
         throws SOAPException;
 
     /**
-     * Gets the fault string for this <CODE>SOAPFaultException</CODE>
+     * Gets the fault string for this <CODE>SOAPFault</CODE>
      * object.
      * @return a <CODE>String</CODE> giving an explanation of the
      *     fault
@@ -145,7 +148,7 @@ public interface SOAPFault extends SOAPBodyElement {
     public abstract String getFaultString();
 
     /**
-     * Returns the detail element for this <CODE>SOAPFaultException</CODE>
+     * Returns the detail element for this <CODE>SOAPFault</CODE>
      *   object.
      *
      *   <P>A <CODE>Detail</CODE> object carries
@@ -158,7 +161,7 @@ public interface SOAPFault extends SOAPBodyElement {
 
     /**
      * Creates a <CODE>Detail</CODE> object and sets it as the
-     *   <CODE>Detail</CODE> object for this <CODE>SOAPFaultException</CODE>
+     *   <CODE>Detail</CODE> object for this <CODE>SOAPFault</CODE>
      *   object.
      *
      *   <P>It is illegal to add a detail when the fault already
@@ -166,7 +169,7 @@ public interface SOAPFault extends SOAPBodyElement {
      *   only after the existing detail has been removed.</P>
      * @return the new <CODE>Detail</CODE> object
      * @throws  SOAPException  if this
-     *     <CODE>SOAPFaultException</CODE> object already contains a valid
+     *     <CODE>SOAPFault</CODE> object already contains a valid
      *     <CODE>Detail</CODE> object
      */
     public abstract Detail addDetail() throws SOAPException;

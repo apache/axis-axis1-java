@@ -67,7 +67,7 @@ public abstract class SOAPConnectionFactory {
      *     SOAPConnectionFactory</CODE> object
      * @throws  SOAPException  if there was an error creating
      *     the <CODE>SOAPConnectionFactory
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException  if newInstance is not supported.
      */
     public static SOAPConnectionFactory newInstance()
             throws SOAPException, UnsupportedOperationException {

@@ -55,22 +55,19 @@
 package javax.xml.soap;
 
 /**
- * <P>A point-to-point connection that a client can use for
- *   sending messages directly to a remote party (represented by a
- *   URL, for instance) without using a messaging provider. A
- *   standalone client uses a <CODE>SOAPConnection</CODE> object
- *   rather than a <CODE>ProviderConnection</CODE> object.</P>
+ * A point-to-point connection that a client can use for sending messages
+ * directly to a remote party (represented by a URL, for instance).
+ * <p>
+ * A client can obtain a <code>SOAPConnection</code> object simply by
+ * calling the following static method.
+ * <pre>
  *
- *   <P>A client can obtain a <CODE>SOAPConnection</CODE> object
- *   simply by calling the following static method.</P>
- * <PRE>
- *     SOAPConnection con = SOAPConnection.newInstance();
- * </PRE>
- *   A <CODE>SOAPConnection</CODE> object can be used to send
- *   messages directly to a URL following the request/response
- *   paradigm. That is, messages are sent using the method <CODE>
- *   call</CODE>, which sends the message and then waits until it
- *   gets a reply.
+ *      SOAPConnection con = SOAPConnection.newInstance();
+ * </pre>
+ * A <code>SOAPConnection</code> object can be used to send messages
+ * directly to a URL following the request/response paradigm.  That is,
+ * messages are sent using the method <code>call</code>, which sends the
+ * message and then waits until it gets a reply.
  */
 public abstract class SOAPConnection {
 
@@ -80,11 +77,14 @@ public abstract class SOAPConnection {
     /**
      * Sends the given message to the specified endpoint and
      * blocks until it has returned the response.
-     * @param   request the <CODE>SOAPMessage</CODE>
+     * @param request the <CODE>SOAPMessage</CODE>
      *     object to be sent
-     * @param   endpoint a <CODE>URLEndpoint</CODE>
-     *     object giving the URL to which the message should be
-     *     sent
+     * @param an <code>Object</code> that identifies
+     *            where the message should be sent. It is required to
+     *            support Objects of type
+     *            <code>java.lang.String</code>,
+     *            <code>java.net.URL</code>, and when JAXM is present
+     *            <code>javax.xml.messaging.URLEndpoint</code>
      * @return the <CODE>SOAPMessage</CODE> object that is the
      *     response to the message that was sent
      * @throws  SOAPException if there is a SOAP error

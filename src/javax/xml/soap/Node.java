@@ -91,6 +91,7 @@ public interface Node {
      * @return  the <code>SOAPElement</code> object that is the parent of
      *    this <code>Node</code> object or <code>null</code> if this
      *    <code>Node</code> object is root
+     * @throws java.lang.UnsupportedOperationException if the whole tree is not kept in memory
      * @see #setParentElement(javax.xml.soap.SOAPElement) setParentElement(javax.xml.soap.SOAPElement)
      */
     public abstract SOAPElement getParentElement();

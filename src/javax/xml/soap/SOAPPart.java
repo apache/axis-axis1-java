@@ -221,6 +221,7 @@ public abstract class SOAPPart {
      * @ throws java.lang.IllegalArgumentException if
      *     there was a problem with the specified mime header name
      *     or value
+     * @throws java.lang.IllegalArgumentException if there was a problem with the specified mime header name or value
      * @see #getMimeHeader(java.lang.String) getMimeHeader(java.lang.String)
      */
     public abstract void setMimeHeader(String name, String value);

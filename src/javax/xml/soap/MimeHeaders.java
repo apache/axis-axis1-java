@@ -230,6 +230,9 @@ public class MimeHeaders {
      * @param  value a <CODE>String</CODE> with the
      *     value that will replace the current value of the
      *     specified header
+     * @throws java.lang.IllegalArgumentException if there was a
+     * problem in the mime header name or the value being set
+     * @see #getHeader(java.lang.String) getHeader(java.lang.String)
      */
     public void setHeader(String name, String value) {
 
