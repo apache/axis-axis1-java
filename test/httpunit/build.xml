@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="httpunit" default="default" basedir=".">
+
+  <property name="axis.home" location="../.."/> 
+  <property name="invoke.target.file" value="buildComponent.xml"/> 
+
+  <target name="clean">
+    <ant antfile="${invoke.target.file}"
+      target="clean"/>
+  </target>
+  
+  <target name="copy">
+    <ant antfile="${invoke.target.file}"
+      target="copy"/>
+  </target>
+  
+  <target name="default" >
+    <ant antfile="${invoke.target.file}"
+      target="default"/>
+  </target>
+  
+  <target name="deploy">
+    <ant antfile="${invoke.target.file}"
+      target="deploy"/>
+  </target>
+  
+  <target name="run">
+    <ant antfile="${invoke.target.file}"
+      target="run"/>
+  </target>
+  
+  <target name="undeploy">
+    <ant antfile="${invoke.target.file}"
+      target="undeploy"/>
+  </target>
+  
+  
+</project>
