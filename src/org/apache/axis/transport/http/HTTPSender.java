@@ -393,7 +393,7 @@ public class HTTPSender extends BasicHandler {
 
         InputStream inp = null;
 
-        if (httpChunkStream) {
+        if (httpChunkStream || httpContinueExpected) {
             out.write(header.toString()
                     .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
         }
@@ -437,8 +437,10 @@ public class HTTPSender extends BasicHandler {
         } else {
             out = new BufferedOutputStream(out, Constants.HTTP_TXR_BUFFER_SIZE);
             try {
-                out.write(header.toString()
-                        .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+                if (!httpContinueExpected) {
+                    out.write(header.toString()
+                            .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+                }
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
                 log.error(Messages.getMessage("exception00"), e);
