@@ -61,6 +61,7 @@ import org.apache.axis.* ;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.Attributes;
+import org.w3c.dom.Element;
 
 /** A simple header abstraction.  Extends MessageElement with header-specific
  * stuff like mustUnderstand, actor, and a 'processed' flag.
@@ -81,6 +82,17 @@ public class SOAPHeader extends MessageElement {
     {
         setNamespaceURI(namespace);
         setName(localPart);
+    }
+    
+    public SOAPHeader(Element elem)
+    {
+        super(elem);
+        String val = elem.getAttributeNS(Constants.URI_SOAP_ENV,
+                                         Constants.ATTR_MUST_UNDERSTAND);
+        mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+        
+        actor = elem.getAttributeNS(Constants.URI_SOAP_ENV,
+                                    Constants.ATTR_ACTOR);
     }
 
     public SOAPHeader(String namespace, String localPart, String prefix,

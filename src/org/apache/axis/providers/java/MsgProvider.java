@@ -63,7 +63,6 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.message.DOMBody;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
@@ -162,7 +161,7 @@ public class MsgProvider extends JavaProvider {
         Document retDoc = (Document) method.invoke( obj, argObjects );
         
         if ( retDoc != null ) {
-            SOAPBodyElement el = new DOMBody(retDoc.getDocumentElement());
+            SOAPBodyElement el = new SOAPBodyElement(retDoc.getDocumentElement());
             resEnv.addBodyElement(el);
         }
     }
