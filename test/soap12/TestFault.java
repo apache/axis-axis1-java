@@ -48,11 +48,14 @@ public class TestFault extends TestCase {
         msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
         SOAPEnvelope msg = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
 
-        SOAPFault fault = new SOAPFault(new AxisFault(FAULTCODE, FAULTSUBCODE ,FAULTREASON, FAULTROLE, FAULTNODE, null));
+        SOAPFault fault = new SOAPFault(new AxisFault(FAULTCODE, FAULTSUBCODE,
+                                                      FAULTREASON, FAULTROLE,
+                                                      FAULTNODE, null));
 
         msg.addBodyElement(fault);
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        SerializationContext context = 
+                new SerializationContextImpl(stringWriter, msgContext);
         context.setDoMultiRefs(false);
         msg.output(context);
         String msgString = stringWriter.toString();
@@ -62,7 +65,7 @@ public class TestFault extends TestCase {
         Message message = new Message(msgString);
         message.setMessageContext(new MessageContext(server));
 
-        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPEnvelope();
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
         assertNotNull("envelope should not be null", envelope);
 
         SOAPBodyElement respBody = envelope.getFirstBody();
@@ -72,14 +75,13 @@ public class TestFault extends TestCase {
 
         assertNotNull("Fault should not be null", aFault);
 
-        assertTrue(aFault.getFaultCode().equals(FAULTCODE));
-        assertTrue(aFault.getFaultReason().equals(FAULTREASON));
-        assertTrue(aFault.getFaultRole().equals(FAULTROLE));
-        assertTrue(aFault.getFaultNode().equals(FAULTNODE));
+        assertEquals(FAULTCODE, aFault.getFaultCode());
+        assertEquals(FAULTREASON, aFault.getFaultReason());
+        assertEquals(FAULTROLE, aFault.getFaultRole());
+        assertEquals(FAULTNODE, aFault.getFaultNode());
         QName q[] = aFault.getFaultSubCodes();
         for (int i = 0; i < q.length; i++)
-            assertTrue(q[i].equals(FAULTSUBCODE[i]));
-
+            assertEquals(FAULTSUBCODE[i], q[i]);
     }
 
 }

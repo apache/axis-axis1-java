@@ -144,12 +144,17 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             }
             
             if (axisFault.getFaultString() != null) {
-                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
                     context.startElement(Constants.QNAME_FAULTREASON_SOAP12, null);
-                else
+                    // TODO: put an xml:lang attribute on the <Text> element?
+                    context.startElement(Constants.QNAME_TEXT_SOAP12, null);
+                } else
                     context.startElement(Constants.QNAME_FAULTSTRING, null);
                 context.writeSafeString(axisFault.getFaultString());
                 context.endElement();
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    context.endElement();
+                }
             }
             
             if (axisFault.getFaultActor() != null) {
