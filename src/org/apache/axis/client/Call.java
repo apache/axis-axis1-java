@@ -319,6 +319,16 @@ public class Call implements javax.xml.rpc.Call {
             }
             setEncodingStyle((String) value);
         }
+        else if (name.equals(ENDPOINT_ADDRESS_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            setTargetEndpointAddress((String) value);
+        }
         else if ( name.equals(TRANSPORT_NAME) ) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(

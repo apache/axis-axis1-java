@@ -83,6 +83,12 @@ public class AxisClientProxy implements InvocationHandler {
      */
     public Object invoke(Object o, Method method, Object[] objects)
             throws Throwable {
-        return call.invoke(method.getName(), objects);
+        if (method.getName().equals("_setProperty")) {
+            call.setProperty((String) objects[0], objects[1]);
+            return null;
+        }
+        else {
+            return call.invoke(method.getName(), objects);
+        }
     }
 }

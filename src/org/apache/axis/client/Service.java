@@ -83,6 +83,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.Remote;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -287,9 +288,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return java.rmi.Remote ...
      * @throws ServiceException If there's an error
      */
-    public java.rmi.Remote getPort(QName portName, Class proxyInterface)
+    public Remote getPort(QName portName, Class proxyInterface)
                            throws ServiceException {
-        return( null );
+        return getPort(null, portName, proxyInterface);
     }
 
     /**
@@ -299,9 +300,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return java.rmi.Remote ...
      * @throws ServiceException If there's an error
      */
-    public java.rmi.Remote getPort(Class proxyInterface)
-            throws ServiceException {
-        return null;
+    public Remote getPort(Class proxyInterface) throws ServiceException {
+        return getPort(null, null, proxyInterface);
     }
 
     /**
@@ -316,30 +316,43 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *                       via a dynamic proxy
      * @throws ServiceException
      */
-    public java.rmi.Remote getPort(String endpoint, Class proxyInterface)
+    public Remote getPort(String endpoint, Class proxyInterface)
         throws ServiceException
     {
+        return getPort(endpoint, null, proxyInterface);
+    }
+
+    private Remote getPort(String endpoint, QName portName,
+            Class proxyInterface) throws ServiceException {
         if (!proxyInterface.isInterface()) {
             throw new ServiceException(JavaUtils.getMessage("mustBeIface00"));
         }
 
-        if (!(java.rmi.Remote.class.isAssignableFrom(proxyInterface))) {
+        if (!(Remote.class.isAssignableFrom(proxyInterface))) {
             throw new ServiceException(
                             JavaUtils.getMessage("mustExtendRemote00"));
         }
 
         try {
-            Call call = (org.apache.axis.client.Call)createCall();
-            call.setTargetEndpointAddress(new URL(endpoint));
+            Call call = null;
+            if (portName == null) {
+                call = (org.apache.axis.client.Call) createCall();
+                if (endpoint != null) {
+                    call.setTargetEndpointAddress(new URL(endpoint));
+                }
+            }
+            else {
+                call = (org.apache.axis.client.Call) createCall(portName);
+            }
             ClassLoader classLoader =
                     Thread.currentThread().getContextClassLoader();
-            return (java.rmi.Remote)Proxy.newProxyInstance(classLoader,
-                                                new Class[] { proxyInterface },
-                                                new AxisClientProxy(call));
+            return (Remote)Proxy.newProxyInstance(classLoader,
+                    new Class[] { proxyInterface, javax.xml.rpc.Stub.class },
+                    new AxisClientProxy(call));
         } catch (Exception e) {
             throw new ServiceException(e.toString());
         }
-    }
+    } // getPort
 
     /**
      * Creates a new Call object - will prefill as much info from the WSDL
