@@ -406,43 +406,16 @@ public abstract class Stub implements javax.xml.rpc.Stub {
 
     /**
      * Helper method for updating headers from the response.
+     *
+     * Deprecated, since response headers should not be
+     * automatically reflected back into the stub list.
+     *
+     *
+     * @deprecated This method has been changed to a no-op but remains
+     *               in the code to keep compatibility with pre-1.1
+     *               generated stubs.
      */
-    protected void getResponseHeaders(org.apache.axis.client.Call call) throws AxisFault {		
-        org.apache.axis.Message response = call.getMessageContext().getResponseMessage();      
-        org.apache.axis.message.SOAPEnvelope env = response.getSOAPEnvelope();
-        if ( env != null )	{
-            Iterator iterator = env.getHeaders().iterator();
-            while(iterator.hasNext()){
-                SOAPHeaderElement header = (SOAPHeaderElement) iterator.next();
-                int iPosition = getHeaderPosition(headers,header);
-                if (iPosition == -1)
-                	headers.add(header);
-                else
-                	headers.set(iPosition,header);
-            }
-        }				
-    }  
+     protected void getResponseHeaders(org.apache.axis.client.Call call) throws AxisFault {
+     }
 
-	/**
-   *    Determine if a specific header exists in a list of headers
-   *    and return the list index position
-   *    Call this method before adding headers to our list
-   *    @param vElems - list of headers
-   *    @param  oHeader - header to check for...
-   *    @return the index position where the item was found or -1
-   */
-    private int getHeaderPosition(Vector vElems,SOAPHeaderElement oHeader) {
- 
-      if (vElems == null)
-        return -1;
- 
-      for(int iScan=0;iScan<vElems.size();iScan++) {
-        SOAPHeaderElement oElem = (SOAPHeaderElement)vElems.get(iScan);
-        if (oElem.getQName().equals(oHeader.getQName()) == true) {
-            return iScan;           
-          }
- 
-      }
-      return -1;
-    }
 }
