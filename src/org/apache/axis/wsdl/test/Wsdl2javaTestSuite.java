@@ -61,6 +61,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.axis.wsdl.Emitter;
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.Options;
+import org.apache.axis.client.AdminClient;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -87,6 +88,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static final String CLEAN_TASK="clean";
     private Project testSuiteProject;
     private List classNames = null;
+    private List fileNames = null;
 
     public Wsdl2javaTestSuite(String Name) {
         super(Name);
@@ -140,12 +142,14 @@ public class Wsdl2javaTestSuite extends TestSuite {
         wsdl2java.emit(fileName);
 
         this.classNames = wsdl2java.getGeneratedClassNames();
+        this.fileNames = wsdl2java.getGeneratedFileNames();
 
         this.testSuiteProject.executeTarget(Wsdl2javaTestSuite.COMPILE_TASK);
     } //protected void prepareTest()
 
     private void cleanTest() {
         this.classNames = null;
+        this.fileNames = null;
         testSuiteProject.executeTarget(Wsdl2javaTestSuite.CLEAN_TASK);
     }
 
@@ -171,8 +175,23 @@ public class Wsdl2javaTestSuite extends TestSuite {
             String curLine = reader.readLine();
             while (curLine != null) {
                 this.prepareTest(curLine);
-                //deploy
+                String deploy = null;
+                String undeploy = null;
 
+                Iterator files = this.fileNames.iterator();
+                while (files.hasNext()) {
+                    String fileName = (String) files.next();
+                    if (fileName.endsWith("deploy.xml")) {
+                        deploy = fileName;
+                    } else if (fileName.endsWith("undeploy.xml")) {
+                        undeploy = fileName;
+                    }
+                }
+                //deploy
+                String[] args = new String[] { deploy };
+                AdminClient.main(args);
+
+                //run tests
                 Iterator names = this.classNames.iterator();
                 while (names.hasNext()) {
                     String className = (String) names.next();
@@ -200,6 +219,8 @@ public class Wsdl2javaTestSuite extends TestSuite {
                     }
                 }
                 //undeploy
+                args = new String[] {undeploy};
+                AdminClient.main(args);
                 this.cleanTest();
             }
 
