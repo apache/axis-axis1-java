@@ -69,6 +69,8 @@ import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
+import javax.wsdl.extensions.ExtensibilityElement;
+
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 
@@ -154,6 +156,21 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("        return skel.getParameterMode(opName, i);");
         pw.println("    }");
         pw.println();
+        pw.println("    public static String getInputNamespaceStatic(String opName) {");
+        pw.println("        init();");
+        pw.println("        return skel.getInputNamespace(opName);");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public static String getOutputNamespaceStatic(String opName) {");
+        pw.println("        init();");
+        pw.println("        return skel.getOutputNamespace(opName);");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public static String getSOAPAction(String opName) {");
+        pw.println("        init();");
+        pw.println("        return skel.getSOAPAction(opName);");
+        pw.println("    }");
+        pw.println();
         // Initialize operation parameter names
         pw.println("    protected static void init() {");
         pw.println("        if (skel != null) ");
@@ -196,7 +213,67 @@ public class JavaSkelWriter extends JavaWriter {
                         pw.println("                   javax.xml.rpc.ParameterMode.PARAM_MODE_OUT,");
 
                 }
-                pw.println("                 });");                
+                pw.println("                 },");
+
+                // Find the input clause's namespace
+                BindingInput input = operation.getBindingInput();
+                if (input == null) {
+                    pw.println("                 null,");
+                }
+                else {
+                    List elems = input.getExtensibilityElements();
+                    boolean found = false;
+                    Iterator it = elems.iterator();
+                    while (!found && it.hasNext()) {
+                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
+                        if (elem instanceof SOAPBody) {
+                            SOAPBody body = (SOAPBody) elem;
+                            pw.println("                 \"" + body.getNamespaceURI() + "\",");
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        pw.println("                 null,");
+                    }
+                }
+                
+                // Find the output clause's namespace
+                BindingOutput output = operation.getBindingOutput();
+                if (output == null) {
+                    pw.println("                 null,");
+                }
+                else {
+                    List elems = output.getExtensibilityElements();
+                    Iterator it = elems.iterator();
+                    boolean found = false;
+                    while (!found && it.hasNext()) {
+                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
+                        if (elem instanceof SOAPBody) {
+                            SOAPBody body = (SOAPBody) elem;
+                            pw.println("                 \"" + body.getNamespaceURI() + "\",");
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        pw.println("                 null,");
+                    }
+                }
+                
+                // Find the SOAPAction.
+                List elems = operation.getExtensibilityElements();
+                Iterator it = elems.iterator();
+                boolean found = false;
+                while (!found && it.hasNext()) {
+                    ExtensibilityElement elem = (ExtensibilityElement) it.next();
+                    if (elem instanceof SOAPOperation) {
+                        SOAPOperation soapOp = (SOAPOperation) elem;
+                        pw.println("                 \"" + soapOp.getSoapActionURI() + "\");");
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    pw.println("                 null);");
+                }
             }       
         }
         pw.println("    }");
