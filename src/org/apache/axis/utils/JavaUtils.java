@@ -799,6 +799,10 @@ public class JavaUtils
     /**
      * Get the resource bundle that contains all
      * of the AXIS translatable messages.
+     * 
+     * This is currently ONLY used by TestMessages... which verifies
+     * axisNLS.properties.  So, it will return the first in the message
+     * list (axisNLS.properties)... name changed to reflect.
      */
     public static ResourceBundle getFirstMessageResourceBundle() {
         if (messageBundles == null) {
@@ -873,6 +877,13 @@ public class JavaUtils
      * ResourceBundle is not opened until needed.
      */    
     public static void addMessages(String resourceBundleName) {
+        if (bundleNames == null) {
+            initializeBundleNames();
+        }
+        bundleNames.add(resourceBundleName);
+        if (messageBundles != null) {
+            messageBundles.add(ResourceBundle.getBundle(resourceBundleName));
+        }
     }
     
     /**
