@@ -64,6 +64,7 @@ Copyright:
 
   <property name="wsdl4j.jar" value="../../wsdl4j/build/lib/wsdl4j.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
+  <property name="clutil.jar" value="lib/log4j-core.jar"/>
 
   <property name="packages" value="org.*"/>
 
@@ -86,10 +87,11 @@ Copyright:
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
   <path id="classpath">
-    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${clutil.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${wsdl4j.jar}"/>
+    <pathelement location="${excalibur.jar}"/>
     <pathelement location="${log4j-core.jar}"/>
     <fileset dir="lib">
      <include name="*.jar"/>
@@ -117,6 +119,10 @@ Copyright:
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
 
+    <available property="clutil.present"
+      classname="org.apache.avalon.excalibur.cli.CLUtil"
+      classpathref="classpath"/>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <echo message="--- Build environment for ${Name} ---" />
@@ -126,6 +132,7 @@ Copyright:
     <echo message="=== Required Libraries ===" />
     <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message="log4j.present=${log4j.present}" />
+    <echo message="clutil.present=${clutil.present}" />
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
