@@ -134,11 +134,10 @@ public class Namespaces extends HashMap {
     } // toDir
 
     /**
-     * Like HashMap's putAll, this replaces the existing contents with the new contents.  But it
-     * also makes a directory for each package name.
+     * Like HashMap's putAll, this adds the given map's contents to this map.  But it
+     * also makes sure the value strings are javified.
      */
     public void putAll(Map map) {
-        super.clear();
         Iterator i = map.keySet().iterator();
         while (i.hasNext()) {
             Object key = i.next();
