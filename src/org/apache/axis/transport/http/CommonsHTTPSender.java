@@ -125,7 +125,7 @@ public class CommonsHTTPSender extends BasicHandler {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             reqMessage.writeTo(baos);
-            method.setRequestBody(new String(baos.toByteArray()));
+            method.setRequestBody(new String(baos.toByteArray(), "UTF-8"));
             method.execute(state, conn);
             int returnCode = method.getStatusCode();
             String contentType = null;
