@@ -444,7 +444,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
 
         // tokenize the hostname and reverse it
-        StringTokenizer st = new StringTokenizer( hostname, "." );
+        StringTokenizer st = new StringTokenizer( hostname, ".:" );
         String[] words = new String[ st.countTokens() ];
         for(int i = 0; i < words.length; ++i)
             words[i] = st.nextToken();
