@@ -210,7 +210,7 @@ public class SerializationContextImpl implements SerializationContext
         // style defaults.  MAKE SURE soapConstants IS SET CORRECTLY FIRST!
         preferredPrefixes.put(soapConstants.getEncodingURI(),
                               Constants.NS_PREFIX_SOAP_ENC);
-        preferredPrefixes.put(Constants.NS_URI_XMLNS,
+        preferredPrefixes.put(Constants.NS_URI_XML,
                               Constants.NS_PREFIX_XML);
         preferredPrefixes.put(schemaVersion.getXsdURI(),
                               Constants.NS_PREFIX_SCHEMA_XSD);
