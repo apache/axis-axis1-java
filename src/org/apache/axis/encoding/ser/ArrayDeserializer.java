@@ -182,12 +182,12 @@ public class ArrayDeserializer extends DeserializerImpl
         QName innerQName = null;
         String innerDimString = "";
         if (arrayTypeValue != null) {
+            if (soapConstants != SOAPConstants.SOAP12_CONSTANTS) {
             String arrayTypeValueNamespaceURI = 
                 arrayTypeValue.getNamespaceURI();
             String arrayTypeValueLocalPart = 
                 arrayTypeValue.getLocalPart();
 
-            if (soapConstants != SOAPConstants.SOAP12_CONSTANTS) {
             int leftBracketIndex = 
                 arrayTypeValueLocalPart.lastIndexOf('[');
             int rightBracketIndex = 
@@ -231,8 +231,9 @@ public class ArrayDeserializer extends DeserializerImpl
                     if (leftStarIndex == 0 && arraySizeValue.length() == 1) {
                     // "* *" => ""
                     } else if (leftStarIndex == (arraySizeValue.length() - 1)) {
-                        innerQName = arrayTypeValue;
-                        innerDimString = arraySizeValue.substring(0, leftStarIndex - 1);
+                        throw new IllegalArgumentException(
+                          Messages.getMessage("badArraySize00",
+                                               "" + arraySizeValue));
                     // "* N" => "N"
                     } else {
                         dimString = arraySizeValue.substring(leftStarIndex + 2);
@@ -243,10 +244,10 @@ public class ArrayDeserializer extends DeserializerImpl
                     dimString = arraySizeValue;
                 }
 
-                if (innerDimString == null) {
-                    defaultItemType = Constants.SOAP_ARRAY12;
-                } else {
+                if (innerDimString == null || innerDimString.length() == 0) {
                     defaultItemType = arrayTypeValue;
+                } else {
+                    defaultItemType = Constants.SOAP_ARRAY12;
                 }
             }
         }
@@ -307,8 +308,7 @@ public class ArrayDeserializer extends DeserializerImpl
         if (dimString == null || dimString.length() == 0) {
             // Size determined using length of the members
             value = new ArrayListExtension(arrayClass);
-        }
-        else {
+        } else {
             try
             {
                 StringTokenizer tokenizer;
