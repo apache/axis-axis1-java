@@ -64,7 +64,6 @@ import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
@@ -100,10 +99,6 @@ public class SOAPService extends SimpleTargetedChain
      */
     private TypeMappingRegistry typeMap;
     
-    /** Our service description
-     */
-    private ServiceDescription serviceDescription;
-    
     /** Standard, no-arg constructor.
      */
     public SOAPService()
@@ -120,16 +115,6 @@ public class SOAPService extends SimpleTargetedChain
     public void setTypeMappingRegistry(TypeMappingRegistry map)
     {
         typeMap = map;
-    }
-    
-    public ServiceDescription getServiceDescription()
-    {
-      return serviceDescription;
-    }
-    
-    public void setServiceDescription(ServiceDescription sd)
-    {
-      serviceDescription = sd;
     }
     
     /** Convenience constructor for wrapping SOAP semantics around

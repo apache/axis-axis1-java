@@ -423,9 +423,6 @@ public class MessageContext {
     /** Is this message an RPC message (instead of just a blob of xml) */
     public static String ISRPC               ="is_rpc" ;
 
-    /** Temporary */
-    public static String SERVICE_DESCRIPTION = "service_description" ;
-
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {

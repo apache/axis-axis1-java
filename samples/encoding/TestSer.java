@@ -3,7 +3,6 @@ package samples.encoding;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
@@ -30,9 +29,6 @@ public class TestSer
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
         QName dataQName = new QName("typeNS", "Data");
 
-        ServiceDescription service = new ServiceDescription("testService", true);
-        service.addInputParam("struct", dataQName);
-        
         Data data = new Data();
         Data data2 = new Data();
         data.stringMember = "String member";
@@ -72,7 +68,6 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            msgContext.setProperty( MessageContext.SERVICE_DESCRIPTION,service);
             TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             

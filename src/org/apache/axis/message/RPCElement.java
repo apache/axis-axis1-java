@@ -2,7 +2,6 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
@@ -22,8 +21,7 @@ public class RPCElement extends SOAPBodyElement
         needDeser = true;
     }
     
-    public RPCElement(String namespace, String methodName,
-                      Object [] args, ServiceDescription serviceDesc)
+    public RPCElement(String namespace, String methodName, Object [] args)
     {
         this.setNamespaceURI(namespace);
         this.name = methodName;
@@ -33,18 +31,10 @@ public class RPCElement extends SOAPBodyElement
                 addParam((RPCParam)args[i]);
             } else {
                 String name = null;
-                if (serviceDesc != null)
-                    name = serviceDesc.getInputParamNameByPos(i);
                 if (name == null) name = "arg" + i;
                 addParam(new RPCParam(name, args[i]));
             }
         }
-    }
-    
-    public RPCElement(String namespace, String methodName,
-                      Object [] args)
-    {
-        this(namespace, methodName, args, null);
     }
     
     public RPCElement(String methodName)
