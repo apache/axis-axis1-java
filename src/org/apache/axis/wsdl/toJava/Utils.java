@@ -799,12 +799,18 @@ public class Utils {
     
     public static javax.xml.rpc.namespace.QName getAxisQName(QName qname)
     {
+        if (qname == null) {
+            return null;
+        }
         return new javax.xml.rpc.namespace.QName(qname.getNamespaceURI(),
                                                  qname.getLocalPart());
     }
     
     public static QName getWSDLQName(javax.xml.rpc.namespace.QName qname)
     {
+        if (qname == null) {
+            return null;
+        }
         return new QName(qname.getNamespaceURI(), qname.getLocalPart());
     }
     
