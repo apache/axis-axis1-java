@@ -178,6 +178,9 @@ public abstract class TestClient {
         try {
             binding = new InteropTestServiceLocator().
                 getEcho(new java.net.URL(url));
+
+            // safety first
+            ((InteropTestSoapBindingStub)binding).setTimeout(60000);
         } catch (Exception exp) {
             throw AxisFault.makeFault(exp);
         }
