@@ -27,8 +27,9 @@ import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import java.util.StringTokenizer;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 
 /**
@@ -220,10 +221,12 @@ public class DimeBodyPart {
                     Messages.getMessage("attach.dimeMaxChunkSize0", "" + maxchunk));
         if (maxchunk > MAX_DWORD) throw new IllegalArgumentException(
                     Messages.getMessage("attach.dimeMaxChunkSize1", "" + maxchunk));
-        if (data instanceof byte[]) send(os, position, (byte[]) data,
-          maxchunk);
-        if (data instanceof DataHandler) send(os, position,
-        (DataHandler) data, maxchunk);
+        if (data instanceof byte[])
+            send(os, position, (byte[]) data, maxchunk);
+        else if (data instanceof DynamicContentDataHandler) 
+            send(os, position, (DynamicContentDataHandler) data, maxchunk);
+        else if (data instanceof DataHandler)
+            send(os, position, (DataHandler) data, maxchunk);
     }
 
     /**
@@ -265,7 +268,6 @@ public class DimeBodyPart {
 
     void send(java.io.OutputStream os, byte position, DataHandler dh,
         final long maxchunk) throws java.io.IOException {
-// START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17001
         java.io.InputStream in = null;
         try {
             byte chunknext = 0;
@@ -298,7 +300,57 @@ public class DimeBodyPart {
                 }
             }
         }
-// END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17001
+    }
+    
+    /**
+     * Special case for dynamically generated content. 
+     * maxchunk is currently ignored since the default is 2GB.
+     * The chunk size is retrieved from the DynamicContentDataHandler
+     * 
+     * @param os
+     * @param position
+     * @param dh
+     * @param maxchunk
+     * @throws java.io.IOException
+     */
+    void send(java.io.OutputStream os, byte position, DynamicContentDataHandler dh,
+            final long maxchunk)
+            throws java.io.IOException {
+    	
+    		BufferedInputStream in = new BufferedInputStream(dh.getInputStream());
+    		
+    		final int myChunkSize = dh.getChunkSize();
+    		
+    		byte[] buffer1 = new byte[myChunkSize]; 
+    		byte[] buffer2 = new byte[myChunkSize]; 
+    		
+    		int bytesRead1 = 0 , bytesRead2 = 0;
+    		byte chunknext = 0;
+    		
+    		bytesRead1 = in.read(buffer1);
+    		
+    		if(bytesRead1 < 0) {
+    			//no data all.should we be sending an empty dime record?
+    			throw new IOException("No data found to send in DIME message");
+    		}
+    		
+    		do {
+    			bytesRead2 = in.read(buffer2);
+    			
+    			if(bytesRead2 < 0) {
+    				//last record...do not set the chunk bit.
+    				//buffer1 contains the last chunked record!
+    				sendChunk(os, position, buffer1, 0, bytesRead1, (byte)0);
+    				break;
+    			}
+    			
+    			sendChunk(os, position, buffer1, 0, bytesRead1, (byte)CHUNK);
+
+    			//now that we have written out buffer1, copy buffer2 into to buffer1
+    			System.arraycopy(buffer2,0,buffer1,0,myChunkSize);
+    			bytesRead1 = bytesRead2;
+    			
+    		}while(bytesRead2 > 0);
     }
 
     protected void sendChunk(java.io.OutputStream os,
