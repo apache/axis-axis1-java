@@ -54,14 +54,13 @@
  */
 package org.apache.axis.wsdl.test;
 
-import junit.framework.Test;
+import junit.framework.AssertionFailedError;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-import junit.framework.AssertionFailedError;
-import org.apache.axis.wsdl.Emitter;
+import org.apache.axis.client.AdminClient;
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.Options;
-import org.apache.axis.client.AdminClient;
+import org.apache.axis.wsdl.Emitter;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -72,12 +71,12 @@ import org.apache.tools.ant.types.Path;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-import java.net.ServerSocket;
 
 /**
  * Set up the test suite for the tests.
@@ -93,6 +92,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static List fileNames = null;
 
     public Wsdl2javaTestSuite() {
+        super();
         this.setupTasks();
         this.prepareTests();
     }
@@ -105,13 +105,15 @@ public class Wsdl2javaTestSuite extends TestSuite {
     } //public Wsdl2javaTestSuite(String Name_)
 
     private void prepareTests() {
-        if (Wsdl2javaTestSuite.classNames == null) {
+        if (null ==  Wsdl2javaTestSuite.classNames) {
             Wsdl2javaTestSuite.classNames = new ArrayList();
             Wsdl2javaTestSuite.fileNames = new ArrayList();
             BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
                     .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
 
             try {
+                URLClassLoader loader = new URLClassLoader(new URL[] {new File(Wsdl2javaTestSuite.WORK_DIR).toURL()},
+                        this.getClass().getClassLoader());
                 String curLine = reader.readLine();
                 int testNum = 0;
                 while (curLine != null) {
@@ -123,23 +125,11 @@ public class Wsdl2javaTestSuite extends TestSuite {
                         String className = (String) names.next();
                         if (className.endsWith("TestCase")) {
                             try {
-                                Class clazz = this.getClass().getClassLoader().loadClass(className);
-
-                                Method[] methods = clazz.getMethods();
-                                for (int i = 0; i < methods.length; i++) {
-                                    String testName = methods[i].getName();
-                                    if (Modifier.isPublic(methods[i].getModifiers())
-                                            && !Modifier.isStatic(methods[i].getModifiers())) {
-                                        if (testName.startsWith("test")) {
-                                            this.addTest((Test) clazz.getConstructor(new Class[] {String.class})
-                                                    .newInstance(new Object[] {testName}));
-                                        }
-                                    }
-                                }
-
+                                this.addTestSuite(loader.loadClass(className));
                             } catch (Exception e) {
                                 System.err.println("Could not set up test '" + className + "' due to an error");
                                 e.printStackTrace(System.err);
+                                throw new AssertionFailedError(e.getMessage());
                             }
                         }
                     }
