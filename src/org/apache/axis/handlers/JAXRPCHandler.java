@@ -78,7 +78,7 @@ public class JAXRPCHandler extends BasicHandler {
         if (impl == null) {
             String className = (String) getOption("className");
             impl = new HandlerChainImpl();
-            impl.addNewHandler(className);
+            impl.addNewHandler(className, getOptions());
         }
         if (!msgContext.getPastPivot()) {
             impl.handleRequest(msgContext);
