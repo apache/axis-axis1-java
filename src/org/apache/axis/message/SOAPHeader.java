@@ -133,20 +133,9 @@ public class SOAPHeader extends MessageElement
     }
     
     private Vector findHeaderElements(String actor) {
-        Vector results = new Vector();
-        Iterator i = headers.iterator();
-
-        while (i.hasNext()) {
-            SOAPHeaderElement header = (SOAPHeaderElement)i.next();
-            String headerActor = header.getActor();
-            // Allow NEXT's and any headers with matching actor
-            if (Constants.URI_SOAP11_NEXT_ACTOR.equals(headerActor) ||
-                (actor == headerActor) || 
-                (actor != null && actor.equals(headerActor))) {
-                results.add(header);
-            }
-        }
-        return results;
+        ArrayList actors = new ArrayList();
+        actors.add(actor);
+        return getHeadersByActor(actors);
     }
 
     public Iterator examineHeaderElements(String actor) {
