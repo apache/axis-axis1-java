@@ -278,7 +278,7 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println(call + ";");
 
         if (parms.returnType != null) {
-            pw.print("        return ret;");
+            pw.println("        return ret;");
         }
         pw.println("    }");
         pw.println();
