@@ -85,10 +85,6 @@ import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 
-import com.ibm.wsdl.extensions.http.HTTPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
-import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
-
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 

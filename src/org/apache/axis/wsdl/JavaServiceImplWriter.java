@@ -70,8 +70,6 @@ import javax.wsdl.Service;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
-
 import org.apache.axis.utils.JavaUtils;
 
 /**
