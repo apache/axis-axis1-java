@@ -36,8 +36,12 @@ public class TestArrayListConversions extends TestCase {
     Object [] array = (Object [])obj;
     Iterator iter = list.iterator();
 
-    for (int i=0; i < array.length; i++)
-      if (!(array[i].equals(iter.next()))) return false;    return true;
+    for (int i=0; i < array.length; i++) {
+      if (!(array[i].equals(iter.next()))) {
+          return false;
+      }
+      return true;
+    }
   }
 
   public void init()
@@ -62,7 +66,7 @@ public class TestArrayListConversions extends TestCase {
     v.addElement("This'll be a SOAP Array and then a LinkedList!");
     Object ret = client.invoke(SERVICE_NAME, "echoLinkedList",
                                new Object [] { v });
-    if (!equals(v, ret)) assertEquals(v, ret);
+    if (!equals(v, ret)) assertEquals("Echo LinkedList mangled the result.  Result is underneath.\n" + ret, v, ret);
   }
   
   public void testLinkedListConversion() throws Exception
