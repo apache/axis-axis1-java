@@ -10,6 +10,7 @@
 
 package test.wsdl.literal;
 
+import org.apache.axis.AxisFault;
 import java.io.IOException;
 import java.io.File;
 
@@ -117,84 +118,29 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
         } catch (javax.xml.rpc.JAXRPCException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
         }
+
         assertTrue("binding is null", binding != null);
+
         try {
-            java.lang.String value = null;
-            value = binding.getAmazonSalesRank(ISBN);
-            printit(value);
+            printit(binding.getAmazonSalesRank(ISBN));
+            printit(binding.getAmazonUKSalesRank(ISBN));
+            printit(binding.getBNSalesRank(ISBN));
+            printit(binding.getAmazonPrice(ISBN));
+            printit(binding.getAmazonUKPrice(ISBN));
+            printit(binding.getBNPrice(ISBN));
+            printit(binding.getAmazonSalesRankNPrice(ISBN));
+            printit(binding.getBNSalesRankNPrice(ISBN));
+            printit(binding.getAmazonAndBNSalesRank(ISBN));
+            printit(binding.getAmazonAndBNPrice(ISBN));
+            printit(binding.getAll(ISBN));
         } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            java.lang.String value = null;
-            value = binding.getAmazonUKSalesRank(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            java.lang.String value = null;
-            value = binding.getBNSalesRank(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            java.lang.String value = null;
-            value = binding.getAmazonPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            java.lang.String value = null;
-            value = binding.getAmazonUKPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            java.lang.String value = null;
-            value = binding.getBNPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            SalesRankNPrice_Type value = null;
-            value = binding.getAmazonSalesRankNPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            SalesRankNPrice_Type value = null;
-            value = binding.getBNSalesRankNPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            SalesRanks value = null;
-            value = binding.getAmazonAndBNSalesRank(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-           Prices value = null;
-            value = binding.getAmazonAndBNPrice(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
-        try {
-            All value = null;
-            value = binding.getAll(ISBN);
-            printit(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+            if (!(re instanceof AxisFault &&
+                  ((AxisFault) re).detail instanceof java.net.ConnectException)) {
+                throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+            } else {
+                // A connection exception has been detected so report this and make the test succeed.
+                printit("Connect failure caused some of SalesRankNPrice_ServiceTestCase to be skipped.");
+            }
         }
     }
 }
-
