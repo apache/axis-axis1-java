@@ -718,11 +718,13 @@ setting up the type mapping in Axis - and for the skeleton, the type mappings
 are included in the generated "deploy.wsdd" file.
 <h5>
 Holders</h5>
-You'll notice that for each data class that Wsdl2java generates, there
-is a corresponding "Holder" class - for instance a class called "MyDataType"
-would also get a companion class "MyDataTypeHolder". These classes exist
-so that we have a reasonably clean mapping for WSDL's in/out and out parameters
-in Java. See the examples for more details.
+In order to have a reasonably clean mapping for WSDL's in/out and out parameters,
+we have holder classes.  The holder classes for the primitive types can be found
+in javax.xml.rpc.holders.  When WSDL2Java generates Java types from schema types,
+it may also generate their associated holders.  If a method uses a type as an
+in/out or out parameter, then its associated holder will be generated.  If a type
+is only used as an in parameter, then no associated holder will be generated.
+See the examples for more details.
 <h4>
 Wsdl2java details</h4>
 Wsdl2java has a number of options, some of which have already been detailed.
