@@ -257,6 +257,7 @@ Copyright:
       destdir="${build.dest}"
       debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
       <include name="test/**/*.java" />
+      <exclude name="test/inout/*.java" />
       <classpath refid="test-classpath" />
     </javac>
   </target>
@@ -275,6 +276,7 @@ Copyright:
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/PackageTests.class" />
+          <!-- <include name="**/test/*TestSuite.class"/> -->
         </fileset>
       </batchtest>
     </junit>
