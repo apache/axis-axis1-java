@@ -69,6 +69,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
@@ -242,34 +243,25 @@ public class TypeMappingRegistry implements Serializer {
         throws IOException
     {
         if (value != null) {
-            Class _class = value.getClass();
-            
-            // Find a Serializer for this class, walking up the inheritance
-            // hierarchy and implemented interfaces list.
-            while (_class != null) {
+            Vector classes = new Vector();
+            classes.add( value.getClass() );
+    
+            while( classes.size() != 0 ) {
+                Class _class = (Class) classes.remove( 0 );
                 Serializer ser = getSerializer(_class);
-                if (ser != null) {
+                if ( ser != null ) {
                     QName type = getTypeQName(_class);
                     attributes = setTypeAttribute(attributes, type, context);
                     ser.serialize(name, attributes, value, context);
                     return;
                 }
-
-                Class [] ifaces = _class.getInterfaces();
-                for (int i = 0; i < ifaces.length; i++) {
-                    Class iface = ifaces[i];
-                    ser = getSerializer(iface);
-                    if (ser != null) {
-                        QName type = getTypeQName(iface);
-                        attributes = setTypeAttribute(attributes, type, context);
-                        ser.serialize(name, attributes, value, context);
-                        return;
-                    }
-                }
-                
+                Class[] ifaces = _class.getInterfaces();
+                for (int i = 0 ; i < ifaces.length ; i++ ) 
+                    classes.add( ifaces[i] );
                 _class = _class.getSuperclass();
+                if ( _class != null ) classes.add( _class );
             }
-            
+
             throw new IOException(JavaUtils.getMessage("noSerializer00",
                     value.getClass().getName(), "" + this));
         }
