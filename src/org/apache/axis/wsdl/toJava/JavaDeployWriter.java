@@ -150,10 +150,22 @@ public class JavaDeployWriter extends JavaWriter {
             if (type.getBaseType() == null && type.isReferenced()
                     && !type.isOnlyLiteralReferenced()
                     && !type.getName().endsWith("[]")) {
-                pw.println("  <beanMapping");
+                // Generate a typeMapping clause that is compatible with JSR 109
+                // This replaces the old beanMapping clause
+                //pw.println("  <beanMapping");
+                //pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
+                //pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
+                //pw.println("    type=\"" + 
+                // Constants.NSPREFIX_WSDD_JAVA + ":" + type.getName() + '"');
+                //pw.println("  />");
+
+                pw.println("  <typeMapping");
                 pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
-                pw.println("    languageSpecificType=\"" + Constants.NSPREFIX_WSDD_JAVA + ":" + type.getName() + '"');
+                pw.println("    type=\"java:" + type.getName() + '"');
+                pw.println("    serializer=\"org.apache.axis.encoding.ser.BeanSerializerFactory\"");
+                pw.println("    deserializer=\"org.apache.axis.encoding.ser.BeanDeserializerFactory\"");
+                pw.println("    encodingStyle=\""+ Constants.URI_CURRENT_SOAP_ENC+"\"");
                 pw.println("  />");
             }
         }
