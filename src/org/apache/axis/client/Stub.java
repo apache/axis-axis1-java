@@ -268,10 +268,17 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     } // getPortName
 
     /**
-     * Set the port name.
+     * Set the port QName.
      */
     public void setPortName(QName portName) {
         cachedPortName = portName;
+    } // setPortName
+
+    /**
+     * Set the port name.
+     */
+    public void setPortName(String portName) {
+        setPortName(new QName(portName));
     } // setPortName
 
     /**

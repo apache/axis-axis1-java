@@ -197,19 +197,36 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                         new String[] {portName, className, address}));
             }
 
-            // Write out the get<PortName> methods
+            // Write the private address info for this port
             pw.println();
             pw.println("    // " + JavaUtils.getMessage("getProxy00", portName));
             writeComment(pw, p.getDocumentationElement());
             pw.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
 
-
-            pw.println("" );
+            // Write the public address getter for this port
+            pw.println();
             pw.println("    public java.lang.String get" + portName + "Address() {" );
             pw.println("        return " + portName + "_address;" );
             pw.println("    }" );
-            pw.println("" );
+            pw.println();
 
+            // Write the private WSDD service name for this port
+            String wsddServiceName = portName + "WSDDServiceName";
+            pw.println("    // " + JavaUtils.getMessage("wsddServiceName00"));
+            pw.println("    private java.lang.String " + wsddServiceName + " = \"" + portName + "\";");
+            pw.println();
+
+            // Write the public accessors for the WSDD service name for this port
+            pw.println("    public java.lang.String get" + wsddServiceName + "() {");
+            pw.println("        return " + wsddServiceName + ";");
+            pw.println("    }");
+            pw.println();
+            pw.println("    public void set" + wsddServiceName + "(java.lang.String name) {");
+            pw.println("        " + wsddServiceName + " = name;");
+            pw.println("    }");
+            pw.println();
+
+            // Write the get<portName>() method
             pw.println("    public " + bindingType + " get" + portName + "() throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
             pw.println("       java.net.URL endpoint;");
             pw.println("        try {");
@@ -222,9 +239,13 @@ public class JavaServiceImplWriter extends JavaClassWriter {
             pw.println("        return get" + portName + "(endpoint);");
             pw.println("    }");
             pw.println();
+
+            // Write the get<portName>(URL) method
             pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) throws " + javax.xml.rpc.ServiceException.class.getName() + " {");
             pw.println("        try {");
-            pw.println("            return new " + stubClass + "(portAddress, this);");
+            pw.println("            " + stubClass + " _stub = new " + stubClass + "(portAddress, this);");
+            pw.println("            _stub.setPortName(get" + wsddServiceName + "());");
+            pw.println("            return _stub;");
             pw.println("        }");
             pw.println("        catch (org.apache.axis.AxisFault e) {");
             pw.println("            return null; // ???");
@@ -255,7 +276,9 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 String stubClass = (String) getPortStubClasses.get(i);
                 String portName = (String) getPortPortNames.get(i);
                 pw.println("            if (" + iface + ".class.isAssignableFrom(serviceEndpointInterface)) {");
-                pw.println("                return new " + stubClass + "(new java.net.URL(" + portName + "_address), this);");
+                pw.println("                " + stubClass + " _stub = new " + stubClass + "(new java.net.URL(" + portName + "_address), this);");
+                pw.println("                _stub.setPortName(get" + portName + "WSDDServiceName());");
+                pw.println("                return _stub;");
                 pw.println("            }");
             }
             pw.println("        }");

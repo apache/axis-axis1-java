@@ -154,7 +154,7 @@ public class Call implements javax.xml.rpc.Call {
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
-    private QName              portName        = new QName("");
+    private QName              portName        = null;
     private QName              operationName   = null ;
     private QName              returnType      = null ;
 
@@ -1176,17 +1176,17 @@ public class Call implements javax.xml.rpc.Call {
      * Returns the fully qualified name of the port for this Call object
      * (if there is one).
      *
-     * @return QName Fully qualified name of the port (or null if not set)
+     * @return QName Fully qualified name of the port
      *
      * @deprecated This is really the service's port name, not portType name.
      *            Use getPortName instead.
      */
     public QName getPortTypeName() {
-        return getPortName();
+        return portName == null ? new QName("") : portName;
     }
 
     /**
-     * Sets the port type of this Call object.  This call will not set
+     * Sets the port name of this Call object.  This call will not set
      * any additional fields, nor will it do any checking to verify that
      * this port type is actually defined in the WSDL - for now anyway.
      *
@@ -1976,7 +1976,7 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setResponseMessage(null);
         msgContext.setProperty( MessageContext.CALL, this );
         msgContext.setProperty( WSDL_SERVICE, service );
-        msgContext.setProperty( WSDL_PORT_NAME, getPortTypeName() );
+        msgContext.setProperty( WSDL_PORT_NAME, getPortName() );
 
         if (username != null) {
             msgContext.setUsername(username);
@@ -2007,10 +2007,10 @@ public class Call implements javax.xml.rpc.Call {
             // If we have a SOAPService kicking around, use that directly
             msgContext.setService(myService);
         } else {
-            if (targetService != null) {
+            if (portName != null) {
                 // No explicit service.  If we have a target service name,
                 // try that.
-                msgContext.setTargetService(targetService);
+                msgContext.setTargetService(portName.getLocalPart());
             } else {
                 // No direct config, so try the namespace of the first body.
                 reqMsg = msgContext.getRequestMessage();
@@ -2163,7 +2163,6 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     private SOAPService myService = null;
-    private String targetService = null;
 
     /**
      *
@@ -2190,16 +2189,6 @@ public class Call implements javax.xml.rpc.Call {
         // Create a SOAPService which will be used as the client-side service
         // handler.
         setSOAPService(new SOAPService(reqHandler, null, respHandler));
-    }
-
-    /**
-     * Set the target service name on the client side.  Note that an explicit
-     * set of an actual SOAPService (with setSOAPService()) will override
-     * this.
-     */
-    public void setTargetService(String targetService)
-    {
-        this.targetService = targetService;
     }
 
     protected java.util.Vector attachmentParts= new java.util.Vector();
