@@ -100,6 +100,11 @@ public class JavaStubWriter extends JavaClassWriter {
     private BindingEntry bEntry;
     private Binding binding;
     private SymbolTable symbolTable;
+    // the maximum number of java type <-> qname binding instructions we'll
+    // emit in a single method.  This is important for stubs that handle
+    // a large number of schema types, as the generated source can exceed
+    // the size in a single method by the VM.
+    private static final int MAXIMUM_BINDINGS_PER_METHOD = 100;
 
     static String [] modeStrings = new String [] { "",
                                             "org.apache.axis.description.ParameterDesc.IN",
@@ -185,6 +190,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            super.service = service;");
         pw.println("        }");
 
+        List deferredBindings = new ArrayList();
         // keep track of how many type mappings we write out
         int typeMappingCount = 0;
         if (types.size() > 0) {
@@ -214,7 +220,8 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
 
                 // write the type mapping for this type
-                writeSerializationInit(pw, type);
+                //writeSerializationInit(pw, type);
+                deferredBindings.add(type);
 
                 // increase the number of type mappings count
                 typeMappingCount++;
@@ -227,8 +234,32 @@ public class JavaStubWriter extends JavaClassWriter {
             typeMappingCount++;
         }
 
+        // track whether the number of bindings exceeds the threshold
+        // that we allow per method.
+        boolean needsMultipleBindingMethods = false;
+        if (deferredBindings.size() < MAXIMUM_BINDINGS_PER_METHOD) {
+            // small number of bindings, just inline them:
+            for (Iterator it = deferredBindings.iterator(); it.hasNext();) {
+                writeSerializationInit(pw, (TypeEntry)it.next());
+            }
+        } else {
+            needsMultipleBindingMethods = true;
+            int methodCount = calculateBindingMethodCount(deferredBindings);
+
+            // invoke each of the soon-to-be generated addBindings methods
+            // from the constructor.
+            for (int i = 0; i < methodCount; i++) {
+                pw.println("        addBindings" + i + "();");
+            }
+        }
+
         pw.println("    }");
         pw.println();
+        // emit any necessary methods for assembling binding metadata.
+        if (needsMultipleBindingMethods) {
+            writeBindingMethods(pw, deferredBindings);
+            pw.println();
+        }
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call _call =");
@@ -360,6 +391,50 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     } // writeFileBody
 
+    /**
+     * Compute the number of addBindings methods we need to generate for the
+     * set of TypeEntries used by the generated stub.
+     *
+     * @param deferredBindings a <code>List</code> value
+     * @return an <code>int</code> value
+     */
+    private int calculateBindingMethodCount(List deferredBindings) {
+        int methodCount = deferredBindings.size() / MAXIMUM_BINDINGS_PER_METHOD;
+        if ((deferredBindings.size() % MAXIMUM_BINDINGS_PER_METHOD) != 0) {
+            methodCount++;
+        }
+        return methodCount;
+    }
+
+    /**
+     * for each of the TypeEntry objects in the deferredBindings list, we need
+     * to write code that will associate a class with a schema namespace/name.
+     * This method writes a number of private methods out that do this in
+     * batches of size MAXIMUM_BINDINGS_PER_METHOD so that generated classes
+     * do not end up with a single method that exceeds the 64K limit that the
+     * VM imposes on all methods.
+     *
+     * @param pw a <code>PrintWriter</code> value
+     * @param deferredBindings a <code>List</code> of TypeEntry objects
+     */
+    private void writeBindingMethods(PrintWriter pw, List deferredBindings) {
+        int methodCount = calculateBindingMethodCount(deferredBindings);
+        for (int i = 0; i < methodCount; i++) {
+            pw.println("    private void addBindings" + i + "() {");
+            // each method gets its own local variables for use in generating
+            // the binding code
+            writeSerializationDecls(pw, false, null);
+            for (int j = 0; j < MAXIMUM_BINDINGS_PER_METHOD; j++) {
+                int absolute = i * MAXIMUM_BINDINGS_PER_METHOD + j;
+                if (absolute == deferredBindings.size()) {
+                    break;      // last one
+                }
+                writeSerializationInit(pw, (TypeEntry) deferredBindings.get(absolute));
+            }
+            pw.println("    }");
+        }
+    }
+    
     private void writeOperationMap(PrintWriter pw) {
         List operations = binding.getBindingOperations();
         pw.println("    static {");
