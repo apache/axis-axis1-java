@@ -286,21 +286,20 @@ public class OperationDesc {
     }
 
     /**
-     * Set the parameters wholesale.  Can only be called from within this
-     * package (by ServiceDesc)
+     * Set the parameters wholesale.
      *
-     * @param parameters an ArrayList of ParameterDescs
+     * @param newParameters an ArrayList of ParameterDescs
      */
-    void setParameters(ArrayList parameters) {
-       // this.parameters = parameters;
+    public void setParameters(ArrayList newParameters) {
        parameters = new ArrayList(); //Keep numInParams correct.
+       numInParams = 0;
 
-       for( java.util.ListIterator li= this.parameters.listIterator();
+       for( java.util.ListIterator li= newParameters.listIterator();
          li.hasNext(); ){
            addParameter((ParameterDesc) li.next());
        }
     }
-
+    
     public int getNumInParams() {
         return numInParams;
     }
