@@ -27,21 +27,17 @@
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.literal"/>
 
-    <!-- This tests .NET document/literal WSDL.
-         We get this WSDL file from the internet on purpose,
-         file is only for reference.
-    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
-    -->
     <!-- NOTE:  THIS DOMAIN HAS EXPIRED!  If it comes back,
          we can add this test back in.
     <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+    -->
+    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
                output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
                testcase="no">
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
     </wsdl2java>
-    -->
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
@@ -49,7 +45,7 @@
       <include name="test/wsdl/literal/*.java" />
     </javac>
 
-    <javac srcdir="${axis.home}/" destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/literal/*.java" />
