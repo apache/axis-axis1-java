@@ -42,6 +42,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collection;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -223,6 +224,24 @@ public class RPCElement extends SOAPBodyElement
 
                                 // Get the type in the signature (java type or its holder)
                                 Class sigType = paramDesc.getJavaType();
+
+                                // if the type is an array but the value is not
+                                // an array or Collection, put it into an
+                                // ArrayList so that we correctly recognize it
+                                // as convertible
+                                if (sigType.isArray()) {
+                                    if (value != null &&
+                                            JavaUtils.isConvertable(value,
+                                               sigType.getComponentType()) &&
+                                          !(value.getClass().isArray()) &&
+                                          !(value instanceof Collection)) {
+                                        ArrayList list = new ArrayList();
+                                        list.add(value);
+                                        value = list;
+                                        rpcParam.setObjectValue(value);
+                                    }
+                                }
+
                                 if(!JavaUtils.isConvertable(value, sigType, isEncoded))
                                     match = false;
                             }
