@@ -60,9 +60,9 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.enum.Style;
@@ -149,6 +149,8 @@ public class BodyBuilder extends SOAPHandler
             throw new SAXException(e);
         }
 
+        Style style = operations == null ? Style.RPC : operations[0].getStyle();
+
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
          * b) have a non-RPC service
@@ -160,9 +162,7 @@ public class BodyBuilder extends SOAPHandler
             handler = new SOAPFaultBuilder((SOAPFault)element,
                                            context);
         } else if (!gotRPCElement) {
-            if (isRoot &&
-                (operations == null ||
-                 (operations[0].getStyle() != Style.MESSAGE))) {
+            if (isRoot && (style != Style.MESSAGE)) {
                 gotRPCElement = true;
                 
                 try {
@@ -194,6 +194,11 @@ public class BodyBuilder extends SOAPHandler
         }
 
         if (element == null) {
+            if (style == Style.RPC &&
+                    context.getMessageContext().getSOAPConstants() ==
+                    SOAPConstants.SOAP12_CONSTANTS) {
+                throw new SAXException("Only one body allowed for SOAP 1.2 RPC");
+            }
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)

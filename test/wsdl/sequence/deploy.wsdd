@@ -1,0 +1,9 @@
+<!-- Deployment for sequence test, built manually because the test -->
+<!-- implementation just deals with raw XML                        -->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+    <service name="SequenceTest" style="message">
+        <parameter name="className" value="test.wsdl.sequence.SequenceService"/>
+        <parameter name="allowedMethods" value="testSequence"/>
+    </service>
+</deployment>

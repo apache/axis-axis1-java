@@ -4,7 +4,7 @@
              targetNamespace="urn:SequenceTest2"
              xmlns:tns="urn:SequenceTest2"
              xmlns:typens="urn:SequenceTest2"
-             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
@@ -14,8 +14,6 @@
   <types>
     <xsd:schema targetNamespace="urn:SequenceTest2"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
-
-
 
       <xsd:complexType name="sequenceInfo">
         <xsd:sequence>
@@ -36,7 +34,7 @@
   </message>
 
   <message name="testSequenceResponse">
-    <part name="rc" type="soapenc:int"/>
+    <part name="return" type="xsd:boolean"/>
   </message>
 
   <!-- port type declns -->

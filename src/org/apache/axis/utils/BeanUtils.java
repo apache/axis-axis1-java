@@ -80,13 +80,19 @@ public class BeanUtils {
 
     /**
      * Create a BeanPropertyDescriptor array for the indicated class.
-     * @param Class javaType 
-     * @param TypeDesc meta-data or null
-     * @return array of properties in order
+     * @param javaType
+     * @return an ordered array of properties
      */
     public static BeanPropertyDescriptor[] getPd(Class javaType) {
         return getPd(javaType, null);
     }
+
+    /**
+     * Create a BeanPropertyDescriptor array for the indicated class.
+     * @param javaType
+     * @param typeDesc
+     * @return an ordered array of properties
+     */
     public static BeanPropertyDescriptor[] getPd(Class javaType, TypeDesc typeDesc) {
         BeanPropertyDescriptor[] pd;
         try {
@@ -179,173 +185,55 @@ public class BeanUtils {
                   PropertyDescriptor[] rawPd, Class cls) {
         return processPropertyDescriptors(rawPd, cls, null);
     }
+
     public static BeanPropertyDescriptor[] processPropertyDescriptors(
                   PropertyDescriptor[] rawPd, Class cls, TypeDesc typeDesc) {
 
         // Create a copy of the rawPd called myPd
         BeanPropertyDescriptor[] myPd = new BeanPropertyDescriptor[rawPd.length];
 
-        int index1 = 0;
-        for (int i=0; i < rawPd.length; i++) {
-            if (rawPd[i].getReadMethod() != null &&
-                rawPd[i].getWriteMethod() != null) {
-                myPd[index1++] = new BeanPropertyDescriptor(rawPd[i].getName(),
-                                                            rawPd[i].getReadMethod(),
-                                                            rawPd[i].getWriteMethod());
-            } 
-        }
+        ArrayList pd = new ArrayList();
 
         try {
-
-            // Create an Array List
-            ArrayList pd = new ArrayList();
-            for (int i=0; i < myPd.length; i++) {
-                if (myPd[i] != null) {
-                    pd.add(myPd[i]);
-                }
-            }
-
-            // Build a new pd array
-            // defined by the order of the set methods.
-            // *Note that this is not guaranteed since the getMethods
-            // is not required to return the methods in the declared order;
-            // however it seems to be the case most of the time.  The only way
-            // to guarantee the correct ordering is if TypeDesc meta-data is available.
-            int index = 0;            
-            ArrayList newPd = new ArrayList();
-            for (int i=0; i <pd.size(); i++) {
-                newPd.add(null);
-            }
-            Method[] methods = cls.getMethods();
-            for (int i=0; i < methods.length; i++) {
-                Method method = methods[i];
-                if (method.getName().startsWith("set")) {
-                    boolean found = false;
-                    for (int j=0; j < pd.size() && !found; j++) {
-                        if (pd.get(j) != null &&
-                            ((BeanPropertyDescriptor)pd.get(j)).getWriteMethod() != null &&
-                            ((BeanPropertyDescriptor)pd.get(j)).getWriteMethod().equals(method)) {
-                            found = true;
-                            newPd.set(index,pd.get(j));
-                            index++;
-                        }
-                    }
-                }
-            }
-            // Now if there are any additional property descriptors, add them to the end.
-            if (index < pd.size()) {
-                for (int m=0; m < pd.size() && index < pd.size(); m++) {
-                    boolean found = false;
-                    for (int n=0; n < index && !found; n++) {
-                        found = (pd.get(m)==newPd.get(n));
-                    }
-                    if (!found) {
-                        newPd.set(index,  pd.get(m));
-                        index++;
-                    }
-                }
-            }
-            // If newPd has same number of elements as pd, use newPd.
-            if (index == pd.size()) {
-                pd = newPd;
-            }
-            myPd = new BeanPropertyDescriptor[pd.size()];
-            for (int i=0; i <pd.size(); i++) {
-                myPd[i] = (BeanPropertyDescriptor) pd.get(i);
-            }
-            // If the javaType is Throwable, add the getter methods to the list.
-            if (Throwable.class.isAssignableFrom(cls)) {
-                for (int i=0; i < methods.length; i++) {
-                    Method method = methods[i];
-                    if (method.getParameterTypes().length == 0 &&
-                        method.getReturnType() != void.class &&
-                        (method.getName().startsWith("get") ||
-                         ((method.getName().startsWith("is") &&
-                           method.getReturnType() == boolean.class))) &&
-                        // Specifically prevent the Throwable get methods
-                        !(method.getName().equals("getMessage") ||
-                          method.getName().equals("getLocalizedMessage"))) {
-                        boolean found = false;
-                        for (int j=0; j < pd.size() && !found; j++) {
-                            BeanPropertyDescriptor bpd = (BeanPropertyDescriptor) pd.get(j);
-                            found = method.equals(bpd.getReadMethod());
-                        }
-                        if (!found) {
-                            pd.add(new BeanPropertyDescriptor(
-                               getPropNameFromReadMethod(method),
-                               method));
-                        }
-                    }
-                }
-            }
-
-
-            // Get the methods of the class and look for the special set and
-            // get methods for property "collections"
-            for (int i=0; i < methods.length; i++) {
-                if (methods[i].getName().startsWith("set") &&
-                    methods[i].getParameterTypes().length == 2) {
-                    for (int j=0; j < methods.length; j++) {
-                        if ((methods[j].getName().startsWith("get") ||
-                             methods[j].getName().startsWith("is")) &&
-                            methods[j].getParameterTypes().length == 1 &&
-                            methods[j].getReturnType() == methods[i].getParameterTypes()[1] &&
-                            methods[j].getParameterTypes()[0] == int.class &&
-                            methods[i].getParameterTypes()[0] == int.class) {
-                            for (int k=0; k < pd.size(); k++) {
-                                BeanPropertyDescriptor bpd = 
-                                    (BeanPropertyDescriptor) pd.get(k);
-                                if (bpd != null &&
-                                    bpd.getReadMethod() != null &&
-                                    bpd.getWriteMethod() != null &&
-                                    bpd.getReadMethod().getName().equals(methods[j].getName()) &&
-                                    bpd.getWriteMethod().getName().equals(methods[i].getName())) {
-                                    pd.set(k, new BeanPropertyDescriptor(bpd.getName(),
-                                                                         bpd.getReadMethod(),
-                                                                         bpd.getWriteMethod(),
-                                                                         methods[j],
-                                                                         methods[i]));
-                                }
-                            }
-                        }
-                    }
-                }
+            for (int i=0; i < rawPd.length; i++) {
+                pd.add(new BeanPropertyDescriptor(rawPd[i]));
             }
 
             // Now look for public fields
             Field fields[] = cls.getFields();
-            if (fields != null && fields.length > 0) {    
+            if (fields != null && fields.length > 0) {
                 // See if the field is in the list of properties
                 // add it if not.
                 for (int i=0; i < fields.length; i++) {
                     Field f = fields[i];
-                    // skip field if it is final, transient, or static 
+                    // skip field if it is final, transient, or static
                     if (!(Modifier.isStatic(f.getModifiers()) ||
-                          Modifier.isFinal(f.getModifiers()) ||
-                          Modifier.isTransient(f.getModifiers()))) {
+                            Modifier.isFinal(f.getModifiers()) ||
+                            Modifier.isTransient(f.getModifiers()))) {
                         String fName = f.getName();
                         boolean found = false;
-                        for (int j=0; j<pd.size() && !found; j++) {
-                            String pName = 
-                                ((BeanPropertyDescriptor)pd.get(j)).getName();
+                        for (int j=0; j< rawPd.length && !found; j++) {
+                            String pName =
+                                    ((BeanPropertyDescriptor)pd.get(j)).getName();
                             if (pName.length() == fName.length() &&
-                                pName.substring(0,1).equalsIgnoreCase(
-                                    fName.substring(0,1))) {
+                                    pName.substring(0,1).equalsIgnoreCase(
+                                            fName.substring(0,1))) {
 
                                 found = pName.length() == 1  ||
                                         pName.substring(1).equals(fName.substring(1));
                             }
                         }
+
                         if (!found) {
-                            pd.add(new BeanPropertyDescriptor(f.getName(), f));
+                            pd.add(new FieldPropertyDescriptor(f.getName(), f));
                         }
                     }
                 }
             }
 
             // If typeDesc meta data exists, re-order according to the fields
-            if (typeDesc != null && 
-                typeDesc.getFields() != null) {
+            if (typeDesc != null &&
+                    typeDesc.getFields() != null) {
                 ArrayList ordered = new ArrayList();
                 // Add the TypeDesc elements first
                 FieldDesc[] fds = typeDesc.getFields();
@@ -353,11 +241,11 @@ public class BeanUtils {
                     FieldDesc field = fds[i];
                     if (field.isElement()) {
                         boolean found = false;
-                        for (int j=0; 
-                             j<pd.size() && !found; 
+                        for (int j=0;
+                             j<pd.size() && !found;
                              j++) {
                             if (field.getFieldName().equals(
-                               ((BeanPropertyDescriptor)pd.get(j)).getName())) {
+                                    ((BeanPropertyDescriptor)pd.get(j)).getName())) {
                                 ordered.add(pd.remove(j));
                                 found = true;
                             }
@@ -377,30 +265,11 @@ public class BeanUtils {
                 myPd[i] = (BeanPropertyDescriptor) pd.get(i);
             }
         } catch (Exception e) {
-            log.error(JavaUtils.getMessage("badPropertyDesc00", cls.getName()), e);
+            log.error(JavaUtils.getMessage("badPropertyDesc00",
+                                           cls.getName()), e);
             throw new InternalException(e);
         }
-        return myPd; 
-    }
 
-    /**
-     * Given a read Method (i.e. is or get Method) 
-     * returns the name of the property.
-     */
-    private static String getPropNameFromReadMethod(Method method) {
-        String name = method.getName();
-        if (name.startsWith("is")) {
-            name = name.substring(2);
-        } else {
-            name = name.substring(3);
-        }
-        if (name.length() == 0) {
-            return null;
-        } else if (name.length() == 1) {
-            return Character.toLowerCase(name.charAt(0)) + "";
-        } else {
-            return Character.toLowerCase(name.charAt(0)) + name.substring(1);
-        } 
-        
+        return myPd;
     }
 }

@@ -1,7 +1,8 @@
 /**
  * SequenceTestServiceTestCase.java
  *
- * @author: Rich Scheuerle (scheu@us.ibm.com)
+ * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 
 package test.wsdl.sequence;
@@ -11,23 +12,12 @@ public class SequenceTestServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
 
-    public void testSequenceTest() {
+    public void testSequenceTest() throws Exception {
         test.wsdl.sequence.SequenceTestPortType binding;
-        try {
-            binding = new SequenceTestLocator().getSequenceTest();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre );
-        }
+        binding = new SequenceTestLocator().getSequenceTest();
         assertTrue("binding is null", binding != null);
-        try {
-            Integer value = null;
-            value = binding.testSequence(new test.wsdl.sequence.SequenceInfo());
-            assertTrue("Test Sequence Failed="+value,             (value != null));
-            assertTrue("Test Sequence Failed="+value.intValue() , (value.intValue() == 0));
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
-        }
+        assertTrue("Test failed!",
+                   binding.testSequence(new test.wsdl.sequence.SequenceInfo()));
     }
 }
 
