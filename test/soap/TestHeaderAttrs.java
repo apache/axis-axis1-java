@@ -80,7 +80,7 @@ public class TestHeaderAttrs extends TestCase {
                                               null);
         
         service.setOption("className", TestService.class.getName());
-        service.setOption("methodName", "*");
+        service.setOption("allowedMethods", "*");
         
         engine.deployService("testService", service);
     }

@@ -17,7 +17,7 @@
  <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
 
  <service name="AdminService" provider="java:MSG">
-  <parameter name="methodName" value="AdminService"/>
+  <parameter name="allowedMethods" value="AdminService"/>
   <parameter name="enableRemoteAdmin" value="false"/>
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
  </service>

@@ -119,7 +119,7 @@ public class SimpleAxisServer implements Runnable {
     private static FileProvider provider = new FileProvider(Constants.SERVER_CONFIG_FILE);
 
     // Another example of configuration (AdminService only) might look like this...
-    //private static XMLStringProvider provider = new XMLStringProvider("<engineConfig><handlers><handler name=\"MsgDispatcher\" class=\"org.apache.axis.providers.java.MsgProvider\"/></handlers><services><service name=\"AdminService\" pivot=\"MsgDispatcher\"><option name=\"className\" value=\"org.apache.axis.utils.Admin\"/><option name=\"methodName\" value=\"AdminService\"/><option name=\"enableRemoteAdmin\" value=\"false\"/></service></services></engineConfig>");
+    //private static XMLStringProvider provider = new XMLStringProvider("<engineConfig><handlers><handler name=\"MsgDispatcher\" class=\"org.apache.axis.providers.java.MsgProvider\"/></handlers><services><service name=\"AdminService\" pivot=\"MsgDispatcher\"><option name=\"className\" value=\"org.apache.axis.utils.Admin\"/><option name=\"allowedMethods\" value=\"AdminService\"/><option name=\"enableRemoteAdmin\" value=\"false\"/></service></services></engineConfig>");
 
     // Axis server (shared between instances)
     private static AxisServer myAxisServer = null;

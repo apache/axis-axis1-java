@@ -3,7 +3,7 @@
 
  <service name="MyService" provider="java:RPC">
   <parameter name="className" value="samples.userguide.example3.MyService"/>
-  <parameter name="methodName" value="*"/>
+  <parameter name="allowedMethods" value="*"/>
  </service>
 
 </deployment>

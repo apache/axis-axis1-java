@@ -13,7 +13,7 @@
 
   <service name="http://www.soapinterop.org/Bid" provider="java:RPC" >
     <parameter name="className" value="samples.bidbuy.BidService" />
-    <parameter name="methodName" value="RequestForQuote SimpleBuy Buy Ping" />
+    <parameter name="allowedMethods" value="RequestForQuote SimpleBuy Buy Ping" />
   </service>
 
   <beanMapping qname="bid:PurchaseOrder"
@@ -27,7 +27,7 @@
 
   <service name="http://www.soapinterop.org/Registry" provider="java:RPC" >
    <parameter name="className" value="samples.bidbuy.RegistryService" />
-   <parameter name="methodName" value="Register Unregister Lookup LookupAsString"/>
+   <parameter name="allowedMethods" value="Register Unregister Lookup LookupAsString"/>
   </service>
 
   <beanMapping qname="reg:Service"

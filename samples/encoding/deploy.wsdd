@@ -3,6 +3,6 @@
             xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
   <service name="ElementService" provider="java:RPC">
     <parameter name="className" value="samples.encoding.ElementService" />
-    <parameter name="methodName" value="echoElement" />
+    <parameter name="allowedMethods" value="echoElement" />
   </service>
 </deployment>

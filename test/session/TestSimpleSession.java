@@ -82,7 +82,7 @@ public class TestSimpleSession extends TestCase {
 
         service.setOption("scope", "session");
         service.setOption("className", "test.session.TestSimpleSession");
-        service.setOption("methodName", "counter");
+        service.setOption("allowedMethods", "counter");
 
         AxisServer server = new AxisServer();
         server.deployService("sessionTest", service);

@@ -82,7 +82,7 @@ public class TestXsiType extends TestCase {
         
         SOAPService service = new SOAPService(new RPCProvider());
         service.setOption("className", "test.encoding.TestXsiType");
-        service.setOption("methodName", "*");
+        service.setOption("allowedMethods", "*");
         server.deployService("TestService", service);
         
         // Call that same server, accessing a method we know returns

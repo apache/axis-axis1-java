@@ -7,7 +7,7 @@
 
  <service name="OrderProcessor" provider="java:RPC">
   <parameter name="className" value="samples.userguide.example5.BeanService"/>
-  <parameter name="methodName" value="processOrder"/>
+  <parameter name="allowedMethods" value="processOrder"/>
  </service>
 
 </deployment>
