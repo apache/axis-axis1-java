@@ -326,7 +326,7 @@ public class JavaDeployWriter extends JavaWriter {
                     }
                     String mode = getModeString(param.getMode());
                     pw.print("        <parameter ");
-                    if (paramQName == null || "".equals(paramQName.getLocalPart())) {
+                    if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
                         pw.print("name=\"" + param.getName() + "\" " );
                     } else {
                         pw.print("qname=\"pns:" + paramQName.getLocalPart() +
