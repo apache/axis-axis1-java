@@ -65,6 +65,7 @@ import org.apache.axis.utils.Debug;
  * then override what you need to.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Doug Davis (dug@us.ibm.com
  */
 public abstract class BasicHandler implements Handler {
     protected Hashtable  options ;
@@ -81,16 +82,14 @@ public abstract class BasicHandler implements Handler {
     {
     }
 
-    public void undo(MessageContext msgContext)
-    {
-      Debug.Print( 1, "Enter: " + this.getClass().getName() + "::undo" );
-      Debug.Print( 1, "Exit: " + this.getClass().getName() + "::undo" );
-    }
-    
     public boolean canHandleBlock(QName qname)
     {
         return false;
     }
+
+    /** Must implement this in subclasses.
+     */
+    public abstract void undo(MessageContext msgContext);
 
     /** Must implement this in subclasses.
      */

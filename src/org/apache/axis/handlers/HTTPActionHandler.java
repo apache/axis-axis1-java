@@ -67,6 +67,7 @@ import org.apache.axis.utils.Debug;
  * SOAPAction to a TARGET.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Doug Davis (dug@us.ibm.com)
  */
 public class HTTPActionHandler extends BasicHandler
 {
@@ -79,5 +80,11 @@ public class HTTPActionHandler extends BasicHandler
 
         msgContext.setProperty(Constants.MC_TARGET, action);
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
+    }
+
+    public void undo(MessageContext msgContext) 
+    {
+        Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
+        Debug.Print( 1, "Exit: HTTPActionHandler::undo" );
     }
 }
