@@ -58,7 +58,13 @@ package org.apache.axis.utils;
 import org.apache.log4j.Category;
 
 import java.lang.reflect.Array;
+
+import java.text.MessageFormat;
+import java.text.ParseException;
+
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -129,4 +135,68 @@ public class JavaUtils
         
         return arg;
     }
+
+    // Message resource bundle.
+    private static ResourceBundle messages = null;
+
+    /**
+     * Get the resource bundle that contains all of the AXIS translatable messages.
+     */
+    public static ResourceBundle getMessageResourceBundle() {
+        if (messages == null) {
+            initializeMessages();
+        }
+        return messages;
+    } // getMessageResourceBundle
+
+    /**
+     * Get the message with the given key.  There are no arguments for this message.
+     */
+    public static String getMessage(String key)
+            throws MissingResourceException {
+        if (messages == null) {
+            initializeMessages();
+        }
+        return messages.getString(key);
+    } // getMessage
+
+    /**
+     * Get the message with the given key.  If an argument is specified in the message (in the
+     * format of "{0}") then fill in that argument with the value of var.
+     */
+    public static String getMessage(String key, String var)
+            throws MissingResourceException, ParseException {
+        String[] args = {var};
+        return MessageFormat.format(getMessage(key), args);
+    } // getMessage
+
+    /**
+     * Get the message with the given key.  If arguments are specified in the message (in the
+     * format of "{0} {1}") then fill them in with the values of var1 and var2, respectively.
+     */
+    public static String getMessage(String key, String var1, String var2)
+            throws MissingResourceException, ParseException {
+        String[] args = {var1, var2};
+        return MessageFormat.format(getMessage(key), args);
+    } // getMessage
+
+    /**
+     * Get the message with the given key.  Replace each "{X}" in the message with vars[X].  If
+     * there are more vars than {X}'s, then the extra vars are ignored.  If there are more {X}'s
+     * than vars, then a java.text.ParseException (subclass of RuntimeException) is thrown.
+     */
+    public static String getMessage(String key, String[] vars)
+            throws MissingResourceException, ParseException {
+        return MessageFormat.format(getMessage(key), vars);
+    } // getMessage
+
+    /**
+     * Load the resource bundle messages from the properties file.  This is ONLY done when it is
+     * needed.  If no messages are printed (for example, only Wsdl2java is being run in non-
+     * verbose mode) then there is no need to read the properties file.
+     */
+    private static void initializeMessages() {
+        messages = ResourceBundle.getBundle("org.apache.axis.utils.resources");
+    } // initializeMessages
+
 }
