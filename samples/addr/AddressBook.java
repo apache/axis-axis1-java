@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.addressbook;
+package samples.addr;
 
 import java.util.*;
 import org.w3c.dom.*;
@@ -63,7 +63,7 @@ import javax.xml.parsers.*;
 //import org.apache.soap.util.xml.*;
 
 /**
- * See \samples\addressbook\readme for info.
+ * See \samples\addr\readme for info.
  *
  * @author Matthew J. Duftler (duftler@us.ibm.com)
  */

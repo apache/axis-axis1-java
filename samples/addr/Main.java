@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.addressbook;
+package samples.addr;
 
 import java.net.*;
 import org.apache.axis.client.ServiceClient;

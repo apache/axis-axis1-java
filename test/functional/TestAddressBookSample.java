@@ -69,7 +69,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
 
-import samples.addressbook.Main;
+import samples.addr.Main;
 
 /** Test the address book sample code.
  */
@@ -80,7 +80,7 @@ public class TestAddressBookSample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/addressbook/deploy.xml" };
+        String[] args = { "samples/addr/deploy.xml" };
         AdminClient.main(args);
     }
     
