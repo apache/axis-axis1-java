@@ -795,9 +795,11 @@ public class SymbolTable {
             // get the parent directory of the contextURL, and append
             // the spec string to the end.
             String contextFileName = contextURL.getFile();
-            URL parent =
-                    new File(contextFileName).getParentFile().toURL();
-
+            URL parent = null;
+            File parentFile = new File(contextFileName).getParentFile(); 
+            if ( parentFile != null ) {
+                parent = parentFile.toURL(); 
+            }
             if (parent != null) {
                 return new URL(parent, path);
             }
