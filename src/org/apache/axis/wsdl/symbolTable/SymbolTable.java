@@ -1702,7 +1702,9 @@ public class SymbolTable {
                 } else if (outdex >= 0) {
                     addOutParm(outputs, outdex, parameters, true);
                 } else {
-                    System.err.println(Messages.getMessage("noPart00", name));
+                    if (verbose) {
+                        System.err.println(Messages.getMessage("noPart00", name));
+                    }
                 }
             }
         }
@@ -3545,8 +3547,10 @@ public class SymbolTable {
                 }
             }
         } else {
-            System.out.println(Messages.getMessage("alreadyExists00",
-                    "" + name));
+            if (verbose) {
+                System.out.println(Messages.getMessage("alreadyExists00",
+                                                       "" + name));
+            }
         }
     }    // symbolTablePut
 
