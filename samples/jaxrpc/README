@@ -1,0 +1,44 @@
+The JAX-RPC compliance samples assume you have a service up and running,
+either through Tomcat or some other web service, or via the SimpleAxisServer.
+If you do not have a service running, you can start the SimpleAxisServer:
+
+  java org.apache.axis.transport.http.SimpleAxisServer -p 8080
+
+Set up the CLASSPATH.  It must contain an XML parser (ie., xerces.jar);
+all the jars in the lib directory; and the directory containing the samples
+subdirectory.
+
+Since these tests are JAX-RPC-specific versions of other samples, they use
+those other samples' deploy.wsdd files.  We will discuss the GetQuote1
+sample, but the others follow a similar pattern;
+
+cd to the directory containing the deploy.wsdd file:
+  cd samples/stock/
+
+Deploy the service:
+  java org.apache.axis.client.AdminClient deploy.wsdd
+
+Run the GetQuote1 sample:
+  java samples.jaxrpc.GetQuote1 [options] <symbol>
+
+  options:
+    -d           turn on debugging - more 'd means more info
+    -h<HOST>     server host name
+    -l<URL>      ie. http://localhost:80/axis/servlet/AxisServlet
+    -p<PORT#>    server port number
+    -s<SERVLET>  ie. axis/servlet/AxisServlet
+    -u<USERID>   user-id
+    -w<PASSWD>   password
+
+If you use the authorization and authentication handlers (which samples/stock/deploy.wsdd specifies) you'll need to add a couple of files to your Servlet Engine's current dir:
+
+users.lst
+ - list of users and passwords
+
+perms.lst
+ - list of users and allowable actions per user
+
+Use the ones in the samples/stock directory.  Note also that if you are running the SimpleAxisServer, these files must be in the directory from which that program is run.
+
+Here's an explicit example of running GetQuote1 using these files:
+  java samples.jaxrpc.GetQuote1 -uuser1 -wpass1 XXX
