@@ -556,6 +556,7 @@ public class Constants {
     public static final QName XSD_DECIMAL = new QName(URI_DEFAULT_SCHEMA_XSD, "decimal");
     public static final QName XSD_BASE64 = new QName(URI_DEFAULT_SCHEMA_XSD, "base64Binary");
     public static final QName XSD_HEXBIN = new QName(URI_DEFAULT_SCHEMA_XSD, "hexBinary");
+    public static final QName XSD_ANYSIMPLETYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anySimpleType");
     public static final QName XSD_ANYTYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anyType");
     public static final QName XSD_ANY = new QName(URI_DEFAULT_SCHEMA_XSD, "any");
     public static final QName XSD_QNAME = new QName(URI_DEFAULT_SCHEMA_XSD, "QName");
