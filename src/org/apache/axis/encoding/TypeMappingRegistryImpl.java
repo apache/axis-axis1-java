@@ -80,43 +80,46 @@ import java.util.HashMap;
  * the default type mapping when information is not found.
  *
  * So logically we have:
- *
+ * <pre>
  *         TMR
  *         | |  
  *         | +---------------> DefaultTM 
  *         |                      ^
  *         |                      |
  *         +----> TM --delegate---+
- *
+ * </pre>
  *
  * But in the implementation, the TMR references
  * "delegate" TypeMappings (TM') which then reference the actual TM's
  *
  * So the picture is really:
+ * <pre>
  *         TMR
  *         | |  
  *         | +-----------TM'------> DefaultTM 
  *         |              ^
  *         |              |
  *         +-TM'-> TM ----+
+ * </pre>
  *
  * This extra indirection is necessary because the user may want to 
  * change the default type mapping.  In such cases, the TMR
  * just needs to adjust the TM' for the DefaultTM, and all of the
  * other TMs will properly delegate to the new one.  Here's the picture:
- *
+ * <pre>
  *         TMR
  *         | |  
  *         | +-----------TM'--+     DefaultTM 
  *         |              ^   |
  *         |              |   +---> New User Defined Default TM
  *         +-TM'-> TM ----+
+ * </pre>
  *
  * The other reason that it is necessary is when a deploy
  * has a TMR, and then TMR's are defined for the individual services
  * in such cases the delegate() method is invoked on the service
  * to delegate to the deploy TMR
- *
+ * <pre>
  *       Deploy TMR
  *         | |  
  *         | +-----------TM'------> DefaultTM 
@@ -150,6 +153,7 @@ import java.util.HashMap;
  *   |     +-TM'-> TM +
  *   |                |
  *   +----------------+
+ * </pre>
  *
  * So now the service uses the DefaultTM of the Deploy TMR, and
  * the Service TM properly delegates to the deploy's TM.  And
