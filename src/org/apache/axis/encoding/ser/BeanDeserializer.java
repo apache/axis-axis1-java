@@ -101,7 +101,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
 
     QName xmlType;
     Class javaType;
-    private BeanPropertyDescriptor[] pd = null;
     private HashMap propertyMap = new HashMap();
     
     /** Type metadata about this class for XML deserialization */
@@ -115,11 +114,12 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         this.xmlType = xmlType;
         this.javaType = javaType;
         // Get a list of the bean properties
-        this.pd = BeanSerializer.getPd(javaType);
+        BeanPropertyDescriptor[] pd = BeanSerializer.getPd(javaType);
         // loop through properties and grab the names for later
         for (int i = 0; i < pd.length; i++) {
             BeanPropertyDescriptor descriptor = pd[i];
             propertyMap.put(descriptor.getName(), descriptor);
+            propertyMap.put(JavaUtils.xmlNameToJava(descriptor.getName()), descriptor);
         }
 
         typeDesc = TypeDesc.getTypeDescForClass(javaType);
@@ -172,14 +172,13 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                     BeanSerializer.format(localName, 
                                           BeanSerializer.FORCE_LOWER);
             String mangledName = JavaUtils.xmlNameToJava(localName);
-            for (int i=0; i<pd.length; i++) {
-                if (pd[i].getWriteMethod() == null ) continue ;
-                if (pd[i].getName().equals(localNameUp) ||
-                        pd[i].getName().equals(localNameLo) ||
-                        pd[i].getName().equals(mangledName)) {
-                    propDesc = pd[i];
-                }
-            }
+            propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
+            if(propDesc == null)
+                propDesc = (BeanPropertyDescriptor) propertyMap.get(localNameUp);
+            if(propDesc == null)
+                propDesc = (BeanPropertyDescriptor) propertyMap.get(localNameLo);
+            if(propDesc == null)
+                propDesc = (BeanPropertyDescriptor) propertyMap.get(mangledName);
         }
         
         if (propDesc == null) {
