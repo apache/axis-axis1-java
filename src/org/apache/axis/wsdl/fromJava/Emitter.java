@@ -1147,12 +1147,11 @@ public class Emitter {
                                               param.getName(),
                                               typeQName)) {
                     // If wrapper element is written
-                    // add <part name="body/return" element=wrapper_elem />
-                    if (request) {
-                        part.setName("body");
-                    } else {
-                        part.setName("return");
-                    }
+                    // add <part name="parameters" element=wrapper_elem />
+                    // Really shouldn't matter what name is used, but
+                    // .NET could be using "parameters" as an indication
+                    // that this is wrapped mode.
+                    part.setName("parameters");
                     part.setElementName(wrapperQName);
                     msg.addPart(part);
                 }
