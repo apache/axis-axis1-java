@@ -2008,6 +2008,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         if(source.getLocalName() != null) {
             dest.setQName(new QName(source.getNamespaceURI(), source.getLocalName()));
         }
+        else
+        {
+            dest.setQName(new QName(source.getNamespaceURI(), source.getNodeName()));
+        }
 
         NamedNodeMap attrs = source.getAttributes();
         for(int i = 0; i < attrs.getLength(); i++){
@@ -2042,10 +2046,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                     new org.apache.axis.message.Text((CharacterData)child);
                 dest.appendChild(childElement);
             } else {
-                PrefixedQName qname = new PrefixedQName(child.getNamespaceURI(),
-                        child.getLocalName(),
-                        child.getPrefix());
-                MessageElement childElement = new MessageElement(qname);
+                MessageElement childElement = new MessageElement();
                 dest.appendChild(childElement);
                 copyNode(childElement, child);
             }
