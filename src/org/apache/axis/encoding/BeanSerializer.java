@@ -55,7 +55,7 @@
 
 package org.apache.axis.encoding;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -73,41 +73,61 @@ import org.xml.sax.*;
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class BeanSerializer extends DeserializerBase implements Serializer {
+public class BeanSerializer extends DeserializerBase 
+    implements Serializer, Serializable 
+{
 
     /**
      * Class being serialized/deserialized
      */
     private Class cls;
 
+    protected void setCls(Class cls) {
+        this.cls = cls;
+    }
+
     /**
      * Property Descriptors.  Retrieved once and cached in the serializer.
      */
-    private PropertyDescriptor[] pd;
-    
+    private PropertyDescriptor[] pd = null;
+
+    protected PropertyDescriptor[] getPd() {
+        if (pd==null) {
+            try {
+               pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
+            } catch (Exception e) {
+               // this should never happen
+               throw new NullPointerException(e.toString());
+            }
+        }
+
+        return pd;
+    }
+
+    protected void setPd(PropertyDescriptor[] pd) {
+        this.pd = pd;
+    }
+
+    /**
+     * Default constructor.
+     */
+    public BeanSerializer() {
+        super();
+    }
+
+    /**
+     * Constructor that takes a class.  Provided only for convenience.
+     * Equivalent to calling setCls(cls) on a new instance.
+     */
+    public BeanSerializer(Class cls) {
+        super();
+        this.cls = cls;
+    }
+     
     /**
      * An array of nothing, defined only once.
      */
     private static final Object[] noArgs = new Object[] {};
-
-    /**
-     * Constructor that takes a class.  Called only for serializers, so it
-     * does NOT creates an instance of the bean.
-     */
-    public BeanSerializer(Class cls) throws Exception {
-        this.cls = cls;
-        this.pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
-    }
-
-    /**
-     * Constructor that takes a class and a pre-computed PropertyDescriptor.
-     * Called only for deserializers, so it DOES create an instance.
-     */
-    public BeanSerializer(Class cls, PropertyDescriptor[] pd) throws Exception {
-        this.cls = cls;
-        this.pd = pd;
-        this.value = cls.newInstance();
-    }
 
     /**
      * BeanSerializer Factory that creates instances with the specified
@@ -123,12 +143,18 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
         }
 
         public DeserializerBase getDeserializer() {
+            BeanSerializer bs = new BeanSerializer();
+            bs.setCls(cls);
+            bs.setPd(pd);
+
             try {
-                return new BeanSerializer(cls, pd);
+                bs.setValue(cls.newInstance());
             } catch (Exception e) {
                 // I'm not allowed to throw much, so I throw what I can!
                 throw new NullPointerException(e.toString());
             }
+
+            return bs;
         }
     }
 
@@ -168,6 +194,16 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
                              String qName, Attributes attributes)
         throws SAXException
     {
+        PropertyDescriptor[] pd = getPd();
+
+        // create a value if there isn't one already...
+        if (value==null) {
+            try {
+                value=cls.newInstance();
+            } catch (Exception e) {
+                throw new SAXException(e.toString());
+           }
+        }
 
         // look for a field by this name.  Assumes the the number of
         // properties in a bean is (relatively) small, so uses a linear
@@ -208,6 +244,7 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
+        PropertyDescriptor[] pd = getPd();
 
         try {
             for (int i=0; i<pd.length; i++) {
@@ -223,4 +260,20 @@ public class BeanSerializer extends DeserializerBase implements Serializer {
 
         context.endElement();
     }
+
+    /**
+     * Write the serializer out to disk.  Actually, all we need is enough
+     * to reconsitute the object from scratch, namely 
+     */
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(cls.getName());
+    }
+          
+    private void readObject(ObjectInputStream stream) 
+        throws IOException, ClassNotFoundException
+    {
+        String clsName = (String) stream.readObject();
+        setCls(Class.forName(clsName));
+    }
+          
 }
