@@ -1344,7 +1344,7 @@ public class Emitter {
         Vector elements = findNameValues(node, "element");
 
         for (int i = 0; i < elements.size(); i += 2)
-            typePW.println("    public " + elements.get(i) + " " + elements.get(i + 1) + ";");
+            typePW.println("    private " + elements.get(i) + " " + elements.get(i + 1) + ";");
 
         typePW.println();
         typePW.println("    public " + nameValue + "() {");
