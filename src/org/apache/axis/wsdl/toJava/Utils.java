@@ -75,7 +75,6 @@ import org.w3c.dom.NodeList;
 
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
-import javax.wsdl.Fault;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
@@ -223,47 +222,41 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     }
 
     /**
-     * Given a fault, return the fully qualified Java class name
+     * Given a fault message, return the fully qualified Java class name
      * of the exception to be generated from this fault
      * 
-     * @param fault The WSDL fault object
+     * @param message The WSDL fault message
      * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
-    public static String getFullExceptionName(Fault fault, 
+    public static String getFullExceptionName(Message faultMessage, 
                                               SymbolTable symbolTable) {
-        // Get the Message referenced in the message attribute of the fault.
-        Message faultMessage = fault.getMessage();
         MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
         return (String) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME);
     } // getFullExceptionName
 
     /**
-     * Given a fault, return the XML type of the exception data.
+     * Given a fault message, return the XML type of the exception data.
      * 
-     * @param fault The WSDL fault object
+     * @param message The WSDL fault message object
      * @param symbolTable the current symbol table
      * @return A QName for the XML type of the data
      */ 
-    public static QName getFaultDataType(Fault fault, 
+    public static QName getFaultDataType(Message faultMessage, 
                                          SymbolTable symbolTable) {
-        // Get the Message referenced in the message attribute of the fault.
-        Message faultMessage = fault.getMessage();
         MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
         return (QName) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_DATA_TYPE);
     } // getFaultDataType
 
     /**
-     * Given a fault, return TRUE if the fault is a complex type fault
+     * Given a fault message, return TRUE if the fault is a complex type fault
      * 
-     * @param fault The WSDL fault object
+     * @param message The WSDL fault message object
      * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
-    public static boolean isFaultComplex(Fault fault, 
+    public static boolean isFaultComplex(Message faultMessage, 
                                          SymbolTable symbolTable) {
-        // Get the Message referenced in the message attribute of the fault.
-        Message faultMessage = fault.getMessage();
         MessageEntry me = symbolTable.getMessageEntry(faultMessage.getQName()); 
         Boolean ret = (Boolean) me.getDynamicVar(JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
         if (ret != null) {

@@ -65,8 +65,8 @@ import java.util.Vector;
 import java.util.ArrayList;
 
 import javax.wsdl.Definition;
-import javax.wsdl.Fault;
 import javax.wsdl.Import;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.BindingFault;
@@ -75,12 +75,14 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 
+import org.apache.axis.utils.Messages;
+
 import org.apache.axis.wsdl.gen.Generator;
 
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
  * This is Wsdl2java's Definition Writer.  
@@ -125,8 +127,8 @@ public class JavaDefinitionWriter implements Generator {
         Iterator fi = faults.iterator();
         while (fi.hasNext()) {
             FaultInfo faultInfo = (FaultInfo) fi.next();
-            Fault fault = faultInfo.fault;
-            String name = Utils.getFullExceptionName(fault, symbolTable);
+            Message message = faultInfo.getMessage();
+            String name = Utils.getFullExceptionName(message, symbolTable);
             if (generatedFaults.contains(name)) {
                 continue;
             }
@@ -135,8 +137,7 @@ public class JavaDefinitionWriter implements Generator {
             // Generate the 'Simple' Faults.
             // The complexType Faults are automatically handled
             // by JavaTypeWriter.
-            MessageEntry me = symbolTable.getMessageEntry(
-                fault.getMessage().getQName());
+            MessageEntry me = symbolTable.getMessageEntry(message.getQName());
             boolean emitSimpleFault = true;
             if (me != null) {
                 Boolean complexTypeFault = (Boolean)
@@ -151,8 +152,7 @@ public class JavaDefinitionWriter implements Generator {
                     JavaFaultWriter writer = 
                             new JavaFaultWriter(emitter, 
                                                 symbolTable, 
-                                                faultInfo.fault, 
-                                                faultInfo.soapFault); 
+                                                faultInfo); 
                     // Go write the file
                     writer.generate();
                 } catch (DuplicateFileException dfe) {
@@ -162,21 +162,6 @@ public class JavaDefinitionWriter implements Generator {
             }
         }
     } // writeFaults
-
-    /**
-     * Holder structure for fault information
-     */ 
-    public static class FaultInfo {
-        public FaultInfo(Fault fault, SOAPFault soapFault, QName xmlType) {
-            this.fault = fault;
-            this.soapFault = soapFault;
-            this.xmlType = xmlType;
-        }
-
-        public Fault fault;
-        public SOAPFault soapFault;
-        public QName xmlType;
-    }
 
     /**
      * Collect all of the faults used in this definition.
