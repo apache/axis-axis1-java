@@ -229,7 +229,11 @@ public class Emitter extends Parser {
 
     /**
      * Set the scope for the deploy.xml file.
-     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
+     * @param scope One of JavaProvider.BYTE_SCOPE_NOT_EXPLICIT,
+     * JavaProvider.BYTE_SCOPE_APPLICATION, JavaProvider.BYTE_SCOPE_REQUEST,
+     * JavaProvider.BYTE_SCOPE_SESSION.  Anything else is equivalent to
+     * BYTE_SCOPE_NOT_EXPLICIT and no explicit scope tag will appear in
+     * deploy.xml.
      */
     public void setScope(byte scope) {
         this.scope = scope;
