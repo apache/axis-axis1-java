@@ -133,7 +133,7 @@ public class AttributeBean extends ParentBean {
             return false;
         }
         if (company == null) {
-            if (company != null) {
+            if (other.company != null) {
                 return false;
             }
         } else if (!company.equals(other.company)) {

@@ -98,6 +98,8 @@ public class SimpleDeserializer extends DeserializerImpl {
 
     private TypeDesc typeDesc = null;
 
+    protected SimpleDeserializer cacheStringDSer = null;
+    protected QName cacheXMLType = null;
     /**
      * The Deserializer is constructed with the xmlType and 
      * javaType (which could be a java primitive like int.class)
@@ -141,7 +143,29 @@ public class SimpleDeserializer extends DeserializerImpl {
             }
         }
     }
-      
+
+    /**
+     * Reset deserializer for re-use
+     */
+    public void reset() {
+        val.setLength(0); // Reset string buffer back to zero
+        attributeMap = null; // Remove attribute map
+        isNil = false; // Don't know if nil
+        isEnded = false; // Indicate the end of element not yet called
+    }
+
+    /**
+     * Remove the Value Targets of the Deserializer.
+     * Simple deserializers may be re-used, so don't
+     * nullify the vector.
+     */
+    public void removeValueTargets() {
+        if (targets != null) {
+            targets.clear();
+            // targets = null;
+        }
+    }
+
     /** 
      * The Factory calls setConstructor.
      */

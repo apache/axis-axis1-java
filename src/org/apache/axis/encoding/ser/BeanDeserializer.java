@@ -100,6 +100,9 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
     // This counter is updated to deal with deserialize collection properties
     protected int collectionIndex = -1;
 
+    protected SimpleDeserializer cacheStringDSer = null;
+    protected QName cacheXMLType = null;
+
     // Construct BeanSerializer for the indicated class/qname
     public BeanDeserializer(Class javaType, QName xmlType) {
         this(javaType, xmlType, TypeDesc.getTypeDescForClass(javaType));
@@ -247,47 +250,23 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                          localName));
         }
 
-        // Look at the type attribute specified.  If this fails,
-        // use the javaType of the property to get the type qname.
-        QName qn = context.getTypeFromXSITypeAttr(namespace, 
-                                                  localName,
-                                                  attributes);
-
-        // get the deserializer
-        Deserializer dSer = null;
-        if (qn !=null) {
-            dSer = context.getDeserializerForType(qn);
-        }
-
-        // We don't have a deserializer, the safest thing to do
-        // is to set up using the DeserializerImpl below.  
-        // The DeserializerImpl will take care of href/id and
-        // install the appropriate deserializer, etc.  The problem 
-        // is that takes a lot of time and will occur 
-        // all the time if no xsi:types are sent.  Most of the
-        // time an element of a bean is a simple schema type (i.e. String)
-        // so the following shortcut is used to get a Deserializer
-        // for these cases.
+        // Get the child's xsi:type if available
+        QName childXMLType = context.getTypeFromXSITypeAttr(namespace, 
+                                                            localName,
+                                                            attributes);
+        
+        // Get Deserializer for child, default to using DeserializerImpl
+        Deserializer dSer = getDeserializer(childXMLType, propDesc.getType(), 
+                                            attributes.getValue("href"),
+                                            context);
+        // It is an error if the dSer is not found, the base
+        // deserializer impl is returned so that it can generate the correct message.
         if (dSer == null) {
-            Class javaType = propDesc.getType();
-            TypeMapping tm = context.getTypeMapping();
-            QName qName = tm.getTypeQName(javaType);
-            if (qn == null && dSer == null) {
-                if (qName != null && SchemaUtils.isSimpleSchemaType(qName)) {
-                    dSer = context.getDeserializer(javaType, qName);
-                }
-            }
-            
-            // If no deserializer, use the base DeserializerImpl
-            // There may not be enough information yet to choose the
-            // specific deserializer.
-            if (dSer == null) {
-                dSer = new DeserializerImpl();
-                // determine a default javaType for this child element
-                dSer.setDefaultType(qName);
-            }
+            dSer = new DeserializerImpl();
+            return (SOAPHandler)dSer;
         }
-                
+
+        // Register value target
         if (propDesc.isWriteable()) {
             // If this is an indexed property, and the deserializer we found
             // was NOT the ArrayDeserializer, this is a non-SOAP array:
@@ -379,25 +358,20 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             if (bpd != null) {
                 if (!bpd.isWriteable() || bpd.isIndexed() ) continue ;
                 
-                // determine the QName for this child element
-                TypeMapping tm = context.getTypeMapping();
-                Class type = bpd.getType();
-                QName qn = tm.getTypeQName(type);
-                if (qn == null)
-                    throw new SAXException(
-                            JavaUtils.getMessage("unregistered00",
-                                                 type.toString()));
-                
-                // get the deserializer
-                Deserializer dSer = context.getDeserializerForType(qn);
+                // Get the Deserializer for the attribute
+                Deserializer dSer = getDeserializer(null, bpd.getType(), 
+                                                    null, context);
+
                 if (dSer == null)
                     throw new SAXException(
-                            JavaUtils.getMessage("noDeser00", type.toString()));
+                            JavaUtils.getMessage("unregistered00",
+                                                 bpd.getType().toString()));
+                
                 if (! (dSer instanceof SimpleDeserializer))
                     throw new SAXException(
                             JavaUtils.getMessage("AttrNotSimpleType00", 
                                                  bpd.getName(), 
-                                                 type.toString()));
+                                                 bpd.getType().toString()));
                 
                 // Success!  Create an object from the string and set
                 // it in the bean
@@ -413,5 +387,59 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 
             } // if
         } // attribute loop
+    }
+
+    /**
+     * Get the Deserializer for the attribute or child element.
+     * @param xmlType QName of the attribute/child element or null if not known.
+     * @param javaType Class of the corresponding property
+     * @param href String is the value of the href attribute, which is used
+     *             to determine whether the child element is complete or an 
+     *             href to another element.
+     * @param context DeserializationContext
+     * @return Deserializer or null if not found.
+    */
+    protected Deserializer getDeserializer(QName xmlType, 
+                                           Class javaType, 
+                                           String href,
+                                           DeserializationContext context) {
+        // See if we have a cached deserializer
+        if (cacheStringDSer != null) {
+            if (String.class.equals(javaType) &&
+                (cacheXMLType == null && xmlType == null ||
+                 cacheXMLType != null && cacheXMLType.equals(xmlType))) {
+                cacheStringDSer.reset();
+                return cacheStringDSer;
+            }
+        }
+        
+        Deserializer dSer = null;
+
+        if (xmlType != null) {
+            // Use the xmlType to get the deserializer.
+            dSer = context.getDeserializerForType(xmlType);
+        } else {
+            // If the xmlType is not set, get a default xmlType
+            TypeMapping tm = context.getTypeMapping();
+            QName defaultXMLType = tm.getTypeQName(javaType);
+            // If there is not href, then get the deserializer
+            // using the javaType and default XMLType,
+            // If there is an href, the create the generic
+            // DeserializerImpl and set its default type (the
+            // default type is used if the href'd element does 
+            // not have an xsi:type.
+            if (href == null) {
+                dSer = context.getDeserializer(javaType, defaultXMLType);
+            } else {
+                dSer = new DeserializerImpl();
+                dSer.setDefaultType(defaultXMLType);
+            }
+        }
+        if (javaType.equals(String.class) &&
+            dSer instanceof SimpleDeserializer) {
+            cacheStringDSer = (SimpleDeserializer) dSer;
+            cacheXMLType = xmlType;
+        }
+        return dSer;
     }
 }
