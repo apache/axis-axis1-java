@@ -96,6 +96,12 @@ import org.w3c.dom.Document;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Steve Loughran
+ * xdoclet tags are not active yet; keep web.xml in sync
+ * @web.servlet name="AxisServlet"  display-name="Apache-Axis Servlet"
+ * @web.servlet-mapping url-pattern="/servlet/AxisServlet"
+ * @web.servlet-mapping url-pattern="*.jws"
+ * @web.servlet-mapping url-pattern="/services/*"
  */
 public class AxisServlet extends AxisServletBase {
     protected static Log log =
