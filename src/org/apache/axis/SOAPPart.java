@@ -511,7 +511,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
          * @returns void
          */
         public void setContentId(String newCid){
-                if(!newCid.toLowerCase().startsWith("cid:")){
+                if(newCid!=null && !newCid.toLowerCase().startsWith("cid:")){
                         newCid="cid:"+newCid;
                 }
                 addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);

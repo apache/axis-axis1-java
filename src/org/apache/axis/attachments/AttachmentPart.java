@@ -89,6 +89,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     /** Field contentLocation           */
     private String contentLocation;
 
+    /** Field contentObject */
+    private Object contentObject;
+
     /**
      * Constructor AttachmentPart
      */
@@ -105,7 +108,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                 SOAPUtils.getNewContentIdValue());
         datahandler = dh;
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
+        if(dh != null)
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
     }
 
     /**
@@ -197,7 +201,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     @returns void
      */
     public void setContentId(String newCid) {
-        if (!newCid.toLowerCase().startsWith("cid:")) {
+        if (newCid!=null && !newCid.toLowerCase().startsWith("cid:")) {
             newCid = "cid:" + newCid;
         }
         addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
@@ -302,6 +306,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     no data in this <CODE>AttachmentPart</CODE> object
      */
     public DataHandler getDataHandler() throws SOAPException {
+        if(datahandler == null) {
+            throw new SOAPException(JavaUtils.getMessage("noContent"));
+        }
         return datahandler;
     }
 
@@ -320,6 +327,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     DataHandler</CODE> object
      */
     public void setDataHandler(DataHandler datahandler) {
+        if(datahandler == null)
+            throw new java.lang.IllegalArgumentException(
+                JavaUtils.getMessage("illegalArgumentException00"));
         this.datahandler = datahandler;
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
     }
@@ -358,8 +368,14 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     was a data transformation error
      */
     public Object getContent() throws SOAPException {
-        javax.activation.DataSource ds = datahandler.getDataSource();
+        if(contentObject != null)
+            return contentObject;
 
+        if(datahandler == null) {
+            throw new SOAPException(JavaUtils.getMessage("noContent"));
+        }
+
+        javax.activation.DataSource ds = datahandler.getDataSource();
         if (ds instanceof ManagedMemoryDataSource) {
             ManagedMemoryDataSource mds = (ManagedMemoryDataSource) ds;
 
@@ -403,20 +419,29 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                 String s = (String) object;
                 java.io.ByteArrayInputStream bais =
                         new java.io.ByteArrayInputStream(s.getBytes());
-
                 datahandler = new DataHandler(new ManagedMemoryDataSource(bais,
                         1024, contentType, true));
-
+                contentObject = object;
                 return;
             } catch (java.io.IOException io) {
                 log.error(JavaUtils.getMessage("javaIOException00"), io);
-
                 throw new java.lang.IllegalArgumentException(
-                        JavaUtils.getMessage("illegalAccessException00"));
+                        JavaUtils.getMessage("illegalArgumentException00"));
             }
+        } else if (object instanceof java.io.InputStream) {
+                try {
+                    datahandler = new DataHandler(new ManagedMemoryDataSource((java.io.InputStream)object,
+                            1024, contentType, true));
+                    contentObject = object;
+                    return;
+                } catch (java.io.IOException io) {
+                    log.error(JavaUtils.getMessage("javaIOException00"), io);
+                    throw new java.lang.IllegalArgumentException(
+                            JavaUtils.getMessage("illegalArgumentException00"));
+                }
         } else {
             throw new java.lang.IllegalArgumentException(
-                    JavaUtils.getMessage("illegalAccessException00"));
+                    JavaUtils.getMessage("illegalArgumentException00"));
         }
     }
 
@@ -427,6 +452,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public void clearContent() {
         datahandler = null;
+        contentObject = null;
     }
 
     /**
