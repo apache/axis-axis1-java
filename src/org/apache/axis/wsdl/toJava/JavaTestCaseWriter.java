@@ -59,7 +59,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -141,11 +140,9 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             }
 
             PortType portType = binding.getPortType();
-            PortTypeEntry ptEntry =
-                    symbolTable.getPortTypeEntry(portType.getQName());
 
             writeComment(pw, p.getDocumentationElement());
-            writeServiceTestCode(pw, portName, portType, ptEntry, binding, bEntry);
+            writeServiceTestCode(pw, portName, portType, bEntry);
         }
     } // writeFileBody
 
@@ -156,8 +153,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
     private int counter = 1;
 
     private final void writeServiceTestCode(PrintWriter pw,
-            String portName, PortType portType, PortTypeEntry ptEntry,
-            Binding binding, BindingEntry bEntry) throws IOException {
+            String portName, PortType portType,
+            BindingEntry bEntry) throws IOException {
         Iterator ops = portType.getOperations().iterator();
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
@@ -178,7 +175,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             String testMethodName = "test" + counter++ + portName + javaOpName;
             pw.println("    public void " + testMethodName + "() throws Exception {");
 
-            String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
+            String bindingType = bEntry.getName() + "Stub";
             writeBindingAssignment(pw, bindingType, portName);
 
             
@@ -291,7 +288,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             String bindingType, String portName) throws IOException {
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");
-        pw.print("            binding = new " + sEntry.getName());
+        pw.println("            binding = (" + bindingType + ")");
+        pw.print("                          new " + sEntry.getName());
         pw.println("Locator" + "().get" + portName + "();");
         pw.println("        }");
         pw.println("        catch (" + javax.xml.rpc.ServiceException.class.getName() + " jre) {");
@@ -300,9 +298,12 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
 
-        pw.println("        assertTrue(\"" +
+        pw.println("        assertNotNull(\"" +
                 Messages.getMessage("null00", "binding") +
-                "\", binding != null);");
+                "\", binding);");
+        pw.println();
+        pw.println("        // Time out after a minute");
+        pw.println("        binding.setTimeout(60000);");
         pw.println();
     } // writeBindingAssignment
 
