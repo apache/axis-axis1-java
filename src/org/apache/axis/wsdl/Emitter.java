@@ -71,6 +71,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Import;
 import javax.wsdl.Input;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
@@ -644,8 +645,12 @@ public class Emitter {
      */
     protected Parameters parameters(Operation operation) throws IOException {
         Parameters parameters = new Parameters();
+
+        // The input and output Vectors, when filled in, will be of the form:
+        // {<parmType0>, <parmName0>, <parmType1>, <parmName1>, ..., <parmTypeN>, <parmNameN>}
         Vector inputs = new Vector();
         Vector outputs = new Vector();
+
         List parameterOrder = operation.getParameterOrdering();
 
         // Handle parameterOrder="", which is techinically illegal
@@ -653,110 +658,76 @@ public class Emitter {
             parameterOrder = null;
         }
 
-        // Collect the input parts
+        // All input parts MUST be in the parameterOrder list.  It is an error otherwise.
+        if (parameterOrder != null) {
+            Input input = operation.getInput();
+            if (input != null) {
+                Message inputMsg = input.getMessage();
+                Map allInputs = inputMsg.getParts();
+                Collection orderedInputs = inputMsg.getOrderedParts(parameterOrder);
+                if (allInputs.size() != orderedInputs.size()) {
+                    throw new IOException("Emitter failure.  All input parts must be listed in the parameterOrder attribute of " + operation.getName());
+                }
+            }
+        }
+
+        // Collect all the input parameters
         Input input = operation.getInput();
         if (input != null) {
             partStrings(inputs,
-                    input.getMessage().getOrderedParts(parameterOrder),
+                    input.getMessage().getOrderedParts(null),
                     (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
-        // Collect the output parts
+        // Collect all the output parameters
         Output output = operation.getOutput();
         if (output != null) {
             partStrings(outputs,
-                    output.getMessage().getOrderedParts(parameterOrder),
+                    output.getMessage().getOrderedParts(null),
                     (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
-        if (parameterOrder == null) {
-            // Get the mode info about the parts.  Since no parameterOrder is defined
-            // the order doesn't matter.  Add the input and inout parts first, then add
-            // the output parts.
-            for (int i = 1; i < inputs.size(); i += 2) {
-                String name = (String) inputs.get(i);
-                Parameter p = new Parameter();
-
-                p.name = name;
-                p.type = (String) inputs.get(i - 1);
-                for (int j = 1; j < outputs.size(); j += 2) {
-                    if (name.equals(outputs.get(j)) &&
-                            p.type.equals(outputs.get(j - 1))) {
-                        p.mode = Parameter.INOUT;
-                        outputs.remove(j);
-                        outputs.remove(j - 1);
-                        break;
-                    }
-                }
-                if (p.mode == Parameter.IN)
-                    ++parameters.inputs;
-                else
-                    ++parameters.inouts;
-                parameters.list.add(p);
-            }
-            if (outputs.size() > 0) {
-                parameters.returnType = (String) outputs.get(0);
-                parameters.returnName = (String)outputs.get (1);
-                ++parameters.outputs;
-                for (int i = 3; i < outputs.size(); i += 2) {
-                    Parameter p = new Parameter();
-
-                    p.name = (String) outputs.get(i);
-                    p.type = (String) outputs.get(i - 1);
-                    p.mode = Parameter.OUT;
-                    ++parameters.outputs;
-                    parameters.list.add(p);
-                }
-            }
-        }
-        else {
-            // Get the mode info about the parts.  Since parameterOrder is defined, make
-            // sure that order is preserved.
-            int index = 1;
-            int outdex = 1;
-            boolean firstOutput = !getReturnType(parameters, output, parameterOrder,
-              (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
-            String inName = inputs.size() == 0 ? null : (String) inputs.get(1);
-            String outName = outputs.size() == 0 ? null : (String) outputs.get(1);
-
+        if (parameterOrder != null) {
+            // Construct a list of the parameters in the parameterOrder list, determining the
+            // mode of each parameter and preserving the parameterOrder list.
             for (int i = 0; i < parameterOrder.size(); ++i) {
                 String name = (String) parameterOrder.get(i);
-                Parameter p = new Parameter();
 
-                if (name.equals(inName)) {
-                    p.name = name;
-                    p.type = (String) inputs.get(index - 1);
-                    index += 2;
-                    inName = index > inputs.size() ? null : (String) inputs.get(index);
-                    if (name.equals(outName)) {
-                        p.mode = Parameter.INOUT;
-                        outdex += 2;
-                        outName = outdex > outputs.size() ? null : (String) outputs.get(outdex);
-                        ++parameters.inouts;
-                    }
-                    else
-                        ++parameters.inputs;
-                    parameters.list.add(p);
+                // index in the inputs Vector of the given name, -1 if it doesn't exist.
+                int index = getPartIndex(name, inputs);
+
+                // index in the outputs Vector of the given name, -1 if it doesn't exist.
+                int outdex = getPartIndex(name, outputs);
+
+                if (index > 0) {
+                    // The mode of this parameter is either in or inout
+                    addInishParm(inputs, outputs, index, outdex, parameters, true);
                 }
-                else if (name.equals(outName)) {
-                    if (firstOutput) {
-                        parameters.returnType = (String) outputs.get(outdex - 1);
-                        parameters.returnName = (String)outputs.get(outdex);
-                        firstOutput = false;
-                    }
-                    else {
-                        p.name = name;
-                        p.type = (String) outputs.get(outdex - 1);
-                        p.mode = Parameter.OUT;
-                        parameters.list.add(p);
-                    }
-                    outdex += 2;
-                    outName = outdex > outputs.size() ? null : (String) outputs.get(outdex);
-                    ++parameters.outputs;
+                else if (outdex > 0) {
+                    addOutParm(outputs, outdex, parameters, true);
                 }
                 else {
                     System.err.println("!!! " + name + " not found as an input OR an output part!");
                 }
+            }
+        }
+
+        // Get the mode info about those parts that aren't in the parameterOrder list.
+        // Since they're not in the parameterOrder list, the order doesn't matter.
+        // Add the input and inout parts first, then add the output parts.
+        for (int i = 1; i < inputs.size(); i += 2) {
+            int outdex = getPartIndex((String) inputs.get(i), outputs);
+            addInishParm(inputs, outputs, i, outdex, parameters, false);
+        }
+
+        // Now that the remaining in and inout parameters are collected, the first entry in the
+        // outputs Vector is the return value.  The rest are out parameters.
+        if (outputs.size() > 0) {
+            parameters.returnType = (String) outputs.get(0);
+            parameters.returnName = (String) outputs.get(1);
+            ++parameters.outputs;
+            for (int i = 3; i < outputs.size(); i += 2) {
+                addOutParm(outputs, i, parameters, false);
             }
         }
 
@@ -777,6 +748,63 @@ public class Emitter {
     } // parameters
 
     /**
+     * Return the index of the given name in the given Vector, -1 if it doesn't exist.
+     */
+    private int getPartIndex(String name, Vector v) {
+        for (int i = 1; i < v.size(); i += 2) {
+            if (name.equals(v.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    } // getPartIndex
+
+    /**
+     * Add an in or inout parameter to the parameters object.
+     */
+    private void addInishParm(Vector inputs, Vector outputs, int index, int outdex, Parameters parameters, boolean trimInput) {
+        Parameter p = new Parameter();
+        p.name = (String) inputs.get(index);
+        p.type = (String) inputs.get(index - 1);
+
+        // Should we remove the given parameter type/name entries from the Vector?
+        if (trimInput) {
+            inputs.remove(index);
+            inputs.remove(index - 1);
+        }
+
+        // At this point we know the name and type of the parameter, and that it's at least an
+        // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
+        // then it's an inout parameter.
+        if (outdex > 0 && p.type.equals(outputs.get(outdex - 1))) {
+            outputs.remove(outdex);
+            outputs.remove(outdex - 1);
+            p.mode = Parameter.INOUT;
+            ++parameters.inouts;
+        }
+        else {
+            ++parameters.inputs;
+        }
+        parameters.list.add(p);
+    } // addInishParm
+
+    /**
+     * Add an output parameter to the parameters object.
+     */
+    private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
+        Parameter p = new Parameter();
+        p.name = (String) outputs.get(outdex);
+        p.type = (String) outputs.get(outdex - 1);
+        if (trim) {
+            outputs.remove(outdex);
+            outputs.remove(outdex - 1);
+        }
+        p.mode = Parameter.OUT;
+        ++parameters.outputs;
+        parameters.list.add(p);
+    } // addOutParm
+
+    /**
      * Construct the signatures.  signature is used by both the interface and the stub.
      * skelSig is used by the skeleton.
      */
@@ -786,7 +814,7 @@ public class Emitter {
         String axisSig = "    public " + parms.returnType + " " + name + "(";
         String skelSig = null;
 
-        if ((allOuts == 0) && (parms.returnName == null))
+        if (allOuts == 0)
             skelSig = "    public void " + name + "(";
         else
             skelSig = "    public Object " + name + "(";
@@ -1343,14 +1371,9 @@ public class Emitter {
 
                     while (p.mode != Parameter.INOUT)
                         p = (Parameter) parms.list.get(++i);
-                    if (parms.returnName == null) {
-                        pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) call.getOutputParams().get(" + 0 + ")).getValue()"));
-                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
-                    }
-                    else
-                        pw.println("             return " + getResponseString(parms.returnType, "resp"));
+                    pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
                 }
-                else if (parms.returnName != null) {
+                else {
                     // (parms.outputs == 1)
                     // There is only one output and it is the return value.
                     pw.println("             return " + getResponseString(parms.returnType, "resp"));
@@ -1363,13 +1386,13 @@ public class Emitter {
                 // either in a holder or as the return value.
                 pw.println("            java.util.Vector output = call.getOutputParams();");
                 int outdex = 0;
-                boolean firstInoutIsResp = ((parms.outputs == 0) && (parms.returnName == null));
+                boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
-                        pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
+                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
                         }
                         else {
                             pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue()"));
@@ -1377,16 +1400,12 @@ public class Emitter {
                     }
 
                 }
-                if ((parms.outputs > 0) || (parms.returnName != null))
+                if (parms.outputs > 0)
                     pw.println ("            return " + getResponseString(parms.returnType, "resp"));
 
             }
             pw.println("        }");
         }
-        else if (parms.returnName != null) {
-            pw.println("             return " + getResponseString(parms.returnType, "resp"));
-        }
-
         pw.println("    }");
         pw.println();
     } // writeStubOperation
@@ -1412,7 +1431,7 @@ public class Emitter {
         }
 
         // Call the real implementation
-        if ((parms.outputs == 0) && (parms.returnName == null))
+        if (parms.outputs == 0)
             pw.print("        ");
         else
             pw.print("        Object ret = ");
@@ -1437,17 +1456,17 @@ public class Emitter {
                 call = call + p.name + "Holder";
         }
         call = call + ")";
-        if ((parms.outputs == 0) && (parms.returnName == null))
+        if (parms.outputs == 0)
             pw.println(call + ";");
         else
             pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
-            if ((parms.inouts == 0 && parms.outputs == 1) && (parms.returnName == null))
+            if (parms.inouts == 0 && parms.outputs == 1)
             // The only output is a single return value; simply pass it through.
                 pw.println("        return ret;");
-            else if ((parms.outputs == 0 && parms.inouts == 1) && (parms.returnName == null)) {
+            else if (parms.outputs == 0 && parms.inouts == 1) {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
                 int i = 0;
@@ -1459,7 +1478,7 @@ public class Emitter {
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
                 pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (parms.returnName != null)
+                if (parms.outputs > 0)
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
@@ -1469,9 +1488,6 @@ public class Emitter {
                 }
                 pw.println("        return list;");
             }
-        }
-        else if (parms.returnName != null) {
-            pw.println("        return ret;");
         }
 
         pw.println("    }");
@@ -2279,41 +2295,5 @@ public class Emitter {
 
     protected boolean isPrimitiveType(String type) {
         return TYPES.get(type) != null;
-    }
-
-    private boolean getReturnType(Parameters parameters, Output output, List parameterOrder, boolean literal) {
-        if (output.getMessage().getOrderedParts(parameterOrder) ==
-            output.getMessage().getOrderedParts(null))
-            return false;
-        Map parts = output.getMessage().getParts();
-        Iterator itr = parts.values().iterator();
-        List outputParts = output.getMessage().getOrderedParts(parameterOrder);
-        while (itr.hasNext()) {
-           Part part = (Part)itr.next();
-           if (!outputParts.contains(part)) {
-               if (literal) {
-                   QName elementName = part.getElementName();
-                   if (elementName != null) {
-                       parameters.returnType = Utils.capitalize(elementName.getLocalPart());
-                       parameters.returnType = part.getName();
-                       return true;
-                   }
-               } else {
-                   QName typeName = part.getTypeName();
-                   if (typeName != null) {
-                       // Handle the special "java" namespace for types
-                       if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
-                           parameters.returnType = typeName.getLocalPart();
-                       } else {
-                           parameters.returnType = emitFactory.getType(typeName).getJavaName();
-                       }
-                       parameters.returnName = part.getName();
-                       return true;
-                   }
-                }
-           }
-       }
-       // should never happen ?
-       return false;
     }
 }
