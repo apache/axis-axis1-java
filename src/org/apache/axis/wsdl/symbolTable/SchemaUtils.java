@@ -343,8 +343,7 @@ public class SchemaUtils {
         // used to retrieve the proper java name of the type.
         QName nodeType = Utils.getTypeQName(elementNode, forElement, false);
 
-        TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
-                                                             forElement.value);
+        TypeEntry type = symbolTable.getTypeEntry(nodeType, forElement.value);
 
         // An element inside a complex type is either qualified or unqualified.
         // If the ref= attribute is used, the name of the ref'd element is used
@@ -564,7 +563,7 @@ public class SchemaUtils {
                 return null; // No extension base
             }
             // Return associated Type
-            return (TypeEntry) symbolTable.getType(extendsType);
+            return symbolTable.getType(extendsType);
         }
         return null;
     }
@@ -1094,9 +1093,8 @@ public class SchemaUtils {
                 }
                 
                 // Get the corresponding TypeEntry from the symbol table
-                TypeEntry type = 
-                        (TypeEntry)symbolTable.getTypeEntry(attributeType, 
-                                                            forElement.value);
+                TypeEntry type = symbolTable.getTypeEntry(attributeType, 
+                                                          forElement.value);
                 
                 // add type and name to vector, skip it if we couldn't parse it
                 // XXX - this may need to be revisited.
@@ -1111,7 +1109,6 @@ public class SchemaUtils {
 
     // list of all of the XSD types in Schema 2001
     private static String schemaTypes[] = {
-        "schema",
         "string",
         "normalizedString",
         "token",        

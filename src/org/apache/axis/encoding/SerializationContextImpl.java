@@ -66,7 +66,6 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
@@ -354,7 +353,7 @@ public class SerializationContextImpl implements SerializationContext
     public TypeMappingRegistry getTypeMappingRegistry() {
         if (msgContext == null)
             return null;
-        return (TypeMappingRegistry) msgContext.getTypeMappingRegistry();
+        return msgContext.getTypeMappingRegistry();
     }
 
     /**
