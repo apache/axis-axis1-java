@@ -74,6 +74,7 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
+import javax.wsdl.Import;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
@@ -99,178 +100,201 @@ import java.util.StringTokenizer;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class Emitter {
+
     private Class cls;
     private String allowedMethods;
-    private String targetNamespace;
+    private String intfNS;          
+    private String implNS;
     private String locationUrl;
+    private String importUrl;
     private String serviceUrn;
     private String serviceName = null;
     private String description;
     private TypeMappingRegistry reg;
     private Namespaces namespaces;
 
-    private Definition def;
-    private Document doc;
-    private String clsName;
     private ArrayList encodingList;
     private Types types;
+    private String clsName;
 
+    /**
+     * Construct Emitter.                                            
+     * Set the contextual information using set* methods at the end of the class.
+     * Invoke emit to emit the code
+     */
     public Emitter () {
       namespaces = new Namespaces();
     }
 
     /**
-     * Generates a WSDL document for a given <code>Class</code> and
-     * a space seperated list of methods at runtime
+     * Generates WSDL documents for a given <code>Class</code> 
      *
-     * @param cls <code>Class</code> object
-     * @param allowedMethods space seperated methods
-     * @param locationUrl location of the service
-     * @param serviceUrn service URN
-     * @param description description of service
-     * @param msgContext <code>MsgContext</code> of the service invocation
-     * @return WSDL <code>Document</code>
+     * @param filename1  interface WSDL                    
+     * @param filename2  implementation WSDL                                
      * @throws Exception
      */
-    public static Document writeWSDLDoc(Class cls,
-                                    String allowedMethods,
-                                    String locationUrl,
-                                    String serviceUrn,
-                                    String description,
-                                    MessageContext msgContext) throws Exception
-    {
-        Emitter emitter = new Emitter();
-        emitter.setCls(cls);
-        emitter.setAllowedMethods(allowedMethods);
-        emitter.setLocationUrl(locationUrl);
+    public void emit(String filename1, String filename2) throws Exception {
+        // Get interface and implementation defs
+        Definition intf = getIntfWSDL();
+        Definition impl = getImplWSDL();
 
-        /** @todo ravi: fix targetNamespace for runtime generation
-        // This is set to auto generated or user defined targetNamespace
-        // need to figure out what it should be in the runtime situation
-        // till we revisit, leave it as it was in WSDLUtils **/
-        emitter.setTargetNamespace(locationUrl);
+        // Write out the interface def      
+        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(intf);
+        types.insertTypesFragment(doc);
+        XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename1)));
 
-        emitter.setServiceUrn(serviceUrn);
-        emitter.setDescription(description);
-        String serviceName = msgContext.getTargetService();
-        if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
-            serviceName = "";
-        emitter.setServiceName(serviceName);
-        emitter.setReg(msgContext.getTypeMappingRegistry());
-        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(emitter.emit());
-        return doc;
+        // Write out the implementation def 
+        doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(impl);
+        XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename2)));
     }
 
     /**
-     * Generates a WSDL document for a given <code>Class</code> and
-     * a space seperated list of methods at designtime
+     * Generates a complete WSDL document for a given <code>Class</code>
      *
-     * @param classDir class directory to explicitly load class not in classpath
-     * @param className <code>Class</code> object
-     * @param allowedMethods space seperated methods
-     * @param filename Output WSDL file name
+     * @param filename  WSDL                    
      * @throws Exception
      */
-    public void emit(String classDir, String className, String allowedMethods, String filename) throws Exception {
-        Class cls = null;
-        try {
-            cls = Class.forName(className);
-        }
-        catch (Exception ex) {
-            /** @todo ravi: use classDir to load class directly into the class loader
-             *  The case for it is that one can create a new directory, drop some source, compile and use a
-             *  WSDL gen tool to generate wsdl - without editing the Wsdl gen tool's classpath
-             *  Assuming all of the classes are either under classDir or otherwise in the classpath
-             *
-             *  Would this be useful?
-             *  */
-            ex.printStackTrace();
-        }
-        emit(cls, allowedMethods, filename);
-    }
-
-    /**
-     * Generates a WSDL document for a given <code>Class</code> and
-     * a space seperated list of methods at design time
-     *
-     * @param cls <code>Class</code> object
-     * @param allowedMethods space seperated methods
-     * @param filename Output WSDL file name
-     * @throws Exception
-     */
-    public void emit(Class cls, String allowedMethods, String filename) throws Exception {
-        def = emit(cls, allowedMethods);
-
+    public void emit(String filename) throws Exception {
+        Definition def = getWSDL();
         Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
         types.insertTypesFragment(doc);
- 
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
     /**
-     * Generates a WSDL <code>Definition</code> for a given <code>Class</code> and
-     * a space seperated list of methods at design time
+     * Get a Full WSDL <code>Definition</code> for the current configuration parameters
      *
-     * @param cls <code>Class</code> object
-     * @param allowedMethods space seperated methods
      * @return WSDL <code>Definition</code>
      * @throws Exception
      */
-    public Definition emit(Class cls, String allowedMethods) throws Exception {
-        this.cls = cls;
-        this.allowedMethods = allowedMethods;
+    public Definition getWSDL() throws Exception {
+        // Invoke the init() method to ensure configuration is setup
+        init();
+        
+        // Create a definition
+        Definition def = WSDLFactory.newInstance().newDefinition();
 
-        /** @todo ravi: getting the serviceName from cls name or explicitly ask the user? */
-        String name = cls.getName();
-        name = name.substring(name.lastIndexOf('.') + 1);
-        setServiceName(name);
-        return emit();
-    }
-
-    /**
-     * Generates a WSDL <code>Definition</code> for the current configuration parameters
-     * set for this class instance
-     *
-     * @return WSDL <code>Document</code>
-     * @throws Exception
-     */
-    public Definition emit() throws Exception {
-        clsName = cls.getName();
-        clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
-
-        encodingList = new ArrayList();
-        encodingList.add(Constants.URI_SOAP_ENC);
-
-        if (reg == null) {
-            reg = new SOAPTypeMappingRegistry();
-        }
-
-        if (targetNamespace == null)
-            targetNamespace = Namespaces.makeNamespace(cls.getName());
-
-        namespaces.put(cls.getName(), targetNamespace, "tns");
-
-        writeDefinitions();
-        types = new Types(def, reg, namespaces, targetNamespace);
-        Binding binding = writeBinding();
-        writePortType(binding);
-        writeService(binding);
+        // Write interface header
+        writeDefinitions(def, intfNS);
+        types = new Types(def, reg, namespaces, intfNS);
+        Binding binding = writeBinding(def, true);
+        writePortType(def, binding);
+        writeService(def, binding);
         return def;
     }
 
-    private void writeDefinitions() throws Exception {
-        def = WSDLFactory.newInstance().newDefinition();
-        def.setTargetNamespace(targetNamespace);
+   /**
+     * Get a interface WSDL <code>Definition</code> for the current configuration parameters
+     *
+     * @return WSDL <code>Definition</code>
+     * @throws Exception
+     */
+    public Definition getIntfWSDL() throws Exception {
+        // Invoke the init() method to ensure configuration is setup
+        init();
 
-        def.addNamespace("tns", targetNamespace);
+        // Create a definition
+        Definition def = WSDLFactory.newInstance().newDefinition();
+
+        // Write interface header
+        writeDefinitions(def, intfNS);
+        types = new Types(def, reg, namespaces, intfNS);
+        Binding binding = writeBinding(def, true);
+        writePortType(def, binding);
+        return def;
+    }
+
+   /**
+     * Get implementation WSDL <code>Definition</code> for the current configuration parameters
+     *
+     * @return WSDL <code>Definition</code>
+     * @throws Exception
+     */
+    public Definition getImplWSDL() throws Exception {
+        // Invoke the init() method to ensure configuration is setup
+        init();
+
+        // Create a definition
+        Definition def = WSDLFactory.newInstance().newDefinition();
+
+        // Write interface header
+        writeDefinitions(def, implNS);
+        writeImport(def, intfNS, importUrl);
+        Binding binding = writeBinding(def, false); // Don't write binding to def
+        writeService(def, binding);
+        return def;
+    }
+    /**
+     * Invoked prior to building a definition to ensure parms and data are set up.      
+     * @throws Exception
+     */
+    private void init() throws Exception {
+        if (encodingList == null) {
+            clsName = cls.getName();
+            clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
+            
+            encodingList = new ArrayList();
+            encodingList.add(Constants.URI_SOAP_ENC);
+            
+            if (reg == null) {
+                reg = new SOAPTypeMappingRegistry();
+            }
+
+            if (intfNS == null) 
+                intfNS = Namespaces.makeNamespace(cls.getName());
+            if (implNS == null)
+                implNS = intfNS + "-impl";
+
+            namespaces.put(cls.getName(), intfNS, "intf");
+            namespaces.put(cls.getName(), implNS, "impl");
+        }
+    }
+
+    /**
+     * Create the definition header information.                                        
+     *
+     * @param def  <code>Definition</code>
+     * @param tns  target namespace
+     * @throws Exception
+     */
+    private void writeDefinitions(Definition def, String tns) throws Exception {
+        def.setTargetNamespace(tns);
+
+        def.addNamespace("intf", intfNS);
+        def.addNamespace("impl", implNS);
         def.addNamespace("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+        def.addNamespace("soapenc", Constants.URI_SOAP_ENC);
         def.addNamespace("xsd", Constants.URI_CURRENT_SCHEMA_XSD);
     }
 
-    private Binding writeBinding() throws Exception {
+   /**
+     * Create and add an import                                        
+     *
+     * @param def  <code>Definition</code>
+     * @param tns  target namespace
+     * @param loc  target location 
+     * @throws Exception
+     */
+    private void writeImport(Definition def, String tns, String loc) throws Exception {
+        Import imp = def.createImport();
+
+        imp.setNamespaceURI(tns);
+        if (loc != null && !loc.equals(""))
+            imp.setLocationURI(loc);
+        def.addImport(imp);
+    }
+
+    /**
+     * Create the binding.                                        
+     *
+     * @param def  <code>Definition</code>
+     * @param add  true if binding should be added to the def
+     * @throws Exception
+     */
+    private Binding writeBinding(Definition def, boolean add) throws Exception {
         Binding binding = def.createBinding();
         binding.setUndefined(false);
-        binding.setQName(new javax.wsdl.QName(targetNamespace, clsName + "SoapBinding"));
+        binding.setQName(new javax.wsdl.QName(intfNS, clsName + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBinding();
         soapBinding.setStyle("rpc");
@@ -278,15 +302,24 @@ public class Emitter {
 
         binding.addExtensibilityElement(soapBinding);
 
-        def.addBinding(binding);
+        if (add) {
+            def.addBinding(binding);
+        }
         return binding;
     }
 
-    private void writeService(Binding binding) {
+    /**
+     * Create the service.                                        
+     *
+     * @param def  
+     * @param binding                        
+     * @throws Exception
+     */
+    private void writeService(Definition def, Binding binding) {
 
         Service service = def.createService();
 
-        service.setQName(new javax.wsdl.QName(serviceUrn, clsName));
+        service.setQName(new javax.wsdl.QName(implNS, clsName));
         def.addService(service);
 
         Port port = def.createPort();
@@ -302,12 +335,18 @@ public class Emitter {
         service.addPort(port);
     }
 
-    private void writePortType(Binding binding) throws Exception{
+    /** Create a PortType                                        
+     *
+     * @param def  
+     * @param binding                        
+     * @throws Exception
+     */
+    private void writePortType(Definition def, Binding binding) throws Exception{
 
         PortType portType = def.createPortType();
         portType.setUndefined(false);
 
-        portType.setQName(new javax.wsdl.QName(targetNamespace, clsName + "PortType"));
+        portType.setQName(new javax.wsdl.QName(intfNS, clsName + "PortType"));
 
         Method[] methods = cls.getDeclaredMethods();
 
@@ -316,8 +355,8 @@ public class Emitter {
                 if (allowedMethods.indexOf(methods[i].getName()) == -1)
                     continue;
             }
-            Operation oper = writeOperation(binding, methods[i].getName());
-            writeMessages(oper, methods[i]);
+            Operation oper = writeOperation(def, binding, methods[i].getName());
+            writeMessages(def, oper, methods[i]);
             portType.addOperation(oper);
         }
 
@@ -326,16 +365,23 @@ public class Emitter {
         binding.setPortType(portType);
     }
 
-    private void writeMessages(Operation oper, Method method) throws Exception{
+    /** Create a Message                                        
+     *
+     * @param def  
+     * @param oper                        
+     * @param method                        
+     * @throws Exception
+     */
+    private void writeMessages(Definition def, Operation oper, Method method) throws Exception{
         Input input = def.createInput();
 
-        Message msg = writeRequestMessage(method);
+        Message msg = writeRequestMessage(def, method);
         input.setMessage(msg);
         oper.setInput(input);
 
         def.addMessage(msg);
 
-        msg = writeResponseMessage(method);
+        msg = writeResponseMessage(def, method);
         Output output = def.createOutput();
         output.setMessage(msg);
         oper.setOutput(output);
@@ -343,15 +389,29 @@ public class Emitter {
         def.addMessage(msg);
     }
 
-    private Operation writeOperation(Binding binding, String operName) {
+    /** Create a Operation
+     *
+     * @param def  
+     * @param binding                        
+     * @param operName                        
+     * @throws Exception
+     */
+    private Operation writeOperation(Definition def, Binding binding, String operName) {
         Operation oper = def.createOperation();
         oper.setName(operName);
         oper.setUndefined(false);
-        writeBindingOperation(binding, oper);
+        writeBindingOperation(def, binding, oper);
         return oper;
     }
 
-    private void writeBindingOperation (Binding binding, Operation oper) {
+    /** Create a Binding Operation
+     *
+     * @param def  
+     * @param binding                        
+     * @param oper                        
+     * @throws Exception
+     */
+    private void writeBindingOperation (Definition def, Binding binding, Operation oper) {
         BindingOperation bindingOper = def.createBindingOperation();
         BindingInput bindingInput = def.createBindingInput();
         BindingOutput bindingOutput = def.createBindingOutput();
@@ -377,12 +437,18 @@ public class Emitter {
         binding.addBindingOperation(bindingOper);
     }
 
-    private Message writeRequestMessage(Method method) throws Exception
+    /** Create a Request Message
+     *
+     * @param def  
+     * @param method             
+     * @throws Exception
+     */
+    private Message writeRequestMessage(Definition def, Method method) throws Exception
     {
         Message msg = def.createMessage();
 
         javax.wsdl.QName qName
-                = createMessageName(method.getName(), "Request");
+                = createMessageName(def, method.getName(), "Request");
 
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -396,29 +462,43 @@ public class Emitter {
                 offset = 1;
                 continue;
             }
-            writePartToMessage(msg, "arg" + (i - offset), parameters[i]);
+            writePartToMessage(def, msg, "arg" + (i - offset), parameters[i]);
         }
 
         return msg;
     }
 
-    private Message writeResponseMessage(Method method) throws Exception
+    /** Create a Response Message
+     *
+     * @param def  
+     * @param method             
+     * @throws Exception
+     */
+    private Message writeResponseMessage(Definition def, Method method) throws Exception
     {
         Message msg = def.createMessage();
 
         javax.wsdl.QName qName
-                = createMessageName(method.getName(), "Response");
+                = createMessageName(def, method.getName(), "Response");
 
         msg.setQName(qName);
         msg.setUndefined(false);
 
         Class type = method.getReturnType();
-        writePartToMessage(msg, method.getName().concat("Result"), type);
+        writePartToMessage(def, msg, method.getName().concat("Result"), type);
 
         return msg;
     }
 
-    public void writePartToMessage(Message msg, String name, Class param) throws Exception
+    /** Create a Part
+     *
+     * @param def  
+     * @param msg             
+     * @param name String name of part             
+     * @param param  Class type of parameter             
+     * @throws Exception
+     */
+    public void writePartToMessage(Definition def, Message msg, String name, Class param) throws Exception
     {
         Part part = def.createPart();
         javax.wsdl.QName typeQName = types.writePartType(param);
@@ -432,10 +512,11 @@ public class Emitter {
     /*
      * Return a message QName which has not already been defined in the WSDL
      */
-    private javax.wsdl.QName createMessageName(String methodName,
-                                                   String suffix) {
+    private javax.wsdl.QName createMessageName(Definition def,
+                                               String methodName,
+                                               String suffix) {
 
-        javax.wsdl.QName qName = new javax.wsdl.QName(targetNamespace,
+        javax.wsdl.QName qName = new javax.wsdl.QName(intfNS,
                                         methodName.concat(suffix));
 
         // Check the make sure there isn't a message with this name already
@@ -443,13 +524,14 @@ public class Emitter {
         while (def.getMessage(qName) != null) {
             StringBuffer namebuf = new StringBuffer(methodName.concat(suffix));
             namebuf.append(messageNumber);
-            qName = new javax.wsdl.QName(targetNamespace, namebuf.toString());
+            qName = new javax.wsdl.QName(intfNS, namebuf.toString());
             messageNumber++;
         }
         return qName;
     }
 
-
+    // -------------------- Parameter Query Methods ----------------------------//
+    
     /**
      * Returns the <code>Class</code> to export
      * @return the <code>Class</code> to export
@@ -466,36 +548,74 @@ public class Emitter {
         this.cls = cls;
     }
 
+   /**
+     * Returns the interface namespace
+     * @return interface target namespace
+     */
+    public String getIntfNamespace() {
+        return intfNS;     
+    }
+
     /**
-     * Returns a list of a space seperated list of methods to export
-     * @return a space seperated list of methods to export
+     * Set the interface namespace
+     * @param ns interface target namespace            
+     */
+    public void setIntfNamespace(String ns) {
+        this.intfNS = ns;                 
+    }
+
+   /**
+     * Returns the implementation namespace
+     * @return implementation target namespace
+     */
+    public String getImplNamespace() {
+        return implNS;     
+    }
+
+    /**
+     * Set the implementation namespace
+     * @param ns implementation target namespace            
+     */
+    public void setImplNamespace(String ns) {
+        this.implNS = ns;                 
+    }
+
+    /**
+     * Sets the <code>Class</code> to export
+     * @param className the name of the <code>Class</code> to export
+     * @param classDir the directory containing the class (optional)
+     */
+    public void setCls(String className, String classDir) {
+        try {
+            cls = Class.forName(className);
+        }
+        catch (Exception ex) {
+            /** @todo ravi: use classDir to load class directly into the class loader
+             *  The case for it is that one can create a new directory, drop some source, compile and use a
+             *  WSDL gen tool to generate wsdl - without editing the Wsdl gen tool's classpath
+             *  Assuming all of the classes are either under classDir or otherwise in the classpath
+             *
+             *  Would this be useful?
+             *  */
+            ex.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Returns a list of a space separated list of methods to export
+     * @return a space separated list of methods to export
      */
     public String getAllowedMethods() {
         return allowedMethods;
     }
 
     /**
-     * Set a space seperated list of methods to export
-     * @param allowedMethods a space seperated list of methods to export
+     * Set a space separated list of methods to export
+     * @param allowedMethods a space separated list of methods to export
      */
     public void setAllowedMethods(String allowedMethods) {
         this.allowedMethods = allowedMethods;
-    }
-
-    /**
-     * Returns the String representation of the service endpoint URL
-     * @return String representation of the service endpoint URL
-     */
-    public String getTargetNamespace() {
-        return targetNamespace;
-    }
-
-    /**
-     * Set the String representation of the target namespace URN
-     * @param targetNamespace the String representation of the target namespace URN
-     */
-    public void setTargetNamespace(String targetNamespace) {
-        this.targetNamespace = targetNamespace;
     }
 
     /**
@@ -529,6 +649,22 @@ public class Emitter {
      */
     public void setLocationUrl(String locationUrl) {
         this.locationUrl = locationUrl;
+    }
+
+    /**
+     * Returns the String representation of the interface import location URL
+     * @return String representation of the interface import location URL
+     */
+    public String getImportUrl() {
+        return importUrl;
+    }
+
+    /**
+     * Set the String representation of the interface location URL for importing
+     * @param locationUrl the String representation of the interface location URL for importing
+     */
+    public void setImportUrl(String importUrl) {
+        this.importUrl = importUrl;
     }
 
     /**
@@ -595,4 +731,53 @@ public class Emitter {
         this.reg = reg;
     }
 
+
+    /**
+     * @todo: this is the logic to hook into the existing WSDLUtils code.
+     * WSDLUtils should be changed to invoke Emitter using the same interface
+     * as Java2Wsdl.  Remove this method after WSDLUtils is changed.
+     * 
+     * Generates a WSDL document for a given <code>Class</code> and
+     * a space separated list of methods at runtime
+     *
+     * @param cls <code>Class</code> object
+     * @param allowedMethods space separated methods
+     * @param locationUrl location of the service
+     * @param serviceUrn service URN
+     * @param description description of service
+     * @param msgContext <code>MsgContext</code> of the service invocation
+     * @return WSDL <code>Document</code>
+     * @throws Exception
+     */
+        /** @todo ravi: fix targetNamespace for runtime generation
+        // This is set to auto generated or user defined targetNamespace
+        // need to figure out what it should be in the runtime situation
+        // till we revisit, leave it as it was in WSDLUtils **/
+
+    /*    
+    public static Document writeWSDLDoc(Class cls,
+                                    String allowedMethods,
+                                    String locationUrl,
+                                    String serviceUrn,
+                                    String description,
+                                    MessageContext msgContext) throws Exception
+    {
+        Emitter emitter = new Emitter();
+        emitter.setCls(cls);
+        emitter.setAllowedMethods(allowedMethods);
+        emitter.setLocationUrl(locationUrl);
+
+        emitter.setTargetNamespace(locationUrl);
+
+        emitter.setServiceUrn(serviceUrn);
+        emitter.setDescription(description);
+        String serviceName = msgContext.getTargetService();
+        if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
+            serviceName = "";
+        emitter.setServiceName(serviceName);
+        emitter.setReg(msgContext.getTypeMappingRegistry());
+        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(emitter.emit());
+        return doc;
+    }
+    */
 }
