@@ -45,7 +45,7 @@ public class Client
             Call     call    = (Call) service.createCall();
 
             call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
-            call.setOperationName( new QName("MyService", "serviceMethod") );
+            call.setOperationName( new QName("http://example3.userguide.samples", "serviceMethod") );
             call.addParameter( "arg1", XMLType.XSD_STRING, ParameterMode.IN);
             call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING );
 
