@@ -240,134 +240,81 @@ This password is used in resolving the WSDL-URI provided as the input to WSDL2Ja
 
 <h3><a name="Java2WSDL"></a>Java2WSDL Reference</h3>
 <p>Here is the help message generated from the current tool: </p>
-<p><tt><font color="#993366">Java2WSDL emitter</font></tt> <br>
-  <tt><font color="#993366">Usage: java org.apache.axis.wsdl.Java2WSDL [options] 
-  class-of-portType</font></tt> <br>
-  <tt><font color="#993366">Options:</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -h, --help</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  print this message and exit</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -I, --input 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  input WSDL filename</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  output WSDL filename</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -l, --location 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  service location url</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -P, --portTypeName 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  portType name (obtained from class-of-portType if not specified)</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -b, --bindingName 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  binding name ((--servicePortName value + "SOAPBinding" if not specified)</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -S, --serviceElementName 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  service element name (defaults to servicePortName value + "Service")</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s, --servicePortName 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  service port name (obtained from --location if not specified)</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n, --namespace 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  target namespace</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -p, --PkgtoNS 
-  &lt;argument>=&lt;value></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  package=namespace, name value pairs</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -m, --methods 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  space or comma separated list of methods to export</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -a, --all</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  look for allowed methods in inherited class</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -w, --outputWsdlMode 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  output WSDL mode: All, Interface, Implementation</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -L, --locationImport 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  location of interface WSDL</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --namespaceImpl 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  target namespace for implementation WSDL</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -O, --outputImpl 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  output Implementation WSDL filename, setting this causes</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  --outputWsdlMode to be ignored</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -i, --implClass 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  optional class that contains implementation of methods in</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  class-of-portType.&nbsp; The debug information in the class is used</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  to obtain the method parameter names, which are used to set</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  the WSDL part names.</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -x, --exclude 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  space or comma separated list of methods not to export</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c, --stopClasses 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  space or comma separated list of class names which stop inheritance search </font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  if --all switch is enabled</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -T, --typeMappingVersion 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  indicate 1.1 or 1.2. The default is 1.2 (SOAP 1.2 JAX-RPC compliant)</font></tt> 
-  <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -A, --soapAction 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  value of the operations soapAction field. Values are DEFAULT,</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  OPERATION or NONE. OPERATION forces soapAction to the name</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  of the operation.  DEFAULT causes the soapAction to be set</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  according to the operations meta data (usually "").  NONE</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  forces the soapAction to "".  The default is DEFAULT.</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -y, --style 
-  &lt;argument></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-  the style of the wsdl document: RPC, DOCUMENT or WRAPPED</font></tt> <br>
-  <tt><font color="#993366">Details:</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; portType element name= &lt.portTypeName 
-  value> OR &lt;class-of-portType name></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; binding element&nbsp; name= &lt;--bindingName value> OR 
-  &lt;--servicePortName value>SoapBinding</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; service element&nbsp; name= &lt;--serviceElementName 
-  value> OR &lt;portTypeName value>Service</font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; port element &nbsp;&nbsp;&nbsp; name= 
-  &lt;--servicePortName value></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; address location&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
-  &lt;--location value></font></tt> <br>
-  &nbsp; 
+<p><font color="#993366">
+<pre>
+Java2WSDL emitter
+Usage: java org.apache.axis.wsdl.Java2WSDL [options] class-of-portType
+Options:
+        -h, --help
+                print this message and exit
+        -I, --input <argument>
+                input WSDL filename
+        -o, --output <argument>
+                output WSDL filename
+        -l, --location <argument>
+                service location url
+        -P, --portTypeName <argument>
+                portType name (obtained from class-of-portType if not specified)
+        -b, --bindingName <argument>
+                binding name (--servicePortName value + "SOAPBinding" if not specified)
+        -S, --serviceElementName <argument>
+                service element name (defaults to --servicePortName value + "Service")
+        -s, --servicePortName <argument>
+                service port name (obtained from --location if not specified)
+        -n, --namespace <argument>
+                target namespace
+        -p, --PkgtoNS <argument>=<value>
+                package=namespace, name value pairs
+        -m, --methods <argument>
+                space or comma separated list of methods to export
+        -a, --all
+                look for allowed methods in inherited class
+        -w, --outputWsdlMode <argument>
+                output WSDL mode: All, Interface, Implementation
+        -L, --locationImport <argument>
+                location of interface wsdl
+        -N, --namespaceImpl <argument>
+                target namespace for implementation wsdl
+        -O, --outputImpl <argument>
+                output Implementation WSDL filename, setting this causes --outputWsdlMode to be ignored
+        -i, --implClass <argument>
+                optional class that contains implementation of methods in class-of-portType.  
+				The debug information in the class is used
+                to obtain the method parameter names, which are used to set
+                the WSDL part names.
+        -x, --exclude <argument>
+                space or comma separated list of methods not to export
+        -c, --stopClasses <argument>
+                space or comma separated list of class names which will stop
+                inheritance search if --all switch is given
+        -T, --typeMappingVersion <argument>
+                indicate 1.1 or 1.2.  The default is 1.1 (SOAP 1.1 JAX-RPC 
+				 compliant  1.2 indicates SOAP 1.1 encoded.)
+        -A, --soapAction <argument>
+                value of the operations soapAction field. Values are DEFAULT,
+                OPERATION or NONE. OPERATION forces soapAction to the name
+                of the operation.  DEFAULT causes the soapAction to be set
+                according to the operations meta data (usually "").  NONE forces
+				the soapAction to "".  The default is DEFAULT.
+        -y, --style <argument>
+                The style of binding in the WSDL, either DOCUMENT, RPC, or WRAPPED.
+        -u, --use <argument>
+                The use of items in the binding, either LITERAL or ENCODED
+        -e, --extraClasses <argument>
+                A space or comma separated list of class names to be added tO
+                The type section.
+Details:
+   portType element name= <--portTypeName value> OR <class-of-portType name>
+   binding  element name= <--bindingName value> OR <--servicePortName value>Soap
+Binding
+   service  element name= <--serviceElementName value> OR <--portTypeName value>
+Service
+   port     element name= <--servicePortName value>
+   address location     = <--location value>
+</pre>
+</font>
+<br>
+ 
 <p><b>-h , --help</b> <br>
   Prints the help message. 
 <p><b>-I, --input &lt;WSDL file></b> <br>
@@ -441,10 +388,23 @@ WSDL.
 <p><b>-A, --soapAction &lt;argument></b> <br>
   The value of the operations soapAction field. Values are DEFAULT, OPERATION or NONE. OPERATION forces soapAction to the name of the operation.  DEFAULT causes the soapAction to be set according to the operation's meta data (usually "").  NONE forces the soapAction to "".  The default is DEFAULT.
 <p><b>-y, --style &lt;argument></b> <br>
-  The style of the WSDL document:  RPC, DOCUMENT or WRAPPED.
-  If RPC, a rpc/encoded wsdl is generated.
-  If DOCUMENT, a document/literal wsdl is generated.
-  If WRAPPED, a document/literal wsdl is generated using the wrapped approach.
+  The style of the WSDL document: RPC, DOCUMENT or WRAPPED. The default is RPC.
+  If RPC is specified, an rpc wsdl is generated. 
+  If DOCUMENT is specified, a document wsdl is generated. 
+  If WRAPPED is specified, a document/literal wsdl is generated using the wrapped approach.  
+  Wrapped style forces the use attribute to be literal.
+<p><b>-u, --use &lt;argument&gt;</b><br>
+  The use of the WSDL document: LITERAL or ENCODED. If LITERAL is specified, the 
+  XML Schema defines the representation of the XML for the request. If ENCODED 
+  is specified, SOAP encoding is specified in the generated WSDL. 
+<p><b>-e, --extraClasses &lt;argument&gt;</b><br>
+  Specify a space or comma seperated list of class names which should be included in the <b>types</b>
+  section of the WSDL document.  This is useful in the case where your service interface references
+  a base class and you would like your WSDL to contain XML Schema type defintions for these other
+  classes.  The -extraClasses option can be specified duplicate times.  
+  Each specification results in the additional classes being added to the list.
+
+
 <h2><a name="Deployment"></a>Deployment (WSDD) Reference</h2>
 Note : all the elements referred to in this section are in the WSDD namespace, 
 namely &quot;http://xml.apache.org/axis/wsdd/&quot;. 

@@ -62,60 +62,63 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 
 /**
- * @author rsitze
+ * Description of the different styles
+ * <br>
+ * <b>style=rpc, use=encoded</b><br>
+ *   First element of the SOAP body is the
+ *   operation.  The operation contains
+ *   elements describing the parameters, which 
+ *   are serialized as encoded (possibly multi-ref)
+ * <pre>
+ *   &lt;soap:body&gt;
+ *      &lt;operation&gt;
+ *         &lt;arg1&gt;...&lt;/arg1&gt;
+ *         &lt;arg2&gt;...&lt;/arg2&gt;
+ *      &lt;/operation&gt;
+ * </pre>
+ * <br>
+ * <b>style=RPC, use=literal</b><br>
+ *   First element of the SOAP body is the 
+ *   operation.  The operation contains elements
+ *   describing the parameters, which are serialized
+ *   as encoded (no multi-ref)\
+ * <pre>
+ *   &lt;soap:body&gt;
+ *      &lt;operation&gt;
+ *         &lt;arg1&gt;...&lt;/arg1&gt;
+ *         &lt;arg2&gt;...&lt;/arg2&gt;
+ *      &lt;/operation&gt;
+ * </pre>
+ * <br>
+ * <b>style=document, use=literal</b><br>
+ *   Elements of the SOAP body are the names of the parameters
+ *   (there is no wrapper operation...no multi-ref)
+ * <pre>
+ *   &lt;soap:body&gt;
+ *         &lt;arg1&gt;...&lt;/arg1&gt;
+ *         &lt;arg2&gt;...&lt;/arg2&gt;
+ * </pre>
+ * <br>
+ * <b>style=wrapped</b><br>
+ *    Special case of DOCLIT where there is only one parameter
+ *    and it has the same qname as the operation.  In
+ *    such cases, there is no actual type with the name...the
+ *    elements are treated as parameters to the operation
+ * <pre>
+ *   &lt;soap:body&gt;
+ *      &lt;one-arg-same-name-as-operation&gt;
+ *         &lt;elemofarg1&gt;...&lt;/elemofarg1&gt;
+ *         &lt;elemofarg2&gt;...&lt;/elemofarg2&gt;
+ * </pre>
+ * <br>
+ * <b>style=document, use=encoded</b><br>
+ *    There is not an enclosing operation name element, but
+ *    the parmeterss are encoded using SOAP encoding
+ *     This mode is not (well?) supported by Axis.
+ *
+ * @author Richard Sitze
  */
 public class Style extends Enum {
-
-    /**
-     * Description of the different styles
-     * 
-     * style=rpc use=encoded
-     *   First element of the SOAP body is the
-     *   operation.  The operation contains
-     *   elements describing the parameters, which 
-     *   are serialized as encoded (possibly multi-ref)
-     *   <soap:body>
-     *      <operation>
-     *         <arg1>...</arg1>
-     *         <arg2>...</arg2>
-     *      </operation>
-     *
-     * style=RPC use=literal
-     *   First element of the SOAP body is the 
-     *   operation.  The operation contains elements
-     *   describing the parameters, which are serialized
-     *   as encoded (no multi-ref)
-     *   <soap:body>
-     *      <operation>
-     *         <arg1>...</arg1>
-     *         <arg2>...</arg2>
-     *      </operation>
-     *
-     * style=document use=literal
-     *   Elements of the SOAP body are the names of the parameters
-     *   (there is no wrapper operation...no multi-ref)
-     *
-     *   <soap:body>
-     *         <arg1>...</arg1>
-     *         <arg2>...</arg2>
-     *
-     * 
-     * style=wrapped
-     *    Special case of DOCLIT where there is only one parameter
-     *    and it has the same qname as the operation.  In
-     *    such cases, there is no actual type with the name...the
-     *    elements are treated as parameters to the operation
-     *
-     *   <soap:body>
-     *      <one-arg-same-name-as-operation>
-     *         <elemofarg1>...</elemofarg1>
-     *         <elemofarg2>...</elemofarg2>
-     * 
-     * style=document use=encoded
-     *    This mode doesn't seem to make any sense...
-     *    Like DOCLIT but the parms are encoded?
-     *
-     */
 
     private static final Type type = new Type();
     

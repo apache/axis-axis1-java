@@ -35,7 +35,7 @@ Copyright:
 <project default="compile">
 
 <property name="axis.home" location="../../.." />
-<property name="componentName" value="test/wsdl/filegen" />
+<property name="componentName" value="test/wsdl/extra" />
         &properties;
         &paths;
         &taskdefs;
@@ -43,48 +43,55 @@ Copyright:
         &targets;
 
 <target name="clean">
-    <echo message="Removing ${build.dir}/**/test/wsdl/filegen" />
     <echo message="componentName is ${componentName}"/>
-    <delete dir="${build.dir}/classes/test/wsdl/filegen"/>
-    <delete dir="${build.dir}/work/test/wsdl/filegen"/>
-    <delete dir="${build.dir}/classes/test/wsdl/filegenAll"/>
-    <delete dir="${build.dir}/work/test/wsdl/filegenAll"/>
+    <echo message="Removing ${build.dir}/**/test/wsdl/extra" />
+    <delete dir="${build.dir}/classes/test/wsdl/extra"/>
+    <delete dir="${build.dir}/work/test/wsdl/extra"/>
 </target>
 
-
+<!-- main target, always start from scratch -->
 <target name="compile" depends="clean">
-  <echo message="Compiling test.wsdl.filegen"/>
-    <!-- Verify files generated based on what is referenced in WSDL -->
-    <wsdl2java url="${axis.home}/test/wsdl/filegen/FileGen.wsdl"
+  <echo message="Compiling test.wsdl.extra"/>
+  
+    <!-- Compile the test classes for Java2WSDL -->
+    <javac srcdir="${axis.home}/test/wsdl/extra" 
+           destdir="${build.dest}" 
+           fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="MyService.java" />
+      <include name="Extra.java" />
+    </javac>
+    
+    <mkdir dir="${build.dir}/work/test/wsdl/extra"/>
+    
+    <!-- Generate WSDL from java -->
+    <java2wsdl output="${build.dir}/work/test/wsdl/extra/MyService.wsdl"
+               className= "test.wsdl.extra.MyService"
+               extraClasses="test.wsdl.extra.Extra"
+               namespace="http://test.com/extraClasses"
+               location="http://localhost:8080/axis/services/MyService">
+        <mapping package="test.wsdl.extra" namespace="http://test.com/extraClasses" />
+    </java2wsdl>
+    
+    <!-- Verify files generated based on everything in WSDL -->
+    <wsdl2java url="${build.dir}/work/test/wsdl/extra/MyService.wsdl"
                output="${axis.home}/build/work"
-               deployscope="none"
-               serverSide="no"
-               noimports="no"
+               all="yes"
                verbose="no"
                testcase="no">
-        <mapping namespace="http://test.com/reference" package="test.wsdl.filegen"/>
+        <mapping namespace="http://test.com/extraClasses" package="test.wsdl.extra"/>
     </wsdl2java>
 
-    <!-- Same test as above but this time the -a flag is turned on -->
-    <wsdl2java url="${axis.home}/test/wsdl/filegen/FileGen.wsdl"
-               output="${axis.home}/build/work"
-               serverSide="no"
-               all="yes">
-        <mapping namespace="http://test.com/reference" package="test.wsdl.filegenAll"/>
-    </wsdl2java>
+    <!-- Copy the test case -->
+    <copy file="ExtraClassesTestCase.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/extra"/>
 
-    <copy todir="${build.dir}/work/test/wsdl/filegen" overwrite="yes">
-      <fileset dir="${axis.home}/test/wsdl/filegen">
-        <include name="*TestCase.java"/>
-        <include name="*Impl.java"/>
-      </fileset>
-    </copy>
-
+    <!-- Compile the test case -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/filegen/*.java" />
-      <include name="test/wsdl/filegenAll/*.java" />
+      <include name="test/wsdl/extra/*.java" />
     </javac>
 
 </target>

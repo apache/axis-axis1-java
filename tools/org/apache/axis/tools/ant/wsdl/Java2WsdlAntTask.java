@@ -92,6 +92,7 @@ public class Java2WsdlAntTask extends Task
     private String tm = "1.1";
     private String style = null;
     private String use = null;
+    private String extraClasses = null;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -116,6 +117,7 @@ public class Java2WsdlAntTask extends Task
             log("\toutputImpl:" + outputImpl, Project.MSG_VERBOSE);
             log("\tnamespaceImpl:" + namespaceImpl, Project.MSG_VERBOSE);
             log("\tlocationImport:" + locationImport, Project.MSG_VERBOSE);
+            log("\textraClasses:" + extraClasses, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -142,6 +144,9 @@ public class Java2WsdlAntTask extends Task
             }
             if (stopClasses != null) {
                 emitter.setStopClasses(stopClasses);
+            }
+            if (extraClasses != null) {
+                emitter.setExtraClasses(extraClasses);
             }
 
             if (tm.equals("1.1")) {
@@ -274,7 +279,12 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "typeMappingVersion" attribute
     public void setTypeMappingVersion(String parameter) {
         this.tm = parameter;
-    } 
+    }
+
+    // The setter for the "extraClasses" attribute
+    public void setExtraClasses(String extraClasses) {
+        this.extraClasses = extraClasses;
+    }
 
     /**
      * Used for nested package definitions.

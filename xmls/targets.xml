@@ -472,11 +472,13 @@
   </target>
 
   <target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
+
+    <!-- FIXME - How do we prevent this from running if deploy.xml.propery is empty? -->
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${deploy.xml.property}"/>
     </java>
-
+   
    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
@@ -491,22 +493,37 @@
       </batchtest>
    </junit>
 
+   <!-- FIXME - how do we prevent this from running if undeploy.xml.property is empty? -->
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${undeploy.xml.property}"/>
     </java>
   </target>
 
-  <target name="execute-Component"  depends="transport-layer" >
+  <target name="execute-Component" depends="setenv" >
+    <mkdir dir="${test.functional.reportdir}" />
     <runaxisfunctionaltests
       url="http://localhost:${test.functional.TCPListenerPort}"
-      startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      httpServerTarget="start-functional-test-http-server"
       testTarget="component-test-run"
-      stopTarget="stop-functional-test-http-server" />
+      httpStopTarget="stop-functional-test-http-server" />
+  </target>
+
+  <target name="execute-Component-noServer" depends="setenv">
+    <mkdir dir="${test.functional.reportdir}" />
+    <runaxisfunctionaltests testTarget="component-test-run"/>
+  </target>
+
+  <target name="execute-Component-with-tcp"  depends="transport-layer" >
+    <mkdir dir="${test.functional.reportdir}" />
+    <runaxisfunctionaltests
+      url="http://localhost:${test.functional.TCPListenerPort}"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="component-test-run"
+      httpStopTarget="stop-functional-test-http-server" />
   </target>
 
   <target name="transport-layer" depends="setenv" >
-    <mkdir dir="${test.functional.reportdir}" />
     <ant inheritAll="false" dir="${axis.home}/samples/transport" antfile="build.xml" target="compile" />
   </target>

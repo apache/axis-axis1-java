@@ -73,11 +73,11 @@ import java.net.URL;
  */
 public class RunAxisFunctionalTestsTask extends Task
 {
-    private String startTarget1;
-    private String startTarget2;
+    private String tcpServerTarget = null;
+    private String httpServerTarget = null;
     private String testTarget;
-    private String stopTarget;
-    private URL url;
+    private String httpStopTarget = null;
+    private URL url = null;
 
     /**
      * Executes the task.
@@ -85,8 +85,8 @@ public class RunAxisFunctionalTestsTask extends Task
     public void execute() throws BuildException
     {
         try {
-            callStart(startTarget1);
-            callStart(startTarget2);
+            callStart(tcpServerTarget);
+            callStart(httpServerTarget);
             callTests();
         } finally {
             // Make sure we stop the server
@@ -99,8 +99,17 @@ public class RunAxisFunctionalTestsTask extends Task
      */
     private void callStart(String startTarget)
     {
+        if (startTarget == null) {
+            return;
+        }
+
+        // Execute the ant target
         new Thread(new TaskRunnable(startTarget)).start();
-        // try a ping
+
+        if (! startTarget.equals(tcpServerTarget))
+            return;
+        
+        // try a ping for the TCP server
         while (true) {
             try {
                 Thread.currentThread().sleep(500);
@@ -134,24 +143,29 @@ public class RunAxisFunctionalTestsTask extends Task
     {
         try {
             // first, stop the tcp server
-            sendOnSocket("quit\r\n");
-
+            if (tcpServerTarget != null) {
+                sendOnSocket("quit\r\n");
+            }
+            
+            
             // second, and more involvedly, stop the http server
             // Try connecting in case the server is already stopped.
-            URL url = new URL("http://localhost:8080/");
-            try {
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.connect();
-                this.readFully(connection);
-                connection.disconnect();
-            } catch (IOException e) {
-                // Server is not running. Make this task a no-op.
-                System.out.println("Error from HTTP read: " + e);
-                return;
+            if (httpServerTarget != null) {
+                URL url = new URL("http://localhost:8080/");
+                try {
+                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    connection.connect();
+                    this.readFully(connection);
+                    connection.disconnect();
+                } catch (IOException e) {
+                    // Server is not running. Make this task a no-op.
+                    System.out.println("Error from HTTP read: " + e);
+                    return;
+                }
             }
 
             // Call the target that stops the server
-            antcall(stopTarget);
+            antcall(httpStopTarget);
 
             // Wait a few ms more (just to make sure)
             try {
@@ -213,6 +227,9 @@ System.out.println("Trying localhost:8080...");
      * Make a socket to the url, and send the given string
      */
     private void sendOnSocket (String str) throws Exception {
+        if (url == null)
+            return;
+        
         Socket sock = null;
         try {
             sock = new Socket(url.getHost(), url.getPort());
@@ -250,9 +267,9 @@ System.out.println("Trying localhost:8080...");
      *
      * @param theStartTarget the Ant target to call
      */
-    public void setStartTarget1(String theStartTarget)
+    public void setTcpServerTarget(String theStartTarget)
     {
-        startTarget1 = theStartTarget;
+        tcpServerTarget = theStartTarget;
     }
 
     /**
@@ -260,9 +277,9 @@ System.out.println("Trying localhost:8080...");
      *
      * @param theStartTarget the Ant target to call
      */
-    public void setStartTarget2(String theStartTarget)
+    public void setHttpServerTarget(String theStartTarget)
     {
-        startTarget2 = theStartTarget;
+        httpServerTarget = theStartTarget;
     }
 
     /**
@@ -279,9 +296,9 @@ System.out.println("Trying localhost:8080...");
      * Sets the stop target.  This is the target which does
      * a HTTP admin shutdown on the simple server.
      */
-    public void setStopTarget (String theStopTarget)
+    public void setHttpStopTarget (String theStopTarget)
     {
-        stopTarget = theStopTarget;
+        httpStopTarget = theStopTarget;
     }
 
     /**

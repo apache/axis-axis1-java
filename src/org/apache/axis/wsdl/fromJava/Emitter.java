@@ -135,9 +135,8 @@ public class Emitter {
     public static final int MODE_INTERFACE = 1;
     public static final int MODE_IMPLEMENTATION = 2;
 
-    // Style Modes
-  
     private Class cls;
+    private Class[] extraClasses;           // Extra classes to emit WSDL for
     private Class implCls;                 // Optional implementation class
     private Vector allowedMethods = null;  // Names of methods to consider
     private Vector disallowedMethods = null; // Names of methods to exclude
@@ -169,6 +168,7 @@ public class Emitter {
     private ServiceDesc serviceDesc2;
     private String soapAction = "DEFAULT";
 
+    // Style Modes
     /** DEPRECATED - Indicates style=rpc use=encoded */
     public static final int MODE_RPC = 0;
     /** DEPRECATED - Indicates style=document use=literal */
@@ -215,6 +215,9 @@ public class Emitter {
         // Write out the interface def
         Document doc = WSDLFactory.newInstance().
             newWSDLWriter().getDocument(intf);
+        for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
+            types.writeTypeForPart(extraClasses[i], null);
+        }
         types.insertTypesFragment(doc);
         prettyDocumentToFile(doc, filename1);
 
@@ -264,12 +267,18 @@ public class Emitter {
                 def = getWSDL();
                 doc = WSDLFactory.newInstance().
                     newWSDLWriter().getDocument(def);
+                for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
+                    types.writeTypeForPart(extraClasses[i], null);
+                }
                 types.insertTypesFragment(doc);
                 break;
             case MODE_INTERFACE:
                 def = getIntfWSDL();
                 doc = WSDLFactory.newInstance().
                     newWSDLWriter().getDocument(def);
+                for (int i = 0; extraClasses != null && i < extraClasses.length; i++) {
+                    types.writeTypeForPart(extraClasses[i], null);
+                }
                 types.insertTypesFragment(doc);
                 break;
             case MODE_IMPLEMENTATION:
@@ -1788,9 +1797,10 @@ public class Emitter {
      * If the value is not a know style, the default setting is used.
      * See org.apache.axis.enum.Style for a description of the interaction between
      * Style/Use
+     * <br>NOTE: If style is specified as "wrapped", use is set to literal.
      */
     public void setStyle(String value) {
-        style = Style.getStyle(value);
+        setStyle(Style.getStyle(value));
     }
 
     /**
@@ -1799,6 +1809,9 @@ public class Emitter {
      */
     public void setStyle(Style value) {
         style = value;
+        if (style.equals(Style.WRAPPED)) {
+            setUse(Use.LITERAL);
+        }
     }
 
     /**
@@ -1870,4 +1883,57 @@ public class Emitter {
     public void setServiceDesc(ServiceDesc serviceDesc) {
         this.serviceDesc = serviceDesc;
     }
+
+    /**
+     * Return the list of extra classes that the emitter will produce WSDL for.
+     */ 
+    public Class[] getExtraClasses() {
+        return extraClasses;
+    }
+
+    /**
+     * Provide a list of classes which the emitter will produce WSDL
+     * type definitions for.
+     */ 
+    public void setExtraClasses(Class[] extraClasses) {
+        this.extraClasses = extraClasses;
+    }
+    
+    /**
+     * Provide a comma or space seperated list of classes which 
+     * the emitter will produce WSDL type definitions for.
+     * The classes will be added to the current list.
+     */ 
+    public void setExtraClasses(String text) throws ClassNotFoundException {
+        ArrayList clsList = new ArrayList();
+        if (text != null) {
+            StringTokenizer tokenizer = new StringTokenizer(text, " ,");
+            while (tokenizer.hasMoreTokens()) {
+                String clsName = tokenizer.nextToken();
+                // Let the caller handler ClassNotFoundException
+                Class cls = ClassUtils.forName(clsName);
+                clsList.add(cls);
+            }
+        }
+        // Allocate the new array
+        Class[] ec;
+        if (extraClasses != null) {
+            ec = new Class[clsList.size() + extraClasses.length];
+            // copy existing elements
+            for (int i = 0; i < extraClasses.length; i++) {
+                Class c = extraClasses[i];
+                ec[i] = c;
+            }
+        } else {
+            ec = new Class[clsList.size()];
+        }
+        // copy the new classes
+        for (int i = 0; i < clsList.size(); i++) {
+            Class c = (Class) clsList.get(i);
+            ec[i] = c;
+        }
+        // set the member variable
+        this.extraClasses = ec;
+    }
+    
 }
