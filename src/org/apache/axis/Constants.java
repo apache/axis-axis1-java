@@ -170,8 +170,8 @@ public class Constants {
         DEFAULT_SOAP_VERSION.getEncodingURI();
 
     public static final String[] URIS_SOAP_ENC = {
-        URI_SOAP11_ENC,
         URI_SOAP12_ENC,
+        URI_SOAP11_ENC,
     };
 
     /**

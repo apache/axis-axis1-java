@@ -187,12 +187,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
 
                 if (qname == null) {
-                    // Use the default...
-                    // The default qname would inherit the namespace of a
-                    // parent. Setting this namespace to "" causes interop
-                    // issues when the "literal" style is used - 
-                    // most of the elements will be serialised with xmlns=""
-                    qname = new QName(name.getNamespaceURI(), propName);
+                    qname = new QName("", propName);
                 }
 
                 if (xmlType == null) {

@@ -337,8 +337,7 @@ public class RPCProvider extends JavaProvider {
             if (operation.getMethod().getReturnType() != Void.TYPE) {
                 QName returnQName = operation.getReturnQName();
                 if (returnQName == null) {
-                    returnQName = new QName(body.getNamespaceURI(), 
-                    methodName + "Return");
+                    returnQName = new QName("", methodName + "Return");
                 }
                 
                 RPCParam param = new RPCParam(returnQName, objRes);
