@@ -388,14 +388,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Set message to FORM_STRING and 
             // translate to bytes below
             getAsString();
-
-
-            //    try{
-            //        return getAsString().getBytes("UTF-8");
-            //     }catch(UnsupportedEncodingException ue){
-            //        log.debug("Exit: SOAPPart::getAsBytes");
-            //    return getAsString().getBytes();
-            //}
         }
 
         if ( currentForm == FORM_STRING ) {
