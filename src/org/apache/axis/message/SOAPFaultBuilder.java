@@ -118,7 +118,13 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
         String name = (String)hint;
         if (name.equals("faultcode")) {
             QName qname = context.getQNameFromString((String)value);
-            if (qname != null) fault.setFaultCode(new QFault(qname));
+            if (qname != null) {
+                //??when would QName make sense, this would be app specific
+                fault.setFaultCode(new QFault(qname));
+            } else {
+                //?? Where would namespace come from
+                fault.setFaultCode(new QFault("",(String) value));
+            }
         } else if (name.equals("faultstring")) {
             fault.setFaultString((String)value);
         } else if (name.equals("faultactor")) {
