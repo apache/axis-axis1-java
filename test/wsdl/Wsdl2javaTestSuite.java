@@ -251,15 +251,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
      */
     protected void prepareTest(String fileName, int testNum) throws Exception {
         Emitter wsdl2java = new Emitter();
-        String packageName = "";
-        packageName = fileName;
-        if(packageName.indexOf(":/")!=-1){
-            packageName = packageName.substring(packageName.indexOf(":/")+2);
-        }
-        packageName = packageName.substring(0, packageName.lastIndexOf('/'));
-        packageName = packageName.replace('/', '.');
-        wsdl2java.setPackageName(Utils.makePackageName(packageName));
-        wsdl2java.generatePackageName(true);
         wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
         wsdl2java.generateTestCase(true);

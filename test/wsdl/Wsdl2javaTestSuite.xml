@@ -4,37 +4,37 @@
   <taskdef name="wsdl2java" classname="test.wsdl.Wsdl2javaAntTask"/>
 
   <target name="main">
-    <wsdl2java url="samples/addr/AddressBook.wsdl" 
+    <wsdl2java url="samples/addr/AddressBook.wsdl"
                deployscope="session"
-               package="samples.addr" 
-               output="build/work" 
+               output="build/work"
                testcase="no">
+        <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
-    <wsdl2java url="test/inout/inout.wsdl" 
-               package="test.inout" 
-               output="build/work" 
+    <wsdl2java url="test/inout/inout.wsdl"
+               output="build/work"
                testcase="no">
-    </wsdl2java>
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl" 
-               package="org.soapinterop" 
-               output="build/work" 
-               testcase="no">
-    </wsdl2java>
-    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl" 
-               package="org.soapinteropB" 
-               output="build/work" 
-               testcase="no">
+        <mapping namespace="http://www.ibm.com/inout" package="test.inout"/>
     </wsdl2java>
     <!--
-    <wsdl2java url="http://www.whitemesa.net/wsdl/std/InteropTestC.wsdl"
-               package="org.soapinterop.echoheadersvc" 
-               output="build/work" 
+    <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
+               output="build/work"
                testcase="no">
+        <mapping namespace="http://soapinterop.org/" package="soap.interop"/>
+    </wsdl2java>
+    <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
+               output="build/work"
+               testcase="no">
+        <mapping namespace="http://soapinterop.org/" package="soap.interopB"/>
+    </wsdl2java>
+    <wsdl2java url="http://www.whitemesa.net/wsdl/std/InteropTestC.wsdl"
+               output="build/work"
+               testcase="no">
+        <mapping namespace="*" package="org.soapinterop.echoheadersvc">
     </wsdl2java>
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
-               package="org.soapinterop.echoheadersvc" 
-               output="build/work" 
+               output="build/work"
                testcase="no">
+        <mapping namespace="http://soapinterop.org/" package="org.soapinterop.echoheadersvc"/>
     </wsdl2java>
     -->
   </target>
