@@ -145,12 +145,10 @@ public class JavaDeployWriter extends JavaWriter {
         for (int i = 0; i < types.size(); ++i) {
             Type type = (Type) types.elementAt(i);
             if (type.getBaseType() == null && type.getShouldEmit()) {
-                pw.println("  <typeMapping");
+                pw.println("  <beanMapping");
                 pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
                 pw.println("    languageSpecificType=\"java:" + type.getJavaName() + '"');
-                pw.println("    serializer=\"org.apache.axis.encoding.BeanSerializer\"");
-                pw.println("    deserializer=\"org.apache.axis.encoding.BeanSerializer$BeanSerFactory\"");
                 pw.println("  />");
             }
         }
