@@ -4,6 +4,11 @@
 <!-- workaround for those IDEs that dont set ant.home as per the ant script -->
 <property name="ant.home" value="env.ANT_HOME" />
 
+<!-- Give user a chance to override without editing this file
+     (and without typing -D each time it compiles it) -->
+<property file="${axis.home}/build.properties"/>
+<property file="${user.home}/build.properties"/>
+
 <property name="axis.version" value="beta3+" />
 <property name="name" value="axis" />
 <property name="Name" value="Axis" />
@@ -84,7 +89,3 @@ them.
 <property name="http.proxyUser" value=""/>
 <property name="http.proxyPassword" value=""/>
 
-<!-- Give user a chance to override without editing this file
-     (and without typing -D each time it compiles it) -->
-<property file="${axis.home}/build.properties"/>
-<property file="${user.home}/build.properties"/>
