@@ -203,6 +203,11 @@ public class WSDDGlobalConfiguration
     public void writeToContext(SerializationContext context)
             throws IOException {
         context.startElement(WSDDConstants.GLOBAL_QNAME, null);
+        writeParamsToContext(context);
+        if (requestFlow != null)
+            requestFlow.writeToContext(context);
+        if (responseFlow != null)
+            responseFlow.writeToContext(context);
         context.endElement();
     }
 

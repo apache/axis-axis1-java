@@ -258,7 +258,7 @@ public abstract class WSDDDeployableItem
             
             attrs.addAttribute("", "name", "name", "CDATA", name);
             attrs.addAttribute("", "value", "value", "CDATA", 
-                                   (String)parameters.get(name));
+                                   parameters.get(name).toString());
             if (parameters.isKeyLocked(name)) {
                 attrs.addAttribute("", "locked", "locked", "CDATA", "true");
             }

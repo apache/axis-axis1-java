@@ -168,6 +168,11 @@ public class WSDDDeployment
         context.registerPrefixForURI("java", WSDDConstants.WSDD_JAVA);
         context.startElement(new QName(WSDDConstants.WSDD_NS, "deployment"),
                              null);
+        
+        if (globalConfig != null) {
+            globalConfig.writeToContext(context);
+        }
+        
         Iterator i = handlers.iterator();
         while (i.hasNext()) {
             WSDDHandler handler = (WSDDHandler)i.next();
