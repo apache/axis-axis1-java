@@ -721,7 +721,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 : mimeInfo.getDimensions();
 
         if (mimeType != null) {
-            if (mimeType.equals("image/jpeg")) {
+            if (mimeType.equals("image/gif") || mimeType.equals("image/jpeg")) {
                 return "(java.awt.Image" + mimeDimensions + ") " + var + ";";
             } else if (mimeType.equals("text/plain")) {
                 return "(java.lang.String" + mimeDimensions + ") " + var + ";";
