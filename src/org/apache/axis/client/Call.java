@@ -577,6 +577,18 @@ public class Call implements javax.xml.rpc.Call {
         }
         operation.setStyle(Style.getStyle(operationStyle, Style.DEFAULT));
     } // setOperationStyle
+    
+    /**
+     * Set the operation style
+     * 
+     * @param operationStyle
+     */ 
+    public void setOperationStyle(Style operationStyle) {
+        if (operation == null) {
+            operation = new OperationDesc();
+        }
+        operation.setStyle(operationStyle);
+    }
 
     /**
      * Get the operation style.
@@ -598,6 +610,17 @@ public class Call implements javax.xml.rpc.Call {
         }
         operation.setUse(Use.getUse(operationUse, Use.DEFAULT));
     } // setOperationUse
+    
+    /**
+     * Set the operation use
+     * @param operationUse
+     */ 
+    public void setOperationUse(Use operationUse) {
+        if (operation == null) {
+            operation = new OperationDesc();
+        }
+        operation.setUse(operationUse);        
+    }
 
     /**
      * Get the operation use.
@@ -2398,15 +2421,14 @@ public class Call implements javax.xml.rpc.Call {
 
                     SOAPBodyElement body = reqEnv.getFirstBody();
 
-                    // Does this make any sense to anyone?  If not, we should remove it.
-                    // --Glen 03/16/02
-                    //if ( body.getPrefix() == null )       body.setPrefix( "m" );
-                    if ( body.getNamespaceURI() == null ) {
-                        throw new AxisFault("Call.invoke",
-                                            Messages.getMessage("cantInvoke00", body.getName()),
-                                            null, null);
-                    } else {
-                        msgContext.setTargetService(body.getNamespaceURI());
+                    if (body != null) {
+                        if ( body.getNamespaceURI() == null ) {
+                            throw new AxisFault("Call.invoke",
+                                                Messages.getMessage("cantInvoke00", body.getName()),
+                                                null, null);
+                        } else {
+                            msgContext.setTargetService(body.getNamespaceURI());
+                        }
                     }
                 }
             }
