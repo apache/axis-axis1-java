@@ -4,6 +4,7 @@
         <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -11,12 +12,13 @@
 
 <project default="compile">
 
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/refattr" />
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
-
-  <property name="testName" value="wsdl/refattr"/>
+        &targets;
 
 <target name="clean"/>
 
@@ -49,29 +51,8 @@
 
 </target>
 
-<target name="deploy" unless="batch">
-<!--    <ant inheritAll="true" antfile="test/startServer.xml" target="start-functional-test-tcp-server" /> -->
-<!--   <ant inheritAll="true" antfile="test/startServer.xml" target="start-functional-test-http-server" /> -->
-<!-- if ! batch -->
-<!-- start the server -->
-</target>
-
-<target name="run"  depends="compile,deploy" >
-   <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
-      <classpath refid="classpath" />
-      <formatter type="xml" usefile="${test.functional.usefile}"/>
-      <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}">
-           <include name="test/${testName}/*TestCase.class" />
-           <include name="test/${testName}/**/*TestCase.class" />
-        </fileset>
-      </batchtest>
-   </junit>
-   <antcall target="undeploy"/>
- </target>
-
-<target name="undeploy" unless="batch">
-<!--    <ant inheritAll="true" antfile="test/startServer.xml" target="stop-functional-test-http-server" /> -->
+<target name="run" >
+  <antcall target="execute-Component" />
 </target>
 
 </project>
