@@ -181,8 +181,8 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             
             // get the QName for this faults detail element
             QName qname = getFaultQName(fault.getClass(), context);
-            if (qname == null && fault.getWrapped() != null) {
-                qname = getFaultQName(fault.getWrapped().getClass(), context);
+            if (qname == null && fault.detail != null) {
+                qname = getFaultQName(fault.detail.getClass(), context);
             }
             if (qname == null) {
                 // not the greatest, but...

@@ -1608,8 +1608,8 @@ public class Call implements javax.xml.rpc.Call {
         }
         catch (AxisFault af) {
             this.operationName = origOpName;
-            if(af.getWrapped() != null && af.getWrapped() instanceof RemoteException) {
-                throw ((RemoteException)af.getWrapped());
+            if(af.detail != null && af.detail instanceof RemoteException) {
+                throw ((RemoteException)af.detail);
             }
             throw af;
         }
@@ -1697,8 +1697,8 @@ public class Call implements javax.xml.rpc.Call {
             return res;
         }
         catch( AxisFault af) {
-            if(af.getWrapped() != null && af.getWrapped() instanceof RemoteException) {
-                throw ((RemoteException)af.getWrapped());
+            if(af.detail != null && af.detail instanceof RemoteException) {
+                throw ((RemoteException)af.detail);
             }
             throw af;
         }
