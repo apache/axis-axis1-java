@@ -6,7 +6,7 @@
  */
 
 package test.wsdl.interop3.compound2;
-package test.wsdl.interop3.compound2.xsd;
+
 
 public class SoapInteropCompound2BindingImpl implements test.wsdl.interop3.compound2.SoapInteropCompound2Binding {
     public test.wsdl.interop3.compound2.xsd.Employee echoEmployee(test.wsdl.interop3.compound2.xsd.Employee xEmployee) throws java.rmi.RemoteException {
