@@ -143,7 +143,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     protected MessageElement parent = null;
 
-    public ArrayList namespaces = new ArrayList();
+    public ArrayList namespaces = null;
 
     /** Our encoding style, if any */
     protected String encodingStyle = null;
@@ -301,7 +301,7 @@ public class MessageElement implements SOAPElement, Serializable
      * @return Attributes collection
      */
     public Attributes getCompleteAttributes() {
-        if (namespaces.size()==0)
+        if (namespaces == null)
             return attributes;
         
         AttributesImpl attrs = null;
@@ -447,8 +447,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     public void setNSMappings(ArrayList namespaces)
     {
-        if(namespaces != null)
-            this.namespaces = namespaces;
+        this.namespaces = namespaces;
     }
 
     public String getPrefix(String namespaceURI) {
@@ -459,7 +458,7 @@ public class MessageElement implements SOAPElement, Serializable
             return getRealElement().getPrefix(namespaceURI);
         }
 
-        for (int i = 0; i < namespaces.size(); i++) {
+        for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
             Mapping map = (Mapping)namespaces.get(i);
             if (map.getNamespaceURI().equals(namespaceURI))
                 return map.getPrefix();
@@ -479,7 +478,7 @@ public class MessageElement implements SOAPElement, Serializable
             return getRealElement().getNamespaceURI(prefix);
         }
 
-        for (int i = 0; i < namespaces.size(); i++) {
+        for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
             Mapping map = (Mapping)namespaces.get(i);
             if (map.getPrefix().equals(prefix)) {
                 return map.getNamespaceURI();
@@ -780,10 +779,12 @@ public class MessageElement implements SOAPElement, Serializable
         if (prefix != null)
             context.registerPrefixForURI(prefix, namespaceURI);
 
-        for (Iterator i = namespaces.iterator(); i.hasNext();) {
-            Mapping mapping = (Mapping) i.next();
-            context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
-        }
+        if (namespaces != null) {
+            for (Iterator i = namespaces.iterator(); i.hasNext();) {
+                Mapping mapping = (Mapping) i.next();
+                context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
+            }
+        }            
 
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
@@ -812,6 +813,8 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public void addMapping(Mapping map) {
+        if (namespaces == null) 
+            namespaces = new ArrayList();
         namespaces.add(map);
     }
 
@@ -1033,9 +1036,8 @@ public class MessageElement implements SOAPElement, Serializable
     // getNamespaceURI implemented above
 
     public Iterator getNamespacePrefixes() {
-        int num = namespaces.size();
-        Vector prefixes = new Vector(num);
-        for (int i = 0; i < num; i++) {
+        Vector prefixes = new Vector();
+        for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
             prefixes.add(((Mapping)namespaces.get(i)).getPrefix());
         }
         return prefixes.iterator();
@@ -1063,7 +1065,7 @@ public class MessageElement implements SOAPElement, Serializable
         AttributesImpl attributes = makeAttributesEditable();
         boolean removed = false;
 
-        for (int i = 0; i < namespaces.size() && !removed; i++) {
+        for (int i = 0; namespaces != null && i < namespaces.size() && !removed; i++) {
             if (((Mapping)namespaces.get(i)).getPrefix().equals(prefix)) {
                 namespaces.remove(i);
                 removed = true;

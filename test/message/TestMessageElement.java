@@ -178,8 +178,15 @@ public class TestMessageElement extends TestCase {
         assertTrue("Did not find namespace declaration \"pre\"", found);
     }
     
+    public void testGetNamespacePrefixes() throws Exception {
+        MessageElement me = 
+            new MessageElement("http://www.wolfram.com","Test");
+        Iterator it = me.getNamespacePrefixes();
+        assertTrue(it != null);
+    }
+    
     public static void main(String[] args) throws Exception {
         TestMessageElement tester = new TestMessageElement("TestMessageElement");
-        tester.testAddNamespaceDeclaration();
+        tester.testGetNamespacePrefixes();
     }
 }
