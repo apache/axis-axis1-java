@@ -163,6 +163,7 @@ public class Admin {
           String   pivot   = elem.getAttribute( "pivot" );
           String   output  = elem.getAttribute( "output" );
           if ( flow != null && flow.length() > 0 ) {
+            System.out.println( "Deploying chain: " + name );
             Chain    c       = (Chain) hr.find( name );
 
             if ( c == null ) c = new SimpleChain();
@@ -175,6 +176,7 @@ public class Admin {
             hr.add( name, c );
           }
           else {
+            System.out.println( "Deploying chain: " + name );
             StringTokenizer      st = null ;
             SimpleTargetedChain  cc = null ;
             Chain                c  = null ;
