@@ -54,8 +54,8 @@
  */
 package org.apache.axis.utils;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -68,7 +68,7 @@ import java.util.Iterator;
  */
 public class NSStack {
     protected static Log log =
-        LogFactory.getLog(NSStack.class.getName());
+        AxisInternalServices.getLog(NSStack.class.getName());
     
     private static final ArrayList EMPTY = new ArrayList();
 

@@ -183,7 +183,7 @@ public abstract class AxisEngine extends BasicHandler
 
         /*Set the default attachment implementation */
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION,
-                         AxisInternalServices.getGlobalProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
+                         getGlobalProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  ));
 
         setOptionDefault(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
 

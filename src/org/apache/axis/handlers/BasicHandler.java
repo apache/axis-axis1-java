@@ -219,4 +219,11 @@ public abstract class BasicHandler implements Handler {
     public List getUnderstoodHeaders() {
         return null;
     }
+    
+    /**
+     * Hook to axis service... for now hardwire
+     */
+    protected static final String getGlobalProperty(String property) {
+        return AxisInternalServices.getGlobalProperty(property);
+    }
 }

@@ -323,7 +323,7 @@ public class EJBProvider extends RPCProvider
         // if we got any stuff from the configuration file
         // create a new context using these properties 
         // otherwise, we get a default context and cache it for next time
-        return ((properties == null) 
+        return ((properties == null)
                 ? getCachedContext()
                 : new InitialContext(properties));
     }
