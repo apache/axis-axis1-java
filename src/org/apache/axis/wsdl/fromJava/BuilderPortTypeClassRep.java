@@ -72,8 +72,10 @@ public interface BuilderPortTypeClassRep {
      * @param cls is the Class 
      * @param inhMethods if true, then the ClassRep will contain all methods inherited and
      *                   declared. If false, then ClassRep will contain just the declared methods.
+     * @param implClass  An optional implClass can be passed in that implements/extends cls.
+     *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods);
+    public ClassRep build(Class cls, boolean inhMethods, Class implClass);
 
     /**
      * Returns a list of MethodReps to be used for portType operation processing.

@@ -117,6 +117,7 @@ public class Emitter {
     public static final int MODE_IMPLEMENTATION = 2;
 
     private Class cls;
+    private Class implCls;                 // Optional class that is an implementation of cls
     private Vector allowedMethods = null;  // Names of methods to consider
     private boolean useInheritedMethods = false;
     private String intfNS;          
@@ -502,7 +503,7 @@ public class Emitter {
         // objects representing the methods that should be contained in the portType.
         // This allows users to provide their own method/parameter mapping.
         BuilderPortTypeClassRep builder = factory.getBuilderPortTypeClassRep();
-        ClassRep classRep = builder.build(cls, useInheritedMethods);
+        ClassRep classRep = builder.build(cls, useInheritedMethods, implCls);
         Vector methods = builder.getResolvedMethods(classRep, allowedMethods);
 
         for(int i=0; i<methods.size(); i++) {
@@ -749,7 +750,7 @@ public class Emitter {
     /**
      * Sets the <code>Class</code> to export.
      * If the class looks like a skeleton class, do some searching to find the
-     * interface class.  
+     * interface class and try and locate and implementation class.                 
      * @param cls the <code>Class</code> to export
      * @param name service name
      */
@@ -779,8 +780,20 @@ public class Emitter {
                 intf = parms[0];
             }
         }
-        if (intf != null)
+        if (intf != null) {
             setCls(intf);
+
+            // There is no way right now to reflect on the skeleton to find
+            // the implementation (and there might never be a way).  
+            // Try to find an implementation and then use the skeleton as a last
+            // resort (the skeleton won't always work due to signature differences).
+            if (implCls == null) {
+                setImplCls(cls.getName().substring(0,cls.getName().indexOf("Skeleton")) + "Impl");
+                if (implCls == null) {
+                    setImplCls(cls);  // Use skeleton as implementation class
+                }
+            }
+        }
         else
             setCls(cls);
     }
@@ -788,20 +801,41 @@ public class Emitter {
     /**
      * Sets the <code>Class</code> to export
      * @param className the name of the <code>Class</code> to export
-     * @param classDir the directory containing the class (optional)
      */
-    public void setCls(String className, String classDir) {
+    public void setCls(String className) {
         try {
             cls = Class.forName(className);
         }
         catch (Exception ex) {
-            /** @todo ravi: use classDir to load class directly into the class loader
-             *  The case for it is that one can create a new directory, drop some source, compile and use a
-             *  WSDL gen tool to generate wsdl - without editing the Wsdl gen tool's classpath
-             *  Assuming all of the classes are either under classDir or otherwise in the classpath
-             *
-             *  Would this be useful?
-             *  */
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns the implementation <code>Class</code> if set
+     * @return the implementation Class or null
+     */
+    public Class getImplCls() {
+        return implCls;
+    }
+
+    /**
+     * Sets the implementation <code>Class</code>
+     * @param implCls the <code>Class</code> to export
+     */
+    public void setImplCls(Class implCls) {
+        this.implCls = implCls;
+    }
+
+    /**
+     * Sets the implementation <code>Class</code>
+     * @param className the name of the implementation <code>Class</code>
+     */
+    public void setImplCls(String className) {
+        try {
+            implCls = Class.forName(className);
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
     }

@@ -58,7 +58,7 @@ import java.util.Vector;
 
 /**
  * DefaultBuilderBeanClassRep:
- * Extend this factory to provide your own functionality.
+ * Extend this class to provide your own functionality.
  * See Java2WSDLFactory and ClassRep for more details.
  *
  * @author Rich Scheuerle (scheu@us.ibm.com)

@@ -59,10 +59,20 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Field;
 import java.util.Vector;
 
+import org.apache.axis.utils.JavapUtils;
+
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
  * emitter.  The information in the ClassRep can be changed by 
  * user provided code to affect the emitted wsdl file.
+ *
+ * If you wish to change the functionality (for example change the
+ * getParameterNames(...) algorithm), here is one way to do it:
+ *   1) Extend ClassRep class (MyClassRep) and override the desired methods.
+ *   2) Extend the DefaultBuilderBeanClassRep and DefaultBuilderPortTypeClasses
+ *      and provide new build(...) methods that construct MyClassRep objects.
+ *   3) Extend the DefaultFactory class (MyFactory) so that it locates your new Builder classes.
+ *   4) Provide MyFactory as an option when your invoke Java2WSDL.
  *            
  *             name  
  * ClassRep +-+---------> String
@@ -136,16 +146,64 @@ public class ClassRep {
      * @param inhMethods if true, then the methods array will contain
      *                   methods declared and/or inherited else only
      *                   the declared methods are put in the list
+     * @param implClass  This is an optional parameter which is a 
+     *                   class that implements or extends cls.  The
+     *                   implClass is used to obtain parameter names.
      */ 
     public ClassRep(Class cls, boolean inhMethods) {
+        init(cls, inhMethods, null);
+    }
+    public ClassRep(Class cls, boolean inhMethods, Class implClass) {
+        init(cls, inhMethods, implClass);
+    }
+    protected void init(Class cls, boolean inhMethods, Class implClass) {
         _name = cls.getName();
         _isInterface = cls.isInterface();
         _modifiers = cls.getModifiers();
-        if (cls.getSuperclass() != null)
+        if (cls.getSuperclass() != null &&
+            cls.getSuperclass() != Object.class) {
             _super = new ClassRep(cls.getSuperclass(), inhMethods);
+        }
         for (int i=0; i < cls.getInterfaces().length; i++) {
             _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods));
         }
+        // Add the methods
+        addMethods(cls, inhMethods, implClass);
+
+        // Add the fields
+        addFields(cls);
+    }
+
+
+    /**
+     * Getters/Setters
+     **/
+    public String   getName()                { return _name; }
+    public void     setName(String name)     { _name = name; }
+    public boolean  isInterface()            { return _isInterface; }
+    public void     setIsInterface(boolean b){ _isInterface = b; }
+    public int      getModifiers()           { return _modifiers; }
+    public void     setModifiers(int m)      { _modifiers = m; }
+    public ClassRep getSuper()               { return _super; }
+    public void     setSuper(ClassRep cr)    { _super = cr; }
+    public Vector   getInterfaces()          { return _interfaces; }
+    public void     setInterfaces(Vector v)  { _interfaces = v; }
+    public Vector   getMethods()             { return _methods; }
+    public void     setMethods(Vector v)     { _methods = v; }
+    public Vector   getFields()              { return _fields; }
+    public void     setFields(Vector v)      { _fields = v; }
+
+    /**
+     * Adds MethodReps to the ClassRep. 
+     * @param cls the Class    
+     * @param inhMethods if true, then the methods array will contain
+     *                   methods declared and/or inherited else only
+     *                   the declared methods are put in the list           
+     * @param implClass  This is an optional parameter which is a 
+     *                   class that implements or extends cls.  The
+     *                   implClass is used to obtain parameter names.            
+     */ 
+    protected void addMethods(Class cls, boolean inhMethods, Class implClass) {
         // Constructs a vector of all the public methods
         Method[] m;
         if (inhMethods)
@@ -154,9 +212,24 @@ public class ClassRep {
             m = cls.getDeclaredMethods();
         for (int i=0; i < m.length; i++) {
             int mod = m[i].getModifiers();
-            if (Modifier.isPublic(mod))
-                _methods.add(new MethodRep(m[i]));
+            if (Modifier.isPublic(mod)) {
+                short[] modes = getParameterModes(m[i]);
+                Class[] types = getParameterTypes(m[i]);
+                _methods.add(new MethodRep(m[i], types, modes,
+                                           getParameterNames(m[i], implClass, types)));
+            }
         }
+        return;
+    }
+
+    /**
+     * Adds FieldReps to the ClassRep.
+     * @param cls the Class    
+     * A complexType component element will be generated for each FieldRep.
+     * This implementation generates FieldReps for public data fields and
+     * also for properties exposed by java bean accessor methods.
+     */ 
+    protected void addFields(Class cls) {
 
         // Constructs a FieldRep for every public field and
         // for every field that has JavaBean accessor methods
@@ -215,27 +288,95 @@ public class ClassRep {
                 
             }
         }
-
+        return;
     }
-       
-    /**
-     * Getters/Setters
-     **/
-    public String   getName()                { return _name; }
-    public void     setName(String name)     { _name = name; }
-    public boolean  isInterface()            { return _isInterface; }
-    public void     setIsInterface(boolean b){ _isInterface = b; }
-    public int      getModifiers()           { return _modifiers; }
-    public void     setModifiers(int m)      { _modifiers = m; }
-    public ClassRep getSuper()               { return _super; }
-    public void     setSuper(ClassRep cr)    { _super = cr; }
-    public Vector   getInterfaces()          { return _interfaces; }
-    public void     setInterfaces(Vector v)  { _interfaces = v; }
-    public Vector   getMethods()             { return _methods; }
-    public void     setMethods(Vector v)     { _methods = v; }
-    public Vector   getFields()              { return _fields; }
-    public void     setFields(Vector v)      { _fields = v; }
 
+    /**
+     * Get the list of parameter types for the specified method.
+     * This implementation uses the specified type unless it is a holder class,
+     * in which case the held type is used.
+     * @param method is the Method.                          
+     * @return array of parameter types.                                      
+     */ 
+    protected Class[] getParameterTypes(Method method) {
+        Class[] types = new Class[method.getParameterTypes().length];
+        for (int i=0; i < method.getParameterTypes().length; i++) {
+            Class type = method.getParameterTypes()[i];
+            if (holderClass(type) != null) {
+                types[i] = holderClass(type);
+            } else {
+                types[i] = type;
+            }
+        }
+        return types;
+    }
+
+    /**
+     * Get the list of parameter modes for the specified method.
+     * This implementation assumes IN unless the type is a holder class
+     * @param method is the Method.                          
+     * @return array of parameter modes.                                      
+     */ 
+    protected short[] getParameterModes(Method method) {
+        short[] modes = new short[method.getParameterTypes().length];
+        for (int i=0; i < method.getParameterTypes().length; i++) {
+            Class type = method.getParameterTypes()[i];
+            if (holderClass(type) != null) {
+                modes[i] = ParamRep.INOUT;
+            } else {
+                modes[i] = ParamRep.IN;
+            }
+        }
+        return modes;
+    }
+
+    /**
+     * Get the list of parameter names for the specified method.
+     * This implementation uses javap to get the parameter names
+     * from the class file.  If parameter names are not available 
+     * for the method (perhaps the method is in an interface), the
+     * corresponding method in the implClass is queried.
+     * @param method is the Method to search.                
+     * @param implClass  If the first search fails, the corresponding  
+     *                   Method in this class is searched.           
+     * @param types  are the parameter types after converting Holders.
+     * @return array of parameter names or null.                              
+     */ 
+    protected String[] getParameterNames(Method method, Class implClass, Class[] types) {
+        String[] paramNames = null;
+        paramNames = JavapUtils.getParameterNames(method); 
+
+        // If failed, try getting a method of the impl class
+        // It is possible that the impl class is a skeleton, thus the
+        // method may have a different signature (no Holders).  This is
+        // why the method search is done with two parameter lists.
+        if (paramNames == null && implClass != null) {
+            Method m = null;
+            try {
+                m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+            } catch (Exception e) {}
+            if (m == null) { 
+                try {
+                    m = implClass.getMethod(method.getName(), method.getParameterTypes());
+                } catch (Exception e) {}
+            }
+            if (m == null) { 
+                try {
+                    m = implClass.getDeclaredMethod(method.getName(), types);
+                } catch (Exception e) {}
+            }
+            if (m == null) { 
+                try {
+                    m = implClass.getMethod(method.getName(), types);
+                } catch (Exception e) {}
+            }
+            if (m != null) {
+                paramNames = JavapUtils.getParameterNames(m); 
+            }
+        }            
+
+        return paramNames;
+    }
 
     /**
      * Determines if the Property in the class has been compliant accessors. If so returns true,
@@ -245,7 +386,7 @@ public class ClassRep {
      * @param type is the type of the property
      * @return true if the Property has JavaBean style accessors
      */
-    public static boolean isJavaBeanNormal(Class cls, String name, Class type) {
+    protected boolean isJavaBeanNormal(Class cls, String name, Class type) {
         try {
             String propName = name.substring(0,1).toUpperCase()
                 + name.substring(1);
@@ -282,7 +423,7 @@ public class ClassRep {
      * @param type is the type of the property
      * @return true if the Property has JavaBean style accessors
      */
-    public static boolean isJavaBeanIndexed(Class cls, String name, Class type) {
+    protected boolean isJavaBeanIndexed(Class cls, String name, Class type) {
         // Must be an array
         if (!type.isArray())
             return false;
@@ -322,7 +463,7 @@ public class ClassRep {
      * @param type the Class
      * @return class of held type or null
      */
-    public static Class holderClass(Class type) {
+    protected Class holderClass(Class type) {
         if (type.getName() != null &&
             type.getName().endsWith("Holder")) {
             // Holder is supposed to have a public value field.

@@ -8,7 +8,9 @@ Group 1
 * Generate deployment - deploy.wsdd, undeploy.wsdd
 * Pluggable ParameterNameResolver for method parameters with complexType
   -Rich: Users can now use Java2WSDLFactory to provide this mapping.
-         I may add a better default later.
+  -Rich: If the class was compiled with -g, the parameter names are 
+         obtained from the javap output and used as the message part names.
+         Users can provide their own mapping by extending the Java2WSDLFactory.
 * Make PackageName=Namespace configurable using a properties file
 * Generate JAX-RPC style stub, skeleton and optionally refactor exporting 
   class as the impl class *** (see Note 1) ***
@@ -25,8 +27,7 @@ Group 2
 
 Group 3
 -------
-* Address roundtrip behaviour - with the exception of type promotion and param 
-  naming differences
+* Address roundtrip behaviour - with the exception of type promotion
    - this has been started see test/sequence
 
 * A mechanism to register types (class:serializer:deserializer)
@@ -39,9 +40,11 @@ Group 4
          their own using new Java2WSDLFactory mechanism.
 * support exporting by interface - in addition to allowed methods
   -Rich: Users can provide their own resolution using Java2WSDLFactory mechanism.
+  -Rich: Seems like we have enough bells and whistles here.
 * Output mode currently has ALL, Interface, Implementation -- need to add Types
 * Output and OUTPUT_IMPL options are there to generate "split" files -- need to 
   add OUTPUT_TYPES as well 
+  -Rich: Might want to think about a separate "split WSDL tool" to do this stuff.
 * Allow options for just for Java->XML type generation
 
 

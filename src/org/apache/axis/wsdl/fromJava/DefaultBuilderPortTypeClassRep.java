@@ -58,7 +58,7 @@ import java.util.Vector;
 
 /**
  * DefaultBuilderPortTypeClassRep:
- * Extend this factory to provide your own functionality.
+ * Extend this class to provide your own functionality.
  * See Java2WSDLFactory and ClassRep for more details.
  *
  * @author Rich Scheuerle (scheu@us.ibm.com)
@@ -75,8 +75,10 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
      * @param cls is the Class 
      * @param inhMethods if true, then the ClassRep will contain all methods inherited and
      *                   declared. If false, then ClassRep will contain just the declared methods.
+     * @param implClass  An optional implClass can be passed in that implements/extends cls.
+     *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods) {
+    public ClassRep build(Class cls, boolean inhMethods, Class implClass) {
         // Constructs a default ClassRep from the class
         // The Java2WSDL code examines the names/methods/params in ClassRep (and its super classes)
         // when constructing complexTypes.  So if you want to change the WSDL
@@ -84,7 +86,7 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
         // For example, if you want to supply your own parameter names, you 
         // could walk the ParamRep objects of each MethodRep and supply your own names.
         // (See getResolvedMethods for a way to deal with overloading conflicts)
-        ClassRep cr = new ClassRep(cls, inhMethods);
+        ClassRep cr = new ClassRep(cls, inhMethods, implClass);
 
         return cr;
     }

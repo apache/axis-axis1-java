@@ -80,22 +80,31 @@ public class MethodRep {
     /**
      * Constructor
      * Create a default representation of MethodRep
-     * @param cls Class to use to create default MethodRep
+     * @param method Method to use to create default MethodRep
+     * @param types  This is an array of parameter types                       
+     * @param modes  This is an array of parameter modes (IN, OUT, INOUT)      
+     * @param paramNames This is an array of names to be used for the
+     *                   parameter names.  If null, default names
+     *                   are constructed.                                          
      */ 
-    public MethodRep(Method method) {
+    public MethodRep(Method method, Class[] types, short[] modes, String[] paramNames) {
         _name = method.getName();
         _returns = new ParamRep("return", method.getReturnType(), ParamRep.OUT);
 
         // Create a ParamRep for each parameter.  The holderClass() method
         // returns the name of the held type if this is a holder class.
         for (int i=0; i < method.getParameterTypes().length; i++) {
-            Class type = method.getParameterTypes()[i];
-            if (ClassRep.holderClass(type) == null) {
-                _parameters.add(new ParamRep("in"+i, type, ParamRep.IN));
+            String name; 
+            if (paramNames !=null) {
+                name = (String) paramNames[i];
+            } else if (modes[i] == ParamRep.IN) {
+                name = "in" + i;
+            } else if (modes[i] == ParamRep.OUT) {
+                name = "out" + i;
             } else {
-                type = ClassRep.holderClass(type);
-                _parameters.add(new ParamRep("inOut"+i, type, ParamRep.INOUT));
+                name = "inOut" + i;
             }
+            _parameters.add(new ParamRep(name, types[i], modes[i]));
         }
     }
        

@@ -87,6 +87,7 @@ public class Java2WSDL {
     protected static final int METHODS_ALLOWED_OPT = 'm';
     protected static final int INHERITED_CLASS_OPT = 'a';
     protected static final int FACTORY_CLASS_OPT = 'f';
+    protected static final int IMPL_CLASS_OPT = 'i';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -150,6 +151,10 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 FACTORY_CLASS_OPT,
                 JavaUtils.getMessage("j2woptfactory00")),
+        new CLOptionDescriptor("implClass",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                IMPL_CLASS_OPT,
+                JavaUtils.getMessage("j2woptimplClass00")),
 
     };
 
@@ -206,6 +211,10 @@ public class Java2WSDL {
 
                     case FACTORY_CLASS_OPT:
                         emitter.setFactory(option.getArgument());
+                        break;
+
+                    case IMPL_CLASS_OPT:
+                        emitter.setImplCls(option.getArgument());
                         break;
 
                     case HELP_OPT:
@@ -271,8 +280,8 @@ public class Java2WSDL {
                 emitter.setNamespaceMap(namespaceMap);
             }
 
-            // Find the class using the name and optionally the classDir
-            emitter.setCls(className, "");
+            // Find the class using the name
+            emitter.setCls(className);
 
             // Generate a full wsdl, or interface & implementation wsdls
             if (wsdlImplFilename == null) {
