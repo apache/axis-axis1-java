@@ -63,7 +63,7 @@ import java.util.Iterator;
  * defines a registry for TypeMapping instances for 
  * the different encoding styles. 
  *
- * @version 0.6
+ * @version 0.7
  */
 public interface TypeMappingRegistry extends java.io.Serializable {
 
@@ -71,15 +71,16 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      * The method register adds a TypeMapping instance for a specific 
      * namespace                        
      *
+     * @param namespaceURI
      * @param mapping - TypeMapping for specific type namespaces
-     * @param namespaceURIs
      *
      * @throws JAXRPCException - If there is any error in the registration
      * of the TypeMapping for the specified namespace URI
      * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public void register(TypeMapping mapping, String[] namespaceURIs)
+    public void register(String namespace, TypeMapping maping)
         throws JAXRPCException;
+
 
     /**
      * The method register adds a default TypeMapping instance.  If a specific
@@ -95,6 +96,12 @@ public interface TypeMappingRegistry extends java.io.Serializable {
         throws JAXRPCException;
 
     /**
+     * Return the default TypeMapping
+     * @return TypeMapping or null
+     **/
+    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+
+    /**
      * Gets the TypeMapping namespace.  If not found, the default TypeMapping 
      * is returned.
      *
@@ -104,12 +111,20 @@ public interface TypeMappingRegistry extends java.io.Serializable {
     public TypeMapping getTypeMapping(String namespaceURI);
 
     /**
-     * Removes the TypeMapping for the namespace.
+     * Unregisters the TypeMapping for the namespace.
      *
      * @param namespaceURI - The namespace URI
      * @return The registered TypeMapping or null.
      */
-    public TypeMapping removeTypeMapping(String namespaceURI);
+    public TypeMapping unregisterTypeMapping(String namespaceURI);
+
+    /**
+     * Remove TypeMapping by unregistering it from all namespaces.
+     *
+     * @param mapping - The mapping to remove
+     * @return true if found and removed.  false if not found
+     */
+    public boolean removeTypeMapping(TypeMapping namespaceURI);
 
 
     /**
@@ -124,19 +139,13 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      *
      * @return String[] containing names of all registered namespace URIs
      */
-    public String[] getSupportedNamespaces();
+    public String[] getRegisteredNamespaces();
 
 
     /**
      * Removes all registered TypeMappings from the registery                   
      */
     public void clear(String namespaceURI);
-
-    /**
-     * Return the default TypeMapping
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
 
 }
 

@@ -67,6 +67,8 @@ import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.Constants;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
@@ -309,7 +311,10 @@ public abstract class JavaProvider extends BasicProvider {
             emitter.setAllowedMethods(allowedMethods);
             emitter.setIntfNamespace(url);
             emitter.setLocationUrl(url);
-            emitter.setReg(msgContext.getTypeMappingRegistry());
+            emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
+                                   getTypeMapping(Constants.URI_CURRENT_SOAP_ENC));
+            emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
+                                          getDefaultTypeMapping());
             Document  doc = emitter.emit(Emitter.MODE_ALL);
 
             msgContext.setProperty("WSDL", doc);

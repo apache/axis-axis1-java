@@ -88,6 +88,7 @@ public class TestSerializedRPC extends TestCase {
         String msgStr = header + bodyElemHead + bodyStr +
                         bodyElemFoot + footer;
         msgContext.setRequestMessage(new Message(msgStr));
+        msgContext.setTypeMappingRegistry(engine.getTypeMappingRegistry());
         
         // Invoke the Axis engine
         try {
@@ -141,10 +142,10 @@ public class TestSerializedRPC extends TestCase {
         BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
 
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        if (tm == null || tm == tmr.getDefaultTypeMapping()) {
             tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
+            tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         }
         tm.register(javaType, xmlType, sf, df);
         
@@ -166,10 +167,10 @@ public class TestSerializedRPC extends TestCase {
         BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
 
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        if (tm == null || tm == tmr.getDefaultTypeMapping()) {
             tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
+            tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         }
         tm.register(javaType, xmlType, sf, df);
         
@@ -191,10 +192,10 @@ public class TestSerializedRPC extends TestCase {
         BeanDeserializerFactory df = new BeanDeserializerFactory(javaType, xmlType);
 
         TypeMappingRegistry tmr = engine.getTypeMappingRegistry();
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        if (tm == null) {
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        if (tm == null || tm == tmr.getDefaultTypeMapping()) {
             tm = (TypeMapping) tmr.createTypeMapping();
-            tmr.register(tm, new String[] {Constants.URI_SOAP_ENC});
+            tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         }
         tm.register(javaType, xmlType, sf, df);
         

@@ -59,7 +59,8 @@ package org.apache.axis.encoding;
 /**
  * This interface describes the AXIS TypeMappingRegistry.
  */
-public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
+public interface TypeMappingRegistry 
+    extends javax.xml.rpc.encoding.TypeMappingRegistry {
     /**
      * delegate
      *

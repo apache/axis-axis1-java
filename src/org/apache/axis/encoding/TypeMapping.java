@@ -66,12 +66,18 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 /**
  * This interface describes the AXIS TypeMapping.
  */
-public interface TypeMapping extends javax.xml.rpc.encoding.TypeMapping {
+public interface TypeMapping 
+    extends javax.xml.rpc.encoding.TypeMapping {
 
     /**
      * setDelegate sets the new Delegate TypeMapping
      */
     public void setDelegate(TypeMapping delegate);
+
+    /**
+     * getDelegate gets the new Delegate TypeMapping
+     */
+    public TypeMapping getDelegate();
 
     /**
      * Gets the SerializerFactory registered for the specified pair
@@ -83,9 +89,11 @@ public interface TypeMapping extends javax.xml.rpc.encoding.TypeMapping {
      *
      * @throws JAXRPCException - If there is no registered SerializerFactory 
      * for this pair of Java type and XML data type 
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * java.lang.IllegalArgumentException  
+     * If invalid or unsupported XML/Java type is specified
      */
-    public SerializerFactory getSerializer(Class javaType)  throws JAXRPCException;
+    public SerializerFactory getSerializer(Class javaType) 
+        throws JAXRPCException;
 
     /**
      * Gets the DeserializerFactory registered for the specified pair 
@@ -98,9 +106,11 @@ public interface TypeMapping extends javax.xml.rpc.encoding.TypeMapping {
      *
      * @throws JAXRPCException - If there is no registered DeserializerFactory
      * for this pair of Java type and  XML data type 
-     * java.lang.IllegalArgumentException - If invalid or unsupported XML/Java type is specified
+     * java.lang.IllegalArgumentException - 
+     * If invalid or unsupported XML/Java type is specified
      */
-    public DeserializerFactory getDeserializer(QName xmlType)  throws JAXRPCException;
+    public DeserializerFactory getDeserializer(QName xmlType) 
+        throws JAXRPCException;
 
     /**
      * Gets the QName for the type mapped to Class.

@@ -68,8 +68,9 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -117,7 +118,7 @@ public class Emitter {
     public static final int MODE_IMPLEMENTATION = 2;
 
     private Class cls;
-    private Class implCls;                 // Optional class that is an implementation of cls
+    private Class implCls;                 // Optional implementation class
     private Vector allowedMethods = null;  // Names of methods to consider
     private boolean useInheritedMethods = false;
     private String intfNS;          
@@ -127,18 +128,19 @@ public class Emitter {
     private String serviceName;
     private String targetService = null;
     private String description;
-    private TypeMappingRegistry reg = null;
+    private TypeMapping tm = null;        // Registered type mapping
+    private TypeMapping defaultTM = null; // Default TM 
     private Namespaces namespaces;
 
     private ArrayList encodingList;
     private Types types;
     private String clsName;
     
-    private Java2WSDLFactory factory;  // Factory for obtaining user provided extensions.
+    private Java2WSDLFactory factory;  // Factory for obtaining user extensions
 
     /**
      * Construct Emitter.                                            
-     * Set the contextual information using set* methods at the end of the class.
+     * Set the contextual information using set* methods
      * Invoke emit to emit the code
      */
     public Emitter () {
@@ -167,13 +169,16 @@ public class Emitter {
         }
 
         // Write out the interface def      
-        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(intf);
+        Document doc = WSDLFactory.newInstance().
+            newWSDLWriter().getDocument(intf);
         types.insertTypesFragment(doc);
-        XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename1)));
+        XMLUtils.PrettyDocumentToStream(doc, 
+                    new FileOutputStream(new File(filename1)));
 
         // Write out the implementation def 
         doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(impl);
-        XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename2)));
+        XMLUtils.PrettyDocumentToStream(doc, 
+                    new FileOutputStream(new File(filename2)));
     }
 
     /**
@@ -187,8 +192,8 @@ public class Emitter {
     }
 
     /**
-     * Generates a WSDL document for a given <code>Class</code>. The sections of
-     * the WSDL generated are controlled by the mode parameter 
+     * Generates a WSDL document for a given <code>Class</code>. 
+     * The WSDL generated is controlled by the mode parameter 
      * mode 0: All
      * mode 1: Interface
      * mode 2: Implementation
@@ -203,17 +208,20 @@ public class Emitter {
         switch (mode) {
             case MODE_ALL:
                 def = getWSDL();
-                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                doc = WSDLFactory.newInstance().
+                    newWSDLWriter().getDocument(def);
                 types.insertTypesFragment(doc);
                 break;
             case MODE_INTERFACE:
                 def = getIntfWSDL();
-                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                doc = WSDLFactory.newInstance().
+                    newWSDLWriter().getDocument(def);
                 types.insertTypesFragment(doc);
                 break;
             case MODE_IMPLEMENTATION:
                 def = getImplWSDL();
-                doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+                doc = WSDLFactory.newInstance().
+                    newWSDLWriter().getDocument(def);
                 break;
             default:
                 throw new Exception ("unrecognized output WSDL mode"); 
@@ -224,8 +232,8 @@ public class Emitter {
     }
 
     /**
-     * Generates a String containing the WSDL for a given <code>Class</code>. The sections of
-     * the WSDL generated are controlled by the mode parameter 
+     * Generates a String containing the WSDL for a given <code>Class</code>.
+     * The WSDL generated is controlled by the mode parameter 
      * mode 0: All
      * mode 1: Interface
      * mode 2: Implementation
@@ -242,8 +250,8 @@ public class Emitter {
     }
 
     /**
-     * Generates a WSDL document for a given <code>Class</code>. The sections of
-     * the WSDL generated are controlled by the mode parameter 
+     * Generates a WSDL document for a given <code>Class</code>.
+     * The WSDL generated is controlled by the mode parameter 
      * mode 0: All
      * mode 1: Interface
      * mode 2: Implementation
@@ -271,11 +279,13 @@ public class Emitter {
             }
         }
             
-        XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
+        XMLUtils.PrettyDocumentToStream(doc, 
+          new FileOutputStream(new File(filename)));
     }
 
     /**
-     * Get a Full WSDL <code>Definition</code> for the current configuration parameters
+     * Get a Full WSDL <code>Definition</code> for the current
+     * configuration parameters
      *
      * @return WSDL <code>Definition</code>
      * @throws Exception
@@ -289,7 +299,7 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, reg, namespaces, intfNS, factory);
+        types = new Types(def, tm, defaultTM, namespaces, intfNS, factory);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         writeService(def, binding);
@@ -297,7 +307,8 @@ public class Emitter {
     }
 
    /**
-     * Get a interface WSDL <code>Definition</code> for the current configuration parameters
+     * Get a interface WSDL <code>Definition</code> for the
+     * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
      * @throws Exception
@@ -311,14 +322,15 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, reg, namespaces, intfNS, factory);
+        types = new Types(def, tm, defaultTM, namespaces, intfNS, factory);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         return def;
     }
 
    /**
-     * Get implementation WSDL <code>Definition</code> for the current configuration parameters
+     * Get implementation WSDL <code>Definition</code> for the
+     * current configuration parameters
      *
      * @return WSDL <code>Definition</code>
      * @throws Exception
@@ -333,12 +345,13 @@ public class Emitter {
         // Write interface header
         writeDefinitions(def, implNS);
         writeImport(def, intfNS, importUrl);
-        Binding binding = writeBinding(def, false); // Don't write binding to def
+        Binding binding = writeBinding(def, false); // Don't add binding to def
         writeService(def, binding);
         return def;
     }
     /**
-     * Invoked prior to building a definition to ensure parms and data are set up.      
+     * Invoked prior to building a definition to ensure parms
+     * and data are set up.      
      * @throws Exception
      */
     private void init() throws Exception {
@@ -367,8 +380,13 @@ public class Emitter {
             encodingList = new ArrayList();
             encodingList.add(Constants.URI_CURRENT_SOAP_ENC);
             
-            if (reg == null) {
-                reg = new TypeMappingRegistryImpl();
+
+            // We want to produce valid SOAP 1.2 JAX-RPC 
+            // translations, so make sure that the default type mapping
+            // is for SOAP 1.2.
+            if (defaultTM == null ||
+                defaultTM instanceof DefaultTypeMappingImpl) {
+                defaultTM = DefaultSOAP12TypeMappingImpl.create();
             }
 
             if (intfNS == null) 
@@ -388,7 +406,8 @@ public class Emitter {
      * @param tns  target namespace
      * @throws Exception
      */
-    private void writeDefinitions(Definition def, String tns) throws Exception {
+    private void writeDefinitions(Definition def, String tns)
+        throws Exception {
         def.setTargetNamespace(tns);
 
         def.addNamespace("intf", intfNS);
@@ -423,7 +442,8 @@ public class Emitter {
      * @param loc  target location 
      * @throws Exception
      */
-    private void writeImport(Definition def, String tns, String loc) throws Exception {
+    private void writeImport(Definition def, String tns, String loc)
+        throws Exception {
         Import imp = def.createImport();
 
         imp.setNamespaceURI(tns);
@@ -439,10 +459,12 @@ public class Emitter {
      * @param add  true if binding should be added to the def
      * @throws Exception
      */
-    private Binding writeBinding(Definition def, boolean add) throws Exception {
+    private Binding writeBinding(Definition def, boolean add)
+        throws Exception {
         Binding binding = def.createBinding();
         binding.setUndefined(false);
-        binding.setQName(new javax.wsdl.QName(intfNS, getServiceName() + "SoapBinding"));
+        binding.setQName(
+          new javax.wsdl.QName(intfNS, getServiceName() + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         soapBinding.setStyle("rpc");
@@ -467,7 +489,8 @@ public class Emitter {
 
         Service service = def.createService();
 
-        service.setQName(new javax.wsdl.QName(implNS, getServiceName()+"Service"));
+        service.setQName(
+           new javax.wsdl.QName(implNS, getServiceName()+"Service"));
         def.addService(service);
 
         Port port = def.createPort();
@@ -491,7 +514,8 @@ public class Emitter {
      * @param binding                        
      * @throws Exception
      */
-    private void writePortType(Definition def, Binding binding) throws Exception{
+    private void writePortType(Definition def, Binding binding) 
+        throws Exception{
 
         PortType portType = def.createPortType();
         portType.setUndefined(false);
@@ -499,12 +523,17 @@ public class Emitter {
         // PortType name is the name of the class being processed
         portType.setQName(new javax.wsdl.QName(intfNS, clsName));
 
-        // Get a ClassRep representing the portType class, and get the list of MethodRep
-        // objects representing the methods that should be contained in the portType.
+        // Get a ClassRep representing the portType class,
+        // and get the list of MethodRep
+        // objects representing the methods that should
+        // be contained in the portType.
         // This allows users to provide their own method/parameter mapping.
-        BuilderPortTypeClassRep builder = factory.getBuilderPortTypeClassRep();
-        ClassRep classRep = builder.build(cls, useInheritedMethods, implCls);
-        Vector methods = builder.getResolvedMethods(classRep, allowedMethods);
+        BuilderPortTypeClassRep builder = 
+           factory.getBuilderPortTypeClassRep();
+        ClassRep classRep = 
+           builder.build(cls, useInheritedMethods, implCls);
+        Vector methods = 
+           builder.getResolvedMethods(classRep, allowedMethods);
 
         for(int i=0; i<methods.size(); i++) {
             MethodRep method = (MethodRep) methods.elementAt(i);
@@ -525,7 +554,8 @@ public class Emitter {
      * @param method (A MethodRep object)                       
      * @throws Exception
      */
-    private void writeMessages(Definition def, Operation oper, MethodRep method) throws Exception{
+    private void writeMessages(Definition def, Operation oper, 
+                               MethodRep method) throws Exception{
         Input input = def.createInput();
 
         Message msg = writeRequestMessage(def, method);
@@ -544,8 +574,10 @@ public class Emitter {
         // Set the parameter ordering using the parameter names
         Vector names = new Vector();
         for (int i=0; i<method.getParameters().size(); i++) {
-            ParamRep parameter = (ParamRep) method.getParameters().elementAt(i);
-            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
+            ParamRep parameter = (ParamRep) 
+                method.getParameters().elementAt(i);
+            if ((i == 0) && 
+                MessageContext.class.equals(parameter.getType())) {
                 continue;
             }
             names.add(parameter.getName());
@@ -562,7 +594,9 @@ public class Emitter {
      * @param operName                        
      * @throws Exception
      */
-    private Operation writeOperation(Definition def, Binding binding, String operName) {
+    private Operation writeOperation(Definition def, 
+                                     Binding binding, 
+                                     String operName) {
         Operation oper = def.createOperation();
         oper.setName(operName);
         oper.setUndefined(false);
@@ -577,7 +611,9 @@ public class Emitter {
      * @param oper                        
      * @throws Exception
      */
-    private void writeBindingOperation (Definition def, Binding binding, Operation oper) {
+    private void writeBindingOperation (Definition def, 
+                                        Binding binding, 
+                                        Operation oper) {
         BindingOperation bindingOper = def.createBindingOperation();
         BindingInput bindingInput = def.createBindingInput();
         BindingOutput bindingOutput = def.createBindingOutput();
@@ -612,7 +648,8 @@ public class Emitter {
      * @param method (a MethodRep object)       
      * @throws Exception
      */
-    private Message writeRequestMessage(Definition def, MethodRep method) throws Exception
+    private Message writeRequestMessage(Definition def,
+                                        MethodRep method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -627,7 +664,8 @@ public class Emitter {
             ParamRep parameter = (ParamRep) parameters.elementAt(i);
             // If the first param is a MessageContext, Axis will
             // generate it for us - it shouldn't be in the WSDL.
-            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
+            if ((i == 0) && 
+                MessageContext.class.equals(parameter.getType())) {
                 continue;
             }
             writePartToMessage(def, msg, true,parameter); 
@@ -642,7 +680,8 @@ public class Emitter {
      * @param method   
      * @throws Exception
      */
-    private Message writeResponseMessage(Definition def, MethodRep method) throws Exception
+    private Message writeResponseMessage(Definition def, 
+                                         MethodRep method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -661,7 +700,8 @@ public class Emitter {
             ParamRep parameter = (ParamRep) parameters.elementAt(i);
             // If the first param is a MessageContext, Axis will
             // generate it for us - it shouldn't be in the WSDL.
-            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
+            if ((i == 0) && 
+                MessageContext.class.equals(parameter.getType())) {
                 continue;
             }
             writePartToMessage(def, msg, false,parameter); 
@@ -678,7 +718,9 @@ public class Emitter {
      * @return The parameter name added or null
      * @throws Exception
      */
-    public String writePartToMessage(Definition def, Message msg, boolean request,
+    public String writePartToMessage(Definition def, 
+                                     Message msg,
+                                     boolean request,
                                      ParamRep param) throws Exception
     {
         // Return if this is a void type
@@ -721,7 +763,8 @@ public class Emitter {
         // Check the make sure there isn't a message with this name already
         int messageNumber = 1;
         while (def.getMessage(qName) != null) {
-            StringBuffer namebuf = new StringBuffer(methodName.concat(suffix));
+            StringBuffer namebuf = 
+                new StringBuffer(methodName.concat(suffix));
             namebuf.append(messageNumber);
             qName = new javax.wsdl.QName(intfNS, namebuf.toString());
             messageNumber++;
@@ -761,29 +804,32 @@ public class Emitter {
 
         // Strip off \ and / from serviceName
         if (serviceName.lastIndexOf('/') > 0) {
-            serviceName = serviceName.substring(serviceName.lastIndexOf('/') + 1);
+            serviceName = 
+              serviceName.substring(serviceName.lastIndexOf('/') + 1);
         } else if (serviceName.lastIndexOf('\\') > 0) {
-            serviceName = serviceName.substring(serviceName.lastIndexOf('\\') + 1);
+            serviceName = 
+              serviceName.substring(serviceName.lastIndexOf('\\') + 1);
         } 
 
         // Get the constructors of the class
-        java.lang.reflect.Constructor[] constructors = cls.getDeclaredConstructors();
+        java.lang.reflect.Constructor[] constructors = 
+          cls.getDeclaredConstructors();
         Class intf = null;
         for (int i=0; i<constructors.length && intf == null; i++) {
             Class[] parms = constructors[i].getParameterTypes();
-            // If the constructor has a single parameter that is an interface which
+            // If the constructor has a single parameter 
+            // that is an interface which
             // matches the serviceName, then use this as the interface class.
             if (parms.length == 1 &&
                 parms[0].isInterface() &&
                 parms[0].getName() != null &&
-                Types.getLocalNameFromFullName(parms[0].getName()).equals(serviceName)) {
+                Types.getLocalNameFromFullName(
+                    parms[0].getName()).equals(serviceName)) {
                 intf = parms[0];
             }
         }
         if (intf != null) {
             setCls(intf);
-
-            // Try to find an implementation or skeleton to use for the impl class.
             if (implCls == null) {
                 setImplCls(cls);
             }
@@ -840,7 +886,8 @@ public class Emitter {
      */
     public void setFactory(String className) {
         try {
-            factory = (Java2WSDLFactory) Class.forName(className).newInstance();
+            factory = (Java2WSDLFactory) 
+                Class.forName(className).newInstance();
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -975,8 +1022,10 @@ public class Emitter {
     }
 
     /**
-     * Set the String representation of the interface location URL for importing
-     * @param locationUrl the String representation of the interface location URL for importing
+     * Set the String representation of the interface location URL 
+     * for importing
+     * @param locationUrl the String representation of the interface
+     * location URL for importing
      */
     public void setImportUrl(String importUrl) {
         this.importUrl = importUrl;
@@ -1031,19 +1080,34 @@ public class Emitter {
     }
 
     /**
-     * Returns the <code>TypeMappingRegistry</code> used by the service
-     * @return the <code>TypeMappingRegistry</code> used by the service
+     * Returns the <code>TypeMapping</code> used by the service
+     * @return the <code>TypeMapping</code> used by the service
      */
-    public TypeMappingRegistry getReg() {
-        return reg;
+    public TypeMapping getTypeMapping() {
+        return tm;
     }
 
     /**
-     * Sets the <code>TypeMappingRegistry</code> used by the service
-     * @param reg the <code>TypeMappingRegistry</code> used by the service
+     * Sets the <code>TypeMapping</code> used by the service
+     * @param tm the <code>TypeMapping</code> used by the service
      */
-    public void setReg(TypeMappingRegistry reg) {
-        this.reg = reg;
+    public void setTypeMapping(TypeMapping tm) {
+        this.tm = tm;
     }
 
+    /**
+     * Returns the default <code>TypeMapping</code> used by the service
+     * @return the default <code>TypeMapping</code> used by the service
+     */
+    public TypeMapping getDefaultTypeMapping() {
+        return defaultTM;
+    }
+
+    /**
+     * Sets the default <code>TypeMapping</code> used by the service
+     * @param defaultTM the default <code>TypeMapping</code> used by the service
+     */
+    public void setDefaultTypeMapping(TypeMapping defaultTM) {
+        this.defaultTM = defaultTM;
+    }
 }

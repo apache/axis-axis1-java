@@ -21,9 +21,10 @@ public class SequenceTestServiceTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
         try {
-            int value = -3;
+            Integer value = null;
             value = binding.testSequence(new test.wsdl.sequence.SequenceInfo());
-            assertTrue("Test Sequence Failed="+value , (value == 0));
+            assertTrue("Test Sequence Failed="+value,             (value != null));
+            assertTrue("Test Sequence Failed="+value.intValue() , (value.intValue() == 0));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
