@@ -121,7 +121,7 @@ public class BeanSerializer extends Deserializer
     public BeanSerializer(Class cls, short format) {
         super();
         this.cls = cls;
-        if (format > FORCE_UPPER ||
+        if (format > FORCE_LOWER ||
             format < PROPERTY_NAME)
             format = PROPERTY_NAME;
         this.elementPropertyFormat = format;
