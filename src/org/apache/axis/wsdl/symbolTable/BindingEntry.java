@@ -89,9 +89,13 @@ public class BindingEntry extends SymTabEntry {
     private HashMap parameters = new HashMap();
 
     // This is a map of a map.  It's a map keyed on operation name whose values
-    // are maps keyed on parameter name.
+    // are maps keyed on parameter name.  The ultimate values are simple Strings.
     private Map     mimeTypes; 
-    
+
+    // This is a map of a map.  It's a map keyed on operation name whose values
+    // are maps keyed on parameter name.  The ultimate values are simple
+    // Booleans.
+    private Map     headerParameters;
 
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
@@ -99,19 +103,59 @@ public class BindingEntry extends SymTabEntry {
      * contain the input/output/fault body type information.
      */
     public BindingEntry(Binding binding, int bindingType, int bindingStyle,
-            boolean hasLiteral, HashMap attributes, Map mimeTypes) {
+            boolean hasLiteral, HashMap attributes, Map mimeTypes,
+            Map headerParameters) {
         super(binding.getQName());
         this.binding = binding;
         this.bindingType = bindingType;
         this.bindingStyle = bindingStyle;
         this.hasLiteral = hasLiteral;
-        this.attributes = attributes;
+        if (attributes == null) {
+            this.attributes = new HashMap();
+        }
+        else {
+            this.attributes = attributes;
+        }
         if (mimeTypes == null) {
             this.mimeTypes = new HashMap();
         }
         else {
             this.mimeTypes = mimeTypes;
         }
+        if (headerParameters == null) {
+            this.headerParameters = new HashMap();
+        }
+        else {
+            this.headerParameters = headerParameters;
+        }
+    } // ctor
+
+    /**
+     * This is a minimal constructor.  Everything will be set up with
+     * defaults.  If the defaults aren't desired, then the appropriate
+     * setter method should be called.  The defaults are:
+     * bindingType = TYPE_UNKNOWN
+     * bindingStyle = STYLE_DOCUMENT
+     * hasLiteral = false
+     * operation inputBodyTypes = USE_ENCODED
+     * operation outputBodyTypes = USE_ENCODED
+     * operation faultBodyTypes = USE_ENCODED
+     * mimeTypes = null
+
+The caller of this constructor should
+     * also call the various setter methods to fully fill out this object:
+     * setBindingType, setBindingStyle, setHasLiteral, setAttribute,
+     * setMIMEType.  
+     */
+    public BindingEntry(Binding binding) {
+        super(binding.getQName());
+        this.binding          = binding;
+        this.bindingType      = TYPE_UNKNOWN;
+        this.bindingStyle     = STYLE_DOCUMENT;
+        this.hasLiteral       = false;
+        this.attributes       = new HashMap();
+        this.mimeTypes        = new HashMap();
+        this.headerParameters = new HashMap();
     } // ctor
 
     /**
@@ -169,6 +213,41 @@ public class BindingEntry extends SymTabEntry {
     } // setMIMEType
 
     /**
+     * Get the mime mapping for the given parameter name.
+     * If there is none, this returns null.
+     */
+    public boolean isHeaderParameter(String operationName,
+            String parameterName) {
+        Map opMap = (Map) headerParameters.get(operationName);
+        if (opMap == null) {
+            return false;
+        }
+        else {
+            Boolean bool = (Boolean) opMap.get(parameterName);
+            return bool == null ? false : bool.booleanValue();
+        }
+    } // isHeaderParameter
+
+    /**
+     * Get the header parameter map.
+     */
+    public Map getHeaderParameters() {
+        return headerParameters;
+    } // getHeaderParameters
+
+    /**
+     * Set the header parameter mapping for the given parameter name.
+     */
+    public void setHeaderParameter(String operationName, String parameterName, boolean isHeader) {
+        Map opMap = (Map) headerParameters.get(operationName);
+        if (opMap == null) {
+            opMap = new HashMap();
+            headerParameters.put(operationName, opMap);
+        }
+        opMap.put(parameterName, new Boolean(isHeader));
+    } // setHeaderParameter
+
+    /**
      * Get this entry's WSDL4J Binding object.
      */
     public Binding getBinding() {
@@ -184,6 +263,15 @@ public class BindingEntry extends SymTabEntry {
     } // getBindingType
 
     /**
+     * Set this entry's binding type.
+     */
+    protected void setBindingType(int bindingType) {
+        if (bindingType >= TYPE_SOAP && bindingType <= TYPE_UNKNOWN) {
+        }
+        this.bindingType = bindingType;
+    } // setBindingType
+
+    /**
      * Get this entry's binding style.  One of BindingEntry.STYLE_RPC, BindingEntry.STYLE_DOCUMENT.
      */
     public int getBindingStyle() {
@@ -191,11 +279,27 @@ public class BindingEntry extends SymTabEntry {
     } // getBindingStyle
 
     /**
+     * Set this entry's binding style.
+     */
+    protected void setBindingStyle(int bindingStyle) {
+        if (bindingStyle == STYLE_RPC || bindingStyle == STYLE_DOCUMENT) {
+            this.bindingStyle = bindingStyle;
+        }
+    } // setBindingStyle
+
+    /**
      * Do any of the message stanzas contain a soap:body which uses literal?
      */
     public boolean hasLiteral() {
         return hasLiteral;
     } // hasLiteral
+
+    /**
+     * Set the literal flag.
+     */
+    protected void setHasLiteral(boolean hasLiteral) {
+        this.hasLiteral = hasLiteral;
+    } // setHashLiteral
 
     /**
      * Get the input body type for the given operation.  One of BindingEntry.USE_ENCODED,
@@ -212,6 +316,21 @@ public class BindingEntry extends SymTabEntry {
     } // getInputBodyType
 
     /**
+     * Set the input body type for the given operation.
+     */
+     protected void setInputBodyType(Operation operation, int inputBodyType) {
+         OperationAttr attr = (OperationAttr) attributes.get(operation);
+         if (attr == null) {
+             attr = new OperationAttr();
+             attributes.put(operation, attr);
+         }
+         attr.setInputBodyType(inputBodyType);
+         if (inputBodyType == USE_LITERAL) {
+             setHasLiteral(true);
+         }
+     } // setInputBodyType
+
+    /**
      * Get the output body type for the given operation.  One of BindingEntry.USE_ENCODED,
      * BindingEntry.USE_LITERAL.
      */
@@ -224,6 +343,35 @@ public class BindingEntry extends SymTabEntry {
             return attr.getOutputBodyType();
         }
     } // getOutputBodyType
+
+    /**
+     * Set the output body type for the given operation.
+     */
+     protected void setOutputBodyType(Operation operation, int outputBodyType) {
+         OperationAttr attr = (OperationAttr) attributes.get(operation);
+         if (attr == null) {
+             attr = new OperationAttr();
+             attributes.put(operation, attr);
+         }
+         attr.setOutputBodyType(outputBodyType);
+         if (outputBodyType == USE_LITERAL) {
+             setHasLiteral(true);
+         }
+     } // setOutputBodyType
+
+     /**
+      * Set the body type for the given operation.  If input is true,
+      * then this is the inputBodyType, otherwise it's the outputBodyType.
+      * (NOTE:  this method exists to enable reusing some SymbolTable code.
+      */
+     protected void setBodyType(Operation operation, int bodyType, boolean input) {
+         if (input) {
+             setInputBodyType(operation, bodyType);
+         }
+         else {
+             setOutputBodyType(operation, bodyType);
+         }
+     } // setBodyType
 
     /**
      * Get the fault body type for the given fault of the given operation.  One of
@@ -247,6 +395,18 @@ public class BindingEntry extends SymTabEntry {
     }
 
     /**
+     * Set the fault body type map for the given operation.
+     */
+     protected void setFaultBodyTypeMap(Operation operation, HashMap faultBodyTypeMap) {
+         OperationAttr attr = (OperationAttr) attributes.get(operation);
+         if (attr == null) {
+             attr = new OperationAttr();
+             attributes.put(operation, attr);
+         }
+         attr.setFaultBodyTypeMap(faultBodyTypeMap);
+     } // setInputBodyTypeMap
+
+    /**
      * Contains attributes for Operations
      *  - Body type: encoded or literal
      */
@@ -261,16 +421,34 @@ public class BindingEntry extends SymTabEntry {
             this.faultBodyTypeMap = faultBodyTypeMap;
         }
 
+        public OperationAttr() {
+            this.inputBodyType = USE_ENCODED;
+            this.outputBodyType = USE_ENCODED;
+            this.faultBodyTypeMap = null;
+        }
+
         public int getInputBodyType() {
             return inputBodyType;
+        }
+
+        protected void setInputBodyType(int inputBodyType) {
+            this.inputBodyType = inputBodyType;
         }
 
         public int getOutputBodyType() {
             return outputBodyType;
         }
 
+        protected void setOutputBodyType(int outputBodyType) {
+            this.outputBodyType = outputBodyType;
+        }
+
         public HashMap getFaultBodyTypeMap() {
             return faultBodyTypeMap;
+        }
+
+        protected void setFaultBodyTypeMap(HashMap faultBodyTypeMap) {
+            this.faultBodyTypeMap = faultBodyTypeMap;
         }
     } // class OperationAttr
 
