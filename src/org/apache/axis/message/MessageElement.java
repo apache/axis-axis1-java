@@ -1020,7 +1020,7 @@ public class MessageElement implements SOAPElement, Serializable
                 if (idx > 0) {
                     prefix = q.substring(0, idx);
                 } else {
-                    prefix= q;
+                    prefix= "";
                 }
             }
 
