@@ -109,7 +109,7 @@ public abstract class JavaProvider extends BasicProvider
      * Get the service object whose method actually provides the service.
      * May look up in session table.
      */
-    private Object getServiceObject (MessageContext msgContext,
+    public Object getServiceObject (MessageContext msgContext,
                                     Handler service,
                                     String clsName,
                                     IntHolder scopeHolder)

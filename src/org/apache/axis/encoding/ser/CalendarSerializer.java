@@ -99,8 +99,13 @@ public class CalendarSerializer implements Serializer {
 
         Calendar calendar = (Calendar) value;
         Date date = calendar.getTime();
+        // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
+        String format = null;
+        synchronized (zulu) {
+            format = zulu.format(date);
+        }
         // Serialize including convert to GMT
-        context.writeString(zulu.format(date));
+        context.writeString(format);
 
         context.endElement();
     }
