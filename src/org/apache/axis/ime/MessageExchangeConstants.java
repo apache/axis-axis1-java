@@ -82,6 +82,6 @@ public interface MessageExchangeConstants {
      * MessageContext property
      */
     public static final Boolean ENABLE_CORRELATOR_SERVICE_DEFAULT =
-            new Boolean(true);
+            Boolean.TRUE;
 
 }

@@ -755,7 +755,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        _hashCode += " + get +
                          Utils.capitalizeFirstChar(variable) + "();");
             } else if (variableType.equals("boolean")) {
-                pw.println("        _hashCode += new Boolean(" + get +
+                pw.println("        _hashCode += Boolean.valueOf(" + get +
                            Utils.capitalizeFirstChar(variable) + "()).hashCode();");
             } else if (variableType.equals("long")) {
                 pw.println("        _hashCode += new Long(" + get +

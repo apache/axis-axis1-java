@@ -961,13 +961,13 @@ public class MessageContext implements SOAPMessageContext {
                 return getPassword();
             }
             else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
-                return new Boolean(getMaintainSession());
+                return Boolean.valueOf(getMaintainSession());
             }
             else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
                 return (getOperationStyle() == null) ? null : getOperationStyle().getName();
             }
             else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
-                return new Boolean(useSOAPAction());
+                return Boolean.valueOf(useSOAPAction());
             }
             else if (name.equals(Call.SOAPACTION_URI_PROPERTY)) {
                 return getSOAPActionURI();
