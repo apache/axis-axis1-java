@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import javax.activation.DataHandler;
 import javax.mail.internet.MimeUtility;
 import java.io.IOException;
+import java.io.BufferedInputStream;
 
 /**
  * This simulates the multipart stream.
@@ -99,6 +100,10 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
         super(null);    // don't cache this stream.
 
+        if(!(stream instanceof BufferedInputStream)) {
+            stream = new BufferedInputStream(stream);
+        }
+        
         try {
 
             // First find the start and boundary parameters. There are real weird rules regard what
