@@ -313,16 +313,15 @@ public class JavaStubWriter extends JavaWriter {
             firstPassTypes.addAll(getTypesInOperation(op));
         }
 
-        // Extract those types which are complex types.
+        // Add all the types nested and derived from the types
+        // in the first pass.
         Iterator i = firstPassTypes.iterator();
         while (i.hasNext()) {
             TypeEntry type = (TypeEntry) i.next();
             if (!types.contains(type)) {
                 types.add(type);
-                if ((type.getNode() != null) && type.getBaseType() == null) {
-                    types.addAll(
-                            Utils.getNestedTypes(type.getNode(), symbolTable));
-                }
+                types.addAll(
+                   Utils.getNestedTypes(type, symbolTable, true));
             }
         }
         return types;
