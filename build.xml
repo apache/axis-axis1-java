@@ -194,7 +194,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="junit" if="junit.present" depends="buildTest">
     <mkdir dir="${basedir}/test-reports" />
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
       <formatter type="xml" />
       <batchtest todir="test-reports">
