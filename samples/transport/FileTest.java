@@ -5,6 +5,8 @@ import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.suppliers.TransportSupplier;
 
 /** Tests the simple File transport.  To run:
  *      java org.apache.axis.utils.Admin client client_deploy.xml
@@ -31,6 +33,20 @@ public class FileTest {
         String   symbol = args[0] ;
         Service  service = new Service();
         Call     call    = (Call) service.createCall();
+
+        AxisEngine engine = call.getEngine();
+
+        // Manually deploy file sender and file transport for this example
+        engine.deployHandler("FileSender", new FileSender());
+        engine.deployTransport("FileTransport",
+                               new TransportSupplier("FileTransport",
+                                                     null,
+                                                     null,
+                                                     "FileSender",
+                                                     null,
+                                                     engine.getHandlerRegistry())
+                                );
+
         call.setOperationName( "getQuote" );
         call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
         call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );

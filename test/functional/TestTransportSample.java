@@ -83,11 +83,6 @@ public class TestTransportSample extends TestCase {
         super(name);
     }
     
-    public void doTestClientDeploy () throws Exception {
-        String[] args = { "client", "samples/transport/client_deploy.xml" };
-        Admin.main(args);
-    }
-    
     public void doTestDeploy () throws Exception {
         String[] args = { "server", "samples/transport/deploy.xml" };
         Admin.main(args);
@@ -123,8 +118,6 @@ public class TestTransportSample extends TestCase {
     public void testService () throws Exception {
         try {
             category.info("Testing transport sample.");
-            category.info("Testing client deployment...");
-            doTestClientDeploy();
             category.info("Testing deployment...");
             doTestDeploy();
             category.info("Testing service with symbol IBM...");

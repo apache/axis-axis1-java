@@ -143,7 +143,7 @@ public class Call implements org.apache.axis.rpc.Call {
     private static Hashtable transports  = new Hashtable();
     private static boolean   initialized = false;
 
-    private static FileProvider configProvider = 
+    private static FileProvider configProvider =
                            new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
 
@@ -197,7 +197,7 @@ public class Call implements org.apache.axis.rpc.Call {
             paramTypes = new Vector();
             paramModes = new Vector();
         }
-        
+
         paramNames.add( paramName );
         paramTypes.add( paramType.getType() );
         paramModes.add( new Integer(parameterMode) );
@@ -324,7 +324,7 @@ public class Call implements org.apache.axis.rpc.Call {
                 transport.setTransportName( name );
             return ;
          }
-        if (myProperties == null) 
+        if (myProperties == null)
             myProperties = new Hashtable();
         myProperties.put(name, value);
     }
@@ -378,7 +378,7 @@ public class Call implements org.apache.axis.rpc.Call {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             env = new SOAPEnvelope();
-            
+
             for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
                 env.addHeader((SOAPHeader)myHeaders.get(i));
 
@@ -410,6 +410,8 @@ public class Call implements org.apache.axis.rpc.Call {
                 return( this.invoke(ns,operationName,getParamList(params)) );
         }
         catch( Exception exp ) {
+            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+
             throw new AxisFault( "Error invoking operation",
                                                 exp );
         }
@@ -447,9 +449,9 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param env a SOAPEnvelope to send.
      * @exception AxisFault
      */
-    public SOAPEnvelope invoke(SOAPEnvelope env) 
+    public SOAPEnvelope invoke(SOAPEnvelope env)
                                   throws java.rmi.RemoteException {
-        try { 
+        try {
             Message msg = null ;
             int     i ;
 
@@ -503,7 +505,7 @@ public class Call implements org.apache.axis.rpc.Call {
         if (!initialized) {
             addTransportPackage("org.apache.axis.transport");
 
-            setTransportForProtocol("local", 
+            setTransportForProtocol("local",
                          org.apache.axis.transport.local.LocalTransport.class);
             setTransportForProtocol("http", HTTPTransport.class);
             setTransportForProtocol("https", HTTPTransport.class);
@@ -539,7 +541,7 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Change the AxisEngine being used by this Call object.  This should
-     * be called right away after creating the Call object since any 
+     * be called right away after creating the Call object since any
      * values in the old msgContext object associated with the old engine
      * will NOT be carried over to the new msgContext of this new engine.
      *
@@ -572,7 +574,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param  params   Array of parameters to pass into the operation/method
      * @return Object[] Array of parameters to pass to invoke()
      */
-    private Object[] getParamList(Object[] params) 
+    private Object[] getParamList(Object[] params)
                            throws org.apache.axis.rpc.JAXRPCException {
         int  numParams = 0 ;
         int  i ;
@@ -591,10 +593,10 @@ public class Call implements org.apache.axis.rpc.Call {
         }
 
         if ( numParams != params.length )
-            throw new org.apache.axis.rpc.JAXRPCException( 
+            throw new org.apache.axis.rpc.JAXRPCException(
                                        "Number of parameters passed in (" +
                                        params.length + ") doesn't match the " +
-                                       "number of IN/INOUT parameters (" + 
+                                       "number of IN/INOUT parameters (" +
                                        numParams + ") from the addParameter" +
                                        "() calls" );
 
@@ -605,7 +607,7 @@ public class Call implements org.apache.axis.rpc.Call {
         for ( i = 0 ; i < numParams ; i++ ) {
             if (((Integer)paramModes.get(i)).intValue() == Call.PARAM_MODE_OUT)
                 continue ;
-            RPCParam p = new RPCParam( (String) paramNames.get(i), 
+            RPCParam p = new RPCParam( (String) paramNames.get(i),
                                           params[j++] );
             result.add( p );
         }
@@ -614,7 +616,7 @@ public class Call implements org.apache.axis.rpc.Call {
     }
 
     /**
-     * Set the Transport 
+     * Set the Transport
      *
      * Note: Not part of JAX-RPC specification.
      *
@@ -734,7 +736,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param qName the xsi:type QName of the associated XML type.
      * @param serializer a Serializer which will be used to write the XML.
      */
-    public void addSerializer(Class _class, org.apache.axis.utils.QName qName, 
+    public void addSerializer(Class _class, org.apache.axis.utils.QName qName,
                               Serializer serializer){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addSerializer(_class, qName, serializer);
@@ -750,7 +752,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
      */
-    public void addDeserializerFactory(org.apache.axis.utils.QName qName, 
+    public void addDeserializerFactory(org.apache.axis.utils.QName qName,
                                        Class _class,
                                        DeserializerFactory deserFactory){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
@@ -778,7 +780,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @return a deserialized Java Object containing the return value
      * @exception AxisFault
      */
-    public Object invoke(String namespace, String method, Object[] args) 
+    public Object invoke(String namespace, String method, Object[] args)
                     throws AxisFault {
         category.debug("Enter: Call::invoke(ns, meth, args)" );
         RPCElement  body = new RPCElement(namespace, method, args);
@@ -879,7 +881,7 @@ public class Call implements org.apache.axis.rpc.Call {
         resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null)
-            throw new AxisFault(new Exception("Null response message!"));
+            throw new AxisFault("Null response message!");
 
         /** This must happen before deserialization...
          */
@@ -948,7 +950,7 @@ public class Call implements org.apache.axis.rpc.Call {
                         intValue = ((Integer)value).intValue();
                     else
                         intValue = Integer.parseInt((String)value);
-                        
+
                     msgContext.setTimeout( intValue );
                 }
                 else
