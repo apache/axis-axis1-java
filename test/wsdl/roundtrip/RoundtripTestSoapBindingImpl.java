@@ -119,8 +119,11 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         short[] shortArray = {(short) 36};
         byte[] byteArray = {(byte) 7};
         CallOptions[] callOptions = new CallOptions[2];
-        callOptions[0] = new CallOptions(new Date(1013441507308L));
-        callOptions[1] = new CallOptions(new Date(1013441507328L));
+        callOptions[0] = new CallOptions();
+        callOptions[0].setCallDate(new Date(1013441507308L));
+        callOptions[1] = new CallOptions();
+        callOptions[1].setCallDate(new Date(1013441507328L));
+
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
 
@@ -191,8 +194,10 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         short[] shortArray = {(short) 36};
         byte[] byteArray = {(byte) 7};
         CallOptions[] callOptions = new CallOptions[2];
-        callOptions[0] = new CallOptions(new Date(1013441507308L));
-        callOptions[1] = new CallOptions(new Date(1013441507328L));
+        callOptions[0] = new CallOptions();
+        callOptions[0].setCallDate(new Date(1013441507308L));
+        callOptions[1] = new CallOptions();
+        callOptions[1].setCallDate(new Date(1013441507328L));
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
 
@@ -511,7 +516,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     public CallOptions[] methodCallOptions(CallOptions[] in0) throws RemoteException {
 
         if (in0[0].getCallDate().equals(new Date(1013459984577L))) {
-            in0[0] = new CallOptions(new Date(1013459984507L));
+            in0[0] = new CallOptions();
+            in0[0].setCallDate(new Date(1013459984507L));
             return in0;
         } else {
             throw new RemoteException("Actual value did not match expected value.");

@@ -71,11 +71,25 @@ import java.net.URL;
  * @author Sanjiva Weerawarana <sanjiva@watson.ibm.com>
  */
 public class Main {
-    static String name1 = "Purdue Boilermaker";
-    static Address addr1 = new Address (1, "University Drive",
-                                        "West Lafayette", StateType.IN, 47907,
-                                        new Phone (765, "494", "4900"));
+    static String name1;
+    static Address addr1;
+    static Phone phone1;
     
+    static {
+        name1 = "Purdue Boilermaker";
+        addr1 = new Address();
+        phone1 = new Phone();
+        addr1.setStreetNum(1);
+        addr1.setStreetName("University Drive");
+        addr1.setCity("West Lafayette");
+        addr1.setState(StateType.IN);
+        addr1.setZip(47907);
+        phone1.setAreaCode(765);
+        phone1.setExchange("494");
+        phone1.setNumber("4900");
+        addr1.setPhoneNumber(phone1);
+        
+    }
     private static void printAddress (Address ad) {
         if (ad == null) {
             System.err.println ("\t[ADDRESS NOT FOUND!]");

@@ -24,6 +24,29 @@ public class DetailedInoutTestCase extends TestCase
     
     public DetailedInoutTestCase(String name) {
         super(name);
+        expectedAddress = new Address();
+        expectedPhone = new Phone();
+        expectedAddress.setStreetNum(1);
+        expectedAddress.setStreetName("University Drive");
+        expectedAddress.setCity("West Lafayette");
+        expectedAddress.setState("IN");
+        expectedAddress.setZip(47907);
+        expectedPhone.setAreaCode(765);
+        expectedPhone.setExchange("494");
+        expectedPhone.setNumber("4900");
+        expectedAddress.setPhoneNumber(expectedPhone);
+
+        returnAddress = new Address();
+        returnPhone = new Phone();
+        returnAddress.setStreetNum(555);
+        returnAddress.setStreetName("Monroe Street");
+        returnAddress.setCity("Madison");
+        returnAddress.setState("WI");
+        returnAddress.setZip(54444);
+        returnPhone.setAreaCode(999);
+        returnPhone.setExchange("one");
+        returnPhone.setNumber("two");
+        returnAddress.setPhoneNumber(returnPhone);
         try {
             io = new InoutServiceLocator().getInoutService();
         }
@@ -75,12 +98,12 @@ public class DetailedInoutTestCase extends TestCase
         }
     }
 
-    private Phone expectedPhone = new Phone (765, "494", "4900");
-    private Address expectedAddress = new Address (1, "University Drive", "West Lafayette", "IN", 47907, expectedPhone);
+    private Phone expectedPhone;
+    private Address expectedAddress;
     private int expectedNumber = 99;
 
-    private Phone returnPhone = new Phone (999, "one", "two");
-    private Address returnAddress = new Address (555, "Monroe Street", "Madison", "WI", 54444, returnPhone);
+    private Phone returnPhone;
+    private Address returnAddress;
     private int returnNumber = 66;
 
     public void testOut0Inout0In0 ()

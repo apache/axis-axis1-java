@@ -202,8 +202,11 @@ public class RoundtripTestServiceTestCase extends TestCase {
         try {
 
             CallOptions[] callOptions = new CallOptions[2];
-            callOptions[0] = new CallOptions(new Date(1013441507388L));
-            callOptions[1] = new CallOptions(new Date(1013441507390L));
+            callOptions[0] = new CallOptions();
+            callOptions[0].setCallDate(new Date(1013441507388L));
+            callOptions[1] = new CallOptions();
+            callOptions[1].setCallDate(new Date(1013441507390L));
+
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
             Short[] wrapperShortArray = {new Short((short) 23), new Short((short) 56)};
@@ -417,8 +420,11 @@ public class RoundtripTestServiceTestCase extends TestCase {
         try {
 
             CallOptions[] callOptions = new CallOptions[2];
-            callOptions[0] = new CallOptions(new Date(1013441507388L));
-            callOptions[1] = new CallOptions(new Date(1013441507390L));
+            callOptions[0] = new CallOptions();
+            callOptions[0].setCallDate(new Date(1013441507388L));
+            callOptions[1] = new CallOptions();
+            callOptions[1].setCallDate(new Date(1013441507390L));
+
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
             Short[] wrapperShortArray = {new Short((short) 23), new Short((short) 56)};
@@ -882,7 +888,9 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
         try {
             CallOptions[] callOptions = new CallOptions[1];
-            callOptions[0] = new CallOptions(new Date(1013459984577L));
+            callOptions[0] = new CallOptions();
+            callOptions[0].setCallDate(new Date(1013459984577L));
+
             CallOptions[] actual = binding.methodCallOptions(callOptions);
             assertEquals("The expected and actual values did not match.",
                          new Date(1013459984507L),
