@@ -74,6 +74,7 @@ public class Options {
   String  host ;      // -h    also -l (url)
   String  port ;      // -p
   String  servlet ;   // -s
+  String  protocol ;
 
   String  user ;      // -u
   String  passwd ;    // -w
@@ -223,7 +224,6 @@ public class Options {
   // SOASS
   public String getURL() throws MalformedURLException {
     String  tmp ;
-    String  protocol = null ;
     URL     url = null ;
 
     if ( (tmp = isValueSet( 'l' )) != null ) {
