@@ -56,8 +56,10 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import java.io.InputStream ;
 
 /** A Body element.
  * 
@@ -80,5 +82,10 @@ public class SOAPBodyElement extends MessageElement
     
     public SOAPBodyElement()
     {
+    }
+
+    public SOAPBodyElement(InputStream input) 
+    {
+        super( XMLUtils.newDocument(input).getDocumentElement() );
     }
 }

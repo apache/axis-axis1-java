@@ -58,12 +58,12 @@ package org.apache.axis.client ;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
+import java.util.Vector;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -71,6 +71,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 /**
  * An admin client object that can be used both from the command line
@@ -200,45 +201,34 @@ public class AdminClient
                 input = new FileInputStream( args[i] );
             }
             
-            ServiceClient client = new ServiceClient(opts.getURL());
-            
-            /** Unfortunately, this is transport-specific.  However, no one
-            * but the HTTP transport should pick this property up.
-            */
-            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
-            
-            Message         inMsg      = new Message( input, true );
-            
-            client.setRequestMessage( inMsg );
-            
-            client.set( Transport.USER, opts.getUser() );
-            client.set( Transport.PASSWORD, opts.getPassword() );
+            Service service = new Service();
+            Call    call = (org.apache.axis.client.Call) service.createCall();
 
+            call.setTargetEndpointAddress( new URL(opts.getURL()) );
+            call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
+            call.setProperty( Transport.USER, opts.getUser() );
+            call.setProperty( Transport.PASSWORD, opts.getPassword() );
+            
             String tName = opts.isValueSet( 't' );
             if ( tName != null && !tName.equals("") )
-                client.setTransportName( tName );
+                call.setProperty( Call.TRANSPORT_NAME, tName );
             
-            client.invoke();
+            Vector result = null ;
+            Object[]  params = new Object[] { new SOAPBodyElement(input) };
+            result = (Vector) call.invoke( params );
             
-            Message outMsg = client.getMessageContext().
-                                                        getResponseMessage();
-            if (outMsg == null) {
+            if (result == null || result.size() == 0) {
                 log("Null response message!");
                 return null;
             }
             
-            client
-              .getMessageContext()
-               .setServiceDescription(new ServiceDescription("Admin", false));
-            
             input.close();
-            SOAPEnvelope envelope =
-                                   (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
-            SOAPBodyElement body = envelope.getFirstBody();
+            SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
             StringWriter writer = new StringWriter();
-            client.addOption(AxisEngine.PROP_XML_DECL, new Boolean(false));
+            call.getEngine().addOption(AxisEngine.PROP_XML_DECL, 
+                                       new Boolean(false));
             SerializationContext ctx = new SerializationContext(writer,
-                                                  client.getMessageContext());
+                                                  call.getMessageContext());
             ctx.setPretty(true);
             body.output(ctx);
             sb.append(writer.toString());

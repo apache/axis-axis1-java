@@ -63,7 +63,7 @@ import org.apache.axis.Constants ;
 import org.apache.axis.client.Service ;
 import org.apache.axis.client.Transport ;
 import org.apache.axis.encoding.XMLType ;
-import org.apache.axis.rpc.Call ;
+import org.apache.axis.client.Call ;
 import org.apache.axis.rpc.namespace.QName ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options ;
@@ -105,7 +105,7 @@ public class GetQuote1 {
       /* Now use those QNames as pointers into the WSDL doc */
       /******************************************************/
       Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
-      Call    call    = service.createCall( portQN, "getQuote" );
+      Call    call    = (Call) service.createCall( portQN, "getQuote" );
 
       /* Strange - but allows the user to change just certain portions of */
       /* the URL we're gonna use to invoke the service.  Useful when you  */
@@ -142,7 +142,7 @@ public class GetQuote1 {
       /* Create default/empty Service and Call object */
       /************************************************/
       Service  service = new Service();
-      Call     call    = service.createCall();
+      Call     call    = (Call) service.createCall();
 
       /* Strange - but allows the user to change just certain portions of */
       /* the URL we're gonna use to invoke the service.  Useful when you  */
@@ -154,7 +154,7 @@ public class GetQuote1 {
       /***********************************************************/
       call.setTargetEndpointAddress( new URL(opts.getURL()) );
       call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "getQuote" );
-      call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+      call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
       call.setOperationName( "getQuote" );
       call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );

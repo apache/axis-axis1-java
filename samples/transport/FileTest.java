@@ -39,12 +39,12 @@ public class FileTest {
     Call     call    = (Call) service.createCall();
     call.setOperationName( "getQuote" );
     call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
-    call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+    call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
     call.setReturnType( XMLType.XSD_FLOAT );
     call.setTransport( new FileTransport() );
     call.setProperty(Transport.USER, opts.getUser() );
     call.setProperty(Transport.PASSWORD, opts.getPassword() );
-    call.setTimeout(10000);
+    call.setProperty(Call.TIMEOUT, "10000");
   
     Float res = new Float(0.0F);
     res = (Float) call.invoke( new Object[] {symbol} );

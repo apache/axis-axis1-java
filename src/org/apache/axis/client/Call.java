@@ -110,7 +110,6 @@ public class Call implements org.apache.axis.rpc.Call {
     // invoke() time
     private Hashtable          myProperties    = null ;
 
-    private int                timeout         = 0 ;
     private boolean            maintainSession = false ;
 
     // Our Transport, if any
@@ -124,7 +123,10 @@ public class Call implements org.apache.axis.rpc.Call {
     private Vector             myHeaders       = null;
 
 
-    public static final String TRANSPORT_PROPERTY="java.protocol.handler.pkgs";
+    public static final String TRANSPORT_NAME    = "transport_name" ;
+    public static final String TIMEOUT           = "timeout" ;
+    public static final String NAMESPACE         = "namespace" ;
+    public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
@@ -304,6 +306,13 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public void setProperty(String name, Object value) {
         if (name == null || value == null) return;
+
+        if ( name.equals(TRANSPORT_NAME) ) {
+            transportName = name ;
+            if ( transport != null )
+                transport.setTransportName( name );
+            return ;
+         }
         if (myProperties == null) 
             myProperties = new Hashtable();
         myProperties.put(name, value);
@@ -334,15 +343,51 @@ public class Call implements org.apache.axis.rpc.Call {
      * Invokes the operation associated with this Call object using the
      * passed in parameters as the arguments to the method.
      *
+     * For Messaging (ie. non-RPC) the params argument should be an array
+     * of SOAPBodyElements.  <b>All</b> of them need to be SOAPBodyElements,
+     * if any of them are not this method will default back to RPC.  In the
+     * Messaging case the return value will be a vector of SOAPBodyElements.
+     *
      * @param  params Array of parameters to invoke the Web Service with
      * @return Object Return value of the operation/method - or null
      * @throws RemoteException if there's an error
      */
     public Object invoke(Object[] params) throws java.rmi.RemoteException {
+        /* First see if we're dealing with Messaging instead of RPC.        */
+        /* If ALL of the params are SOAPBodyElements then we're doing       */
+        /* Messaging, otherwise just fall through to normal RPC processing. */
+        /********************************************************************/
+        int i ;
+        for ( i = 0 ; params != null && i < params.length ; i++ )
+            if ( !(params[i] instanceof SOAPBodyElement) ) break ;
+        if ( i == params.length ) {
+            /* ok, we're doing Messaging, so build up the message */
+            /******************************************************/
+            SOAPEnvelope env = new SOAPEnvelope();
+            Message      msg = null ;
+            
+            for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
+                env.addHeader((SOAPHeader)myHeaders.get(i));
+
+            for ( i = 0 ; i < params.length ; i++ )
+                env.addBodyElement( (SOAPBodyElement) params[i] );
+
+            msg = new Message( env );
+            msgContext.setRequestMessage( msg );
+
+            invoke();
+
+            msg = msgContext.getResponseMessage();
+            if ( msg == null ) return( null );
+            env = msg.getAsSOAPEnvelope();
+            return( env.getBodyElements() );
+        }
+
+
         if ( operationName == null )
             throw new AxisFault( "No operation name specified" );
         try {
-            String ns = (String) getProperty( Constants.NAMESPACE );
+            String ns = (String) getProperty( Call.NAMESPACE );
             if ( ns == null )
                 return( this.invoke(operationName,getParamList(params)) );
             else
@@ -533,17 +578,6 @@ public class Call implements org.apache.axis.rpc.Call {
             category.info("Transport is " + transport);
     }
 
-    /**
-     * Set the name of the transport chain to use.
-     *
-     * Note: Not part of JAX-RPC specification.
-     */
-    public void setTransportName(String name) {
-        transportName = name ;
-        if ( transport != null )
-            transport.setTransportName( name );
-    }
-
     /** Get the Transport registered for the given protocol.
      *
      * Note: Not part of JAX-RPC specification.
@@ -564,28 +598,6 @@ public class Call implements org.apache.axis.rpc.Call {
             }
         }
         return ret;
-    }
-
-    /**
-     * Set timeout in our MessageContext.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @param value the maximum amount of time, in milliseconds
-     */
-    public void setTimeout (int value) {
-        timeout = value;
-    }
-
-    /**
-     * Get timeout from our MessageContext.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @return value the maximum amount of time, in milliseconds
-     */
-    public int getTimeout () {
-        return timeout;
     }
 
     /**
@@ -891,14 +903,23 @@ public class Call implements org.apache.axis.rpc.Call {
 
         msgContext.reset();
 
-        msgContext.setTimeout(timeout);
-
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();
             while (enum.hasMoreElements()) {
                 String name = (String) enum.nextElement();
                 Object value = myProperties.get(name);
-                msgContext.setProperty(name, value);
+                int    intValue = 0 ;
+
+                if ( name.equals( TIMEOUT ) ) {
+                    if ( value instanceof Integer )
+                        intValue = ((Integer)value).intValue();
+                    else
+                        intValue = Integer.parseInt((String)value);
+                        
+                    msgContext.setTimeout( intValue );
+                }
+                else
+                    msgContext.setProperty(name, value);
             }
         }
 
