@@ -1088,9 +1088,8 @@ public class Emitter {
             QName typeQName = 
                 types.writeTypeForPart(javaType,
                                        param.getTypeQName());
-            QName elemQName = 
-                types.writeElementForPart(javaType,
-                                          param.getTypeQName());
+            types.writeElementForPart(javaType,
+                                      param.getTypeQName());
             if (typeQName != null) {
                 part.setName(param.getName());
                 part.setTypeName(typeQName);
