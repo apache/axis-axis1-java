@@ -88,6 +88,9 @@ public class Options {
      * Constructor - just pass in the <b>args</b> from the command line.
      */
     public Options(String _args[]) throws MalformedURLException {
+        if (_args == null) {
+            _args = new String [] {};
+        }
         args = _args ;
         usedArgs = null ;
         defaultURL = new URL("http://localhost:8080/axis/servlet/AxisServlet");

@@ -31,6 +31,9 @@ public class FunctionalTests extends TestCase
         // nothing else has been deployed
         suite.addTestSuite(TestStockSample.class);
 
+        // JWS global types test (deploys a typeMapping)
+        suite.addTestSuite(TestJWSGlobalTypes.class);
+
         // TCP transport sample test
         suite.addTestSuite(TestTCPTransportSample.class);
         
