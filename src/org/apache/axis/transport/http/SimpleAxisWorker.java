@@ -216,12 +216,6 @@ public class SimpleAxisWorker implements Runnable {
         // resetting state between requests:
         //   msgContext = new MessageContext();
         //   requestMsg = new Message("", "String");
-        try {
-            msgContext.setTargetService(null);
-        } catch (AxisFault fault) {
-        }
-        msgContext.setResponseMessage(null);
-        msgContext.reset();
         //msgContext.setProperty("transport", "HTTPTransport");
         msgContext.setTransportName(transportName);
 
