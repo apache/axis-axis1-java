@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:s="http://www.w3.org/2001/XMLSchema" 
+    xmlns:s0="http://tempuri.org/" 
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+    targetNamespace="http://tempuri.org/" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="echoString">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="echoStringResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringIO">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringIOResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringIOret">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringIOretResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="echoStringIOretResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringInIO">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inarg" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringInIOResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringBig">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inarg" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg2" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringBigResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="echoStringBigResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ioarg2" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HelloInOut">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inout1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout3" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout4" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inonly" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="HelloInOutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="inout1" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout2" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout3" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="inout4" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoPhone">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="input" type="s0:Phone" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Phone">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="areaCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="prefix" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="number" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="echoPhoneResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="input" type="s0:Phone" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </types>
+  <message name="echoStringSoapIn">
+    <part name="parameters" element="s0:echoString" />
+  </message>
+  <message name="echoStringSoapOut">
+    <part name="parameters" element="s0:echoStringResponse" />
+  </message>
+  <message name="echoStringIOSoapIn">
+    <part name="parameters" element="s0:echoStringIO" />
+  </message>
+  <message name="echoStringIOSoapOut">
+    <part name="parameters" element="s0:echoStringIOResponse" />
+  </message>
+  <message name="echoStringIOretSoapIn">
+    <part name="parameters" element="s0:echoStringIOret" />
+  </message>
+  <message name="echoStringIOretSoapOut">
+    <part name="parameters" element="s0:echoStringIOretResponse" />
+  </message>
+  <message name="echoStringInIOSoapIn">
+    <part name="parameters" element="s0:echoStringInIO" />
+  </message>
+  <message name="echoStringInIOSoapOut">
+    <part name="parameters" element="s0:echoStringInIOResponse" />
+  </message>
+  <message name="echoStringBigSoapIn">
+    <part name="parameters" element="s0:echoStringBig" />
+  </message>
+  <message name="echoStringBigSoapOut">
+    <part name="parameters" element="s0:echoStringBigResponse" />
+  </message>
+  <message name="HelloInOutSoapIn">
+    <part name="parameters" element="s0:HelloInOut" />
+  </message>
+  <message name="HelloInOutSoapOut">
+    <part name="parameters" element="s0:HelloInOutResponse" />
+  </message>
+  <message name="echoPhoneSoapIn">
+    <part name="parameters" element="s0:echoPhone" />
+  </message>
+  <message name="echoPhoneSoapOut">
+    <part name="parameters" element="s0:echoPhoneResponse" />
+  </message>
+  <portType name="WrappedInOutInterface">
+    <operation name="echoString">
+      <input message="s0:echoStringSoapIn" />
+      <output message="s0:echoStringSoapOut" />
+    </operation>
+    <operation name="echoStringIO">
+      <input message="s0:echoStringIOSoapIn" />
+      <output message="s0:echoStringIOSoapOut" />
+    </operation>
+    <operation name="echoStringIOret">
+      <input message="s0:echoStringIOretSoapIn" />
+      <output message="s0:echoStringIOretSoapOut" />
+    </operation>
+    <operation name="echoStringInIO">
+      <input message="s0:echoStringInIOSoapIn" />
+      <output message="s0:echoStringInIOSoapOut" />
+    </operation>
+    <operation name="echoStringBig">
+      <input message="s0:echoStringBigSoapIn" />
+      <output message="s0:echoStringBigSoapOut" />
+    </operation>
+    <operation name="HelloInOut">
+      <input message="s0:HelloInOutSoapIn" />
+      <output message="s0:HelloInOutSoapOut" />
+    </operation>
+    <operation name="echoPhone">
+      <input message="s0:echoPhoneSoapIn" />
+      <output message="s0:echoPhoneSoapOut" />
+    </operation>
+  </portType>
+  <binding name="WrappedInOutSoap" type="s0:WrappedInOutInterface">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="echoString">
+      <soap:operation soapAction="http://tempuri.org/echoString" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="echoStringIO">
+      <soap:operation soapAction="http://tempuri.org/echoStringIO" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="echoStringIOret">
+      <soap:operation soapAction="http://tempuri.org/echoStringIOret" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="echoStringInIO">
+      <soap:operation soapAction="http://tempuri.org/echoStringInIO" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="echoStringBig">
+      <soap:operation soapAction="http://tempuri.org/echoStringBig" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="HelloInOut">
+      <soap:operation soapAction="http://tempuri.org/HelloInOut" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="echoPhone">
+      <soap:operation soapAction="http://tempuri.org/echoPhone" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="WrappedInOut">
+    <port name="WrappedInOut" binding="s0:WrappedInOutSoap">
+      <soap:address location="http://localhost:8080/axis/services/WrappedInOut" />
+    </port>
+  </service>
+</definitions>

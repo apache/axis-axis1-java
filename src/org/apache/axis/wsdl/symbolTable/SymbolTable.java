@@ -1080,14 +1080,25 @@ public class SymbolTable {
             }
         }
 
-        // Get the mode info about those parts that aren't in the
-        // parameterOrder list. Since they're not in the parameterOrder list,
-        // the order is, first all in (and inout) parameters, then all out
-        // parameters, in the order they appear in the messages.
-        for (int i = 0; i < inputs.size(); i++) {
-            Parameter p = (Parameter)inputs.get(i);
-            int outdex = getPartIndex(p.getName(), outputs);
-            addInishParm(inputs, outputs, i, outdex, parameters, false);
+        // Some special case logic for JAX-RPC, but also to make things
+        // nicer for the user.
+        // If we have a single input and output with the same name
+        //   instead of: void echo(StringHolder inout)
+        //   Do this:  string echo(string in)
+        if (wrapped && inputs.size() == 1 && outputs.size() == 1 &&
+        ((Parameter)inputs.get(0)).getName().equals(((Parameter)outputs.get(0)).getName())) {
+            // add the input and make sure its a IN not an INOUT
+            addInishParm(inputs, null, 0, -1, parameters, false);
+        } else {
+            // Get the mode info about those parts that aren't in the
+            // parameterOrder list. Since they're not in the parameterOrder list,
+            // the order is, first all in (and inout) parameters, then all out
+            // parameters, in the order they appear in the messages.
+            for (int i = 0; i < inputs.size(); i++) {
+                Parameter p = (Parameter)inputs.get(i);
+                int outdex = getPartIndex(p.getName(), outputs);
+                addInishParm(inputs, outputs, i, outdex, parameters, false);
+            }
         }
 
         // Now that the remaining in and inout parameters are collected,
@@ -1110,7 +1121,7 @@ public class SymbolTable {
         }
         parameters.faults = operation.getFaults();
 
-        // before we add return the paramters, 
+        // before we return the paramters, 
         // make sure we dont have a duplicate name
         Vector used = new Vector(parameters.list.size());
         Iterator i = parameters.list.iterator();
@@ -1169,26 +1180,13 @@ public class SymbolTable {
 
         // At this point we know the name and type of the parameter, and that it's at least an
         // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
-        // then it's an inout parameter.
-        // Don't bother doing this if the parameters are wrapped  since their
-        // names won't be the part names.
-        
+        // then it's an inout parameter.        
          if (outdex >= 0) {
             Parameter outParam = (Parameter)outputs.get(outdex);
             if (p.getType().equals(outParam.getType())) {
-                
-                // Some special case logic for JAX-RPC, but also to make things
-                // nicer for the user.
-                // If we have a single output, always make it the return value
-                //   instead of: void echo(StringHolder inout)
-                //   Do this:  string echo(string in)
-                if (wrapped && outputs.size() == 1) {
-                    ++parameters.inputs;
-                } else {
-                    outputs.remove(outdex);
-                    p.setMode(Parameter.INOUT);
-                    ++parameters.inouts;
-                }
+                outputs.remove(outdex);
+                p.setMode(Parameter.INOUT);
+                ++parameters.inouts;
             } else {
                 // If we're here, we have both an input and an output
                 // part with the same name but different types.... guess
