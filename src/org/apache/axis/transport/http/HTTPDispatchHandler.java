@@ -269,15 +269,16 @@ public class HTTPDispatchHandler extends BasicHandler {
       }
 
       if ( b != -1 ) {
-
         if (Debug.getDebugLevel() > 0) {
+        {
           String contentLength = (String) headers.get("content-length");
+          contentLength = contentLength.trim();
           byte[] data = new byte[Integer.parseInt(contentLength)];
           for (len=0; len<data.length; )
             len+= inp.read(data,len,data.length-len);
           String xml = new String(data);
 
-          outMsg = new Message( data, "String" );
+          outMsg = new Message( data, "Bytes" );
 
           Debug.Print( 1, "\nXML received:" );
           Debug.Print( 1, "-------------------------------------------------");
