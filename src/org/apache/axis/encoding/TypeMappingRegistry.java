@@ -209,9 +209,10 @@ public class TypeMappingRegistry implements Serializer {
     public Attributes setTypeAttribute(Attributes attributes, QName type,
                                        SerializationContext context)
     {
-        if ((attributes != null) &&
-            (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
-                                "type") != -1))
+        if (!context.shouldSendXSIType() ||
+            ((attributes != null) &&
+             (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                "type") != -1)))
             return attributes;
         
         AttributesImpl attrs = new AttributesImpl();

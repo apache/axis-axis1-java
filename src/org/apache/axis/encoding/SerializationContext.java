@@ -108,7 +108,12 @@ public class SerializationContext
      * Should I send an XML declaration?
      */
     private boolean sendXMLDecl = true;
-    
+
+    /**
+     * Should I send xsi:type attributes?
+     */
+    private boolean sendXSIType = true;
+
     /**
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
@@ -139,6 +144,11 @@ public class SerializationContext
                                                   AxisEngine.PROP_DOMULTIREFS);
         if (shouldSendMultiRefs != null)
             doMultiRefs = shouldSendMultiRefs.booleanValue();
+
+        ServiceDescription sd = msgContext.getServiceDescription();
+        if (sd != null) {
+            sendXSIType = sd.getSendTypeAttr();
+        }
     }
     
     public void setSendDecl(boolean sendDecl)
@@ -146,6 +156,10 @@ public class SerializationContext
         sendXMLDecl = sendDecl;
     }
     
+    public boolean shouldSendXSIType() {
+        return sendXSIType;
+    }
+
     public ServiceDescription getServiceDescription()
     {
         return msgContext.getServiceDescription();
