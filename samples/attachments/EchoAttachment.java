@@ -235,7 +235,7 @@ public class EchoAttachment {
             throw new AxisFault("", (String) ret, null, null);
         }
 
-        if (!(ret instanceof java.util.ArrayList)) {
+        if (!(ret instanceof javax.activation.DataHandler[])) {
             //The wrong type of object that what was expected.
             System.out.println("Received unexpected type :" +
                 ret.getClass().getName());
@@ -246,14 +246,12 @@ public class EchoAttachment {
         //Still here, so far so good.
         //Now lets brute force compare the source attachment
         // to the one we received.
-        java.util.ArrayList received = (java.util.ArrayList ) ret;
+        javax.activation.DataHandler[] received = (javax.activation.DataHandler[] ) ret;
 
-        int j = 0;
-        java.util.ListIterator i =  received.listIterator();
-
-        for ( ; i.hasNext() && j < attachments.length; ) {
-            DataHandler recDH = (DataHandler ) i.next();
-            DataHandler orginalDH = attachments[j++];
+        int i=0;
+        for (  i=0; i< received.length && i < attachments.length; ++i ) {
+            DataHandler recDH =  received[i];
+            DataHandler orginalDH = attachments[i];
 
             if (!compareFiles( filename + java.io.File.separator + orginalDH.getName(), recDH.getName())) {
                 System.err.println("The attachment with the file name: \"" + orginalDH.getName() +
@@ -265,12 +263,12 @@ public class EchoAttachment {
             receivedFile.delete();
         }
 
-        if (i.hasNext()) {
+        if (i < received.length) {
             System.err.println("There are more file received than sent!!!!");
 
             rc = false;
         }
-        if ( j < attachments.length ) {
+        if ( i < attachments.length ) {
             System.err.println("Not all the files were received!");
             rc = false;
         }
