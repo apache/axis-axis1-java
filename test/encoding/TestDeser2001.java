@@ -1,7 +1,10 @@
 package test.encoding;
 
 import org.apache.axis.Constants;
+
 import org.apache.axis.encoding.Hex;
+import org.apache.axis.encoding.NormalizedString;
+import org.apache.axis.encoding.Token;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -119,6 +122,16 @@ public class TestDeser2001 extends TestDeser {
     public void testHexNull() throws Exception {
         deserialize("<result xsi:type=\"xsd:hexBinary\"></result>",
                     new Hex(""),true);
+    }
+
+    public void testToken() throws Exception {
+        deserialize("<result xsi:type=\"xsd:token\">abcdefg</result>",
+                    new Token("abcdefg"),true);
+    }
+
+    public void testNormalizedString() throws Exception {
+        deserialize("<result xsi:type=\"xsd:normalizedString\">abcdefg</result>",
+                    new NormalizedString("abcdefg"),true);
     }
 
     public void testQName() throws Exception {

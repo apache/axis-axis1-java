@@ -56,7 +56,11 @@
 package samples.echo ;
 
 import org.apache.axis.AxisFault;
+
 import org.apache.axis.encoding.Hex;
+import org.apache.axis.encoding.NormalizedString;
+import org.apache.axis.encoding.Token;
+
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 
@@ -187,11 +191,46 @@ public abstract class TestClient {
     }
 
     /**
-     * Execute both the 2A and 2B tests
+     * Execute all tests.
      */
     public void executeAll() throws Exception {
         execute2A();
         execute2B();
+        executeAxisXSD();
+    }
+
+    /**
+     * Test custom mapping of xsd types not standardized:  xsd:token and
+     * xsd:normalizedString.
+     */
+    public void executeAxisXSD() throws Exception {
+        Object output = null;
+
+        // Test xsd:token
+        Token tInput = new Token("abccdefg");
+        try {
+            output = binding.echoToken(tInput);
+            verify("echoToken", tInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoToken", tInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:normalizedString
+        NormalizedString nsInput = new NormalizedString("abccdefg");
+        try {
+            output = binding.echoNormalizedString(nsInput);
+            verify("echoNormalizedString", nsInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoNormalizedString", nsInput, e);
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**

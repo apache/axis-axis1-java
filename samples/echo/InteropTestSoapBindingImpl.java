@@ -105,4 +105,19 @@ public class InteropTestSoapBindingImpl implements samples.echo.InteropTestPortT
     public java.util.HashMap [] echoMapArray(java.util.HashMap[] input) {
         return input;
     }
+
+    /**
+     * This method accepts a Token (xsd:token) and echoes it back to the client.
+     */
+    public org.apache.axis.encoding.Token echoToken(org.apache.axis.encoding.Token input) throws java.rmi.RemoteException {
+        return input;
+    }
+
+    /**
+     * This method accepts a NormalizedString (xsd:normalizedString) and echoes
+     * it back to the client.
+     */
+    public org.apache.axis.encoding.NormalizedString echoNormalizedString(org.apache.axis.encoding.NormalizedString input) throws java.rmi.RemoteException {
+        return input;
+    }
 }
