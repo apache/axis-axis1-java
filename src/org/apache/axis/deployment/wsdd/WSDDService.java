@@ -181,7 +181,7 @@ public class WSDDService
         Element wsdlElem = getChildElement(e, ELEM_WSDD_WSDLFILE);
         if (wsdlElem != null) {
             String fileName = XMLUtils.getChildCharacterData(wsdlElem);
-            desc.setWSDLFile(fileName);
+            desc.setWSDLFile(fileName.trim());
         }
 
         Element docElem = getChildElement(e, ELEM_WSDD_DOC);
