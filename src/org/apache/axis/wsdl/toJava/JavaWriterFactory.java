@@ -196,7 +196,7 @@ public class JavaWriterFactory implements WriterFactory {
                         // collision.  In both cases, the java type name should be mangled.
                         if (symbolTable.getType(typeQName) != null ||
                             anonQNames.get(typeQName) != null) {
-                            localName += "ANON" + uniqueNum++;
+                            localName += "Type" + uniqueNum++;
                             typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         } 
                         anonQNames.put(typeQName, typeQName);
