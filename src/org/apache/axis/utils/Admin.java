@@ -310,7 +310,7 @@ public class Admin {
 
         try {
             WSDDDocument wsddDoc = new WSDDDocument(root);
-            engine.getDeploymentRegistry().deploy(wsddDoc);
+            engine.deployWSDD(wsddDoc);
         } catch (DeploymentException e) {
             throw new AxisFault(e);
         }
