@@ -60,6 +60,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Handler;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.JavaUtils;
@@ -219,11 +220,24 @@ public class RPCElement extends SOAPBodyElement
         if (encodingStyle.equals("")) {
             context.registerPrefixForURI("", getNamespaceURI());
         }
+        MessageContext msgContext = context.getMessageContext();
+        boolean isRPC = true;
+        if (msgContext != null) {
+            if ((msgContext.getOperationStyle() != SOAPService.STYLE_RPC) &&
+                ! msgContext.isPropertyTrue("wrapit"))
+                isRPC = false;
+        }
+
+        if (isRPC) {
+            context.startElement(new QName(namespaceURI,name), attributes);        
+        }
         
-        context.startElement(new QName(namespaceURI,name), attributes);
         for (int i = 0; i < params.size(); i++) {
             ((RPCParam)params.elementAt(i)).serialize(context);
         }
-        context.endElement();
+        
+        if (isRPC) {
+            context.endElement();
+        }
     }
 }

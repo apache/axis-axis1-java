@@ -118,17 +118,21 @@ public class SchemaUtils {
             nodeKind.getLocalPart().equals("complexType") &&
             Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
-            // Under the complexType there could be complexContent &
-            // extension elements if this is a derived type.  Skip over these.
+            // Under the complexType there could be complexContent/simpleContent
+            // and extension elements if this is a derived type.  Skip over these.
             NodeList children = node.getChildNodes();
             Node complexContent = null;
+            Node simpleContent = null;
             Node extension = null;
             for (int j = 0; j < children.getLength() && complexContent == null; j++) {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
-                    complexContentKind.getLocalPart().equals("complexContent") &&
-                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
-                    complexContent = children.item(j);
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
+                    if (complexContentKind.getLocalPart().equals("complexContent") )
+                        complexContent = children.item(j);
+                    else if (complexContentKind.getLocalPart().equals("simpleContent"))
+                        simpleContent = children.item(j);
+                }
             }
             if (complexContent != null) {
                 children = complexContent.getChildNodes();
@@ -140,10 +144,32 @@ public class SchemaUtils {
                         extension = children.item(j);
                 }
             }
+            if (simpleContent != null) {
+                children = simpleContent.getChildNodes();
+                for (int j = 0; j < children.getLength() && extension == null; j++) {
+                    QName extensionKind = Utils.getNodeQName(children.item(j));
+                    if (extensionKind != null &&
+                        extensionKind.getLocalPart().equals("extension") &&
+                        Constants.isSchemaXSD(extensionKind.getNamespaceURI())) {
+                        
+                        // get the type of the extension
+                        QName extendsType =
+                                Utils.getNodeTypeRefQName(children.item(j), 
+                                                          "base");
+                        Vector v = new Vector();
+                        v.add(symbolTable.getTypeEntry(extendsType, false));
+                        v.add("value"); // A fixed, implementation specific name
+                        
+                        // done
+                        return v;
+                    }
+                        
+                }
+                
+            }
             if (extension != null) {
                 node = extension;  // Skip over complexContent and extension
             }
-
 
             // Under the complexType (or extension) there should be a sequence or all group node.
             // (There may be other #text nodes, which we will ignore).
@@ -159,6 +185,7 @@ public class SchemaUtils {
             }
 
             if (groupNode == null) {
+                // didn't find anything
                 return new Vector();
             }
             if (groupNode != null) {
@@ -568,7 +595,8 @@ public class SchemaUtils {
                 QName kind2 = Utils.getNodeQName(children.item(j));
                 if (kind2 != null &&
                     (kind2.getLocalPart().equals("simpleType") ||
-                     kind2.getLocalPart().equals("complexType")) &&
+                     kind2.getLocalPart().equals("complexType") ||
+                     kind2.getLocalPart().equals("simpleContent")) &&
                     Constants.isSchemaXSD(kind2.getNamespaceURI())) {
                     node2 = children.item(j);
                     node = node2;
@@ -590,7 +618,8 @@ public class SchemaUtils {
                 for (int j = 0; j < children.getLength() && complexContent == null; j++) {
                     QName complexContentKind = Utils.getNodeQName(children.item(j));
                     if (complexContentKind != null &&
-                        complexContentKind.getLocalPart().equals("complexContent") &&
+                        (complexContentKind.getLocalPart().equals("complexContent") ||
+                         complexContentKind.getLocalPart().equals("simpleContent"))&&
                         Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
                         complexContent = children.item(j);
                 }
@@ -726,7 +755,8 @@ public class SchemaUtils {
             for (int j = 0; j < children.getLength() && complexContentNode == null; j++) {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
-                    complexContentKind.getLocalPart().equals("complexContent") &&
+                    (complexContentKind.getLocalPart().equals("complexContent") ||
+                    complexContentKind.getLocalPart().equals("simpleContent")) &&
                     Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
                     complexContentNode = children.item(j);
             }
@@ -876,33 +906,90 @@ public class SchemaUtils {
         if (node == null) {
             return null;
         }
-        
-        // examine children of the node for <attribute> elements
-        NodeList children = node.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            QName nodeKind = Utils.getNodeQName(child);
-            if (nodeKind == null ||
-                ! nodeKind.getLocalPart().equals("attribute"))
-                continue;
-            
-            // we have an attribute node
-            if (v == null)
-                v = new Vector();
-            
-            // type
-            QName typeAttr = Utils.getNodeTypeRefQName(child, "type");
-            TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
-            // name
-            QName name = Utils.getNodeNameQName(child);
-            // add type and name to vector, skip it if we couldn't parse it
-            // XXX - this may need to be revisited.
-            if (type != null && name != null) {
-                v.add(type);
-                v.add(name.getLocalPart());
+        // Check for SimpleContent
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node complexNode = null;
+            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
+                QName complexKind = Utils.getNodeQName(children.item(j));
+                if (complexKind != null &&
+                    complexKind.getLocalPart().equals("complexType") &&
+                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
+                    complexNode = children.item(j);
+                    node = complexNode;
+                }
             }
         }
-        
+
+        // Expecting a schema complexType
+        nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("complexType") &&
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+
+            // Under the complexType there could be complexContent/simpleContent
+            // and extension elements if this is a derived type.  Skip over these.
+            NodeList children = node.getChildNodes();
+            Node content = null;
+            Node extension = null;
+            for (int j = 0; j < children.getLength() && content == null; j++) {
+                QName complexContentKind = Utils.getNodeQName(children.item(j));
+                if (complexContentKind != null &&
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI())) {
+                    if (complexContentKind.getLocalPart().equals("complexContent") ||
+                        complexContentKind.getLocalPart().equals("simpleContent")) {
+                        content = children.item(j);
+                    }
+                }
+            }
+            // Check for extensions
+            if (content != null) {
+                children = content.getChildNodes();
+                for (int j = 0; j < children.getLength(); j++) {
+                    QName extensionKind = Utils.getNodeQName(children.item(j));
+                    if (extensionKind != null &&
+                            extensionKind.getLocalPart().equals("extension") &&
+                            Constants.isSchemaXSD(extensionKind.getNamespaceURI())) {
+                        extension = children.item(j);
+                        break;
+                    }
+                }
+            }
+            
+            if (extension != null) {
+                node = extension;
+            }
+            
+            // examine children of the node for <attribute> elements
+            children = node.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                nodeKind = Utils.getNodeQName(child);
+                if (nodeKind == null ||
+                        ! nodeKind.getLocalPart().equals("attribute"))
+                    continue;
+                
+                // we have an attribute node
+                if (v == null)
+                    v = new Vector();
+                
+                // type
+                QName typeAttr = Utils.getNodeTypeRefQName(child, "type");
+                TypeEntry type = symbolTable.getTypeEntry(typeAttr, false);
+                // name
+                QName name = Utils.getNodeNameQName(child);
+                // add type and name to vector, skip it if we couldn't parse it
+                // XXX - this may need to be revisited.
+                if (type != null && name != null) {
+                    v.add(type);
+                    v.add(name.getLocalPart());
+                }
+            }
+        }            
         return v;
     }
 

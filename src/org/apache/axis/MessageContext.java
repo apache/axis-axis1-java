@@ -167,7 +167,7 @@ public class MessageContext {
      */
     private String  username       = null;
     private String  password       = null;
-    private String  operationStyle = null;
+    private int     operationStyle = SOAPService.STYLE_RPC;
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
     private String  encodingStyle  = Constants.URI_CURRENT_SOAP_ENC;
@@ -273,11 +273,7 @@ public class MessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return isEncoded;
-    }
-
-    public void setEncoded(boolean encoded) {
-        isEncoded = encoded;
+        return Constants.URI_CURRENT_SOAP_ENC.equals(encodingStyle);
     }
 
     /**
@@ -455,8 +451,8 @@ public class MessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setProperty(ISRPC, new Boolean(service.isRPC()));
-            setEncoded(service.getStyle() == SOAPService.STYLE_RPC);
-            setEncodingStyle(isEncoded() ? Constants.URI_CURRENT_SOAP_ENC:"");
+            setEncodingStyle((service.getStyle() == SOAPService.STYLE_RPC) ?
+                                        Constants.URI_CURRENT_SOAP_ENC : "");
         }
     }
 
@@ -611,7 +607,7 @@ public class MessageContext {
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
-            setOperationStyle((String) value);
+            setOperationStyle(getStyleFromString((String)value));
         }
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -669,7 +665,7 @@ public class MessageContext {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
-                return getOperationStyle();
+                return getStyleFromInt(getOperationStyle());
             }
             else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -731,23 +727,14 @@ public class MessageContext {
      *
      * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
      */
-    public void setOperationStyle(String operationStyle) {
-        if ("rpc".equalsIgnoreCase(operationStyle)
-                || "document".equalsIgnoreCase(operationStyle)) {
-            this.operationStyle = operationStyle;
-        }
-        else {
-            throw new IllegalArgumentException(JavaUtils.getMessage(
-                    "badProp01",
-                    new String[] {Call.OPERATION_STYLE_PROPERTY,
-                    "\"rpc\", \"document\"", operationStyle}));
-        }
+    public void setOperationStyle(int operationStyle) {
+        this.operationStyle = operationStyle;
     } // setOperationStyle
 
     /**
      * Get the operation style.
      */
-    public String getOperationStyle() {
+    public int getOperationStyle() {
         return operationStyle;
     } // getOperationStyle
 
@@ -816,5 +803,35 @@ public class MessageContext {
         }
         serviceHandler = null;
         havePassedPivot = false;
+    }
+
+    /**
+     * Utility function to convert string to operation style constants
+     * 
+     * @param operationStyle "rpc" or "document"
+     * @return either SOAPService.STYLE_RPC or SOAPService.STYLE_DOCUMENT
+     * @throws IllegalArgumentException
+     */ 
+    public static int getStyleFromString(String operationStyle)
+    {
+        if ("rpc".equalsIgnoreCase(operationStyle))
+            return SOAPService.STYLE_RPC;
+        if ("document".equalsIgnoreCase(operationStyle))
+            return SOAPService.STYLE_DOCUMENT;
+
+        throw new IllegalArgumentException(JavaUtils.getMessage(
+                    "badProp01",
+                    new String[] {Call.OPERATION_STYLE_PROPERTY,
+                    "\"rpc\", \"document\"", operationStyle}));
+    }
+    
+    public static String getStyleFromInt(int style)
+    {
+        if (style == SOAPService.STYLE_RPC)
+            return "rpc";
+        if (style == SOAPService.STYLE_DOCUMENT)
+            return "document";
+        
+        return null;        
     }
 };

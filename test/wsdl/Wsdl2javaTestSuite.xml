@@ -366,7 +366,7 @@
     </wsdl2java>
 
     <!-- More information at: http://www.whitemesa.net/  -->
-    <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
+<!--    <wsdl2java url="http://www.whitemesa.com/wsdl/std/echoheadersvc.wsdl"
                output="build/work"
                testcase="no"
                deployscope="none"
@@ -376,7 +376,7 @@
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheadersvc"/>
     </wsdl2java>
-
+-->
     <!-- http://www.mssoapinterop.org/stk/roundBC.htm -->
     <wsdl2java url="http://mssoapinterop.org/stk/InteropB.wsdl"
                output="build/work"

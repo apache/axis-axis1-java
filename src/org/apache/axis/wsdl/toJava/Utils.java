@@ -381,13 +381,19 @@ public class Utils {
             if (minOccursValue == null) {
                 minOccursValue = "1";
             }
-            if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
+            if (minOccursValue.equals("0") && maxOccursValue.equals("1")) {
+                // If we have a minoccurs="0"/maxoccurs="1", this is just
+                // like a nillable single value, so treat it as such.
+                qName = getNillableQName(qName);
+            } else if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
                 String localPart = qName.getLocalPart();
-                localPart += "[" + minOccursValue + "," + maxOccursValue + "]";
+//                localPart += "[" + minOccursValue + "," + maxOccursValue + "]";
+//                qName.setLocalPart(localPart);
+//                String namespace = getScopedAttribute(node, "targetNamespace");
+//                if (namespace != null)
+//                    qName.setNamespaceURI(namespace);
+                localPart += "[" + maxOccursValue + "]";
                 qName.setLocalPart(localPart);
-                String namespace = getScopedAttribute(node, "targetNamespace");
-                if (namespace != null)
-                    qName.setNamespaceURI(namespace);
             }
         }
 

@@ -76,6 +76,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.wsdl.toJava.Utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -171,7 +172,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 if (propName.equals("class")) 
                     continue;
                 //if (!isSOAP_ENC && beanAttributeNames.contains(propName)) 
-                if (beanAttributeNames.contains(propName)) 
+                if (beanAttributeNames.contains(Utils.xmlNameToJava(propName))) 
                     continue;
                 propName = format(propName, elementPropertyFormat);
 
@@ -427,9 +428,11 @@ public class BeanSerializer implements Serializer, Serializable {
             // and add it to our attribute list
             for (int i=0; i<propertyDescriptor.length; i++) {
                 String propName = propertyDescriptor[i].getName();
+                if (propName.equals("class"))
+                    continue;
                 // skip it if its not in the list
-                if (!beanAttributeNames.contains(propName)) continue;
-                if (propName.equals("class")) continue;
+                if (!beanAttributeNames.contains(Utils.xmlNameToJava(propName)))
+                    continue;
                 propName = format(propName, elementPropertyFormat);
                 
                 Method readMethod = propertyDescriptor[i].getReadMethod();

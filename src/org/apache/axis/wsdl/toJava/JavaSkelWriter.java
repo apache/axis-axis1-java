@@ -177,7 +177,7 @@ public class JavaSkelWriter extends JavaWriter {
                 }
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
-                    pw.println("                   \"" + p.name + "\",");
+                    pw.println("                   \"" + p.getName() + "\",");
                 }
                 pw.println("                 },"); 
                 pw.println("                 new javax.xml.rpc.ParameterMode[] {");
@@ -302,7 +302,7 @@ public class JavaSkelWriter extends JavaWriter {
                 needComma = true;
             Parameter p = (Parameter) parms.list.get(i);
 
-            call = call + Utils.xmlNameToJava(p.name);
+            call = call + Utils.xmlNameToJava(p.getName());
         }
         call = call + ")";
         pw.println(call + ";");

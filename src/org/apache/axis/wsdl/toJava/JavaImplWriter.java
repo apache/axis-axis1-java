@@ -154,7 +154,7 @@ public class JavaImplWriter extends JavaWriter {
             // Note that similar code is in JavaTestCaseWriter.
             // So please check both places if changes are made.
             if (param.mode == Parameter.OUT) {
-                pw.print("        " + Utils.xmlNameToJava(param.name)
+                pw.print("        " + Utils.xmlNameToJava(param.getName())
                         + ".value = ");
                 if ( isPrimitiveType(param.type) ) {
                     if ( "boolean".equals(paramType) ) {

@@ -518,9 +518,10 @@ public class SymbolTable {
         QName nodeKind = Utils.getNodeQName(node);
 
         if (nodeKind != null) {
-            if ((nodeKind.getLocalPart().equals("complexType") ||
-                 nodeKind.getLocalPart().equals("simpleType")) &&
-                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            String localPart = nodeKind.getLocalPart();
+            boolean isXSD = Constants.isSchemaXSD(nodeKind.getNamespaceURI());
+            if ((isXSD && localPart.equals("complexType") ||
+                 localPart.equals("simpleType"))) {
 
                 // If an extension or restriction is present,
                 // create a type for the reference
@@ -534,8 +535,7 @@ public class SymbolTable {
                 // Create a Type.
                 createTypeFromDef(node, false, false);
             }
-            else if (nodeKind.getLocalPart().equals("element") &&
-                   Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            else if (isXSD && localPart.equals("element")) {
                 // If the element has a type/ref attribute, create
                 // a Type representing the referenced type.
                 if (Utils.getAttribute(node, "type") != null ||
@@ -556,14 +556,20 @@ public class SymbolTable {
                 // and element=.
                 createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             }
-            else if (nodeKind.getLocalPart().equals("part") &&
+            else if (localPart.equals("part") &&
                      Constants.isWSDL(nodeKind.getNamespaceURI())) {
 
                 // This is a wsdl part.  Create an TypeEntry representing the reference
                 createTypeFromRef(node);
             }
-            else if (nodeKind.getLocalPart().equals("attribute") &&
-                     Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+            else if (isXSD && localPart.equals("simpleContent")) {
+                // need to mark parent as a simple type
+                Node parent = node.getParentNode();
+                QName parentQName = Utils.getNodeNameQName(parent);
+                TypeEntry te = getTypeEntry(parentQName, false);
+                te.setSimpleType(true);
+            }
+            else if (isXSD && localPart.equals("attribute")) {
                 // we can no longer do .NET stuff and treat document as rpc style
                 this.dotNet = false;
                 // Create symbol table entry for attribute type
@@ -572,9 +578,8 @@ public class SymbolTable {
                     TypeEntry refType = getTypeEntry(refQName, false);
                     if (refType == null) {
                         // Not defined yet, add one
-                        // XXX This check is too basic, we need to handle
-                        // XXX <simpleType> types also.
-                        // XXX <simpleType> types also.
+                        // TODO: This check is too basic, we need to handle
+                        //       <simpleType> types also.
                         String baseName = btm.getBaseName(refQName);
                         if (baseName != null) {
                             BaseType bt = new BaseType(refQName);
@@ -1000,8 +1005,15 @@ public class SymbolTable {
      */
     private void addInishParm(Vector inputs, Vector outputs, int index, int outdex, Parameters parameters, boolean trimInput) {
         Parameter p = new Parameter();
-        p.name = (String) inputs.get(index);
         p.type = (TypeEntry) inputs.get(index - 1);
+        // If this is an element, we want the XML to reflect the element name
+        // not the part name.
+        if (p.type instanceof DefinedElement) {
+            DefinedElement de = (DefinedElement)p.type;
+            p.setQName(de.getQName());
+        } else {
+            p.setName((String) inputs.get(index));
+        }
 
         // Should we remove the given parameter type/name entries from the Vector?
         if (trimInput) {
@@ -1029,7 +1041,7 @@ public class SymbolTable {
      */
     private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
         Parameter p = new Parameter();
-        p.name = (String) outputs.get(outdex);
+        p.setName((String) outputs.get(outdex));
         p.type = (TypeEntry) outputs.get(outdex - 1);
         if (trim) {
             outputs.remove(outdex);
@@ -1061,12 +1073,14 @@ public class SymbolTable {
                 } else if (elementName != null) {
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
-                    // but we do the right thing here, so let it go.
+                    // but we kinda do the right thing here, so let it go.
                     v.add(getElement(elementName));
                     v.add(part.getName());
                 }
                 continue;   // next part
             }
+            
+            // flow to here means literal use (no encoding)
                 
             // See if we can map all the XML types to java types
             // if we can, we use these as the types
