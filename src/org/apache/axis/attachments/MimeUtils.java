@@ -267,12 +267,7 @@ public class MimeUtils {
         javax.mail.internet.MimeMultipart multipart = null;
 
         try {
-            String rootCID = getNewContentIdValue();
-
-            if (rootCID.startsWith("cid:")) {
-                rootCID = rootCID.substring(4);
-            }
-
+            String rootCID = org.apache.axis.utils.SOAPUtils.getNewContentIdValue();
             multipart = new javax.mail.internet.MimeMultipart(
                     "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
 
@@ -293,11 +288,11 @@ public class MimeUtils {
                 javax.activation.DataHandler dh =
                         org.apache.axis.attachments.AttachmentUtils.getActivationDataHandler(
                                 part);
+                if(part.getContentId()==null){
+                    part.setContentId(org.apache.axis.utils.SOAPUtils.getNewContentIdValue());
+                }
                 String contentID = part.getContentId();
 
-                if (contentID.startsWith("cid:")) {
-                    contentID = contentID.substring(4);
-                }
 
                 messageBodyPart = new javax.mail.internet.MimeBodyPart();
 
@@ -337,44 +332,5 @@ public class MimeUtils {
         }
 
         return multipart;
-    }
-
-    /** Field thisHost           */
-    static String thisHost = null;
-
-    /** Field count           */
-    private static int count = (int) (Math.random() * 100);
-
-    /**
-     * Method getNewContentIdValue
-     *
-     * @return
-     */
-    public static String getNewContentIdValue() {
-
-        int lcount;
-
-        synchronized (org.apache.axis.Message.class) {
-            lcount = ++count;
-        }
-
-        if (null == thisHost) {
-            try {
-                thisHost = java.net.InetAddress.getLocalHost().getHostName();
-            } catch (java.net.UnknownHostException e) {
-                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"),
-                        e);
-
-                thisHost = "localhost";
-            }
-        }
-
-        StringBuffer s = new StringBuffer();
-
-        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
-        s.append("cid:").append(lcount).append(s.hashCode()).append('.').append(
-                System.currentTimeMillis()).append(".AXIS@").append(thisHost);
-
-        return s.toString();
     }
 }
