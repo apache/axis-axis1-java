@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.stockquote ;
+package samples.stock ;
 
 import java.net.*;
 import java.io.*;

@@ -104,7 +104,7 @@ public class SOAPBody {
     return( v );
   }
 
-  public void      addDataNode(Node n) { data.add(n); };
+  public void addDataNode(Node n) { data.add(n); };
 
   public void setData(NodeList nl) { 
     data = null ;

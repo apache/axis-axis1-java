@@ -9,7 +9,7 @@
 
 <deploy>
   <service name="urn:xmltoday-delayed-quotes" handler="JavaRPC" >
-    <option name="className" value="samples.stockquote.StockQuoteService" />
+    <option name="className" value="samples.stock.StockQuoteService" />
     <option name="methodName" value="getQuote" />
   </service>
 </deploy>
