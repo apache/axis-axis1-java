@@ -68,6 +68,8 @@ import java.util.Enumeration;
  */
 public class AxisHttpSession implements Session
 {
+    public static final String AXIS_SESSION_MARKER = "axis.isAxisSession";
+    
     private HttpSession rep;
     private HttpServletRequest req;
     
@@ -78,7 +80,8 @@ public class AxisHttpSession implements Session
     
     public AxisHttpSession(HttpSession realSession)
     {
-        rep = realSession;
+        if (realSession != null)
+            setRep(realSession);
     }
     
     /** Get the internal HttpSession.
@@ -93,9 +96,10 @@ public class AxisHttpSession implements Session
      * servlet HttpSession.  Not sure if we'll really
      * need this method...
      */
-    public void setRep(HttpSession realSession)
+    private void setRep(HttpSession realSession)
     {
         rep = realSession;
+        rep.setAttribute(AXIS_SESSION_MARKER, Boolean.TRUE);
     }
     
     /** Get a property from the session
@@ -175,7 +179,7 @@ public class AxisHttpSession implements Session
     
     protected void ensureSession() {
         if (rep == null) {
-              rep = req.getSession();
+            setRep(req.getSession());
         }
     }
 
