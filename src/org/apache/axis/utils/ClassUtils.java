@@ -214,6 +214,36 @@ public final class ClassUtils {
      * </ol>
      * @param clazz class to use in the lookups
      * @param resource resource string to look for
+     * @param checkThreadContextFirst check the thread context first?
+     * @return input stream if found, or null
+     */
+    public static InputStream getResourceAsStream(Class clazz, String resource, boolean checkThreadContextFirst) {
+        InputStream myInputStream = null;
+
+        if (checkThreadContextFirst &&
+                Thread.currentThread().getContextClassLoader() != null) {
+            // try the context class loader.
+            myInputStream =
+                    Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(resource);
+        }
+        if (myInputStream == null) {
+            // if not found in context class loader fall back to default
+            myInputStream = getResourceAsStream(clazz, resource);
+        }
+        return myInputStream;
+    }
+    
+    /**
+     * Get an input stream from a named resource.
+     * Tries
+     * <ol>
+     * <li>the classloader that loaded "clazz" first,
+     * <li>the system classloader
+     * <li>the class "clazz" itself
+     * </ol>
+     * @param clazz class to use in the lookups
+     * @param resource resource string to look for
      * @return input stream if found, or null
      */
     public static InputStream getResourceAsStream(Class clazz, String resource) {

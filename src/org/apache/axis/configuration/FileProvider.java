@@ -167,7 +167,7 @@ public class FileProvider implements WSDDEngineConfiguration {
                     setInputStream(new FileInputStream(configFile));
                 } catch (Exception e) {
                     if (searchClasspath)
-                        setInputStream(ClassUtils.getResourceAsStream(engine.getClass(), filename));
+                        setInputStream(ClassUtils.getResourceAsStream(engine.getClass(), filename, true));
                 }
             }
 
