@@ -366,16 +366,7 @@ public class JWSHandler extends BasicHandler
         }
 
         // axis.ext.dirs can be used in any appserver
-        String jwsClasspath = AxisProperties.getProperty("axis.ext.dirs");
-        try {
-            jwsClasspath = expandDirs(jwsClasspath);
-        } catch (Exception e) {
-            // Oh well.  No big deal.
-        }
-        if (jwsClasspath != null) {
-            classpath.append(jwsClasspath);
-            classpath.append(File.pathSeparatorChar);
-        }
+        getClassPathFromDirectoryProperty(classpath, "axis.ext.dirs");
 
         // classpath used by Jasper 
         getClassPathFromProperty(classpath, "org.apache.catalina.jsp_classpath");
