@@ -61,6 +61,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.apache.axis.message.MessageElement;
 
+import org.apache.axis.encoding.SerializationContext;
+import java.io.IOException;
+
 /** An <code>IDElementEvent</code> represents hitting a sub-element
  * with an ID set, which means the engine put it into another MessageElement.
  * 
@@ -83,5 +86,10 @@ public class IDElementEvent implements SAXEvent
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         _target.publishToHandler(handler);
+    }
+    
+    public void output(SerializationContext context) throws IOException
+    {
+        _target.output(context);
     }
 }

@@ -60,6 +60,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.axis.encoding.SerializationContext;
+import java.io.IOException;
+
 /** A <code>StartElementEvent</code>
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
@@ -84,5 +87,26 @@ public class StartElementEvent implements SAXEvent
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         handler.startElement(_namespace, _localPart, _qName, _attributes);
+    }
+    
+    public void output(SerializationContext context) throws IOException
+    {
+        context.writeString("<");
+        if (_namespace!=null && _namespace.length()>0) {
+          // FIXME: this really should be using a NSStack...
+          context.writeString(_namespace);
+          context.writeString(":");
+        }
+        context.writeString(_localPart);
+        for (int i=0; i<_attributes.getLength(); i++) {
+           context.writeString(" ");
+          // FIXME: this really should be namespace aware
+           context.writeString(_attributes.getLocalName(i));
+           context.writeString("=\"");
+          // FIXME: this really should be properly escaped...
+           context.writeString(_attributes.getValue(i));
+           context.writeString("\"");
+        }
+        context.writeString(">");
     }
 }

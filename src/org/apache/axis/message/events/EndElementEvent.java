@@ -60,6 +60,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.axis.encoding.SerializationContext;
+import java.io.IOException;
+
 /** An <code>EndElementEvent</code>
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
@@ -81,5 +84,17 @@ public class EndElementEvent implements SAXEvent
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         handler.endElement(_namespace, _localPart, _qName);
+    }
+    
+    public void output(SerializationContext context) throws IOException
+    {
+        context.writeString("</");
+        if (_namespace!=null && _namespace.length()>0) {
+          // FIXME: this really should be using a NSStack...
+          context.writeString(_namespace);
+          context.writeString(":");
+        }
+        context.writeString(_localPart);
+        context.writeString(">");
     }
 }

@@ -58,6 +58,9 @@ package org.apache.axis.message.events;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.axis.encoding.SerializationContext;
+import java.io.IOException;
+
 /** This is a simple interface for classes which store cached SAX events.
  * Each implementing class should keep some representation of the particular
  * event it reflects, and know how to "replay" that event to a ContentHandler.
@@ -68,4 +71,7 @@ public interface SAXEvent
 {
     public void publishToHandler(ContentHandler handler)
         throws SAXException;
+
+    public void output(SerializationContext context)
+        throws IOException;
 }
