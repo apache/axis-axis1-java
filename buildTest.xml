@@ -60,12 +60,12 @@ Copyright:
 <!-- =========================================================================== -->
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the code -->
-    <foreach target="component-compile">
+    <foreach target="component-compile" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/**/build.xml"/>
-		 <exclude name="test/wsdl/interop3/compound1/build.xml" />
+                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
                  <exclude name="test/wsdl/interop3/compound2/build.xml" />
                  <exclude name="test/wsdl/interop3/docLit/build.xml" />
                  <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
@@ -240,7 +240,7 @@ Copyright:
   <!--   This simply echos the component files, for sanity checks -->
   <!-- =================================================================== -->
   <target name="echoTest" >
-    <foreach target="echo-file">
+    <foreach target="echo-file" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
@@ -263,7 +263,7 @@ Copyright:
   <!--    This runs each test component, instantiating the server each time -->
   <!-- =================================================================== -->
   <target name="componentTest" >
-    <foreach target="batch-component-run">
+    <foreach target="batch-component-run" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>
@@ -297,7 +297,7 @@ Copyright:
    </target>
 
    <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
-    <foreach target="batch-component-test">
+    <foreach target="batch-component-test" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" >
                 <patternset>

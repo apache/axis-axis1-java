@@ -55,9 +55,12 @@ package org.apache.axis.tools.ant.foreach;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Ant;
+import org.apache.tools.ant.taskdefs.Java;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -89,12 +92,13 @@ import java.util.Vector;
  * in <code>ExecuteOn</code>.  It allows the user
  * to specify whether directories, files, or both directories and files
  * from the filesets are included as entries in the parameter set.
- * 
+ *
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
  * @author Davanum Srinivas
  */
 public class ForeachTask extends Task {
     private Ant callee;
+    private Java callee2;
     private String subTarget;
     private Vector params;
     private Hashtable properties;
@@ -102,6 +106,7 @@ public class ForeachTask extends Task {
     private boolean inheritAll = true;
     // must match the default value of Ant#inheritRefs
     private boolean inheritRefs = false;
+    private boolean fork = false;
 
     public ForeachTask() {
         params = new Vector();
@@ -109,11 +114,6 @@ public class ForeachTask extends Task {
     }
 
     public void init() {
-        callee = (Ant) getProject().createTask("ant");
-        callee.setOwningTarget(getOwningTarget());
-        callee.setTaskName(getTaskName());
-        callee.setLocation(getLocation());
-        callee.init();
     }
 
     /**
@@ -140,6 +140,15 @@ public class ForeachTask extends Task {
         subTarget = target;
     }
 
+    /**
+     * If true, forks the javac compiler.
+     *
+     * @param f "true|false|on|off|yes|no"
+     */
+    public void setFork(boolean f) {
+        fork = f;
+    }
+
     public ParamSet createParam() {
         ParamSet param = new ParamSet();
         params.addElement(param);
@@ -151,13 +160,41 @@ public class ForeachTask extends Task {
     }
 
     private void executeTarget() {
-        if (callee == null) {
-            init();
-        }
-
         if (subTarget == null) {
             throw new BuildException("Attribute target is required.",
                                      getLocation());
+        }
+        if(fork) {
+            executeForkedAntTask();
+        } else {
+            executeAntTask();
+        }
+    }
+
+    private void executeForkedAntTask() {
+        if (callee == null) {
+            callee2 = (Java) getProject().createTask("java");
+            callee2.setOwningTarget(getOwningTarget());
+            callee2.setTaskName(getTaskName());
+            callee2.setLocation(getLocation());
+            callee2.setClassname("org.apache.tools.ant.Main");
+            callee2.setFork(true);
+        }
+        String systemClassPath = System.getProperty("java.class.path");
+        callee2.setClasspath(new Path(getProject(), systemClassPath));
+        String args = "-buildfile " + properties.get("file");
+        Commandline.Argument arguments = callee2.createArg();
+        arguments.setLine(args);
+        callee2.execute();
+    }
+
+    private void executeAntTask() {
+        if (callee == null) {
+            callee = (Ant) getProject().createTask("ant");
+            callee.setOwningTarget(getOwningTarget());
+            callee.setTaskName(getTaskName());
+            callee.setLocation(getLocation());
+            callee.init();
         }
 
         callee.setAntfile(getProject().getProperty("ant.file"));
