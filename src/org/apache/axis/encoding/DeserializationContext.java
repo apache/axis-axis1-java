@@ -1,8 +1,10 @@
+package org.apache.axis.encoding;
+
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,15 +55,53 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding;
+import org.xml.sax.*;
+import java.util.*;
+import org.apache.axis.encoding.*;
+import org.apache.axis.message.*;
+import org.apache.axis.utils.QName;
 
-import org.apache.axis.message.MessageElement;
-
-/**
- * @author James Snell (jasnell@us.ibm.com)
+/** Keeps track of the active typeMappings, element IDs, parser, and
+ * SOAPSAXHandler in an ongoing parse.  Might want to move the
+ * storage for the namespace/prefix mappings into here too...
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public interface Deserializer { 
+
+public class DeserializationContext
+{
+    public SOAPSAXHandler baseHandler;
+    public Hashtable idMappings = new Hashtable();
+    public TypeMapper typeMappings = new TypeMapper();
     
-    public Object deserialize(MessageElement element, TypeMappingRegistry tmr);
+    public DeserializationContext(SOAPSAXHandler baseHandler)
+    {
+        this.baseHandler = baseHandler;
+    }
     
+    public void pushElementHandler(ContentHandler handler)
+    {
+        baseHandler.pushElementHandler(handler);    
+    }
+    
+    public String getNamespaceURI(String prefix)
+    {
+        return (String)baseHandler.getNamespaceURI(prefix);
+    }
+    
+    public void registerID(String id, MessageElement element)
+    {
+        // Throw an exception if already registered?
+        idMappings.put(id, element);
+    }
+    
+    public MessageElement getElementByID(String id)
+    {
+        return (MessageElement)idMappings.get(id);
+    }
+    
+    public DeserializerBase getDeserializer(QName qName)
+    {
+        return typeMappings.getDeserializer(qName);
+    }
 }
