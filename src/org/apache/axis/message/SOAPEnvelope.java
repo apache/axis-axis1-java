@@ -339,7 +339,7 @@ public class SOAPEnvelope extends MessageElement
                                         boolean accessAllHeaders)
         throws AxisFault
     {
-        ArrayList actors;
+        ArrayList actors = null;
         boolean firstTime = false;
         
         /** This might be optimizable by creating a custom Enumeration

@@ -558,21 +558,22 @@ public class SymbolTable {
      */
     private void createTypeFromDef(Node node, boolean isElement,
             boolean belowSchemaLevel) throws IOException {
-        // If this is not an element, make sure it is not an anonymous type.
-        // If it is, the the existing DefinedElement will be used.  If
-        // not, create a new type.
+        // See if this is an anonymous complexType for a global element
+        // If it is, the element in the dictionary is used.
+        QName qName = null;
+        TypeEntry anonType = null;
         if (!isElement &&
             Utils.getAttribute(node, "name") == null) {
-            return;
+            qName = Utils.getNodeNameQName(node);
+            if (qName != null &&
+                getElement(qName) != null) {  // Element exists in dictionary so use it.
+                return;
+            }
         }
 
         // Get the QName of the node's name attribute value
-        QName qName = Utils.getNodeNameQName(node);
+        qName = Utils.getNodeNameQName(node);
         if (qName != null) {
-            if (debug) {
-                System.out.println("Create Type From Def:" + qName);
-            }
-            
             // If the node has a type or ref attribute, get the 
             // qname representing the type
             BooleanHolder forElement = new BooleanHolder();
@@ -597,9 +598,6 @@ public class SymbolTable {
                     TypeEntry arrayEType = getTypeEntry(arrayEQName, false);
                     if (arrayEType == null) {
                         // Array Element Type not defined yet, add one
-                        if (debug) {
-                            System.out.println("Create Type From Ref:" + arrayEQName);
-                        }
                         String baseJavaName = Utils.getBaseJavaName(arrayEQName);
                         if (baseJavaName != null)
                             arrayEType = new BaseJavaType(arrayEQName);
@@ -611,11 +609,15 @@ public class SymbolTable {
                     // Create a defined type or element array of arrayEType.
                     TypeEntry arrayType = null;
                     if (isElement) {
-                        arrayType = new DefinedElement(qName, arrayEType, node, "[]");
+                        if (!belowSchemaLevel) { 
+                            arrayType = new DefinedElement(qName, arrayEType, node, "[]");
+                        }
                     } else {
                         arrayType = new DefinedType(qName, arrayEType, node, "[]");
                     }
-                    symbolTablePut(arrayType);
+                    if (arrayType != null) {
+                        symbolTablePut(arrayType);
+                    }
                 }
                 else {
                     // Create a TypeEntry representing this non-array type/element
@@ -623,11 +625,15 @@ public class SymbolTable {
                     if (baseJavaName != null) {
                         symbolTablePut(new BaseJavaType(qName));
                     }
-                    else if (isElement) {
-                        symbolTablePut(new DefinedElement(qName, node));
+                    else if (!isElement) {
+                        symbolTablePut(new DefinedType(qName, node));
                     }
                     else {
-                        symbolTablePut(new DefinedType(qName, node));
+                        // This is an element with an anonymous complex type
+                        // Create the element if it is a global element
+                        if (!belowSchemaLevel) {
+                            symbolTablePut(new DefinedElement(qName, node));
+                        }
                     }
                 }
             }
@@ -656,9 +662,6 @@ public class SymbolTable {
                     TypeEntry collEl = getTypeEntry(typeAttr, false);
                     if (collEl == null) {
                         // Collection Element Type not defined yet, add one.
-                        if (debug) {
-                            System.out.println("Create Type From Ref:" + typeAttr);
-                        }
                         String baseJavaName = Utils.getBaseJavaName(typeAttr);
                         if (baseJavaName != null) {
                             collEl = new BaseJavaType(typeAttr);
@@ -667,15 +670,9 @@ public class SymbolTable {
                         }
                         symbolTablePut(collEl);
                     }
-                    if (debug) {
-                        System.out.println("Create Type From Ref:" + qName);
-                    }
                     symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
                 } else {
                     // Add a BaseJavaType or Undefined Type/Element
-                    if (debug) {
-                        System.out.println("Create Type From Ref:" + qName);
-                    }
                     String baseJavaName = Utils.getBaseJavaName(qName);
                     if (baseJavaName != null)
                         symbolTablePut(new BaseJavaType(qName));
@@ -1334,6 +1331,11 @@ public class SymbolTable {
         if (get(name, entry.getClass()) == null) {
             // An entry of the given qname of the given type doesn't exist yet.
 
+            if (debug) {
+                System.out.println("Symbol Table add " + name + " as " + 
+                      entry.getClass().getName().substring(
+                            entry.getClass().getName().lastIndexOf(".") + 1));
+            }
             if (entry instanceof Type && 
                 get(name, UndefinedType.class) != null) {
                 // A undefined type  exists in the symbol table, which means
