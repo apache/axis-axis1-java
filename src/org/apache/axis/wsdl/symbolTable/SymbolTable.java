@@ -1220,6 +1220,7 @@ public class SymbolTable {
                         // be mapped as a simple type, and put it in the
                         // symbol table.
                         TypeEntry te = null;
+                        TypeEntry parentType = null;
 
                         if (!isElement) {
                             te = new DefinedType(qName, node);
@@ -1231,11 +1232,7 @@ public class SymbolTable {
                                 Node parent = node.getParentNode();
                                 QName parentQName =
                                         Utils.getNodeNameQName(parent);
-                                TypeEntry parentType = getElement(parentQName);
-
-                                if (parentType != null) {
-                                    parentType.setRefType(te);
-                                }
+                                parentType = getElement(parentQName);
                             }
                         } else {
                             if (!belowSchemaLevel) {
@@ -1247,7 +1244,11 @@ public class SymbolTable {
                             if (SchemaUtils.isSimpleTypeOrSimpleContent(node)) {
                                 te.setSimpleType(true);
                             }
-                            symbolTablePut(te);
+                            te = (TypeEntry)symbolTablePut(te);
+
+                            if (parentType != null) {
+                                parentType.setRefType(te);
+                            }
                         }
                     }
                 }
@@ -3505,11 +3506,14 @@ public class SymbolTable {
      * @param entry 
      * @throws IOException 
      */
-    private void symbolTablePut(SymTabEntry entry) throws IOException {
+    private SymTabEntry symbolTablePut(SymTabEntry entry) throws IOException {
 
         QName name = entry.getQName();
 
-        if (get(name, entry.getClass()) == null) {
+        SymTabEntry e = get(name, entry.getClass());
+
+        if (e == null) {
+            e = entry;
 
             // An entry of the given qname of the given type doesn't exist yet.
             if ((entry instanceof Type)
@@ -3597,6 +3601,8 @@ public class SymbolTable {
                                                        "" + name));
             }
         }
+
+        return e;
     }    // symbolTablePut
 
     /**
