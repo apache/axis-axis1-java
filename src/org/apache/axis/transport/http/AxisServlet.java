@@ -62,6 +62,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -131,7 +132,9 @@ public class AxisServlet extends AxisServletBase {
 
     // These have default values.
     private String transportName;
-
+    
+    private Handler transport;
+    
     private ServletSecurityProvider securityProvider = null;
 
     /**
@@ -201,6 +204,8 @@ public class AxisServlet extends AxisServletBase {
         } else {
             jwsClassDir = getDefaultJWSClassDir();
         }
+        
+        initQueryStringHandlers();
     }
 
 
@@ -962,6 +967,62 @@ public class AxisServlet extends AxisServletBase {
     }
     
     /**
+     * Initialize a Handler for the transport defined in the Axis server config.
+     * This includes optionally filling in query string handlers.
+     */
+    
+    public void initQueryStringHandlers () {
+          try {
+               this.transport = getEngine().getTransport (this.transportName);
+               
+               if (this.transport == null) {
+                    // No transport by this name is defined.  Therefore, fill in default
+                    // query string handlers.
+                    
+                    this.transport = new SimpleTargetedChain();
+                    
+                    this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
+                    this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
+                    this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
+                    
+                    return;
+               }
+               
+               else {
+                    // See if we should use the default query string handlers.
+                    // By default, set this to true (for backwards compatibility).
+                    
+                    boolean defaultQueryStrings = true;
+                    String useDefaults = (String) this.transport.getOption ("useDefaultQueryStrings");
+                    
+                    if ((useDefaults != null) && useDefaults.toLowerCase().equals ("false")) {
+                         defaultQueryStrings = false;
+                    }
+                    
+                    if (defaultQueryStrings == true) {
+                         // We should use defaults, so fill them in.
+                         
+                         this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
+                         this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
+                         this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
+                    }
+               }
+          }
+          
+          catch (AxisFault e) {
+               // Some sort of problem occurred, let's just make a default transport.
+               
+               this.transport = new SimpleTargetedChain();
+               
+               this.transport.setOption ("qs.list", "org.apache.axis.transport.http.QSListHandler");
+               this.transport.setOption ("qs.method", "org.apache.axis.transport.http.QSMethodHandler");
+               this.transport.setOption ("qs.wsdl", "org.apache.axis.transport.http.QSWSDLHandler");
+               
+               return;
+          }
+    }
+    
+    /**
      * Attempts to invoke a plugin for the query string supplied in the URL.
      *
      * @param request the servlet's HttpServletRequest object.
@@ -978,8 +1039,7 @@ public class AxisServlet extends AxisServletBase {
           String queryString = request.getQueryString();
           String serviceName;
           AxisEngine engine = getEngine();
-          Handler httpTransport = engine.getTransport ("http");
-          Iterator i = httpTransport.getOptions().keySet().iterator();
+          Iterator i = this.transport.getOptions().keySet().iterator();
           
           if (queryString == null) {
                return false;
@@ -991,12 +1051,12 @@ public class AxisServlet extends AxisServletBase {
           while (i.hasNext() == true) {
                String queryHandler = (String) i.next();
                
-               if (queryHandler.startsWith ("qs:") == true) {
+               if (queryHandler.startsWith ("qs.") == true) {
                     // Only attempt to match the query string with transport
                     // parameters prefixed with "qs:".
                     
                     String handlerName = queryHandler.substring
-                         (queryHandler.indexOf (":") + 1).toLowerCase();
+                         (queryHandler.indexOf (".") + 1).toLowerCase();
                     
                     // Determine the name of the plugin to invoke by using all text
                     // in the query string up to the first occurence of &, =, or the
@@ -1022,12 +1082,19 @@ public class AxisServlet extends AxisServletBase {
                     if (queryString.toLowerCase().equals (handlerName) == true) {
                          // Query string matches a defined query string handler name.
                          
+                         // If the defined class name for this query string handler is blank,
+                         // just return (the handler is "turned off" in effect).
+                         
+                         if (((String) this.transport.getOption (queryHandler)).equals ("")) {
+                              return false;
+                         }
+                         
                          try {
                               // Attempt to dynamically load the query string handler
                               // and its "invoke" method.
                               
                               MessageContext msgContext = createMessageContext (engine, request, response);
-                              Class plugin = Class.forName ((String) httpTransport.getOption (queryHandler));
+                              Class plugin = Class.forName ((String) this.transport.getOption (queryHandler));
                               Method pluginMethod = plugin.getDeclaredMethod ("invoke",
                                 new Class[] { msgContext.getClass() });
                               String url = HttpUtils.getRequestURL (request).toString();
