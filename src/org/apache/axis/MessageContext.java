@@ -108,6 +108,12 @@ public class MessageContext {
      * to determine what to do next.
      */
     private String           targetService ;
+    
+    /**
+     * The name of the Transport which this message was received on (or is
+     * headed to, for the client).
+     */
+    private String           transportName;
 
     /**
      * The default classloader that this service should use
@@ -179,6 +185,19 @@ public class MessageContext {
 
     public void setServiceDescription(ServiceDescription serviceDesc) {
         this.serviceDesc = serviceDesc;
+    }
+    
+    /**
+     * Transport
+     */
+    public String getTransportName()
+    {
+        return transportName;
+    }
+    
+    public void setTransportName(String transportName)
+    {
+        this.transportName = transportName;
     }
     
     /**

@@ -150,8 +150,6 @@ public abstract class AxisEngine extends BasicHandler
     public AxisEngine(HandlerRegistry handlers, HandlerRegistry services)
     {
         this();
-        handlers.init();
-        services.init();
         setHandlerRegistry(handlers);
         setServiceRegistry(services);
         
@@ -170,7 +168,6 @@ public abstract class AxisEngine extends BasicHandler
         DefaultHandlerRegistry  hr =
                                     new DefaultHandlerRegistry(handlerRegFilename);
         hr.setOnServer( isOnServer() );
-        hr.init();
         setHandlerRegistry( hr );
         
         // Load the simple deployed services registry and init it
@@ -178,7 +175,6 @@ public abstract class AxisEngine extends BasicHandler
                                     new DefaultServiceRegistry(serviceRegFilename);
         sr.setHandlerRegistry( getHandlerRegistry() ); // needs to know about 'hr'
         sr.setOnServer( isOnServer() );
-        sr.init();
         setServiceRegistry( sr );
         
         init();
@@ -200,6 +196,9 @@ public abstract class AxisEngine extends BasicHandler
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
         
+        getHandlerRegistry().init();
+        getServiceRegistry().init();
+
         // Load the registry of deployed types
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());

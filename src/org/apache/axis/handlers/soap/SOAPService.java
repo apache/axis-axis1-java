@@ -54,6 +54,7 @@
 
 package org.apache.axis.handlers.soap;
 
+import java.util.Vector;
 import org.apache.axis.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.Debug;
@@ -71,6 +72,14 @@ import org.apache.axis.registries.* ;
 public class SOAPService extends SimpleTargetedChain
 {
     public static final String OPTION_PIVOT = "pivot";
+    
+    /** Valid transports for this service
+     * (server side only!)
+     * 
+     * !!! For now, if this is null, we assume all
+     * transports are valid.
+     */
+    private Vector validTransports = null;
 
     /** Service-specific type mappings
      */
@@ -104,11 +113,29 @@ public class SOAPService extends SimpleTargetedChain
         addOption(OPTION_PIVOT, pivotName);
     }
     
+    public boolean availableFromTransport(String transportName)
+    {
+        if (validTransports != null) {
+            for (int i = 0; i < validTransports.size(); i++) {
+                if (((String)validTransports.elementAt(i)).
+                                                 equals(transportName))
+                    return true;
+            }
+            return false;
+        }
+        
+        return true;
+    }
+    
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: SOAPService::invoke" );
         
-        //msgContext.setServiceHandler( this );
+        if (!availableFromTransport(msgContext.getTransportName()))
+            throw new AxisFault("Server.NotAvailable",
+                "This service is not available at this endpoint (" +
+                msgContext.getTransportName() + ").",
+                null, null);
         
         Handler h = getRequestChain() ;
         if ( h != null ) {
@@ -188,5 +215,26 @@ public class SOAPService extends SimpleTargetedChain
     {
         typeMap.removeDeserializer(qName);
         typeMap.removeSerializer(cls);
+    }
+    
+    /**
+     * Make this service available on a particular transport
+     */
+    public void enableTransport(String transportName)
+    {
+        Debug.Print(3, "SOAPService(" + this + ") enabling transport " + transportName);
+        if (validTransports == null)
+            validTransports = new Vector();
+        validTransports.addElement(transportName);
+    }
+    
+    /**
+     * Disable access to this service from a particular transport
+     */
+    public void disableTransport(String transportName)
+    {
+        if (validTransports != null) {
+            validTransports.removeElement(transportName);
+        }
     }
 }

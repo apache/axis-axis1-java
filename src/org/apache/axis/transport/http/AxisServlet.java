@@ -102,19 +102,8 @@ public class AxisServlet extends HttpServlet {
     ServletContext context = config.getServletContext();
     HttpSession    session = req.getSession();
 
-    AxisEngine  engine = null ;
-
-    /* Get or 'new' the Axis engine object */
-    /***************************************/
-    synchronized(context) {
-      engine = (AxisEngine) context.getAttribute( AXIS_ENGINE );
-      if ( engine == null ) {
-        engine = new AxisServer();
-        engine.init();
-        context.setAttribute( AXIS_ENGINE, engine );
-      }
-    }
-
+    AxisEngine  engine = AxisServer.getSingleton();
+    
     /* Place the Request message in the MessagContext object - notice */
     /* that we just leave it as a 'ServletRequest' object and let the  */
     /* Message processing routine convert it - we don't do it since we */
@@ -133,6 +122,7 @@ public class AxisServlet extends HttpServlet {
     /******************************************************/
     msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName );
     msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName );
+    msgContext.setTransportName(transportReqName);
 
     /* Save some HTTP specific info in the bag in case a handler needs it */
     /**********************************************************************/
