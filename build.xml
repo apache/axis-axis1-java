@@ -212,6 +212,8 @@ Copyright:
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
     <copy file="${commons-discovery.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
+    <copy file="${src.dir}/log4j.properties"
+          toDir="${build.lib}"/>
 
      <!--  Build the new org.apache.axis.tools.ant stuff -->
      <mkdir dir="${axis.home}/tools/lib" />
