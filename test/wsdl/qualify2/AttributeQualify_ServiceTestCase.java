@@ -40,7 +40,7 @@ public class AttributeQualify_ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test1AttributeQualifyEchoPhone() {
-        test.wsdl.qualify2.AttributeQualify_Port binding;
+        test.wsdl.qualify2.AttributeQualify_PortType binding;
         test.wsdl.qualify2.AttributeQualify_ServiceLocator locator = new test.wsdl.qualify2.AttributeQualify_ServiceLocator();
         try {
             binding = locator.getAttributeQualify();

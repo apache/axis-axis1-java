@@ -41,7 +41,7 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
 
     public void test1QualifySimple() {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
-        Qualify_Port binding;
+        Qualify_PortType binding;
         try {
             binding = locator.getQualify();
         } catch (javax.xml.rpc.ServiceException jre) {
@@ -102,7 +102,7 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
 
     public void test2QualifyFormOverride() {
         Qualify_ServiceLocator locator = new Qualify_ServiceLocator();
-        test.wsdl.qualify.Qualify_Port binding;
+        test.wsdl.qualify.Qualify_PortType binding;
         try {
             binding = locator.getQualify();
         } catch (javax.xml.rpc.ServiceException jre) {

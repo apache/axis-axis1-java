@@ -58,7 +58,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -82,6 +84,15 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
     /** Field EXCEPTION_DATA_TYPE */
     public static String EXCEPTION_DATA_TYPE = "ExceptionDataType";
+    
+    /* Name suffixes for collision */
+    private static final String SERVICE_SUFFIX = "_Service";
+    private static final String PORT_TYPE_SUFFIX = "_PortType";     // "_Port" (Axis classic) --> "_PortType" (JAX-RPC 1.1)
+    private static final String TYPE_SUFFIX = "_Type";
+    private static final String ELEMENT_SUFFIX = "_Element";        // "_ElemType (Axis classic) --> "_Element" (JAX-RPC 1.1)
+    private static final String EXCEPTION_SUFFIX = "_Exception";   
+    private static final String BINDING_SUFFIX = "_Binding";
+
 
     /**
      * Default constructor.  Note that this class is unusable until setEmitter
@@ -937,6 +948,43 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         HashSet anonTypes = new HashSet();
         Iterator it = symbolTable.getHashMap().values().iterator();
 
+        // MUST check Name Collisions between different namespaces 
+        // in case package name is set with default package name.
+        // To do it, reconstruct iterator.
+        if (emitter.getPackageName() != null) {
+            List entries = new ArrayList();
+            List namespaceURIs = new ArrayList();
+            List localParts = new ArrayList();
+            
+            // Collect namespaceURIs and names related to the all entry of SymbolTable.
+            HashMap map = symbolTable.getHashMap();
+            Set keySet = map.keySet();
+            for (Iterator itr = keySet.iterator(); itr.hasNext(); ) {
+                QName qName = (QName)itr.next();
+
+                String namespaceURI = qName.getNamespaceURI();
+                if (!namespaceURIs.contains(namespaceURI))
+                    namespaceURIs.add(namespaceURI);
+
+                String localPart = qName.getLocalPart();
+                if (!localParts.contains(localPart))
+                    localParts.add(localPart);
+            }
+            
+            // Combine entry vectors, which have the same entry name, into a new entry vector.
+            for (int i = 0; i < localParts.size(); i++) {
+                Vector v = new Vector();
+                for (int j = 0; j < namespaceURIs.size(); j++) {
+                    QName qName = new QName((String)namespaceURIs.get(j), (String)localParts.get(i));
+                    if (map.get(qName) != null) {
+                        v.addAll((Vector)map.get(qName));
+                    }
+                }
+                entries.add(v);
+            }
+            it = entries.iterator();
+        }                
+        
         while (it.hasNext()) {
             Vector v = new Vector(
                     (Vector) it.next());    // New vector we can temporarily add to it
@@ -946,7 +994,13 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
             while (index < v.size()) {
                 if (v.elementAt(index) instanceof MessageEntry) {
-                    v.removeElementAt(index);
+                    // Need to resolve a Exception message.
+                    MessageEntry msgEntry = (MessageEntry) v.elementAt(index);                    
+                    if (msgEntry.getDynamicVar(EXCEPTION_CLASS_NAME) == null) {
+                        v.removeElementAt(index);
+                    } else {                        
+                        index++;
+                    }
                 } else {
                     index++;
                 }
@@ -959,11 +1013,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 // If a Type and Element have the same QName, and the Element
                 // references the Type, then they are the same class so
                 // don't bother mangling.
-                if ((v.size() == 2) && (((v.elementAt(
-                        0) instanceof Element) && (v.elementAt(
-                                1) instanceof Type)) || ((v.elementAt(
-                                        1) instanceof Element) && (v.elementAt(
-                                                0) instanceof Type)))) {
+                if (v.size() == 2 &&
+                    ((v.elementAt(0) instanceof Element &&
+                      v.elementAt(1) instanceof Type) ||
+                     (v.elementAt(1) instanceof Element &&
+                      v.elementAt(0) instanceof Type))) {
                     Element e = null;
 
                     if (v.elementAt(0) instanceof Element) {
@@ -993,8 +1047,16 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
                         if ((entry instanceof MessageEntry)
-                                || (entry instanceof BindingEntry)) {
-                            ;                  // Don't process these
+                                || (entry instanceof BindingEntry)) {                            
+                            // Need to resolve a exception class name                            
+                            String exceptionClassName = (String) entry.getDynamicVar(EXCEPTION_CLASS_NAME);
+                            if (exceptionClassName != null) {                                
+                                if (name == null) {
+                                    name = exceptionClassName;
+                                } else if (name.equals(exceptionClassName)) {
+                                    resolve = true;
+                                }
+                            }
                         } else if (name == null) {
                             name = entry.getName();
                         } else if (name.equals(entry.getName())) {
@@ -1011,8 +1073,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
                         if (entry instanceof Element) {
-                            entry.setName(mangleName(entry.getName(),
-                                    "_ElemType"));
+                            entry.setName(mangleName(entry.getName(), ELEMENT_SUFFIX));
 
                             // If this global element was defined using
                             // an anonymous type, then need to change the
@@ -1021,13 +1082,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                     new QName(entry.getQName().getNamespaceURI(),
                                             SymbolTable.ANON_TOKEN
                                     + entry.getQName().getLocalPart());
+                            
                             TypeEntry anonType =
                                     symbolTable.getType(anonQName);
 
                             if (anonType != null) {
                                 anonType.setName(entry.getName());
                                 anonTypes.add(anonType);
-                            }
+                            }                            
                         } else if (entry instanceof TypeEntry) {
 
                             // Search all other types for java names that match this one.
@@ -1054,16 +1116,75 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // If this is an anonymous type, it's name was resolved in
                             // the previous if block.  Don't reresolve it.
                             if (!anonTypes.contains(entry)) {
-                                entry.setName(mangleName(entry.getName(),
-                                        "_Type"));
+                                // In case that other entry in name collision among 
+                                // PortTypeEntry, ServiceEntry and BindingEntry
+                                
+                                boolean needResolve = false;
+                                
+                                // check collision of TypeEntry with PortTypeEntry, ServiceEtnry and/or BindingEntry 
+                                for (int j = 0; j < v.size(); j++) {
+                                    SymTabEntry e = (SymTabEntry) v.elementAt(j);
+                                    if ((e instanceof PortTypeEntry 
+                                            || e instanceof ServiceEntry
+                                            || e instanceof BindingEntry)) {
+                                        needResolve = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (!needResolve) {
+                                    continue;
+                                }                                                                
+                                
+                                // Appended Suffix for avoiding name collisions (JAX-RPC 1.1)
+                                Boolean isComplexTypeFault = (Boolean)entry.getDynamicVar(COMPLEX_TYPE_FAULT);
+                                if ((isComplexTypeFault != null) && isComplexTypeFault.booleanValue()) {
+                                    entry.setName(mangleName(entry.getName(), EXCEPTION_SUFFIX));
+                                } 
+                                else {
+                                    entry.setName(mangleName(entry.getName(), TYPE_SUFFIX));
+                                }
+                                
+                                // should update the class name of ElementEntry which references this type entry
+                                Map elementIndex = symbolTable.getElementIndex();
+                                List elements = new ArrayList(elementIndex.values());
+                                for (int j = 0; j < elementIndex.size(); j++) {
+                                    TypeEntry te = (TypeEntry) elements.get(j);
+                                    TypeEntry ref = te.getRefType();
+                                    if (ref != null && entry.getQName().equals(ref.getQName())) {
+                                        te.setName(entry.getName());
+                                    }
+                                }           
+                                
+                                // Need to resolve a complex-type exception message.
+                                if ((isComplexTypeFault != null) && isComplexTypeFault.booleanValue()) {
+                                    // SHOULD update the exception class name of a referencing message entry.
+                                    List messageEntries = symbolTable.getMessageEntries();
+                                    for (int j = 0; j < messageEntries.size(); j++) {
+                                        MessageEntry messageEntry = (MessageEntry)messageEntries.get(j);
+                                        Boolean isComplexTypeFaultMsg = (Boolean)messageEntry.getDynamicVar(COMPLEX_TYPE_FAULT);
+                                        if ((isComplexTypeFaultMsg != null) && (isComplexTypeFaultMsg.booleanValue())) {
+                                            QName exceptionDataType = (QName)messageEntry.getDynamicVar(EXCEPTION_DATA_TYPE);
+                                            if (((TypeEntry)entry).getQName().equals(exceptionDataType)) {
+                                                String className = (String)messageEntry.getDynamicVar(EXCEPTION_CLASS_NAME);
+                                                messageEntry.setDynamicVar(EXCEPTION_CLASS_NAME, className + EXCEPTION_SUFFIX);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         } else if (entry instanceof PortTypeEntry) {
-                            entry.setName(mangleName(entry.getName(), "_Port"));
+                            entry.setName(mangleName(entry.getName(), PORT_TYPE_SUFFIX));   // "_Port" --> "_PortType" for JAX-RPC 1.1
                         } else if (entry instanceof ServiceEntry) {
-                            entry.setName(mangleName(entry.getName(),
-                                    "_Service"));
+                            entry.setName(mangleName(entry.getName(), SERVICE_SUFFIX));
+                        } else if (entry instanceof MessageEntry) {
+                            Boolean complexTypeFault = 
+                                (Boolean) entry.getDynamicVar(COMPLEX_TYPE_FAULT);
+                            if ((complexTypeFault == null) || !complexTypeFault.booleanValue()) {
+                                String exceptionClassName = (String) entry.getDynamicVar(EXCEPTION_CLASS_NAME);
+                                entry.setDynamicVar(EXCEPTION_CLASS_NAME, exceptionClassName + EXCEPTION_SUFFIX);
+                            }                            
                         }
-
                         // else if (entry instanceof MessageEntry) {
                         // we don't care about messages
                         // }
@@ -1078,7 +1199,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // possibility of a name clash.
                             if (bEntry.hasLiteral()) {
                                 entry.setName(mangleName(entry.getName(),
-                                        "_Binding"));
+                                        BINDING_SUFFIX));
                             }
                         }
                     }

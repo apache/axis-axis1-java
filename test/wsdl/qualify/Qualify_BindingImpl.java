@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
+public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_PortType {
     
     public static final String namespace = "urn:qualifyTest";
     

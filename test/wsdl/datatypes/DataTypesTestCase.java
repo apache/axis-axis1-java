@@ -14,7 +14,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1DataTypesSoapSayHello() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -34,7 +34,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test2DataTypesSoapSayHelloName() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -54,7 +54,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test3DataTypesSoapGetIntArray() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -78,7 +78,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test4DataTypesSoapGetMode() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -98,7 +98,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test5DataTypesSoapGetOrder() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -119,7 +119,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test6DataTypesSoapGetOrders() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -150,7 +150,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test7DataTypesSoapGetSimpleList() {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }
@@ -178,7 +178,7 @@ public class DataTypesTestCase extends junit.framework.TestCase {
     }
 
     public void test5DataTypesGetUsageType() throws Exception {
-        DataTypes_Port binding;
+        DataTypes_PortType binding;
         try {
             binding = new DataTypes_ServiceLocator().getDataTypes();
         }

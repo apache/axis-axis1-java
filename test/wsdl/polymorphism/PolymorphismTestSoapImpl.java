@@ -7,7 +7,7 @@
 
 package test.wsdl.polymorphism;
 
-public class PolymorphismTestSoapImpl implements test.wsdl.polymorphism.PolymorphismTest_Port{
+public class PolymorphismTestSoapImpl implements test.wsdl.polymorphism.PolymorphismTest_PortType{
     public static final String B_TEXT = "this is my B field";
     public static final String A_TEXT = "this is my A field";
 

@@ -529,6 +529,7 @@ public class SymbolTable {
                 : getURL(null, context);
 
         populate(contextURL, def, doc, null);
+        processTypes();
         checkForUndefined();
         populateParameters();
         setReferences(def, doc);    // uses wrapped flag set in populateParameters
@@ -697,7 +698,6 @@ public class SymbolTable {
                 lookForImports(context, doc);
             }
         }
-        processTypes();
 
         if (def != null) {
             checkForUndefined(def, filename);
@@ -1631,7 +1631,6 @@ public class SymbolTable {
                                 portType.getQName().getNamespaceURI();
                         Parameters parms = getOperationParameters(operation,
                                 namespace, bEntry);
-
                         parameters.put(operation, parms);
                     }
 
@@ -1706,7 +1705,7 @@ public class SymbolTable {
                     literalInput, operation.getName(),
                     bindingEntry);
         }
-
+        
         // Collect all the output parameters
         if ((output != null) && (output.getMessage() != null)) {
             getParametersFromParts(outputs,
@@ -1714,7 +1713,7 @@ public class SymbolTable {
                     literalOutput, operation.getName(),
                     bindingEntry);
         }
-
+        
         if (parameterOrder != null && !wrapped) {
 
             // Construct a list of the parameters in the parameterOrder list, determining the
@@ -2119,7 +2118,6 @@ public class SymbolTable {
             BooleanHolder forElement = new BooleanHolder();
             QName type = Utils.getTypeQName(node, forElement,
                     false);
-
             if ((type != null) && !forElement.value) {
 
                 // If in fact we have such a type, go get the node that
@@ -3713,5 +3711,21 @@ public class SymbolTable {
                 type.setContainedElements(elements);
             }
         }
+    }
+    
+    public List getMessageEntries() {
+        List messageEntries = new ArrayList();
+        Iterator iter = symbolTable.values().iterator();
+        while (iter.hasNext()) {
+            Vector v = (Vector)iter.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry)v.elementAt(i);
+                if (entry instanceof MessageEntry) {
+                    messageEntries.add(entry);
+                }
+            }
+        }
+
+        return messageEntries;
     }
 }    // class SymbolTable

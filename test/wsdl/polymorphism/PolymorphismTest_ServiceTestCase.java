@@ -20,7 +20,7 @@ public class PolymorphismTest_ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test1PolymorphismTestGetBAsA() {
-        test.wsdl.polymorphism.PolymorphismTest_Port binding;
+        test.wsdl.polymorphism.PolymorphismTest_PortType binding;
         try {
             binding = new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTest();
         }
@@ -51,7 +51,7 @@ public class PolymorphismTest_ServiceTestCase extends junit.framework.TestCase {
     }
 
     public void test1PolymorphismTestGetCAsA() {
-        test.wsdl.polymorphism.PolymorphismTest_Port binding;
+        test.wsdl.polymorphism.PolymorphismTest_PortType binding;
         try {
             binding = new test.wsdl.polymorphism.PolymorphismTest_ServiceLocator().getPolymorphismTest();
         }

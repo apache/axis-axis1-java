@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="WS-ResourcePropertiesImpl"
+  xmlns="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:wsa="http://schemas.xmlsoap.org/ws/2003/03/addressing" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:wsbf=
+  "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+  xmlns:wsrp=
+  "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" 
+  xmlns:wsrpw=
+  "http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" 
+  xmlns:tns="http://www.tempuri.org"
+  targetNamespace="http://www.tempuri.org"
+>
+<wsdl:import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl"/>
+
+<wsdl:binding name="GetResourcePropertySoapBinding" type="wsrpw:GetResourceProperty">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<wsdl:operation name="GetResourceProperty">
+		<wsdl:input>
+			<soap:body use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body use="literal"/>
+		</wsdl:output>
+		<wsdl:fault name="ResourceUnknownFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidResourcePropertyQNameFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+	</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="GetMultipleResourcePropertiesSoapBinding" type="wsrpw:GetMultipleResourceProperties">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<wsdl:operation name="GetMultipleResourceProperties">
+		<wsdl:input>
+			<soap:body use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body use="literal"/>
+		</wsdl:output>
+		<wsdl:fault name="ResourceUnknownFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidResourcePropertyQNameFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+	</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="SetResourcePropertiesSoapBinding" type="wsrpw:SetResourceProperties">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<wsdl:operation name="SetResourceProperties">
+		<wsdl:input>
+			<soap:body use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body use="literal"/>
+		</wsdl:output>
+		<wsdl:fault name="ResourceUnknownFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidSetResourcePropertiesRequestContentFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="UnableToModifyResourcePropertyFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidResourcePropertyQNameFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="SetResourcePropertyRequestFailedFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+	</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="QueryResourcePropertiesSoapBinding" type="wsrpw:QueryResourceProperties">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<wsdl:operation name="QueryResourceProperties">
+		<wsdl:input>
+			<soap:body use="literal"/>
+		</wsdl:input>
+		<wsdl:output>
+			<soap:body use="literal"/>
+		</wsdl:output>
+		<wsdl:fault name="ResourceUnknownFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidResourcePropertyQNameFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="UnknownQueryExpressionDialectFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="InvalidQueryExpressionFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+		<wsdl:fault name="QueryEvaluationErrorFault">
+			<soap:fault use="literal"/>
+		</wsdl:fault>
+	</wsdl:operation>
+</wsdl:binding>
+
+<wsdl:service name="ResourceService">
+	<port name="GetResourceProperty" binding="tns:GetResourcePropertySoapBinding">
+		<soap:address location="http://localhost:8080/ResourceService/GetResourceProperty"/>
+	</port>
+	<port name="GetMultipleResourceProperties" binding="tns:GetMultipleResourcePropertiesSoapBinding">
+		<soap:address location="http://localhost:8080/ResourceService/GetMultipleResouceProperties"/>
+	</port>
+	<port name="SetResourceProperties" binding="tns:SetResourcePropertiesSoapBinding">
+		<soap:address location="http://localhost:8080/ResourceService/SetResourceProperties"/>
+	</port>
+	<port name="QueryResourceProperties" binding="tns:QueryResourcePropertiesSoapBinding">
+		<soap:address location="http://localhost:8080/ResourceService/QueryResourceProperties"/>
+	</port>
+</wsdl:service>
+</wsdl:definitions>

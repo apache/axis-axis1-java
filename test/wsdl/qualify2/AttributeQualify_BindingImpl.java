@@ -33,7 +33,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
-public class AttributeQualify_BindingImpl implements test.wsdl.qualify2.AttributeQualify_Port {
+public class AttributeQualify_BindingImpl implements test.wsdl.qualify2.AttributeQualify_PortType {
 
     public static final String NAMESPACE = "urn:attributeQualify";
 
