@@ -179,21 +179,13 @@ public class RPCHandler extends SOAPHandler
         }
 
         // Grab xsi:type attribute if present, on either this element or
-        // the referent (if it's an href).
-        if (curEl.getHref() != null) {
-            MessageElement ref = context.getElementByID(curEl.getHref());
-            if (ref != null)
-                type = context.getTypeFromAttributes(ref.getNamespaceURI(),
-                                                     ref.getName(),
-                                                     ref.getAttributes());
-        } else {
-            // Get the element type if we have it, otherwise check xsi:type
-            type = curEl.getType();
-            if (type == null) {
-                type = context.getTypeFromAttributes(namespace,
-                                                     localName,
-                                                     attributes);
-            }
+        // the referent (if it's an href).  MessageElement.getType() will
+        // automatically dig through to the referent if necessary.
+        type = curEl.getType();
+        if (type == null) {
+            type = context.getTypeFromAttributes(namespace,
+                                                 localName,
+                                                 attributes);
         }
 
         if (log.isDebugEnabled()) {
