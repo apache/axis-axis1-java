@@ -10,6 +10,13 @@
   <handler name="RPCDispatcher"
            class="org.apache.axis.handlers.RPCDispatchHandler" />
 
+  <handler name="router" class="org.apache.axis.handlers.Router" />
+
+  <handler name="HTTPAction" 
+           class="org.apache.axis.handlers.HTTPActionHandler" />
+  <chain name="HTTPTransport" flow="HTTPAction,router" />
+  <service name="AxisServlet" handler="HTTPTransport" />
+
   <service name="AdminService" handler="MsgDispatcher">
     <option name="className" value="org.apache.axis.utils.Admin" />
     <option name="methodName" value="AdminService" />
