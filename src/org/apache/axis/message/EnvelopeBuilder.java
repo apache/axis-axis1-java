@@ -163,7 +163,7 @@ public class EnvelopeBuilder extends SOAPHandler
                                      attributes, context);
         
         if (element.getFixupDeserializer() != null)
-            return element.getFixupDeserializer();
+            return (SOAPHandler)element.getFixupDeserializer();
 
         return null;
     }

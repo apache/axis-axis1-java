@@ -58,13 +58,13 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -85,7 +85,7 @@ import java.util.Set;
  * @author Sam Ruby (rubys@us.ibm.com)
  * Modified for JAX-RPC @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class SimpleDeserializer extends Deserializer {
+public class SimpleDeserializer extends DeserializerImpl {
 
     StringBuffer val = new StringBuffer();
     private Constructor constructor = null;
@@ -197,7 +197,7 @@ public class SimpleDeserializer extends Deserializer {
      * Convert the string that has been accumulated into an Object.  Subclasses
      * may override this.  Note that if the javaType is a primitive, the returned
      * object is a wrapper class.
-     * @param string the serialized value to be deserialized
+     * @param source the serialized value to be deserialized
      * @throws Exception any exception thrown by this method will be wrapped
      */
     public Object makeValue(String source) throws Exception

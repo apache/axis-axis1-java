@@ -154,7 +154,7 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
     /**
      * Convenenience method that returns true if the value is nil 
      * (due to the xsi:nil) attribute.
-     * @param attributes are the element attributes.
+     * @param attrs are the element attributes.
      * @return true if xsi:nil is true
      */
     public boolean isNil(Attributes attrs);

@@ -55,29 +55,20 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.DeserializerTarget;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
 import java.util.Vector;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerTarget;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPHandler;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Deserializer for SOAP Vectors for compatibility with SOAP 2.2.
@@ -85,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Carsten Ziegeler (cziegeler@apache.org)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class VectorDeserializer extends Deserializer
+public class VectorDeserializer extends DeserializerImpl
 {
     protected static Log log =
         LogFactory.getLog(VectorDeserializer.class.getName());
@@ -165,7 +156,7 @@ public class VectorDeserializer extends Deserializer
            dSer = context.getDeserializerForType(itemType);
         }
         if (dSer == null) {
-            dSer = new Deserializer();
+            dSer = new DeserializerImpl();
         }
 
         // When the value is deserialized, inform us.
@@ -177,7 +168,7 @@ public class VectorDeserializer extends Deserializer
         if (log.isDebugEnabled()) {
             log.debug("Exit: VectorDeserializer::onStartChild()");
         }
-        return dSer;
+        return (SOAPHandler)dSer;
     }
     
     /**

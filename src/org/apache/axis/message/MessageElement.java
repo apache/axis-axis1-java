@@ -485,7 +485,7 @@ public class MessageElement implements SOAPElement
         if (dser == null)
             throw new Exception(JavaUtils.getMessage("noDeser00", "" + type));
 
-        context.pushElementHandler(new EnvelopeHandler(dser));
+        context.pushElementHandler(new EnvelopeHandler((SOAPHandler)dser));
 
         publishToHandler((org.xml.sax.ContentHandler) context);
 

@@ -58,7 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
@@ -85,7 +85,7 @@ import java.util.StringTokenizer;
  * Multi-reference stuff:
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class ArrayDeserializer extends Deserializer
+public class ArrayDeserializer extends DeserializerImpl
 {
     protected static Log log =
         LogFactory.getLog(ArrayDeserializer.class.getName());
@@ -397,7 +397,7 @@ public class ArrayDeserializer extends Deserializer
             dSer = context.getDeserializerForType(itemType);
         }
         if (dSer == null) {
-            dSer = new Deserializer();
+            dSer = new DeserializerImpl();
             // Determine a default type for the deserializer
             if (itemType == null) {
                 QName defaultType = defaultItemType;
@@ -425,7 +425,7 @@ public class ArrayDeserializer extends Deserializer
             log.debug("Exit: ArrayDeserializer.onStartChild()");
         }
         
-        return dSer;
+        return (SOAPHandler)dSer;
     }
 
     /** 

@@ -177,7 +177,7 @@ public class BodyBuilder extends SOAPHandler
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)
-                handler = element.getFixupDeserializer();
+                handler = (SOAPHandler)element.getFixupDeserializer();
         }
 
         if (handler == null)

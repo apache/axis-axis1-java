@@ -57,7 +57,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.AttachmentUtils;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -72,7 +72,7 @@ import javax.xml.rpc.namespace.QName;
  * @author Rick Rineholt 
  * Modified by Rich Scheuerle <scheu@us.ibm.com>
  */
-public class JAFDataHandlerDeserializer extends Deserializer {
+public class JAFDataHandlerDeserializer extends DeserializerImpl {
     protected static Log log =
         LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
