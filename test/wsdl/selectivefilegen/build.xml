@@ -86,7 +86,7 @@ Copyright:
     <!-- exluded bean 
     -->
     <echo message="exclude bean test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
@@ -106,7 +106,7 @@ Copyright:
     <!-- excluded service 
                -->
     <echo message="exclude service test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
@@ -126,7 +126,7 @@ Copyright:
     <!-- include bean 
     -->
     <echo message="include bean test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
@@ -144,7 +144,7 @@ Copyright:
     <!-- included service
                  -->
     <echo message="include service test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
@@ -181,7 +181,7 @@ Copyright:
          <arg value="--NStoPkg"/>
          <arg value="urn:bean2.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinex.bean2"/>
          <arg line="-x urn:bean1.selectivefilegen.wsdl.test"/>
-         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"/>
+         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"/>
     </java>
 
     <!-- cmd line include test -->
@@ -207,14 +207,14 @@ Copyright:
          <arg value="urn:bean2.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinei"/>
          <arg line="-i urn:bean1.selectivefilegen.wsdl.test"/>
          <arg line="-i urn:bean2.selectivefilegen.wsdl.test"/>
-         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"/>
+         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"/>
     </java>
 
     <!-- property test - just look at the factoryProp printout using a 
          compile -verbose option until a better test can be created.
     -->
     <echo message="property test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
