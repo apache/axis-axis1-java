@@ -109,7 +109,7 @@ public class JavaTypeWriter implements Writer {
                     }
 
                     typeWriter = new 
-                        JavaComplexTypeWriter(
+                        JavaBeanWriter(
                             emitter, 
                             type, 
                             SchemaUtils.getContainedElementDeclarations(
