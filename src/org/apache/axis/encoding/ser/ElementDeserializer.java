@@ -93,7 +93,6 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
         LogFactory.getLog(ElementDeserializer.class.getName());
 
    public static final String DESERIALIZE_CURRENT_ELEMENT = "DeserializeCurrentElement";
-   public static final String SERIALIZE_CURRENT_ELEMENT = "SerializeCurrentElement";
 
     public final void onEndElement(String namespace, String localName,
                                    DeserializationContext context)
@@ -106,7 +105,7 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
                 Boolean currentElement = (Boolean) messageContext.getProperty(DESERIALIZE_CURRENT_ELEMENT);
                 if (currentElement != null && currentElement.booleanValue()) {
                     value = msgElem.getAsDOM();
-                    messageContext.setProperty(SERIALIZE_CURRENT_ELEMENT, Boolean.FALSE);
+                    messageContext.setProperty(DESERIALIZE_CURRENT_ELEMENT, Boolean.FALSE);
                     return;
                 }
                 ArrayList children = msgElem.getChildren();
