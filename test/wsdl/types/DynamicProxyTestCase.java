@@ -54,12 +54,22 @@ import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedByte;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.URI;
+import org.apache.axis.types.Year;
+import org.apache.axis.types.Month;
+import org.apache.axis.types.Day;
+import org.apache.axis.types.YearMonth;
+import org.apache.axis.types.MonthDay;
 import org.apache.axis.holders.TimeHolder;
 import org.apache.axis.holders.UnsignedLongHolder;
 import org.apache.axis.holders.UnsignedShortHolder;
 import org.apache.axis.holders.UnsignedByteHolder;
 import org.apache.axis.holders.UnsignedIntHolder;
 import org.apache.axis.holders.URIHolder;
+import org.apache.axis.holders.YearHolder;
+import org.apache.axis.holders.MonthHolder;
+import org.apache.axis.holders.DayHolder;
+import org.apache.axis.holders.YearMonthHolder;
+import org.apache.axis.holders.MonthDayHolder;
 
 public class DynamicProxyTestCase extends TestCase {
     public DynamicProxyTestCase(String name) {
@@ -100,10 +110,6 @@ public class DynamicProxyTestCase extends TestCase {
     private void allPrimitivesIn(TypeTest binding) {
         assertTrue("binding is null", binding != null);
         try {
-            UnsignedLong ulong = new UnsignedLong(0);
-            UnsignedInt uint = new UnsignedInt(0);
-            UnsignedShort ushort = new UnsignedShort(0);
-            UnsignedByte ubyte = new UnsignedByte(0);
 
             binding.allPrimitivesIn(
                     new String(),
@@ -129,11 +135,16 @@ public class DynamicProxyTestCase extends TestCase {
                     new Short((short)0),
                     new byte[0],
                     new Time("12:01:30.150Z"),
-                    ulong,
-                    uint,
-                    ushort,
-                    ubyte,
-                    new URI("urn:this-is-a-test")
+                    new UnsignedLong(0),
+                    new UnsignedInt(0),
+                    new UnsignedShort(0),
+                    new UnsignedByte(0),
+                    new URI("urn:this-is-a-test"),
+                    new Year(1995),
+                    new Month(7),
+                    new Day(13),
+                    new YearMonth(2002, 8),
+                    new MonthDay(8, 26)
                     );
         }
         catch (RemoteException re) {
@@ -157,11 +168,6 @@ public class DynamicProxyTestCase extends TestCase {
     private void allPrimitivesInout(TypeTest binding) {
         assertTrue("binding is null", binding != null);
         try {
-            UnsignedLong ulong = new UnsignedLong(0);
-            UnsignedInt uint = new UnsignedInt(0);
-            UnsignedShort ushort = new UnsignedShort(0);
-            UnsignedByte ubyte = new UnsignedByte(0);
-            URI uri = new URI("urn:this-is-a-test");
 
             binding.allPrimitivesInout(
                     new StringHolder(new String()),
@@ -188,11 +194,16 @@ public class DynamicProxyTestCase extends TestCase {
                     new ShortWrapperHolder(new Short((short)0)),
                     new ByteArrayHolder(new byte[0]),
                     new TimeHolder(new Time("12:01:30.150Z")),
-                    new UnsignedLongHolder(ulong),
-                    new UnsignedIntHolder(uint),
-                    new UnsignedShortHolder(ushort),
-                    new UnsignedByteHolder(ubyte),
-                    new URIHolder(uri)
+                    new UnsignedLongHolder(new UnsignedLong(0)),
+                    new UnsignedIntHolder(new UnsignedInt(0)),
+                    new UnsignedShortHolder(new UnsignedShort(0)),
+                    new UnsignedByteHolder(new UnsignedByte(0)),
+                    new URIHolder(new URI("urn:this-is-a-test")),
+                    new YearHolder(new Year(1995)),
+                    new MonthHolder(new Month(7)),
+                    new DayHolder(new Day(13)),
+                    new YearMonthHolder(new YearMonth(2002, 8)),
+                    new MonthDayHolder(new MonthDay(8, 26))
                     
             );
         }
@@ -246,7 +257,13 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedIntHolder(),
                     new UnsignedShortHolder(),
                     new UnsignedByteHolder(),
-                    new URIHolder()
+                    new URIHolder(),
+                    new YearHolder(),
+                    new MonthHolder(),
+                    new DayHolder(),
+                    new YearMonthHolder(),
+                    new MonthDayHolder()
+                    
             );
         }
         catch (RemoteException re) {
