@@ -35,6 +35,7 @@
                skeleton="yes"
                noimports="no"
                verbose="no"
+               typeMappingVersion="1.1"
                testcase="no">
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>

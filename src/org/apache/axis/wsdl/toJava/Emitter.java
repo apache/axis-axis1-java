@@ -585,57 +585,5 @@ public class Emitter {
         }
     } // main
 
-    private static class NoopWriterFactory implements WriterFactory {
-        public void writerPass(Definition def, SymbolTable symbolTable) {}
-        public Writer getWriter(Message message, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
 
-        public Writer getWriter(PortType portType, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
-
-        public Writer getWriter(Binding binding, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
-
-        public Writer getWriter(Service service, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
-
-        public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
-
-        public Writer getWriter(Definition definition, SymbolTable symbolTable) {
-            return new NoopWriter();
-        }
-
-        public void setEmitter(Emitter emitter) {}
-
-        /**
-         * Get TypeMapping to use for translating
-         * QNames to java base types
-         */
-        BaseTypeMapping btm = null;
-        public BaseTypeMapping getBaseTypeMapping() {
-            if (btm == null) {
-                btm = new BaseTypeMapping() {
-                        TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
-                        public String getBaseName(QName qNameIn) {
-                            javax.xml.rpc.namespace.QName qName = 
-                                new javax.xml.rpc.namespace.QName(
-                                   qNameIn.getNamespaceURI(),                                 
-                                   qNameIn.getLocalPart());
-                            Class cls = defaultTM.getClassForQName(qName);
-                            if (cls == null)
-                                return null;
-                            else 
-                                return JavaUtils.getTextClassName(cls.getName());
-                        }
-                    };    
-            }
-            return btm;
-        }
-    }
 }

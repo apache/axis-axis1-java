@@ -62,8 +62,14 @@ import org.apache.avalon.excalibur.cli.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.wsdl.toJava.BaseTypeMapping;
 import org.apache.axis.wsdl.toJava.JavaWriterFactory;
 import org.apache.axis.wsdl.toJava.GeneratedFileInfo;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+
+import javax.wsdl.QName;
 
 import org.w3c.dom.Document;
 
@@ -94,6 +100,7 @@ public class WSDL2Java {
     protected static final int PACKAGE_OPT = 'p';
     protected static final int DEBUG_OPT = 'D';
     protected static final int ALL_OPT = 'a';
+    protected static final int TYPEMAPPING_OPT = 'T';
 
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
@@ -103,6 +110,8 @@ public class WSDL2Java {
 
     // The emitter framework Emitter class.
     private Emitter emitter;
+
+    JavaWriterFactory writerFactory = null;
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -161,7 +170,11 @@ public class WSDL2Java {
         new CLOptionDescriptor("Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
-                JavaUtils.getMessage("optionDebug00"))
+                JavaUtils.getMessage("optionDebug00")),
+        new CLOptionDescriptor("typeMappingVersion",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                TYPEMAPPING_OPT,
+                JavaUtils.getMessage("optionTypeMapping00"))
     };
 
     /**
@@ -169,7 +182,7 @@ public class WSDL2Java {
      */
     public WSDL2Java() {
         // Instantiate the emitter
-        JavaWriterFactory writerFactory = new JavaWriterFactory();
+        writerFactory = new JavaWriterFactory();
         emitter = new Emitter(writerFactory);
         writerFactory.setEmitter(emitter);
     } // ctor
@@ -389,6 +402,7 @@ public class WSDL2Java {
         String wsdlURI = null;
         HashMap namespaceMap = new HashMap();
         boolean bPackageOpt = false;
+        String typeMappingVersion = "1.2";
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -486,9 +500,19 @@ public class WSDL2Java {
                     case DEBUG_OPT:
                         wsdl2java.debug(true);
                         break;
+                    case TYPEMAPPING_OPT:
+                        String tmValue = option.getArgument();
+                        if (tmValue.equals("1.1")) {
+                            typeMappingVersion = "1.1";
+                        } else if (tmValue.equals("1.2")) {
+                            typeMappingVersion = "1.2";
+                        } else {
+                            System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
+                        }
+                        break;                
                 }
             }
-
+            
             // validate argument combinations
             //
             if (wsdlURI == null) {
@@ -503,6 +527,7 @@ public class WSDL2Java {
                 wsdl2java.setNamespaceMap(namespaceMap);
             }
 
+            wsdl2java.setTypeMappingVersion(typeMappingVersion);
             wsdl2java.emit(wsdlURI);
             
             // everything is good
@@ -514,6 +539,41 @@ public class WSDL2Java {
         }
     }
 
+    public void setTypeMappingVersion(String typeMappingVersion) {
+        if (typeMappingVersion.equals("1.1")) {
+            writerFactory.setBaseTypeMapping(
+                    new BaseTypeMapping() {
+                        final TypeMapping defaultTM = DefaultTypeMappingImpl.create();
+                        public String getBaseName(QName qNameIn) {
+                            javax.xml.rpc.namespace.QName qName = 
+                                new javax.xml.rpc.namespace.QName(
+                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else 
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    }); 
+        } else {
+            writerFactory.setBaseTypeMapping(
+                    new BaseTypeMapping() {
+                        final TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                        public String getBaseName(QName qNameIn) {
+                            javax.xml.rpc.namespace.QName qName = 
+                                new javax.xml.rpc.namespace.QName(
+                                  qNameIn.getNamespaceURI(),                                 
+                                  qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else 
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    }); 
+        }
+    }
     /**
      * Print usage message and exit
      */

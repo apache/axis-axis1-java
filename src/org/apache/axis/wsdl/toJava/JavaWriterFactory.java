@@ -521,6 +521,9 @@ public class JavaWriterFactory implements WriterFactory {
      * QNames to java base types
      */
     BaseTypeMapping btm = null;
+    public void setBaseTypeMapping(BaseTypeMapping btm) {
+        this.btm = btm;
+    }
     public BaseTypeMapping getBaseTypeMapping() {
         if (btm == null) {
             btm = new BaseTypeMapping() {
