@@ -317,7 +317,6 @@
     <part name="boolean" type="xsd:boolean"/>
     <part name="byte" type="xsd:byte"/>
     <part name="QName" type="xsd:QName"/>
-    <part name="date" type="xsd:date"/>
     <part name="dateTime" type="xsd:dateTime"/>
     <part name="base64Binary" type="xsd:base64Binary"/>
     <part name="hexBinary" type="xsd:hexBinary"/>
@@ -428,16 +427,6 @@
   <message name="outputDecimal">
     <part name="outDecimal" type="xsd:decimal"/>
     <part name="decimal" type="xsd:decimal"/>
-  </message>
-
-  <message name="inputDate">
-    <part name="inDate" type="xsd:date"/>
-    <part name="date" type="xsd:date"/>
-  </message>
-
-  <message name="outputDate">
-    <part name="outDate" type="xsd:date"/>
-    <part name="date" type="xsd:date"/>
   </message>
 
   <message name="inputDateTime">
@@ -776,10 +765,6 @@
       <input message="tns:inputDecimal"/>
       <output message="tns:outputDecimal"/>
     </operation>
-    <operation name="methodDate">
-      <input message="tns:inputDate"/>
-      <output message="tns:outputDate"/>
-    </operation>    
     <operation name="methodDateTime">
       <input message="tns:inputDateTime"/>
       <output message="tns:outputDateTime"/>
@@ -1488,21 +1473,6 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
-    <operation name="methodDate">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>    
     <operation name="methodDateTime">
       <soap:operation soapAction=""/>
       <input>

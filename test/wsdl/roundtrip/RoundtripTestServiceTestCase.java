@@ -650,7 +650,6 @@ public class RoundtripTestServiceTestCase extends TestCase {
             binding.methodAllTypesIn(new String("Request methodAllTypesIn"),
                                      new BigInteger("545"),
                                      new BigDecimal("546.545"),
-                                     new Date(1017532800000L),
                                      dateTime,
                                      true,
                                      (byte) 2,
@@ -717,24 +716,6 @@ public class RoundtripTestServiceTestCase extends TestCase {
         }
 
     } // testMethodByteArray
-
-    /**
-     *  Test to insure that a Date object matches the expected values
-     *  on both the client and server.
-     */
-    public void testMethodDate() {
-
-        try {
-            Date expected = new Date(1017532800000L);
-            Date actual = binding.methodDate(new Date(1017532800000L));
-            assertEquals("The expected and actual values did not match.",
-                         expected,
-                         actual);
-        } catch (RemoteException re) {
-            fail("Remote Exception caught: " + re);
-        }
-
-    } // testMethodDateTime
 
     /**
      *  Test to insure that a Calendar object matches the expected values

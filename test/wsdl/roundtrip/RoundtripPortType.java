@@ -93,8 +93,6 @@ public interface RoundtripPortType {
         throws java.rmi.RemoteException;
     public java.math.BigDecimal methodBigDecimal(java.math.BigDecimal inDecimal)
         throws java.rmi.RemoteException;
-    public java.util.Date methodDate(java.util.Date inDate)
-        throws java.rmi.RemoteException;
     public java.util.Calendar methodDateTime(java.util.Calendar inDateTime)
         throws java.rmi.RemoteException;
     public byte[] methodByteArray(byte[] inByteArray)
@@ -104,7 +102,6 @@ public interface RoundtripPortType {
     public void methodAllTypesIn(java.lang.String string,
                                  java.math.BigInteger integer,
                                  java.math.BigDecimal decimal,
-                                 java.util.Date date,
                                  java.util.Calendar dateTime,
                                  boolean _boolean,
                                  byte _byte,
