@@ -1,4 +1,4 @@
-package java.src.org.apache.axis.features;
+package org.apache.axis.features;
 
 public class FeatureNotSupportedException 
         extends Exception {
