@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:MArrayTests"
+             targetNamespace="urn:MArrayTests"
+             xmlns:tns="urn:MArrayTests"
+             xmlns:typens="urn:MArrayTests"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:MArrayTests"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+    <!-- Arrays of ints -->
+      <xsd:complexType name="Array1">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="xsd:int" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+
+      <xsd:complexType name="Array2">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="typens:Array1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="Array3">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="typens:Array2" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+    <!-- Arrays of Complex Types -->
+      <xsd:complexType name="foo">
+        <xsd:all>
+          <xsd:element name="value" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="Array1F">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="typens:foo" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="Array2F">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="typens:Array1F" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="Array3F">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="typens:Array2F" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+    </xsd:schema>
+
+  </types>
+
+  <!-- message declns -->
+
+  <message name="testIntArrayRequest">
+    <part name="in" type="typens:Array3"/>
+  </message>
+
+  <message name="testIntArrayResponse">
+    <part name="out" type="typens:Array3"/>
+  </message>
+
+  <message name="testFooArrayRequest">
+    <part name="in" type="typens:Array3F"/>
+  </message>
+
+  <message name="testFooArrayResponse">
+    <part name="out" type="typens:Array3F"/>
+  </message>
+  <!-- port type declns -->
+  <portType name="MArrayTests">
+    <operation name="testIntArray">
+      <input message="tns:testIntArrayRequest"/>
+      <output message="tns:testIntArrayResponse"/>
+    </operation>
+    <operation name="testFooArray">
+      <input message="tns:testFooArrayRequest"/>
+      <output message="tns:testFooArrayResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="MArrayTestsSOAPBinding" type="tns:MArrayTests">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="testIntArray">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testFooArray">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MArrayTests"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="MArrayTestsService">
+    <port name="MArrayTests" binding="tns:MArrayTestsSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/MArrayTests"/>
+    </port>
+  </service>
+
+</definitions>
+
