@@ -231,6 +231,7 @@ public class WSDDService
      **/
     public void addOperation(WSDDOperation operation) {
         operations.add(operation);
+        desc.addOperationDesc(operation.getOperationDesc());
     }
 
     protected QName getElementName()
