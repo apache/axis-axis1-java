@@ -420,7 +420,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             SymbolTable symbolTable = wsdlParser.getSymbolTable();
             BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
             if(bEntry.getParameters().size() !=  proxyInterface.getMethods().length) {
-                throw new ServiceException(Messages.getMessage("incompatibleSEI00", "" + portName));
+                throw new ServiceException(Messages.getMessage("incompatibleSEI00", "" + proxyInterface.getName()));
             }  
             // TODO: Check the methods and the parameters as well.
         }
