@@ -110,12 +110,12 @@ public abstract class JavaProvider extends BasicProvider {
             scope = "Request";
         }
 
-        if (scope.equals("Request")) {
+        if (scope.equalsIgnoreCase("Request")) {
 
             // make a one-off
             return getNewServiceObject(msgContext, clsName);
 
-        } else if (scope.equals("Session")) {
+        } else if (scope.equalsIgnoreCase("Session")) {
 
             // look in incoming session
             if (msgContext.getSession() != null) {
@@ -131,7 +131,7 @@ public abstract class JavaProvider extends BasicProvider {
                 return getNewServiceObject(msgContext, clsName);
             }
 
-        } else if (scope.equals("Application")) {
+        } else if (scope.equalsIgnoreCase("Application")) {
 
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
