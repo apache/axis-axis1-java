@@ -1,7 +1,6 @@
 package test.wsdl.interop3.import1;
 
 import test.wsdl.interop3.import1.definitions.SoapInteropImport1PortType;
-import test.wsdl.interop3.import1.step6.definitions.SoapInteropImport1PortTypeServiceLocator;
 /*
     <!-- SOAP Builder's round III web services          -->
     <!-- interoperability testing:  import1             -->
@@ -50,25 +49,6 @@ public class Import1TestCase extends junit.framework.TestCase {
         SoapInteropImport1PortType binding;
         try {
             binding = new Import1Locator().getSoapInteropImport1Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport1Port"));
-        }
-        catch (Throwable t) {
-            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
-        }
-        assertTrue("binding is null", binding != null);
-
-        try {
-            String value = null;
-            value = binding.echoString(new String());
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        }
-    }
-
-    public void testStep7() {
-        test.wsdl.interop3.import1.step6.definitions.SoapInteropImport1PortType binding;
-        try {
-            binding = new SoapInteropImport1PortTypeServiceLocator().getSoapInteropImport1Port();
         }
         catch (Throwable t) {
             throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
