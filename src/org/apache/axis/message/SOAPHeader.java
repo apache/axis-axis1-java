@@ -61,6 +61,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.handlers.soap.SOAPService;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -211,11 +212,14 @@ public class SOAPHeader extends MessageElement
             if (mc != null) {
                 if (header != null) {
                     String actor = header.getActor();
-                    ArrayList actors = mc.getService().getActors();
-                    if ((actor != null) &&
+                    SOAPService soapService = mc.getService();
+                    if (soapService != null) {
+                        ArrayList actors = mc.getService().getActors();
+                        if ((actor != null) && 
                             !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
                             (actors == null || !actors.contains(actor))) {
-                        header = null;
+                            header = null;
+                      }
                     }
                 }
             }
