@@ -115,7 +115,7 @@ public class JMSURLHelper
                 if (key.startsWith(JMSConstants._MSG_PROP_PREFIX)) {
                     key = key.substring(
                         JMSConstants._MSG_PROP_PREFIX.length());
-                    addAppplicationProperty(key);
+                    addApplicationProperty(key);
                 }
                 properties.put(key, value);
             }
@@ -178,13 +178,27 @@ public class JMSURLHelper
     /** Adds the name of a property from the url properties that should
      * be added to the JMS message.
      */
-    public void addAppplicationProperty(String property) {
+    public void addApplicationProperty(String property) {
         if (property == null)
             return;
 
         if (appProperties == null)
             appProperties = new Vector();
 
+        appProperties.addElement(property);
+    }
+
+    /** Adds the name and value od the application property to the 
+     * JMS URL.
+     */
+    public void addApplicationProperty(String property, String value) {
+        if (property == null)
+            return;
+
+        if (appProperties == null)
+            appProperties = new Vector();
+        
+        properties.put(property, value);
         appProperties.addElement(property);
     }
 
