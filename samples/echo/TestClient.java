@@ -181,7 +181,9 @@ public abstract class TestClient {
     /**
      * Set up the call object.
      */
-    public void setURL(String url) {
+    public void setURL(String url) 
+        throws AxisFault
+    {
         call = new ServiceClient(url);
         map = call.getMessageContext().getTypeMappingRegistry();
     }

@@ -208,6 +208,7 @@ public class ServiceClient {
      *                    service.
      */
     public ServiceClient(String endpointURL)
+        throws AxisFault
     {
         this(endpointURL, new AxisClient(configProvider));
     }
@@ -216,6 +217,7 @@ public class ServiceClient {
      * Construct a ServiceClient with a given endpoint URL & engine
      */
     public ServiceClient(String endpointURL, AxisEngine engine)
+        throws AxisFault
     {
         this(engine);
         this.setURL(endpointURL);
@@ -255,16 +257,18 @@ public class ServiceClient {
      * Set the URL (and the transport state).
      */
     public void setURL (String endpointURL)
+        throws AxisFault
     {
         try {
             URL url = new URL(endpointURL);
             String protocol = url.getProtocol();
-            setTransport(getTransportForProtocol(protocol));
+            Transport transport = getTransportForProtocol(protocol);
+            if (transport == null)
+                throw new AxisFault("ServiceClient.setURL", "No transport mapping for protocol: " + protocol, null, null);
+            setTransport(transport);
             set(MessageContext.TRANS_URL, endpointURL);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new AxisFault("ServiceClient.setURL", "Malformed URL Exception: " + e.getMessage(), null, null);
         }
     }
 
