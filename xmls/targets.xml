@@ -120,7 +120,7 @@
         <available classname="com.sun.net.ssl.X509TrustManager" classpathref="classpath" />
         <available classname="javax.net.SocketFactory" classpathref="classpath" />
         <available classname="com.sun.net.ssl.SSLContext" classpathref="classpath" />
-        <available classname="javax.net.ssl.SSLSocketFactory;" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
       </and>
     </condition>
 
