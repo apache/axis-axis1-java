@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  targetNamespace="http://wdls.error/OperationWithUndefinedMessage"
+  xmlns:tns="http://wdls.error/OperationWithUndefinedMessage"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+>
+
+
+	<message name="CityTemperatureForecastRequest">
+		<part name="body" type="xsd:string" />
+	</message>
+	
+		
+	<message name="CityTemperatureForecastResponse">
+		<part name="body" type="xsd:float" />
+	</message>
+	
+	<message name="NoSuchCity">
+		<part name="body" type="xsd:string" />
+	</message>
+	
+	
+	<portType name="CityTemperatureForecast">
+		<operation name="GetCityTemperatureForecast">
+			<input  message="tns:CityTemperatureForecastRequest" />
+			<output message="tns:CityTemperatureForecastResponse" />
+			<fault message="tns:NoSuchCity" />
+			<!-- missing message attribute -->
+			<fault />
+		</operation>	
+	</portType>
+	
+	
+	<binding name="CityTemperatureForecastBinding" type="tns:CityTemperatureForecast">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="GetCityTemperatureForecast">
+			<soap:operation/>
+			<input>
+			    <soap:body use="encoded" 
+				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" 
+				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</output>
+		</operation>>	
+	</binding>	
+	
+		
+	<service name="WeatherForecastService">
+		<port  name="CityTemperatureForecast" binding="tns:CityTemperatureForecastBinding">	
+			<soap:address location="http://localhost:9090/axis/services/WeatherForecastService"/>		
+		</port>	
+	</service>
+</definitions>

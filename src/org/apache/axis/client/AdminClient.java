@@ -101,6 +101,37 @@ public class AdminClient
         defaultConfiguration.set(config);
     }
 
+    private static String getUsageInfo() 
+    {
+    	return "Processes a set of administration commands.\n"
+    	  + "\n"
+    	  + "The following Options are available:\n"
+    	  + "\n"
+     	  + "\t-l<url>         sets the AxisServlet URL\n"
+     	  + "\t-h<hostName     sets the AxisServlet host\n"
+          + "\t-p<portNumber>  sets the AxisServlet port\n"
+          + "\t-s<servletPath> sets the path to the AxisServlet\n"
+          + "\t-f<fileName>    specifies that a simple file protocol should be used\n"
+          + "\t-u<username>    sets the username\n"
+          + "\t-w<password>    sets the password\n"
+          + "\t-d              sets the debug flag (for instance, -ddd would set it to 3)\n"
+          + "\t-t<name>          sets the transport chain touse\n"
+          + "\n"
+          + "Commands:\n"
+          + "\tlist            will list the currently deployed services\n"
+          + "\tquit            will quit (???)\n"
+          + "\tpasswd          value changes the admin password\n"
+          + "\n"
+          + "Deployment Descriptor files:\n"
+          + "\n"
+          + "<deployment-descriptor-files>   deploys or undeploys Axis components and\n"
+          + "      web services 	described in these files\n"
+          + "\n"
+          + "If -l or -h -p -s  are not set, the AdminClient will invoke\n"
+          + "http://localhost:8080/axis/servlet/AxisServlet\n";	
+    }
+
+
     protected Call call;
 
     /**
@@ -223,8 +254,10 @@ public class AdminClient
 
         args = opts.getRemainingArgs();
 
-        if ( args == null ) {
-            log.info(Messages.getMessage("usage00","AdminClient xml-files | list"));
+        if ( args == null  || opts.isFlagSet('h') > 0) {
+            log.info(Messages.getMessage("usage00","AdminClient [Options] [list | <deployment-descriptor-files>]"));
+            log.info("");
+            log.info(getUsageInfo());
             return null;
         }
 
