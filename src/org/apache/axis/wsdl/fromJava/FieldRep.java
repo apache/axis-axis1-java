@@ -96,4 +96,10 @@ public class FieldRep {
     public void     setType(Class cls)       { _type = cls; }
     public boolean  getIndexed()             { return _indexed; }
     public void     setIndexed(boolean b)    { _indexed = b;}
+
+    /**
+     * Field properties are considered equal if their names are the 
+     * same (ignoring case).
+     */
+    public boolean equals(FieldRep rep) {return _name.equalsIgnoreCase(rep._name); }
 };
