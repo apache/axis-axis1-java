@@ -169,8 +169,8 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                             // Don't do anything here, since a problem above means
                             // we'll just fall through and use a plain AxisFault.
                         }
-                        if (f == null && faultData instanceof RemoteException) {
-                            f = AxisFault.makeFault((RemoteException)faultData);    
+                        if (f == null && faultData instanceof Exception) {
+                            f = AxisFault.makeFault((Exception)faultData);    
                         }
                     }
                 }
