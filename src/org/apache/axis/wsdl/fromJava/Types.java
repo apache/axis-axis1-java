@@ -231,7 +231,9 @@ public class Types {
      * @param type <code>Class</code> to generate the XML Schema info for
      * @param qname <code>QName</code> of the type.  If null, qname is
      *             defaulted from the class.
-     * @return the QName of the generated Schema type, null if void
+     * @return the QName of the generated Schema type, null if void,
+     *         if the Class type cannot be converted to a schema type
+     *         then xsd:anytype is returned.
      */
     public QName writeTypeForPart(Class type, QName qname) throws AxisFault {
         //patch by costin to fix an NPE; commented out till we find out what the problem is
@@ -265,8 +267,10 @@ public class Types {
             writeWsdlTypesElement();
         }
 
-        // write the type
-        writeType(type, qname);
+        // Write the type, if problems occur use ANYTYPE
+        if (writeType(type, qname) == null) {
+            qname = Constants.XSD_ANYTYPE;
+        }
         return qname;
     }
 
@@ -318,8 +322,10 @@ public class Types {
             writeWsdlTypesElement();
         }
 
-        // Write Element
-        writeTypeAsElement(type, qname);
+        // Write Element, if problems occur return null.
+        if (writeTypeAsElement(type, qname) == null) {
+            qname = null;
+        }
         return qname;
     }
 
@@ -380,7 +386,7 @@ public class Types {
     /**
      * Create a schema element for the given type
      * @param type the class type
-     * @return the QName of the generated Element or null if no element written
+     * @return the QName of the generated Element or problems occur
      */
     private QName writeTypeAsElement(Class type, QName qName) throws AxisFault {
         if (qName == null ||
@@ -598,7 +604,7 @@ public class Types {
      *
      * @param type Class for which to generate schema
      * @param qName of the type to write
-     * @return a prefixed string for the schema type
+     * @return a prefixed string for the schema type or null if problems occur
      */
     public String writeType(Class type, QName qName) throws AxisFault {
         // Get a corresponding QName if one is not provided
