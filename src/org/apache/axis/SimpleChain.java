@@ -58,6 +58,7 @@ package org.apache.axis ;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,7 +111,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     private void doVisiting(MessageContext msgContext,
                             HandlerIterationStrategy visitor) throws AxisFault {
-        category.debug("Enter: SimpleChain::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleChain::invoke"));
         int i = 0 ;
         try {
             Vector localHandlers;
@@ -130,7 +131,7 @@ public class SimpleChain extends BasicHandler implements Chain {
                 ((Handler) handlers.elementAt( i )).undo( msgContext );
             throw (AxisFault) e ;
         }
-        category.debug("Exit: SimpleChain::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::invoke"));
     }
 
     /**
@@ -138,10 +139,10 @@ public class SimpleChain extends BasicHandler implements Chain {
      * later on has faulted - in reverse order.
      */
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: SimpleChain::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleChain::undo"));
         for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
             ((Handler) handlers.elementAt( i )).undo( msgContext );
-        category.debug("Exit: SimpleChain::undo" );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::undo"));
     }
 
     public boolean canHandleBlock(QName qname) {
@@ -153,8 +154,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     public void addHandler(Handler handler) {
         if (handler == null)
-            throw new NullPointerException(
-                "SimpleChain.addHandler: Null handler!");
+            throw new NullPointerException(JavaUtils.getMessage("exception01"));
         
         if ( handlers == null ) handlers = new Vector();
         handlers.add( handler );
@@ -182,7 +182,7 @@ public class SimpleChain extends BasicHandler implements Chain {
     }
 
     public Element getDeploymentData(Document doc) {
-        category.debug("Enter: SimpleChain::getDeploymentData" );
+        category.debug( JavaUtils.getMessage("enter00","SimpleChain::getDeploymentData") );
 
         Element  root = doc.createElementNS("", "chain" );
 
@@ -210,7 +210,7 @@ public class SimpleChain extends BasicHandler implements Chain {
             }
         }
 
-        category.debug("Exit: SimpleChain::getDeploymentData" );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::getDeploymentData") );
         return( root );
     }
 };
