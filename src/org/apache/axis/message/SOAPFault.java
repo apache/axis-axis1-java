@@ -62,11 +62,15 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.DetailEntry;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /** A Fault body element.
  *
@@ -82,7 +86,6 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
                      Attributes attrs, DeserializationContext context)
     {
         super(namespace, localName, prefix, attrs, context);
-        this.fault = fault;
     }
     
     public SOAPFault(AxisFault fault)
@@ -107,7 +110,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
         
         // XXX - Can fault be anything but an AxisFault here?
         if (fault instanceof AxisFault) {
-            AxisFault axisFault = (AxisFault) fault;
+            AxisFault axisFault = fault;
             if (axisFault.getFaultCode() != null) {
                 // Do this BEFORE starting the element, so the prefix gets
                 // registered if needed.
@@ -299,9 +302,18 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     application-specific error information
      */
     public javax.xml.soap.Detail getDetail() {
-        if(this.getChildren()==null || this.getChildren().size()<=0)
+        ArrayList children = this.getChildren();
+        if(children==null || children.size()<=0)
             return null;
-        return (javax.xml.soap.Detail) this.getChildren().get(0);
+
+        // find detail element
+        for (int i=0; i < children.size(); i++) {
+            Object obj = children.get(i);
+            if (obj instanceof javax.xml.soap.Detail) {
+                return (javax.xml.soap.Detail) obj;
+            }
+        }
+        return null;
     }
     
     /**
@@ -318,11 +330,74 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     <CODE>Detail</CODE> object
      */
     public javax.xml.soap.Detail addDetail() throws SOAPException {
-        if(getDetail()!=null){
+        if(getDetail() != null){
             throw new SOAPException(Messages.getMessage("valuePresent"));
         }
-        Detail detail = new Detail(fault);
+        Detail detail = convertToDetail(fault);
         addChildElement(detail);
         return detail;
+    }
+
+
+    /**
+     * Convert the details in an AxisFault to a Detail object
+     *
+     * @param fault source of the fault details
+     * @return a detail element contructed from the AxisFault details
+     * @throws SOAPException
+     */
+    private static Detail convertToDetail(AxisFault fault)
+            throws SOAPException
+    {
+        Detail detail = new Detail(fault);
+        Element[] darray = fault.getFaultDetails();
+        for (int i = 0; i < darray.length; i++)
+        {
+            Element detailtEntryElem = darray[i];
+            DetailEntry detailEntry = detail.addDetailEntry(
+                    new PrefixedQName(detailtEntryElem.getNamespaceURI(),
+                            detailtEntryElem.getLocalName(), detailtEntryElem.getPrefix()));
+            copyChildren(detailEntry, detailtEntryElem);
+        }
+        return detail;
+    }
+
+    /**
+     * Copy the children of a DOM element to a SOAPElement.
+     *
+     * @param soapElement target of the copy
+     * @param domElement source for the copy
+     * @throws SOAPException
+     */
+    private static void copyChildren(SOAPElement soapElement, Element domElement)
+            throws SOAPException
+    {
+        org.w3c.dom.NodeList nl = domElement.getChildNodes();
+        for (int j = 0; j < nl.getLength(); j++)
+        {
+            org.w3c.dom.Node childNode = nl.item(j);
+            if (childNode.getNodeType() == Node.TEXT_NODE)
+            {
+                soapElement.addTextNode(childNode.getNodeValue());
+                break; // only one text node assmed
+            }
+            if (childNode.getNodeType() == Node.ELEMENT_NODE)
+            {
+                String uri = childNode.getNamespaceURI();
+                SOAPElement childSoapElement = null;
+                if (uri == null)
+                {
+                    childSoapElement = soapElement.addChildElement(childNode.getLocalName
+                            ());
+                }
+                else
+                {
+                    childSoapElement = soapElement.addChildElement(
+                            childNode.getLocalName(),
+                            childNode.getPrefix(), uri);
+                }
+                copyChildren(childSoapElement, (Element) childNode);
+            }
+        }
     }
 }

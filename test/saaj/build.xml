@@ -60,7 +60,7 @@ Copyright:
 </target>
 
 <target name="run" >
-  <antcall target="execute-Component" />
+  <antcall target="execute-Component-noServer" />
 </target>
 
 </project>
