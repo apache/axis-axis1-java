@@ -16,11 +16,14 @@
 
 package org.apache.axis.configuration;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -196,7 +199,9 @@ public class FileProvider implements WSDDEngineConfiguration {
         if (!readOnly) {
             try {
                 Document doc = Admin.listConfig(engine);
-                PrintWriter writer = new PrintWriter(new FileOutputStream(configFile));
+                Writer osWriter = new OutputStreamWriter(
+                        new FileOutputStream(configFile),XMLUtils.getEncoding());
+                PrintWriter writer = new PrintWriter(new BufferedWriter(osWriter));
                 XMLUtils.DocumentToWriter(doc, writer);
                 writer.println();
                 writer.close();

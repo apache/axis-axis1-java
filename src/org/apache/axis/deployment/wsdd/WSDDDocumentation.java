@@ -78,7 +78,7 @@ public class WSDDDocumentation
             throws IOException
     {
         context.startElement(QNAME_DOC, null);
-        context.writeString(value);
+        context.writeSafeString(value);
         context.endElement();
     }
 }
