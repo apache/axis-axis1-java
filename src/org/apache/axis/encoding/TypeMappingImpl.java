@@ -59,6 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.ClassUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -444,7 +445,7 @@ public class TypeMappingImpl implements TypeMapping
             if (doAutoTypes &&
                 Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
                 try {
-                    javaType = Class.forName(xmlType.getLocalPart());
+                    javaType = ClassUtils.forName(xmlType.getLocalPart());
                 } catch (ClassNotFoundException e) {
                     return null;
                 }
@@ -585,7 +586,7 @@ public class TypeMappingImpl implements TypeMapping
                 Constants.NS_URI_JAVA.equals(xmlType.getNamespaceURI())) {
             // Classloader?
             try {
-                javaType = Class.forName(xmlType.getLocalPart());
+                javaType = ClassUtils.forName(xmlType.getLocalPart());
             } catch (ClassNotFoundException e) {
             }
         }
