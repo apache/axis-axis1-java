@@ -1722,8 +1722,8 @@ public class Types {
         // If we've already got this type (because it's a native type or
         // because we've already written it), just add the type="" attribute
         // (if appropriate) and return.
-        if (!addToTypesList(qName)) {
-            if (containingElement != null) {
+        if (!addToTypesList(qName) && !anonymous) {
+        	if (containingElement != null) {
                 containingElement.setAttribute("type", getQNameString(qName));
             }
 
@@ -1775,7 +1775,11 @@ public class Types {
         // containingElement to the right QName, and make sure the type is
         // correctly written into the appropriate <schema> element.
         if (anonymous) {
-            containingElement.appendChild(typeEl);
+        	if (typeEl == null) {
+                containingElement.setAttribute("type", getQNameString(getTypeQName(type)));
+        	} else {
+                containingElement.appendChild(typeEl);
+        	}
         } else {
             if (typeEl != null) {
                 typeEl.setAttribute("name", qName.getLocalPart());
