@@ -26,7 +26,8 @@ h1 {  margin-left: -30px}
   <A href="#ConsumingServices">Consuming Web Services with Axis</a><br>
   <A href="#PublishingServices">Publishing Web Services with Axis</a><br>
   <A href="#DataMapping">XML &lt;-&gt; Java Data Mapping in Axis<br>
-  </a><br>
+  </a> <A href="#WSDL">Using WSDL with Axis</a><br>
+  <br>
   <A href="#DeploymentReference">Deployment Reference</a><br>
   <A href="#Glossary">Glossary</a></p>
 <h2><a name="Introduction"></a>Introduction</h2>
@@ -103,6 +104,7 @@ h1 {  margin-left: -30px}
   <li>Support for the SOAP with Attachments specification 
   <li>Supprt for multi-dimensional arrays 
   <li>Support for the SOAP actor attribute 
+  <li>Support for generating complex type definitions in WSDL
   <li>A final deployment descriptor syntax (WSDD)</li>
 </ul>
 <p>All of these items are on the list for the final release.</p>
@@ -297,7 +299,7 @@ J2EE server is running on)
   system without source. Also, the amount of configuration you can do as to how 
   the service gets accessed is pretty limited - you can't specify custom type 
   mappings, or control which Handlers get invoked when people are using your service.</p>
-<h4>Deploying via descriptors</h4>
+<h4><a name="descriptors"></a>Deploying via descriptors</h4>
 To really use the flexibility available to you in Axis, you should get familiar 
 with the Axis <b>deployment descriptor</b> format (<i>note: this particular XML 
 format is just for the alpha release. Axis plans to move to using WSDD (Web Service 
@@ -437,7 +439,7 @@ If this had been a real order processing system, we'd probably have charged you 
   For now, take a look at the ArraySerializer, the BeanSerializer (both in org.apache.axis.encoding), 
   and the DataSer example (in samples/encoding) to see how custom serializers 
   work. </font></i></p>
-<h2>Using WSDL with Axis</h2>
+<h2><a name="WSDL"></a>Using WSDL with Axis</h2>
 <p>The <a href="http://www.w3.org/TR/wsdl">Web Service Description Language</a> 
   is a specification authored by IBM and Microsoft, and supported by many other 
   organizations. WSDL serves to describe Web Services in a structured way. A WSDL 
@@ -478,28 +480,45 @@ If this had been a real order processing system, we'd probably have charged you 
   In other words, you don't need to deal with the endpoint URL, namespace, or 
   parameter arrays which are involved in dynamic invocation via the ServiceClient. 
   The stub hides all that work for you.</p>
-<p><font color="#FF0000"><i>Insert example here</i></font></p>
+<p>You can try an example, assuming you've deployed the service in <a href="#descriptors">example 
+  3</a> above and have your Axis server up and running. Type the following at 
+  the command line:</p>
+<pre>% java org.apache.axis.wsdl.Wsdl2java http://localhost:8080/axis/services/MyService?wsdl</pre>
+<p>You can add the &quot;--verbose&quot; option right before the URL if you want 
+  some more feedback on what the tool is up to. This will generate stub code, 
+  which we'll describe.</p>
 <p>Wsdl2java generates a few classes; here's a rundown of what they are and how 
   to use them:</p>
 <ul>
   <li>There will be an interface for each referenced PortType in the WSDL. These 
-    interfaces are the ones you will actually use to call the remote methods. 
-  </li>
+    interfaces are the ones you will actually use to call the remote methods, 
+    as they contain the operations described in the WSDL. For the example, above, 
+    the generated interface is called MyServicePortType.</li>
   <li>The Stub classes implement the interface, and contain the code which turns 
-    the method invocations into SOAP calls using the Axis ServiceClient.</li>
-  <li>The Service class serves as a factory for obtaining Stub instances</li>
+    the method invocations into SOAP calls using the Axis ServiceClient. For the 
+    example, this is MyServiceSoapBindingStub. The stubs themselves also have 
+    a few additional methods for getting a little more control over the SOAP invocations 
+    - in this version of Axis we won't go into more detail about these, though 
+    you can read the code if you're inclined.</li>
+  <li>The Service class serves as a factory for obtaining Stub instances - MyService 
+    for our example. The Service class will by default make a Stub which points 
+    to the endpoint URL described in the WSDL file, but you may also specify a 
+    different URL when you ask for the PortType.</li>
 </ul>
 <p>So a typical usage of the stub classes would be as follows:</p>
 <pre class="example">public class Tester {
-  public static void main(String [] args)
+  public static void main(String [] args) throws Exception
   {
-    Service service = new Service();
+    // Make a service (PortType factory)
+    MyService service = new MyService();
 
 
-    // Now use the service to get a PortType that we can call
-    PortType port = service.getPort();
-
-    port.method(5, 4);
+    // Now use the service to get a PortType that we can call.
+    MyServicePortType port = service.getMyServicePort();
+ 
+    // Make the actual call
+    String ret = port.serviceMethod(&quot;test string&quot;);
+    System.out.println(&quot;Return val was &quot; + ret);
   }
 } </pre>
 <h4>Skeletons - frameworks for implementing Web Services</h4>
@@ -509,17 +528,22 @@ If this had been a real order processing system, we'd probably have charged you 
   you might want to join a digital marketplace which requires you to make your 
   inventory available via a particular Web Service interface.</p>
 <p>To make skeleton classes, you just specify the &quot;--skeleton&quot; option 
-  to Wsdl2java.</p>
-<p><font color="#FF0000"><i>Insert example here</i></font></p>
+  to Wsdl2java. For instance, if we wanted to replicate the service in the last 
+  example, we'd type:</p>
+<pre>% java org.apache.axis.wsdl.Wsdl2java --skeleton http://localhost:8080/axis/services/MyService?wsdl</pre>
 <p>There are a couple of classes produced by the skeleton generator, so let's 
   take a look at them:</p>
 <ul>
-  <li>The Skeleton proper (in our example, <b>TemperatureBindingSkeleton</b>) 
+  <li>The Skeleton proper (in our example, <b>MyServiceSoapBindingSkeleton</b>) 
     is the class you'll actually deploy as an Axis service. You won't need to 
     edit the code in here at all.</li>
-  <li>The Implementation class (<b>TemperatureBindingImpl</b>) is the actual framework 
-    class which you'll flesh out with your own code.</li>
+  <li>The Implementation class (<b>MyServiceSoapBindingImpl</b>) is the actual 
+    framework class which you'll flesh out with your own code.</li>
 </ul>
+The tool also builds you a &quot;deploy.xml&quot; and an &quot;undeploy.xml&quot; 
+for use with the AdminClient. These files may be used to deploy the service once 
+you've filled in the methods of the Implementation class, compiled the code, and 
+made the classes available to your Axis engine. 
 <h4>Data Types for Stubs and Skeletons</h4>
 <h3></h3>
 <p>WSDL files can contain (or reference) XML Schema describing the data types 
@@ -564,7 +588,13 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
     response=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
     pivot=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
     &gt;</font></b></dt>
-  <dd>Deploys/undeploys an Axis Service. </dd>
+  <dd>Deploys/undeploys an Axis Service. Common options for this element (i.e. 
+    subelements of the form <code><b>&lt;option name=&quot;</b>name<b>&quot; value=&quot;</b>value<b>&quot;/&gt;</b></code> 
+    include:<br>
+    <b>className</b> : the backend implementation class<br>
+    <b>methodName</b> : the allowed methods<br>
+    <b>allowedRoles</b> : comma-separated list of roles allowed to access this 
+    service</dd>
   <dt><b><br>
     <font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
     flow=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler handler...</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
@@ -608,6 +638,25 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
   <dt> 
   <dt><b>EchoHandler</b> 
   <dd>The EchoHandler copies the request message into the response message. 
+  <dt><b>HTTPAuth</b>
+  <dd>The HTTPAuthHandler takes HTTP-specific authentication information (right 
+    now, just Basic authentication) and turns it into generic MessageContext properties 
+    for username and password
+  <dt><b>SimpleAuthenticationHandler</b> 
+  <dd>The SimpleAuthentication handler passes a MessageContext to a SecurityProvider 
+    (see org.apache.axis.security) to authenticate the user using whatever information 
+    the SecurityProvider wants (right now, just the username and password).
+  <dt><b>SimpleAuthorizationHandler</b> 
+  <dd>This handler, typically deployed alongside the SimpleAuthenticationHandler 
+    (a chain called &quot;authChecks&quot; is predefined for just this combination), 
+    checks to make sure that the currently authenticated user satisfies one of 
+    the allowed roles for the target service. Throws a Fault if access is denied.
+  <dt><b>URLMapper</b> 
+  <dd>The URLMapper, an HTTP-specific handler, usually goes on HTTP transport 
+    chains (it is deployed by default). It serves to do service dispatch based 
+    on URL - for instance, this is the Handler which allows URLs like http://localhost:8080/axis/services/MyService?wsdl 
+    to work.
+  <dt>&nbsp;
   <dt> 
   <dt><b>RPCDispatcher</b> 
   <dd>The RPCDispatcher is the pivot point for all RPC services. It accepts the 
@@ -615,7 +664,7 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
     <b><i>className</i></b> = the class of the backend object to invoke<br>
     <b><i>methodName</i></b> = a space-separated list of methods which are exported 
     as web services. The special value &quot;*&quot; matches all public methods 
-    in the class.
+    in the class. 
   <dt> 
   <dt><b>MsgDispatcher</b> 
   <dd>The MsgDispatcher is the pivot point for all messaging services. It accepts 
