@@ -54,19 +54,18 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
-
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
@@ -1647,7 +1646,8 @@ public class SchemaUtils {
         "decimal", "float", "double", "boolean", "time", "dateTime", "duration",
         "date", "gMonth", "gYear", "gYearMonth", "gDay", "gMonthDay", "Name",
         "QName", "NCName", "anyURI", "language", "ID", "IDREF", "IDREFS",
-        "ENTITY", "ENTITIES", "NOTATION", "NMTOKEN", "NMTOKENS"
+        "ENTITY", "ENTITIES", "NOTATION", "NMTOKEN", "NMTOKENS",
+        "anySimpleType"
     };
 
     /** Field schemaTypeSet */
