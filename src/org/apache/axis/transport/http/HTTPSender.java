@@ -292,6 +292,19 @@ public class HTTPSender extends BasicHandler {
             userID = msgContext.getStrProp( MessageContext.USERID );
             passwd = msgContext.getStrProp( MessageContext.PASSWORD );
 
+            // if UserID is not part of the context, but is in the URL, use
+            // the one in the URL.
+            if ( userID == null && tmpURL.getUserInfo() != null) {
+                String info = tmpURL.getUserInfo();
+                int sep = info.indexOf(':');
+                if ( (sep>=0) && (sep+1<info.length()) ) {
+                    userID = info.substring(0,sep);
+                    passwd = info.substring(sep+1);
+                } else {
+                    userID = info;
+                }
+            }
+
             if ( userID != null ) {
                 StringBuffer tmpBuf = new StringBuffer();
                 tmpBuf.append( userID )
