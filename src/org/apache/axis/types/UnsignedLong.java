@@ -17,8 +17,7 @@ package org.apache.axis.types;
 
 import org.apache.axis.utils.Messages;
 
-import java.text.FieldPosition;
-import java.text.NumberFormat;
+import java.math.BigInteger;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedLong
@@ -26,79 +25,61 @@ import java.text.NumberFormat;
  * @author Chris Haddad <chaddad@cobia.net>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedLong">XML Schema 3.3.21</a>
  */
-public class UnsignedLong extends java.lang.Number implements java.lang.Comparable {
+public class UnsignedLong extends java.lang.Number
+        implements java.lang.Comparable {
 
-    protected Double lValue = new Double(0);
+    protected BigInteger lValue = BigInteger.ZERO;
+    private static BigInteger MAX = new BigInteger("18446744073709551615"); // max unsigned long
 
     public UnsignedLong() {
-
     }
 
-    /**
-     * ctor for UnsignedLong
-     * @exception NumberFormatException will be thrown if validation fails
-     */
-    public UnsignedLong(double lValue) throws NumberFormatException {
-      setValue(lValue);
+    public UnsignedLong(double value) throws NumberFormatException {
+        setValue(new BigInteger(Double.toString(value)));
+    }
+
+    public UnsignedLong(BigInteger value) throws NumberFormatException {
+        setValue(value);
+    }
+
+    public UnsignedLong(long lValue) throws NumberFormatException {
+        setValue(BigInteger.valueOf(lValue));
     }
 
     public UnsignedLong(String stValue) throws NumberFormatException {
-      setValue(Double.parseDouble(stValue));
+        setValue(new BigInteger(stValue));
     }
 
-    /**
-     *
-     * validates the data and sets the value for the object.
-     *
-     * @param long value
-     */
-    public void setValue(double lValue) throws NumberFormatException {
-        if (UnsignedLong.isValid(lValue) == false)
-            throw new NumberFormatException(
-                    Messages.getMessage("badUnsignedLong00") +
-                    String.valueOf(lValue) + "]");
-        this.lValue = new Double(lValue);
+    private void setValue(BigInteger val) {
+        if (!UnsignedLong.isValid(val)) {
+            throw new NumberFormatException(Messages.getMessage(
+                    "badUnsignedLong00") +
+                    String.valueOf(val) + "]");
+        }
+        this.lValue = val;
     }
 
-    /**
-     * Format the Double in to a string
-     */ 
-    private String convertDoubleToUnsignedLong(Double lValue) {
-      if (lValue != null) {
-          NumberFormat nf = NumberFormat.getInstance();
-          nf.setGroupingUsed(false);
-          StringBuffer buf = new StringBuffer();
-          FieldPosition pos = new FieldPosition(NumberFormat.INTEGER_FIELD);
-          nf.format(lValue.doubleValue(), buf, pos);
-          return buf.toString();
-      }
-      return null;
-    }
-
-    public String toString(){
-        return convertDoubleToUnsignedLong(lValue);
-    }
-
-    public int hashCode(){
-      if (lValue != null)
-        return lValue.hashCode();
-      else
-        return 0;
-    }
-
-    /**
-     *
-     * validate the value against the xsd definition
-     *
-     */
-    public static boolean isValid(double lValue) {
-      if ( (lValue < 0L)  || (lValue > 18446744073709551615D) )
-        return false;
-      else
+    public static boolean isValid(BigInteger value) {
+        if (value.compareTo(BigInteger.ZERO) == -1 || // less than zero
+                value.compareTo(MAX) == 1) {
+            return false;
+        }
         return true;
     }
 
+    public String toString() {
+        return lValue.toString();
+    }
+
+    public int hashCode() {
+        if (lValue != null)
+            return lValue.hashCode();
+        else
+            return 0;
+    }
+
     private Object __equalsCalc = null;
+
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof UnsignedLong)) return false;
         UnsignedLong other = (UnsignedLong) obj;
@@ -110,31 +91,46 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
         __equalsCalc = obj;
         boolean _equals;
         _equals = true &&
-            ((lValue ==null && other.lValue ==null) ||
-             (lValue !=null &&
-              lValue.equals(other.lValue)));
+                ((lValue == null && other.lValue == null) ||
+                (lValue != null &&
+                lValue.equals(other.lValue)));
         __equalsCalc = null;
         return _equals;
     }
 
     // implement java.lang.comparable interface
     public int compareTo(Object obj) {
-      if (lValue != null)
-        return lValue.compareTo(obj);
-      else
-        if (equals(obj) == true)
+        if (lValue != null)
+            return lValue.compareTo(obj);
+        else if (equals(obj) == true)
             return 0;  // null == null
         else
             return 1;  // object is greater
     }
 
     // Implement java.lang.Number interface
-    public byte byteValue() { return lValue.byteValue(); }
-    public short shortValue() { return lValue.shortValue(); }
-    public int intValue() { return lValue.intValue(); }
-    public long longValue() { return lValue.longValue(); }
-    public double doubleValue() { return lValue.doubleValue(); }
-    public float floatValue() { return lValue.floatValue(); }
+    public byte byteValue() {
+        return lValue.byteValue();
+    }
 
+    public short shortValue() {
+        return lValue.shortValue();
+    }
+
+    public int intValue() {
+        return lValue.intValue();
+    }
+
+    public long longValue() {
+        return lValue.longValue();
+    }
+
+    public double doubleValue() {
+        return lValue.doubleValue();
+    }
+
+    public float floatValue() {
+        return lValue.floatValue();
+    }
 
 }

@@ -19,6 +19,8 @@ package test.types;
 import junit.framework.TestCase;
 import org.apache.axis.types.UnsignedLong;
 
+import java.math.BigInteger;
+
 /**
  * Test validation of types.UnsignedLong
  */
@@ -31,28 +33,28 @@ public class TestUnsignedLong extends TestCase {
     /**
      * Run a failure test.  value should be invalid.
      */
-    private void runFailTest(double value) throws Exception {
+    private void runFailTest(BigInteger value) throws Exception {
         UnsignedLong oUnsignedLong = null;
         try {
             oUnsignedLong = new UnsignedLong(value);
-        }
-        catch (Exception e) { // catch the validation exception
+        } catch (Exception e) { // catch the validation exception
         }
         // object is not iNstantiated on bad data value
         assertNull("validation restriction failed [" +
-                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedLong);
+                String.valueOf(value) + "]. did not restrict bad value.",
+                oUnsignedLong);
     }
 
     /**
      * Run a successful test.  value should be valid.  String should come out
      * as expected.
      */
-    private void runPassTest(double value, String strValue) throws Exception {
+    private void runPassTest(BigInteger value, String strValue)
+            throws Exception {
         UnsignedLong oUnsignedLong = null;
         try {
             oUnsignedLong = new UnsignedLong(value);
-        }
-        catch (Exception e) { // catch the validation exception
+        } catch (Exception e) { // catch the validation exception
             // error!
             assertTrue("validation error thrown and it shouldn't be", false);
         }
@@ -64,40 +66,32 @@ public class TestUnsignedLong extends TestCase {
      * Test that a positive value succeeeds
      */
     public void testPositiveValue() throws Exception {
-        runPassTest(100, "100");
+        runPassTest(new BigInteger("100"), "100");
     }
 
     /**
      * Test that a negative number fails
      */
     public void testNegativeValue() throws Exception {
-        runFailTest(-100);
+        runFailTest(new BigInteger("-100"));
     }
 
     /**
-    * Test that a big number that send the double in scientific notation is OK
-    */
+     * Test Max unsigned long
+     */
     public void testMaxInclusive() throws Exception {
-      runPassTest(123456789, "123456789");
+        runPassTest(new BigInteger("18446744073709551615"),
+                "18446744073709551615");
+    }
+
+    public void testTooLarge() throws Exception {
+        runFailTest(new BigInteger("184467440737095516152"));
     }
 
     /**
-    * Test that a number over MaxInclusive fails
-     * This test wont pass because of precision issues:
-     * expected:<18446744073709551615> but was:<18446744073709552000>
-    */
-/*    
-      public void testBigNumber() throws Exception {
-      runPassTest(18446744073709551615D, "18446744073709551615");
-    }
-*/
-
-    /**
-    * Test that a number at MinInclusive succeeds
-    */
+     * Test that a number at MinInclusive succeeds
+     */
     public void testMinExclusive() throws Exception {
-       runPassTest(0L, "0");
+        runPassTest(BigInteger.ZERO, "0");
     }
-
-
 }
