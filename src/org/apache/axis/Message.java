@@ -307,20 +307,17 @@ public class Message {
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
-        SAXParser parser = XMLUtils.getSAXParser();
         DeserializationContext dser = 
-            new DeserializationContext(msgContext, messageType);
+            new DeserializationContext(is, msgContext, messageType);
         
         // This may throw a SAXException
         try {
-            parser.parse(is, dser);
+            dser.parse();
         } catch (SAXException e) {
             Exception real = e.getException();
             if (real == null)
                 real = e;
             throw new AxisFault(real);
-        } catch (IOException ioe) {
-            throw new AxisFault(ioe);
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);

@@ -141,6 +141,11 @@ public class SerializationContext
             doMultiRefs = shouldSendMultiRefs.booleanValue();
     }
     
+    public void setSendDecl(boolean sendDecl)
+    {
+        sendXMLDecl = sendDecl;
+    }
+    
     public ServiceDescription getServiceDescription()
     {
         return msgContext.getServiceDescription();
@@ -153,6 +158,11 @@ public class SerializationContext
     
     public String getPrefixForURI(String uri)
     {
+        return getPrefixForURI(uri, "ns" + lastPrefixIndex++);
+    }
+    
+    public String getPrefixForURI(String uri, String defaultPrefix)
+    {
         if ((uri == null) || (uri.equals("")))
             return null;
         
@@ -164,13 +174,13 @@ public class SerializationContext
         }
         
         if (prefix == null) {
-            prefix = "ns" + lastPrefixIndex++;
+            prefix = defaultPrefix;
             registerPrefixForURI(prefix, uri);
         }
         
         return prefix;
     }
-    
+
     public void registerPrefixForURI(String prefix, String uri)
     {
         if (DEBUG_LOG) {
@@ -332,7 +342,7 @@ public class SerializationContext
         
         ArrayList currentMappings = nsStack.peek();
         for (int i = 0; i < currentMappings.size(); i++) {
-            NSStack.Mapping map = (NSStack.Mapping)currentMappings.get(i);
+            Mapping map = (Mapping)currentMappings.get(i);
             buf.append(" xmlns");
             if (!map.getPrefix().equals("")) {
                 buf.append(":" + map.getPrefix());
@@ -424,7 +434,9 @@ public class SerializationContext
             for (int i = 0; i < attrMap.getLength(); i++) {
               Attr attr = (Attr)attrMap.item(i);
                             
-              attributes.addAttribute("", attr.getName(), attr.getName(),
+              attributes.addAttribute(attr.getNamespaceURI(),
+                                      attr.getName(),
+                                      attr.getName(),
                                       "CDATA", attr.getValue());
             }
         }

@@ -208,4 +208,10 @@ public class TestDeser extends TestCase {
     public void testUntyped() throws Exception {
          deserialize("<result>10</result>", "10");
     }
+    
+    public static void main(String [] args) throws Exception
+    {
+        TestDeser tester = new TestDeser("test");
+        tester.testUntyped();
+    }
 }

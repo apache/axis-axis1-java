@@ -63,24 +63,6 @@ import java.util.Enumeration;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class NSStack {
-    public static class Mapping {
-        public String namespaceURI;
-        public String prefix;
-        public Mapping(String namespaceURI, String prefix)
-        {
-            this.namespaceURI = namespaceURI;
-            this.prefix = prefix;
-        }
-        
-        public String getNamespaceURI()
-        {
-            return namespaceURI;
-        }
-        public String getPrefix()
-        {
-            return prefix;
-        }
-    }
     private static final boolean DEBUG_LOG = false;
     
     private static final ArrayList EMPTY = new ArrayList();

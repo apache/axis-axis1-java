@@ -16,25 +16,28 @@ import org.apache.axis.encoding.DeserializationContext;
 
 public class SOAPHandler extends DefaultHandler
 {
+    public MessageElement myElement = null;
+    
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
         throws SAXException
     {
+        // By default, make a new element
+        if (!context.doneParsing) {
+            if (myElement == null)
+                myElement = new MessageElement(namespace, localName,
+                                               qName, attributes, context);
+            context.pushNewElement(myElement);
+        }
     }
     
     public void endElement(String namespace, String localName,
                            DeserializationContext context)
         throws SAXException
     {
-    }
-    
-    public final SOAPHandler onStartChild(String namespace, String localName,
-                             Attributes attributes,
-                             DeserializationContext context)
-        throws SAXException
-    {
-        return null;
+        if (myElement != null)
+            myElement.setEndIndex(context.getCurrentRecordPos());
     }
     
     public SOAPHandler onStartChild(String namespace, 
@@ -44,7 +47,8 @@ public class SOAPHandler extends DefaultHandler
                                     DeserializationContext context)
         throws SAXException
     {
-        return null;
+        SOAPHandler handler = new SOAPHandler();
+        return handler;
     }
     
     public void onEndChild(String namespace, String localName,

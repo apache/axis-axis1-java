@@ -59,6 +59,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.apache.axis.AxisFault;
 import org.xml.sax.InputSource;
@@ -80,12 +81,26 @@ public class SOAPEnvelope extends MessageElement
     // This gets passed back into the service description during
     // deserialization 
     public String messageType;
-  
+    
     public SOAPEnvelope()
     {
-        nsDecls.put(Constants.URI_SOAP_ENV, Constants.NSPREFIX_SOAP_ENV);
-        nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSD, Constants.NSPREFIX_SCHEMA_XSD);
-        nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSI, Constants.NSPREFIX_SCHEMA_XSI);
+        this(true);
+    }
+  
+    public SOAPEnvelope(boolean registerPrefixes)
+    {
+        if (registerPrefixes) {
+            if (namespaces == null)
+                namespaces = new ArrayList();
+            
+            namespaces.add(new Mapping(Constants.URI_SOAP_ENV,
+                                       Constants.NSPREFIX_SOAP_ENV));
+            namespaces.add(new Mapping(Constants.URI_CURRENT_SCHEMA_XSD,
+                                       Constants.NSPREFIX_SCHEMA_XSD));
+            namespaces.add(new Mapping(Constants.URI_CURRENT_SCHEMA_XSI,
+                                       Constants.NSPREFIX_SCHEMA_XSI));
+        }
+        
         setDirty(true);
     }
     

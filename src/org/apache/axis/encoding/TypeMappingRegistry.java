@@ -218,8 +218,15 @@ public class TypeMappingRegistry implements Serializer {
         if (attributes != null)
             attrs.setAttributes(attributes);
         
-        attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type",
-                           "xsi:type", "CDATA", context.qName2String(type));
+        String prefix = context.
+                           getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI,
+                                           "xsi");
+        
+        
+        attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI,
+                           "type",
+                           prefix + ":type",
+                           "CDATA", context.qName2String(type));
         return attrs;
     }
     

@@ -254,6 +254,10 @@ public class Deserializer extends SOAPHandler
                                                        localName,
                                                        attributes);
             
+            if (DEBUG_LOG) {
+                System.out.println("Deser got type : " + type);
+            }
+            
             // We know we're deserializing, and we can't seem to figure
             // out a type... so let's give them a string.
             // ??? Is this the right thing to do?
@@ -271,6 +275,14 @@ public class Deserializer extends SOAPHandler
                 startIdx = context.getCurrentRecordPos();
             }
         }
+    }
+    
+    public SOAPHandler onStartChild(String namespace, String localName,
+                             String prefix, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        return null;
     }
     
     public final void startElement(String namespace, String localName,
@@ -294,9 +306,23 @@ public class Deserializer extends SOAPHandler
             }
             
             if (ref instanceof MessageElement) {
+                /*
+                if (this.getClass().equals(Deserializer.class)) {
+                    QName type = ((MessageElement)ref).getType();
+                    Deserializer dser = 
+                                   context.getTypeMappingRegistry().getDeserializer(type);
+                    System.out.println("dser = " + dser);
+                    if (dser != null) {
+                        dser.copyValueTargets(this);
+                        context.replaceElementHandler(dser);
+                    }
+                }
+                */
+                context.replaceElementHandler(new EnvelopeHandler(this));
+
                 SAX2EventRecorder r = context.recorder;
                 context.recorder = null;
-                ((MessageElement)ref).publishContents(context);
+                ((MessageElement)ref).publishToHandler(context);
                 context.recorder = r;
             }
             
@@ -332,10 +358,10 @@ public class Deserializer extends SOAPHandler
             SerializationContext serContext = 
                         new SerializationContext(writer,
                                                  context.getMessageContext());
+            serContext.setSendDecl(false);
             SAXOutputter so = new SAXOutputter(serContext);
-            context.getRecorder().replay(startIdx + 1,
-                                         endIdx - 1,
-                                         so);
+            context.curElement.publishContents(so);
+            
             value = writer.getBuffer().toString();
         }
     }

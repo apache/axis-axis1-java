@@ -10,11 +10,15 @@ import org.apache.axis.utils.QName;
 public class RPCElement extends SOAPBodyElement
 {
     protected Vector params = new Vector();
+    protected boolean needDeser = false;
     
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
         super(namespace, localName, prefix, attributes, context);
+
+        // This came from parsing XML, so we need to deserialize it sometime
+        needDeser = true;
     }
     
     public RPCElement(String namespace, String methodName,
@@ -52,11 +56,29 @@ public class RPCElement extends SOAPBodyElement
         return name;
     }
     
+    public void deserialize() throws Exception
+    {
+        context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+        context.setCurElement(this);
+        
+        needDeser = false;
+        
+        publishToHandler(context);
+    }
+    
     /** This gets the FIRST param whose name matches.
      * !!! Should it return more in the case of duplicates?
      */
     public RPCParam getParam(String name)
     {
+        if (needDeser) {
+            try {
+                deserialize();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
         for (int i = 0; i < params.size(); i++) {
             RPCParam param = (RPCParam)params.elementAt(i);
             if (param.getName().equals(name))
@@ -68,6 +90,15 @@ public class RPCElement extends SOAPBodyElement
     
     public Vector getParams()
     {
+        if (needDeser) {
+            try {
+                deserialize();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
         return params;
     }
     

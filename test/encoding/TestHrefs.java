@@ -33,7 +33,7 @@ public class TestHrefs extends TestCase {
     {
         TestHrefs tester = new TestHrefs("me");
         try {
-            tester.testStringReference();
+            tester.testStringReference2();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,46 +91,16 @@ public class TestHrefs extends TestCase {
        assertEquals("case " + pos, expected, result);
     }
 
-    public void testStringReference() throws Exception {
+    public void testStringReference1() throws Exception {
         String result = 
             "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
         deserialize(result, "abc", 0);
+    }
+
+    public void testStringReference2() throws Exception {
+        String result = 
+            "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
         deserialize(result, "abc", 1);
     }
 
-    /*
-    public void testBoolean() throws Exception {
-        deserialize("<result xsi:type=\"xsd:boolean\">true</result>",
-                    new Boolean(true));
-    }
-
-    public void testDouble() throws Exception {
-        deserialize("<result xsi:type=\"xsd:double\">3.14</result>",
-                    new Double(3.14));
-    }
-
-    public void testFloat() throws Exception {
-        deserialize("<result xsi:type=\"xsd:float\">3.14</result>",
-                    new Float(3.14F));
-    }
-
-    public void testInt() throws Exception {
-        deserialize("<result xsi:type=\"xsd:int\">10</result>",
-                    new Integer(10));
-    }
-
-    public void testLong() throws Exception {
-        deserialize("<result xsi:type=\"xsd:long\">17</result>",
-                    new Long(17));
-    }
-
-    public void testShort() throws Exception {
-        deserialize("<result xsi:type=\"xsd:short\">3</result>",
-                    new Short((short)3));
-    }
-
-    public void testUntyped() throws Exception {
-         deserialize("<result>10</result>", "10");
-    }
-    */
 }
