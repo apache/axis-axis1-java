@@ -23,6 +23,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.EnumSerializerFactory;
 import org.apache.axis.enum.Style;
@@ -115,9 +116,6 @@ public class Types {
     
     /** Which types have we already written? */
     Class [] mappedTypes = null;
-
-    /** For WS-I BP compliance, we can't use "ArrayOf" as a type prefix - instead use "MyArrayOf" (gag) */
-    private String arrayTypePrefix = AxisEngine.jaxrpc11Compliance ? "MyArrayOf" : "ArrayOf";
 
     public static boolean isArray(Class clazz)
     {
@@ -719,6 +717,15 @@ public class Types {
                 Constants.equals(Constants.SOAP_ARRAY, qName)) {
             Class componentType = getComponentType(javaType);
 
+            // For WS-I BP compliance, we can't use "ArrayOf" as a type prefix 
+            // instead use "MyArrayOf" (gag) 
+            String arrayTypePrefix = "ArrayOf";
+
+            if(tm instanceof DefaultJAXRPC11TypeMappingImpl || 
+               defaultTM instanceof DefaultJAXRPC11TypeMappingImpl) {
+                arrayTypePrefix = "MyArrayOf";
+            }
+            
             // If component namespace uri == targetNamespace
             // Construct ArrayOf<componentLocalPart>
             // Else
