@@ -17,6 +17,10 @@ public class TestSer
     public static void main(String args[]) {
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
+        QName dataQName = new QName("typeNS", "Data");
+
+        ServiceDescription service = new ServiceDescription("testService", true);
+        service.addInputParam("struct", dataQName);
         
         Data data = new Data();
         data.stringMember = "String member";
@@ -27,41 +31,54 @@ public class TestSer
         msg.addBodyElement(body);
         
         try {
-            Writer stringWriter = new StringWriter();
-            SerializationContext context = new SerializationContext(stringWriter);
+            Reader reader = null;
             
-            TypeMappingRegistry reg = context.getTypeMappingRegistry();
-            QName dataQName = new QName("typeNS", "Data");
-            
-            reg.addSerializer(Data.class, dataQName, new DataSer());
+            if (args.length == 0) {
+                Writer stringWriter = new StringWriter();
+                SerializationContext context = new SerializationContext(stringWriter);
+                
+                TypeMappingRegistry reg = context.getTypeMappingRegistry();
+                
+                reg.addSerializer(Data.class, dataQName, new DataSer());
 
-            msg.output(context);
-            
-            String msgString = stringWriter.toString();
-            System.out.println("Serialized msg:");
-            System.out.println(msgString);
-            
-            System.out.println("-------");
-            System.out.println("Testing deserialization...");
-            
-            StringReader reader = new StringReader(msgString);
+                msg.output(context);
+                
+                String msgString = stringWriter.toString();
+                System.out.println("Serialized msg:");
+                System.out.println(msgString);
+                
+                System.out.println("-------");
+                System.out.println("Testing deserialization...");
+                
+                reader = new StringReader(msgString);
+            } else {
+                reader = new FileReader(args[0]);
+            }
             
             SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
-            reg = adapter.getContext().getTypeMappingRegistry();
+            adapter.setServiceDescription(service);
+            TypeMappingRegistry reg = adapter.getContext().getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, DataSer.getFactory());
             
             SOAPEnvelope env = adapter.getEnvelope();
+            env.setMessageType(ServiceDescription.REQUEST);
+            
             RPCElement rpcElem = (RPCElement)env.getFirstBody();
             RPCParam struct = rpcElem.getParam("struct");
             if (struct == null)
                 throw new Exception("No <struct> param");
             
+            if (!(struct.getValue() instanceof Data)) {
+                System.out.println("Not a Data object! ");
+                System.out.println(struct.getValue());
+                System.exit(1);
+            }
+            
             Data val = (Data)struct.getValue();
             if (val == null)
                 throw new Exception("No value for struct param");
             
-            System.out.println("String member is '" + val.stringMember +"'");
-            System.out.println("Float member is " + val.floatMember);
+            System.out.println(val.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
