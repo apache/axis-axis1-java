@@ -18,8 +18,8 @@ import org.apache.axis.encoding.* ;
  *      java samples.transport.FileTest XXX
  */
 
-class FileTest {
-  public static void main(String args[]) {
+public class FileTest {
+  public static void main(String args[]) throws Exception {
     FileReader  reader = new FileReader();
     reader.start();
 
@@ -49,14 +49,14 @@ class FileTest {
       call.setTransportInput( "FileSender" );
     
       Float res = new Float(0.0F);
-      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/",
+      res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
                                  "getQuote",
                                  new Object[] {symbol} );
     
       System.out.println( symbol + ": " + res );
 
       // Once more just for fun...
-      res = (Float) call.invoke( "http://schemas.xmlsoap.org/soap/envelope/",
+      res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",
                                  "getQuote",
                                  new Object[] {symbol} );
     
@@ -65,6 +65,7 @@ class FileTest {
     catch( Exception e ) {
       if ( e instanceof AxisFault ) ((AxisFault)e).dump();
       e.printStackTrace();
+        throw e;
     }
 
     reader.halt();
