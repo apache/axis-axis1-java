@@ -77,6 +77,7 @@ public class Wsdl2javaAntTask extends Task
     private boolean skeleton = true ;
     private boolean testCase = false;
     private boolean noImports = false;
+    private boolean all = false;
     private HashMap namespaceMap = new HashMap();
     private String output = "." ;
     private String deployScope = "";
@@ -94,6 +95,7 @@ public class Wsdl2javaAntTask extends Task
             log("\toutput:" + output, Project.MSG_VERBOSE);
             log("\tdeployScope:" + deployScope, Project.MSG_VERBOSE);
             log("\tURL:" + url, Project.MSG_VERBOSE);
+            log("\tall:" + all, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             WSDL2Java emitter = new WSDL2Java();
@@ -118,6 +120,7 @@ public class Wsdl2javaAntTask extends Task
             }
             emitter.generateTestCase(testCase);
             emitter.generateImports(!noImports);
+            emitter.generateAll(all);
             emitter.setOutputDir(output);
             emitter.generateSkeleton(skeleton);
             emitter.verbose(verbose);
@@ -182,6 +185,11 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "url" attribute
     public void setURL(String parameter) {
         this.url = parameter;
+    }
+
+    // The setter for the "all" attribute
+    public void setAll(String parameter) {
+        this.all = Project.toBoolean(parameter);
     }
 
     /** the command arguments */

@@ -93,6 +93,7 @@ public class WSDL2Java {
     protected static final int NOIMPORTS_OPT = 'n';
     protected static final int PACKAGE_OPT = 'p';
     protected static final int DEBUG_OPT = 'D';
+    protected static final int ALL_OPT = 'a';
 
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
@@ -153,6 +154,10 @@ public class WSDL2Java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
                 JavaUtils.getMessage("optionImport00")),
+        new CLOptionDescriptor("all",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                ALL_OPT,
+                JavaUtils.getMessage("optionAll00")),
         new CLOptionDescriptor("Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
@@ -226,6 +231,17 @@ public class WSDL2Java {
     public void generateImports(boolean generateImports) {
         emitter.generateImports(generateImports);
     } // generateImports
+
+    /**
+     * By default, code is generated only for referenced elements.
+     * Call generateAll(true) and WSDL2Java will generate code for all
+     * elements in the scope regardless of whether they are
+     * referenced.  Scope means:  by default, all WSDL files; if
+     * generateImports(false), then only the immediate WSDL file.
+     */
+     public void generateAll(boolean all) {
+         emitter.generateAll(all);
+     } // generateAll
 
     /**
      * Turn on/off debug messages.
@@ -461,6 +477,10 @@ public class WSDL2Java {
 
                     case NOIMPORTS_OPT:
                         wsdl2java.generateImports(false);
+                        break;
+
+                    case ALL_OPT:
+                        wsdl2java.generateAll(true);
                         break;
 
                     case DEBUG_OPT:

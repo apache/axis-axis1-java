@@ -99,7 +99,7 @@
   <!-- Non-soap binding, no code should be emitted for it -->
   <binding name="ReferenceHttpGet" type="serviceNS:PortTypeNotSoap">
     <http:binding verb="GET" />
-    <operation name="myop">
+    <operation name="otherop">
       <http:operation location="/GetReference" />
       <input>
         <http:urlEncoded />

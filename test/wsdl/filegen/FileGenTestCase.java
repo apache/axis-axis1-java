@@ -80,6 +80,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
      */
     protected Set shouldExist() {
         HashSet set = new HashSet();
+        set.add("AllOptionTestCase.java");
         set.add("FileGenTestCase.java");
         set.add("OpFault.java");
         set.add("PortTypeSoap.java");

@@ -427,6 +427,14 @@
         <mapping namespace="http://test.com/reference" package="test.wsdl.filegen"/>
     </wsdl2java>
     
+    <!-- Same test as above but this time the -a flag is turned on -->
+    <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
+               output="build/work"
+               skeleton="no"
+               all="yes">
+        <mapping namespace="http://test.com/reference" package="test.wsdl.filegenAll"/>
+    </wsdl2java>
+    
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
