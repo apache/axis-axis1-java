@@ -139,21 +139,28 @@ public class JavaComplexTypeWriter extends JavaWriter {
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
-        pw.println();
-        if (names.size() > 0) {
-            pw.print("    public " + className + "(");
-            for (int i = 0; i < names.size(); i += 2) {
-                if (i != 0) pw.print(", ");
-                String variable = (String) names.get(i + 1);
-                pw.print((String) names.get(i) + " " + variable);
+
+        // The code used to generate a constructor that set
+        // all of the properties.  
+        boolean fullConstructorGen = false;
+        if (fullConstructorGen) {
+            pw.println();
+            if (names.size() > 0) {
+                pw.print("    public " + className + "(");
+                for (int i = 0; i < names.size(); i += 2) {
+                    if (i != 0) pw.print(", ");
+                    String variable = (String) names.get(i + 1);
+                    pw.print((String) names.get(i) + " " + variable);
+                }
+                pw.println(") {");
+                for (int i = 1; i < names.size(); i += 2) {
+                    String variable = (String) names.get(i);
+                    pw.println("        this." + variable + " = " + variable + ";");
+                }
+                pw.println("    }");
             }
-            pw.println(") {");
-            for (int i = 1; i < names.size(); i += 2) {
-                String variable = (String) names.get(i);
-                pw.println("        this." + variable + " = " + variable + ";");
-            }
-            pw.println("    }");
         }
+
         pw.println();
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);

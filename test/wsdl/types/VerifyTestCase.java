@@ -181,7 +181,10 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
-        ComplexAll complexAll = new ComplexAll(512, "838", "4544");
+        ComplexAll complexAll = new ComplexAll();
+        complexAll.setAreaCode(512);
+        complexAll.setExchange("838");
+        complexAll.setNumber("4544");
         try {
             binding.complexAllIn(complexAll);
         } catch (java.rmi.RemoteException re) {
@@ -198,7 +201,11 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-        ComplexSequence complexSequence = new ComplexSequence(512, "838", "4544");
+        ComplexSequence complexSequence = new ComplexSequence();
+        complexSequence.setAreaCode(512);
+        complexSequence.setExchange("838");
+        complexSequence.setNumber("4544");
+
         try {
             binding.complexSequenceIn(complexSequence);
         } catch (java.rmi.RemoteException re) {
@@ -217,19 +224,24 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         String[] strValue = new String[] {"abc", "def"};
         String[][] optArray = new String[][] {strValue};
-        ElemWComplex elemWComplex = new ElemWComplex(
-                "one",
-                new QName[] {new QName("two")},
-                new Enum[] {Enum.three},
-                EnumString.value1,
-                EnumInt.value1,
-                EnumLong.value2,
-                EnumFloat.value3,
-                EnumDouble.value3,
-                EnumShort.value2,
-                EnumByte.value1,
-                new B(new A(3)),
-                optArray );
+        B b = new B();
+        A a = new A();
+        a.setC(3);
+        b.setD(a);
+        ElemWComplex elemWComplex = new ElemWComplex();
+
+        elemWComplex.setOne( "one");
+        elemWComplex.setTwo( new QName[] {new QName("two")});
+        elemWComplex.setThree( new Enum[] {Enum.three});
+        elemWComplex.setEnum1( EnumString.value1);
+        elemWComplex.setEnum2( EnumInt.value1);
+        elemWComplex.setEnum3( EnumLong.value2);
+        elemWComplex.setEnum4( EnumFloat.value3);
+        elemWComplex.setEnum5( EnumDouble.value3);
+        elemWComplex.setEnum6( EnumShort.value2);
+        elemWComplex.setEnum7( EnumByte.value1);
+        elemWComplex.setNested( b);
+        elemWComplex.setOptArray( optArray );
         try {
             binding.elemWComplexIn(elemWComplex);
         } catch (java.rmi.RemoteException re) {
@@ -288,7 +300,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-        Cat cat = new Cat("meow");
+        Cat cat = new Cat();
+        cat.setPurr("meow");
         try {
             binding.animalIn(cat);
         } catch (java.rmi.RemoteException re) {

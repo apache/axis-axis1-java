@@ -72,11 +72,20 @@ public class MultithreadTestCase extends TestCase {
         public void run() {
             try {
                 for (int i = 0; i < 4; ++i) {
-                    binding.addEntry(
-                            "hi",
-                            new Address(var++, "2", "3", StateType.TX, var++,
-                            new Phone(11, "22", "33")));
-                    Address address = binding.getAddressFromName("hi");
+                    Address address = new Address();
+                    Phone phone = new Phone();
+                    address.setStreetNum(var++);
+                    address.setStreetName("2");
+                    address.setCity("3");
+                    address.setState(StateType.TX);
+                    address.setZip(var++);
+                    phone.setAreaCode(11);
+                    phone.setExchange("22");
+                    phone.setNumber("33");
+                    address.setPhoneNumber(phone);
+                    
+                    binding.addEntry("hi", address); 
+                    Address addressRet = binding.getAddressFromName("hi");
                 }
             } catch (Throwable t) {
                 // There are bound to be connection refused exceptions when the

@@ -26,9 +26,15 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
         String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
         Byte[]   nickName = new Byte[] { new Byte((byte)'g'), new Byte((byte)'e'),
                                          new Byte((byte)'e'), new Byte((byte)'k') };
-        PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets, id, id2,
-                                                  foods,
-                                                  nickName);
+        PersonalInfo pi = new PersonalInfo();
+        pi.setName(name);
+        pi.setFavoriteMovies(movies);
+        pi.setHobbies(hobbies);
+        pi.setPets(pets);
+        pi.setId(id);
+        pi.setId2(id2);
+        pi.setFoods(foods);
+        pi.setNickName(nickName);
 
         // Get the stub and set Session
         test.wsdl.arrays.PersonalInfoBook binding;
