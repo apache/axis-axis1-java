@@ -63,6 +63,7 @@ import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaCORBAProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRMIProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
@@ -104,6 +105,7 @@ public abstract class WSDDProvider
         providers.put(WSDDConstants.QNAME_JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
         providers.put(WSDDConstants.QNAME_HANDLER_PROVIDER, new WSDDHandlerProvider());
         providers.put(WSDDConstants.QNAME_EJB_PROVIDER, new WSDDJavaEJBProvider());
+        providers.put(WSDDConstants.QNAME_BSF_PROVIDER, new WSDDBsfProvider());
         providers.put(WSDDConstants.QNAME_CORBA_PROVIDER, new WSDDJavaCORBAProvider());
         providers.put(WSDDConstants.QNAME_RMI_PROVIDER, new WSDDJavaRMIProvider());
         try {
@@ -137,7 +139,7 @@ public abstract class WSDDProvider
         DiscoverServiceNames dsn = new DiscoverServiceNames(loaders);
         ResourceNameIterator iter = dsn.findResourceNames(PLUGABLE_PROVIDER_FILENAME);
         while (iter.hasNext()) {
-            String className = (String) iter.nextResourceName();
+            String className = iter.nextResourceName();
             try {
                 Object o = Class.forName(className).newInstance();
                 if (o instanceof WSDDProvider) {
@@ -157,7 +159,7 @@ public abstract class WSDDProvider
     /**
      *
      * @param uri XXX
-     * @param _class XXX
+     * @param prov XXX
      */
     public static void registerProvider(QName uri, WSDDProvider prov)
     {
