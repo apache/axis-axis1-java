@@ -53,6 +53,7 @@ public class SimpleListDeserializer extends DeserializerImpl {
     private Constructor constructor = null;
     private Map propertyMap = null;
     private HashMap attributeMap = null;
+    private DeserializationContext context = null;
 
     public QName xmlType;
     public Class javaType;
@@ -217,6 +218,15 @@ public class SimpleListDeserializer extends DeserializerImpl {
                 return new Double(Double.NEGATIVE_INFINITY);
             }
         }
+        if (javaType == QName.class) {
+            int colon = source.lastIndexOf(":");
+            String namespace = colon < 0 ? "" :
+                context.getNamespaceURI(source.substring(0, colon));
+            String localPart = colon < 0 ? source : 
+                source.substring(colon + 1);
+            return new QName(namespace, localPart);
+        }
+
         return constructor.newInstance(new Object [] { source });
     }
     /**
@@ -235,6 +245,8 @@ public class SimpleListDeserializer extends DeserializerImpl {
                                DeserializationContext context)
             throws SAXException
     {
+
+        this.context = context;
 
         // If we have no metadata, we have no attributes.  Q.E.D.
         if (typeDesc == null)
