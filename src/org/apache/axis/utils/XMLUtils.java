@@ -167,14 +167,8 @@ public class XMLUtils {
                         break;
             case '>'  : strBuf.append("&gt;");
                         break;
-            default   : 
-                if (((int)chars[i]) > 127) {
-                        strBuf.append("&#");
-                        strBuf.append((int)chars[i]);
-                        strBuf.append(";");
-                } else {
-                        strBuf.append(chars[i]);
-                }
+            default   : strBuf.append(chars[i]);
+                        break;
             }
         }
 
