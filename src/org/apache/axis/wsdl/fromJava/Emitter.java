@@ -880,10 +880,12 @@ public class Emitter {
      * @param allowedMethods a space separated list of methods to export
      */
     public void setAllowedMethods(String text) {
-        StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
-        allowedMethods = new Vector();
-        while (tokenizer.hasMoreTokens()) {
-            allowedMethods.add(tokenizer.nextToken());
+        if (text != null) {
+            StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
+            allowedMethods = new Vector();
+            while (tokenizer.hasMoreTokens()) {
+                allowedMethods.add(tokenizer.nextToken());
+            }
         }
     }
     
