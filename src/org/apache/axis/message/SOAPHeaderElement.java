@@ -129,7 +129,7 @@ public class SOAPHeaderElement extends MessageElement
         if(!(parent instanceof SOAPHeader))
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
         try {
-            super.setParentElement((SOAPHeader)parent);
+            super.setParentElement(parent);
         } catch (Throwable t) {
             throw new SOAPException(t);
         }
@@ -177,7 +177,12 @@ public class SOAPHeaderElement extends MessageElement
     public void setActor(String a) {
         actor = a ;
     }
-
+    
+    public String getRole() { return( actor ); }
+    public void setRole(String a) {
+        actor = a ;
+    }
+    
     public void setProcessed(boolean value) {
         processed = value ;
     }
