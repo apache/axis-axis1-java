@@ -54,8 +54,6 @@
 
 package org.apache.axis.utils;
 
-import org.apache.axis.AxisProperties;
-
 
 /**
  * This class is used by WSDL2javaAntTask and WSDL2.
@@ -73,10 +71,10 @@ public class DefaultAuthenticator extends java.net.Authenticator {
     protected java.net.PasswordAuthentication getPasswordAuthentication() {
         // if user and password weren't provided, check the system properties
         if (user == null) {
-            user = AxisProperties.getProperty("http.proxyUser", "");
+            user = System.getProperty("http.proxyUser", "");
         }
         if (password == null) {
-            password = AxisProperties.getProperty("http.proxyPassword", "");
+            password = System.getProperty("http.proxyPassword", "");
         }
         return new java.net.PasswordAuthentication(user, password.toCharArray());
     }

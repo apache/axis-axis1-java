@@ -67,7 +67,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.apache.axis.AxisProperties;
 
 /**
  * This class is a utility to serialize a DOM node as XML. This class

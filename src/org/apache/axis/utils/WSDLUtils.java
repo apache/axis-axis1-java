@@ -62,8 +62,6 @@ import javax.wsdl.Port;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 
-import org.apache.axis.AxisProperties;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 

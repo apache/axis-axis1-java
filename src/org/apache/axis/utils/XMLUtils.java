@@ -55,7 +55,6 @@
 
 package org.apache.axis.utils ;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 
 import org.apache.axis.components.logger.LogFactory;

@@ -9,7 +9,6 @@
 // version 4.1 (Jan 30, 2002).  Only the package name has been changed.
 package org.apache.axis.utils;
 
-import org.apache.axis.AxisProperties;
 
 /**
  * CLUtil offers basic utility operations for use both internal and external to package.

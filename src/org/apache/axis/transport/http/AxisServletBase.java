@@ -57,7 +57,6 @@ package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;

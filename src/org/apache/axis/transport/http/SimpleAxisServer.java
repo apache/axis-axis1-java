@@ -55,7 +55,6 @@
 
 package org.apache.axis.transport.http;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
