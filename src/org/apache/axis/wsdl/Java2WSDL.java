@@ -306,6 +306,10 @@ public class Java2WSDL {
                         emitter.setDisallowedMethods(option.getArgument());
                         break;
                         
+                    case PORTTYPE_NAME_OPT:
+                        emitter.setPortTypeName(option.getArgument());
+                        break;
+                        
                     case STOP_CLASSES_OPT:
                         emitter.setStopClasses(option.getArgument());
                         break;
