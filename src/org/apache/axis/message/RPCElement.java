@@ -159,9 +159,7 @@ public class RPCElement extends SOAPBodyElement
                     } catch (ClassNotFoundException e) {
                         throw new SAXException(e);
                     }
-                    TypeMapping tm = (TypeMapping)msgContext.
-                            getTypeMappingRegistry().
-                            getTypeMapping(msgContext.getEncodingStyle());
+                    TypeMapping tm = msgContext.getTypeMapping();
                     serviceDesc.setTypeMapping(tm);
                     serviceDesc.setImplClass(jc.getJavaClass());
                 }
