@@ -59,6 +59,7 @@ import junit.framework.TestCase;
 import org.apache.axis.client.AdminClient;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.transport.http.SimpleAxisWorker;
 import org.apache.commons.logging.Log;
 
 import samples.encoding.TestElem;
@@ -75,7 +76,7 @@ public class TestElementSample extends TestCase {
     }
     
     public void doTestElement () throws Exception {
-        String thisHost = "localhost";
+        String thisHost = SimpleAxisWorker.getLocalHost();
         String thisPort = System.getProperty("test.functional.ServicePort","8080");
 
         String[] args = {thisHost,thisPort};
