@@ -61,11 +61,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Vector;
-
+import java.util.Map;
+import java.util.HashMap;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.utils.ClassUtils;
@@ -86,6 +88,7 @@ public abstract class BaseDeserializerFactory
     
     transient protected Constructor deserClassConstructor = null;
     transient protected Method getDeserializer = null;
+    transient protected ThreadLocal methodCache = new ThreadLocal();
 
     /**
      * Constructor
@@ -185,10 +188,31 @@ public abstract class BaseDeserializerFactory
     }
 
     /**
+     * Returns the per thread hashmap (for method caching)  
+     */
+    private Map getMethodCache() {
+        Map map = (Map)methodCache.get();
+        if(map == null) {
+            map = new HashMap();
+            methodCache.set(map);
+        }
+        return map;
+    }
+    
+    /**
      * Returns the "getDeserializer" method if any.
      */
     private Method getDeserializerMethod(Class clazz) {
+        String className = clazz.getName();
+        Map cache = getMethodCache();
         Method method = null;
+        
+        // Check the cache first.
+        if(cache.containsKey(className)) {
+            method = (Method) cache.get(clazz);
+            return method;
+        }
+        
         try {
             method = 
                 clazz.getMethod("getDeserializer",
@@ -208,6 +232,8 @@ public abstract class BaseDeserializerFactory
             } catch (NoSuchMethodException e) {
             } catch (ClassNotFoundException e) {}
         }
+        
+        cache.put(className, method);
         return method;
     }
     
