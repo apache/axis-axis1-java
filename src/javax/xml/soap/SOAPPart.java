@@ -95,7 +95,7 @@ import java.util.Iterator;
  * The <CODE>SOAPPart</CODE> method <CODE>getEnvelope</CODE> can
  * be used to retrieve the <CODE>SOAPEnvelope</CODE> object.</P>
  */
-public abstract class SOAPPart {
+public abstract class SOAPPart implements org.w3c.dom.Document {
 
     /**  */
     public SOAPPart() {}
@@ -121,7 +121,7 @@ public abstract class SOAPPart {
 
         String as[] = getMimeHeader("Content-Id");
 
-        if (as != null) {
+        if (as != null && as.length > 0) {
             return as[0];
         } else {
             return null;
@@ -139,7 +139,7 @@ public abstract class SOAPPart {
 
         String as[] = getMimeHeader("Content-Location");
 
-        if (as != null) {
+        if (as != null && as.length > 0) {
             return as[0];
         } else {
             return null;

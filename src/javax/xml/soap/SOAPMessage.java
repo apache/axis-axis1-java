@@ -338,4 +338,15 @@ public abstract class SOAPMessage {
      */
     public abstract void writeTo(OutputStream out)
         throws SOAPException, IOException;
+
+    public abstract SOAPBody getSOAPBody() throws SOAPException;
+
+    public abstract SOAPHeader getSOAPHeader() throws SOAPException;
+
+    public abstract void setProperty(String s, Object obj) throws SOAPException;
+
+    public abstract Object getProperty(String s) throws SOAPException;
+
+    public static final String CHARACTER_SET_ENCODING = "javax.xml.soap.character-set-encoding";
+    public static final String WRITE_XML_DECLARATION = "javax.xml.soap.write-xml-declaration";
 }

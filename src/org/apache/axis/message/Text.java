@@ -56,6 +56,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.InternalException;
+import org.w3c.dom.DOMException;
 
 /**
  * A representation of a node whose value is text. A <CODE>
@@ -86,5 +87,41 @@ public class Text extends MessageElement implements javax.xml.soap.Text {
         if(temp.startsWith("<!--") && temp.endsWith("-->"))
             return true;
         return false;
+    }
+
+    public org.w3c.dom.Text splitText(int offset) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public int getLength() {
+        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void deleteData(int offset, int count) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getData() throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String substringData(int offset, int count) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void replaceData(int offset, int count, String arg) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void insertData(int offset, String arg) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void appendData(String arg) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setData(String data) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
     }
 }

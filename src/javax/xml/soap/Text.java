@@ -59,7 +59,7 @@ package javax.xml.soap;
  *   Text</CODE> object may represent text that is content or text
  *   that is a comment.
  */
-public interface Text extends Node {
+public interface Text extends Node, org.w3c.dom.Text {
 
     /**
      * Retrieves whether this <CODE>Text</CODE> object

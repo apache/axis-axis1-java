@@ -69,6 +69,11 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -312,7 +317,55 @@ public class MessageElement implements SOAPElement, Serializable
 
     public String getHref() { return href; }
 
-    public Attributes getAttributes() { return attributes; }
+    public Attributes getAttributesEx() { return attributes; }
+
+    public Node getFirstChild() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getLastChild() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getNextSibling() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getParentNode() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getPreviousSibling() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node cloneNode(boolean deep) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getChildNodes() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean isSupported(String feature, String version) {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node appendChild(Node newChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node removeChild(Node oldChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node insertBefore(Node newChild, Node refChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
 
     /**
      * Obtain an Attributes collection consisting of all attributes
@@ -350,9 +403,51 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public String getPrefix() { return( prefix ); }
+
+    public void setNodeValue(String nodeValue) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
     public void setPrefix(String prefix) { this.prefix = prefix; }
 
+    public Document getOwnerDocument() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NamedNodeMap getAttributes() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public short getNodeType() {
+        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void normalize() {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasAttributes() {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasChildNodes() {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getLocalName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
     public String getNamespaceURI() { return( namespaceURI ); }
+
+    public String getNodeName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getNodeValue() throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
     public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
 
     public QName getType() {
@@ -386,6 +481,14 @@ public class MessageElement implements SOAPElement, Serializable
             return parent.getEncodingStyle();
         }
         return encodingStyle;
+    }
+
+    public void removeContents() {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Iterator getVisibleNamespacePrefixes() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
     /**
@@ -918,6 +1021,10 @@ public class MessageElement implements SOAPElement, Serializable
      */
     public void recycleNode() {}
 
+    public void setValue(String s) {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
     // JAXM SOAPElement methods...
 
     public SOAPElement addChildElement(Name name) throws SOAPException {
@@ -1093,6 +1200,70 @@ public class MessageElement implements SOAPElement, Serializable
             }
         }
         return c.iterator();
+    }
+
+    public String getTagName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void removeAttribute(String name) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasAttribute(String name) {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getAttribute(String name) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setAttribute(String name, String value) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasAttributeNS(String namespaceURI, String localName) {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr getAttributeNode(String name) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr setAttributeNode(Attr newAttr) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr setAttributeNodeNS(Attr newAttr) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getElementsByTagName(String name) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getAttributeNS(String namespaceURI, String localName) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr getAttributeNodeNS(String namespaceURI, String localName) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
     // setEncodingStyle implemented above

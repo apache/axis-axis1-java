@@ -149,4 +149,10 @@ public interface SOAPHeader extends SOAPElement {
      * @see #examineHeaderElements(java.lang.String) examineHeaderElements(java.lang.String)
      */
     public abstract Iterator extractHeaderElements(String actor);
+    
+    public abstract Iterator examineMustUnderstandHeaderElements(String s);
+    
+    public abstract Iterator examineAllHeaderElements();
+
+    public abstract Iterator extractAllHeaderElements();
 }

@@ -68,6 +68,21 @@ import org.apache.axis.utils.SessionUtils;
 import org.apache.commons.logging.Log;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.EntityReference;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
@@ -805,6 +820,174 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         } catch (AxisFault af) {
             throw new SOAPException(af);
         }
+    }
+
+    public DOMImplementation getImplementation() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public DocumentFragment createDocumentFragment() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public DocumentType getDoctype() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Element getDocumentElement() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr createAttribute(String name) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public CDATASection createCDATASection(String data) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Comment createComment(String data) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Element createElement(String tagName) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Element getElementById(String elementId) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public EntityReference createEntityReference(String name) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node importNode(Node importedNode, boolean deep) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getElementsByTagName(String tagname) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Text createTextNode(String data) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Element createElementNS(String namespaceURI, String qualifiedName) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public ProcessingInstruction createProcessingInstruction(String target, String data) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public short getNodeType() {
+        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void normalize() {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasAttributes() {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean hasChildNodes() {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getLocalName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getNamespaceURI() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getNodeName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getNodeValue() throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public String getPrefix() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setNodeValue(String nodeValue) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setPrefix(String prefix) throws DOMException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Document getOwnerDocument() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NamedNodeMap getAttributes() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getFirstChild() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getLastChild() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getNextSibling() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getParentNode() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node getPreviousSibling() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node cloneNode(boolean deep) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public NodeList getChildNodes() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public boolean isSupported(String feature, String version) {
+        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node appendChild(Node newChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node removeChild(Node oldChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node insertBefore(Node newChild, Node refChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 }
 

@@ -65,6 +65,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -73,6 +74,7 @@ import javax.xml.soap.SOAPException;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Holder for body elements.
@@ -167,7 +169,7 @@ public class SOAPBody extends MessageElement
 
         // Output <SOAP-ENV:Body>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
-                                       Constants.ELEM_BODY), getAttributes());
+                                       Constants.ELEM_BODY), getAttributesEx());
         Enumeration enum = bodyElements.elements();
         while (enum.hasMoreElements()) {
             SOAPBodyElement body = (SOAPBodyElement)enum.nextElement();
@@ -255,6 +257,18 @@ public class SOAPBody extends MessageElement
         SOAPBodyElement bodyElement = new SOAPBodyElement(name);
         addBodyElement(bodyElement);
         return bodyElement;
+    }
+
+    public javax.xml.soap.SOAPFault addFault(Name name, String s, Locale locale) throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public javax.xml.soap.SOAPFault addFault(Name name, String s) throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public javax.xml.soap.SOAPBodyElement addDocument(Document document) throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
     public javax.xml.soap.SOAPFault addFault() throws SOAPException {

@@ -162,6 +162,18 @@ public class SOAPHeader extends MessageElement
         return results.iterator();
     }
 
+    public Iterator examineMustUnderstandHeaderElements(String s) {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Iterator examineAllHeaderElements() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Iterator extractAllHeaderElements() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
     Vector getHeaders() {
         return headers;
     }
