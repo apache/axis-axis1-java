@@ -278,6 +278,9 @@ public class JWSProcessor extends BasicHandler
             sd.setImplClass(cl.loadClass(clsName));
             sd.setTypeMapping(msgContext.getTypeMapping());
 
+            // Set engine, which hooks up type mappings.
+            rpc.setEngine(msgContext.getAxisEngine());
+            
             rpc.init();   // ??
             if (doWsdl)
                 rpc.generateWSDL(msgContext);
