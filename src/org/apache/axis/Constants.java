@@ -260,7 +260,7 @@ public class Constants {
         return false;
     }
 
-    // Misc SOAP Namespaces
+    // Misc SOAP Namespaces / URIs
     public static final String URI_SOAP11_NEXT_ACTOR =
                                      "http://schemas.xmlsoap.org/soap/actor/next" ;
     public static final String URI_SOAP12_NEXT_ACTOR =
@@ -274,6 +274,11 @@ public class Constants {
 
     public static final String URI_SOAP12_RPC =
                                      "http://www.w3.org/2002/06/soap-rpc";
+    
+    public static final String URI_SOAP12_NONE_ROLE =
+                         "http://www.w3.org/2002/06/soap-envelope/role/none";    
+    public static final String URI_SOAP12_ULTIMATE_ROLE =
+             "http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver";    
 
     public static final String URI_SOAP11_HTTP =
                                      "http://schemas.xmlsoap.org/soap/http";

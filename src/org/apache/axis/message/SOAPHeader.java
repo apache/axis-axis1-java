@@ -169,12 +169,18 @@ public class SOAPHeader extends MessageElement
     Vector getHeadersByActor(ArrayList actors) {
         Vector results = new Vector();
         Iterator i = headers.iterator();
-        String nextActor = getEnvelope().getSOAPConstants().getNextRoleURI();
+        SOAPConstants soapVer = getEnvelope().getSOAPConstants();
+        boolean isSOAP12 = soapVer == SOAPConstants.SOAP12_CONSTANTS;
+        String nextActor = soapVer.getNextRoleURI();
         while (i.hasNext()) {
             SOAPHeaderElement header = (SOAPHeaderElement)i.next();
             
             // Always process NEXT's, and then anything else in our list
+            // For now, also always process ultimateReceiver role if SOAP 1.2
             if (nextActor.equals(header.getActor()) ||
+                (isSOAP12 && 
+                    Constants.URI_SOAP12_ULTIMATE_ROLE.equals(
+                                                        header.getActor())) ||
                 (actors != null && actors.contains(header.getActor()))) {
                 results.add(header);
             }
