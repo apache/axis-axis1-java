@@ -69,6 +69,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
+import java.io.CharArrayWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -87,7 +88,8 @@ import java.util.Set;
  */
 public class SimpleDeserializer extends DeserializerImpl {
 
-    StringBuffer val = new StringBuffer();
+    //StringBuffer val = new StringBuffer(); -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
+    private final CharArrayWriter val = new CharArrayWriter();
     private Constructor constructor = null;
     private Map propertyMap = null;
     private HashMap attributeMap = null;
@@ -147,7 +149,8 @@ public class SimpleDeserializer extends DeserializerImpl {
      * Reset deserializer for re-use
      */
     public void reset() {
-        val.setLength(0); // Reset string buffer back to zero
+        //val.setLength(0); // Reset string buffer back to zero -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
+        val.reset();
         attributeMap = null; // Remove attribute map
         isNil = false; // Don't know if nil
         isEnded = false; // Indicate the end of element not yet called
@@ -194,7 +197,8 @@ public class SimpleDeserializer extends DeserializerImpl {
     public void characters(char [] chars, int start, int end)
         throws SAXException
     {
-        val.append(chars, start, end);
+        //val.append(chars, start, end); -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
+        val.write(chars,start,end);
     }
     
     /**
@@ -205,7 +209,8 @@ public class SimpleDeserializer extends DeserializerImpl {
                            DeserializationContext context)
         throws SAXException
     {
-        if (isNil || val == null) {
+        //if (isNil || val == null) {  -- FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=11945
+        if (isNil) {
             value = null;
             return;
         }
