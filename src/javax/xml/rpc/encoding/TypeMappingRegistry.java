@@ -62,7 +62,6 @@ import java.util.Iterator;
  * The interface javax.xml.rpc.encoding.TypeMappingRegistry defines a registry for TypeMapping instances for 
  * the different encoding styles. 
  *
- * @author
  * @version 0.1
  */
 public interface TypeMappingRegistry extends java.io.Serializable {

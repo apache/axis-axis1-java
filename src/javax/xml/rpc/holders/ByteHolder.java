@@ -57,7 +57,6 @@ package javax.xml.rpc.holders;
 /**
  * Class ByteHolder
  *
- * @author
  * @version 0.1
  */
 public final class ByteHolder implements java.io.Serializable {

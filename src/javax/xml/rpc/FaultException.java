@@ -57,7 +57,6 @@ package javax.xml.rpc;
 /**
  * Class FaultException
  *
- * @author
  * @version 0.1
  */
 public class FaultException extends java.lang.Exception {

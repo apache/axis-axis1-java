@@ -60,7 +60,6 @@ import javax.xml.rpc.namespace.QName;
 /**
  * Interface XMLType
  *
- * @author
  * @version 0.1
  */
 public interface XMLType extends java.io.Serializable {
@@ -68,7 +67,7 @@ public interface XMLType extends java.io.Serializable {
     /**
      * Method getType
      *
-     * @return
+     * @return QName
      */
     public QName getType();
 

@@ -59,7 +59,6 @@ package javax.xml.rpc.namespace;
  * QName class represents a qualified name based on "Namespaces in XML" specification. A QName is represented as: 
  * QName ::= (Prefix ':') ? LocalPart 
  *
- * @author
  * @version 0.1
  */
 public class QName {
@@ -107,7 +106,7 @@ public class QName {
     /**
      * Gets the Namespace URI for this QName
      *
-     * @return
+     * @return namespaceURI
      */
     public String getNamespaceURI() {
         return (namespaceURI);

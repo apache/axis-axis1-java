@@ -73,7 +73,6 @@ import javax.xml.rpc.namespace.QName;
  * java.io.Serializable and javax.naming.Referenceable 
  * interfaces to support registration in the JNDI namespace.
  *
- * @author
  * @version 0.1
  */
 public interface Service

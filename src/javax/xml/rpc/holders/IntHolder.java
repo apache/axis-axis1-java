@@ -57,7 +57,6 @@ package javax.xml.rpc.holders;
 /**
  * Class IntHolder
  *
- * @author
  * @version 0.1
  */
 public final class IntHolder implements java.io.Serializable {

@@ -60,7 +60,6 @@ package javax.xml.rpc.encoding;
  * a Java object to an XML representation using a specific XML processing mechanism and based on the specified type 
  * mapping and encoding style. 
  *
- * @author
  * @version 0.1
  */
 public interface Serializer extends java.io.Serializable {
