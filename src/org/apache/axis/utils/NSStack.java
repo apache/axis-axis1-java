@@ -118,7 +118,7 @@ public class NSStack {
      * Remove the top frame from the stack.
      */
     public void pop() {
-        while (stack[top] != null) top--;
+        clearFrame();
 
         if (top == 0) {
             if (log.isTraceEnabled())
@@ -215,15 +215,27 @@ public class NSStack {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
         
+        int hash = namespaceURI.hashCode();
+
         for (int cursor=top; cursor>0; cursor--) {
             Mapping map = stack[cursor];
             if (map == null) continue;
 
-            if (map.getNamespaceURI().equals(namespaceURI)) {
+            if (map.getNamespaceHash() == hash &&
+                map.getNamespaceURI().equals(namespaceURI)) {
                 String possiblePrefix = map.getPrefix();
-                if (getNamespaceURI(possiblePrefix).equals(namespaceURI) &&
-                    (!noDefault || !"".equals(possiblePrefix)))
-                    return possiblePrefix;
+                if (noDefault && possiblePrefix.length() == 0) continue;
+
+                // now make sure that this is the first occurance of this 
+                // particular prefix
+                int ppHash = possiblePrefix.hashCode();
+                for (int cursor2=top; true; cursor2--) {
+                   if (cursor2 == cursor) return possiblePrefix;
+                   map = stack[cursor2];
+                   if (map == null) continue;
+                   if (ppHash == map.getPrefixHash() &&
+                       possiblePrefix.equals(map.getPrefix())) break;
+                }
             }
         }
         
@@ -245,11 +257,13 @@ public class NSStack {
         if (prefix == null)
             prefix = "";
 
+        int hash = prefix.hashCode();
+
         for (int cursor=top; cursor>0; cursor--) {
             Mapping map = stack[cursor];
             if (map == null) continue;
         
-            if (map.getPrefix().equals(prefix))
+            if (map.getPrefixHash() == hash && map.getPrefix().equals(prefix))
                 return map.getNamespaceURI();
         }
         

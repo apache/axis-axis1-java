@@ -58,25 +58,41 @@ package org.apache.axis.utils;
 import java.io.Serializable;
 
 public class Mapping implements Serializable {
-    public String namespaceURI;
-    public String prefix;
-    public Mapping(String namespaceURI, String prefix)
-    {
-        this.namespaceURI = namespaceURI;
-        this.prefix = prefix;
+    private String namespaceURI;
+    private int namespaceHash;
+
+    private String prefix;
+    private int prefixHash;
+
+    public Mapping (String namespaceURI, String prefix) {
+        setPrefix(prefix);
+        setNamespaceURI(namespaceURI);
     }
     
-    public String getNamespaceURI()
-    {
+    public String getNamespaceURI() {
         return namespaceURI;
     }
 
-    public void setNamespaceURI(String namespaceURI) {
-        this.namespaceURI = namespaceURI;
+    public int getNamespaceHash() {
+        return namespaceHash;
     }
 
-    public String getPrefix()
-    {
+    public void setNamespaceURI (String namespaceURI) {
+        this.namespaceURI = namespaceURI;
+        this.namespaceHash = namespaceURI.hashCode();
+    }
+
+    public String getPrefix() {
         return prefix;
     }
+
+    public int getPrefixHash() {
+        return prefixHash;
+    }
+
+    public void setPrefix (String prefix) {
+        this.prefix = prefix;
+        this.prefixHash = prefix.hashCode();
+    }
+
 }
