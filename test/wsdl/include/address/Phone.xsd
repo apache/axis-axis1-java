@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<xsd:schema targetNamespace="urn:AddressFetcher2"
+              xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+  <xsd:complexType name="phone">
+    <xsd:all>
+      <xsd:element name="areaCode" type="xsd:int"/>
+      <xsd:element name="exchange" type="xsd:string"/>
+      <xsd:element name="number" type="xsd:string"/>
+    </xsd:all>
+  </xsd:complexType>
+</xsd:schema>

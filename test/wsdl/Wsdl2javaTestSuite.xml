@@ -484,6 +484,15 @@
         <mapping namespace="http://test.globus.org/types" package="test.wsdl.import2.types"/>
     </wsdl2java>
 
+    <!-- Include test -->
+    <wsdl2java url="test/wsdl/include/AddressBook.wsdl"
+               output="build/work"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+        <mapping namespace="urn:AddressFetcher2" package="test.wsdl.include"/>
+    </wsdl2java>
+
     <!-- InOut Sample -->
     <wsdl2java url="test/wsdl/inout/inout.wsdl"
                output="build/work"
