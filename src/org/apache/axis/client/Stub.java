@@ -368,6 +368,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
 
     /**
      * Get the array of attachments
+     * The attachment array is cleared after this, so it is a destructive operation.
+     * @return the array of attachments that was in the message, or an empty array if
+     * there were none
      */ 
     public Object[] getAttachments() {
         Object[] array = new Object[attachments.size()];
