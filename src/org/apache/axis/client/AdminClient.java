@@ -64,6 +64,7 @@ import org.apache.axis.Message ;
 import org.apache.axis.MessageContext ;
 import org.apache.axis.client.HTTPMessage ;
 import org.apache.axis.utils.Debug ;
+import org.apache.axis.encoding.ServiceDescription;
 
 /**
  *
@@ -100,7 +101,7 @@ public class AdminClient {
         HTTPMessage     hMsg       = new HTTPMessage( opts.getURL(), 
                                                       "AdminService" );
         MessageContext  msgContext = new MessageContext();
-        Message         inMsg      = new Message( input, "InputStream" );
+        Message         inMsg      = new Message( input, "BodyInputStream" );
         Message         outMsg     = null ;
         msgContext.setRequestMessage( inMsg );
 
@@ -111,7 +112,9 @@ public class AdminClient {
         hMsg.invoke( msgContext );
 
         outMsg = msgContext.getResponseMessage();
+        outMsg.setServiceDescription(new ServiceDescription("Admin", false));
         input.close();
+        outMsg.getAs("SOAPEnvelope");
         System.out.println( outMsg.getAs( "String" ) );
       }
     }

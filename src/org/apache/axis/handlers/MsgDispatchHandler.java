@@ -61,6 +61,8 @@ import java.lang.reflect.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.DOMBody;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
@@ -100,8 +102,21 @@ public class MsgDispatchHandler extends BasicHandler {
       Object          obj    = cls.newInstance();
       Class[]         argClasses = new Class[2];
       Object[]        argObjects = new Object[2];
-
+      
       Message       reqMsg  = msgContext.getRequestMessage();
+
+      /** !!! KLUDGE WARNING
+       * We need some way of associating ServiceDescriptions with actual
+       * services... and then at the point when we figure out which service
+       * we'll be calling (which might be right away (static dispatch), after
+       * looking at the URL (transport-level dispatch), or even after looking
+       * into the SOAP message itself...)
+       */
+      if (clsName.equals("org.apache.axis.utils.Admin")) {
+          ServiceDescription sd = new ServiceDescription("Admin", false);
+          reqMsg.setServiceDescription(sd);
+      }
+
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       
       System.err.println("Parsed the request message!");
@@ -141,13 +156,7 @@ public class MsgDispatchHandler extends BasicHandler {
       Document retDoc = (Document) method.invoke( obj, argObjects );
   
       if ( retDoc != null ) {
-          // !!! This doesn't really work yet... need to figure out how to
-          //     inject XML into just the Body of a message.....
-          
-          SOAPBodyElement el = new SOAPBodyElement();
-          String retString = XMLUtils.DocumentToString(retDoc);
-          System.out.println(retString);
-          el.setValue(retString);
+          SOAPBodyElement el = new DOMBody(retDoc.getDocumentElement());
           resEnv.addBodyElement(el);
       }
       

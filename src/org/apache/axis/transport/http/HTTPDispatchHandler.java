@@ -166,7 +166,7 @@ public class HTTPDispatchHandler extends BasicHandler {
 
       reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
       
-      System.out.println("Msg: " + reqEnv);
+      //System.out.println("Msg: " + reqEnv);
 
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();

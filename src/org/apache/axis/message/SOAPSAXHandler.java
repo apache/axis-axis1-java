@@ -59,6 +59,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.axis.*;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.utils.NSStack;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
@@ -116,6 +117,24 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     private int recordingDepth = 0;
 
     protected DeserializationContext context;
+    protected ServiceDescription serviceDesc = null;
+    
+    class BodyFactory implements ElementFactory {
+        public MessageElement createElement(String namespace,
+                                            String localName,
+                                            Attributes attributes,
+                                            DeserializationContext context)
+        {
+            if ((serviceDesc != null) && (!serviceDesc.isRPC())) {
+                return new SOAPBodyElement(namespace, localName, attributes, context);
+            }
+            
+            return RPCElement.getFactory().createElement(namespace,
+                                                         localName,
+                                                         attributes,
+                                                         context);
+        }
+    }
 
     /** These guys know how to create the right MessageElements (and thus
      * sub-handlers) for particular XML elements.  Right now the headers
@@ -128,7 +147,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                             new ElementRegistry(SOAPHeader.factory());
     
     // Body factory. Only doing rpc bodies for right now...
-    ElementFactory bodyFactory = RPCElement.getFactory();
+    ElementFactory bodyFactory = new BodyFactory();
 
     public SOAPSAXHandler()
     {
@@ -137,6 +156,11 @@ public abstract class SOAPSAXHandler extends DefaultHandler
 
         // just testing...
         headerRegistry.registerFactory("urn:myNS", "Debug", DebugHeader.getFactory());
+    }
+    
+    public void setServiceDescription(ServiceDescription serviceDesc)
+    {
+        this.serviceDesc = serviceDesc;
     }
     
     public int getState()

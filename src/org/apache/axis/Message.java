@@ -61,6 +61,7 @@ import org.w3c.dom.* ;
 import org.xml.sax.*;
 
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
@@ -79,6 +80,7 @@ public class Message {
   private Object currentMessage ;
   private String currentForm ;
   private boolean isResponse = false;
+  private ServiceDescription serviceDesc = null;
 
   /**
    * Just something to us working...
@@ -103,6 +105,15 @@ public class Message {
   }
   
   public void markAsResponse() { isResponse = true; }
+  
+  public ServiceDescription getServiceDescription()
+  {
+      return serviceDesc;
+  }
+  public void setServiceDescription(ServiceDescription serviceDesc)
+  {
+      this.serviceDesc = serviceDesc;
+  }
 
   public void setCurrentMessage(Object currMsg, String form) {
     Debug.Print( 2, "Setting current message form to: " + form );
@@ -122,6 +133,7 @@ public class Message {
     if ( desiredType.equals( "Document" )) return( getAsDocument() );
     if ( desiredType.equals( "String" )) return( getAsString() );
     if ( desiredType.equals( "SOAPEnvelope" )) return( getAsSOAPEnvelope() );
+    // ??? if ( desiredType.equals( "BodyInputStream" )) return( getAsBodyInputStream() );
 
     System.err.println("Can't convert " + currentForm + " to " +desiredType);
     return( null );
@@ -132,6 +144,10 @@ public class Message {
     if ( currentForm.equals("Bytes") ) {
       Debug.Print( 2, "Exit: Message::getAsByes" );
       return( (byte[]) currentMessage );
+    }
+    
+    if ( currentForm.equals("BodyInputStream") ) {
+        getAsSOAPEnvelope();
     }
 
     if ( currentForm.equals("InputStream") ) {
@@ -174,7 +190,8 @@ public class Message {
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("InputStream") ) {
+    if ( currentForm.equals("InputStream") ||
+         currentForm.equals("BodyInputStream") ) {
       getAsBytes();
       // Fall thru to "Bytes"
     }
@@ -275,6 +292,14 @@ public class Message {
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
     
+    if (currentForm.equals("BodyInputStream")) {
+      InputStreamBody bodyEl = new InputStreamBody((InputStream)currentMessage);
+      SOAPEnvelope env = new SOAPEnvelope();
+      env.addBodyElement(bodyEl);
+      setCurrentMessage(env, "SOAPEnvelope");
+      return env;
+    }
+    
     InputSource is;
 
     if ( currentForm.equals("InputStream") ) {
@@ -285,6 +310,7 @@ public class Message {
     
     ThreadedSAXAdapter parser = 
         new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+    parser.setServiceDescription(serviceDesc);
     
     setCurrentMessage( parser.getEnvelope(), "SOAPEnvelope" );
     Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
