@@ -111,4 +111,6 @@ public interface ServletEndpointContext {
      * @return the current <code>ServletContext</code>
      */
     public ServletContext getServletContext();
+
+    public boolean isUserInRole(java.lang.String s);
 }

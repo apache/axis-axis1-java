@@ -306,5 +306,5 @@ public class MimeHeaders {
      * A <code>Vector</code> containing the headers as <code>MimeHeader</code>
      *              instances.
      */
-    protected Vector headers;
+    private Vector headers;
 }

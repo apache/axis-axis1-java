@@ -41,6 +41,11 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
         return (srv == null) ? null : srv.getServletContext();
     }
 
+    public boolean isUserInRole(String s) {
+        // TODO: Not yet implemented
+        return false;  
+    }
+
     public Principal getUserPrincipal() {
         HttpServletRequest srvreq = (HttpServletRequest)
                 getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
