@@ -73,9 +73,6 @@ public abstract class WSDDElement
     extends WSDDConstants
     implements Serializable
 {
-    /** If we have documentation, it goes here */
-    private WSDDDocumentation documentation = null;
-    
     private String name;
 
     /**
@@ -148,21 +145,11 @@ public abstract class WSDDElement
 
         return elements;
     }
-    
-    /**
-     * Get documentation (if any) for this WSDDElement.
-     * 
-     * @return the WSDDDocumentation object associated with this element, or
-     *         null.
-     */
-    public WSDDDocumentation getDocumentation()
-    {
-        return documentation;
-    }
 
     /**
      * Write this element out to a SerializationContext
      */ 
     public abstract void writeToContext(SerializationContext context)
         throws IOException;
+        
 }

@@ -125,6 +125,9 @@ public class OperationDesc {
     /** If we're a message-style operation, what's our signature? */
     private int messageOperationStyle = -1;
 
+	/** The documentation for the operation */
+	private String documentation = null;
+
     /**
      * Default constructor.
      */
@@ -159,6 +162,20 @@ public class OperationDesc {
     public void setName(String name) {
         this.name = name;
     }
+
+	/**
+	 * get the documentation for the operation
+	 */
+	public String getDocumentation() {
+		return documentation; 
+	}
+
+	/**
+	 * set the documentation for the operation
+	 */
+	public void setDocumentation(String documentation) {
+		this.documentation = documentation;
+	}
 
     public QName getReturnQName() {
         return returnDesc.getQName();

@@ -565,6 +565,22 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
   <dd><b></b>A simplified type mapping, which uses pre-defined serializers/deserializers 
     to encode/decode JavaBeans. The class named by &quot;classname&quot; must 
     follow the JavaBean standard pattern of get/set accessors.</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;documentation&gt;</font></b></dt>
+  <dd>Can be used inside a <b>&lt;service&gt;</b>, an <b>&lt;operation&gt;</b> or an
+operation <b>&lt;parameter&gt;</b>. The content of the element is arbitrary
+text which will be put in the generated wsdl inside a wsdl:document
+element.<br>
+<br>
+Example:<br>
+    <code>&lt;operation name="echoString" &gt;<br>
+&nbsp;&nbsp;&lt;documentation&gt;This operation echoes a string&lt;/documentation&gt;<br>
+&nbsp;&nbsp;&lt;parameter name="param"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;documentation&gt;a string&lt;/documentation&gt;<br>
+&nbsp;&nbsp;&lt;/parameter&gt;<br>
+&lt;/operation&gt;    
+    </code> 
+  </dd>
 </dl>
 <p> </p>
 

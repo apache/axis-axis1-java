@@ -106,6 +106,12 @@ public class WSDDParameter extends WSDDElement
         if (typeStr != null && !typeStr.equals("")) {
             parameter.setTypeQName(XMLUtils.getQNameFromString(typeStr, e));
         }
+        
+        Element docElem = getChildElement(e, ELEM_WSDD_DOC);
+        if (docElem != null) {
+            WSDDDocumentation documentation = new WSDDDocumentation(docElem);
+            parameter.setDocumentation(documentation.getValue());
+        }        
     }
 
     public WSDDParameter() {
@@ -159,6 +165,12 @@ public class WSDDParameter extends WSDDElement
         }
         
         context.startElement(getElementName(), attrs);
+        
+        if (parameter.getDocumentation() != null) {
+            WSDDDocumentation documentation = new WSDDDocumentation(parameter.getDocumentation());
+            documentation.writeToContext(context);
+        }
+		        
         context.endElement();
     }
 

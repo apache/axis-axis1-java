@@ -62,6 +62,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
 import org.apache.axis.Version;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.OperationDesc;
@@ -78,6 +79,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
@@ -179,6 +181,7 @@ public class Emitter {
      * Invoke emit to emit the code
      */
     public Emitter () {
+	  createDocumentFragment();
       namespaces = new Namespaces();
       exceptionMsg = new HashMap();
     }
@@ -753,6 +756,17 @@ public class Emitter {
         return binding;
     }
 
+	Document docHolder;
+
+	private void createDocumentFragment() {
+		try {
+			this.docHolder = XMLUtils.newDocument();
+		}  catch (ParserConfigurationException e) {
+			// This should not occur
+			throw new InternalException(e);
+		}
+	}
+
     /**
      * Create the service.
      *
@@ -772,6 +786,13 @@ public class Emitter {
             service.setQName(serviceElementQName);
             def.addService(service);
         }
+
+		if (serviceDesc.getDocumentation() != null) {
+			Element element = docHolder.createElement("documentation");
+			Text textNode = docHolder.createTextNode(serviceDesc.getDocumentation());
+			element.appendChild(textNode);
+			service.setDocumentationElement(element);
+		}
 
         // Add the port
         Port port = def.createPort();
@@ -824,6 +845,15 @@ public class Emitter {
             Operation oper = bindingOper.getOperation();
 
             OperationDesc messageOper = thisOper;
+            
+            // add the documentation to oper
+			if (messageOper.getDocumentation() != null) {
+				Element element = docHolder.createElement("documentation");
+				Text textNode = docHolder.createTextNode(messageOper.getDocumentation());
+				element.appendChild(textNode);
+				oper.setDocumentationElement(element);
+			}			
+            
             if (serviceDesc2 != null) {
                 // If a serviceDesc containing an impl class is provided,
                 // try and locate the corresponding operation
@@ -1359,6 +1389,14 @@ public class Emitter {
 
         // Create the Part
         Part part = def.createPart();
+
+		if (param.getDocumentation() != null) {
+			Element element = docHolder.createElement("documentation");
+			Text textNode = docHolder.createTextNode(param.getDocumentation());
+			element.appendChild(textNode);
+			part.setDocumentationElement(element);
+		}			
+
 
         // Get the java type to represent in the wsdl
         // (if the mode is OUT or INOUT and this

@@ -222,6 +222,12 @@ public class WSDDService
             desc.setWSDLFile(fileName);
         }
 
+        Element docElem = getChildElement(e, ELEM_WSDD_DOC);
+        if (docElem != null) {
+            WSDDDocumentation documentation = new WSDDDocumentation(docElem);
+            desc.setDocumentation(documentation.getValue());
+        }        
+
         Element urlElem = getChildElement(e, ELEM_WSDD_ENDPOINTURL);
         if (urlElem != null) {
             String endpointURL = XMLUtils.getChildCharacterData(urlElem);
@@ -607,6 +613,11 @@ public class WSDDService
             context.startElement(QNAME_WSDLFILE, null);
             context.writeSafeString(desc.getWSDLFile());
             context.endElement();
+        }
+        
+        if (desc.getDocumentation() != null) {
+        	WSDDDocumentation documentation = new WSDDDocumentation(desc.getDocumentation());
+        	documentation.writeToContext(context);
         }
 
         for (int i = 0; i < operations.size(); i++) {

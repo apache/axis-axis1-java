@@ -99,6 +99,10 @@ public class ParameterDesc implements Serializable {
     private boolean inHeader = false;
     private boolean outHeader = false; 
 
+	/** The documentation for the parameter */
+	private String documentation = null;
+
+
     public ParameterDesc() {
     }
 
@@ -316,6 +320,20 @@ public class ParameterDesc implements Serializable {
     public void setIsReturn(boolean value) {
         isReturn = value;
     }
+
+	/**
+	 * get the documentation for the parameter
+	 */
+	public String getDocumentation() {
+		return documentation; 
+	}
+
+	/**
+	 * set the documentation for the parameter
+	 */
+	public void setDocumentation(String documentation) {
+		this.documentation = documentation;
+	}
 
     private void writeObject(ObjectOutputStream out)
         throws IOException {

@@ -136,6 +136,12 @@ public class WSDDOperation extends WSDDElement
             WSDDFault fault = new WSDDFault(faultElem);
             desc.addFault(fault.getFaultDesc());
         }
+
+        Element docElem = getChildElement(e, ELEM_WSDD_DOC);
+        if (docElem != null) {
+            WSDDDocumentation documentation = new WSDDDocumentation(docElem);
+            desc.setDocumentation(documentation.getValue());
+        }        
     }
 
     /**
@@ -173,6 +179,11 @@ public class WSDDOperation extends WSDDElement
 
         context.startElement(getElementName(), attrs);
 
+        if (desc.getDocumentation() != null) {
+            WSDDDocumentation documentation = new WSDDDocumentation(desc.getDocumentation());
+            documentation.writeToContext(context);
+        }
+		
         ArrayList params = desc.getParameters();
         for (Iterator i = params.iterator(); i.hasNext();) {
             ParameterDesc parameterDesc = (ParameterDesc) i.next();

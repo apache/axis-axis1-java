@@ -106,6 +106,9 @@ public class ServiceDesc {
     /** The name of this service */
     private String name = null;
 
+	/** The documentation of this service */
+	private String documentation = null;
+
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
     private List allowedMethods = null;
@@ -335,6 +338,20 @@ public class ServiceDesc {
     public void setName(String name) {
         this.name = name;
     }
+
+	/**
+	 * get the documentation for the service
+	 */
+	public String getDocumentation() {
+		return documentation; 
+	}
+
+	/**
+	 * set the documentation for the service
+	 */
+	public void setDocumentation(String documentation) {
+		this.documentation = documentation;
+	}
 
     public ArrayList getStopClasses() {
         return stopClasses;
