@@ -600,9 +600,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                                         contentTransferEncoding);
                     }
 
-                    DataHandler dh = new DataHandler(
-                            new ManagedMemoryDataSource(
-                                    decodedStream, ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
+                    ManagedMemoryDataSource source = new ManagedMemoryDataSource(
+                                                        decodedStream, ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true);
+                    DataHandler dh = new DataHandler(source);
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
