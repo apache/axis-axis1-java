@@ -611,10 +611,11 @@ public class AxisServlet extends HttpServlet
         throws AxisFault, IOException
     {
         if (responseMsg == null) {
+            res.setStatus(HttpServletResponse.SC_NO_CONTENT);
             if(isDebug) log.debug("NO AXIS MESSAGE TO RETURN!");
-            String resp = JavaUtils.getMessage("noData00");
-            res.setContentLength(resp.getBytes().length);
-            res.getWriter().print(resp);
+            //String resp = JavaUtils.getMessage("noData00");
+            //res.setContentLength(resp.getBytes().length);
+            //res.getWriter().print(resp);
         } else {
             if(isDebug) {
                 log.debug("Returned Content-Type:" +
