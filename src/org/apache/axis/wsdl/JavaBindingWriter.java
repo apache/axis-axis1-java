@@ -62,8 +62,8 @@ import javax.wsdl.Binding;
 import javax.wsdl.QName;
 
 /**
-* This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
-* which contains the <portTypeName> interface.
+* This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
+* <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
 */
 public class JavaBindingWriter implements Writer {
     Writer stubWriter = null;

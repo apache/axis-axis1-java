@@ -54,58 +54,44 @@
  */
 package org.apache.axis.wsdl;
 
+import java.io.IOException;
+
 import java.util.HashMap;
 
-import javax.wsdl.Binding;
-import javax.wsdl.PortType;
+import javax.wsdl.QName;
 import javax.wsdl.Service;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:
+* <serviceName>.java, <serviceName>TestCase.java.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaServiceWriter implements Writer {
+    Writer serviceWriter = null;
+    Writer testCaseWriter = null;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaServiceWriter(
+            Emitter emitter,
+            Service service,
+            HashMap portTypeOperationParameters) {
+        QName serviceQName = new QName(service.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(service.getQName().getLocalPart())));
+        service.setQName (serviceQName);
+        serviceWriter = new JavaServiceImplWriter(emitter, service);
+        if (emitter.bEmitTestCase) {
+            testCaseWriter = new JavaTestCaseWriter(emitter, service, portTypeOperationParameters);
+        }
     } // ctor
 
     /**
-     * Provide the emitter object to this class.
+     * Write all the service bindnigs:  service and testcase.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    public void write() throws IOException {
+        serviceWriter.write();
+        if (testCaseWriter != null) {
+            testCaseWriter.write();
+        }
+    } // write
 
-    /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaBindingWriter object.
-     */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaServiceWriter object.
-     */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return null;//return new JavaTypeWriter(emitter, type);
-    } // getWriter
-} // class JavaWriterFactory
+} // class JavaServiceWriter
