@@ -164,8 +164,15 @@ public class Registrar {
          */
         private boolean bindToModeler() {
             Exception ex = null;
+            Class clazz;
             try {
-                Class clazz = Class.forName("org.apache.commons.modeler.Registry");
+                clazz = Class.forName("org.apache.commons.modeler.Registry");
+            } catch (ClassNotFoundException e) {
+                // just ignore it silently if we don't have commons-modeler.jar around
+                registry = null;
+                return false;
+            }
+            try {
                 Class[] getRegistryArgs = new Class[]{Object.class, Object.class, };
                 Method getRegistry = clazz.getMethod("getRegistry", getRegistryArgs);
                 Object[] getRegistryOptions = new Object[]{null, null};
@@ -181,15 +188,13 @@ public class Registrar {
                 ex = e;
             } catch (InvocationTargetException e) {
                 ex = e;
-            } catch (ClassNotFoundException e) {
-                ex = e;
             } catch (NoSuchMethodException e) {
                 ex = e;
             }
             // handle any of these exceptions
             if (ex != null) {
                 //log the error
-                log.error(ex);
+                log.warn("Unable to initialize commons-modeler Registry.", ex);
                 //mark the registration as a failure
                 registry = null;
                 //and fail
