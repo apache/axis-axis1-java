@@ -689,6 +689,21 @@ public class SerializationContextImpl implements SerializationContext
                 mri = new MultiRefItem (id, xmlType, sendType, value);
                 multiRefValues.put(getIdentityKey(value), mri);
 
+                /**
+                 * If we're SOAP 1.2, we can "inline" the serializations,
+                 * so put it out now, with it's ID.
+                 */
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    AttributesImpl attrs = new AttributesImpl();
+                    if (attributes != null && 0 < attributes.getLength())
+                        attrs.setAttributes(attributes);
+                    attrs.addAttribute("", Constants.ATTR_ID, "id", "CDATA",
+                                       id);
+                    serializeActual(elemQName, attrs, value, xmlType, sendType);
+                    return;
+                }
+
+
                 /** If we're in the middle of writing out
                  * the multi-refs, we've already cloned the list of objects
                  * and so even though we add a new one to multiRefValues,
@@ -756,7 +771,8 @@ public class SerializationContextImpl implements SerializationContext
      */
     public void outputMultiRefs() throws IOException
     {
-        if (!doMultiRefs || (multiRefValues == null))
+        if (!doMultiRefs || (multiRefValues == null) ||
+                soapConstants == SOAPConstants.SOAP12_CONSTANTS)
             return;
         outputMultiRefsFlag = true;
         AttributesImpl attrs = new AttributesImpl();
