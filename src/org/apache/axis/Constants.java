@@ -547,7 +547,4 @@ public class Constants {
     // When invoked from a servlet, per JAX-RPC, we need  a
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
-    
-    public static final String AXIS_VERSION="Axis/1.0";
-
 }
