@@ -62,7 +62,7 @@ import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -111,7 +111,7 @@ public class NoopFactory implements GeneratorFactory {
     public BaseTypeMapping getBaseTypeMapping() {
         if (btm == null) {
             btm = new BaseTypeMapping() {
-                    TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                    TypeMapping defaultTM = DefaultSOAPEncodingTypeMappingImpl.create();
                     public String getBaseName(QName qNameIn) {
                         javax.xml.namespace.QName qName = 
                             new javax.xml.namespace.QName(

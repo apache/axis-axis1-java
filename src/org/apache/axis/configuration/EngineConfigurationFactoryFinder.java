@@ -88,7 +88,6 @@ public class EngineConfigurationFactoryFinder
         LogFactory.getLog(EngineConfigurationFactoryFinder.class.getName());
 
     private static final Class mySpi = EngineConfigurationFactory.class;
-    private static final Class myFactory = EngineConfigurationFactoryFinder.class;
 
     private static final Class[] newFactoryParamTypes =
         new Class[] { Object.class };

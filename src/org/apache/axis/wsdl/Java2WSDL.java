@@ -63,7 +63,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Emitter;
 
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -367,7 +367,7 @@ public class Java2WSDL {
                                               DefaultTypeMappingImpl.getSingleton());
             } else if (value.equals("1.2")) {
                 emitter.setDefaultTypeMapping(
-                                              DefaultSOAP12TypeMappingImpl.create());
+                                              DefaultSOAPEncodingTypeMappingImpl.create());
             } else {
                 System.out.println(Messages.getMessage("j2wBadTypeMapping00"));
                 status = false;

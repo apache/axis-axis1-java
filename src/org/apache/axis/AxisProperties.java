@@ -151,7 +151,6 @@ public class AxisProperties {
         return new DiscoverClasses(loaders).findResourceClasses(it);
     }
 
-    
     private static ClassLoaders getClassLoaders() {
         if (loaders == null) {
             loaders = ClassLoaders.getAppLoaders(AxisProperties.class, null, true);

@@ -173,7 +173,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
                 new TypeMappingImpl(DefaultTypeMappingImpl.getSingleton());
         } else {
             defaultDelTM = 
-                new TypeMappingImpl(DefaultSOAP12TypeMappingImpl.create()); 
+                new TypeMappingImpl(DefaultSOAPEncodingTypeMappingImpl.create());
         }
     }
     
