@@ -12,7 +12,7 @@
 
 <project default="compile">
 <property name="axis.home" location="../.." />
-<property name="componentName" value="test/encoding" />
+<property name="componentName" value="test/types" />
         &properties;
         &paths;
         &taskdefs;
@@ -27,12 +27,12 @@
 </target>
 
 <target name="compile" depends="copy">
-  <echo message="Compiling test.encoding.*"/>
+  <echo message="Compiling test.types.*"/>
   <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
-    <include name="test/encoding/*.java"/>
+    <include name="test/types/*.java"/>
   </javac>
 </target>
 
