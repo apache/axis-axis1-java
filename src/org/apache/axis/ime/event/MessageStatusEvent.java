@@ -55,7 +55,6 @@
 package org.apache.axis.ime.event;
 
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeStatus;
 
 /**
  * The MessageExchangeStatus event is used to provide status 

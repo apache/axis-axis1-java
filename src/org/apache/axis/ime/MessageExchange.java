@@ -67,7 +67,8 @@ import java.util.Map;
  * @author James M Snell (jasnell@us.ibm.com)
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public interface MessageExchange {
+public interface MessageExchange
+        extends FeatureEnabled {
 
     /**
      * Send an outbound message.  (Impl's of this method
@@ -192,28 +193,6 @@ public interface MessageExchange {
             MessageExchangeEventListener listener);
         
     public MessageExchangeEventListener getMessageExchangeEventListener();
-
-    /**
-     * @param String The id of the feature to enable
-     * @throws AxisFault
-     */
-    public void enableFeature(String featureId)
-            throws AxisFault;
-
-    /**
-     * @param String The id of the feature to disable
-     * @throws AxisFault
-     */
-    public void disableFeature(String featureId)
-            throws AxisFault;
-
-    /**
-     * @param String The id of the feature to check
-     * @return boolean
-     * @throws AxisFault
-     */
-    public boolean isFeatureEnabled(String featureId)
-            throws AxisFault;
 
     /**
      * @param String The id of the property
