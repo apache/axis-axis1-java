@@ -83,6 +83,7 @@ import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.io.Serializable;
 
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
@@ -173,7 +174,7 @@ public abstract class JavaProvider extends BasicProvider
     /**
      * Simple utility class for dealing with synchronization issues.
      */
-    class LockObject {
+    class LockObject implements Serializable {
         private boolean completed = false;
 
         synchronized void waitUntilComplete() throws InterruptedException {
