@@ -65,14 +65,20 @@ package test.wsdl.interop3.groupE.client;
 import junit.framework.AssertionFailedError;
 
 public class InteropTestDocLitServiceTestCase extends junit.framework.TestCase {
+    public static URL url;
+
     public InteropTestDocLitServiceTestCase(String name) {
         super(name);
     }
     public void testInteropTestDocLitEchoString() {
         InteropTestDocLit binding;
         try {
-            binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit();        }
-        catch (javax.xml.rpc.ServiceException jre) {
+            if (url == null) {
+                binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit();
+            } else {
+                binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit(url);
+            }
+        } catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);
@@ -92,7 +98,12 @@ public class InteropTestDocLitServiceTestCase extends junit.framework.TestCase {
     public void testInteropTestDocLitEchoStringArray() {
         InteropTestDocLit binding;
         try {
-            binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit();        }
+            if (url == null) {
+                binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit();
+            } else {
+                binding = new InteropTestDocLitServiceLocator().getInteropTestDocLit(url);
+            }
+        }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }

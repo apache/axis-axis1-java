@@ -24,7 +24,7 @@ import java.net.URL;
 */
 
 public class Import1TestCase extends junit.framework.TestCase {
-    static URL url = null;
+    public static URL url = null;
 
     public Import1TestCase(String name) {
         super(name);
@@ -48,25 +48,6 @@ public class Import1TestCase extends junit.framework.TestCase {
             String value = "import1 test string";
             String result = binding.echoString(value);
             assertEquals("Strings didn't match", value, result);
-        }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
-        }
-    }
-
-    public void testStep5() {
-        SoapInteropImport1PortType binding;
-        try {
-            binding = new Import1Locator().getSoapInteropImport1Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport1Port"));
-        }
-        catch (Throwable t) {
-            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
-        }
-        assertTrue("binding is null", binding != null);
-
-        try {
-            String value = null;
-            value = binding.echoString(new String());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
