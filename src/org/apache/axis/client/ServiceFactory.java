@@ -301,7 +301,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     private Service createService(String serviceImplementationName) throws ServiceException {
         try {
             if(serviceImplementationName == null) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(Messages.getMessage("serviceFactoryInvalidServiceName"));
             }
             Class serviceImplementationClass;
             serviceImplementationClass = Thread.currentThread().getContextClassLoader().loadClass(serviceImplementationName);
