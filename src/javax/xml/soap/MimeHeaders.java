@@ -238,10 +238,9 @@ public class MimeHeaders {
 
         boolean flag = false;
 
-        if ((name == null) || name.equals("") || (value == null)
-                || value.equals("")) {
+        if ((name == null) || name.equals("")) {
             throw new IllegalArgumentException(
-                "Illegal MimeHeader name or value");
+                "Illegal MimeHeader name");
         }
 
         for (int i = 0; i < headers.size(); i++) {
@@ -281,10 +280,9 @@ public class MimeHeaders {
      */
     public void addHeader(String name, String value) {
 
-        if ((name == null) || name.equals("") || (value == null)
-                || value.equals("")) {
+        if ((name == null) || name.equals("")) {
             throw new IllegalArgumentException(
-                "Illegal MimeHeader name or value");
+                "Illegal MimeHeader name");
         }
 
         int i = headers.size();
