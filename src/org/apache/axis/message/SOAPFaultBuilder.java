@@ -114,9 +114,8 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
     {
         String name = (String)hint;
         if (name.equals("faultcode")) {
-            fault.setFaultCode(
-                         new QFault(
-                               context.getQNameFromString((String)value)));
+            QName qname = context.getQNameFromString((String)value);
+            if (qname != null) fault.setFaultCode(new QFault(qname));
         } else if (name.equals("faultstring")) {
             fault.setFaultString((String)value);
         } else if (name.equals("faultactor")) {
