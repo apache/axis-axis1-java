@@ -117,7 +117,8 @@ public class HTTPDispatchHandler implements Handler {
 
       if ( userID != null )
         otherHeaders = Constants.HEADER_AUTHORIZATION + ": Basic " + 
-                       Base64.encode( (userID + ":" + passwd).getBytes() ) + 
+                       Base64.encode( (userID + ":" + 
+                       ((passwd == null) ? "" : passwd) ).getBytes() ) + 
                        "\n" ;
 
       String  header = Constants.HEADER_POST + " " + 

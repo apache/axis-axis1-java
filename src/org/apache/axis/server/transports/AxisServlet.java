@@ -139,8 +139,12 @@ public class AxisServlet extends HttpServlet {
       if ( i == -1 ) user = tmp ;
       else           user = tmp.substring( 0, i);
       msgContext.setProperty( Constants.MC_USERID, user );
-      if ( i != -1 ) 
-        msgContext.setProperty( Constants.MC_PASSWORD, tmp.substring(i+1) );
+      if ( i != -1 )  {
+        String pwd = tmp.substring(i+1);
+        if ( pwd != null && pwd.equals("") ) pwd = null ;
+        if ( pwd != null )
+          msgContext.setProperty( Constants.MC_PASSWORD, pwd );
+      }
     }
 
     // Invoke the Axis engine...
