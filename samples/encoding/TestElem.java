@@ -1,9 +1,5 @@
 package samples.encoding;
 
-/*
-import org.apache.axis.client.* ;
-import org.apache.axis.utils.* ;
-*/
 import java.io.ByteArrayInputStream;
 
 import java.net.URL;
