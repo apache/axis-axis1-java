@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://date.wsdl.test" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://date.wsdl.test" xmlns:intf="http://date.wsdl.test" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+        <schema targetNamespace="http://date.wsdl.test" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="MyBean">
+                <sequence>
+                    <element name="date" nillable="true" type="xsd:date"/>
+                </sequence>
+            </complexType>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="getInfoRequest">
+    </wsdl:message>
+    <wsdl:message name="getInfoResponse">
+        <wsdl:part name="getInfoReturn" type="impl:MyBean"/>
+    </wsdl:message>
+    <wsdl:portType name="MyService">
+        <wsdl:operation name="getInfo">
+            <wsdl:input message="impl:getInfoRequest" name="getInfoRequest"/>
+            <wsdl:output message="impl:getInfoResponse" name="getInfoResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="testdateSoapBinding" type="impl:MyService">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getInfo">
+            <wsdlsoap:operation soapAction=""/>
+            <wsdl:input name="getInfoRequest">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://date.wsdl.test" use="encoded"/>
+            </wsdl:input>
+            <wsdl:output name="getInfoResponse">
+                <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://date.wsdl.test" use="encoded"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MyServiceService">
+        <wsdl:port binding="impl:testdateSoapBinding" name="testdate">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/testdate"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
