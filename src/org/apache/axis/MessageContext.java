@@ -63,6 +63,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.message.*;
 
 /**
  * Some more general docs will go here.
@@ -229,27 +230,49 @@ public class MessageContext {
      * service specific input/output/pivot point handlers
      */
     private Handler          serviceHandler ;
+    private boolean          parsing = false;
+    public void setParsing(boolean parsing)
+    {
+        this.parsing = parsing;
+    }
 
     public Handler getServiceHandler() {
         if (serviceHandler == null) {
-            if (targetService != null) {
-                try {
+            try {
+                if (targetService != null) {
                     /** This is a bit kludgey for now - what might have
-                     *  happened is that someone set the target service name
-                     *  before the registry was set, or before the service
-                     *  was registered.  So just to make sure, we set it
-                     *  again here and see if that causes the serviceHandler
-                     *  to be set correctly.
-                     */
+                    *  happened is that someone set the target service name
+                    *  before the registry was set, or before the service
+                    *  was registered.  So just to make sure, we set it
+                    *  again here and see if that causes the serviceHandler
+                    *  to be set correctly.
+                    */
                     setTargetService(targetService);
-                } catch (AxisFault f) {
+                } else if (!parsing) {
+                    // No target service was set.  So here's where we want to
+                    // potentially try to dispatch off the QName of the first
+                    // appropriate <Body> element.  Might also hook this to
+                    // another configurable piece of code to avoid SOAP 
+                    // specifics in this class.
+                    SOAPEnvelope env = (SOAPEnvelope)
+                                        inMessage.getAs("SOAPEnvelope");
+                    Vector bodies = env.getBodyElements();
+                    Enumeration e = bodies.elements();
+                    while (e.hasMoreElements()) {
+                        SOAPBodyElement body = (SOAPBodyElement)
+                                                e.nextElement();
+                        /** The algorithm we use here is to find the first
+                         * element without an ID attribute (assuming that
+                         * ID'ed attributes are multi-ref encodings).
+                         */
+                        if (body.getID() == null) {
+                            //Debug.Print(2, "Dispatching to body namespace '"
+                            //            + body.getNamespaceURI() + "'");
+                            setTargetService(body.getNamespaceURI());
+                        }
+                    }
                 }
-            } else {
-                // No target service was set.  So here's where we want to
-                // potentially try to dispatch off the QName of the first
-                // appropriate <Body> element.  Might also hook this to
-                // another configurable piece of code to avoid SOAP specifics
-                // in this class.
+            } catch (AxisFault f) {
             }
       }
       return( serviceHandler );
