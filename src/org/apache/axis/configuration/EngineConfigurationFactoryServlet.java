@@ -169,8 +169,7 @@ public class EngineConfigurationFactoryServlet
                 try {
                     config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
                 } catch (ConfigurationException e) {
-                    log.error(Messages.getMessage("servletEngineWebInfError00",
-                                                   serverConfigFileName),
+                    log.error(Messages.getMessage("servletEngineWebInfError00"),
                               e);
                 }
             }
