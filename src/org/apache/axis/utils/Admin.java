@@ -194,7 +194,29 @@ public class Admin {
         
         engine.saveConfiguration();
     }
-    
+
+    private static final int
+        TYPE_UNKNOWN = 0,
+        TYPE_HANDLER = 1,
+        TYPE_CHAIN = 2,
+        TYPE_SERVICE = 3,
+        TYPE_TRANSPORT = 4,
+        TYPE_TYPEMAPPING = 5;
+    private static final Hashtable typeTable = new Hashtable();
+    static {
+        typeTable.put("handler", new Integer(TYPE_HANDLER));
+        typeTable.put("chain", new Integer(TYPE_CHAIN));
+        typeTable.put("service", new Integer(TYPE_SERVICE));
+        typeTable.put("transport", new Integer(TYPE_TRANSPORT));
+        typeTable.put("typeMapping", new Integer(TYPE_TYPEMAPPING));
+    }
+    private static int getType(String tagName) {
+        Integer i;
+        if ((i = (Integer)typeTable.get(tagName)) == null)
+            return TYPE_UNKNOWN;
+        return i.intValue();
+    }
+
     /** Deploy a set of individual items.
      *
      * NOTE: as it stands this doesn't care about the relationship between
@@ -208,30 +230,39 @@ public class Admin {
      */
     static void deploy(NodeList nl, AxisEngine engine) throws Exception
     {
-        for (int i = 0; i < nl.getLength(); i++) {
+        int lenI = nl.getLength();
+        for (int i = 0; i < lenI; i++) {
             Element el = (Element)nl.item(i);
             
             NodeList children = el.getChildNodes();
-            for (int j = 0; j < children.getLength(); j++) {
+            int lenJ = children.getLength();
+            for (int j = 0; j < lenJ; j++) {
                 if (!(children.item(j) instanceof Element)) continue;
                 
                 Element item = (Element)children.item(j);
-                String type = item.getTagName();
-                
-                if ( type.equals( "handler" ) ) {
+
+                int type;
+                switch (type = getType(item.getTagName())) {
+                case TYPE_HANDLER:
                     registerHandler(item, engine);
-                }
-                else if ( type.equals( "chain" ) ) {
+                    break;
+                case TYPE_CHAIN:
                     registerChain(item, engine);
-                }
-                else if ( type.equals( "service" ) ) {
+                    break;
+                case TYPE_SERVICE:
                     registerService(item, engine);
-                }
-                else if (type.equals("transport")) {
+                    break;
+                case TYPE_TRANSPORT:
                     registerTransport(item, engine);
-                }
-                else if (type.equals("typeMapping")) {
+                    break;
+                case TYPE_TYPEMAPPING:
                     registerTypeMapping(item, engine.getTypeMappingRegistry(), false);
+                    break;
+                case TYPE_UNKNOWN:
+                    // ignore it
+                    break;
+                default:
+                    throw new UnknownError("Shouldn't happen: " + type);
                 }
             }
         }
@@ -495,13 +526,13 @@ public class Admin {
         String   response  = elem.getAttribute( "response" );
         Hashtable options = new Hashtable();
 
-        if ( flow   != null && flow.equals("") )   flow = null ;
-        if ( request  != null && request.equals("") )  request = null ;
-        if ( response != null && response.equals("") ) response = null ;
-        if ( pivot  != null && pivot.equals("") )  pivot = null ;
-        if ( name != null && name.equals("") ) name = null ;
+        if ("".equals(flow)) flow = null;
+        if ("".equals(request)) request = null;
+        if ("".equals(response)) response = null;
+        if ("".equals(pivot)) pivot = null;
+        if ("".equals(name)) name = null;
 
-        if ( flow != null && flow.length() > 0 ) {
+        if (flow != null) {
             Debug.Print( 2, "Deploying chain: " + name );
             Vector names = new Vector();
             

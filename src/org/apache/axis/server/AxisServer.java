@@ -267,11 +267,11 @@ public class AxisServer extends AxisEngine
                         h.invoke(msgContext);
                 }
             }
-        }
-        catch( Exception e ) {
+        } catch (AxisFault e) {
+            throw e;
+        } catch (Exception e) {
             // Should we even bother catching it ?
-            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw new AxisFault(e);
         }
         Debug.Print( 1, "Exit: AxisServer::invoke" );
     }
@@ -308,15 +308,12 @@ public class AxisServer extends AxisEngine
                         h = (Handler) cls.newInstance();
                     }
                     catch( Exception e ) {
-                        h = null ;
+                        throw new AxisFault( "Server.error",
+                                             "Can't locate handler: " + hName,
+                                             null, null );
                     }
                 }
-                if ( h != null )
-                    h.generateWSDL(msgContext);
-                else
-                    throw new AxisFault( "Server.error",
-                        "Can't locate handler: " + hName,
-                        null, null );
+                h.generateWSDL(msgContext);
             }
             else {
                 // This really should be in a handler - but we need to discuss it
@@ -416,11 +413,11 @@ public class AxisServer extends AxisEngine
                         h.generateWSDL(msgContext);
                 }
             }
-        }
-        catch( Exception e ) {
+        } catch (AxisFault e) {
+            throw e;
+        } catch(Exception e) {
             // Should we even bother catching it ?
-            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw new AxisFault( e );
         }
         Debug.Print( 1, "Exit: AxisServer::editWSDL" );
     }
