@@ -69,6 +69,8 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.BuildLogger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -137,6 +139,13 @@ public class Wsdl2javaTestSuite extends TestSuite {
             testSuiteProject.addReference("Wsdl2javaTestSuite", testSuiteProject);
             testSuiteProject.setBasedir("./");
             testSuiteProject.setDefaultTarget(Wsdl2javaTestSuite.COMPILE_TASK);
+            
+            /* Setup the logger */
+            BuildLogger logger = new DefaultLogger();
+            testSuiteProject.addBuildListener(logger);
+            logger.setMessageOutputLevel(Project.MSG_INFO);
+            logger.setOutputPrintStream(System.out);
+            logger.setErrorPrintStream(System.err);
 
             /* Set up the default task (the compile task).  We add the "javac" target,
              * and all the options for it.
