@@ -109,12 +109,11 @@ public class MsgProvider extends JavaProvider {
         
         // the document which is the contents of the first body element
         // (generated only if we are not an envelope service)
-        Document doc;
+        Method   method = null ;
+        Document doc = null ;
         
         if (bodyOnlyService) {
             // dig out just the body, and pass it with the MessageContext
-            argClasses = new Class[2];
-            argObjects = new Object[2];
             SOAPBodyElement reqBody = reqEnv.getFirstBody();
             
             doc = reqBody.getAsDOM().getOwnerDocument();
@@ -127,24 +126,43 @@ public class MsgProvider extends JavaProvider {
                 Element root = doc.getDocumentElement();
                 if ( root != null ) methodName = root.getLocalName();
             }
-            argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
-            argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
-            argObjects[0] = msgContext ;
-            argObjects[1] = doc ;
+
+            // Try the the simplest case first - just Document as the param 
+            /////////////////////////////////////////////////////////////////
+            argClasses = new Class[1];
+            argObjects = new Object[1];
+            argClasses[0] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
+            argObjects[0] = doc ;
+
+            try {
+              method = jc.getJavaClass().getMethod( methodName, argClasses );
+            }
+            catch( NoSuchMethodException exp ) {
+              // Ok, no match - so now add MessageContext as the first param
+              // and try it again
+              ///////////////////////////////////////////////////////////////
+              argClasses = new Class[2];
+              argObjects = new Object[2];
+              argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
+              argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
+              argObjects[0] = msgContext ;
+              argObjects[1] = doc ;
+              method = jc.getJavaClass().getMethod( methodName, argClasses );
+            }
+
         } else {
             // pass *just* the MessageContext (maybe don't even parse!!!)
             argClasses = new Class[1];
             argObjects = new Object[1];
             argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
             argObjects[0] = msgContext ;
+            method = jc.getJavaClass().getMethod( methodName, argClasses );
         }
         
         
         // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
         //     want DOM, but our examples should mostly lean towards the
         //     SAX side of things....
-        
-        Method       method = jc.getJavaClass().getMethod( methodName, argClasses );
         
         Document retDoc = (Document) method.invoke( obj, argObjects );
         
