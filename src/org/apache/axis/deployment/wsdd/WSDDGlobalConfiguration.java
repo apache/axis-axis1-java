@@ -58,6 +58,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -203,6 +204,14 @@ public class WSDDGlobalConfiguration
             throws IOException {
         context.startElement(WSDDConstants.GLOBAL_QNAME, null);
         context.endElement();
+    }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
+        if (requestFlow != null)
+            requestFlow.deployToRegistry(registry);
+        if (responseFlow != null)
+            responseFlow.deployToRegistry(registry);
     }
 }
 

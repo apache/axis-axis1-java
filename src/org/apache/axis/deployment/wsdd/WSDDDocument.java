@@ -176,15 +176,15 @@ public class WSDDDocument
         WSDDTypeMapping[] mappings   = dep.getTypeMappings();
 
         for (int n = 0; n < handlers.length; n++) {
-            registry.deployHandler(handlers[n]);
+            handlers[n].deployToRegistry(registry);
         }
 
         for (int n = 0; n < transports.length; n++) {
-            registry.deployTransport(transports[n]);
+            transports[n].deployToRegistry(registry);
         }
 
         for (int n = 0; n < services.length; n++) {
-            registry.deployService(services[n]);
+            services[n].deployToRegistry(registry);
         }
 
         for (int n = 0; n < mappings.length; n++) {

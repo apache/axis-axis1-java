@@ -59,6 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -200,5 +201,17 @@ public class WSDDChain
             handler.writeToContext(context);
         } 
         context.endElement();
+    }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
+        if (getQName() != null)
+            registry.deployHandler(this);
+        
+        for (int n = 0; n < handlers.size(); n++) {
+            WSDDHandler handler = (WSDDHandler)handlers.get(n);
+            if (handler.getQName() != null)
+                handler.deployToRegistry(registry);
+        }         
     }
 }

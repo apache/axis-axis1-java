@@ -82,4 +82,7 @@ public interface DeployableItem
      */
     public Handler getInstance(DeploymentRegistry registry)
         throws Exception;
+    
+    public void deployToRegistry(DeploymentRegistry registry)
+        throws DeploymentException;
 }

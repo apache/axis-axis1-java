@@ -120,4 +120,11 @@ public class WSDDTransport
         writeFlowsToContext(context);
         context.endElement();
     }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
+        registry.deployTransport(this);
+        
+        super.deployToRegistry(registry);
+    }
 }

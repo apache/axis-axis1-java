@@ -300,4 +300,11 @@ public class WSDDService
     {
         cachedService = service;
     }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
+        registry.deployService(this);
+        
+        super.deployToRegistry(registry);
+    }
 }

@@ -56,6 +56,8 @@ package org.apache.axis.deployment.wsml;
 
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -67,5 +69,9 @@ public class WSMLDeployableItem implements DeployableItem {
 
     public Handler getInstance(org.apache.axis.deployment.DeploymentRegistry registry) {
         return null;
+    }
+
+    public void deployToRegistry(DeploymentRegistry registry)
+            throws DeploymentException {
     }
 }
