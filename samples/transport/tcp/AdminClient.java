@@ -79,7 +79,7 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
             SimpleTargetedChain c = new SimpleTargetedChain();
             c.setPivotHandler(new TCPSender());
-            client.getCall().getEngine().deployTransport("tcp", c);
+            client.getCall().getService().getEngine().deployTransport("tcp", c);
 
             System.out.println(client.process(args));
         }

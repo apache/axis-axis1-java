@@ -35,7 +35,7 @@ public class FileTest {
         Service  service = new Service();
         Call     call    = (Call) service.createCall();
 
-        AxisEngine engine = call.getEngine();
+        AxisEngine engine = service.getEngine();
 
         // Manually deploy file sender and file transport for this example
         SimpleTargetedChain c = new SimpleTargetedChain();

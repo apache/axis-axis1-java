@@ -95,7 +95,7 @@ public class GetQuote {
         
         SimpleTargetedChain c = new SimpleTargetedChain();
         c.setPivotHandler(new TCPSender());
-        call.getEngine().deployTransport("tcp", c);
+        service.getEngine().deployTransport("tcp", c);
         
         call.setTransport(new TCPTransport());
         
