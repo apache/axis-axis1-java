@@ -162,7 +162,10 @@ public class AxisFault extends Exception {
 
   public Element[] getFaultDetails() {
     if (faultDetails == null) return null;
-    return( (Element[]) faultDetails.toArray() );
+    Element result[] = new Element[faultDetails.size()];
+    for (int i=0; i<result.length; i++)
+      result[i] = (Element) faultDetails.elementAt(i);
+    return result;
   }
 
   public void output(SerializationContext context) throws Exception {
