@@ -182,7 +182,7 @@ public abstract class WSDDTargetedChain
      * @param pivot XXX
      * @param registry XXX
      * @return XXX
-     * @throws Exception XXX
+     * @throws ConfigurationException XXX
      */
     public Handler makeNewInstance(EngineConfiguration registry)
         throws ConfigurationException

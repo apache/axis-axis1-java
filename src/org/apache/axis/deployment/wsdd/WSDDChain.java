@@ -160,7 +160,7 @@ public class WSDDChain
      * Creates a new instance of this Chain
      * @param registry XXX
      * @return XXX
-     * @throws Exception XXX
+     * @throws ConfigurationException XXX
      */
     public Handler makeNewInstance(EngineConfiguration registry)
         throws ConfigurationException

@@ -119,8 +119,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      *
      * @param mapping - TypeMapping for specific type namespaces
      *
-     * @throws JAXRPCException - If there is any error in the registration
-     * of the TypeMapping for the specified namespace URI
      * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
     public void registerDefault(javax.xml.rpc.encoding.TypeMapping mapping) {

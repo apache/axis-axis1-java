@@ -283,7 +283,7 @@ public abstract class WSDDDeployableItem
      *
      * @param registry XXX
      * @return XXX
-     * @throws Exception XXX
+     * @throws ConfigurationException XXX
      */
     public final Handler getInstance(EngineConfiguration registry)
         throws ConfigurationException
@@ -305,7 +305,7 @@ public abstract class WSDDDeployableItem
      * find a suitable item
      * @param registry XXX
      * @return XXX
-     * @throws Exception XXX
+     * @throws ConfigurationException XXX
      */
     protected Handler makeNewInstance(EngineConfiguration registry)
         throws ConfigurationException
