@@ -44,15 +44,14 @@ Copyright:
     <echo message="Removing ${build.dir}/tools/${componentName}" />
     <delete dir="${build.dir}/tools/${componentName}" />
     <delete file="${build.lib}/axis-ant.jar"/>
-</target>
-
-<target name="copy" depends="setenv,clean">
    <mkdir dir="${build.dir}/tools"/>
 </target>
 
-<target name="compile" depends="copy">
-  <echo message="Compiling tools.ant"/>
+<target name="copy" depends="setenv"/>
 
+<target name="compile" depends="copy" unless="axis-ant.present">
+  <echo message="Compiling tools.ant"/>
+  <echo message="${axis-ant.present}"/>
     <!-- build my ForEach task -->
     <echo message="Building ForEach" />
     <javac srcdir="${axis.home}/tools/${componentName}/foreach" destdir="${build.dir}/tools">
@@ -87,7 +86,7 @@ Copyright:
   </jar>
 </target>
 
-<target name="test" >
+<target name="test" unless="axis-ant.present">
    <ant antfile="${axis.home}/tools/test.xml" /> 
 </target>
 
