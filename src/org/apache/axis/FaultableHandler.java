@@ -134,11 +134,13 @@ public class FaultableHandler extends BasicHandler {
             Handler faultHandler = null;
 
             Hashtable options = getOptions();
-            Enumeration enum = options.keys();
-            while (enum.hasMoreElements()) {
-                String s = (String) enum.nextElement();
-                if (s.equals("fault-" + fault.getFaultCode().getLocalPart())) {
-                    faultHandler = (Handler)options.get(s);
+            if (options != null) {
+                Enumeration enum = options.keys();
+                while (enum.hasMoreElements()) {
+                    String s = (String) enum.nextElement();
+                    if (s.equals("fault-" + fault.getFaultCode().getLocalPart())) {
+                        faultHandler = (Handler)options.get(s);
+                    }
                 }
             }
 

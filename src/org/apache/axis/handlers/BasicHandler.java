@@ -84,14 +84,20 @@ public abstract class BasicHandler implements Handler {
     protected static Log log =
         LogFactory.getLog(BasicHandler.class.getName());
 
+    protected boolean makeLockable = false;
     protected Hashtable options;
     protected String name;
 
 
     /**
      * Should this Handler use a LockableHashtable for options?
+     * Default is 'false'.
      */
-    protected void initHashtable(boolean makeLockable)
+    protected void setOptionsLockable(boolean makeLockable) {
+        this.makeLockable = makeLockable;
+    }
+    
+    protected void initHashtable()
     {
         if (makeLockable) {
             options = new LockableHashtable();
@@ -128,7 +134,7 @@ public abstract class BasicHandler implements Handler {
      * Set the given option (name/value) in this handler's bag of options
      */
     public void setOption(String name, Object value) {
-        if ( options == null ) initHashtable(false);
+        if ( options == null ) initHashtable();
         options.put( name, value );
     }
 
@@ -166,7 +172,7 @@ public abstract class BasicHandler implements Handler {
     }
 
     public void setOptions(Hashtable opts) {
-        options = opts ;
+        options = opts;
     }
 
     /**
