@@ -1,0 +1,18 @@
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <service name="jaxrpchandler">
+    <handlerInfoChain>
+       <handlerInfo classname="test.wsdl.jaxrpchandler.ClientHandler">
+       <parameter name="param1" value="value1"/>
+       <parameter name="param4" value="value4"/>
+       <parameter name="param3" value="value3"/>
+       <header qname="ns11:Bob" xmlns:ns11="http://bob.com/stuff"/>
+       <header qname="ns12:Fred" xmlns:ns12="http://fred.com/stuff"/>
+       <header qname="ns12:Fred" xmlns:ns12="FredNS"/>
+       <header qname="ns11:Bob" xmlns:ns11="BobNS"/>
+       <header qname="Tom"/>
+       </handlerInfo>
+       <role soapActorName="Mary"/>
+    </handlerInfoChain>
+  </service>
+</deployment>

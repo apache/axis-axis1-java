@@ -1,0 +1,11 @@
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <service name="jaxrpchandler" provider="java:RPC">
+    <handlerInfoChain>
+       <handlerInfo classname="test.wsdl.jaxrpchandler.ServerHandler"/>
+    </handlerInfoChain>
+    <parameter name="className" value="test.wsdl.jaxrpchandler.StockQuoteImpl"/>
+    <parameter name="allowedMethods" value="getQuote"/>
+    <parameter name="wsdlServicePort" value="GetQuote"/>
+  </service>
+</deployment>
