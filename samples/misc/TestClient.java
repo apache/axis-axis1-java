@@ -85,20 +85,18 @@ public class TestClient {
       args = opts.getRemainingArgs();
       if ( args != null ) action = args[0];
 
-      ServiceClient hMsg = new ServiceClient(new HTTPTransport());
-      hMsg.set(HTTPTransport.URL, url);
-      hMsg.set(HTTPTransport.ACTION, action);
-
-      if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
+      ServiceClient client = new ServiceClient(new HTTPTransport());
+      client.set(HTTPTransport.URL, url);
+      client.set(HTTPTransport.ACTION, action);
 
       Message        inMsg      = new Message( msg );
       Message        outMsg     = null ;
 
       System.out.println( "Request:\n" + msg );
         
-      hMsg.setRequestMessage( inMsg );
-      hMsg.invoke();
-      outMsg = hMsg.getMessageContext().getResponseMessage();
+      client.setRequestMessage( inMsg );
+      client.invoke();
+      outMsg = client.getMessageContext().getResponseMessage();
 
       System.out.println( "Response:\n" + outMsg.getAsString() );
         return (String)outMsg.getAsString();
