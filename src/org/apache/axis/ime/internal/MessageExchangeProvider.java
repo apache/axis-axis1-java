@@ -57,6 +57,7 @@ package org.apache.axis.ime.internal;
 
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchange;
 import org.apache.axis.ime.MessageContextListener;
@@ -84,6 +85,14 @@ public abstract class MessageExchangeProvider
     protected final KeyedBuffer RECEIVE_REQUESTS = new NonPersistentKeyedBuffer(WORKERS);
 
     protected boolean initialized = false;
+
+    protected Handler getSendHandler() {
+      return null;
+    }
+    
+    protected Handler getReceiveHandler() {
+      return null;
+    }
 
     protected abstract MessageExchangeSendListener getMessageExchangeSendListener();
 
@@ -119,8 +128,8 @@ public abstract class MessageExchangeProvider
         if (initialized)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
         for (int n = 0; n < THREAD_COUNT; n++) {
-            WORKERS.addWorker(new MessageSender(WORKERS, SEND, getMessageExchangeSendListener()));
-            WORKERS.addWorker(new MessageReceiver(WORKERS, RECEIVE, getReceivedMessageDispatchPolicy()));
+            WORKERS.addWorker(new MessageSender(WORKERS, SEND, getMessageExchangeSendListener(), getSendHandler()));
+            WORKERS.addWorker(new MessageReceiver(WORKERS, RECEIVE, getReceivedMessageDispatchPolicy(), getReceiveHandler()));
         }
         initialized = true;
     }
@@ -170,14 +179,17 @@ public abstract class MessageExchangeProvider
         protected WorkerPool pool;
         protected KeyedBuffer channel;
         protected ReceivedMessageDispatchPolicy policy;
+        protected Handler handler;
     
         protected MessageReceiver(
                 WorkerPool pool,
                 KeyedBuffer channel,
-                ReceivedMessageDispatchPolicy policy) {
+                ReceivedMessageDispatchPolicy policy,
+                Handler handler) {
             this.pool = pool;
             this.channel = channel;
             this.policy = policy;
+            this.handler = handler;
         }
     
         /**
@@ -187,6 +199,8 @@ public abstract class MessageExchangeProvider
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
+                    if (handler != null)
+                      handler.invoke(context.getMessageContext());
                     policy.dispatch(context);
                 }
             } catch (Throwable t) {
@@ -210,14 +224,17 @@ public abstract class MessageExchangeProvider
         protected WorkerPool pool;
         protected KeyedBuffer channel;
         protected MessageExchangeSendListener listener;
+        protected Handler handler;
     
         protected MessageSender(
                 WorkerPool pool,
                 KeyedBuffer channel,
-                MessageExchangeSendListener listener) {
+                MessageExchangeSendListener listener,
+                Handler handler) {
             this.pool = pool;
             this.channel = channel;
             this.listener = listener;
+            this.handler = handler;
         }
         
         /**
@@ -227,6 +244,8 @@ public abstract class MessageExchangeProvider
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
+                    if (handler != null)
+                      handler.invoke(context.getMessageContext());
                     if (context != null)
                         listener.onSend(context);
                 }
