@@ -122,12 +122,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     protected static Log log =
         LogFactory.getLog(SOAPPart.class.getName());
 
-    private static final int FORM_STRING       = 1;
-    private static final int FORM_INPUTSTREAM  = 2;
-    private static final int FORM_SOAPENVELOPE = 3;
-    private static final int FORM_BYTES        = 4;
-    private static final int FORM_BODYINSTREAM = 5;
-    private static final int FORM_FAULT        = 6;
+    public static final int FORM_STRING       = 1;
+    public static final int FORM_INPUTSTREAM  = 2;
+    public static final int FORM_SOAPENVELOPE = 3;
+    public static final int FORM_BYTES        = 4;
+    public static final int FORM_BODYINSTREAM = 5;
+    public static final int FORM_FAULT        = 6;
     private int currentForm;
 
     //private Hashtable headers = new Hashtable();
@@ -305,7 +305,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         return currentMessage;
     }
 
-    private void setCurrentMessage(Object currMsg, int form) {
+    public void setCurrentMessage(Object currMsg, int form) {
       currentMessageAsString = null; //Get rid of any cached stuff this is new.
       currentMessageAsBytes = null;
       currentMessageAsEnvelope= null;
