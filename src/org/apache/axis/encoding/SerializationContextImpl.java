@@ -57,7 +57,6 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
@@ -168,6 +167,7 @@ public class SerializationContextImpl implements SerializationContext
     private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
     private boolean noNamespaceMappings = true;
+    private QName writeXMLType;
 
     class MultiRefItem {
         String id;
@@ -244,61 +244,56 @@ public class SerializationContextImpl implements SerializationContext
         this.writer = writer;
         this.msgContext = msgContext;
 
-        Handler optionSource = null ;
         if ( msgContext != null ) {
             soapConstants = msgContext.getSOAPConstants();
-
-            // optionSource = msgContext.getService();
-            if (optionSource == null)
-                optionSource = msgContext.getAxisEngine();
 
             // Use whatever schema is associated with this MC
             schemaVersion = msgContext.getSchemaVersion();
 
-            Boolean shouldSendDecl = (Boolean)optionSource.getOption(
+            Boolean shouldSendDecl = (Boolean)msgContext.getProperty(
                                                   AxisEngine.PROP_XML_DECL);
             if (shouldSendDecl != null)
                 sendXMLDecl = shouldSendDecl.booleanValue();
 
             Boolean shouldSendMultiRefs =
                   (Boolean)msgContext.getProperty(AxisEngine.PROP_DOMULTIREFS);
-
-            if (shouldSendMultiRefs == null)
-                shouldSendMultiRefs =
-                        (Boolean)optionSource.getOption(AxisEngine.PROP_DOMULTIREFS);
-
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
-
-            // The SEND_TYPE_ATTR and PROP_SEND_XSI options indicate
-            // whether the elements should have xsi:type attributes.
-            // Only turn this off is the user tells us to
-            if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ))
-                sendXSIType = false ;
-
-            Boolean opt = (Boolean)optionSource.getOption(AxisEngine.PROP_SEND_XSI);
-            if ((opt != null) && (opt.equals(Boolean.FALSE))) {
-                    sendXSIType = false ;
-            }
+            
+            boolean sendTypesDefault = sendXSIType;
 
             // A Literal use operation overrides the above settings. Don't
             // send xsi:type, and don't do multiref in that case.
             OperationDesc operation = msgContext.getOperation();
             if (operation != null) {
                 if (operation.getUse() != Use.ENCODED) {
-                    sendXSIType = false;
                     doMultiRefs = false;
+                    sendTypesDefault = false;
                 }
             } else {
-                // A Literal use service overrides the above settings. 
+                // A Literal use service also overrides the above settings. 
                 SOAPService service = msgContext.getService();
                 if (service != null) {
                     if (service.getUse() != Use.ENCODED) {
-                        sendXSIType = false;
                         doMultiRefs = false;
+                        sendTypesDefault = false;
                     }
                 }
             }
+
+            // The SEND_TYPE_ATTR and PROP_SEND_XSI options indicate
+            // whether the elements should have xsi:type attributes.
+            // Only turn this off is the user tells us to
+            if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, sendTypesDefault ))
+                sendXSIType = false ;
+
+// Don't need this since the above isPropertyTrue should walk up to the engine's
+// properties...?
+//            
+//            Boolean opt = (Boolean)optionSource.getOption(AxisEngine.PROP_SEND_XSI);
+//            if (opt != null) {
+//                sendXSIType = opt.booleanValue();
+//            }
         }
 
         // Set up preferred prefixes based on current schema, soap ver, etc.
@@ -917,6 +912,11 @@ public class SerializationContextImpl implements SerializationContext
         writer.write('<');
 
         writer.write(elementQName);
+        
+        if (writeXMLType != null) {
+            attributes = setTypeAttribute(attributes, writeXMLType);
+            writeXMLType = null;
+        }
 
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
@@ -1238,8 +1238,7 @@ public class SerializationContextImpl implements SerializationContext
                 if (shouldSendType ||
                     (xmlType != null &&
                      (!xmlType.equals(actualXMLType.value)))) {
-                    attributes = setTypeAttribute(attributes,
-                                                  actualXMLType.value);
+                    writeXMLType = actualXMLType.value;
                 }
 
                 // -----------------
@@ -1267,8 +1266,7 @@ public class SerializationContextImpl implements SerializationContext
                 if (typedesc != null) {
                     QName qname = typedesc.getXmlType();
                     if (qname != null) {
-                        attributes = setTypeAttribute(attributes,
-                                                      qname);
+                        writeXMLType = qname;
                     }
                 }
                 serializer.serialize(elemQName, attributes, value, this);
@@ -1373,8 +1371,12 @@ public class SerializationContextImpl implements SerializationContext
                     actualXMLType.value =
                         ((BaseSerializerFactory) serFactory).getXMLType();
                 }
-                if (actualXMLType.value == null) {
-                    actualXMLType.value = tm.getXMLType(javaType, xmlType);
+                boolean encoded = (msgContext == null || msgContext.isEncoded());
+                if (actualXMLType.value == null ||
+                        (!encoded && actualXMLType.value.equals(soapConstants.getArrayType()))) {
+                    actualXMLType.value = tm.getXMLType(javaType,
+                                                        xmlType,
+                                                        encoded);
                 }
             }
         }

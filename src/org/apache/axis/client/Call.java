@@ -62,6 +62,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FaultDesc;
@@ -91,6 +92,7 @@ import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
@@ -175,7 +177,7 @@ public class Call implements javax.xml.rpc.Call {
     // Collection of properties to store and put in MessageContext at
     // invoke() time.  Known ones are stored in actual variables for
     // efficiency/type-consistency.  Unknown ones are in myProperties.
-    private Hashtable          myProperties = new Hashtable();
+    private LockableHashtable  myProperties    = new LockableHashtable();
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
@@ -313,7 +315,9 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Call(Service service) {
         this.service = service ;
-        msgContext = new MessageContext( service.getEngine() );
+        AxisEngine engine = service.getEngine();
+        msgContext = new MessageContext( engine );
+        myProperties.setParent(engine.getOptions());
         maintainSession = service.getMaintainSession();
         initialize();
     }
@@ -1784,10 +1788,8 @@ public class Call implements javax.xml.rpc.Call {
             throw af;
         }
         catch( Exception exp ) {
-            //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
             entLog.debug(Messages.getMessage("toAxisFault00"), exp);
-            throw new AxisFault(
-                    Messages.getMessage("errorInvoking00", "\n" + exp) );
+            throw AxisFault.makeFault(exp);
         }
     }
 
@@ -2792,9 +2794,12 @@ public class Call implements javax.xml.rpc.Call {
         if (service != null) {
             // Set the service so that it defers missing property gets to the
             // Call.  So when client-side Handlers get at the MessageContext,
-            // the property scoping will be MC -> SOAPService -> Call
-            service.setPropertyParent(myProperties);
+            // the property scoping will be MC -> SOAPService -> Call -> Engine
+            
+            // THE ORDER OF THESE TWO CALLS IS IMPORTANT, since setting the
+            // engine on a service will set the property parent for the service
             service.setEngine(this.service.getAxisClient());
+            service.setPropertyParent(myProperties);
         }
     }
 

@@ -156,7 +156,7 @@ public interface TypeMapping
      * @return the type's QName
      * @throws javax.xml.rpc.JAXRPCException
      */
-    QName getXMLType(Class javaType, QName xmlType)
+    QName getXMLType(Class javaType, QName xmlType, boolean encoded)
         throws JAXRPCException;
 }
 

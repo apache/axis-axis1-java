@@ -135,4 +135,8 @@ public interface SOAPConstants extends Serializable {
      */
     public QName getMustunderstandFaultQName();
 
+    /**
+     * Obtain the QName of the SOAP array type
+     */ 
+    QName getArrayType();
 }

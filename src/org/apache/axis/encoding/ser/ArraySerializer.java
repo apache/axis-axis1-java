@@ -59,12 +59,8 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
@@ -93,6 +89,14 @@ import java.util.Iterator;
  */
 public class ArraySerializer implements Serializer
 {
+    QName xmlType;
+    Class javaType;
+    
+    public ArraySerializer(Class javaType, QName xmlType) {
+        this.javaType = javaType;
+        this.xmlType = xmlType;
+    }
+    
     protected static Log log =
         LogFactory.getLog(ArraySerializer.class.getName());
 
@@ -159,29 +163,11 @@ public class ArraySerializer implements Serializer
 
         // Get the QName of the componentType.
         // If not found, look at the super classes
-        QName componentQName = null;
-        
-        // Try to get componentQName from operation description first.
-        MessageContext messageContext = context.getMessageContext();
-        if (messageContext != null) {
-            OperationDesc op = messageContext.getOperation();
-            if (op != null) {
-                QName typeQName = null;
-                ParameterDesc param = op.getParamByQName(name);
-                if (param == null) {
-                    if (name.equals(op.getReturnQName())) {
-                        typeQName = op.getReturnType();
-                    }
-                }
-                else {
-                    typeQName = param.getTypeQName();
-                }
-                TypeMapping tm = context.getTypeMapping();
-                SerializerFactory componentFactory = (SerializerFactory) tm.getSerializer(componentType, typeQName);
-                if (componentFactory != null && componentFactory instanceof SimpleSerializerFactory) {
-                    SimpleSerializerFactory simpleComponentFactory = (SimpleSerializerFactory) componentFactory;
-                    componentQName = simpleComponentFactory.getXMLType();
-                }
+        QName componentQName = context.getCurrentXMLType();
+        if (componentQName != null) {
+            if ((componentQName.equals(xmlType) ||
+                    componentQName.equals(soap.getArrayType()))) {
+                componentQName = null;
             }
         }
         
@@ -247,8 +233,8 @@ public class ArraySerializer implements Serializer
         
             // Vidyanand : added this check
             if( msgContext != null ) {
-               enable2Dim = 
-                JavaUtils.isTrueExplicitly(msgContext.getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
+               enable2Dim = JavaUtils.isTrueExplicitly(msgContext.getProperty(
+                       AxisEngine.PROP_TWOD_ARRAY_ENCODING));
             }
 
             if (enable2Dim && !dims.equals("")) {
@@ -388,7 +374,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
+                                      null);  // Respect default type config
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -398,7 +384,7 @@ public class ArraySerializer implements Serializer
                     context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
-                                      Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
+                                      null);  // Respect default type config
 
                 }
             }
@@ -407,7 +393,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue);
+                    context.serialize(elementName, null, aValue, componentQName, true, null);
                 }
             }
         }

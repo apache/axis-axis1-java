@@ -148,25 +148,26 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
             // If we didn't get type information, look up QName of fault
             if (faultDesc == null) {
                 faultDesc = op.getFaultByQName(qn);
-                if (faultDesc != null) {
+                if ((faultXmlType == null) && (faultDesc != null)) {
                     faultXmlType = faultDesc.getXmlType();
                 }
             }
 
-            // Set the class if we found a description
-            if (faultDesc != null) {
-                try {
-                    faultClass = ClassUtils.forName(faultDesc.getClassName());
-                } catch (ClassNotFoundException e) {
-                    // Just create an AxisFault, no custom exception
-                }
-            }
+//            // Set the class if we found a description
+//            if (faultDesc != null) {
+//                try {
+//                    faultClass = ClassUtils.forName(faultDesc.getClassName());
+//                } catch (ClassNotFoundException e) {
+//                    // Just create an AxisFault, no custom exception
+//                }
+//            }
         } else {
             faultXmlType = context.getTypeFromAttributes(namespace,
                                                        name,
                                                        attributes); 
-            faultClass = context.getTypeMapping().getClassForQName(faultXmlType);            
         }
+
+        faultClass = context.getTypeMapping().getClassForQName(faultXmlType);            
         
         if(faultClass != null && faultXmlType != null) {
             builder.setFaultClass(faultClass);

@@ -55,6 +55,10 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+
+import javax.xml.namespace.QName;
+
 
 /**
  * SerializerFactory for arrays
@@ -63,6 +67,9 @@ package org.apache.axis.encoding.ser;
  */
 public class ArraySerializerFactory extends BaseSerializerFactory {
     public ArraySerializerFactory() {
-        super(ArraySerializer.class);
+        this(Object[].class, Constants.SOAP_ARRAY);
+    }
+    public ArraySerializerFactory(Class javaType, QName xmlType) {
+        super(ArraySerializer.class, xmlType, javaType);
     }
 }

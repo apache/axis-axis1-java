@@ -378,7 +378,7 @@ public class TypeMappingImpl implements TypeMapping
      * @return the type's QName
      * @throws JAXRPCException
      */
-    public QName getXMLType(Class javaType, QName xmlType)
+    public QName getXMLType(Class javaType, QName xmlType, boolean encoded)
         throws JAXRPCException
     {
         javax.xml.rpc.encoding.SerializerFactory sf = null;
@@ -399,27 +399,28 @@ public class TypeMappingImpl implements TypeMapping
 
         // Now get the serializer with the pair
         sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
-
-        if (sf == null && delegate != null) {
-            return delegate.getXMLType(javaType, xmlType);
-        }
+        if (sf != null)
+            return xmlType;
 
         // If not successful, use the xmlType to get
         // another pair.  For some xmlTypes (like SOAP_ARRAY)
         // all of the possible javaTypes are not registered.
-        if (sf == null) {
-            if (isArray(javaType)) {
-                pair = (Pair) qName2Pair.get(pair.xmlType);
+        if (isArray(javaType)) {
+            if (encoded) {
+                return Constants.SOAP_ARRAY;
             } else {
-                pair = (Pair) class2Pair.get(pair.javaType);
+                pair = (Pair) qName2Pair.get(xmlType);
             }
-            if (pair != null) {
-                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
-            }
+        }
+
+        if (pair == null) {
+            pair = (Pair) class2Pair.get(javaType);
         }
 
         if (pair != null) {
             xmlType = pair.xmlType;
+        } else if (delegate != null) {
+            return delegate.getXMLType(javaType, xmlType, encoded);
         }
 
         return xmlType;

@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import java.io.StringReader;
@@ -98,6 +99,27 @@ public class TestSer extends TestCase {
         assertEquals("Data and Val string members are not equal", data.stringMember, val.stringMember);
         assertEquals("Data and Val float members are not equal",data.floatMember.floatValue(),
                      val.floatMember.floatValue(), 0.00001F);
+    }
+    
+    public void testAttributeQNames() throws Exception {
+        String NS1 = "urn:foo";
+        MessageContext context = new MessageContext(new AxisServer());
+        StringWriter writer = new StringWriter();
+        SerializationContextImpl ser = new SerializationContextImpl(writer);
+        ser.registerPrefixForURI("", NS1);
+        ser.startElement(new QName(NS1, "e1"), null);
+        String foo = ser.attributeQName2String(new QName(NS1, "attr"));
+        AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("a", "a", "a", "CDATA", foo);
+        ser.startElement(new QName(NS1, "e2"), attrs);
+        ser.endElement();
+        foo = ser.attributeQName2String(new QName(NS1, "attr"));
+        attrs = new AttributesImpl();
+        attrs.addAttribute("a", "a", "a", "CDATA", foo);
+        ser.startElement(new QName(NS1, "e3"), null);
+        ser.endElement();
+        ser.endElement();
+        System.out.println(writer.getBuffer().toString());
     }
 
     /**

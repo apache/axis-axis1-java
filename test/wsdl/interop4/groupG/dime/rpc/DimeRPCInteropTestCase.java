@@ -190,13 +190,4 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
     }
 
     public static URL url = null;
-    
-    public static void main(String[] args) throws Exception {
-        if (args.length == 1) {
-            url = new URL(args[0]);
-        } else {
-            url = new URL(new test.wsdl.interop4.groupG.dime.rpc.DimeRPCInteropLocator().getDimeRPCSoapPortAddress());
-        }
-        junit.textui.TestRunner.run(new junit.framework.TestSuite(DimeRPCInteropTestCase.class));
-    } // main
 }

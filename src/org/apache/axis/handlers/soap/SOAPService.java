@@ -304,6 +304,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler serviceHandler)
     {
+        this();
         init(null, new MustUnderstandChecker(), serviceHandler, null, null);
     }
     
@@ -317,6 +318,7 @@ public class SOAPService extends SimpleTargetedChain
                     Messages.getMessage("nullEngine"));
 
         this.engine = engine;
+        ((LockableHashtable)options).setParent(engine.getOptions());
         getTypeMappingRegistry().delegate(engine.getTypeMappingRegistry());
     }
 
