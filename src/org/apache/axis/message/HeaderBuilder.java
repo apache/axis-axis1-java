@@ -66,26 +66,30 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class HeaderBuilder extends SOAPHandler {
+public class HeaderBuilder extends SOAPHandler
+{
     protected static Log log =
-            LogFactory.getLog(HeaderBuilder.class.getName());
+        LogFactory.getLog(HeaderBuilder.class.getName());
 
+    private SOAPHeaderElement header;
     private SOAPEnvelope envelope;
 
-    HeaderBuilder(SOAPEnvelope envelope) {
+    HeaderBuilder(SOAPEnvelope envelope)
+    {
         this.envelope = envelope;
     }
 
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
-            throws SAXException {
+        throws SAXException
+    {
         if (!context.isDoneParsing()) {
             if (myElement == null) {
                 myElement = new SOAPHeader(namespace, localName, qName,
-                        attributes, context,
-                        envelope.getSOAPConstants());
-                envelope.setHeader((SOAPHeader) myElement);
+                                           attributes, context,
+                                           envelope.getSOAPConstants());
+                envelope.setHeader((SOAPHeader)myElement);
             }
             context.pushNewElement(myElement);
         }
@@ -96,8 +100,20 @@ public class HeaderBuilder extends SOAPHandler {
                                     String prefix,
                                     Attributes attributes,
                                     DeserializationContext context)
-            throws SAXException {
-        HeaderElementBuilder handler = new HeaderElementBuilder((SOAPHeader) myElement);
+        throws SAXException
+    {
+        header = new SOAPHeaderElement(namespace, localName, prefix,
+                                       attributes, context);
+
+        SOAPHandler handler = new SOAPHandler();
+        handler.myElement = header;
+
         return handler;
+    }
+
+    public void onEndChild(String namespace, String localName,
+                           DeserializationContext context)
+    {
+        envelope.addHeader(header);
     }
 }
