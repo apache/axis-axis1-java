@@ -246,6 +246,12 @@
     <echo message="test.functional.fail = ${test.functional.fail}" />
     <echo message="" />
 
+
+    <pathconvert targetos="windows" property="classpath.as.string" refid="classpath"/>
+    <echo message="classpath: ${classpath.as.string}"/>
+    <echo message="" />
+
+
     <uptodate property="javadoc.notoutofdate"
               targetfile="${build.javadocs}/index.html">
       <srcfiles dir="${src.dir}" includes="**/*.java" />
