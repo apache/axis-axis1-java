@@ -157,7 +157,8 @@ public class Emitter {
             serviceName = "";
         emitter.setServiceName(serviceName);
         emitter.setReg(msgContext.getTypeMappingRegistry());
-        return emitter.emit();
+        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(emitter.emit());
+        return doc;
     }
 
     /**
@@ -198,21 +199,23 @@ public class Emitter {
      * @throws Exception
      */
     public void emit(Class cls, String allowedMethods, String filename) throws Exception {
-        Document doc = emit(cls, allowedMethods);
-        types.insertTypesFragment(doc);
+        def = emit(cls, allowedMethods);
+        types.insertTypesFragment(def);
+        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
     /**
-     * Generates a WSDL <code>Document</code> for a given <code>Class</code> and
+     * Generates a WSDL <code>Definition</code> for a given <code>Class</code> and
      * a space seperated list of methods at design time
      *
      * @param cls <code>Class</code> object
      * @param allowedMethods space seperated methods
-     * @return WSDL <code>Document</code>
+     * @return WSDL <code>Definition</code>
      * @throws Exception
      */
-    public Document emit(Class cls, String allowedMethods) throws Exception {
+    public Definition emit(Class cls, String allowedMethods) throws Exception {
         this.cls = cls;
         this.allowedMethods = allowedMethods;
 
@@ -224,13 +227,13 @@ public class Emitter {
     }
 
     /**
-     * Generates a WSDL <code>Document</code> for the current configuration parameters
+     * Generates a WSDL <code>Definition</code> for the current configuration parameters
      * set for this class instance
      *
      * @return WSDL <code>Document</code>
      * @throws Exception
      */
-    public Document emit() throws Exception {
+    public Definition emit() throws Exception {
         clsName = cls.getName();
         clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
 
@@ -251,7 +254,7 @@ public class Emitter {
         Binding binding = writeBinding();
         writePortType(binding);
         writeService(binding);
-        return WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+        return def;
     }
 
     private void writeDefinitions() throws Exception {
