@@ -69,6 +69,27 @@ public class TestEnvelope extends junit.framework.TestCase {
         assertTrue(body != null);
     }
     
+    public void testEnvelopeWithLeadingComment() throws Exception {
+    	String soapMessageWithLeadingComment =
+    		"<?xml version='1.0' encoding='UTF-8'?>" + 
+			"<!-- Comment -->" +
+			"<env:Envelope xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>" +
+			"<env:Body><echo><arg0>Hello</arg0></echo></env:Body>" +
+			"</env:Envelope>";
+    	
+    	SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
+    	SOAPConnection con = scFactory.createConnection();
+    	
+    	MessageFactory factory = MessageFactory.newInstance();
+    	SOAPMessage message =
+    		factory.createMessage(new MimeHeaders(), 
+    				new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
+        SOAPPart part = message.getSOAPPart();
+        SOAPEnvelope envelope = (SOAPEnvelope) part.getEnvelope();
+        //message.writeTo(System.out);
+        assertTrue(envelope != null);
+    }
+    
     private SOAPEnvelope getSOAPEnvelope() throws Exception {
         SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
         SOAPConnection con = scFactory.createConnection();
