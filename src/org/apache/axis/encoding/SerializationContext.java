@@ -57,6 +57,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.cache.MethodCache;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.Utils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -508,6 +509,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     prefix = null;
                 }
             }
+            localPart = Utils.getLastLocalPart(localPart);            
         }
 
         if (namespaceURI.length() == 0) {
