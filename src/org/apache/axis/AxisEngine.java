@@ -74,6 +74,7 @@ import org.apache.axis.providers.java.MsgProvider;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
+import java.util.Hashtable;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -324,6 +325,9 @@ public abstract class AxisEngine extends BasicHandler
     public void deployWSDD(WSDDDocument doc) throws DeploymentException
     {
         myRegistry.deploy(doc);
+        WSDDGlobalConfiguration global = myRegistry.getGlobalConfiguration();
+        if (global != null)
+            this.setOptions(global.getParametersTable());
     }
     
     /**
