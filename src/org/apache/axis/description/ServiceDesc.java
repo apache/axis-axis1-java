@@ -54,7 +54,6 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.TypeMapping;
 
@@ -86,13 +85,13 @@ public class ServiceDesc {
      * Fill in what we can of the service description by introspecting a
      * Java class.  Only do this if we haven't already been filled in.
      */
-    public void loadServiceDescByIntrospection(JavaClass jc, TypeMapping tm)
+    public void loadServiceDescByIntrospection(Class jc, TypeMapping tm)
     {
         if (hasOperationData)
             return;
 
         ArrayList allowedMethods = null;
-        Method [] methods = jc.getJavaClass().getDeclaredMethods();
+        Method [] methods = jc.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
             String methodName = methods[i].getName();
