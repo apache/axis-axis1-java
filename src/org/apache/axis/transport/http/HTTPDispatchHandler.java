@@ -71,9 +71,6 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.encoding.Base64 ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
-import org.apache.xml.serialize.XMLSerializer ;
-import org.apache.xml.serialize.OutputFormat ;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -222,30 +219,13 @@ public class HTTPDispatchHandler extends BasicHandler {
       }
 
       if ( b != -1 ) {
-        DocumentBuilderFactory dbf = null ;
-        DocumentBuilder        db  = null ;
-        Document               doc = null ;
-
-        try {
-          dbf = DocumentBuilderFactory.newInstance();
-          dbf.setNamespaceAware(true);
-          db  = dbf.newDocumentBuilder();
-          doc = db.parse( inp );
-        }
-        catch( Exception e ) {
-          e.printStackTrace();
-        }
-
+        Document doc = XMLUtils.newDocument( inp );
         outMsg = new Message( doc, "Document" );
         msgContext.setResponseMessage( outMsg );
 
         Debug.Print( 1, "\nXML received:" );
         Debug.Print( 1, "---------------------------------------------------");
-        ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-        XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
-        xs.serialize( (Document) doc );
-        baos.close();
-        Debug.Print( 1, baos.toString() );
+        Debug.Print( 1, XMLUtils.DocumentToString( doc ) );
       }
       inp.close();
       out.close();

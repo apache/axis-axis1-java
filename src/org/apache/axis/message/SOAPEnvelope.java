@@ -58,11 +58,11 @@
 package org.apache.axis.message ;
 
 import java.util.* ;
-import org.apache.axis.message.* ;
 import org.apache.axis.* ;
+import org.apache.axis.utils.* ;
+import org.apache.axis.message.* ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  *
@@ -233,19 +233,7 @@ public class SOAPEnvelope {
     String tmpEnc    = (encodingStyleURI != null ? encodingStyleURI :
                                                    Constants.URI_SOAP_ENC );
 
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
+    Document doc = XMLUtils.newDocument();
 
     root = doc.createElementNS(tmpEnvURI,tmpEnvPre+":"+Constants.ELEM_ENVELOPE);
     root.setAttribute( "xmlns:" + Constants.NSPREFIX_SOAP_ENV,
@@ -261,7 +249,7 @@ public class SOAPEnvelope {
       root.appendChild( elem );
       for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
-        elem.appendChild( doc.importNode( h.getRoot(), true ) );
+        elem.appendChild( doc.importNode(h.getRoot(),true) );
       }
     } 
     if ( body != null ) {
@@ -270,9 +258,7 @@ public class SOAPEnvelope {
       root.appendChild( elem );
       for ( i = 0 ; i < body.size() ; i++ ) {
         Element  bod = ((SOAPBody)body.get(i)).getRoot();
-        if ( bod.getOwnerDocument() != null )
-          bod = (Element) doc.importNode( bod, true );
-        elem.appendChild( bod );
+        elem.appendChild( doc.importNode(bod,true) );
       }
     }
     return( doc );

@@ -59,9 +59,9 @@ import java.util.Enumeration;
 import org.apache.axis.*;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.Debug;
+import org.apache.axis.utils.XMLUtils ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler
@@ -126,22 +126,8 @@ public abstract class BasicHandler implements Handler {
         options = opts ;
     }
 
-    public Element getDeploymentData() {
+    public Element getDeploymentData(Document doc) {
       Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
-
-      DocumentBuilderFactory dbf = null ;
-      DocumentBuilder        db  = null ;
-      Document               doc = null ;
-
-      try {
-        dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        db  = dbf.newDocumentBuilder();
-        doc = db.newDocument();
-      }
-      catch( Exception e ) {
-        e.printStackTrace();
-      }
 
       Element  root = doc.createElement( "handler" );
 

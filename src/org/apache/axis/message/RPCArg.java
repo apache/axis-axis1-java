@@ -62,7 +62,6 @@ import java.util.* ;
 import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.utils.Debug ;
 
-import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
 
 /**
@@ -125,22 +124,8 @@ public class RPCArg {
   }
   public void   setType(String str) { type = str ; }
 
-  public Element getElement() {
+  public Element getElement(Document doc) {
     Element   root ;
-
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
 
     if ( prefix != null ) {
       root = doc.createElementNS( namespaceURI, prefix + ":" + name );

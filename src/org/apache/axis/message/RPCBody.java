@@ -58,10 +58,10 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
+import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.message.* ;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  *
@@ -137,23 +137,10 @@ public class RPCBody {
     }
   }
 
-  public Element getElement() {
+  public Element getElement(Document doc) {
     Element   root ;
-
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
-   
+  
+    if ( doc == null ) doc = XMLUtils.newDocument();
     if ( prefix != null )  {
       root = doc.createElementNS( namespaceURI, prefix + ":" + methodName );
       root.setAttribute( "xmlns:" + prefix, namespaceURI );
@@ -162,13 +149,13 @@ public class RPCBody {
       root = doc.createElement( methodName );
     for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
       RPCArg  arg = (RPCArg) args.get(i) ;
-      root.appendChild( doc.importNode(arg.getElement(),true) );
+      root.appendChild( arg.getElement(doc) );
     }
     return( root );
   }
 
   public SOAPBody getAsSOAPBody() {
-    return( new SOAPBody( getElement() ) );
+    return( new SOAPBody( getElement(null) ) );
   }
 
 };

@@ -64,7 +64,6 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
 
 import org.w3c.dom.* ;
-import javax.xml.parsers.* ;
 
 /**
  *
@@ -136,12 +135,7 @@ public class Admin {
         Handler    h ;
         int        i, j ;
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder        db  = dbf.newDocumentBuilder();
-
-        doc = db.newDocument();
-
+        doc = XMLUtils.newDocument();
         root = doc.createElement( "Admin" );
         doc.appendChild( root );
 
@@ -158,7 +152,7 @@ public class Admin {
 
           for( i = 0 ; i < names.length ; i++ ) {
             h = hr.find(names[i]);
-            elem = h.getDeploymentData();
+            elem = h.getDeploymentData(doc);
 
             if ( elem == null ) continue ;
 
@@ -371,13 +365,7 @@ public class Admin {
                                "Unknown type to " + action + ": " + type,
                                null, null );
       }
-
-      DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      DocumentBuilder         db  = dbf.newDocumentBuilder();
-
-      doc = db.newDocument();
-
+      doc = XMLUtils.newDocument();
       doc.appendChild( root = doc.createElement( "Admin" ) );
       root.appendChild( doc.createTextNode( "Done processing" ) );
     }
@@ -416,16 +404,8 @@ public class Admin {
 
     try {
       for ( i = 0 ; i < args.length ; i++ ) {
-        Document         doc     = null ;
-
         System.out.println( "Processing '" + args[i] + "'" );
- 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        DocumentBuilder        db  = dbf.newDocumentBuilder();
-        doc = db.parse( new FileInputStream( args[i] ) );
-
-        admin.process( doc );
+        admin.process(XMLUtils.newDocument( new FileInputStream( args[i] ) ));
       }
     }
     catch( AxisFault e ) {

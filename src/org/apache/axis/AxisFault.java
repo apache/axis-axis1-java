@@ -145,24 +145,11 @@ public class AxisFault extends Exception {
     return( (Element[]) faultDetails.toArray() );
   }
 
-  public Element getElement() {
+  public Element getElement(Document doc) {
     Element  elem, root ;
     int      i ;
 
-    DocumentBuilderFactory dbf = null ;
-    DocumentBuilder        db  = null ;
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
-      doc = db.newDocument();
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
-    
+    if ( doc == null ) doc = XMLUtils.newDocument();
     root = doc.createElementNS( Constants.URI_SOAP_ENV,
                                 Constants.NSPREFIX_SOAP_ENV + ":" +
                                 Constants.ELEM_FAULT );
@@ -182,7 +169,7 @@ public class AxisFault extends Exception {
       root.appendChild(elem = doc.createElement( Constants.ELEM_FAULT_DETAIL));
 
       for ( i = 0 ;i < faultDetails.size() ; i++ )
-        elem.appendChild( (Element) faultDetails.get(i) );
+        elem.appendChild( doc.importNode((Element) faultDetails.get(i),true) );
     }
 
     return( root );
