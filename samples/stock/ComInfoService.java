@@ -58,8 +58,6 @@ package samples.stock ;
 import java.io.*;
 import java.net.URL;
 
-import org.jdom.* ;
-
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)

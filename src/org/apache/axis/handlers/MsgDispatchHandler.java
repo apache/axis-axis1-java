@@ -58,7 +58,6 @@ package org.apache.axis.handlers ;
 import java.io.* ;
 import java.util.* ;
 import java.lang.reflect.* ;
-import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.RPCArg;
@@ -67,6 +66,9 @@ import org.apache.axis.message.SOAPBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -108,19 +110,34 @@ public class MsgDispatchHandler extends BasicHandler {
                               new SOAPEnvelope() :
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
 
-      Document      doc     = new Document( reqBody.getRoot() );
+      DocumentBuilderFactory dbf = null ;
+      DocumentBuilder        db  = null ;
+      Document               doc = null ;
+
+      try {
+        dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        db  = dbf.newDocumentBuilder();
+        doc = db.newDocument();
+      }
+      catch( Exception e ) {
+        Debug.Print( 1, e );
+        throw new AxisFault( e );
+      }
+
+      doc.appendChild( doc.importNode(reqBody.getRoot(),true) );
 
       /* If no methodName was specified during deployment then get it */
       /* from the root of the Body element                            */
       /* Hmmm, should we do this????                                  */
       /****************************************************************/
       if ( methodName == null || methodName.equals("") ) {
-        Element root = doc.getRootElement();
-        if ( root != null ) methodName = root.getName();
+        Element root = doc.getDocumentElement();
+        if ( root != null ) methodName = root.getLocalName();
       }
   
       argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
-      argClasses[1] = cl.loadClass("org.jdom.Document");
+      argClasses[1] = cl.loadClass("org.w3c.dom.Document");
       argObjects[0] = msgContext ;
       argObjects[1] = doc ;
 

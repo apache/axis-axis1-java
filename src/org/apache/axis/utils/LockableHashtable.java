@@ -52,6 +52,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.utils ;
+
 import java.util.Hashtable;
 import java.util.Vector;
 

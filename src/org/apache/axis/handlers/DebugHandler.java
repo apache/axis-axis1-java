@@ -56,7 +56,6 @@
 package org.apache.axis.handlers ;
 
 import java.util.* ;
-import org.jdom.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
@@ -65,6 +64,8 @@ import org.apache.axis.message.RPCBody;
 import org.apache.axis.message.SOAPBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+
+import org.w3c.dom.* ;
 
 /**
  *
@@ -84,7 +85,7 @@ public class DebugHandler extends BasicHandler {
             for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
                 SOAPHeader  header = (SOAPHeader) headers.get(i);
                 Element     root   = header.getRoot();
-                String      value = root.getText();
+                String      value = root.getFirstChild().getNodeValue();
                 if ( value != null ) {
                     int     debugVal = Integer.parseInt( value );
                     Debug.Print( 1, "Setting debug level to: " + debugVal );

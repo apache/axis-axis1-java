@@ -58,8 +58,6 @@ package org.apache.axis.client ;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-import org.jdom.output.XMLOutputter ;
-import org.jdom.Document ;
 
 import org.apache.axis.utils.Options ;
 import org.apache.axis.Message ;
@@ -114,13 +112,7 @@ public class AdminClient {
 
         outMsg = msgContext.getResponseMessage();
         input.close();
-        if ( args[i].equals("list") ) {
-          XMLOutputter out = new XMLOutputter("  ", true);
-          Document doc = (Document) outMsg.getAs("Document");
-          out.output(doc, System.out);
-        }
-        else
-          System.err.println( outMsg.getAs( "String" ) );
+        System.err.println( outMsg.getAs( "String" ) );
       }
     }
     catch( Exception e ) {

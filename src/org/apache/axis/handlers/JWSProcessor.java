@@ -60,7 +60,9 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.AxisClassLoader ;
 import sun.tools.javac.Main;
-import org.jdom.* ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  * This handler will use the JWSFileName property of the MsgContext to
@@ -134,7 +136,23 @@ public class JWSProcessor extends BasicHandler
           /* confuse us.                                             */
           /***********************************************************/
           (new File(cFile)).delete();
-          Element         root = new Element( "Errors" );
+
+          DocumentBuilderFactory dbf = null ;
+          DocumentBuilder        db  = null ;
+          Document               doc = null ;
+          
+          try {
+            dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            db  = dbf.newDocumentBuilder();
+            doc = db.newDocument();
+          }
+          catch( Exception e ) {
+            Debug.Print( 1, e );
+            throw new AxisFault( e );
+          }
+
+          Element         root = doc.createElement( "Errors" );
           StringBuffer    sbuf = new StringBuffer();
           FileReader      inp  = new FileReader( errFile );
 
@@ -143,7 +161,7 @@ public class JWSProcessor extends BasicHandler
           while ( (rc = inp.read(buf, 0, 4096)) > 0 )
              sbuf.append( buf, 0, rc );
           inp.close();
-          root.addContent( sbuf.toString() );
+          root.appendChild( doc.createTextNode( sbuf.toString() ) );
           (new File(errFile)).delete();
           throw new AxisFault( "Server.compileError",
                                "Error while compiling: " + jFile,

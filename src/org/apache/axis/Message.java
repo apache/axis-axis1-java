@@ -59,9 +59,9 @@ import java.io.* ;
 import javax.servlet.* ;
 import javax.servlet.http.* ;
 
-import org.jdom.* ;
-import org.jdom.input.SAXBuilder ;
-import org.jdom.output.XMLOutputter ;
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
+import org.apache.xml.serialize.* ;
 
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
@@ -205,9 +205,11 @@ public class Message {
     if ( currentForm.equals("Document") ) { 
       try {
         ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-        XMLOutputter   xo = new XMLOutputter();
+        XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
+        xs.serialize( (Document) currentMessage );
+        baos.close();
         currentForm = "String" ;
-        currentMessage = xo.outputString( (Document) currentMessage );
+        currentMessage = baos.toString();
         return( (String) currentMessage );
       }
       catch( Exception e ) {
@@ -224,7 +226,18 @@ public class Message {
     Debug.Print( 2, "Enter: Message::getAsDocument" );
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
-    SAXBuilder  parser = new SAXBuilder();
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
+
     InputStream inp     = null ;
 
     try {
@@ -244,8 +257,10 @@ public class Message {
         // reader = new CharArrayReader(payload);
       }
       else if ( currentForm.equals("String") )  {
-        Reader reader = new StringReader( (String) currentMessage );
-        setCurrentMessage( parser.build( reader ), "Document" );
+        // Reader reader = new StringReader( (String) currentMessage );
+        ByteArrayInputStream bais =  null ;
+        bais = new ByteArrayInputStream( ((String)currentMessage).getBytes() );
+        setCurrentMessage( db.parse( bais ), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
@@ -276,7 +291,7 @@ public class Message {
         return( null );
       }
   
-      setCurrentMessage( parser.build( inp ), "Document" );
+      setCurrentMessage( db.parse( inp ), "Document" );
       Debug.Print( 2, "Exit: Message::getAsDocument" );
       return( (Document) currentMessage );
     }

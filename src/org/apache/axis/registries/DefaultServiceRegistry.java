@@ -57,14 +57,15 @@ package org.apache.axis.registries ;
 
 import java.io.* ;
 import java.util.* ;
-import org.jdom.* ;
-import org.jdom.input.DOMBuilder ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Admin ;
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /** 
  *
@@ -132,11 +133,13 @@ public class DefaultServiceRegistry extends SupplierRegistry {
     input = new ByteArrayInputStream( (onServer ? serverXML : 
                                                   clientXML).getBytes() );
 
-    DOMBuilder            builder    = new DOMBuilder();
-    Document              doc        = null ;
-
     try {
-      doc = builder.build( input );
+      DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      DocumentBuilder         db  = dbf.newDocumentBuilder();
+      Document                doc = null ;
+
+      doc = db.parse( input );
       admin.AdminService( msgContext, doc );
     }
     catch( Exception e ) {

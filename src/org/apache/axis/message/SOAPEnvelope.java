@@ -58,10 +58,11 @@
 package org.apache.axis.message ;
 
 import java.util.* ;
-import org.jdom.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.* ;
 
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -86,7 +87,8 @@ public class SOAPEnvelope {
   }
 
   public SOAPEnvelope(Document doc) {
-    setEnvelope( doc.getRootElement() );
+    Element   root = doc.getDocumentElement();
+    setEnvelope( root );
   }
 
   public SOAPEnvelope(SOAPBody bod) {
@@ -94,8 +96,8 @@ public class SOAPEnvelope {
   }
 
   public void setEnvelope(Element elem) {
-    List     list ;
-    Element  e ;
+    NodeList list ;
+    Element  e = null ;
     int      i ;
 
     if ( elem == null ) {
@@ -105,26 +107,38 @@ public class SOAPEnvelope {
       return ;
     }
 
-    prefix = elem.getNamespacePrefix();
-    namespaceURI = elem.getNamespace().getURI();
-    encodingStyleURI = elem.getAttributeValue( Constants.ATTR_ENCODING_STYLE );
+    prefix = elem.getPrefix();
+    namespaceURI = Constants.URI_SOAP_ENV ; // elem.getNamespaceURI();
+    encodingStyleURI = elem.getAttribute( Constants.ATTR_ENCODING_STYLE );
 
-    e = elem.getChild( Constants.ELEM_HEADER, elem.getNamespace() );
+    list = elem.getElementsByTagNameNS( Constants.URI_SOAP_ENV, 
+                                        Constants.ELEM_HEADER );
+    if ( list != null && list.getLength() > 0 )
+      e = (Element) list.item(0);
+
     if ( e != null ) {
-      list = e.getChildren();
-      for ( i = 0 ; i < list.size() ; i++ ) {
-        Element h = (Element) list.get(i);
+      list = e.getChildNodes();
+      for ( i = 0 ; i < list.getLength() ; i++ ) {
+        Node    n = list.item(i);
+        if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+
+        Element h = (Element) n ;
         if ( headers == null ) headers = new Vector();
         headers.add( new SOAPHeader( h ) );
       }
     }
 
-    e = elem.getChild( Constants.ELEM_BODY, elem.getNamespace() );
+    list = elem.getElementsByTagNameNS( Constants.URI_SOAP_ENV, 
+                                        Constants.ELEM_BODY );
+    if ( list != null && list.getLength() > 0 )
+      e = (Element) list.item(0);
+
     if ( e != null ) {
-      list = e.getChildren();
+      list = e.getChildNodes();
       if ( list != null ) {
-        for ( i = 0 ; i < list.size() ; i++ ) {
-          Object n = list.get(i);
+        for ( i = 0 ; i < list.getLength() ; i++ ) {
+          Node   n = list.item(i);
+          if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
           if ( body == null ) body = new Vector();
           body.add( new SOAPBody( (Element) n ) );
         }
@@ -210,7 +224,6 @@ public class SOAPEnvelope {
   }
 
   public Document getDocument() {
-    Document doc = null ;
     Element  root ;
     int      i ;
 
@@ -220,29 +233,46 @@ public class SOAPEnvelope {
     String tmpEnc    = (encodingStyleURI != null ? encodingStyleURI :
                                                    Constants.URI_SOAP_ENC );
 
-    root = new Element( Constants.ELEM_ENVELOPE, tmpEnvPre, tmpEnvURI );
-    root.addAttribute( new Attribute( Constants.ATTR_ENCODING_STYLE,
-                                      tmpEnvPre, tmpEnvURI, tmpEnc ) );
-    doc = new Document( root );
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
+
+    root = doc.createElementNS(tmpEnvURI,tmpEnvPre+":"+Constants.ELEM_ENVELOPE);
+    root.setAttribute( "xmlns:" + Constants.NSPREFIX_SOAP_ENV,
+                                  Constants.URI_SOAP_ENV );
+                    
+    root.setAttributeNS( tmpEnvURI, tmpEnvPre+":"+Constants.ATTR_ENCODING_STYLE,
+                         tmpEnc );
+    doc.appendChild( root );
 
     if ( headers != null && headers.size() > 0 ) {
-      Element elem = new Element( Constants.ELEM_HEADER, 
-                                  tmpEnvPre, tmpEnvURI );
-      root.addContent( elem );
+      Element elem = doc.createElementNS( tmpEnvURI,
+                                          tmpEnvPre+":"+Constants.ELEM_HEADER);
+      root.appendChild( elem );
       for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
-        elem.addContent( h.getRoot() );
+        elem.appendChild( doc.importNode( h.getRoot(), true ) );
       }
     } 
     if ( body != null ) {
-      Element elem = new Element( Constants.ELEM_BODY, 
-                                  tmpEnvPre, tmpEnvURI );
-      root.addContent( elem );
+      Element elem = doc.createElementNS( tmpEnvURI,
+                                          tmpEnvPre+":"+Constants.ELEM_BODY);
+      root.appendChild( elem );
       for ( i = 0 ; i < body.size() ; i++ ) {
         Element  bod = ((SOAPBody)body.get(i)).getRoot();
-        if ( bod.getDocument() != null )
-          bod = (Element) bod.clone();
-        elem.addContent( bod );
+        if ( bod.getOwnerDocument() != null )
+          bod = (Element) doc.importNode( bod, true );
+        elem.appendChild( bod );
       }
     }
     return( doc );

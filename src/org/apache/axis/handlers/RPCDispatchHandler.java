@@ -57,7 +57,6 @@ package org.apache.axis.handlers ;
 
 import java.util.* ;
 import java.lang.reflect.* ;
-import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.RPCArg;

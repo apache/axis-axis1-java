@@ -58,10 +58,12 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.jdom.* ;
 
 import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.utils.Debug ;
+
+import javax.xml.parsers.* ;
+import org.w3c.dom.* ;
 
 /**
  *
@@ -77,10 +79,10 @@ public class RPCArg {
   public RPCArg() {} 
 
   public RPCArg(Element elem) {
-    prefix = elem.getNamespacePrefix();
+    prefix = elem.getPrefix();
     namespaceURI = elem.getNamespaceURI();
-    name = elem.getName();
-    value = elem.getText();
+    name = elem.getLocalName();
+    value = elem.getFirstChild().getNodeValue();
   }
 
   public RPCArg(String name) {
@@ -126,11 +128,27 @@ public class RPCArg {
   public Element getElement() {
     Element   root ;
 
-    if ( prefix != null )
-      root = new Element( name, prefix, namespaceURI );
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
+
+    if ( prefix != null ) {
+      root = doc.createElementNS( namespaceURI, prefix + ":" + name );
+      root.setAttribute( "xmlns:" + prefix, namespaceURI );
+    }
     else 
-      root = new Element( name );
-    root.addContent( value );
+      root = doc.createElement( name );
+    root.appendChild( doc.createTextNode( value ) );
     return( root );
   }
 };

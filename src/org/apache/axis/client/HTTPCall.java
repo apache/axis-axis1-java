@@ -56,8 +56,6 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
-import org.jdom.* ;
-import org.apache.axis.* ;
 import org.apache.axis.message.RPCArg;
 import org.apache.axis.message.RPCBody;
 import org.apache.axis.message.SOAPBody;
@@ -68,6 +66,13 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPDispatchHandler;
+
+import org.w3c.dom.* ;
+
+import java.io.* ;
+import javax.xml.parsers.* ;
+import org.apache.xml.serialize.XMLSerializer ;
+import org.apache.xml.serialize.OutputFormat ;
 
 /**
  * This class is meant to be the interface that client/requestor code
@@ -186,7 +191,23 @@ public class HTTPCall {
 
     resMsg = msgContext.getResponseMessage();
     Document doc = (Document) resMsg.getAs("Document");
-    body = new RPCBody( doc.getRootElement() );
+{
+try {
+ByteArrayOutputStream  baos = new ByteArrayOutputStream();
+XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
+xs.serialize( (Document) doc );
+baos.close();
+Debug.Print( 1, "AGAIN" );
+Debug.Print( 1, baos.toString() );
+} catch( Exception e ) {}
+
+    Element elem = doc.getDocumentElement();
+    System.err.println("doc: " + doc );
+    System.err.println("elem: " + elem );
+    System.err.println("elem: " + elem.getNodeName() );
+}
+
+    body = new RPCBody( doc.getDocumentElement() );
     resArgs = body.getArgs();
     if ( resArgs != null && resArgs.size() > 0 )
       result = (String) ((RPCArg) resArgs.get(0)).getValue() ;

@@ -58,9 +58,10 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.jdom.* ;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.message.* ;
+
+import org.w3c.dom.* ;
 
 /**
  *
@@ -75,33 +76,13 @@ public class SOAPBody {
 
   public SOAPBody(Document doc) {
     if ( doc != null )
-      root = doc.getRootElement() ;
-    else
-      root = null ;
-  }
-
-  public SOAPBody(org.w3c.dom.Document doc) {
-    if ( doc != null ) {
-      org.jdom.input.DOMBuilder builder = null ;
-      builder = new org.jdom.input.DOMBuilder();
-      root = builder.build( doc ).getRootElement();
-    }
+      root = doc.getDocumentElement() ;
     else
       root = null ;
   }
 
   public SOAPBody(Element elem) {
     root = elem ;
-  }
-
-  public SOAPBody(org.w3c.dom.Element elem) {
-    if ( elem != null ) {
-      org.jdom.input.DOMBuilder builder = null ;
-      builder = new org.jdom.input.DOMBuilder();
-      root = builder.build( elem );
-    }
-    else
-      root = null ;
   }
 
   public Element getRoot() {
@@ -111,24 +92,4 @@ public class SOAPBody {
   public void setRoot(Element r) {
     this.root = r ;
   }
-
-  public void setRoot(org.w3c.dom.Element elem) {
-    if ( elem == null ) return ;
-    org.jdom.input.DOMBuilder builder = null ;
-    builder = new org.jdom.input.DOMBuilder();
-    setRoot( builder.build(elem) );
-  }
-
-  public org.w3c.dom.Element getAsDOMElement() throws AxisFault {
-    if ( root == null ) return( null );
-    try {
-      org.jdom.output.DOMOutputter outputter = null ;
-      outputter = new org.jdom.output.DOMOutputter();
-      return( outputter.output( root ) );
-    }
-    catch( Exception e ) {
-      throw new AxisFault( e );
-    }
-  }
-
 };

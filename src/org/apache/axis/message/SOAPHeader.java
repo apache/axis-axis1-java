@@ -58,9 +58,11 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.jdom.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.* ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -86,15 +88,6 @@ public class SOAPHeader {
     setRoot( elem );
   }
 
-  public SOAPHeader(org.w3c.dom.Element elem) {
-    if ( elem != null ) {
-      org.jdom.input.DOMBuilder builder = null ;
-      builder = new org.jdom.input.DOMBuilder();
-      processed = false ;
-      setRoot( builder.build(elem) );
-    }
-  }
-
   public Element getRoot() {
     return( root );
   }
@@ -103,32 +96,25 @@ public class SOAPHeader {
     String  value ;
 
     root           = elem ;
-    prefix         = elem.getNamespacePrefix();
+    prefix         = elem.getPrefix();
     namespaceURI   = elem.getNamespaceURI();
-    name           = elem.getName();
+    name           = elem.getLocalName();
 
-    value          = elem.getAttributeValue( Constants.ATTR_ACTOR, 
-                                             elem.getNamespace() );
+    value          = elem.getAttributeNS( elem.getNamespaceURI(),
+                                          Constants.ATTR_ACTOR );
     if ( value != null )
       actor = value ;
     else 
       // Handle the case where they set Actor before they set the root
       if ( value != null ) setActor( value );
 
-    value          = elem.getAttributeValue( Constants.ATTR_MUST_UNDERSTAND,
-                                             elem.getNamespace() );
+    value = elem.getAttributeNS( elem.getNamespaceURI(),
+                                 Constants.ATTR_MUST_UNDERSTAND );
     if ( value != null )
       mustUnderstand = "1".equals(value);
     else 
       // Handle the case where they set MU before they set the root
       if ( mustUnderstand ) setMustUnderstand( true );
-  }
-
-  public void setRoot(org.w3c.dom.Element elem) {
-    if ( elem == null ) return ;
-    org.jdom.input.DOMBuilder builder = null ;
-    builder = new org.jdom.input.DOMBuilder();
-    setRoot( builder.build(elem) );
   }
 
   public String getName() { return( name ); }
@@ -137,39 +123,22 @@ public class SOAPHeader {
 
   public boolean getMustUnderstand() { return( mustUnderstand ); }
   public void setMustUnderstand(boolean b) { 
-    Namespace ns   = null ;
-    Attribute attr = null ;
-
     mustUnderstand = b ;
     if ( root == null ) return ;
-    ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
-                                 Constants.URI_SOAP_ENV );
-    attr = new Attribute(Constants.ATTR_MUST_UNDERSTAND, "1", ns );
-    root.addAttribute( attr );
+    root.setAttributeNS( Constants.URI_SOAP_ENV,
+                         Constants.NSPREFIX_SOAP_ENV + ":" +
+                           Constants.ATTR_MUST_UNDERSTAND,
+                         "1" );
+
   }
 
   public String getActor() { return( actor ); }
   public void setActor(String a) { 
-    Namespace ns   = null ;
-    Attribute attr = null ;
-
     actor = a ;
-    ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
-                                 Constants.URI_SOAP_ENV );
-    attr = new Attribute( Constants.ATTR_ACTOR, actor, ns );
-    root.addAttribute( attr );
-  }
-
-  public org.w3c.dom.Element getAsDOMElement() throws AxisFault {
-    if ( root == null ) return( null );
-    try {
-      org.jdom.output.DOMOutputter outputter = null ;
-      outputter = new org.jdom.output.DOMOutputter();
-      return( outputter.output( root ) );
-    }
-    catch( Exception e ) {
-      throw new AxisFault( e );
-    }
+    root.setAttributeNS( Constants.URI_SOAP_ENV,
+                         Constants.NSPREFIX_SOAP_ENV + ":" + 
+                           Constants.ATTR_ACTOR,
+                         actor );
   }
 
   public void setProcessed(boolean value) {

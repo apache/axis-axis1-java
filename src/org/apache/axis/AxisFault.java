@@ -57,30 +57,24 @@ package org.apache.axis ;
 
 import java.io.* ;
 import java.util.* ;
-import org.jdom.* ;
+
+import javax.xml.parsers.* ;
+import org.w3c.dom.* ;
+
 import org.apache.axis.utils.* ;
 
 /** 
  *
- * @author Doug Davis (dug@us.ibm.com)
- * @author James Snell (jasnell@us.ibm.com)
+ * @author Doug Davis (dug@us.ibm.com.com)
  */
 
 public class AxisFault extends Exception {
-  protected QFault    faultCode ;
+  protected String    faultCode ;
   protected String    faultString ;
   protected String    faultActor ;
   protected Vector    faultDetails ;  // vector of Element's
 
-  
   public AxisFault(String code, String str, String actor, Element[] details) {
-    setFaultCode( new QFault(Constants.AXIS_NS, code));
-    setFaultString( str );
-    setFaultActor( actor );
-    setFaultDetails( details );
-  }
-  
-  public AxisFault(QFault code, String str, String actor, Element[] details) {
     setFaultCode( code );
     setFaultString( str );
     setFaultActor( actor );
@@ -90,7 +84,7 @@ public class AxisFault extends Exception {
   public AxisFault(Exception e) {
     String  str ;
 
-    setFaultCode( Constants.FAULT_SERVER_GENERAL );
+    setFaultCode( "Server.generalException" );
     // setFaultString( e.toString() );
     // need to set details if we were in the body at the time!!
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -108,15 +102,11 @@ public class AxisFault extends Exception {
                         "  faultDetails: " + faultDetails + "\n"  );
   }
 
-  public void setFaultCode(QFault code) {
+  public void setFaultCode(String code) {
     faultCode = code ;
   }
 
-  public void setFaultCode(String code) {
-    faultCode = new QFault(Constants.AXIS_NS, code);
-  }
-
-  public QFault getFaultCode() { 
+  public String getFaultCode() {
     return( faultCode );
   }
 
@@ -147,23 +137,40 @@ public class AxisFault extends Exception {
     Element  elem, root ;
     int      i ;
 
-    root = new Element( Constants.ELEM_FAULT, Constants.NSPREFIX_SOAP_ENV,
-                        Constants.URI_SOAP_ENV );
-    root.addContent( elem = new Element( Constants.ELEM_FAULT_CODE ) );
-    elem.addContent( faultCode.getLocalPart() );
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
 
-    root.addContent( elem = new Element(Constants.ELEM_FAULT_STRING) );
-    elem.addContent( faultString );
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
+    
+    root = doc.createElementNS( Constants.URI_SOAP_ENV,
+                                Constants.NSPREFIX_SOAP_ENV + ":" +
+                                Constants.ELEM_FAULT );
+
+    root.appendChild( elem = doc.createElement( Constants.ELEM_FAULT_CODE ) );
+    elem.appendChild( doc.createTextNode( faultCode ) );
+
+    root.appendChild( elem = doc.createElement( Constants.ELEM_FAULT_STRING ) );
+    elem.appendChild( doc.createTextNode( faultString ) );
 
     if ( faultActor != null && !faultActor.equals("") ) {
-      root.addContent( elem = new Element(Constants.ELEM_FAULT_ACTOR) );
-      elem.addContent( faultActor );
+      root.appendChild(elem = doc.createElement( Constants.ELEM_FAULT_ACTOR ));
+      elem.appendChild( doc.createTextNode( faultActor ) );
     }
 
     if ( faultDetails != null && faultDetails.size() > 0 ) {
-      root.addContent( elem = new Element(Constants.ELEM_FAULT_DETAIL) );
+      root.appendChild(elem = doc.createElement( Constants.ELEM_FAULT_DETAIL));
+
       for ( i = 0 ;i < faultDetails.size() ; i++ )
-        elem.addContent( (Element) faultDetails.get(i) );
+        elem.appendChild( (Element) faultDetails.get(i) );
     }
 
     return( root );
