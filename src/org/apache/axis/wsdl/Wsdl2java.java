@@ -122,12 +122,7 @@ public class Wsdl2java {
     public static void main(String args[]) {
         boolean bSkeleton = false;
         boolean bMessageContext = false;
-        boolean bVerbose = false;
-        boolean bGeneratePackageName = false;
-        String packageName = null;
         String wsdlURI = null;
-        String outputDir = null;
-        String scope = null;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -142,71 +137,81 @@ public class Wsdl2java {
         List clOptions = parser.getArguments();
         int size = clOptions.size();
 
-        for (int i = 0; i < size; i++) {
-            CLOption option = (CLOption)clOptions.get(i);
-
-            switch (option.getId()) {
-                case CLOption.TEXT_ARGUMENT:
-                    if (wsdlURI != null) {
-                        printUsage();
-                    }
-                    wsdlURI = option.getArgument();
-                    break;
-
-                case HELP_OPT:
-                    printUsage();
-                    break;
-
-                case VERBOSE_OPT:
-                    bVerbose = true;
-                    break;
-
-                case SKELETON_OPT:
-                    bSkeleton = true;
-                    break;
-
-                case MESSAGECONTEXT_OPT:
-                    bMessageContext = true;
-                    break;
-
-                case PACKAGE_OPT:
-                    packageName = option.getArgument();
-                    if (packageName == null)
-                      bGeneratePackageName = true;
-                    break;
-
-                case OUTPUT_OPT:
-                    outputDir = option.getArgument();
-                    break;
-
-                case SCOPE_OPT:
-                    scope = option.getArgument();
-                    break;
-            }
-        }
-
-        // validate argument combinations
-        //
-        if (bMessageContext && !bSkeleton) {
-            System.out.println("Error: --messageContext switch only valid with --skeleton");
-            printUsage();
-        }
-        if (wsdlURI == null) {
-            printUsage();
-        }
-
-        // Create an emitter, initialize settings and go
         try {
+
+            // Instantiate the emitter
             Emitter emitter = new Emitter();
-            emitter.generateSkeleton(bSkeleton);
-            emitter.verbose(bVerbose);
-            emitter.generateMessageContext(bMessageContext);
-            emitter.generatePackageName(bGeneratePackageName);
-            if (packageName != null)
-                emitter.setPackageName(packageName);
-            emitter.setOutputDir(outputDir);
-            emitter.setScope(scope);
-            // Start writing code!
+
+            // Parse the options and configure the emitter as appropriate.
+            for (int i = 0; i < size; i++) {
+                CLOption option = (CLOption)clOptions.get(i);
+
+                switch (option.getId()) {
+                    case CLOption.TEXT_ARGUMENT:
+                        if (wsdlURI != null) {
+                            printUsage();
+                        }
+                        wsdlURI = option.getArgument();
+                        break;
+
+                    case HELP_OPT:
+                        printUsage();
+                        break;
+
+                    case VERBOSE_OPT:
+                        emitter.verbose(true);
+                        break;
+
+                    case SKELETON_OPT:
+                        bSkeleton = true;
+                        emitter.generateSkeleton(true);
+                        break;
+
+                    case MESSAGECONTEXT_OPT:
+                        bMessageContext = true;
+                        emitter.generateMessageContext(true);
+                        break;
+
+                    case PACKAGE_OPT:
+                        String packageName = option.getArgument();
+                        if (packageName == null)
+                            emitter.generatePackageName(true);
+                        else
+                            emitter.setPackageName(packageName);
+                        break;
+
+                    case OUTPUT_OPT:
+                        emitter.setOutputDir(option.getArgument());
+                        break;
+
+                    case SCOPE_OPT:
+                        String scope = option.getArgument();
+                        if ("Application".equals(scope)) {
+                            emitter.setScope(Emitter.APPLICATION_SCOPE);
+                        }
+                        else if ("Request".equals(scope)) {
+                            emitter.setScope(Emitter.REQUEST_SCOPE);
+                        }
+                        else if ("Session".equals(scope)) {
+                            emitter.setScope(Emitter.SESSION_SCOPE);
+                        }
+                        else {
+                            System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
+                        }
+                        break;
+                }
+            }
+
+            // validate argument combinations
+            //
+            if (bMessageContext && !bSkeleton) {
+                System.out.println("Error: --messageContext switch only valid with --skeleton");
+                printUsage();
+            }
+            if (wsdlURI == null) {
+                printUsage();
+            }
+
             emitter.emit(wsdlURI);
         }
         catch (Throwable t) {
