@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -91,75 +91,19 @@ import org.apache.axis.encoding.SerializationContext;
 // Only supports String
 
 public class ServiceClient {
-    // Client transports
-    private static Hashtable transports = new Hashtable();
-                                                        
-    // keep prop hashtable small
-    private Hashtable properties = new Hashtable(10);
-    
-    // For testing
-    private static Handler localServer = null ;
-    public  boolean doLocal = false ;
     private static final boolean DEBUG_LOG = false;
-    
-    // Our AxisClient
-    private AxisClient engine;
-    
-    // The description of our service
-    private ServiceDescription serviceDesc;
-    
-    // The message context we use across invocations
-    private MessageContext msgContext;
-    
-    // Our Transport, if any
-    private Transport transport;
 
-    /**
-     * Construct a ServiceClient with no properties.
-     * Set it up yourself!
+    /***************************************************************
+     * Static stuff
      */
-    public ServiceClient () {
-        engine = new AxisClient();
-        msgContext = new MessageContext(engine);
-    }
     
-    /**
-     * Construct a ServiceClient with a given endpoint URL
-     */
-    public ServiceClient(String endpointURL)
-    {
-        this();
-        
-        try {
-            URL url = new URL(endpointURL);
-            String protocol = url.getProtocol();
-            setTransport(getTransportForProtocol(protocol));
-            set(MessageContext.TRANS_URL, endpointURL);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public static final String TRANSPORT_PROPERTY =
+                                              "java.protocol.handler.pkgs";
+
+    private static Hashtable transports = new Hashtable();
+    private static boolean initialized = false;
     
-    /**
-     * Construct a ServiceClient with the given Transport.
-     */
-    public ServiceClient (Transport transport) {
-        this();
-        setTransport(transport);
-    }
-    
-    /**
-     * Force the transport to be set for this ServiceClient.
-     * 
-     * @param transport the Transport object we'll use
-     */
-    public void setTransport(Transport transport) {
-        this.transport = transport;
-        Debug.Print(1, "Transport is " + transport);
-    }
-    
+                                                        
     /** Register a Transport that should be used for URLs of the specified
      * protocol.
      * 
@@ -173,13 +117,12 @@ public class ServiceClient {
         transports.put(protocol, transport);
     }
     
-    public static final String TRANSPORT_PROPERTY =
-                                              "java.protocol.handler.pkgs";
-    private static boolean initialized = false;
-    
     /**
-     * This is a bit kludgey - call this at some point before parsing
-     * URLs to set up default Axis transports....
+     * Set up the default transport URL mappings.
+     * 
+     * This must be called BEFORE doing non-standard URL parsing (i.e. if you
+     * want the system to accept a "local:" URL).  This is why the Options class
+     * calls it before parsing the command-line URL argument.
      */
     public static synchronized void initialize()
     {
@@ -217,65 +160,184 @@ public class ServiceClient {
         System.setProperty(TRANSPORT_PROPERTY, currentPackages);
     }
     
+    /*****************************************************************************
+     * END STATICS
+     */
+    
+    // Our AxisClient
+    private AxisClient engine;
+    
+    // The description of our service
+    private ServiceDescription serviceDesc;
+    
+    // The message context we use across invocations
+    private MessageContext msgContext;
+    
+    // Our Transport, if any
+    private Transport transport;
+
+    /**
+     * Basic, no-argument constructor.
+     */
+    public ServiceClient () {
+        engine = new AxisClient();
+        msgContext = new MessageContext(engine);
+        if (!initialized)
+          initialize();
+    }
+    
+    /**
+     * Construct a ServiceClient with a given endpoint URL
+     * 
+     * @param endpointURL a string containing the transport endpoint for this
+     *                    service.
+     */
+    public ServiceClient(String endpointURL)
+    {
+        this();
+        
+        try {
+            URL url = new URL(endpointURL);
+            String protocol = url.getProtocol();
+            setTransport(getTransportForProtocol(protocol));
+            set(MessageContext.TRANS_URL, endpointURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Construct a ServiceClient with the given Transport.
+     * 
+     * @param transport a pre-constructed Transport object which will be used
+     *                  to set up the MessageContext appropriately for each
+     *                  request
+     */
+    public ServiceClient (Transport transport) {
+        this();
+        setTransport(transport);
+    }
+    
+    /**
+     * Set the Transport for this ServiceClient.
+     * 
+     * @param transport the Transport object we'll use to set up
+     *                  MessageContext properties.
+     */
+    public void setTransport(Transport transport) {
+        this.transport = transport;
+        Debug.Print(1, "Transport is " + transport);
+    }
+    
+    /** Get the Transport registered for the given protocol.
+     * 
+     * @param protocol a protocol such as "http" or "local" which may
+     *                 have a Transport object associated with it.
+     * @return the Transport registered for this protocol, or null if none.
+     */
     public Transport getTransportForProtocol(String protocol)
     {
       return (Transport)transports.get(protocol);
     }
     
     /**
-     * Set property; pass through to MessageContext.
-     * This works because the constants defined in Transport and its
-     * subclasses are synonyms for MessageContext constants.
+     * Set property in our MessageContext.
+     * 
+     * @param name the property name to set.
+     * @param value the value of the property.
      */
-    public void set (String name, String value) {
-        if (value == null) return;
-        
+    public void set (String name, Object value) {
         msgContext.setProperty(name, value);
     }
     
     /**
-     * Get property; pass through to MessageContext.
-     * This works because the constants defined in Transport and its
-     * subclasses are synonyms for MessageContext constants.
+     * Get a property from our MessageContext.
+     * 
+     * @param name the property name to retrieve.
+     * @return the property's value.
      */
-    public String get (String name) {
-        return (String)msgContext.getProperty(name);
+    public Object get (String name) {
+        return msgContext.getProperty(name);
     }
     
+    /**
+     * Directly set the request message in our MessageContext.
+     * 
+     * This allows custom message creation.
+     * 
+     * @param msg the new request message.
+     */
     public void setRequestMessage(Message msg) {
         msgContext.setRequestMessage(msg);
     }
     
     /**
-     * pass through whether we are maintaining session state
+     * Determine whether we'd like to track sessions or not.
+     * 
+     * This just passes through the value into the MessageContext.
+     * 
+     * @param yesno true if session state is desired, false if not.
      */
     public void setMaintainSession (boolean yesno) {
         msgContext.setMaintainSession(yesno);
     }
     
     /**
-     * all-purpose accessor for fringe cases....
+     * Obtain a reference to our MessageContext.
+     * 
+     * @return the ServiceClient's MessageContext.
      */
     public MessageContext getMessageContext () {
         return msgContext;
     }
-     
+    
+    /**
+     * Set the ServiceDescription associated with this ServiceClient.
+     * 
+     * @param serviceDesc a ServiceDescription.
+     */
     public void setServiceDescription(ServiceDescription serviceDesc)
     {
         this.serviceDesc = serviceDesc;
     }
     
+    /**
+     * Map a type for serialization.
+     * 
+     * @param _class the Java class of the data type.
+     * @param qName the xsi:type QName of the associated XML type.
+     * @param serializer a Serializer which will be used to write the XML.
+     */
     public void addSerializer(Class _class, QName qName, Serializer serializer) {
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addSerializer(_class, qName, serializer);
     }
     
+    /**
+     * Map a type for deserialization.
+     * 
+     * @param qName the xsi:type QName of an XML Schema type.
+     * @param _class the class of the associated Java data type.
+     * @param deserializerFactory a factory which can create deserializer
+     *                            instances for this type.
+     */
     public void addDeserializerFactory(QName qName, Class _class,
                                        DeserializerFactory deserializerFactory) {
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
     }
 
+    /************************************************
+     * Invocation
+     */
+    
+    /** Invoke the service with a custom SOAPEnvelope.
+     * 
+     * @param env a SOAPEnvelope to send.
+     * @exception AxisFault
+     */
     public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
     {
         msgContext.clearProperties();
@@ -284,6 +346,21 @@ public class ServiceClient {
         return msgContext.getResponseMessage().getAsSOAPEnvelope();
     }
     
+    /** Invoke an RPC service with a method name and arguments.
+     * 
+     * This will call the service, serializing all the arguments, and
+     * then deserialize the return value.
+     * 
+     * @param namespace the desired namespace URI of the method element
+     * @param method the method name
+     * @param args an array of Objects representing the arguments to the
+     *             invoked method.  If any of these objects are RPCParams,
+     *             Axis will use the embedded name of the RPCParam as the
+     *             name of the parameter.  Otherwise, we will serialize
+     *             each argument as an XML element called "arg<n>".
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
     public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
         Debug.Print( 1, "Enter: ServiceClient::invoke(ns, meth, args)" );
         RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
@@ -292,6 +369,13 @@ public class ServiceClient {
         return ret;
     }
     
+    /** Invoke an RPC service with a pre-constructed RPCElement.
+     * 
+     * @param body an RPCElement containing all the information about
+     *             this call.
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
     public Object invoke( RPCElement body ) throws AxisFault {
         Debug.Print( 1, "Enter: ServiceClient::invoke(RPCElement)" );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
@@ -370,8 +454,10 @@ public class ServiceClient {
     }
     
     /**
-     * invoke this ServiceClient with its established MessageContext
+     * Invoke this ServiceClient with its established MessageContext
      * (perhaps because you called this.setRequestMessage())
+     * 
+     * @exception AxisFault
      */
     public void invoke() throws AxisFault {
         Debug.Print( 1, "Enter: Service::invoke()" );
@@ -382,32 +468,6 @@ public class ServiceClient {
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, this.engine);
         }
-        
-        /* ??? --Glen
-
-        Message              inMsg = msgContext.getRequestMessage();
-        
-        SOAPEnvelope         reqEnv = null ;
-        
-        reqEnv = (SOAPEnvelope) inMsg.getAsSOAPEnvelope();
-        if ( encodingStyleURI != null )
-            reqEnv.setEncodingStyleURI( encodingStyleURI );
-        
-        Message              reqMsg = new Message( reqEnv );
-        */
-        
-        /*
-         * I don't think we should be doing this.  Debugging on the client
-         * doesn't necessarily map to debugging on the server.  Leaving
-         * it commented for now.  --Glen
-         *
-        if ( Debug.getDebugLevel() > 0  ) {
-            DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
-            header.setActor( Constants.URI_NEXT_ACTOR );
-            
-            reqEnv.addHeader( header );
-        }
-        */
         
         try {
             engine.invoke( msgContext );
