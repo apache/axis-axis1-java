@@ -227,9 +227,15 @@
             "Axis will not work",
             "http://xml.apache.org/axis/");
 
+    needed+=needClass(out, "org.apache.commons.discovery.Resource",
+            "commons-discovery.jar",
+            "Jakarta-Commons Discovery",
+            "Axis will not work",
+            "http://jakarta.apache.org/commons/discovery.html");
+
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
-            "Jakarta-commons logging",
+            "Jakarta-Commons Logging",
             "Axis will not work",
             "http://jakarta.apache.org/commons/logging.html");
 
