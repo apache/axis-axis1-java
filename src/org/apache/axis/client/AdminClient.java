@@ -239,6 +239,7 @@ public class AdminClient
             client.addOption(AxisEngine.PROP_XML_DECL, new Boolean(false));
             SerializationContext ctx = new SerializationContext(writer,
                                                   client.getMessageContext());
+            ctx.setPretty(true);
             body.output(ctx);
             sb.append(writer.toString());
             sb.append('\n');
