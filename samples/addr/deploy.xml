@@ -12,14 +12,14 @@
   <chain   name="book"     flow="RPCDispatcher" />
 
   <service name="urn:AddressFetcher2" pivot="book" >
-    <option name="className" value="samples.addressbook.AddressBook" />
+    <option name="className" value="samples.addr.AddressBook" />
     <option name="methodName" value="addEntry getAddressFromName" />
     <option name="scope" value="Session" />
   </service>
 
   <bean xmlns:book2="urn:AddressFetcher2">
-    <book2:Address       classname="samples.addressbook.Address"/>
-    <book2:PhoneNumber      classname="samples.addressbook.PhoneNumber"/>
+    <book2:Address       classname="samples.addr.Address"/>
+    <book2:PhoneNumber      classname="samples.addr.PhoneNumber"/>
   </bean>
 
 <!--
@@ -31,14 +31,14 @@ See commented-out code in Main.main() - RobJ
 
 <!--
   <service name="urn:AddressFetcher3" pivot="book" >
-    <option name="className" value="samples.addressbook.AddressBook" />
+    <option name="className" value="samples.addr.AddressBook" />
     <option name="methodName" value="addEntry getAddressFromName" />
     <option name="scope" value="Application" />
   </service>
 
   <bean xmlns:book3="urn:AddressFetcher3">
-    <book3:Address       classname="samples.addressbook.Address"/>
-    <book3:PhoneNumber      classname="samples.addressbook.PhoneNumber"/>
+    <book3:Address       classname="samples.addr.Address"/>
+    <book3:PhoneNumber      classname="samples.addr.PhoneNumber"/>
   </bean>
 -->
 
