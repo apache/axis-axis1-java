@@ -238,12 +238,18 @@ public class ArraySerializer implements Serializer {
             int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                        "type");
             if (typeI != -1) {
-                attrs.removeAttribute(typeI);
-                attributes = context.setTypeAttribute(attrs,
-                                                      Constants.SOAP_ARRAY);
-            } else {
-                attributes = attrs;
+                String qname = 
+                      context.getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI, 
+                                              "xsi") + ":type";
+                attrs.setAttribute(typeI, 
+                                   Constants.URI_CURRENT_SCHEMA_XSI,
+                                   "type",
+                                   qname,
+                                   "CDATA",
+                                   context.qName2String(Constants.SOAP_ARRAY));
             }
+            
+            attributes = attrs;
         }
 
         // For non-encoded (literal) use, each item is named with the QName
