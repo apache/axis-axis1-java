@@ -423,12 +423,14 @@ public class JavaUtils
         char[] nameArray = name.toCharArray();
         int nameLen = name.length();
         StringBuffer result = new StringBuffer(nameLen);
+        boolean wordStart = false;
         
         // The mapping indicates to convert first
         // character.
         int i = 0;
         while (i < nameLen
-                && !Character.isJavaIdentifierStart(nameArray[i])) {
+                && (isPunctuation(nameArray[i])
+                || !Character.isJavaIdentifierStart(nameArray[i]))) {
             i++;
         }
         if (i < nameLen) {
@@ -442,9 +444,20 @@ public class JavaUtils
             else {
                 result.append(nameArray[i]);
             }
+            wordStart = !Character.isLetter(nameArray[i]);
         }
         else {
-            result.append("_" + nameArray[0]);
+            // The identifier cannot be mapped strictly according to
+            // JSR 101
+            if (Character.isJavaIdentifierPart(nameArray[0])) {
+                result.append("_" + nameArray[0]);
+            }
+            else {
+                // The XML identifier does not contain any characters
+                // we can map to Java.  Using the length of the string
+                // will make it somewhat unique.
+                result.append("_" + nameArray.length);
+            }
         }
         
         // The mapping indicates to skip over
@@ -452,7 +465,6 @@ public class JavaUtils
         // digits.  The first letter/digit 
         // following a skipped character is 
         // upper-cased.
-        boolean wordStart = false;
         for (++i; i < nameLen; ++i) {
             char c = nameArray[i];
 
