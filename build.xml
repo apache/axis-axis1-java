@@ -532,4 +532,23 @@ Copyright:
     <delete dir="test-reports"/>
     <delete file="TEST-test.functional.FunctionalTests.txt"/>
   </target>
+  
+  <!-- =================================================================== -->
+  <!-- Check the style of the Axis source                                 -->
+  <!-- =================================================================== -->
+  <target name="checkstyle" 
+    description="Check the style of the Axis source" >
+    <ant dir="." target="checkstyle"
+      antfile="xmls/checkstyle.xml"
+      inheritall="true" 
+      inheritrefs="true"
+      >
+      <property name="checkstyle.project"
+        value="axis" />
+      <property name="checkstyle.src.dir"
+        location="${axis.home}/src" />
+      <property name="checkstyle.dest.dir" 
+        location="${build.dir}/checkstyle/${project}"/>
+    </ant>
+    </target>
 </project>
