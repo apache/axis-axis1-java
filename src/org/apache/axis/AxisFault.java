@@ -60,7 +60,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.utils.QFault;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.wsdl.FaultDetail;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
