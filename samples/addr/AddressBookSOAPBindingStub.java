@@ -7,7 +7,7 @@
 
 package samples.addr;
 
-public class AddressBookSOAPBindingStub extends org.apache.axis.wsdl.Stub implements AddressBook {
+public class AddressBookSOAPBindingStub extends org.apache.axis.rpc.Stub implements AddressBook {
     private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient(new org.apache.axis.transport.http.HTTPTransport());
     private java.util.Hashtable properties = new java.util.Hashtable();
 
