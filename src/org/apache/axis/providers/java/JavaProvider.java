@@ -133,30 +133,36 @@ public abstract class JavaProvider extends BasicProvider
 
             // look in incoming session
             if (msgContext.getSession() != null) {
-                // store service objects in session, indexed by class name
-                Object obj = msgContext.getSession().get(serviceName);
-                if (obj == null) {
-                    obj = getNewServiceObject(msgContext, clsName);
-                    msgContext.getSession().set(serviceName, obj);
+                // This part isn't thread safe...
+                synchronized (this) {
+                    // store service objects in session, indexed by class name
+                    Object obj = msgContext.getSession().get(serviceName);
+                    if (obj == null) {
+                        obj = getNewServiceObject(msgContext, clsName);
+                        msgContext.getSession().set(serviceName, obj);
+                    }
+                    return obj;
                 }
-                return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
                 return getNewServiceObject(msgContext, clsName);
             }
 
         } else if (scope.equalsIgnoreCase("Application")) {
-
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
             if (engine.getApplicationSession() != null) {
-                // store service objects in session, indexed by class name
-                Object obj = engine.getApplicationSession().get(serviceName);
-                if (obj == null) {
-                    obj = getNewServiceObject(msgContext, clsName);
-                    engine.getApplicationSession().set(serviceName, obj);
+                // This part isn't thread safe
+                synchronized (this) {
+                    // store service objects in session, indexed by class name
+                    Object obj =
+                            engine.getApplicationSession().get(serviceName);
+                    if (obj == null) {
+                        obj = getNewServiceObject(msgContext, clsName);
+                        engine.getApplicationSession().set(serviceName, obj);
+                    }
+                    return obj;
                 }
-                return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
                 return getNewServiceObject(msgContext, clsName);
