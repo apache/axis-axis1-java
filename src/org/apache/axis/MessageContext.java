@@ -384,6 +384,7 @@ public class MessageContext {
             SOAPService service = (SOAPService)sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
+            setProperty(ISRPC, new Boolean(service.isRPC()));
         }
     }
     

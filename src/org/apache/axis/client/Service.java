@@ -59,6 +59,7 @@ import com.ibm.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.AxisFault;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -101,8 +102,7 @@ public class Service implements javax.xml.rpc.Service {
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
 
-    private static FileProvider defaultConfigProvider =
-                           new FileProvider(Constants.CLIENT_CONFIG_FILE);
+    private ConfigurationProvider configProvider = null;
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -112,6 +112,16 @@ public class Service implements javax.xml.rpc.Service {
         return( wsdlService );
     }
 
+    protected AxisClient getAxisClient() throws JAXRPCException
+    {
+        String name = "some name";
+        try {
+            return AxisClientFactory.getClient(name, configProvider);
+        } catch (AxisFault fault) {
+            throw new JAXRPCException(fault.getMessage());
+        }
+    }
+
     /**
      * Constructs a new Service object - this assumes the caller will set
      * the appropriate fields by hand rather than getting them from the
@@ -119,8 +129,8 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @exception JAXRPCException If there's an error
      */
-    public Service() throws JAXRPCException { 
-        engine = new AxisClient(defaultConfigProvider);
+    public Service() throws JAXRPCException {
+        engine = getAxisClient();
     }
 
     /**
@@ -130,11 +140,12 @@ public class Service implements javax.xml.rpc.Service {
      */
     public Service(ConfigurationProvider configProvider)
             throws JAXRPCException {
-        engine = new AxisClient(configProvider);
+        this.configProvider = configProvider;
+        engine = getAxisClient();
     }
 
     /**
-     * Constructs a new Service object for the service in the WSDL document 
+     * Constructs a new Service object for the service in the WSDL document
      * pointed to by the wsdlDoc URL and serviceName parameters.
      *
      * @param wsdlDoc          URL of the WSDL document
@@ -142,7 +153,7 @@ public class Service implements javax.xml.rpc.Service {
      * @throws JAXRPCExceptionIif there's an error finding or parsing the WSDL
      */
     public Service(URL wsdlDoc, QName serviceName) throws JAXRPCException {
-        engine = new AxisClient(defaultConfigProvider);
+        engine = getAxisClient();
         Document doc = XMLUtils.newDocument(wsdlDoc.toString());
         initService(doc, serviceName);
     }
@@ -150,7 +161,7 @@ public class Service implements javax.xml.rpc.Service {
     /**
      * Constructs a new Service object for the service in the WSDL document
      * pointed to by the wsdlLocation and serviceName parameters.  This is
-     * just like the previous constructor but instead of URL the 
+     * just like the previous constructor but instead of URL the
      * wsdlLocation parameter points to a file on the filesystem relative
      * to the current directory.
      *
@@ -158,9 +169,9 @@ public class Service implements javax.xml.rpc.Service {
      * @param  serviceName     Qualified name of the desired service
      * @throws JAXRPCException If there's an error finding or parsing the WSDL
      */
-    public Service(String wsdlLocation, QName serviceName) 
+    public Service(String wsdlLocation, QName serviceName)
                            throws JAXRPCException {
-        engine = new AxisClient(defaultConfigProvider);
+        engine = getAxisClient();
         try {
             // Start by reading in the WSDL using WSDL4J
             FileInputStream      fis = new FileInputStream(wsdlLocation);
@@ -183,21 +194,21 @@ public class Service implements javax.xml.rpc.Service {
      * @param  serviceName     Qualified name of the desired service
      * @throws JAXRPCException If there's an error finding or parsing the WSDL
      */
-    public Service(InputStream wsdlInputStream, QName serviceName) 
+    public Service(InputStream wsdlInputStream, QName serviceName)
                            throws JAXRPCException {
-        engine = new AxisClient(defaultConfigProvider);
+        engine = getAxisClient();
         Document doc = XMLUtils.newDocument(wsdlInputStream);
         initService(doc, serviceName);
     }
 
     /**
      * Common code for building up the Service from a WSDL document
-     * 
+     *
      * @param doc               A DOM document containing WSDL
      * @param serviceName       Qualified name of the desired service
      * @throws JAXRPCException  If there's an error finding or parsing the WSDL
-     */ 
-    private void initService(Document doc, QName serviceName) 
+     */
+    private void initService(Document doc, QName serviceName)
             throws JAXRPCException {
         try {
             // Start by reading in the WSDL using WSDL4J
@@ -210,7 +221,7 @@ public class Service implements javax.xml.rpc.Service {
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
- 
+
             this.wsdlService    = def.getService( qn );
             if ( this.wsdlService == null )
                 throw new JAXRPCException(
@@ -243,7 +254,7 @@ public class Service implements javax.xml.rpc.Service {
      * @return Call            Used for invoking the Web Service
      * @throws JAXRPCException If there's an error
      */
-    public javax.xml.rpc.Call createCall(QName portName) 
+    public javax.xml.rpc.Call createCall(QName portName)
                             throws JAXRPCException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
                                                     portName.getLocalPart() );
@@ -267,7 +278,7 @@ public class Service implements javax.xml.rpc.Service {
         List list = port.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
-            if ( obj instanceof SOAPAddress ) { 
+            if ( obj instanceof SOAPAddress ) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj ;
                     URL         url  = new URL(addr.getLocationURI());
@@ -293,7 +304,7 @@ public class Service implements javax.xml.rpc.Service {
      * @return Call            Used for invoking the Web Service
      * @throws JAXRPCException If there's an error
      */
-    public javax.xml.rpc.Call createCall(QName portName, 
+    public javax.xml.rpc.Call createCall(QName portName,
                                          String operationName)
                            throws JAXRPCException {
 
