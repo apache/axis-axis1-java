@@ -93,11 +93,11 @@
 <property name="test.functional.SimpleAxisPort" value="8080" />
 <property name="test.functional.ServicePort" value="8080"/>
 <property name="test.functional.TCPListenerPort" value="8088" />
-<property name="test.functional.serverurl" 
+<property name="test.functional.serverurl"
   value="http://localhost:${test.functional.TCPListenerPort}" />
-<property name="test.functional.webapp.url" 
+<property name="test.functional.webapp.url"
   value="http://localhost:${test.functional.TCPListenerPort}/axis" />
-<property name="test.functional.TCPListener.url" 
+<property name="test.functional.TCPListener.url"
   value="tcp://localhost:${test.functional.TCPListenerPort}" />
 
 <property name="test.functional.fail" value="yes" />
@@ -122,4 +122,4 @@
 <property name="iis.hostname" value="127.0.0.1"/>
 <property name="iis.port" value="80"/>
 
-<property name="exclude.log4j.configuration" value="false"/>
+<property name="exclude.log4j.configuration" value="true"/>
