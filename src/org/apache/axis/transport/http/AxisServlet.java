@@ -584,7 +584,9 @@ public class AxisServlet extends HttpServlet {
           if(isDebug) log.debug("Returned Content-Length:" + respContentlength);
           msg.writeContentToStream(res.getOutputStream());
         }
-        res.flushBuffer(); //Force it right now.
+        if(!res.isCommitted()) {
+            res.flushBuffer(); //Force it right now.
+        }
         if(isDebug) log.debug("Response sent.");
     }
 }
