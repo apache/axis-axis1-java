@@ -16,6 +16,10 @@ import junit.framework.TestSuite;
 
 import org.apache.axis.utils.JavaUtils;
 
+/**
+* This TestCase verifies the contents of resources.properties for well-formedness and tests calls
+* to JavaUtils.getMessage.
+*/
 public class TestMessages extends TestCase {
     public TestMessages(String name) {
         super(name);
@@ -25,6 +29,9 @@ public class TestMessages extends TestCase {
         return new TestSuite(TestMessages.class);
     }
 
+    /**
+     * Call getMessage for each key in resources.properties to make sure they are all well formed.
+     */
     public void testAllMessages() {
         String arg0 = "arg0";
         String arg1 = "arg1";
@@ -44,6 +51,9 @@ public class TestMessages extends TestCase {
         }
     } // testAllMessages
 
+    /**
+     * Make sure the test messages come out as we expect them to.
+     */
     public void testTestMessages() {
         try {
             String message = JavaUtils.getMessage("test00");
@@ -94,6 +104,13 @@ public class TestMessages extends TestCase {
 
     private String errors = "";
 
+    /**
+     * If this test is run from xml-axis/java, then walk through the source tree looking for all
+     * calls to JavaUtils.getMessage.  For each of these calls:
+     * 1.  Make sure the message key exists in resources.properties
+     * 2.  Make sure the actual number of parameters (in resources.properties) matches the
+     *     excpected number of parameters (in the source code).
+     */
     public void testForMissingMessages() {
         String baseDir = System.getProperty("user.dir");
         char sep = File.separatorChar;
@@ -108,6 +125,9 @@ public class TestMessages extends TestCase {
         }
     } // testForMissingMessages
 
+    /**
+     * Walk the source tree
+     */
     private void walkTree(File srcDir) {
         File[] files = srcDir.listFiles();
         for (int i = 0; i < files.length; ++i) {
@@ -120,6 +140,12 @@ public class TestMessages extends TestCase {
         }
     } // walkTree
 
+    /**
+     * Check all calls to JavaUtils.getMessages:
+     * 1.  Make sure the message key exists in resources.properties
+     * 2.  Make sure the actual number of parameters (in resources.properties) matches the
+     *     excpected number of parameters (in the source code).
+     */
     private void checkMessages(File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
@@ -128,9 +154,17 @@ public class TestMessages extends TestCase {
             String string = new String(bytes);
             int index = string.indexOf("JavaUtils.getMessage(");
             while (index >= 0) {
+
+                // Bump the string past the "JavaUtils.getMessage(" string
                 string = string.substring(index + 21);
+
+                // Get the arguments for the getMessage call
                 String[] msgArgs = args(string);
+
+                // The first argument is the key
                 String key = msgArgs[0].substring(1, msgArgs[0].length() - 1);
+
+                // Get the raw message
                 String value = null;
                 try {
                     value = JavaUtils.getMessage(key);
@@ -138,7 +172,12 @@ public class TestMessages extends TestCase {
                 catch (Throwable t) {
                     errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + '\n';
                 }
+                // The realParms count is the number of strings in the message of the form:
+                // {X} where X is 0..9
                 int realParms = count(value);
+
+                // The expectedParms count is the number of arguments to getMessage minus the
+                // first argument.
                 int expectedParms = msgArgs.length - 1;
                 if (realParms != expectedParms) {
                     errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected.\n";
@@ -151,21 +190,34 @@ public class TestMessages extends TestCase {
         }
     } // checkMessages
 
+    /**
+     * For the given method call string, return the parameter strings.  This means that everything
+     * between the first "(" and the last ")", and each "," encountered at the top level delimits
+     * a parameter.
+     */
     private String[] args (String string) {
         int innerParens = 0;
         Vector args = new Vector();
         String arg = "";
         while (true) {
             if (string.startsWith("\"")) {
+
+                // Make sure we don't look for the following characters within quotes:
+                // , ' " ( )
                 String quote = readQuote(string);
                 arg = arg + quote;
                 string = string.substring(quote.length());
             }
             else if (string.startsWith("'")) {
+
+                // Make sure we ignore a quoted character
                 arg = arg + string.substring(0, 2);
                 string = string.substring(2);
             }
             else if (string.startsWith(",")) {
+
+                // If we're at the top level (ie., not inside inner parens like:
+                // (X, Y, new String(str, 0))), then we are seeing the end of an argument.
                 if (innerParens == 0) {
                     args.add(arg);
                     arg = "";
@@ -176,11 +228,16 @@ public class TestMessages extends TestCase {
                 string = string.substring(1);
             }
             else if (string.startsWith("(")) {
+
+                // We are stepping within a subexpression delimited by parens
                 ++innerParens;
                 arg = arg + '(';
                 string = string.substring(1);
             }
             else if (string.startsWith(")")) {
+
+                // We are either stepping out of a subexpression delimited by parens, or we
+                // have reached the end of the parameter list.
                 if (innerParens == 0) {
                     args.add(arg);
                     String[] argsArray = new String[args.size()];
@@ -194,6 +251,9 @@ public class TestMessages extends TestCase {
                 }
             }
             else {
+
+                // We aren't looking at any special character, just add it to the arg string
+                // we're building.
                 if (!Character.isWhitespace(string.charAt(0))) {
                     arg = arg + string.charAt(0);
                 }
@@ -202,6 +262,9 @@ public class TestMessages extends TestCase {
         }
     } // args
 
+    /**
+     * Collect a quoted string, making sure we really end when the string ends.
+     */
     private String readQuote(String string) {
         String quote = "\"";
         string = string.substring(1);
@@ -218,6 +281,9 @@ public class TestMessages extends TestCase {
         }
     } // readQuote
 
+    /**
+     * Count the number of strings of the form {X} where X = 0..9.
+     */
     private int count(String string) {
         int parms = 0;
         int index = string.indexOf("{");
