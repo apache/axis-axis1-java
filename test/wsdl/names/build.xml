@@ -75,7 +75,7 @@ Copyright:
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/names/*.java" />
+      <include name="test/wsdl/names/**/*.java" />
     </javac>
 
 </target>
