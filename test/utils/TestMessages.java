@@ -103,6 +103,9 @@ public class TestMessages extends TestCase {
         }
     } // testTestMessages
 
+
+    private final String LS = System.getProperty("line.separator");
+
     private String errors = "";
 
     /**
@@ -174,7 +177,7 @@ public class TestMessages extends TestCase {
                         value = JavaUtils.getMessage(key);
                     }
                     catch (Throwable t) {
-                        errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + '\n';
+                        errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + LS;
                     }
                     // The realParms count is the number of strings in the message of the form:
                     // {X} where X is 0..9
@@ -184,14 +187,14 @@ public class TestMessages extends TestCase {
                     // first argument.
                     int expectedParms = msgArgs.length - 1;
                     if (realParms != expectedParms) {
-                        errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected.\n";
+                        errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected." + LS;
                     }
                 }
                 index = string.indexOf("JavaUtils.getMessage(");
             }
         }
         catch (Throwable t) {
-            errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + '\n';
+            errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + LS;
         }
     } // checkMessages
 
