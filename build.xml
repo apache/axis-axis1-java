@@ -288,11 +288,11 @@ Copyright:
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
   <target name="junit" if="junit.present" depends="samples,buildTest">
-    <mkdir dir="${basedir}/test-reports" />
+    <mkdir dir="${test.functional.reportdir}" />
     <junit printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
       <formatter type="xml" />
-      <batchtest todir="test-reports">
+      <batchtest todir="${test.functional.reportdir}">
         <fileset dir="${build.dir}/classes">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
