@@ -379,7 +379,7 @@ public class Message extends javax.xml.soap.SOAPMessage
     public String getContentType(SOAPConstants sc) throws AxisFault {
 
         int sendType = Attachments.SEND_TYPE_NOTSET;
-        if (msgContext.getService() != null) {
+        if ((msgContext != null) && (msgContext.getService() != null)) {
             sendType = msgContext.getService().getSendType();
         }
 
