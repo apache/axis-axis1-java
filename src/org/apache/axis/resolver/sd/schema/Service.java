@@ -15,7 +15,6 @@ public class Service extends SDElement {
     private Provider provider;
     private HandlerList response;
     private HashMap faults;
-    private TypeMappings typeMappings;
     
     public HandlerList getRequest() {
         return this.request;
