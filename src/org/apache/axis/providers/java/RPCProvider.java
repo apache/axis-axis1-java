@@ -274,8 +274,10 @@ public class RPCProvider extends JavaProvider
                     // Store an RPCParam in the outs collection so we
                     // have an easy and consistent way to write these
                     // back to the client below
-                    outs.add(new RPCParam(param.getQName(),
-                                          argValues[numArgs + i]));
+                    RPCParam p = new RPCParam(param.getQName(),
+                                              argValues[numArgs + i]);
+                    p.setParamDesc(param);
+                    outs.add(p);
                 } else {
                     throw new AxisFault(Messages.getMessage("badOutParameter00",
                                                              "" + param.getQName(),

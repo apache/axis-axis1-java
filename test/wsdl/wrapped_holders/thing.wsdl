@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="urn:Thing" 
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+targetNamespace="urn:Thing" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<!--
+
+This test checks out the emitting of holders for container elements
+(arrays) that are inside elements.
+
+-->
+
+
+  <types>
+      <s:schema elementFormDefault="qualified" targetNamespace="urn:Thing">
+          <s:element name="aThing" type="s0:aThing" final="restriction"/>
+          <s:simpleType name="aThing">
+              <s:restriction base="s:string">
+                  <s:maxLength value="255"/>
+              </s:restriction>
+          </s:simpleType>
+          <s:element name="otherData" type="s0:otherData" final="restriction"/>
+          <s:simpleType name="otherData">
+              <s:restriction base="s:string">
+                  <s:maxLength value="1024"/>
+              </s:restriction>
+          </s:simpleType>
+          <s:element name="find_aThing" type="s0:find_aThing" final="restriction"/>
+          <s:complexType name="find_aThing" final="restriction">
+              <s:sequence>
+                  <s:element ref="s0:aThing" maxOccurs="1"/>
+              </s:sequence>
+          </s:complexType>
+          <s:element name="AThingResponse" type="s0:AThingResponse" final="restriction"/>
+          <s:complexType name="AThingResponse" final="restriction">
+              <s:sequence>
+                  <s:element ref="s0:aThing" minOccurs="0" maxOccurs="unbounded"/>
+                  <s:element ref="s0:otherData" minOccurs="0" maxOccurs="unbounded"/>
+              </s:sequence>
+          </s:complexType>
+      </s:schema>
+  </types>
+  <message name="ThingIn">
+    <part name="parameters" element="s0:find_aThing" />
+  </message>
+  <message name="ThingOut">
+    <part name="parameters" element="s0:AThingResponse" />
+  </message>
+  <portType name="Thing">
+    <operation name="find_aThing">
+      <input message="s0:ThingIn" />
+      <output message="s0:ThingOut" />
+    </operation>
+  </portType>
+  <binding name="Thing" type="s0:Thing">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="find_aThing">
+      <soap:operation soapAction="http://tempuri.org/find_aThing" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="wrapped_holders">
+    <port name="Thing" binding="s0:Thing">
+      <soap:address location="http://localhost:8080/axis/services/Thing" />
+    </port>
+  </service>
+</definitions>

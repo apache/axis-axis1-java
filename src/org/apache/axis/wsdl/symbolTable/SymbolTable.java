@@ -1110,6 +1110,20 @@ public class SymbolTable {
         }
         parameters.faults = operation.getFaults();
 
+        // before we add return the paramters, 
+        // make sure we dont have a duplicate name
+        Vector used = new Vector(parameters.list.size());
+        Iterator i = parameters.list.iterator();
+        while (i.hasNext()) {
+            Parameter parameter = (Parameter) i.next();
+            int count = 2;
+            while (used.contains(parameter.getName())) {
+                // duplicate, add a suffix and try again
+                parameter.setName(parameter.getName() + Integer.toString(count++));
+            }
+            used.add(parameter.getName());
+        }
+                
         return parameters;
     } // parameters
 
@@ -1136,10 +1150,16 @@ public class SymbolTable {
                               boolean trimInput) {
         Parameter p = (Parameter)inputs.get(index);
         // If this is an element, we want the XML to reflect the element name
-        // not the part name.
+        // not the part name.  Same check is made in addOutParam below.
         if (p.getType() instanceof DefinedElement) {
             DefinedElement de = (DefinedElement)p.getType();
             p.setQName(de.getQName());
+        }
+        // If this is a collection we want the XML to reflect the type in
+        // the collection, not foo[unbounded].  
+        // Same check is made in addOutParam below.
+        if (p.getType() instanceof CollectionTE) {
+            p.setQName(p.getType().getRefType().getQName());
         }
 
         // Should we remove the given parameter type/name entries from the Vector?
@@ -1205,9 +1225,17 @@ public class SymbolTable {
                             boolean trim) {
         Parameter p = (Parameter)outputs.get(outdex);
 
+        // If this is an element, we want the XML to reflect the element name
+        // not the part name.  Same check is made in addInishParam above.
         if (p.getType() instanceof DefinedElement) {
             DefinedElement de = (DefinedElement)p.getType();
             p.setQName(de.getQName());
+        }
+        // If this is a collection we want the XML to reflect the type in
+        // the collection, not foo[unbounded].  
+        // Same check is made in addInishParam above.
+        if (p.getType() instanceof CollectionTE) {
+            p.setQName(p.getType().getRefType().getQName());
         }
 
         if (trim) {
@@ -1216,6 +1244,7 @@ public class SymbolTable {
 
         p.setMode(Parameter.OUT);
         ++parameters.outputs;
+        
         parameters.list.add(p);
     } // addOutParm
 

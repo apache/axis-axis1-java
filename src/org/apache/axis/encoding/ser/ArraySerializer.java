@@ -284,7 +284,9 @@ public class ArraySerializer implements Serializer
         // we got in the arguments.  For normal array case, we write an element with
         // that QName, and then serialize each item as <item>
         QName elementName = name;
+        Attributes serializeAttr = attributes;
         if (!maxOccursUsage) {
+            serializeAttr = null;  // since we are putting them here
             context.startElement(name, attributes);
             elementName = Constants.QNAME_LITERAL_ITEM;
         }
@@ -296,7 +298,7 @@ public class ArraySerializer implements Serializer
                     Object aValue = Array.get(value, index);
 
                     // Serialize the element.
-                    context.serialize(elementName, null, aValue,
+                    context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
                                       Boolean.FALSE); // Don't send xsi:type if it matches preferred QName
@@ -306,7 +308,7 @@ public class ArraySerializer implements Serializer
                     Object aValue = (Object)iterator.next();
 
                     // Serialize the element.
-                    context.serialize(elementName, null, aValue,
+                    context.serialize(elementName, serializeAttr, aValue,
                                       componentQName, // prefered type QName
                                       true,   // Send null values
                                       Boolean.FALSE); // Don't send xsi:type if it matches preferred QName

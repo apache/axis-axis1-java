@@ -54,28 +54,24 @@
  */
 package org.apache.axis.wsdl.gen;
 
-import java.io.IOException;
-
-import java.util.Iterator;
-import java.util.Vector;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionElement;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.Type;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-import org.apache.axis.wsdl.symbolTable.ServiceEntry;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;
-import org.apache.axis.wsdl.symbolTable.Type;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-
-import org.w3c.dom.Document;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * This is a class with no documentation.
@@ -345,13 +341,17 @@ public class Parser {
             //  - we found its definition (getNode())
             //  - it is referenced 
             //  - it is not a base type
-            //  - it is a Type (not an Element)
+            //  - it is a Type (not an Element) or a CollectionElement
             // (Note that types that are arrays are passed to getGenerator
             //  because they may require a Holder)
-            if (type.getNode() != null && 
-                type instanceof Type &&
-                type.isReferenced() && 
-                type.getBaseType() == null) {
+
+            // A CollectionElement is an array that might need a holder
+            boolean isType = (type instanceof Type ||
+                    type instanceof CollectionElement);
+            if (type.getNode() != null &&
+                    type.isReferenced() &&
+                    isType &&
+                    type.getBaseType() == null) {
                 Generator gen = genFactory.getGenerator(type, symbolTable);
                 gen.generate();
             }
