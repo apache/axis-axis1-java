@@ -325,7 +325,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 pw.println("            }");
             }
             pw.println("        }");
-            pw.println("        catch (Throwable t) {");
+            pw.println("        catch (java.lang.Throwable t) {");
             pw.println("            throw new " + javax.xml.rpc.ServiceException.class.getName() + "(t);");
             pw.println("        }");
             pw.println("        throw new " + javax.xml.rpc.ServiceException.class.getName() + "(\""
