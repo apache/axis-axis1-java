@@ -2125,14 +2125,16 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     }
 
     public Document getOwnerDocument() {
-        Document doc = super.getOwnerDocument();
+        Document doc = null;
+        if (context != null && context.getEnvelope() != null &&
+                context.getEnvelope().getOwnerDocument() != null) {
+            doc = context.getEnvelope().getOwnerDocument();
+        }
+        if(doc == null) {
+            doc = super.getOwnerDocument();
+        }
         if (doc == null) {
-            if (context != null && context.getEnvelope() != null &&
-                    context.getEnvelope().getOwnerDocument() != null) {
-                doc = context.getEnvelope().getOwnerDocument();
-            } else {
-                doc = new SOAPDocumentImpl(null);
-            }
+            doc = new SOAPDocumentImpl(null);
         }
         return doc;
     }
