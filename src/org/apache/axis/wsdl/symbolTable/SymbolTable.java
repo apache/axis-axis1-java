@@ -3191,7 +3191,7 @@ public class SymbolTable {
             }
         }
 
-        HashSet nestedTypes = Utils.getNestedTypes(entry, this, true);
+        HashSet nestedTypes = entry.getNestedTypes(this, true);
         Iterator it = nestedTypes.iterator();
 
         while (it.hasNext()) {

@@ -641,7 +641,7 @@ public class Utils {
      *                    returned.
      * @return 
      */
-    public static HashSet getNestedTypes(TypeEntry type,
+    protected static HashSet getNestedTypes(TypeEntry type,
                                          SymbolTable symbolTable,
                                          boolean derivedFlag) {
 

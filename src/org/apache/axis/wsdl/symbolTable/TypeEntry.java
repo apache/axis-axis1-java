@@ -60,6 +60,7 @@ import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
 
 /**
  * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.
@@ -139,6 +140,9 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
     /** Field onlyLiteralReference */
     protected boolean onlyLiteralReference = false;    // Indicates
+    
+    /** Field types */
+    protected HashSet types = null;
 
     // whether this type is only referenced
     // via a binding's literal use.
@@ -424,4 +428,23 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
                 + indent + "Node:          " + getNode() + "\n" + indent
                 + "Dims:          " + dims + "\n" + refString;
     }
+
+    /**
+     * This method returns a set of all the nested types.
+     * Nested types are types declared within this TypeEntry (or descendents)
+     * plus any extended types and the extended type nested types
+     * The elements of the returned HashSet are Types.
+     * 
+     * @param symbolTable is the symbolTable
+     * @param derivedFlag should be set if all dependendent derived types should also be
+     *                    returned.
+     * @return 
+     */
+    public HashSet getNestedTypes(SymbolTable symbolTable,
+                                         boolean derivedFlag) {
+        if( types == null) {
+            types = Utils.getNestedTypes(this, symbolTable, derivedFlag);
+        }
+        return types;
+    }    // getNestedTypes
 }

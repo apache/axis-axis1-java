@@ -757,7 +757,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
             if (!types.contains(type)) {
                 types.add(type);
-                types.addAll(Utils.getNestedTypes(type, symbolTable, true));
+                types.addAll(type.getNestedTypes(symbolTable, true));
             }
         }
 

@@ -68,6 +68,9 @@ public class DefinedType extends Type {
 
     /** Field extensionBase */
     protected TypeEntry extensionBase;
+    
+    /** Field searchedForExtensionBase */
+    protected boolean searchedForExtensionBase = false;
 
     /**
      * Constructor DefinedType
@@ -100,10 +103,13 @@ public class DefinedType extends Type {
      */
     public TypeEntry getComplexTypeExtensionBase(SymbolTable symbolTable) {
 
-        if (null == extensionBase) {
-            extensionBase =
-                    SchemaUtils.getComplexElementExtensionBase(getNode(),
-                            symbolTable);
+        if(!searchedForExtensionBase) {
+            if (null == extensionBase) {
+                extensionBase =
+                        SchemaUtils.getComplexElementExtensionBase(getNode(),
+                                symbolTable);
+            }
+            searchedForExtensionBase = true;
         }
 
         return extensionBase;
