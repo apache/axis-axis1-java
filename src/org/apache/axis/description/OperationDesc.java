@@ -111,6 +111,8 @@ public class OperationDesc {
 
     /** The number of "in" params (i.e. IN or INOUT) for this operation */
     private int numInParams = 0;
+    /** The number of "out" params (i.e. OUT or INOUT) for this operation */
+    private int numOutParams = 0;
 
     /** A unique SOAPAction value for this operation */
     private String soapAction = null;
@@ -258,6 +260,10 @@ public class OperationDesc {
             (param.getMode() == ParameterDesc.INOUT)) {
             param.setOrder(numInParams++);
         }
+        if ((param.getMode() == ParameterDesc.OUT) ||
+            (param.getMode() == ParameterDesc.INOUT)) {
+            numOutParams++;
+        }
        log.debug("@" + Integer.toHexString(hashCode())  + " added parameter >" + param + "@" + Integer.toHexString(param.hashCode()) + "<total parameters:" +getNumParams());
     }
     
@@ -291,17 +297,22 @@ public class OperationDesc {
      * @param newParameters an ArrayList of ParameterDescs
      */
     public void setParameters(ArrayList newParameters) {
-       parameters = new ArrayList(); //Keep numInParams correct.
-       numInParams = 0;
-
-       for( java.util.ListIterator li= newParameters.listIterator();
-         li.hasNext(); ){
-           addParameter((ParameterDesc) li.next());
-       }
+        parameters = new ArrayList(); //Keep numInParams correct.
+        numInParams = 0;
+        numOutParams = 0;
+        
+        for( java.util.ListIterator li= newParameters.listIterator();
+             li.hasNext(); ){
+            addParameter((ParameterDesc) li.next());
+        }
     }
     
     public int getNumInParams() {
         return numInParams;
+    }
+
+    public int getNumOutParams() {
+        return numOutParams;
     }
 
     public int getNumParams() {
@@ -380,6 +391,43 @@ public class OperationDesc {
         return param;
     }
 
+    /**
+     * Return a list of ALL "in" params (including INOUTs)
+     * 
+     * Note: if we were sure the order went IN->INOUT->OUT, we could optimize
+     * this.
+     * 
+     * @return
+     */ 
+    public ArrayList getAllInParams() {
+        ArrayList result = new ArrayList();
+        for (Iterator i = parameters.iterator(); i.hasNext();) {
+            ParameterDesc desc = (ParameterDesc) i.next();
+            if (desc.getMode() != ParameterDesc.OUT) {
+                result.add(desc);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Return a list of ALL "out" params (including INOUTs)
+     * 
+     * Note: if we were sure the order went IN->INOUT->OUT, we could optimize
+     * this.
+     * 
+     * @return
+     */ 
+    public ArrayList getAllOutParams() {
+        ArrayList result = new ArrayList();
+        for (Iterator i = parameters.iterator(); i.hasNext();) {
+            ParameterDesc desc = (ParameterDesc) i.next();
+            if (desc.getMode() != ParameterDesc.IN) {
+                result.add(desc);
+            }
+        }
+        return result;        
+    }
     /**
      * Returns an ordered list of out params (NOT inouts)
      */

@@ -482,6 +482,7 @@ public class Emitter {
             serviceDesc.setStopClasses(stopClasses);
             serviceDesc.setAllowedMethods(allowedMethods);
             serviceDesc.setDisallowedMethods(disallowedMethods);
+            serviceDesc.setStyle(style);
 
             // If the class passed in is a portType,
             // there may be an implClass that is used to
@@ -1084,7 +1085,7 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        QName qName = createMessageName(def, oper.getName(), "Request");
+        QName qName = createMessageName(def, oper.getName() + "Request");
         
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -1104,6 +1105,11 @@ public class Emitter {
             part.setName("part");
             part.setElementName(qname);
             msg.addPart(part);
+        } else if (oper.getStyle() == Style.WRAPPED) {
+            // If we're WRAPPED, write the wrapper element first, and then
+            // fill in any params.  If there aren't any params, we'll see
+            // an empty <complexType/> for the wrapper element.
+            writeWrapperPart(def, msg, oper, true);
         } else {
             // Otherwise, write parts for the parameters.
             ArrayList parameters = oper.getParameters();
@@ -1115,7 +1121,79 @@ public class Emitter {
 
         return msg;
     }
-
+    
+    private QName getRequestQName(OperationDesc oper) {
+        QName qname = oper.getElementQName();
+        if (qname == null) {
+            qname = new QName(oper.getName());
+        }
+        return qname;
+    }
+    private QName getResponseQName(OperationDesc oper) {
+        QName qname = oper.getElementQName();
+        if (qname == null) {
+            return new QName(oper.getName() + "Response");
+        }
+        return new QName(qname.getNamespaceURI(),
+                         qname.getLocalPart() + "Response");
+    }
+    /**
+     * Write out the schema definition for a WRAPPED operation request or
+     * response.
+     * 
+     * @param oper
+     * @param request
+     */ 
+    public void writeWrapperPart(Definition def, Message msg,
+                                 OperationDesc oper, boolean request)
+            throws AxisFault {
+        QName qname = request ? getRequestQName(oper) : getResponseQName(oper) ;
+        boolean hasParams = false;
+        if (request) {
+            hasParams = (oper.getNumInParams() > 0);
+        } else {
+            if (oper.getReturnClass() != void.class) {
+                hasParams = true;
+            } else {
+                hasParams = (oper.getNumOutParams() > 0);
+            }
+        }
+        
+        // First write the wrapper element itself.
+        Element sequence = types.writeWrapperElement(qname, request, hasParams);
+        
+        // If we got anything back above, there must be parameters in the
+        // operation, and it's a <sequence> node in which to write them...
+        if (sequence != null) {
+            ArrayList parameters = request ? oper.getAllInParams() :
+                    oper.getAllOutParams();
+            if (!request) {
+                String retName;
+                if (oper.getReturnQName() == null) {
+                    retName = oper.getName() + "Return";
+                } else {
+                    retName = oper.getReturnQName().getLocalPart();
+                }
+                types.writeWrappedParameter(sequence, retName,
+                                            oper.getReturnType(),
+                                            oper.getReturnClass());
+            }
+            for(int i=0; i<parameters.size(); i++) {
+                ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+                types.writeWrappedParameter(sequence,
+                                            parameter.getName(), // QName??
+                                            parameter.getTypeQName(), 
+                                            parameter.getJavaType());
+            }            
+        }
+        
+        // Finally write the part itself
+        Part part = def.createPart();
+        part.setName("parameters");  // We always se "parameters"
+        part.setElementName(qname);
+        msg.addPart(part);        
+    }
+    
     /** Create a Response Message
      *
      * @param def
@@ -1128,28 +1206,32 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        QName qName = createMessageName(def, desc.getName(), "Response");
+        QName qName = createMessageName(def, desc.getName() + "Response");
 
         msg.setQName(qName);
         msg.setUndefined(false);
 
-        // Write the part
-        ParameterDesc retParam = new ParameterDesc();
-        if (desc.getReturnQName() == null) {
-            retParam.setName(desc.getName()+"Return");
+        if (desc.getStyle() == Style.WRAPPED) {
+            writeWrapperPart(def, msg, desc, false);            
         } else {
-            retParam.setQName(desc.getReturnQName());
-        }
-        retParam.setTypeQName(desc.getReturnType());
-        retParam.setMode(ParameterDesc.OUT);
-        retParam.setIsReturn(true);
-        retParam.setJavaType(desc.getReturnClass());
-        writePartToMessage(def, msg, false, retParam);
-
-        ArrayList parameters = desc.getParameters();
-        for (Iterator i = parameters.iterator(); i.hasNext();) {
-            ParameterDesc param = (ParameterDesc)i.next();
-            writePartToMessage(def, msg, false, param);
+            // Write the part
+            ParameterDesc retParam = new ParameterDesc();
+            if (desc.getReturnQName() == null) {
+                retParam.setName(desc.getName()+"Return");
+            } else {
+                retParam.setQName(desc.getReturnQName());
+            }
+            retParam.setTypeQName(desc.getReturnType());
+            retParam.setMode(ParameterDesc.OUT);
+            retParam.setIsReturn(true);
+            retParam.setJavaType(desc.getReturnClass());
+            writePartToMessage(def, msg, false, retParam);
+            
+            ArrayList parameters = desc.getAllOutParams();
+            for (Iterator i = parameters.iterator(); i.hasNext();) {
+                ParameterDesc param = (ParameterDesc)i.next();
+                writePartToMessage(def, msg, false, param);
+            }
         }
         return msg;
     }
@@ -1180,7 +1262,7 @@ public class Emitter {
 
         if (msg == null) {
             msg = def.createMessage();
-            QName qName = createMessageName(def, clsName, "");
+            QName qName = createMessageName(def, clsName);
 
             msg.setQName(qName);
             msg.setUndefined(false);
@@ -1244,43 +1326,7 @@ public class Emitter {
             javaType = JavaUtils.getHolderValueType(javaType);
         }
 
-        if (style == Style.WRAPPED) {
-            // Write type representing the param
-            QName typeQName = 
-                types.writeTypeForPart(javaType,
-                                       param.getTypeQName());
-
-            // Get the QName of the wrapper element
-            QName wrapperQName = null;
-            if (request) {
-                wrapperQName = 
-                    new QName(
-                        msg.getQName().getNamespaceURI(),
-                        msg.getQName().getLocalPart().substring(0,
-                           msg.getQName().getLocalPart().indexOf("Request"))); 
-            } else {
-                wrapperQName = msg.getQName();
-            }
-            
-            if (typeQName != null) {
-                // Write/Get the wrapper element
-                // and append a child element repesenting
-                // the parameter
-                if (types.writeWrapperForPart(wrapperQName,
-                                              param.getName(),
-                                              typeQName, javaType)) {
-                    // If wrapper element is written
-                    // add <part name="parameters" element=wrapper_elem />
-                    // Really shouldn't matter what name is used, but
-                    // .NET could be using "parameters" as an indication
-                    // that this is wrapped mode.
-                    part.setName("parameters");
-                    part.setElementName(wrapperQName);
-                    msg.addPart(part);
-                }
-            }
-        } else if (use == Use.ENCODED || 
-                   style == Style.RPC) {
+        if (use == Use.ENCODED || style == Style.RPC) {
             // Add the type representing the param
             // For convenience, add an element for the param
             // Write <part name=param_name type=param_type>
@@ -1315,18 +1361,14 @@ public class Emitter {
     /*
      * Return a message QName which has not already been defined in the WSDL
      */
-    private QName createMessageName(Definition def,
-                                               String methodName,
-                                               String suffix) {
+    private QName createMessageName(Definition def, String methodName) {
 
-        QName qName = new QName(intfNS,
-                                        methodName.concat(suffix));
+        QName qName = new QName(intfNS, methodName);
 
         // Check the make sure there isn't a message with this name already
         int messageNumber = 1;
         while (def.getMessage(qName) != null) {
-            StringBuffer namebuf =
-                new StringBuffer(methodName.concat(suffix));
+            StringBuffer namebuf = new StringBuffer(methodName);
             namebuf.append(messageNumber);
             qName = new QName(intfNS, namebuf.toString());
             messageNumber++;
