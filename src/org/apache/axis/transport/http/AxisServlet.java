@@ -435,7 +435,7 @@ public class AxisServlet extends HttpServlet
             try {
                 engine = getEngine();
             } catch (AxisFault fault) {
-                log.error(fault);
+                log.error(JavaUtils.getMessage("axisFault00"), fault);
                 Message msg = new Message(fault);
                 res.setContentType( msg.getContentType() );
                 res.setContentLength( msg.getContentLength() );
@@ -542,7 +542,7 @@ public class AxisServlet extends HttpServlet
                     JavaUtils.getMessage("noHeader00", "SOAPAction"),
                     null, null );
 
-                log.error(af);
+                log.error(JavaUtils.getMessage("genFault00"), af);
 
                 throw af; 
             }
@@ -577,7 +577,7 @@ public class AxisServlet extends HttpServlet
             if(isDebug) log.debug("Return from Axis Engine.");
         }
         catch( Exception e ) {
-            log.error(e);
+            log.error(JavaUtils.getMessage("exception00"), e);
 
             if ( e instanceof AxisFault ) {
                 AxisFault  af = (AxisFault) e ;
