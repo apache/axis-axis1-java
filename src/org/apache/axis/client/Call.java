@@ -81,6 +81,8 @@ import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.InternalException;
+import org.apache.axis.Handler;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 
@@ -1724,28 +1726,39 @@ public class Call implements javax.xml.rpc.Call {
         }
         msgContext.setEncodingStyle(encodingStyle);
 
-        /**
-         * Go thru the properties and ones that are Axis specific, and
-         * need to be moved to the msgContext - do so.
-         * TBD:
-         *   security.auth.subject
-         */
-        if (myProperties != null) {
-            msgContext.setPropertyParent(myProperties);
-        }
-
         // Determine client target service
-        reqMsg = msgContext.getRequestMessage();
-        reqEnv = reqMsg.getSOAPEnvelope();
-        SOAPBodyElement body = reqEnv.getFirstBody();
+        if (myService != null) {
+            // If we have a SOAPService kicking around, use that directly
+            msgContext.setService(myService);
+        } else {
+            if (targetService != null) {
+                // No explicit service.  If we have a target service name,
+                // try that.
+                msgContext.setTargetService(targetService);
+            } else {
+                // No direct config, so try the namespace of the first body.
+                reqMsg = msgContext.getRequestMessage();
+                reqEnv = reqMsg.getSOAPEnvelope();
+                SOAPBodyElement body = reqEnv.getFirstBody();
 
-        if ( body.getPrefix() == null )       body.setPrefix( "m" );
-        if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("Call.invoke",
-                   JavaUtils.getMessage("cantInvoke00", body.getName()),
+                // Does this make any sense to anyone?  If not, we should remove it.
+                // --Glen 03/16/02
+                //if ( body.getPrefix() == null )       body.setPrefix( "m" );
+                if ( body.getNamespaceURI() == null ) {
+                    throw new AxisFault("Call.invoke",
+                                        JavaUtils.getMessage("cantInvoke00", body.getName()),
                                         null, null);
-        } else if (msgContext.getService() == null) {
-            msgContext.setTargetService(body.getNamespaceURI());
+                } else {
+                    msgContext.setTargetService(body.getNamespaceURI());
+                }
+            }
+
+            SOAPService svc = msgContext.getService();
+            if (svc != null) {
+                svc.setPropertyParent(myProperties);
+            } else {
+                msgContext.setPropertyParent(myProperties);
+            }
         }
 
         if (log.isDebugEnabled()) {
@@ -1830,6 +1843,44 @@ public class Call implements javax.xml.rpc.Call {
         return this.service;
     }
 
+    private SOAPService myService = null;
+    private String targetService = null;
+
+    /**
+     *
+     */
+    public void setSOAPService(SOAPService service)
+    {
+        myService = service;
+        if (service != null) {
+            // Set the service so that it defers missing property gets to the
+            // Call.  So when client-side Handlers get at the MessageContext,
+            // the property scoping will be MC -> SOAPService -> Call
+            service.setPropertyParent(myProperties);
+        }
+    }
+
+    /**
+     * Sets the client-side request and response Handlers.  This is handy
+     * for programatically setting up client-side work without deploying
+     * via WSDD or the EngineConfiguration mechanism.
+     */
+    public void setClientHandlers(Handler reqHandler, Handler respHandler)
+    {
+        // Create a SOAPService which will be used as the client-side service
+        // handler.
+        setSOAPService(new SOAPService(reqHandler, null, respHandler));
+    }
+
+    /**
+     * Set the target service name on the client side.  Note that an explicit
+     * set of an actual SOAPService (with setSOAPService()) will override
+     * this.
+     */
+    public void setTargetService(String targetService)
+    {
+        this.targetService = targetService;
+    }
 
     protected java.util.Vector attachmentParts= new java.util.Vector();
 

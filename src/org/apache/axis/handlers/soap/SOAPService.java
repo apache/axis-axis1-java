@@ -73,6 +73,7 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.LockableHashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,6 +86,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.beans.IntrospectionException;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
@@ -188,6 +190,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService()
     {
+        initHashtable(true);
         initTypeMappingRegistry();
     }
 
@@ -197,8 +200,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler reqHandler, Handler pivHandler,
                        Handler respHandler) {
+        this();
         init(reqHandler, new SOAPRequestHandler(), pivHandler, null, respHandler);
-        initTypeMappingRegistry();
     }
 
     private void initTypeMappingRegistry() {
@@ -270,6 +273,11 @@ public class SOAPService extends SimpleTargetedChain
 
     public void setServiceDescription(ServiceDesc serviceDescription) {
         this.serviceDescription = serviceDescription;
+    }
+
+    public void setPropertyParent(Hashtable parent)
+    {
+        ((LockableHashtable)options).setParent(parent);
     }
     /*********************************************************************
      * Administration and management APIs

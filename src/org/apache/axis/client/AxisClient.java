@@ -62,6 +62,7 @@ import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -145,18 +146,16 @@ public class AxisClient extends AxisEngine {
 
                 // When do we call init/cleanup??
 
-                SimpleTargetedChain service = null ;
+                SOAPService service = null ;
                 msgContext.setPastPivot(false);
 
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
-                hName =  msgContext.getTargetService();
-                if ( hName != null && (h = getService( hName )) != null ) {
-                    if ( h instanceof SimpleTargetedChain ) {
-                        service = (SimpleTargetedChain) h ;
-                        h = service.getRequestHandler();
-                    }
-                    if ( h != null ) h.invoke( msgContext );
+                service = msgContext.getService();
+                if ( service != null ) {
+                    h = service.getRequestHandler();
+                    if ( h != null )
+                        h.invoke( msgContext );
                 }
 
                 /* Process the Global Request Chain */
