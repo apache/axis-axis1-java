@@ -135,7 +135,7 @@ public class SOAPBody extends MessageElement
         if (bodyElements != null) {
             Iterator e = bodyElements.iterator();
             while (e.hasNext()) {
-                SOAPBodyElement body = (SOAPBodyElement)e.next();
+                MessageElement body = (MessageElement)e.next();
                 body.output(context);
                 // Output this body element.
             }
