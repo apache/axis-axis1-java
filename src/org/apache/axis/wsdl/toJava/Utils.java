@@ -84,6 +84,9 @@ public class Utils {
      * Capitalize the first character of the name.
      */
     public static String capitalizeFirstChar(String name) {
+        if (name == null || name.equals(""))
+            return name;
+        
         char start = name.charAt(0);
 
         if (Character.isLowerCase(start)) {
