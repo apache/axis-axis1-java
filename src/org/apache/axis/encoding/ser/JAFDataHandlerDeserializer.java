@@ -101,7 +101,7 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
         if (href != null) {
             Object ref = context.getObjectByRef(href);
             try{
-                ref = AttachmentUtils.getActiviationDataHandler((org.apache.axis.Part)ref); 
+                ref = AttachmentUtils.getActivationDataHandler((org.apache.axis.Part)ref); 
             }catch(org.apache.axis.AxisFault e){;}
             
             setValue(ref);

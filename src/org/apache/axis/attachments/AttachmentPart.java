@@ -56,28 +56,41 @@
 package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.SOAPUtils;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class AttachmentPart extends Part {
+import javax.activation.DataHandler;
+import javax.xml.soap.SOAPException;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Part {
     protected static Log log =
         LogFactory.getLog(AttachmentPart.class.getName());
 
     javax.activation.DataHandler datahandler= null;
-    
+
+    private Hashtable headers = new Hashtable();
+    private String contentId;
+    private String contentLocation;
+
 
     public AttachmentPart() {
-        super();
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+
     }
 
     public AttachmentPart(javax.activation.DataHandler dh ) {
-        super();
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+
         datahandler= dh;
         addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
     }
 
-    public javax.activation.DataHandler getActiviationDataHandler(){
+    public javax.activation.DataHandler getActivationDataHandler(){
       return datahandler;
     }
 
@@ -86,13 +99,13 @@ public class AttachmentPart extends Part {
     public int getContentLength() {
         return 0;
     }
-    */ 
+    */
 
     /**
      * TODO: everything!
-     */ 
+     */
     public String getContentType() {
-        return getMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
     }
 
     /**
@@ -100,7 +113,299 @@ public class AttachmentPart extends Part {
     public int getSize() {
         return 0;
     }
-     */ 
+     */
 
+    /**
+     * Add the specified MIME header, as per JAXM.
+     */
+    public void addMimeHeader (String header, String value) {
+
+        if(null == header) {
+            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
+        }
+
+        header = header.trim();
+
+        if(header.length() == 0) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerNotEmpty"));
+        }
+
+        if(null == value) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("headerValueNotNull"));
+        }
+        headers.put(header.toLowerCase(), value);
+    }
+
+    /**
+     * Get the specified MIME header.
+     */
+    public String getFirstMimeHeader (String header) {
+        return (String) headers.get(header.toLowerCase());
+    }
+
+    /**
+     * Total size in bytes (of all content and headers, as encoded).
+    public abstract int getSize();
+     */
+
+    /**
+     * Content location.
+     */
+    public String getContentLocation() {
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION);
+    }
+
+    /**
+     * Set content location.
+     */
+    public void setContentLocation(String loc) {
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
+    }
+
+    /**
+         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+         *  already defined.
+         * @param newCid new Content-Id
+         * @returns void
+         */
+        public void setContentId(String newCid){
+                if(!newCid.toLowerCase().startsWith("cid:")){
+                        newCid="cid:"+newCid;
+                }
+                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+        }
+
+    /**
+     * Content ID.
+     */
+    public String getContentId() {
+        String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+        //Do not let the contentID ever be empty.
+        if(ret == null){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        ret= ret.trim();
+        if(ret.length() ==0){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        return ret;
+    }
+
+
+    /**
+     * Get all headers that match
+     */
+    public java.util.Iterator getMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList();
+        if(null != match && 0 != match.length ){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                      String key= match[i].toLowerCase();
+                      if(headers.containsKey(key))
+                         retList.add(match[i]);
+                }
+            }
+        }
+        return retList.iterator();
+    }
+
+    /**
+     * Get all headers that do not match
+     */
+    public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
+        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
+        if(null != match && 0 != match.length && !headers.isEmpty()){
+            for(int i= match.length-1 ; i > -1 ; --i){
+                    if(match[i] != null){
+                        String remItem= match[i].toLowerCase();
+                        if(headers.containsKey(remItem)){
+                            retList.remove(remItem);
+                    }
+                }
+            }
+        }
+        return retList.iterator();
+    }
+
+    /**
+     * Retrieves all the headers for this <CODE>
+     * AttachmentPart</CODE> object as an iterator over the <CODE>
+     * MimeHeader</CODE> objects.
+     * @return  an <CODE>Iterator</CODE> object with all of the Mime
+     *     headers for this <CODE>AttachmentPart</CODE> object
+     */
+    public Iterator getAllMimeHeaders() {
+        //TODO: Implement this.
+        return null;
+    }
+
+    /**
+     * Changes the first header entry that matches the given name
+     *   to the given value, adding a new header if no existing
+     *   header matches. This method also removes all matching
+     *   headers but the first.
+     *
+     *   <P>Note that RFC822 headers can only contain US-ASCII
+     *   characters.</P>
+     * @param  name   a <CODE>String</CODE> giving the
+     *     name of the header for which to search
+     * @param  value  a <CODE>String</CODE> giving the
+     *     value to be set for the header whose name matches the
+     *     given name
+     * @throws java.lang.IllegalArgumentException if
+     *     there was a problem with the specified mime header name
+     *     or value
+     */
+    public void setMimeHeader(String name, String value){
+        //TODO: Implement this.
+    }
+
+    /** Removes all the MIME header entries. */
+    public void removeAllMimeHeaders() {
+        //TODO: Implement this.
+    }
+
+    /**
+     * Removes all MIME headers that match the given name.
+     * @param  header - the string name of the MIME
+     *     header/s to be removed
+     */
+    public void removeMimeHeader(String header) {
+        //TODO: Implement this.
+    }
+
+    /**
+     * Gets the <CODE>DataHandler</CODE> object for this <CODE>
+     * AttachmentPart</CODE> object.
+     * @return the <CODE>DataHandler</CODE> object associated with
+     *     this <CODE>AttachmentPart</CODE> object
+     * @throws  SOAPException  if there is
+     *     no data in this <CODE>AttachmentPart</CODE> object
+     */
+    public DataHandler getDataHandler() throws SOAPException {
+        //TODO: Implement this.
+        return null;
+    }
+
+    /**
+     * Sets the given <CODE>DataHandler</CODE> object as the
+     * data handler for this <CODE>AttachmentPart</CODE> object.
+     * Typically, on an incoming message, the data handler is
+     * automatically set. When a message is being created and
+     * populated with content, the <CODE>setDataHandler</CODE>
+     * method can be used to get data from various data sources into
+     * the message.
+     * @param  datahandler  <CODE>DataHandler</CODE> object to
+     *     be set
+     * @throws java.lang.IllegalArgumentException if
+     *     there was a problem with the specified <CODE>
+     *     DataHandler</CODE> object
+     */
+    public void setDataHandler(DataHandler datahandler) {
+        //TODO: Implement this.
+    }
+
+    /**
+     * Gets the content of this <CODE>AttachmentPart</CODE> object
+     *   as a Java object. The type of the returned Java object
+     *   depends on (1) the <CODE>DataContentHandler</CODE> object
+     *   that is used to interpret the bytes and (2) the <CODE>
+     *   Content-Type</CODE> given in the header.
+     *
+     *   <P>For the MIME content types "text/plain", "text/html" and
+     *   "text/xml", the <CODE>DataContentHandler</CODE> object does
+     *   the conversions to and from the Java types corresponding to
+     *   the MIME types. For other MIME types,the <CODE>
+     *   DataContentHandler</CODE> object can return an <CODE>
+     *   InputStream</CODE> object that contains the content data as
+     *   raw bytes.</P>
+     *
+     *   <P>A JAXM-compliant implementation must, as a minimum,
+     *   return a <CODE>java.lang.String</CODE> object corresponding
+     *   to any content stream with a <CODE>Content-Type</CODE>
+     *   value of <CODE>text/plain</CODE> and a <CODE>
+     *   javax.xml.transform.StreamSource</CODE> object
+     *   corresponding to a content stream with a <CODE>
+     *   Content-Type</CODE> value of <CODE>text/xml</CODE>. For
+     *   those content types that an installed <CODE>
+     *   DataContentHandler</CODE> object does not understand, the
+     *   <CODE>DataContentHandler</CODE> object is required to
+     *   return a <CODE>java.io.InputStream</CODE> object with the
+     *   raw bytes.</P>
+     * @return a Java object with the content of this <CODE>
+     *     AttachmentPart</CODE> object
+     * @throws  SOAPException  if there is no content set
+     *     into this <CODE>AttachmentPart</CODE> object or if there
+     *     was a data transformation error
+     */
+    public Object getContent() throws SOAPException {
+        //TODO: Implement this.
+        return null;
+    }
+
+    /**
+     * Sets the content of this attachment part to that of the
+     * given <CODE>Object</CODE> and sets the value of the <CODE>
+     * Content-Type</CODE> header to the given type. The type of the
+     * <CODE>Object</CODE> should correspond to the value given for
+     * the <CODE>Content-Type</CODE>. This depends on the particular
+     * set of <CODE>DataContentHandler</CODE> objects in use.
+     * @param  object  the Java object that makes up
+          the content for this attachment part
+     * @param  contentType the MIME string that
+          specifies the type of the content
+     * @throws java.lang.IllegalArgumentException if
+     *     the contentType does not match the type of the content
+     *     object, or if there was no <CODE>
+     *     DataContentHandler</CODE> object for this content
+     *     object
+     * @see #getContent() getContent()
+     */
+    public void setContent(Object object, String contentType) {
+        //TODO: Implement this.
+    }
+
+    /**
+     * Clears out the content of this <CODE>
+     * AttachmentPart</CODE> object. The MIME header portion is left
+     * untouched.
+     */
+    public void clearContent() {
+        //TODO: Implement this.
+    }
+
+    /**
+     * Returns the number of bytes in this <CODE>
+     * AttachmentPart</CODE> object.
+     * @return the size of this <CODE>AttachmentPart</CODE> object
+     *     in bytes or -1 if the size cannot be determined
+     * @throws  SOAPException  if the content of this
+     *     attachment is corrupted of if there was an exception
+     *     while trying to determine the size.
+     */
+    public int getSize() throws SOAPException {
+        //TODO: Implement this.
+        return -1;
+    }
+
+    /**
+     * Gets all the values of the header identified by the given
+     * <CODE>String</CODE>.
+     * @param   name  the name of the header; example:
+     *     "Content-Type"
+     * @return a <CODE>String</CODE> array giving the value for the
+     *     specified header
+     * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
+     */
+    public String[] getMimeHeader(String name) {
+        //TODO: Flesh this out.
+        String[] strings = new String[1];
+        strings[0] = getFirstMimeHeader(name);
+        return strings;
+    }
 }
 
