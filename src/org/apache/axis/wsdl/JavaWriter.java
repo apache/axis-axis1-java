@@ -144,6 +144,7 @@ public abstract class JavaWriter implements Writer {
         String packageDirName = namespaces.toDir(packageName);
         emitter.fileList.add(packageDirName + fileName);
         emitter.classList.add(packageName + "." + className);
+        namespaces.mkdir(packageName);
         File file = new File(packageDirName, fileName);
         if (emitter.bVerbose) {
             System.out.println(message + ":  " + file.getPath());
