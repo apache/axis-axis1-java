@@ -54,11 +54,8 @@
  */
 package org.apache.axis.wsdl;
 
-import com.ibm.wsdl.xml.WSDLReader;
-
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -73,6 +70,8 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -168,7 +167,7 @@ public class Emitter {
      */
     public void emit(Document doc) throws IOException {
         try {
-            WSDLReader reader = new WSDLReader();
+            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             reader.setVerbose(bVerbose);
             def = reader.readWSDL(null, doc);
             namespaces = new Namespaces(outputDir);
