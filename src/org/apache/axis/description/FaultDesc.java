@@ -127,7 +127,9 @@ public class FaultDesc {
     }
     public String toString(String indent) {
         String text ="";
+        text+= indent + "name: " + getName() + "\n";
         text+= indent + "qname: " + getQName() + "\n";
+        text+= indent + "type: " + getXmlType() + "\n";
         text+= indent + "Class: " + getClassName() + "\n";
         for (int i=0; parameters != null && i < parameters.size(); i++) {
             text+= indent +" ParameterDesc[" + i + "]:\n";
