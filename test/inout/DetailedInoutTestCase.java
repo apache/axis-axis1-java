@@ -2,10 +2,13 @@ package test.inout;
 
 import java.net.URL;
 
+import javax.xml.rpc.holders.StringHolder;
+
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 
-import javax.xml.rpc.holders.StringHolder;
+import org.apache.axis.client.AdminClient;
+
 import org.apache.axis.utils.Options;
 
 import junit.framework.TestCase;
@@ -78,6 +81,11 @@ public class DetailedInoutTestCase extends TestCase
     private Address returnAddress = new Address (555, "Monroe Street", "Madison", "WI", 54444, returnPhone);
     private int returnNumber = 66;
 
+    public void testDeploy() {
+        String[] args = {"test/inout/deploy.xml"};
+        AdminClient.main(args);
+    } // doTestDeploy
+    
     public void testOut0_inout0_in0 ()
     {
         try
