@@ -10,7 +10,7 @@
  <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
 			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
-  <service name="http://soapinterop.org/" pivot="java:RPC" >
+  <service name="http://soapinterop.org/" provider="java:RPC" >
     <parameter name="className" value="samples.echo.EchoService" />
     <parameter name="methodName" value="*" />
   </service>
