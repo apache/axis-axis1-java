@@ -1355,27 +1355,6 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 ser.serialize(elemQName, attributes, value, this);
                 return;
             }
-
-            // if no serializer was configured try to find one dynamically using WSDLJava
-            // generated metadata
-            Class cls = value.getClass();
-            Serializer serializer = getSerializerFromClass(cls, elemQName);
-            if (serializer != null) {
-                TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
-                if (typedesc != null) {
-                    QName qname = typedesc.getXmlType();
-		    // Send the xmlType if indicated or if
-		    // the actual xmlType is different than the
-		    // prefered xmlType
-                    if (shouldSendType ||
-		        (xmlType != null && qname != null &&
-			 (!xmlType.equals(qname)))) {
-                        writeXMLType = qname;
-                    }
-                }
-                serializer.serialize(elemQName, attributes, value, this);
-                return;
-            }
             throw new IOException(Messages.getMessage("noSerializer00",
                     value.getClass().getName(), "" + tm));
         }
@@ -1453,17 +1432,31 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         }
 
         while (javaType != null) {
+            // check type mapping
             serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
-            if (serFactory != null)
+            if (serFactory != null) {
                 break;
+            }
+
+            // check the class for serializer
+            Serializer serializer = getSerializerFromClass(javaType, xmlType);
+            if (serializer != null) {
+                if (actualXMLType != null) {
+                    TypeDesc typedesc = TypeDesc.getTypeDescForClass(javaType);
+                    if (typedesc != null) {
+                        actualXMLType.value = typedesc.getXmlType();
+                    }
+                }
+                return serializer;
+            }
 
             // Walk my interfaces...
             serFactory = getSerializerFactoryFromInterface(javaType, xmlType, tm);
+            if (serFactory != null) {
+                break;
+            }
 
             // Finally, head to my superclass
-            if (serFactory != null)
-                break;
-
             javaType = javaType.getSuperclass();
         }
 
@@ -1498,9 +1491,6 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     public String getValueAsString(Object value, QName xmlType) throws IOException {
         Class cls = value.getClass();
         Serializer ser = getSerializer(cls, xmlType, null);
-        if (ser == null) {
-            ser = getSerializerFromClass(cls, xmlType);
-        }
         if (!(ser instanceof SimpleValueSerializer)) {
             throw new IOException(
                     Messages.getMessage("needSimpleValueSer",
