@@ -259,7 +259,6 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
     /**
      * Handler management methods
      */
-    public SOAPHandler getTopHandler();
     public void pushElementHandler(SOAPHandler handler);
     public void replaceElementHandler(SOAPHandler handler);
     public SOAPHandler popElementHandler();

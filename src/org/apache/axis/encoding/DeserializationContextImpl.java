@@ -104,7 +104,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     
     private Locator locator;
                                              
-    private Stack handlerStack = new Stack();
+    // for performance reasons, keep the top of the stack separate from
+    // the remainder of the handlers, and therefore readily available.
+    private SOAPHandler topHandler = null;
+    private ArrayList pushedDownHandlers = new ArrayList();
     
     //private SAX2EventRecorder recorder = new SAX2EventRecorder();
     private SAX2EventRecorder recorder = null;
@@ -667,22 +670,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * Management of sub-handlers (deserializers)
      */
     
-    public SOAPHandler getTopHandler()
-    {
-        try {
-            return (SOAPHandler)handlerStack.peek();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
     public void pushElementHandler(SOAPHandler handler)
     {
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
         }
         
-        handlerStack.push(handler);
+        if (topHandler != null) pushedDownHandlers.add(topHandler);
+        topHandler = handler;
     }
     
     /** Replace the handler at the top of the stack.
@@ -693,25 +688,29 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public void replaceElementHandler(SOAPHandler handler)
     {
-        handlerStack.pop();
-        handlerStack.push(handler);
+        topHandler = handler;
     }
     
     public SOAPHandler popElementHandler()
     {
-        if (!handlerStack.empty()) {
-            SOAPHandler handler = getTopHandler();
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("popHandler00", "" + handler));
-            }
-            handlerStack.pop();
-            return handler;
+        SOAPHandler result = topHandler;
+
+        int size = pushedDownHandlers.size();
+        if (size > 0) {
+            topHandler = (SOAPHandler) pushedDownHandlers.remove(size-1);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("popHandler00", "(null)"));
-            }
-            return null;
+            topHandler = null;
         }
+
+        if (log.isDebugEnabled()) {
+            if (result == null) {
+                log.debug(JavaUtils.getMessage("popHandler00", "(null)"));
+            } else {
+                log.debug(JavaUtils.getMessage("popHandler00", "" + result));
+            }
+        }
+
+        return result;
     }
     
     /****************************************************************
@@ -771,9 +770,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             namespaces.add(uri, "");
         }
        
-        SOAPHandler handler = getTopHandler();
-        if (handler != null)
-            handler.startPrefixMapping(prefix, uri);
+        if (topHandler != null)
+            topHandler.startPrefixMapping(prefix, uri);
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::startPrefixMapping()");
@@ -790,9 +788,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (!doneParsing && (recorder != null))
             recorder.endPrefixMapping(prefix);
         
-        SOAPHandler handler = getTopHandler();
-        if (handler != null)
-            handler.endPrefixMapping(prefix);
+        if (topHandler != null)
+            topHandler.endPrefixMapping(prefix);
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::endPrefixMapping()");
@@ -813,15 +810,15 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void characters(char[] p1, int p2, int p3) throws SAXException {
         if (!doneParsing && (recorder != null))
             recorder.characters(p1, p2, p3);
-        if (getTopHandler() != null)
-            getTopHandler().characters(p1, p2, p3);
+        if (topHandler != null)
+            topHandler.characters(p1, p2, p3);
     }
     
     public void ignorableWhitespace(char[] p1, int p2, int p3) throws SAXException {
         if (!doneParsing && (recorder != null))
             recorder.ignorableWhitespace(p1, p2, p3);
-        if (getTopHandler() != null)
-            getTopHandler().ignorableWhitespace(p1, p2, p3);
+        if (topHandler != null) 
+            topHandler.ignorableWhitespace(p1, p2, p3);
     }
  
     public void processingInstruction(String p1, String p2) throws SAXException {
@@ -833,7 +830,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void skippedEntity(String p1) throws SAXException {
         if (!doneParsing && (recorder != null))
             recorder.skippedEntity(p1);
-        getTopHandler().skippedEntity(p1);
+        topHandler.skippedEntity(p1);
     }
 
     /** 
@@ -857,8 +854,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (idx > 0)
             prefix = qName.substring(0, idx);
 
-        if (!handlerStack.isEmpty()) {
-            nextHandler = getTopHandler().onStartChild(namespace,
+        if (topHandler != null) {
+            nextHandler = topHandler.onStartChild(namespace,
                                                        localName,
                                                        prefix,
                                                        attributes,
@@ -907,8 +904,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             SOAPHandler handler = popElementHandler();
             handler.endElement(namespace, localName, this);
             
-            if (!handlerStack.isEmpty()) {
-                getTopHandler().onEndChild(namespace, localName, this);
+            if (topHandler != null) {
+                topHandler.onEndChild(namespace, localName, this);
             } else {
                 // We should be done!
             }
