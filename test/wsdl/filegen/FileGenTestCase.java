@@ -84,6 +84,9 @@ public class FileGenTestCase extends junit.framework.TestCase {
      */    
     protected String[] getPaths(File root, String parent) {
         File files[] = root.listFiles();
+        if (files == null)
+            fail("Unable to get a list of files from " + root.getPath());
+
         Set filePaths = new HashSet();
         for(int i=0; i<files.length; i++) {
             if (files[i].isDirectory()) {
