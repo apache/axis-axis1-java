@@ -20,10 +20,32 @@ import javax.xml.namespace.QName;
 
 public class ContainedAttribute extends ContainedEntry {
 
+    /** Field optional */
+    private boolean optional = false;
+
     /**
      * @param qname
      */
     protected ContainedAttribute(TypeEntry type, QName qname) {
         super(type, qname);
     }
+
+    /**
+     * Method setOptional
+     * 
+     * @param optional 
+     */
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    /**
+     * Method getOptional
+     * 
+     * @return 
+     */
+    public boolean getOptional() {
+        return optional;
+    }
+
 }

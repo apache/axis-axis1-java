@@ -268,7 +268,8 @@ public class JavaBeanWriter extends JavaClassWriter {
                 } else {
                     variableName = elem.getName();
                     
-                    if (elem.getMinOccursIs0() || elem.getNillable()) {
+                    if (elem.getMinOccursIs0() || elem.getNillable() ||
+		            elem.getOptional()) {
                         typeName = Utils.getWrapperType(typeName);
                     }
                 }
@@ -307,6 +308,13 @@ public class JavaBeanWriter extends JavaClassWriter {
                 ContainedAttribute attr = (ContainedAttribute) attributes.get(i);
                 String typeName = attr.getType().getName(); 
                 String variableName = attr.getName();
+
+		// TODO - What about MinOccurs and Nillable? 
+		// Do they make sense here?
+		if (attr.getOptional()) {
+		    typeName = Utils.getWrapperType(typeName);
+		}
+
                 names.add(typeName);
                 names.add(variableName);
 
@@ -357,6 +365,52 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
 
         }
+    }
+
+    /**
+     * Returns the class name that should be used to serialize and
+     * deserialize this binary element
+     */
+    protected String getBinaryTypeEncoderName(String elementName)
+    {
+        TypeEntry type = getElementDecl(elementName);
+	if (type != null)
+	{
+	    String typeName = type.getQName().getLocalPart();
+
+	    if (typeName.equals("base64Binary"))
+	    	return "org.apache.axis.encoding.Base64";
+	    if (typeName.equals("hexBinary"))
+	    	return "org.apache.axis.types.HexBinary";
+
+	    throw new java.lang.RuntimeException("Unknown binary type " +
+		typeName + " for element " + elementName);
+	}
+
+	throw new java.lang.RuntimeException("Unknown element " + elementName);
+    }
+
+    /**
+     * Returns the TypeEntry of the given element
+     */
+    protected TypeEntry getElementDecl(String elementName)
+    {
+        if (elements != null) {
+            for (int i = 0; i < elements.size(); i++) {
+                ElementDecl elem = (ElementDecl) elements.get(i);
+                String variableName;
+
+                if (elem.getAnyElement()) {
+                    variableName = Constants.ANYCONTENT;
+                } else {
+                    variableName = elem.getName();
+                }
+
+                if (variableName.equals(elementName))
+		    return elem.getType();
+	    }
+	}
+	return null;
     }
 
     /**
@@ -706,8 +760,9 @@ public class JavaBeanWriter extends JavaClassWriter {
                     + "(_value)." + simpleValueType + "Value();");
         } else {
             if (simpleValueType.equals("byte[]")) {
+	        String encoder = getBinaryTypeEncoderName ("_value");
                 pw.println("        " + returnString
-                        + " org.apache.axis.types.HexBinary.decode(_value);");
+                        + " " + encoder + ".decode(_value);");
             } else if (simpleValueType.equals("org.apache.axis.types.URI")) {
                 pw.println("        try {");
                 pw.println("            " + returnString
@@ -784,8 +839,10 @@ public class JavaBeanWriter extends JavaClassWriter {
             } else {
                 String simpleValueType0 = (String)simpleValueTypes.get(0); 
                 if (simpleValueType0.equals("byte[]")) {
+	            String encoder = getBinaryTypeEncoderName ("_value");
                     pw.println(
-                            "        return _value == null ? null : org.apache.axis.types.HexBinary.encode(_value);");
+                            "        return _value == null ? null : " +
+			    encoder + ".encode(_value);");
                 } else if (simpleValueType0.equals("java.util.Calendar")) {
                     pw.println(
                             "        return _value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(_value, null);");
@@ -814,8 +871,10 @@ public class JavaBeanWriter extends JavaClassWriter {
                     + "(_value).toString();");
         } else {
             if (simpleValueType.equals("byte[]")) {
+		String encoder = getBinaryTypeEncoderName ("_value");
                 pw.println(
-                        "        this._value = _value == null ? null : org.apache.axis.types.HexBinary.encode(_value);");
+                        "        this._value = _value == null ? null : " +
+			encoder + ".encode(_value);");
             } else if (simpleValueType.equals("java.util.Calendar")) {
                 pw.println(
                         "        this._value = _value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(_value, null);");

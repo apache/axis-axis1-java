@@ -709,6 +709,12 @@ public class SchemaUtils {
                     JavaUtils.isTrueExplicitly(
                             Utils.getAttribute(elementNode, "nillable")));
 
+            String useValue = Utils.getAttribute(elementNode, "use");
+
+            if (useValue != null) {
+                elem.setOptional(useValue.equalsIgnoreCase("optional"));
+            }
+
             return elem;
         }
 
@@ -1561,13 +1567,22 @@ public class SchemaUtils {
         // Try to get the corresponding global attribute ElementEntry
         // from the symbol table.
         if (type instanceof org.apache.axis.wsdl.symbolTable.Element) {
-        	type = ((org.apache.axis.wsdl.symbolTable.Element) type).getRefType();
+                type = ((org.apache.axis.wsdl.symbolTable.Element) type).getRefType();
         }
         
         // add type and name to vector, skip it if we couldn't parse it
         // XXX - this may need to be revisited.
         if ((type != null) && (attributeName != null)) {
-            v.add(new ContainedAttribute(type, attributeName));
+            ContainedAttribute attr =
+	    	new ContainedAttribute(type, attributeName);
+
+	    String useValue = Utils.getAttribute(child, "use");
+
+	    if (useValue != null) {
+		attr.setOptional(useValue.equalsIgnoreCase("optional"));
+	    }
+
+            v.add(attr);
         }
     }
 
@@ -1904,11 +1919,12 @@ public class SchemaUtils {
                     if (type.equals("")) {
                         return null;
                     }
-                    int colonIndex = type.lastIndexOf(":");
-                    if (colonIndex > 0) {
-                        type = type.substring(colonIndex + 1);
-                    }
-                    return new QName(Constants.URI_2001_SCHEMA_XSD, type + "[]");
+                    //int colonIndex = type.lastIndexOf(":");
+                    //if (colonIndex > 0) {
+                        //type = type.substring(colonIndex + 1);
+                    //}
+                    //return new QName(Constants.URI_2001_SCHEMA_XSD, type + "[]");
+                    return Utils.getQNameFromPrefixedName(node, type);
                 }
             }
         }

@@ -30,7 +30,7 @@ public class InquiryServiceTestCase extends junit.framework.TestCase {
 
         test.wsdl.uddiv2.api_v2.Find_business find = new test.wsdl.uddiv2.api_v2.Find_business();
         find.setGeneric("2.0");
-        find.setMaxRows(100);
+        find.setMaxRows(new Integer(100));
         test.wsdl.uddiv2.api_v2.Name[] names = new test.wsdl.uddiv2.api_v2.Name[1];
         names[0] = new test.wsdl.uddiv2.api_v2.Name();
         names[0].set_value("IBM");

@@ -569,7 +569,17 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             // set typeQName to the value of the itemType attribute.
             QName itemType = SchemaUtils.getListItemType(tEntry.getNode());
             if (itemType != null) {
-                typeQName = itemType;
+                // Get the typeEntry so we know the absolute base type
+                TypeEntry itemEntry = symbolTable.getTypeEntry(itemType, false);
+		// TODO - If the itemEntry is not found, we need to throw
+		// an exception.  "Item is referenced, but not defined"
+                javifyTypeEntryName(symbolTable, itemEntry, anonQNames, uniqueNum);
+                // Grab the referenced type, If it's there.
+                TypeEntry refedEntry = itemEntry.getRefType();
+                QName baseName = refedEntry == null ? itemEntry.getQName() : 
+                        refedEntry.getQName();
+                typeQName = new QName(baseName.getNamespaceURI(),
+                                        baseName.getLocalPart() + "[]");
             }
 
             if ((typeQName.getLocalPart().

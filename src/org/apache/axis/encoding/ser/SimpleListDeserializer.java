@@ -15,6 +15,7 @@
  */
 
 package org.apache.axis.encoding.ser;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +30,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
  *
  * @author Ias (iasandcb@tmax.co.kr)
  */
-public class SimpleListDeserializer extends DeserializerImpl {
+public class SimpleListDeserializer extends SimpleDeserializer {
 
     StringBuffer val = new StringBuffer();
     private Constructor constructor = null;
@@ -67,10 +67,14 @@ public class SimpleListDeserializer extends DeserializerImpl {
      * javaType (which could be a java primitive like int.class)
      */
     public SimpleListDeserializer(Class javaType, QName xmlType) {
+        super (javaType, xmlType);
+
         this.xmlType = xmlType;
         this.javaType = javaType;
     }
     public SimpleListDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
+        super (javaType, xmlType, typeDesc);
+
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;

@@ -43,6 +43,9 @@ public class ElementDecl extends ContainedEntry {
     /** Field nillable */
     private boolean nillable = false;
 
+    /** Field optional */
+    private boolean optional = false;
+
     // Indicate if the ElementDecl represents
     // an xsd:any element
 
@@ -94,6 +97,24 @@ public class ElementDecl extends ContainedEntry {
      */
     public boolean getNillable() {
         return nillable;
+    }
+
+    /**
+     * Method setOptional
+     * 
+     * @param optional 
+     */
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    /**
+     * Method getOptional
+     * 
+     * @return 
+     */
+    public boolean getOptional() {
+        return optional;
     }
 
     /**
