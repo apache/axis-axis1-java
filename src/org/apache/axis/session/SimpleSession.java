@@ -153,4 +153,19 @@ public class SimpleSession implements Session
     {
         return lastTouched;
     }
+
+    /**
+     * Get an Object suitable for synchronizing the session.  This method
+     * exists because different session implementations might provide
+     * different ways of getting at shared data.  For a simple hashtable-
+     * based session, this would just be the hashtable, but for sessions
+     * which use database connections, etc. it might be an object wrapping
+     * a table ID or somesuch.
+     */
+    public Object getLockObject() {
+        if (rep == null) {
+            rep = new Hashtable();
+        }
+        return rep;
+    }
 }
