@@ -79,6 +79,7 @@
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
             <xsd:element name="byteArray" type="typens:array_of_base64" />
           </xsd:all>
+          <xsd:attribute name="attr" type="typens:enum" />
         </xsd:complexType>
       </xsd:element>
 

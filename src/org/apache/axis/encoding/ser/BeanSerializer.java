@@ -510,18 +510,22 @@ public class BeanSerializer implements Serializer, Serializable {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].
                                         getReadMethod().invoke(value,noArgs);
-                    // NOTE: we will always set the attribute here to something, 
-                    // which we may not want (i.e. if null, omit it)
-                    String propString = propValue != null ? propValue.toString() : "";
-                    
-                    String namespace = qname.getNamespaceURI();
-                    String localName = qname.getLocalPart();
-                    
-                    attrs.addAttribute(namespace, 
-                                       localName, 
-                                       context.qName2String(qname), 
-                                       "CDATA", 
-                                       propString);
+                    // If the property value does not exist, don't serialize
+                    // the attribute.  In the future, the decision to serializer
+                    // the attribute may be more sophisticated.  For example, don't 
+                    // serialize if the attribute matches the default value.
+                    if (propValue != null) {
+                        String propString = propValue != null ? propValue.toString() : "";
+                        
+                        String namespace = qname.getNamespaceURI();
+                        String localName = qname.getLocalPart();
+                        
+                        attrs.addAttribute(namespace, 
+                                           localName, 
+                                           context.qName2String(qname), 
+                                           "CDATA", 
+                                           propString);
+                    }
                 }
             }
         } catch (Exception e) {

@@ -353,7 +353,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                                                  xmlType);
                 }
             }
-            df = new SimpleDeserializerFactory(javaType, xmlType);
+            if (javaType != java.lang.Object.class) {
+                df = new SimpleDeserializerFactory(javaType, xmlType);
+            }
         }
         if (onlyDeserFactory) {
             sf = null;
