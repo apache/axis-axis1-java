@@ -209,7 +209,6 @@ public class MessageContext {
      * service's.
      *
      * @param tServ the name of the target service.
-     * @exception AxisFault
      */
     public void setTargetService(String tServ) {
         targetService = tServ ;
