@@ -72,7 +72,7 @@ public class RPCProvider extends JavaProvider {
     private static final boolean DEBUG_LOG = false;
     
     public void processMessage (MessageContext msgContext,
-                                String serviceUrn,
+                                String serviceName,
                                 String allowedMethods,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
