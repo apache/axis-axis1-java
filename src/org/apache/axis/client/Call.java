@@ -881,6 +881,23 @@ public class Call implements javax.xml.rpc.Call {
             list = bIn.getExtensibilityElements();
             for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
                 Object obj = list.get(i);
+                if( obj instanceof javax.wsdl.extensions.mime.MIMEMultipartRelated){
+                  javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
+                  (javax.wsdl.extensions.mime.MIMEMultipartRelated) obj;
+                  Object part= null; 
+                  List l=  mpr.getMIMEParts();
+                  for(int j=0; l!= null && j< l.size() && part== null; j++){
+                     javax.wsdl.extensions.mime.MIMEPart mp
+                     = (javax.wsdl.extensions.mime.MIMEPart)l.get(j);
+                     List ll= mp.getExtensibilityElements();
+                     for(int k=0; ll!= null && k< ll.size() && part== null; k++){
+                       part= ll.get(k);
+                       if ( !(part instanceof SOAPBody)) part = null; 
+                     }
+                  }
+                  if(null != part) obj= part;
+                }
+
                 if ( obj instanceof SOAPBody ) { 
                     SOAPBody sBody  = (SOAPBody) obj ;
                     list = sBody.getEncodingStyles();

@@ -62,6 +62,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -366,13 +367,25 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
                 ((MessageElement)ref).publishToHandler((DefaultHandler) context);
                 context.setRecorder(r);
             } else {
+
+                if( !href.startsWith("#") && defaultType != null && ref instanceof Part ){
+                    //For attachments this is the end of the road-- invoke deserializer
+                    Deserializer dser= context.getDeserializerForType(defaultType );
+                    if(null != dser){          
+                      dser.startElement(namespace, localName,
+                             qName, attributes,
+                             context);
+                      ref = dser.getValue();       
+                             
+                    }         
+               }
+                
                 // If the ref is not a MessageElement, then it must be an
                 // element that has already been deserialized.  Use it directly.
                 value = ref;
                 valueComplete();
             }
             
-            // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
         } else {
             isHref = false;
             onStartElement(namespace, localName, qName, attributes,

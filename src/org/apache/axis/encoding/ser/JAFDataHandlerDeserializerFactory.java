@@ -78,17 +78,23 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A JAFDataHandlerDeserializer Factory
  *
  *  @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
+   protected static Log log = LogFactory.getLog(JAFDataHandlerDeserializerFactory.class.getName());
 
     public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
         super(JAFDataHandlerDeserializer.class, false, xmlType, javaType); 
+        log.debug("Enter JAFDataHandlerDeserializerFactory ("+javaType+", "+xmlType+")");
     }
     public JAFDataHandlerDeserializerFactory() {
         super(JAFDataHandlerDeserializer.class, false); 
+        log.debug("Enter JAFDataHandlerDeserializerFactory ()" );
     }
 }

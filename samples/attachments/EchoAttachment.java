@@ -122,6 +122,7 @@ public class EchoAttachment {
                                  qnameAttachment,
                                  JAFDataHandlerSerializerFactory.class,
                                  JAFDataHandlerDeserializerFactory.class);
+
                                  
         call.addParameter( "source", qnameAttachment,
                 ParameterMode.PARAM_MODE_IN ); //Add the file.
@@ -329,8 +330,8 @@ public class EchoAttachment {
             if ( e instanceof AxisFault ) {
                 ((AxisFault) e).dump();
             } 
-            else
-                e.printStackTrace();
+            System.err.println(e);
+             e.printStackTrace();
         }
         System.exit(18);
     }
