@@ -173,7 +173,7 @@ public class RPCProvider extends JavaProvider {
 			//   add msgContext to argValues[] 
 			if ( params.length == numberOfBodyArgs + 1 ) {
 				Object[] tmpArgs = new Object[numberOfBodyArgs + 1];
-				for ( int i = 1 ; i < args.size() ; i++ )
+				for ( int i = 1 ; i <= args.size() ; i++ )
 				  tmpArgs[i] = argValues[i-1];
 				tmpArgs[0] = msgContext ;
 				argValues = tmpArgs ;
