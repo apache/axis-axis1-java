@@ -452,7 +452,9 @@ public class AxisServlet extends AxisServletBase {
                 throw configException;
             }
         }
-        String baseURL = getWebappBase(request)+"/services/";
+        // baseURL may change if <endpointURL> tag is used for 
+        // custom deployment at a different location
+        String defaultBaseURL = getWebappBase(request)+"/services/"; 
         writer.println("<ul>");
         while (i.hasNext()) {
             ServiceDesc sd = (ServiceDesc)i.next();
@@ -461,6 +463,8 @@ public class AxisServlet extends AxisServletBase {
             String name = sd.getName();
             sb.append(name);
             sb.append(" <a href=\"");
+            String endpointURL = sd.getEndpointURL(); 
+            String baseURL = (endpointURL==null)? defaultBaseURL : endpointURL;
             sb.append(baseURL);
             sb.append(name);
             sb.append("?wsdl\"><i>(wsdl)</i></a></li>");
