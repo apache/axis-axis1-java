@@ -72,18 +72,17 @@ import java.util.Vector;
  */
 public class TypeFactory {
 
-    private HashMap types;                  // All Types
-    private HashMap mapNamespaceToPackage;  // Mapping from Namespace to Java Package
-    private HashMap mapPackageToNamespace;  // Mapping from Java Package to Namespace
+    private HashMap types;                    // All Types
+    private Namespaces mapNamespaceToPackage; // Mapping from Namespace to Java Package
     private static int nameSpaceSuffix = 1;
     private String nameSpacePrefix = null;
 
     /**
      * Create an Emit Type Factory
      */
-    public TypeFactory() {
+    public TypeFactory(Namespaces namespaces) {
         types = new HashMap();
-        mapNamespaceToPackage = new HashMap();
+        mapNamespaceToPackage = namespaces;
     }
 
     /**
@@ -114,16 +113,6 @@ public class TypeFactory {
      */
     public void buildTypes(Document doc) {
         addTypes(doc, false);
-    }
-
-
-    private String getPackageNamespace(String pkgName) {
-      String nsPrefix = (String)mapPackageToNamespace.get(pkgName);
-      if (nsPrefix == null) {
-        nsPrefix = "ns" + nameSpaceSuffix++;
-        mapPackageToNamespace.put(pkgName, nsPrefix);
-      }
-      return nsPrefix;
     }
 
     /**

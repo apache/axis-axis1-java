@@ -59,6 +59,7 @@ import org.apache.avalon.excalibur.cli.CLOption;
 import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public class Wsdl2java {
     protected static final int VERBOSE_OPT = 'v';
     protected static final int MESSAGECONTEXT_OPT = 'm';
     protected static final int SKELETON_OPT = 's';
-    protected static final int PACKAGE_OPT = 'p';
+    protected static final int NAMESPACE_OPT = 'N';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
     protected static final int TEST_OPT = 't';
@@ -104,10 +105,10 @@ public class Wsdl2java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 MESSAGECONTEXT_OPT,
                 "emit a MessageContext parameter to skeleton methods"),
-        new CLOptionDescriptor("package",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                PACKAGE_OPT,
-                "package to put emitted files in"),
+        new CLOptionDescriptor("NStoPkg",
+                CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
+                NAMESPACE_OPT,
+                "mapping of namespace to package"),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
@@ -134,6 +135,7 @@ public class Wsdl2java {
         boolean bMessageContext = false;
         boolean bTestClass = false;
         String wsdlURI = null;
+        HashMap namespaceMap = new HashMap();
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -183,12 +185,10 @@ public class Wsdl2java {
                         emitter.generateMessageContext(true);
                         break;
 
-                    case PACKAGE_OPT:
-                        String packageName = option.getArgument();
-                        if (packageName == null)
-                            emitter.generatePackageName(true);
-                        else
-                            emitter.setPackageName(packageName);
+                    case NAMESPACE_OPT:
+                        String namespace = option.getArgument(0);
+                        String packageName = option.getArgument(1);
+                        namespaceMap.put(namespace, packageName);
                         break;
 
                     case OUTPUT_OPT:
@@ -230,6 +230,10 @@ public class Wsdl2java {
             }
             if (wsdlURI == null) {
                 printUsage();
+            }
+
+            if (!namespaceMap.isEmpty()) {
+                emitter.setNamespaceMap(namespaceMap);
             }
 
             emitter.emit(wsdlURI);
