@@ -8,6 +8,68 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
+1.0 BUGZILLA SCRUB
+------------------
+Here is our initial scrub of bugzilla bugs for 1.0.  We've come up with 5 categories:
+A - showstopper - don't release 1.0 without it
+B - planning for 1.0
+C - nice to have in 1.0
+D - post 1.0
+E - evaluation
+
+7407 - B
+8419 - C
+8435 - C
+8598 - E - Glen/Rich
+9393 - D
+9452 - E
+9473 - closed
+9510 - closed
+9665 - B
+9717 - E (C?) - Tom/discussion issue
+9773 - E
+9780 - E
+9815 - C
+9881 - done
+9882 - A
+9966 - E - see 9717
+9967 - E - see 9717
+10019 - E - dims (does -extraClasses solve this?)
+10056 - B
+10058 - C
+10141 - C
+10211 - D
+10246 - D
+10290 - A
+10355 - A
+10365 - B
+10477 - C
+10479 - B
+10512 - B
+10590 - A
+10605 - B - Tom
+10613 - A
+10645 - C
+10739 - A
+10841 - C
+10847 - A
+10853 - D
+10862 - B
+10864 - A
+10872 - D
+10944 - B
+10966 - B - Sitze
+11055 - closed
+11120 - B
+11162 - A
+11170 - A
+11290 - C
+11295 - B - Tom
+11296 - C
+11297 - B
+11305 - A
+11306 - A
+11315 - A
 
 MESSAGE PARSING / ENCODING
 --------------------------
