@@ -400,7 +400,7 @@ Copyright:
     </copy>
   </target>
 
-  <target name="dist" depends="compile, javadocsdist, samples"
+  <target name="dist" depends="compile, javadocsdist, samples, junit"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
