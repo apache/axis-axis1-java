@@ -57,6 +57,7 @@ package test;
 
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebResponse;
 
 /**
  * test the services
@@ -64,7 +65,7 @@ import com.meterware.httpunit.GetMethodWebRequest;
  * @created Jul 10, 2002 12:09:06 AM
  */
 
-public class ServicesTest extends HttpUnitTestBase{
+public class ServicesTest extends HttpUnitTestBase {
 
     private String services;
 
@@ -134,9 +135,25 @@ public class ServicesTest extends HttpUnitTestBase{
      * test version call
      * @throws Exception
      */
-    public void testVersion() throws Exception {
-        WebRequest request = new GetMethodWebRequest(services+"/Version?wsdl");
+    public void testVersionWSDL() throws Exception {
+        WebRequest request = new GetMethodWebRequest(services
+                +"Version?wsdl");
         assertStringInBody(request,"<wsdl:definitions");
     }
+
+    /**
+     * test version call
+     * @throws Exception
+     */
+    public void testVersionMethod() throws Exception {
+        WebRequest request = new GetMethodWebRequest(services
+                + "Version?method=getVersion");
+        WebResponse response=makeRequest(request);
+        String body = response.getText();
+        assertTrue(body.indexOf("<?xml") ==0);
+        assertTrue(body.indexOf("<getVersionReturn")>0);
+    }
+
+
 
 }

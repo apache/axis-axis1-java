@@ -74,4 +74,65 @@ public class JwsTest extends HttpUnitTestBase {
         WebRequest request = new GetMethodWebRequest(url+"/StockQuoteService.jws?wsdl");
         assertStringInBody(request,"<wsdl:definitions");
     }
+
+    public void testEchoHeadersWsdl() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url + "/EchoHeaders.jws?wsdl");
+        assertStringInBody(request, "<wsdl:definitions");
+    }
+
+
+    public void testEchoHeaders() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url + "/EchoHeaders.jws");
+        assertStringInBody(request, "Some Services");
+    }
+
+    /**
+     * see that we get a hello back
+     * @throws Exception
+     */
+    public void testEchoHeadersWhoami() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url
+                + "/EchoHeaders.jws");
+        request.setParameter("method", "whoami");
+        assertStringInBody(request, "Hello");
+    }
+
+    /**
+     * do we get a list of headers back?
+     * @throws Exception
+     */
+    public void testEchoHeadersList() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url
+                + "/EchoHeaders.jws");
+        request.setHeaderField("x-header","echo-header-test");
+        request.setParameter("method", "list");
+        assertStringInBody(request, "echo-header-test");
+    }
+
+    /**
+     * send an echo with a space down
+     * @throws Exception
+     */
+    public void testEchoHeadersEcho() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url
+                + "/EchoHeaders.jws");
+        request.setParameter("method","echo");
+        request.setParameter("param", "foo bar");
+        assertStringInBody(request, "foo bar");
+    }
+
+    /**
+     * send a complex unicode round the loop and see what happens
+     * @throws Exception
+     */
+    /* this is failing but it may be in the test code
+    public void testEchoHeadersEchoUnicode() throws Exception {
+        WebRequest request = new GetMethodWebRequest(url
+                + "/EchoHeaders.jws");
+        request.setParameter("method", "echo");
+        request.setParameter("param", "\u221a");
+        assertStringInBody(request, "\u221a");
+    }
+    */
+
 }

@@ -118,9 +118,21 @@ public class HttpUnitTestBase extends TestCase {
                                        String searchfor
                                        )
                 throws IOException, org.xml.sax.SAXException {
+        WebResponse response = makeRequest(request);
+        assertStringInBody(response,searchfor,request.getURL().toString());
+    }
+
+    /**
+     * make a request in a new session
+     * @param request   request to make
+     * @return the response
+     * @throws IOException
+     * @throws SAXException
+     */
+    protected WebResponse makeRequest(WebRequest request) throws IOException, SAXException {
         WebConversation session = new WebConversation();
         WebResponse response=session.getResponse(request);
-        assertStringInBody(response,searchfor,request.getURL().toString());
+        return response;
     }
 
     /**
