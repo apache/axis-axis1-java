@@ -15,6 +15,7 @@
   </taskdef>
 
   <target name="main">
+    <property name="test.dir" value="import2"/>
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
@@ -23,16 +24,16 @@
     <mkdir dir="${root.dir}/${build.dest}"/>
 
     <copy file="SoapInteropImport2BindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/import2"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <copy file="Import2TestCase.java"
-          todir="${root.dir}/build/work/test/wsdl/interop3/import2"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/**/*.java" />
+      <include name="test/wsdl/interop3/${test.dir}/*.java" />
     </javac>
   </target>
 
