@@ -54,6 +54,7 @@
  */
 package org.apache.axis.utils ;
 
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -104,6 +105,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+
 /**
  * @author Doug Davis (dug@us.ibm.com)
  */
@@ -137,14 +139,14 @@ public class tcpmon extends JFrame {
             GridBagConstraints  c             = new GridBagConstraints();
 
             mainPane = new JPanel(layout);
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER;
             mainPane.add( new JLabel(getMessage("newTCP00", "Create a new TCP/IP Monitor...") + " "), c );
 
             // Add some blank space
-            mainPane.add( Box.createRigidArea(new Dimension(1,5)), c );
-            
+            mainPane.add( Box.createRigidArea(new Dimension(1, 5)), c );
+
             // The listener info
             ///////////////////////////////////////////////////////////////////
             JPanel   tmpPanel = new JPanel(new GridBagLayout());
@@ -159,10 +161,11 @@ public class tcpmon extends JFrame {
 
             mainPane.add( tmpPanel, c );
 
-            mainPane.add( Box.createRigidArea(new Dimension(1,5)), c );
-            
+            mainPane.add( Box.createRigidArea(new Dimension(1, 5)), c );
+
             // Group for the radio buttons
             ButtonGroup btns = new ButtonGroup();
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             mainPane.add( new JLabel(getMessage("actAs00", "Act as a...") ), c );
@@ -173,69 +176,76 @@ public class tcpmon extends JFrame {
             c.gridwidth = GridBagConstraints.REMAINDER ;
 
             final String listener = getMessage("listener00", "Listener");
+
             mainPane.add( listenerButton  = new JRadioButton( listener ), c );
             btns.add( listenerButton );
             listenerButton.setSelected( true );
 
-            listenerButton.addActionListener( new ActionListener(){
-                public void actionPerformed(ActionEvent event) {
-                    if (listener.equals(event.getActionCommand())) {
-                        boolean state = listenerButton.isSelected();
-                        tport.setEnabled( state );
-                        host.setEnabled( state );
-                        hostLabel.setForeground(state?Color.black:Color.gray);
-                        tportLabel.setForeground(state?Color.black:Color.gray);
+            listenerButton.addActionListener( new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        if (listener.equals(event.getActionCommand())) {
+                            boolean state = listenerButton.isSelected();
+
+                            tport.setEnabled( state );
+                            host.setEnabled( state );
+                            hostLabel.setForeground(state ? Color.black : Color.gray);
+                            tportLabel.setForeground(state ? Color.black : Color.gray);
+                        }
                     }
                 }
-            });
+            );
 
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
-            mainPane.add( Box.createRigidArea(new Dimension(25,0)) );
+            mainPane.add( Box.createRigidArea(new Dimension(25, 0)) );
             mainPane.add( hostLabel = new JLabel(getMessage("targetHostname00", "Target Hostname") + " "), c );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             mainPane.add( host = new JTextField(30), c );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
-            mainPane.add( Box.createRigidArea(new Dimension(25,0)) );
+            mainPane.add( Box.createRigidArea(new Dimension(25, 0)) );
             mainPane.add( tportLabel = new JLabel(getMessage("targetPort00", "Target Port #") + " "), c );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             mainPane.add( tport = new JTextField(4), c );
-            
+
             // Act as proxy section
             ///////////////////////////////////////////////////////////////////
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             final String proxy = getMessage("proxy00", "Proxy");
-            mainPane.add( proxyButton = new JRadioButton( proxy ),c);
+
+            mainPane.add( proxyButton = new JRadioButton( proxy ), c);
             btns.add( proxyButton );
 
-            proxyButton.addActionListener( new ActionListener(){
-                public void actionPerformed(ActionEvent event) {
-                    if (proxy.equals(event.getActionCommand())) {
-                        boolean state = proxyButton.isSelected();
-                        tport.setEnabled( !state );
-                        host.setEnabled( !state );
-                        hostLabel.setForeground(state?Color.gray:Color.black);
-                        tportLabel.setForeground(state?Color.gray:Color.black);
+            proxyButton.addActionListener( new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        if (proxy.equals(event.getActionCommand())) {
+                            boolean state = proxyButton.isSelected();
+
+                            tport.setEnabled( !state );
+                            host.setEnabled( !state );
+                            hostLabel.setForeground(state ? Color.gray : Color.black);
+                            tportLabel.setForeground(state ? Color.gray : Color.black);
+                        }
                     }
                 }
-            });
+            );
 
             // Spacer
             /////////////////////////////////////////////////////////////////
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
-            mainPane.add( Box.createRigidArea(new Dimension(1,10)), c );
+            mainPane.add( Box.createRigidArea(new Dimension(1, 10)), c );
 
             // Options section
             ///////////////////////////////////////////////////////////////////
             JPanel       opts = new JPanel(new GridBagLayout());
+
             opts.setBorder( new TitledBorder(getMessage("options00", "Options")) );
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
@@ -246,53 +256,57 @@ public class tcpmon extends JFrame {
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             final String proxySupport = getMessage("proxySupport00", "HTTP Proxy Support");
+
             opts.add(HTTPProxyBox = new JCheckBox(proxySupport), c);
 
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
             opts.add( HTTPProxyHostLabel = new JLabel(getMessage("hostname00", "Hostname") + " "), c );
             HTTPProxyHostLabel.setForeground( Color.gray );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             opts.add( HTTPProxyHost = new JTextField(30), c );
             HTTPProxyHost.setEnabled( false );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = 1 ;
             opts.add( HTTPProxyPortLabel = new JLabel(getMessage("port00", "Port #") + " "), c );
             HTTPProxyPortLabel.setForeground( Color.gray );
-            
+
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             opts.add( HTTPProxyPort = new JTextField(4), c );
             HTTPProxyPort.setEnabled( false );
 
             HTTPProxyBox.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if (proxySupport.equals(event.getActionCommand())) {
-                        boolean b = HTTPProxyBox.isSelected();
-                        Color   color = b ? Color.black : Color.gray ;
+                    public void actionPerformed(ActionEvent event) {
+                        if (proxySupport.equals(event.getActionCommand())) {
+                            boolean b = HTTPProxyBox.isSelected();
+                            Color   color = b ? Color.black : Color.gray ;
 
-                        HTTPProxyHost.setEnabled( b );
-                        HTTPProxyPort.setEnabled( b );
-                        HTTPProxyHostLabel.setForeground( color );
-                        HTTPProxyPortLabel.setForeground( color );
+                            HTTPProxyHost.setEnabled( b );
+                            HTTPProxyPort.setEnabled( b );
+                            HTTPProxyHostLabel.setForeground( color );
+                            HTTPProxyPortLabel.setForeground( color );
+                        }
                     }
-                };
-            });
+                    ;
+                }
+            );
 
             // Set default proxy values...
             String tmp = System.getProperty( "http.proxyHost" );
+
             if ( tmp != null && tmp.equals("") )
                 tmp = null ;
 
             HTTPProxyBox.setSelected( tmp != null );
             HTTPProxyHost.setEnabled( tmp != null );
             HTTPProxyPort.setEnabled( tmp != null );
-            HTTPProxyHostLabel.setForeground( tmp!=null?Color.black:Color.gray);
-            HTTPProxyPortLabel.setForeground( tmp!=null?Color.black:Color.gray);
-                
+            HTTPProxyHostLabel.setForeground( tmp != null ? Color.black : Color.gray);
+            HTTPProxyPortLabel.setForeground( tmp != null ? Color.black : Color.gray);
+
             if ( tmp != null ) {
                 HTTPProxyBox.setSelected( true );
                 HTTPProxyHost.setText( tmp );
@@ -304,56 +318,59 @@ public class tcpmon extends JFrame {
 
             // Spacer
             //////////////////////////////////////////////////////////////////
-            mainPane.add( Box.createRigidArea(new Dimension(1,10)), c );
-            
+            mainPane.add( Box.createRigidArea(new Dimension(1, 10)), c );
+
             // ADD Button
             ///////////////////////////////////////////////////////////////////
             c.anchor    = GridBagConstraints.WEST ;
             c.gridwidth = GridBagConstraints.REMAINDER ;
             final String add = getMessage("add00", "Add");
+
             mainPane.add( addButton = new JButton( add ), c );
 
-            
+
             this.add( new JScrollPane( mainPane ), BorderLayout.CENTER );
 
             // addButton.setEnabled( false );
             addButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if ( add.equals(event.getActionCommand()) ) {
-                        String   text ;
-                        Listener l = null ;
-                        int      lPort = Integer.parseInt(port.getText());
-                        String   tHost = host.getText();
-                        int      tPort = 0 ;
+                    public void actionPerformed(ActionEvent event) {
+                        if ( add.equals(event.getActionCommand()) ) {
+                            String   text ;
+                            Listener l = null ;
+                            int      lPort = Integer.parseInt(port.getText());
+                            String   tHost = host.getText();
+                            int      tPort = 0 ;
 
-                        text = tport.getText();
-                        if ( text != null && !text.equals("") )
-                            tPort = Integer.parseInt(text);
-                        l = new Listener( noteb, null, lPort, tHost, tPort, 
-                                          proxyButton.isSelected() );
+                            text = tport.getText();
+                            if ( text != null && !text.equals("") )
+                                tPort = Integer.parseInt(text);
+                            l = new Listener( noteb, null, lPort, tHost, tPort,
+                                proxyButton.isSelected() );
 
-                        // Pick-up the HTTP Proxy settings
-                        ///////////////////////////////////////////////////
-                        text = HTTPProxyHost.getText();
-                        if ( "".equals(text) ) text = null ;
-                        l.HTTPProxyHost = text ;
-                        text = HTTPProxyPort.getText();
-                        if ( "".equals(text) ) text = null ;
-                        if( text != null )
-                            l.HTTPProxyPort = Integer.parseInt(text);
+                            // Pick-up the HTTP Proxy settings
+                            ///////////////////////////////////////////////////
+                            text = HTTPProxyHost.getText();
+                            if ( "".equals(text) ) text = null ;
+                            l.HTTPProxyHost = text ;
+                            text = HTTPProxyPort.getText();
+                            if ( "".equals(text) ) text = null ;
+                            if ( text != null )
+                                l.HTTPProxyPort = Integer.parseInt(text);
 
-                        port.setText(null);
-                        host.setText(null);
-                        tport.setText(null);
+                            port.setText(null);
+                            host.setText(null);
+                            tport.setText(null);
+                        }
                     }
-                };
-            });
+                    ;
+                }
+            );
 
             notebook.addTab( name, this );
             notebook.repaint();
-            notebook.setSelectedIndex( notebook.getTabCount()-1 );
+            notebook.setSelectedIndex( notebook.getTabCount() - 1 );
         }
-    };
+    }
 
     class SocketWaiter extends Thread {
         ServerSocket  sSocket = null ;
@@ -372,16 +389,18 @@ public class tcpmon extends JFrame {
                 listener.setLeft( new JLabel(getMessage("wait00", " Waiting for Connection...") ) );
                 listener.repaint();
                 sSocket = new ServerSocket( port );
-                for(;;) {
+                for (; ; ) {
                     Socket inSocket = sSocket.accept();
+
                     if ( pleaseStop ) break ;
                     new Connection( listener, inSocket );
                     inSocket = null ;
                 }
             }
-            catch( Exception exp ) {
+            catch ( Exception exp ) {
                 if ( !"socket closed".equals(exp.getMessage()) ) {
                     JLabel tmp = new JLabel( exp.toString() );
+
                     tmp.setForeground( Color.red );
                     listener.setLeft( tmp );
                     listener.setRight( new JLabel("") );
@@ -396,11 +415,12 @@ public class tcpmon extends JFrame {
                 new Socket( "127.0.0.1", port );
                 if ( sSocket != null ) sSocket.close();
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
     }
+
 
     class SocketRR extends Thread {
         Socket        inSocket  = null ;
@@ -409,14 +429,16 @@ public class tcpmon extends JFrame {
         InputStream   in = null ;
         OutputStream  out = null ;
         boolean       xmlFormat ;
-        boolean       done = false ;
+        volatile boolean       done = false ;
         TableModel    tmodel = null ;
-        int           tableIndex =0 ;
+        int           tableIndex = 0 ;
+        String type = null;
+        Connection    myConnection = null;
 
-        public SocketRR(Socket inputSocket, InputStream inputStream, 
-                        Socket outputSocket, OutputStream outputStream, 
-                        JTextArea _textArea, boolean format, 
-                        TableModel tModel, int index) {
+        public SocketRR(Connection c, Socket inputSocket, InputStream inputStream,
+            Socket outputSocket, OutputStream outputStream,
+            JTextArea _textArea, boolean format,
+            TableModel tModel, int index, final String type) {
             inSocket = inputSocket ;
             in       = inputStream ;
             outSocket = outputSocket ;
@@ -425,11 +447,13 @@ public class tcpmon extends JFrame {
             xmlFormat = format ;
             tmodel    = tModel ;
             tableIndex = index ;
+            this.type = type;
+            myConnection = c;
             start();
         }
 
         public boolean isDone() {
-          return( done );
+            return ( done );
         }
 
         public void run() {
@@ -443,58 +467,68 @@ public class tcpmon extends JFrame {
                 int         reqSaved = 0 ;
                 int         tabWidth = 3 ;
                 boolean     atMargin = true ;
-                int         thisIndent = - 1, 
-                            nextIndent = -1,
-                            previousIndent = -1;
+                int         thisIndent = -1,
+                    nextIndent = -1,
+                    previousIndent = -1;
 
-                if ( inSocket  != null ) inSocket.setSoTimeout( 10 );
-                if ( outSocket != null ) outSocket.setSoTimeout( 10 );
+                //if ( inSocket  != null ) inSocket.setSoTimeout( 10 );
+                //if ( outSocket != null ) outSocket.setSoTimeout( 10 );
 
                 if ( tmodel != null ) {
-                  String tmpStr = (String) tmodel.getValueAt(tableIndex,
-                                                             REQ_COLUMN);
-                  if ( !"".equals(tmpStr) )
-                    reqSaved = tmpStr.length();
+                    String tmpStr = (String) tmodel.getValueAt(tableIndex,
+                            REQ_COLUMN);
+
+                    if ( !"".equals(tmpStr) )
+                        reqSaved = tmpStr.length();
                 }
-                
-                for ( ;; ) {
-                    if( done ) break;
-                    len = in.available();
+
+                a:
+                for ( ; ; ) {
+                    if ( done ) break;
+                    //try{
+                    //len = in.available();
+                    //}catch(Exception e){len=0;}
+                    len = buffer.length ;
                     // Used to be 1, but if we block it doesn't matter 
                     // however 1 will break with some servers, including apache
-                    if ( len == 0 ) len = 4096 ;
-                    if ( saved+len > 4096 ) len = 4096-saved ;
-                    int len1=0;
-                    while( len1==0 ) {
+                    if ( len == 0 ) len = buffer.length;
+                    if ( saved + len > buffer.length) len = buffer.length - saved ;
+                    int len1 = 0;
+
+                    while ( len1 == 0 ) {
                         try {
-                            len1 = in.read(buffer,saved,len);
-                        } catch( Exception ex ) {
-                            len1=0;
-                            if( done ) return;
+                            len1 = in.read(buffer, saved, len);
+                        } 
+                        catch ( Exception ex ) {
+                            if ( done && saved == 0  ) break a;
+                            len1 = -1;
+                            break;
                         }
                     }
-                    len=len1;
+                    len = len1;
 
                     if ( len == -1 && saved == 0 ) break ;
+                    if ( len == -1) done = true;
 
                     // No matter how we may (or may not) format it, send it
                     // on unformatted - we don't want to mess with how its
                     // sent to the other side, just how its displayed
                     if ( out != null && len > 0 ) {
-                      out.write( buffer, saved, len );
+                        out.write( buffer, saved, len );
                     }
-                
+
                     if ( tmodel != null && reqSaved < 50 ) {
-                        String old = (String) tmodel.getValueAt( tableIndex, 
-                                                                 REQ_COLUMN);
-                        old = old + new String(buffer,saved,len);
+                        String old = (String) tmodel.getValueAt( tableIndex,
+                                REQ_COLUMN);
+
+                        old = old + new String(buffer, saved, len);
                         if ( old.length() > 50 )
-                            old = old.substring(0,50);
+                            old = old.substring(0, 50);
 
                         reqSaved = old.length();
 
                         if ( (i = old.indexOf('\n')) > 0 ) {
-                            old = old.substring(0,i-1);
+                            old = old.substring(0, i - 1);
                             reqSaved = 50 ;
                         }
 
@@ -505,66 +539,93 @@ public class tcpmon extends JFrame {
                         // Do XML Formatting
                         boolean inXML = false ;
                         int     bufferLen = saved ;
+
                         if ( len != -1 ) bufferLen += len ;
                         i1 = 0 ;
                         i2 = 0 ;
                         saved = 0 ;
-                        for( ; i1 < bufferLen ; i1++ ) {
-                          // Except when we're at EOF, saved last char
-                          if ( len != -1 && i1+1 == bufferLen ) { 
-                            saved = 1; 
-                            break;
-                          }
-                          thisIndent = -1;
-                          if ( buffer[i1]=='<' && buffer[i1+1]!='/' ) {
-                            previousIndent = nextIndent++;
-                            thisIndent = nextIndent;
-                            inXML = true ;
-                          }
-                          if ( buffer[i1]=='<' && buffer[i1+1]=='/' ) {
-                            if (previousIndent>nextIndent) 
-                              thisIndent = nextIndent;
-                            previousIndent = nextIndent--;
-                            inXML = true ;
-                          }
-                          if ( buffer[i1]=='/' && buffer[i1+1]=='>' ) {
-                            previousIndent = nextIndent--;
-                            inXML = true ;
-                          }
-                          if ( thisIndent!=-1 ) {
-                            if ( thisIndent > 0 ) tmpbuffer[i2++] = (byte)'\n';
-                            for ( i = tabWidth*thisIndent; i>0; i-- )
-                              tmpbuffer[i2++] = (byte)' ';
-                          }
-                          atMargin = ( buffer[i1]=='\n' || buffer[i1]=='\r');
+                        for ( ; i1 < bufferLen ; i1++ ) {
+                            // Except when we're at EOF, saved last char
+                            if ( len != -1 && i1 + 1 == bufferLen ) {
+                                saved = 1;
+                                break;
+                            }
+                            thisIndent = -1;
+                            if ( buffer[i1] == '<' && buffer[i1 + 1] != '/' ) {
+                                previousIndent = nextIndent++;
+                                thisIndent = nextIndent;
+                                inXML = true ;
+                            }
+                            if ( buffer[i1] == '<' && buffer[i1 + 1] == '/' ) {
+                                if (previousIndent > nextIndent)
+                                    thisIndent = nextIndent;
+                                previousIndent = nextIndent--;
+                                inXML = true ;
+                            }
+                            if ( buffer[i1] == '/' && buffer[i1 + 1] == '>' ) {
+                                previousIndent = nextIndent--;
+                                inXML = true ;
+                            }
+                            if ( thisIndent != -1 ) {
+                                if ( thisIndent > 0 ) tmpbuffer[i2++] = (byte) '\n';
+                                for ( i = tabWidth * thisIndent; i > 0; i-- )
+                                    tmpbuffer[i2++] = (byte) ' ';
+                            }
+                            atMargin = ( buffer[i1] == '\n' || buffer[i1] == '\r');
 
-                          if ( !inXML || !atMargin ) {
-                            tmpbuffer[i2++] = buffer[i1];
-                          }
+                            if ( !inXML || !atMargin ) {
+                                tmpbuffer[i2++] = buffer[i1];
+                            }
                         }
 
                         textArea.append( new String( tmpbuffer, 0, i2 ) );
 
                         // Shift saved bytes to the beginning
                         for ( i = 0 ; i < saved ; i++ )
-                          buffer[i] = buffer[bufferLen-saved+i];
+                            buffer[i] = buffer[bufferLen - saved + i];
                     }
                     else {
                         textArea.append( new String( buffer, 0, len ) );
                     }
-                    this.sleep(3);  // Let other threads have a chance to run
+                // this.sleep(3);  // Let other threads have a chance to run
                 }
-                this.sleep(3);  // Let other threads have a chance to run
-                // halt();
-                // Only set the 'done' flag if we were reading from a
-                // Socket - if we were reading from an input stream then
-                // we'll let the other side control when we're done
-                if ( inSocket != null ) done = true ;
+            // this.sleep(3);  // Let other threads have a chance to run
+            // halt();
+            // Only set the 'done' flag if we were reading from a
+            // Socket - if we were reading from an input stream then
+            // we'll let the other side control when we're done
+            //      if ( inSocket != null ) done = true ;
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
+            finally {
+                done = true ;
+                try {
+                    if (out != null) {
+                        out.flush();
+                        if (null != outSocket) outSocket.shutdownOutput();
+                        else out.close();
+                        out = null;
+                    }
+                } 
+                catch (Exception e) {
+                    ;
+                }
+                try {
+                    if (in != null) {
+                        if (inSocket != null) inSocket.shutdownInput();
+                        else in.close();
+                        in = null;
+                    }
+                }
+                catch (Exception e) {
+                    ;
+                }
+                myConnection.wakeUp();
+            }
         }
+
         public  void halt() {
             try {
                 if ( inSocket != null )  inSocket.close();
@@ -575,12 +636,14 @@ public class tcpmon extends JFrame {
                 if ( out != null ) out.close();
                 in = null ;
                 out = null ;
-                done=true;
-            } catch( Exception e ) {
+                done = true;
+            } 
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
     }
+
 
     class Connection extends Thread {
         Listener     listener ;
@@ -609,13 +672,13 @@ public class tcpmon extends JFrame {
         }
 
         public Connection(Listener l, Socket s ) {
-            this(l);
+            this (l);
             inSocket = s ;
             start();
         }
 
         public Connection(Listener l, InputStream in ) {
-            this(l);
+            this (l);
             inputStream = in ;
             start();
         }
@@ -627,34 +690,41 @@ public class tcpmon extends JFrame {
                 HTTPProxyHost = System.getProperty( "http.proxyHost" );
                 if ( HTTPProxyHost != null && HTTPProxyHost.equals("") )
                     HTTPProxyHost = null ;
-                
+
                 if ( HTTPProxyHost != null ) {
                     String tmp = System.getProperty( "http.proxyPort" );
+
                     if ( tmp != null && tmp.equals("") ) tmp = null ;
                     if ( tmp == null ) HTTPProxyPort = 80 ;
                     else HTTPProxyPort = Integer.parseInt( tmp );
                 }
 
-                if ( inSocket != null ) 
-                  fromHost = (inSocket.getInetAddress()).getHostName();
-                else 
-                  fromHost = "resend" ;
+                if ( inSocket != null )
+                    fromHost = (inSocket.getInetAddress()).getHostName();
+                else
+                    fromHost = "resend" ;
 
                 DateFormat   df = new SimpleDateFormat("MM/dd/yy hh:mm:ss aa");
+
                 time = df.format( new Date() );
-                
+
                 int count = listener.connections.size();
-                listener.tableModel.insertRow(count+1, new Object[] { getMessage("active00", "Active"),
-                                              time,
-                                              fromHost, 
-                                              listener.hostField.getText(), "" });
+
+                listener.tableModel.insertRow(count + 1, new Object[] { 
+                        getMessage("active00", "Active"),
+                        time,
+                        fromHost,
+                        listener.hostField.getText(), "" 
+                    }
+                );
                 listener.connections.add( this );
                 inputText  = new JTextArea( null, null, 20, 80 );
                 inputScroll = new JScrollPane( inputText );
                 outputText = new JTextArea( null, null, 20, 80 );
                 outputScroll = new JScrollPane( outputText );
-                
+
                 ListSelectionModel lsm = listener.connectionTable.getSelectionModel();
+
                 if ( count == 0 || lsm.getLeadSelectionIndex() == 0 ) {
                     listener.outPane.setVisible( false );
                     int divLoc = listener.outPane.getDividerLocation();
@@ -672,7 +742,7 @@ public class tcpmon extends JFrame {
 
                 String targetHost = listener.hostField.getText();
                 int    targetPort = Integer.parseInt(listener.tPortField.getText());
-                
+
                 InputStream  tmpIn1  = inputStream ;
                 OutputStream tmpOut1 = null ;
 
@@ -680,10 +750,10 @@ public class tcpmon extends JFrame {
                 OutputStream tmpOut2 = null ;
 
                 if ( tmpIn1 == null )
-                  tmpIn1  = inSocket.getInputStream();
-                
-                if ( inSocket != null ) 
-                  tmpOut1 = inSocket.getOutputStream();
+                    tmpIn1  = inSocket.getInputStream();
+
+                if ( inSocket != null )
+                    tmpOut1 = inSocket.getOutputStream();
 
                 String         bufferedData = null ;
                 StringBuffer   buf = null ;
@@ -693,13 +763,14 @@ public class tcpmon extends JFrame {
                 if (listener.isProxyBox.isSelected() || HTTPProxyHost != null) {
                     // Check if we're a proxy
                     byte[]       b = new byte[1];
+
                     buf = new StringBuffer();
                     String       s ;
 
-                    for ( ;; ) {
+                    for ( ; ; ) {
                         int len ;
 
-                        len = tmpIn1.read(b,0,1);
+                        len = tmpIn1.read(b, 0, 1);
                         if ( len == -1 ) break ;
                         s = new String( b );
                         buf.append( s );
@@ -711,14 +782,15 @@ public class tcpmon extends JFrame {
                     inputText.append( bufferedData );
 
                     if ( bufferedData.startsWith( "GET " ) ||
-                         bufferedData.startsWith( "POST " ) ) {
+                        bufferedData.startsWith( "POST " ) ) {
                         int  start, end ;
                         URL  url ;
 
-                        start = bufferedData.indexOf( ' ' )+1;
-                        while( bufferedData.charAt(start) == ' ' ) start++ ;
+                        start = bufferedData.indexOf( ' ' ) + 1;
+                        while ( bufferedData.charAt(start) == ' ' ) start++ ;
                         end   = bufferedData.indexOf( ' ', start );
                         String urlString = bufferedData.substring( start, end );
+
                         if ( urlString.charAt(0) == '/' ) urlString = urlString.substring(1);
                         if ( listener.isProxyBox.isSelected() ) {
                             url = new URL( urlString );
@@ -726,52 +798,57 @@ public class tcpmon extends JFrame {
                             targetPort = url.getPort();
                             if ( targetPort == -1 ) targetPort = 80 ;
 
-                            listener.tableModel.setValueAt( targetHost, index+1,
-                                                            OUTHOST_COLUMN );
+                            listener.tableModel.setValueAt( targetHost, index + 1,
+                                OUTHOST_COLUMN );
                             bufferedData = bufferedData.substring( 0, start) +
-                                           url.getFile() +
-                                           bufferedData.substring( end );
+                            url.getFile() +
+                            bufferedData.substring( end );
                         }
                         else {
-                            url = new URL( "http://" + targetHost + ":" + 
-                                           targetPort + "/" + urlString );
+                            url = new URL( "http://" + targetHost + ":" +
+                                targetPort + "/" + urlString );
 
-                            listener.tableModel.setValueAt( targetHost, index+1,
-                                                            OUTHOST_COLUMN );
+                            listener.tableModel.setValueAt( targetHost, index + 1,
+                                OUTHOST_COLUMN );
                             bufferedData = bufferedData.substring( 0, start) +
-                                           url.toExternalForm() + 
-                                           bufferedData.substring( end );
+                            url.toExternalForm() +
+                            bufferedData.substring( end );
 
                             targetHost = HTTPProxyHost ;
                             targetPort = HTTPProxyPort ;
                         }
 
                     }
-                } else {
+                } 
+                else {
                     //
                     // Change Host: header to point to correct host
                     //
                     byte[] b1 = new byte[1];
+
                     buf = new StringBuffer();
                     String s1;
                     String lastLine = null ;
 
-                    for ( ;; ) {
+                    for ( ; ; ) {
                         int len ;
+
                         len = tmpIn1.read(b1, 0, 1);
                         if ( len == -1 )
-                                break ;
+                            break ;
                         s1 = new String( b1 );
                         buf.append( s1 );
                         if ( b1[0] != '\n' )
-                                continue ;
+                            continue ;
                         // we have a complete line
                         String line = buf.toString();
+
                         buf.setLength(0);
                         // check to see if we have found Host: header
                         if (line.startsWith("Host: ")) {
                             // we need to update the hostname to target host
                             String newHost = "Host: " + targetHost + "\r\n";
+
                             bufferedData = bufferedData.concat(newHost);
                             break ;
                         }
@@ -790,77 +867,102 @@ public class tcpmon extends JFrame {
                         inputText.append( bufferedData );
                         s1 = bufferedData.substring( 0, 50 );
                         int i = s1.indexOf('\n');
-                        if ( i > 0 ) s1 = s1.substring(0,i-1);
-                        s1 = s1 + "                           " + 
-                                  "                       ";
-                        s1 = s1.substring(0,51);
-                        listener.tableModel.setValueAt( s1, index+1,
-                                                        REQ_COLUMN );
+
+                        if ( i > 0 ) s1 = s1.substring(0, i - 1);
+                        s1 = s1 + "                           " +
+                        "                       ";
+                        s1 = s1.substring(0, 51);
+                        listener.tableModel.setValueAt( s1, index + 1,
+                            REQ_COLUMN );
                     }
                 }
 
                 if ( targetPort == -1 ) targetPort = 80 ;
                 outSocket = new Socket(targetHost, targetPort );
-                
+
                 tmpIn2  = outSocket.getInputStream();
                 tmpOut2 = outSocket.getOutputStream();
 
                 if ( bufferedData != null ) {
                     byte[] b = bufferedData.getBytes();
+
                     tmpOut2.write( b );
                 }
 
                 boolean format = listener.xmlFormatBox.isSelected();
 
-                rr1 = new SocketRR( inSocket, tmpIn1, outSocket, 
-                                    tmpOut2, inputText, format, 
-                                    listener.tableModel, index+1 );
-                rr2 = new SocketRR( outSocket, tmpIn2, inSocket, 
-                                    tmpOut1, outputText, format, 
-                                    null, 0 );
+                rr1 = new SocketRR(this, inSocket, tmpIn1, outSocket,
+                    tmpOut2, inputText, format,
+                    listener.tableModel, index + 1, "request:" );
+                rr2 = new SocketRR( this, outSocket, tmpIn2, inSocket,
+                    tmpOut1, outputText, format,
+                    null, 0, "response:" );
 
-                while( !rr1.isDone() && !rr2.isDone() ) {
-                // Only loop as long as the connection to the target
-                // machine is available - once that's gone we can stop.
-                // The old way, loop until both are closed, left us
-                // looping forever since no one closed the 1st one.
-                // while( !rr2.isDone() ) {
-                    Thread.sleep( 10 );
+                while ( rr1 != null || rr2 != null ) {
+                    // Only loop as long as the connection to the target
+                    // machine is available - once that's gone we can stop.
+                    // The old way, loop until both are closed, left us
+                    // looping forever since no one closed the 1st one.
+                    // while( !rr2.isDone() ) 
+                    if (null != rr1 && rr1.isDone()) {
+                        if ( index >= 0 ) {
+                            listener.tableModel.setValueAt(getMessage("resp00", "Resp"),
+                                1 + index, STATE_COLUMN );
+                            rr1 = null;
+                        }
+                    }
+                    if (null != rr2 && rr2.isDone()) {
+                        if ( index >= 0 ) {
+                            listener.tableModel.setValueAt(getMessage("req00", "Req"),
+                                1 + index, STATE_COLUMN );
+                            rr2 = null;
+                        }
+                    }
+
+                    //  Thread.sleep( 10 );
+                    synchronized ( this) {
+                        wait(1000); //Safety just incase we're not told to wake up.
+                    }
                 }
+
                 //  System.out.println("Done ");
-                rr1.halt();
-                rr2.halt();
+                // rr1.halt();
+                // rr2.halt();
 
-                rr1 = null ;
-                rr2 = null ;
-                
+
                 active = false ;
+
                 /*
-                if ( inSocket != null ) {
-                  inSocket.close();
-                  inSocket = null ;
-                }
-                outSocket.close();
-                outSocket = null ;
-                */
+                 if ( inSocket != null ) {
+                 inSocket.close();
+                 inSocket = null ;
+                 }
+                 outSocket.close();
+                 outSocket = null ;
+                 */
 
                 if ( index >= 0 ) {
-                    listener.tableModel.setValueAt(getMessage("done00","Done"),
-                                                   1+index, STATE_COLUMN );
+                    listener.tableModel.setValueAt(getMessage("done00", "Done"),
+                        1 + index, STATE_COLUMN );
 
                 }
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 StringWriter st = new StringWriter();
                 PrintWriter  wr = new PrintWriter(st);
                 int index = listener.connections.indexOf( this );
+
                 if ( index >= 0 )
-                    listener.tableModel.setValueAt( getMessage("error00", "Error"), 1+index, STATE_COLUMN );
+                    listener.tableModel.setValueAt( getMessage("error00", "Error"), 1 + index, STATE_COLUMN );
                 e.printStackTrace(wr);
                 wr.close();
                 outputText.append( st.toString() );
                 halt();
             }
+        }
+
+        synchronized void wakeUp() {
+            notifyAll();
         }
 
         public void halt() {
@@ -872,24 +974,28 @@ public class tcpmon extends JFrame {
                 if ( outSocket != null ) outSocket.close();
                 outSocket = null ;
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
 
         public void remove() {
+            int index = -1;
+
             try {
                 halt();
-                int index = listener.connections.indexOf( this );
-                listener.tableModel.removeRow( index+1 );
+                index = listener.connections.indexOf( this );
+                listener.tableModel.removeRow( index + 1 );
                 listener.connections.remove( index );
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
+                System.err.println("index:=" + index + this );
                 e.printStackTrace();
             }
         }
     }
-    
+
+
     class Listener extends JPanel {
         public  Socket      inputSocket     = null ;
         public  Socket      outputSocket    = null ;
@@ -918,10 +1024,9 @@ public class tcpmon extends JFrame {
 
         final public Vector connections = new Vector();
 
-        public Listener(JTabbedPane _notebook, String name, 
-                        int listenPort, String host, int targetPort,
-                        boolean isProxy)
-        {
+        public Listener(JTabbedPane _notebook, String name,
+            int listenPort, String host, int targetPort,
+            boolean isProxy) {
             notebook = _notebook ;
             if ( name == null ) name = getMessage("port01", "Port") + " " + listenPort ;
 
@@ -930,43 +1035,49 @@ public class tcpmon extends JFrame {
             // 1st component is just a row of labels and 1-line entry fields
             /////////////////////////////////////////////////////////////////////
             JPanel top = new JPanel();
+
             top.setLayout( new BoxLayout(top, BoxLayout.X_AXIS) );
-            top.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            top.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             final String start = getMessage("start00", "Start");
+
             top.add( stopButton = new JButton( start ) );
-            top.add( Box.createRigidArea(new Dimension(5,0)) );
+            top.add( Box.createRigidArea(new Dimension(5, 0)) );
             top.add( new JLabel( "  " + getMessage("listenPort01", "Listen Port:") + " ", SwingConstants.RIGHT ) );
-            top.add( portField = new JTextField( ""+listenPort, 4 ) );
+            top.add( portField = new JTextField( "" + listenPort, 4 ) );
             top.add( new JLabel( "  " + getMessage("host00", "Host:"), SwingConstants.RIGHT ) );
             top.add( hostField = new JTextField( host, 30 ) );
             top.add( new JLabel( "  " + getMessage("port02", "Port:") + " ", SwingConstants.RIGHT ) );
-            top.add( tPortField = new JTextField( ""+targetPort, 4 ) );
-            top.add( Box.createRigidArea(new Dimension(5,0)) );
+            top.add( tPortField = new JTextField( "" + targetPort, 4 ) );
+            top.add( Box.createRigidArea(new Dimension(5, 0)) );
             top.add( isProxyBox = new JCheckBox(getMessage("proxy00", "Proxy")) );
 
             isProxyBox.addChangeListener( new BasicButtonListener(isProxyBox) {
-                public void stateChanged(ChangeEvent event) {
-                JCheckBox box = (JCheckBox) event.getSource();
-                boolean state = box.isSelected();
-                tPortField.setEnabled( !state );
-                hostField.setEnabled( !state );
+                    public void stateChanged(ChangeEvent event) {
+                        JCheckBox box = (JCheckBox) event.getSource();
+                        boolean state = box.isSelected();
+
+                        tPortField.setEnabled( !state );
+                        hostField.setEnabled( !state );
+                    }
                 }
-                });
+            );
+
             isProxyBox.setSelected(isProxy);
 
             portField.setEditable(false);
             portField.setMaximumSize(new Dimension(50, Short.MAX_VALUE) );
             hostField.setEditable(false);
-            hostField.setMaximumSize(new Dimension(85,Short.MAX_VALUE) );
+            hostField.setMaximumSize(new Dimension(85, Short.MAX_VALUE) );
             tPortField.setEditable(false);
-            tPortField.setMaximumSize(new Dimension(50,Short.MAX_VALUE) );
+            tPortField.setMaximumSize(new Dimension(50, Short.MAX_VALUE) );
 
             stopButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                  if ( getMessage("stop00", "Stop").equals(event.getActionCommand()) ) stop();
-                  if ( start.equals(event.getActionCommand()) ) start();
-                };
-            });
+                    public void actionPerformed(ActionEvent event) {
+                        if ( getMessage("stop00", "Stop").equals(event.getActionCommand()) ) stop();
+                        if ( start.equals(event.getActionCommand()) ) start();
+                    }
+                }
+            );
 
             this.add( top, BorderLayout.NORTH );
 
@@ -974,106 +1085,125 @@ public class tcpmon extends JFrame {
             // and the request/response text areas on the bottom
             /////////////////////////////////////////////////////////////////////
 
-            tableModel = new DefaultTableModel(new String[] {getMessage("state00", "State"),
-                                                             getMessage("time00", "Time"),
-                                                             getMessage("requestHost00", "Request Host"),
-                                                             getMessage("targetHost", "Target Host"), 
-                                                             getMessage("request00", "Request...")},
-                                               0 );
+            tableModel = new DefaultTableModel(new String[] {
+                    getMessage("state00", "State"),
+                    getMessage("time00", "Time"),
+                    getMessage("requestHost00", "Request Host"),
+                    getMessage("targetHost", "Target Host"),
+                    getMessage("request00", "Request...")
+                } , 0 );
 
-            connectionTable = new JTable(1,2);
+            connectionTable = new JTable(1, 2);
             connectionTable.setModel( tableModel );
-            connectionTable.setSelectionMode(ListSelectionModel.
-                                                                MULTIPLE_INTERVAL_SELECTION);
+            connectionTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             // Reduce the STATE column and increase the REQ column
             TableColumn col ;
+
             col = connectionTable.getColumnModel().getColumn(STATE_COLUMN);
-            col.setMaxWidth( col.getPreferredWidth()/2 );
+            col.setMaxWidth( col.getPreferredWidth() / 2 );
             col = connectionTable.getColumnModel().getColumn(REQ_COLUMN);
-            col.setPreferredWidth( col.getPreferredWidth()*2 );
-            
+            col.setPreferredWidth( col.getPreferredWidth() * 2 );
+
 
             ListSelectionModel sel = connectionTable.getSelectionModel();
+
             sel.addListSelectionListener( new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent event) {
-                if (event.getValueIsAdjusting()) return ;
-                ListSelectionModel m = (ListSelectionModel) event.getSource();
-                int divLoc = outPane.getDividerLocation();
-                if (m.isSelectionEmpty()) {
-                setLeft( new JLabel(" " + getMessage("wait00", "Waiting for Connection...") ) );
-                setRight( new JLabel("") );
-                removeButton.setEnabled(false);
-                removeAllButton.setEnabled(false);
-                saveButton.setEnabled(false);
-                resendButton.setEnabled(false);
-                }
-                else {
-                int row = m.getLeadSelectionIndex();
-                if ( row == 0 ) {
-                if ( connections.size() == 0 ) {
-                setLeft(new JLabel(" " + getMessage("wait00", "Waiting for connection...")));
-                setRight(new JLabel(""));
-                removeButton.setEnabled(false);
-                removeAllButton.setEnabled(false);
-                saveButton.setEnabled(false);
-                resendButton.setEnabled(false);
-                }
-                else {
-                Connection conn = (Connection) connections.lastElement();
-                setLeft( conn.inputScroll );
-                setRight( conn.outputScroll );
-                removeButton.setEnabled(false);
-                removeAllButton.setEnabled(true);
-                saveButton.setEnabled(true);
-                resendButton.setEnabled(true);
-                }
-                }
-                else {
-                Connection conn = (Connection) connections.get(row-1);
-                setLeft( conn.inputScroll );
-                setRight( conn.outputScroll );
-                removeButton.setEnabled(true);
-                removeAllButton.setEnabled(true);
-                saveButton.setEnabled(true);
-                resendButton.setEnabled(true);
-                }
-                }
-                outPane.setDividerLocation(divLoc);
-                }} );
-            tableModel.addRow( new Object[] { "---", getMessage("mostRecent00", "Most Recent"), "---", "---", "---" } );
+                    public void valueChanged(ListSelectionEvent event) {
+                        if (event.getValueIsAdjusting()) return ;
+                        ListSelectionModel m = (ListSelectionModel) event.getSource();
+                        int divLoc = outPane.getDividerLocation();
+
+                        if (m.isSelectionEmpty()) {
+                            setLeft( new JLabel(" " + getMessage("wait00", "Waiting for Connection...") ) );
+                            setRight( new JLabel("") );
+                            removeButton.setEnabled(false);
+                            removeAllButton.setEnabled(false);
+                            saveButton.setEnabled(false);
+                            resendButton.setEnabled(false);
+                        }
+                        else {
+                            int row = m.getLeadSelectionIndex();
+
+                            if ( row == 0 ) {
+                                if ( connections.size() == 0 ) {
+                                    setLeft(new JLabel(" " + getMessage("wait00", "Waiting for connection...")));
+                                    setRight(new JLabel(""));
+                                    removeButton.setEnabled(false);
+                                    removeAllButton.setEnabled(false);
+                                    saveButton.setEnabled(false);
+                                    resendButton.setEnabled(false);
+                                }
+                                else {
+                                    Connection conn = (Connection) connections.lastElement();
+
+                                    setLeft( conn.inputScroll );
+                                    setRight( conn.outputScroll );
+                                    removeButton.setEnabled(false);
+                                    removeAllButton.setEnabled(true);
+                                    saveButton.setEnabled(true);
+                                    resendButton.setEnabled(true);
+                                }
+                            }
+                            else {
+                                Connection conn = (Connection) connections.get(row - 1);
+
+                                setLeft( conn.inputScroll );
+                                setRight( conn.outputScroll );
+                                removeButton.setEnabled(true);
+                                removeAllButton.setEnabled(true);
+                                saveButton.setEnabled(true);
+                                resendButton.setEnabled(true);
+                            }
+                        }
+                        outPane.setDividerLocation(divLoc);
+                    }
+                } 
+            );
+            tableModel.addRow( new Object[] { 
+                    "---", getMessage("mostRecent00", "Most Recent"), "---", "---", "---" 
+                } 
+            );
 
             JPanel  tablePane = new JPanel();
+
             tablePane.setLayout( new BorderLayout() );
 
             JScrollPane tableScrollPane = new JScrollPane( connectionTable );
+
             tablePane.add( tableScrollPane, BorderLayout.CENTER );
             JPanel buttons = new JPanel();
+
             buttons.setLayout( new BoxLayout(buttons, BoxLayout.X_AXIS) );
-            buttons.setBorder( BorderFactory.createEmptyBorder(5,5,5,5) );
+            buttons.setBorder( BorderFactory.createEmptyBorder(5, 5, 5, 5) );
             final String removeSelected = getMessage("removeSelected00", "Remove Selected");
+
             buttons.add( removeButton = new JButton(removeSelected) );
-            buttons.add( Box.createRigidArea(new Dimension(5,0)) );
+            buttons.add( Box.createRigidArea(new Dimension(5, 0)) );
             final String removeAll = getMessage("removeAll00", "Remove All");
+
             buttons.add( removeAllButton = new JButton(removeAll) );
             tablePane.add( buttons, BorderLayout.SOUTH );
 
             removeButton.setEnabled( false );
             removeButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                if ( removeSelected.equals(event.getActionCommand()) ) remove();
-                };
-                });
+                    public void actionPerformed(ActionEvent event) {
+                        if ( removeSelected.equals(event.getActionCommand()) ) remove();
+                    }
+                }
+            );
 
             removeAllButton.setEnabled( false );
             removeAllButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                if ( removeAll.equals(event.getActionCommand()) ) removeAll();
-                };
-                });
+                    public void actionPerformed(ActionEvent event) {
+                        if ( removeAll.equals(event.getActionCommand()) ) removeAll();
+                    }
+                }
+            );
 
             // Add Response Section
             /////////////////////////////////////////////////////////////////////
             JPanel     pane2     = new JPanel();
+
             pane2.setLayout( new BorderLayout() );
 
             leftPanel = new JPanel();
@@ -1092,58 +1222,69 @@ public class tcpmon extends JFrame {
             pane2.add( outPane, BorderLayout.CENTER );
 
             JPanel bottomButtons = new JPanel();
+
             bottomButtons.setLayout( new BoxLayout(bottomButtons, BoxLayout.X_AXIS));
-            bottomButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+            bottomButtons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             bottomButtons.add( xmlFormatBox = new JCheckBox( getMessage("xmlFormat00", "XML Format") ) );
-            bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
+            bottomButtons.add( Box.createRigidArea(new Dimension(5, 0)) );
             final String save = getMessage("save00", "Save");
+
             bottomButtons.add( saveButton = new JButton( save ) );
-            bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
+            bottomButtons.add( Box.createRigidArea(new Dimension(5, 0)) );
             final String resend = getMessage("resend00", "Resend");
+
             bottomButtons.add( resendButton = new JButton( resend ) );
-            bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
+            bottomButtons.add( Box.createRigidArea(new Dimension(5, 0)) );
             final String switchStr = getMessage("switch00", "Switch Layout");
+
             bottomButtons.add( switchButton = new JButton( switchStr ) );
             bottomButtons.add( Box.createHorizontalGlue() );
             final String close = getMessage("close00", "Close");
+
             bottomButtons.add( closeButton = new JButton( close ) );
             pane2.add( bottomButtons, BorderLayout.SOUTH );
 
             saveButton.setEnabled( false );
             saveButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if ( save.equals(event.getActionCommand()) ) save();
-                };
-            });
+                    public void actionPerformed(ActionEvent event) {
+                        if ( save.equals(event.getActionCommand()) ) save();
+                    }
+                }
+            );
 
             resendButton.setEnabled( false );
             resendButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if ( resend.equals(event.getActionCommand()) ) resend();
-                };
-            });
+                    public void actionPerformed(ActionEvent event) {
+                        if ( resend.equals(event.getActionCommand()) ) resend();
+                    }
+                }
+            );
 
             switchButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if (switchStr.equals(event.getActionCommand()) ) {
-                        int v = outPane.getOrientation();
-                        if ( v == 0 )  // top/bottom
-                            outPane.setOrientation(1);
-                        else  // left/right
-                            outPane.setOrientation(0);
-                        outPane.setDividerLocation(0.5);
+                    public void actionPerformed(ActionEvent event) {
+                        if (switchStr.equals(event.getActionCommand()) ) {
+                            int v = outPane.getOrientation();
+
+                            if ( v == 0 )  // top/bottom
+                                outPane.setOrientation(1);
+                            else  // left/right
+                                outPane.setOrientation(0);
+                            outPane.setDividerLocation(0.5);
+                        }
                     }
-                };
-            });
+                }
+            );
 
             closeButton.addActionListener( new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    if (close.equals(event.getActionCommand()) )
-                        close();
-                };
-            });
+                    public void actionPerformed(ActionEvent event) {
+                        if (close.equals(event.getActionCommand()) )
+                            close();
+                    }
+                }
+            );
 
             JSplitPane  pane1 = new JSplitPane( 0 );
+
             pane1.setDividerSize(4);
             pane1.setTopComponent( tablePane );
             pane1.setBottomComponent( pane2 );
@@ -1152,11 +1293,11 @@ public class tcpmon extends JFrame {
 
             // 
             ////////////////////////////////////////////////////////////////////
-            sel.setSelectionInterval(0,0);
+            sel.setSelectionInterval(0, 0);
             outPane.setDividerLocation( 150 );
             notebook.addTab( name, this );
             start();
-        };
+        }
 
         public void setLeft(Component left) {
             leftPanel.remove(1);
@@ -1170,12 +1311,15 @@ public class tcpmon extends JFrame {
 
         public void start() {
             int  port = Integer.parseInt( portField.getText() );
-            portField.setText( ""+port );
+
+            portField.setText( "" + port );
             int i = notebook.indexOfComponent( this );
+
             notebook.setTitleAt( i, getMessage("port01", "Port") + " " + port );
 
             int  tmp = Integer.parseInt( tPortField.getText() );
-            tPortField.setText( ""+tmp );
+
+            tPortField.setText( "" + tmp );
 
             sw = new SocketWaiter( this, port );
             stopButton.setText( getMessage("stop00", "Stop") );
@@ -1195,6 +1339,7 @@ public class tcpmon extends JFrame {
             try {
                 for ( int i = 0 ; i < connections.size() ; i++ ) {
                     Connection conn = (Connection) connections.get( i );
+
                     conn.halt();
                 }
                 sw.halt();
@@ -1204,7 +1349,7 @@ public class tcpmon extends JFrame {
                 tPortField.setEditable(true);
                 isProxyBox.setEnabled(true);
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
@@ -1215,49 +1360,52 @@ public class tcpmon extends JFrame {
             int top = lsm.getMaxSelectionIndex();
 
             for ( int i = top ; i >= bot ; i-- ) {
-                ((Connection) connections.get(i-1)).remove();
+                ((Connection) connections.get(i - 1)).remove();
             }
             if ( bot > connections.size() ) bot = connections.size();
-            lsm.setSelectionInterval(bot,bot);
+            lsm.setSelectionInterval(bot, bot);
         }
 
         public void removeAll() {
-            while ( connections.size() > 0 )
-                ((Connection)connections.get(0)).remove();
             ListSelectionModel lsm = connectionTable.getSelectionModel();
             lsm.clearSelection();
-            lsm.setSelectionInterval(0,0);
+            while ( connections.size() > 0 )
+                ((Connection) connections.get(0)).remove();
+
+            lsm.setSelectionInterval(0, 0);
         }
 
         public void save() {
             JFileChooser  dialog = new JFileChooser( "." );
             int rc = dialog.showSaveDialog( this );
+
             if ( rc == JFileChooser.APPROVE_OPTION ) {
                 try {
                     File             file = dialog.getSelectedFile();
                     FileOutputStream out  = new FileOutputStream( file );
-                    
+
                     ListSelectionModel lsm = connectionTable.getSelectionModel();
+
                     rc = lsm.getLeadSelectionIndex();
                     if ( rc == 0 ) rc = connections.size();
-                    Connection conn = (Connection) connections.get( rc-1 );
-                    
+                    Connection conn = (Connection) connections.get( rc - 1 );
+
                     rc = Integer.parseInt( portField.getText() );
                     out.write( (new String(getMessage("listenPort01", "Listen Port:") + " " + rc + "\n" )).getBytes() );
-                    out.write( (new String(getMessage("targetHost01", "Target Host:") + " " + hostField.getText() + 
-                                           "\n" )).getBytes() );
+                    out.write( (new String(getMessage("targetHost01", "Target Host:") + " " + hostField.getText() +
+                                "\n" )).getBytes() );
                     rc = Integer.parseInt( tPortField.getText() );
                     out.write( (new String(getMessage("targetPort01", "Target Port:") + " " + rc + "\n" )).getBytes() );
-                    
+
                     out.write( (new String("==== " + getMessage("request01", "Request") + " ====\n" )).getBytes() );
                     out.write( conn.inputText.getText().getBytes() );
-                    
+
                     out.write( (new String("==== " + getMessage("response00", "Response") + " ====\n" )).getBytes() );
                     out.write( conn.outputText.getText().getBytes() );
-                    
+
                     out.close();
                 }
-                catch( Exception e ) {
+                catch ( Exception e ) {
                     e.printStackTrace();
                 }
             }
@@ -1265,66 +1413,70 @@ public class tcpmon extends JFrame {
 
         public void resend() {
             int rc ;
+
             try {
                 ListSelectionModel lsm = connectionTable.getSelectionModel();
+
                 rc = lsm.getLeadSelectionIndex();
                 if ( rc == 0 ) rc = connections.size();
-                Connection conn = (Connection) connections.get( rc-1 );
+                Connection conn = (Connection) connections.get( rc - 1 );
+
                 if ( rc > 0 ) {
-                  lsm.clearSelection();
-                  lsm.setSelectionInterval(0,0);
+                    lsm.clearSelection();
+                    lsm.setSelectionInterval(0, 0);
                 }
-                
+
                 InputStream in = null ;
                 String      text = conn.inputText.getText();
 
                 // Fix Content-Length HTTP headers
                 if ( text.startsWith("POST ") || text.startsWith("GET ") ) {
-                  System.err.println("IN CL" );
-                  int         pos1, pos2, pos3 ;
-                  String      body, headers, headers1, header2 ;
+                    System.err.println("IN CL" );
+                    int         pos1, pos2, pos3 ;
+                    String      body, headers, headers1, header2 ;
 
-                  pos3 = text.indexOf( "\n\n" );
-                  if ( pos3 == -1 ) {
-                    pos3 = text.indexOf( "\r\n\r\n" );
-                    if ( pos3 != -1 ) pos3 = pos3 + 4 ;
-                  }
-                  else
-                    pos3 += 2 ;
+                    pos3 = text.indexOf( "\n\n" );
+                    if ( pos3 == -1 ) {
+                        pos3 = text.indexOf( "\r\n\r\n" );
+                        if ( pos3 != -1 ) pos3 = pos3 + 4 ;
+                    }
+                    else
+                        pos3 += 2 ;
 
-                  headers = text.substring( 0, pos3 );
+                    headers = text.substring( 0, pos3 );
 
-                  pos1 = headers.indexOf( "Content-Length:" );
-                  System.err.println("pos1: "+ pos1 );
-                  System.err.println("pos3: "+ pos3 );
-                  if ( pos1 != -1 ) {
-                    int  newLen = text.length()-pos3 ;
+                    pos1 = headers.indexOf( "Content-Length:" );
+                    System.err.println("pos1: " + pos1 );
+                    System.err.println("pos3: " + pos3 );
+                    if ( pos1 != -1 ) {
+                        int  newLen = text.length() - pos3 ;
 
-                    pos2 = headers.indexOf( "\n", pos1 );
+                        pos2 = headers.indexOf( "\n", pos1 );
 
-                    System.err.println("CL: " + newLen );
-                    System.err.println("Hdrs: '" + headers + "'" );
-                    System.err.println("subTEXT: '" + 
-                                       text.substring(pos3,pos3+newLen)+"'");
-                    text = headers.substring(0,pos1) + 
-                           "Content-Length: " + newLen + "\n" +
-                           headers.substring(pos2+1) +
-                           text.substring(pos3) ;
-                    System.err.println("\nTEXT: '" + text + "'" );
-                  }
+                        System.err.println("CL: " + newLen );
+                        System.err.println("Hdrs: '" + headers + "'" );
+                        System.err.println("subTEXT: '" +
+                            text.substring(pos3, pos3 + newLen) + "'");
+                        text = headers.substring(0, pos1) +
+                        "Content-Length: " + newLen + "\n" +
+                        headers.substring(pos2 + 1) +
+                        text.substring(pos3) ;
+                        System.err.println("\nTEXT: '" + text + "'" );
+                    }
                 }
 
                 in = new ByteArrayInputStream( text.getBytes() );
                 new Connection( this, in );
             }
-            catch( Exception e ) {
+            catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
-    };
+    }
+
 
     public tcpmon(int listenPort, String targetHost, int targetPort) {
-        super( getMessage("tcpmon00", "TCPMonitor") );
+        super ( getMessage("tcpmon00", "TCPMonitor") );
 
         notebook = new JTabbedPane();
         this.getContentPane().add( notebook );
@@ -1333,20 +1485,22 @@ public class tcpmon extends JFrame {
 
         if ( listenPort != 0 ) {
             Listener l = null ;
+
             if ( targetHost == null )
-                l= new Listener( notebook, null, listenPort, 
-                              targetHost, targetPort, true );
+                l = new Listener( notebook, null, listenPort,
+                    targetHost, targetPort, true );
             else
-                l = new Listener( notebook, null, listenPort, 
-                              targetHost, targetPort, false );
+                l = new Listener( notebook, null, listenPort,
+                    targetHost, targetPort, false );
             notebook.setSelectedIndex( 1 );
 
             l.HTTPProxyHost = System.getProperty( "http.proxyHost" );
             if ( l.HTTPProxyHost != null && l.HTTPProxyHost.equals("") )
                 l.HTTPProxyHost = null ;
-                
+
             if ( l.HTTPProxyHost != null ) {
                 String tmp = System.getProperty( "http.proxyPort" );
+
                 if ( tmp != null && tmp.equals("") ) tmp = null ;
                 if ( tmp == null ) l.HTTPProxyPort = 80 ;
                 else l.HTTPProxyPort = Integer.parseInt( tmp );
@@ -1359,11 +1513,14 @@ public class tcpmon extends JFrame {
     }
 
     protected void processWindowEvent(WindowEvent event) {
-        switch( event.getID() ) {
-        case WindowEvent.WINDOW_CLOSING: exit();
-                                         break ;
-        default: super.processWindowEvent(event);
-                 break ;
+        switch ( event.getID() ) {
+        case WindowEvent.WINDOW_CLOSING: 
+            exit();
+            break ;
+
+        default: 
+            super.processWindowEvent(event);
+            break ;
         }
     }
 
@@ -1382,11 +1539,13 @@ public class tcpmon extends JFrame {
             if ( args.length == 3 ) {
                 int p1 = Integer.parseInt( args[0] );
                 int p2 = Integer.parseInt( args[2] );
+
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 new tcpmon( p1, args[1], p2 );
             }
             else if ( args.length == 1 ) {
                 int p1 = Integer.parseInt( args[0] );
+
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 new tcpmon( p1, null, 0 );
             }
@@ -1395,10 +1554,10 @@ public class tcpmon extends JFrame {
             }
             else {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                new tcpmon(0,null,0);
+                new tcpmon(0, null, 0);
             }
         }
-        catch( Throwable exp ) {
+        catch ( Throwable exp ) {
             exp.printStackTrace();
         }
     }
