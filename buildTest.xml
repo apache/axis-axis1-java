@@ -194,7 +194,6 @@ Copyright:
       <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
-      <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
       <batchtest todir="${test.functional.reportdir}">
         <fileset dir="${build.dest}">
           <!-- Convention: each package that's being tested
