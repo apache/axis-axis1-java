@@ -69,6 +69,7 @@ import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
 
 import java.net.URL;
+import java.io.File;
 
 
 /**
@@ -349,6 +350,12 @@ public class EchoAttachment {
 
         java.io.BufferedInputStream oneStream = null;
         java.io.BufferedInputStream otherStream = null;
+        
+        // First compare file length.
+        File f1 = new File(one);
+        File f2 = new File(other);
+        if (f1.length() != f2.length())
+            return false;
 
         try {
             oneStream = new java.io.BufferedInputStream(
