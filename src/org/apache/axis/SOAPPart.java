@@ -400,7 +400,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsString
             currentMessageAsString = (String) currentMessage;
             try{
-                // set encoding of string from message context.
+                // set encoding of string from parent.
                 String encoding = null;
                 if (msgObject != null) {
                     try {
@@ -545,13 +545,16 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
-            // set encoding of input source from message context.
-            if (getMessage().getMessageContext() != null) {
-                String encoding = 
-                    (String) getMessage().getMessageContext().getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-                if (encoding != null) {
-                    is.setEncoding(encoding);
+            // set encoding of input source from parent.
+            String encoding = null;
+            if (msgObject != null) {
+                try {
+                    encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                } catch (SOAPException e) {
                 }
+            }
+            if (encoding != null) {
+                is.setEncoding(encoding);
             }
         } else {
             is = new InputSource(new StringReader(getAsString()));
