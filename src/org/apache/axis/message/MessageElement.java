@@ -304,7 +304,12 @@ public class MessageElement implements SOAPElement, Serializable
         if (namespaces == null)
             return attributes;
 
-        AttributesImpl attrs = new AttributesImpl(attributes);
+        AttributesImpl attrs = null;
+        if (attributes == NullAttributes.singleton)
+            attrs = new AttributesImpl();
+        else
+            attrs = new AttributesImpl(attributes);
+        
         for (Iterator iterator = namespaces.iterator(); iterator.hasNext();) {
             Mapping mapping = (Mapping) iterator.next();
             String prefix = mapping.getPrefix();
