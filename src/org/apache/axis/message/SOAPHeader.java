@@ -4,7 +4,7 @@ package org.apache.axis.message;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@ package org.apache.axis.message;
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -20,7 +20,7 @@ package org.apache.axis.message;
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -28,7 +28,7 @@ package org.apache.axis.message;
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -56,38 +56,49 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.QName;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 /** A simple header abstraction.  Extends MessageElement with header-specific
  * stuff like mustUnderstand, actor, and a 'processed' flag.
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
- * 
+ *
  */
 public class SOAPHeader extends MessageElement {
     protected boolean   processed = false;
 
     protected String    actor;
     protected boolean   mustUnderstand = false;
+    protected Object    value = null;
 
     public SOAPHeader() {
     }
-    
+
     public SOAPHeader(String namespace, String localPart)
     {
         setNamespaceURI(namespace);
         setName(localPart);
     }
-    
+
+    public SOAPHeader(String namespace, String localPart, Object value)
+    {
+        setNamespaceURI(namespace);
+        setName(localPart);
+        setValue(value);
+    }
+
     public SOAPHeader(Element elem)
     {
         super(elem);
         String val = elem.getAttributeNS(Constants.URI_SOAP_ENV,
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
-        
+
         actor = elem.getAttributeNS(Constants.URI_SOAP_ENV,
                                     Constants.ATTR_ACTOR);
     }
@@ -95,25 +106,38 @@ public class SOAPHeader extends MessageElement {
     public SOAPHeader(String namespace, String localPart, String prefix,
                       Attributes attributes, DeserializationContext context) {
         super(namespace, localPart, prefix, attributes, context);
-        
+
         // Check for mustUnderstand
         String val = attributes.getValue(Constants.URI_SOAP_ENV,
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
-        
+
         actor = attributes.getValue(Constants.URI_SOAP_ENV,
                                     Constants.ATTR_ACTOR);
-        
+
         processed = false;
     }
-    
+
     public boolean isMustUnderstand() { return( mustUnderstand ); }
-    public void setMustUnderstand(boolean b) { 
+    public void setMustUnderstand(boolean b) {
         mustUnderstand = b ;
+        if (attributes != null) {
+            int idx = attributes.getIndex(Constants.URI_SOAP_ENV,
+                                          Constants.ATTR_MUST_UNDERSTAND);
+            if (idx > -1) {
+                // Got it, so replace it's value.
+                attributes.setValue(idx, b ? "1" : "0");
+            }
+        } else {
+            attributes = new AttributesImpl();
+            addAttribute(Constants.URI_SOAP_ENV,
+                         Constants.ATTR_MUST_UNDERSTAND,
+                         b ? "1" : "0");
+        }
     }
 
     public String getActor() { return( actor ); }
-    public void setActor(String a) { 
+    public void setActor(String a) {
         actor = a ;
     }
 
@@ -121,7 +145,23 @@ public class SOAPHeader extends MessageElement {
         processed = value ;
     }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
     public boolean isProcessed() {
         return( processed );
+    }
+
+    protected void outputImpl(SerializationContext context) throws Exception {
+        if (value == null) {
+            super.outputImpl(context);
+        } else {
+            context.serialize(new QName(namespaceURI,name), attributes, value);
+        }
     }
 };
