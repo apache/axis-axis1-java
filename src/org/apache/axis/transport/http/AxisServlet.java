@@ -80,6 +80,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -134,16 +135,26 @@ public class AxisServlet extends HttpServlet {
     }
 
     public AxisServer getEngine() throws AxisFault {
-        if (getServletContext().getAttribute("AxisEngine") == null) {
-            String webInfPath = getServletContext().getRealPath("/WEB-INF");
+        ServletContext  context = getServletContext();
+
+        if (context.getAttribute("AxisEngine") == null) {
+            String webInfPath = context.getRealPath("/WEB-INF");
             // Set the base path for the AxisServer to our WEB-INF directory
             // (so the config files can't get snooped by a browser)
-            FileProvider provider =
-                    new FileProvider(webInfPath,
-                                     Constants.SERVER_CONFIG_FILE);
+            FileProvider provider = null ;
+
+            if (!(new File(webInfPath, Constants.SERVER_CONFIG_FILE)).exists()){
+                InputStream is = null ;
+                is = context.getResourceAsStream("/WEB-INF/"+
+                                                 Constants.SERVER_CONFIG_FILE);
+                if ( is != null ) provider = new FileProvider(is);
+            }
+            if ( provider == null )
+                provider = new FileProvider(webInfPath,
+                                            Constants.SERVER_CONFIG_FILE);
 
             Map environment = new HashMap();
-            environment.put("servletContext", getServletContext());
+            environment.put("servletContext", context);
             environment.put("provider", provider);
 
             // Obtain an AxisServer by using whatever AxisServerFactory is
@@ -157,10 +168,10 @@ public class AxisServlet extends HttpServlet {
             // container, and pre-registered in JNDI at deployment time.  It
             // also means we put the standard configuration pattern in one
             // place.
-            getServletContext().setAttribute("AxisEngine", 
-                                             AxisServer.getServer(environment));
+            context.setAttribute("AxisEngine", 
+                                 AxisServer.getServer(environment));
         }
-        return (AxisServer)getServletContext().getAttribute("AxisEngine");
+        return (AxisServer)context.getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)

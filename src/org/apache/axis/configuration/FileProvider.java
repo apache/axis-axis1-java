@@ -108,7 +108,8 @@ public class FileProvider implements ConfigurationProvider
     }
     
     /**
-     * Constructor which takes an input stream directly
+     * Constructor which takes an input stream directly.
+     * Note: The configuration will be read-only in this case!
      */ 
     public FileProvider(InputStream is)
     {
@@ -156,6 +157,10 @@ public class FileProvider implements ConfigurationProvider
      */ 
     public void writeEngineConfig(AxisEngine engine) throws Exception
     {
+        // If there's no filename then we must have created this with just
+        // an InputStream - in which case the config stuff is read-only
+        if ( filename == null ) return ;
+
         Document doc = Admin.listConfig(engine);
         StringWriter writer = new StringWriter();
         XMLUtils.DocumentToWriter(doc, writer);
