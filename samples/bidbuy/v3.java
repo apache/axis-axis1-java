@@ -10,7 +10,7 @@ import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -230,7 +230,7 @@ public class v3 implements vInterface {
         lineItems[i] = new LineItem("Widget"+i,quantity,new BigDecimal(price));
 
       PurchaseOrder  po = new PurchaseOrder( "PO1",
-                                             new Date(),
+                                             Calendar.getInstance(),
                                              new Address("Mr Big",
                                                          "40 Wildwood Lane",
                                                          "Weston",
