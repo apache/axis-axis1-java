@@ -73,6 +73,9 @@ public class FieldDesc {
     /** The Java type of this field */
     private Class javaType;
 
+    /*** The hash code of the localPart of the xmlName */
+    private int xmlLocalHash = 0;
+
     /** An indication of whether this should be an element or an attribute */
     // Q : should this be a boolean, or just "instanceof ElementDesc", etc.
     private boolean _isElement = true;
@@ -111,10 +114,18 @@ public class FieldDesc {
     }
 
     /**
+     * Obtain the hash of the local part of the XML QName for this field
+     */
+    public int getXmlLocalHash() {
+        return xmlLocalHash;
+    }
+
+    /**
      * Set the XML QName for this field
      */
     public void setXmlName(QName xmlName) {
         this.xmlName = xmlName;
+        xmlLocalHash = xmlName.getLocalPart().hashCode();
     }
 
     public Class getJavaType() {

@@ -280,11 +280,14 @@ public class TypeDesc {
         if (fields == null)
             return null;
 
+        String localPart = qname.getLocalPart();
+        int    localHash = localPart.hashCode();
+
         for (int i = 0; i < fields.length; i++) {
             FieldDesc field = fields[i];
-            if (field.isElement()) {
+            if (field.isElement() && localHash == field.getXmlLocalHash()) {
                 QName xmlName = field.getXmlName();
-                if (qname.getLocalPart().equals(xmlName.getLocalPart())) {
+                if (localPart.equals(xmlName.getLocalPart())) {
                     if (ignoreNS || qname.getNamespaceURI().
                                         equals(xmlName.getNamespaceURI())) {
                         return field.getFieldName();
