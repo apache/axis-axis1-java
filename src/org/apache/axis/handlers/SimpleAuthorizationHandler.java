@@ -85,7 +85,10 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      * Authorize the user and targetService from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthorizationHandler::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleAuthorizationHandler::invoke") );
+        }
 
         boolean allowByDefault = false;
         String optVal = (String)getOption("allowByDefault");
@@ -110,15 +113,24 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         String allowedRoles = (String)serviceHandler.getOption("allowedRoles");
         if (allowedRoles == null) {
             if (allowByDefault) {
-                category.info(JavaUtils.getMessage( "noRoles00"));
+                if (category.isInfoEnabled()) {
+                    category.info(JavaUtils.getMessage( "noRoles00"));
+                }
             }
             else {
-                category.info(JavaUtils.getMessage( "noRoles01"));
+                if (category.isInfoEnabled()) {
+                    category.info(JavaUtils.getMessage( "noRoles01"));
+                }
+
                 throw new AxisFault( "Server.Unauthorized",
                     JavaUtils.getMessage("notAuth00", userID, serviceName),
                     null, null );
             }
-            category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::invoke") );
+
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage("exit00", 
+                    "SimpleAuthorizationHandler::invoke") );
+            }
             return;
         }
 
@@ -130,8 +142,16 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         while (st.hasMoreTokens()) {
             String thisRole = st.nextToken();
             if (provider.userMatches(user, thisRole)) {
-                category.info(JavaUtils.getMessage("auth01", userID, serviceName));
-                category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::invoke") );
+
+                if (category.isInfoEnabled()) {
+                    category.info(JavaUtils.getMessage("auth01", 
+                        userID, serviceName));
+                }
+
+                if (category.isDebugEnabled()) {
+                    category.debug(JavaUtils.getMessage("exit00", 
+                        "SimpleAuthorizationHandler::invoke") );
+                }
                 return;
             }
         }
@@ -145,7 +165,11 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthorizationHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleAuthorizationHandler::undo") );
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleAuthorizationHandler::undo") );
+        }
     }
 };
