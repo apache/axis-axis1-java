@@ -365,6 +365,9 @@ public abstract class AxisEngine extends BasicHandler
                     handler.setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
                     continue;
                 }
+            } else {
+                if (!(handler instanceof AxisEngine))
+                    continue;
             }
             // If it was null or not "false"...
             handler.setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
