@@ -1,0 +1,104 @@
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" 
+                  xmlns:impl="http://marshall.wsdl.test" 
+                  xmlns:intf="http://marshall.wsdl.test" 
+                  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+                  xmlns:tns1="http://marshall.wsdl.test/types" 
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+                  targetNamespace="http://marshall.wsdl.test">
+    <wsdl:types>
+        <schema targetNamespace="http://marshall.wsdl.test/types" xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="MyBean">
+                <sequence>
+                    <element name="myBigDecimal" type="xsd:decimal"/>
+                    <element name="myBigDecimalArray" type="xsd:decimal"/>
+                    <element name="myBigInteger" type="xsd:integer"/>
+                    <element name="myBigIntegerArray" type="xsd:integer"/>
+                </sequence>
+            </complexType>
+            <complexType name="ArrayOfMyBean">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:MyBean[]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+            <complexType name="ArrayOfArrayOfMyBean">
+                <complexContent>
+                    <restriction base="soapenc:Array">
+                        <attribute ref="soapenc:arrayType" wsdl:arrayType="tns1:MyBean[][]"/>
+                    </restriction>
+                </complexContent>
+            </complexType>
+        </schema>
+    </wsdl:types>
+    <wsdl:message name="MyBeanMultiArrayRequest">
+        <wsdl:part name="arrayOfarrayOfMyBean_1" type="tns1:ArrayOfArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanMultiArrayResponse">
+        <wsdl:part name="result" type="tns1:ArrayOfArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanResponse">
+        <wsdl:part name="result" type="tns1:MyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanArrayResponse">
+        <wsdl:part name="result" type="tns1:ArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanRequest">
+        <wsdl:part name="MyBean_1" type="tns1:MyBean"/>
+    </wsdl:message>
+    <wsdl:message name="MyBeanArrayRequest">
+        <wsdl:part name="arrayOfMyBean_1" type="tns1:ArrayOfMyBean"/>
+    </wsdl:message>
+    <wsdl:portType name="MarshallPortType">
+        <wsdl:operation name="MyBeanArray" parameterOrder="arrayOfMyBean_1">
+            <wsdl:input name="MyBeanArrayRequest" message="impl:MyBeanArrayRequest"/>
+            <wsdl:output name="MyBeanArrayResponse" message="impl:MyBeanArrayResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="MyBeanMultiArray" parameterOrder="arrayOfarrayOfMyBean_1">
+            <wsdl:input name="MyBeanMultiArrayRequest" message="impl:MyBeanMultiArrayRequest"/>
+            <wsdl:output name="MyBeanMultiArrayResponse" message="impl:MyBeanMultiArrayResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="MyBean" parameterOrder="MyBean_1">
+            <wsdl:input name="MyBeanRequest" message="impl:MyBeanRequest"/>
+            <wsdl:output name="MyBeanResponse" message="impl:MyBeanResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MarshallBinding" type="impl:MarshallPortType">
+        <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MyBeanArray">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="MyBeanMultiArray">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="MyBean">
+            <wsdlsoap:operation/>
+            <wsdl:input>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:input>
+            <wsdl:output>
+                <wsdlsoap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://marshall.wsdl.test"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Marshall">
+        <wsdl:port name="MarshallPort" binding="impl:MarshallBinding">
+            <wsdlsoap:address location="http://localhost:8080/axis/services/MarshallPort"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
