@@ -1178,7 +1178,12 @@ public class Emitter {
 
         Operation oper = def.createOperation();
 
-        oper.setName(desc.getName());
+        QName elementQName = desc.getElementQName();
+        if(elementQName != null && elementQName.getLocalPart() != null) {
+            oper.setName(elementQName.getLocalPart());
+        } else {
+            oper.setName(desc.getName());
+        }
         oper.setUndefined(false);
 
         return writeBindingOperation(def, binding, oper, desc);
