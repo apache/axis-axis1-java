@@ -79,7 +79,7 @@ public class OmitTestCase extends junit.framework.TestCase {
     public void test1OmitEchoPhone() {
         test.wsdl.omit.Omit binding;
         try {
-            binding = new test.wsdl.omit.OmitTestLocator().getOmit();
+            binding = new test.wsdl.omit.OmitTestLocator().getomit();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);

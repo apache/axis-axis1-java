@@ -131,7 +131,18 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 continue;
             }
 
-            String portName = Utils.xmlNameToJavaClass(p.getName());
+            // JSR 101 indicates that the name of the port used
+            // in the java code is the name of the wsdl:port.  It
+            // does not indicate what should occur if the 
+            // wsdl:port name is not a java identifier.  The
+            // TCK depends on the case-sensitivity being preserved,
+            // and the interop tests have port names that are not
+            // valid java identifiers.  Thus the following code.
+            String portName = p.getName();
+            if (!JavaUtils.isJavaId(portName)) {
+                portName = Utils.xmlNameToJavaClass(portName);
+            }
+
             PortType portType = binding.getPortType();
             PortTypeEntry ptEntry =
                     symbolTable.getPortTypeEntry(portType.getQName());

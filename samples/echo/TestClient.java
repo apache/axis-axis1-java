@@ -181,7 +181,7 @@ public abstract class TestClient {
     {
         try {
             binding = new InteropTestServiceLocator().
-                getEcho(new java.net.URL(url));
+                getecho(new java.net.URL(url));
 
             // safety first
             ((InteropTestSoapBindingStub)binding).setTimeout(60000);

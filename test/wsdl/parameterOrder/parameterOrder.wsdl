@@ -303,8 +303,8 @@
 
   <!-- service decln -->
   <service name="parameterOrderService">
-    <port name="parameterOrder" binding="tns:parameterOrderBinding">
-      <soap:address location="http://localhost:8080/axis/services/parameterOrder"/>
+    <port name="ParameterOrder" binding="tns:parameterOrderBinding">
+      <soap:address location="http://localhost:8080/axis/services/ParameterOrder"/>
     </port>
   </service>
 
