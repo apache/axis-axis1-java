@@ -112,9 +112,14 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
 
     public QName getTypeQName(Class _class) {
         QName qName = super.getTypeQName(_class);
-        if ((qName == null) && (_class != null) &&
-            (_class.isArray())) {
-            qName = SOAP_ARRAY;
+        if ((qName == null) && (_class != null)) {
+            if (_class.isArray()) qName = SOAP_ARRAY;
+            if (_class == boolean.class) qName = XSD_BOOLEAN;
+            if (_class == double.class)  qName = XSD_DOUBLE;
+            if (_class == float.class)   qName = XSD_FLOAT;
+            if (_class == int.class)     qName = XSD_INT;
+            if (_class == long.class)    qName = XSD_LONG;
+            if (_class == short.class)   qName = XSD_SHORT;
         }
         return qName;
     }
