@@ -170,6 +170,8 @@
     <delete dir="${build.dir}/work/test/wsdl/roundtrip"/>
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/roundtrip">
+        <include name="RoundtripPortTypeA.java"/>
+        <include name="RoundtripPortTypeB.java"/>
         <include name="RoundtripPortType.java"/>
         <include name="Investment.java"/>
         <include name="StockInvestment.java"/>
@@ -209,6 +211,7 @@
     </java2wsdl>
 
     <!-- Now create the real WSDL file -->
+    <!-- The className must be the RoundtripPortType to properly test multi-inherits -->
     <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"

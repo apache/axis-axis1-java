@@ -69,29 +69,37 @@ import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 import javax.xml.rpc.holders.StringHolder;
 
 /**
- * The RoundtripPortType interface defines the methods necessary when
- * when implementing this interface.  
+ * The RoundtripPortTypeB defines methods for RoundtripPortType
  *
- * @version   1.00  06 Feb 2002
- * @author    Brent Ulbricht
  * @author    Rich Scheuerle
  */
-// Some of the methods are inherited, to test inherted interface processing
-public interface RoundtripPortType extends RoundtripPortTypeA, RoundtripPortTypeB {
+public interface RoundtripPortTypeB {
 
-    public boolean methodBoolean(boolean inBoolean)
+    public java.lang.Float methodSoapFloat(java.lang.Float inSoapFloat)
         throws java.rmi.RemoteException;
-    public byte methodByte(byte inByte)
+    public java.lang.Double methodSoapDouble(java.lang.Double inSoapDouble)
         throws java.rmi.RemoteException;
-    public short methodShort(short inShort)
+    public java.lang.Boolean methodSoapBoolean(java.lang.Boolean inSoapBoolean)
         throws java.rmi.RemoteException;
-    public int methodInt(int inInt)
+    public java.lang.Byte methodSoapByte(java.lang.Byte inSoapByte)
         throws java.rmi.RemoteException;
-    public long methodLong(long inLong)
+    public java.lang.Short methodSoapShort(java.lang.Short inSoapShort)
         throws java.rmi.RemoteException;
-    public float methodFloat(float inFloat)
+    public java.lang.Integer methodSoapInt(java.lang.Integer inSoapInt)
         throws java.rmi.RemoteException;
-    public double methodDouble(double inDouble)
+    public java.lang.Long methodSoapLong(java.lang.Long inSoapLong)
         throws java.rmi.RemoteException;
+    public void throwInvalidTickerException()
+        throws InvalidTickerSymbol, 
+               java.rmi.RemoteException;
+    public void throwInvalidTradeExchange()
+        throws InvalidCompanyId, InvalidTradeExchange, InvalidTickerSymbol, 
+               java.rmi.RemoteException;
+
+    // Overloading test
+    public int getId(BondInvestment investment) throws java.rmi.RemoteException;
+    public int getId(Investment investment) throws java.rmi.RemoteException;
+
+    public void holderTest(StringHolder sh, BondInvestmentHolder bih);
 } // RoundtripPortType
 

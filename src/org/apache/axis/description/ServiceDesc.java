@@ -559,12 +559,21 @@ public class ServiceDesc {
     /**
      * Fill in a service description by introspecting the implementation
      * class.
-     */
-    public void loadServiceDescByIntrospection(Class implClass, boolean searchParents)
-    {
-        if (introspectionComplete || implClass == null)
+     */    
+    public void loadServiceDescByIntrospection(Class implClass, boolean searchParents) {
+        if (introspectionComplete || implClass == null) {
             return;
+        }
 
+        loadServiceDescByIntrospectionRecursive(implClass, searchParents);
+        introspectionComplete = true;
+    }
+
+    /**
+     * Recursive helper class for loadServiceDescByIntrospection
+     */
+    private void loadServiceDescByIntrospectionRecursive(Class implClass, boolean searchParents)
+    {
         if (Skeleton.class.equals(implClass)) {
             return;
         }
@@ -583,7 +592,7 @@ public class ServiceDesc {
                 Class superClass = superClasses[i];
                 if (stopClasses == null ||
                         !stopClasses.contains(superClass.getName())) {
-                    loadServiceDescByIntrospection(superClass, true);
+                    loadServiceDescByIntrospectionRecursive(superClass, true);
                 }
             }
         } else {
@@ -593,11 +602,9 @@ public class ServiceDesc {
                     !superClass.getName().startsWith("javax.") &&
                     (stopClasses == null ||
                         !stopClasses.contains(superClass.getName()))) {
-                loadServiceDescByIntrospection(superClass, true);
+                loadServiceDescByIntrospectionRecursive(superClass, true);
             }
         }
-
-        introspectionComplete = true;
     }
 
     /**
