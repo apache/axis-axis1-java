@@ -143,7 +143,6 @@ public class AxisFault extends java.rmi.RemoteException {
      */ 
     protected AxisFault(Exception target) {
         super ("", target);
-        String  str ;
 
         setFaultCode( Constants.FAULT_SERVER_USER );
         
