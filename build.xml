@@ -215,7 +215,7 @@ Copyright:
       <manifest>
         <section name="javax/xml/soap">
           <attribute name="Specification-Title" value="SAAJ"/>
-          <attribute name="Specification-Version" value="1.1"/>
+          <attribute name="Specification-Version" value="1.2"/>
           <attribute name="Specification-Vendor" value="JCP"/>
         </section>
       </manifest>

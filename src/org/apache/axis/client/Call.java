@@ -2794,12 +2794,11 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get the output parameters (if any) from the last invocation.
+     * 
+     * This allows named access - if you need sequential access, use
+     * getOutputValues().
      *
-     * NOTE that the params returned are all RPCParams, containing
-     * name and value - if you want the value, you'll need to call
-     * param.getValue().
-     *
-     * @return Vector of RPCParams
+     * @return a Map containing the output parameter values, indexed by QName
      */
     public Map getOutputParams()
     {
