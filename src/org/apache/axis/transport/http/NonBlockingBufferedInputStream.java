@@ -85,7 +85,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
         if (in == null) return -1;
         if (offset >= numbytes) refillBuffer();
         if (offset >= numbytes) return -1;
-        return buffer[offset++];
+        return buffer[offset++] & 0xFF;
     }
     
     /**
@@ -170,7 +170,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
         if (in == null) return -1;
         if (offset >= numbytes) refillBuffer();
         if (offset >= numbytes) return -1;
-        return buffer[offset];
+        return buffer[offset] & 0xFF;
     }
 }
 
