@@ -1,3 +1,4 @@
+package samples.userguide.example5;
 
 /** This is a JavaBean which represents an order for some products.
  * 
