@@ -225,10 +225,12 @@ public class Utils {
                     search = null;
                 } else if (kind.getLocalPart().equals("element") ||
                            kind.getLocalPart().equals("attribute")) {
-                    localName = getNodeNameQName(search).getLocalPart();
+                    localName = SymbolTable.ANON_TOKEN + 
+                        getNodeNameQName(search).getLocalPart();
                     search = search.getParentNode();
                 } else if (kind.getLocalPart().equals("complexType") ||
                            kind.getLocalPart().equals("simpleType")) {
+                    localName = getNodeNameQName(search).getLocalPart() + localName;
                     search = null;
                 } else {
                     search = search.getParentNode();
