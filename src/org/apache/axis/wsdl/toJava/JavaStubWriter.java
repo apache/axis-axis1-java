@@ -74,19 +74,11 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -96,6 +88,22 @@ public class JavaStubWriter extends JavaClassWriter {
     private BindingEntry bEntry;
     private Binding binding;
     private SymbolTable symbolTable;
+
+    static String [] modeStrings = new String [] { "",
+                                            "org.apache.axis.description.ParameterDesc.IN",
+                                            "org.apache.axis.description.ParameterDesc.OUT",
+                                            "org.apache.axis.description.ParameterDesc.INOUT" };
+    static HashMap styles = new HashMap();
+    static HashMap uses = new HashMap();
+
+    static {
+        styles.put(Style.DOCUMENT, "org.apache.axis.enum.Style.DOCUMENT");
+        styles.put(Style.RPC, "org.apache.axis.enum.Style.RPC");
+        styles.put(Style.MESSAGE, "org.apache.axis.enum.Style.MESSAGE");
+        styles.put(Style.WRAPPED, "org.apache.axis.enum.Style.WRAPPED");
+        uses.put(Use.ENCODED, "org.apache.axis.enum.Use.ENCODED");
+        uses.put(Use.LITERAL, "org.apache.axis.enum.Use.LITERAL");
+    }
 
     /**
      * Constructor.
@@ -140,6 +148,11 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         pw.println();
 
+        pw.println("    static org.apache.axis.description.OperationDesc [] _operations;");
+        pw.println();
+        writeOperationMap(pw);
+        pw.println();
+
         pw.println("    public " + className + "() throws org.apache.axis.AxisFault {");
         pw.println("         this(null);");
         pw.println("    }");
@@ -169,7 +182,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 // 1) Don't register types that are base (primitive) types.
                 //    If the baseType != null && getRefType() != null this
                 //    is a simpleType that must be registered.
-                // 2) Don't register the special types for collections 
+                // 2) Don't register the special types for collections
                 //    (indexed properties) or elements
                 // 3) Don't register types that are not referenced
                 //    or only referenced in a literal context.
@@ -180,7 +193,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     type.isOnlyLiteralReferenced()) {
                     continue;
                 }
-        
+
                 // Write out serializer declarations
                 if (typeMappingCount == 0) {
                     writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
@@ -188,7 +201,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
                 // write the type mapping for this type
                 writeSerializationInit(pw, type);
-                
+
                 // increase the number of type mappings count
                 typeMappingCount++;
             }
@@ -199,7 +212,7 @@ public class JavaStubWriter extends JavaClassWriter {
             writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
             typeMappingCount++;
         }
-        
+
         pw.println("    }");
         pw.println();
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
@@ -238,7 +251,7 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("            // " + Messages.getMessage("typeMap04"));
             pw.println("            synchronized (this) {");
             pw.println("                if (firstCall()) {");
-            
+
             // Hack alert - we need to establish the encoding style before we register type mappings due
             // to the fact that TypeMappings key off of encoding style
             pw.println("                    // "
@@ -248,7 +261,7 @@ public class JavaStubWriter extends JavaClassWriter {
             } else {
                 pw.println("                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
             }
-            
+
             pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
             pw.println("                        java.lang.Class cls = (java.lang.Class) cachedSerClasses.get(i);");
             pw.println("                        javax.xml.namespace.QName qName =");
@@ -301,10 +314,142 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             else {
                 writeOperation(pw, operation, parameters, soapAction, opStyle,
-                        type == OperationType.ONE_WAY);
+                        type == OperationType.ONE_WAY, i);
             }
         }
     } // writeFileBody
+
+    private void writeOperationMap(PrintWriter pw) {
+        List operations = binding.getBindingOperations();
+        pw.println("    static {");
+        pw.println("        _operations = new org.apache.axis.description.OperationDesc[" +
+                operations.size() + "];");
+        pw.println("        org.apache.axis.description.OperationDesc oper;");
+        for (int i = 0; i < operations.size(); ++i) {
+            BindingOperation operation = (BindingOperation) operations.get(i);
+            Parameters parameters =
+                    bEntry.getParameters(operation.getOperation());
+
+            // Get the soapAction from the <soap:operation>
+            String opStyle = null;
+            Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
+            for (; operationExtensibilityIterator.hasNext();) {
+                Object obj = operationExtensibilityIterator.next();
+                if (obj instanceof SOAPOperation) {
+                    opStyle = ((SOAPOperation) obj).getStyle();
+                    break;
+                }
+            }
+            Operation ptOperation = operation.getOperation();
+            OperationType type = ptOperation.getStyle();
+
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                pw.println(parameters.signature);
+                pw.println();
+            }
+
+            String operName = operation.getName();
+            String indent = "        ";
+            pw.println(indent + "oper = new org.apache.axis.description.OperationDesc();");
+            pw.println(indent + "oper.setName(\"" + operName + "\");");
+
+            // loop over paramters and set up in/out params
+            for (int j = 0; j < parameters.list.size(); ++j) {
+                Parameter p = (Parameter) parameters.list.get(j);
+
+                String mimeType = p.getMIMEType();
+
+                // Get the QName representing the parameter type
+                QName paramType = Utils.getXSIType(p);
+
+                // Set the javaType to the name of the type
+                String javaType = null;
+                if (mimeType != null) {
+                    javaType = "javax.activation.DataHandler.class, ";
+                }
+                else {
+                    javaType = p.getType().getName();
+                    if (javaType != null) {
+                        javaType += ".class, ";
+                    } else {
+                        javaType = "null, ";
+                    }
+                }
+
+                // Get the text representing newing a QName for the name and type
+                String paramNameText = Utils.getNewQName(p.getQName());
+                String paramTypeText = Utils.getNewQName(paramType);
+
+                // Generate the addParameter call with the
+                // name qname, typeQName, optional javaType, and mode
+                boolean isInHeader = p.isInHeader();
+                boolean isOutHeader = p.isOutHeader();
+                pw.println("        oper.addParameter(" + paramNameText
+                           + ", " + paramTypeText + ", "
+                           + javaType + modeStrings[p.getMode()]
+                           + ", " + isInHeader + ", " + isOutHeader + ");");
+            }
+            // set output type
+            if (parameters.returnParam != null) {
+
+                // Get the QName for the return Type
+                QName returnType = Utils.getXSIType(parameters.returnParam);
+
+                // Get the javaType
+                String javaType = null;
+                if (parameters.returnParam.getMIMEType() != null) {
+                    javaType = "javax.activation.DataHandler";
+                }
+                else {
+                    javaType = parameters.returnParam.getType().getName();
+                }
+                if (javaType == null) {
+                    javaType = "";
+                }
+                else {
+                    javaType = javaType + ".class";
+                }
+                pw.println("        oper.setReturnType(" +
+
+                          Utils.getNewQName(returnType) + ");");
+                pw.println("        oper.setReturnClass("
+                           + javaType + ");");
+                QName returnQName = parameters.returnParam.getQName();
+                if (returnQName != null) {
+                    pw.println("        oper.setReturnQName(" +
+                               Utils.getNewQName(returnQName) + ");");
+                }
+                if (parameters.returnParam.isOutHeader()) {
+                    pw.println("        oper.setReturnHeader(true);");
+                }
+            }
+            else {
+                pw.println("        oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
+            }
+
+            boolean hasMIME = Utils.hasMIME(bEntry, operation);
+            Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+            Use use = bEntry.getInputBodyType(operation.getOperation());
+            if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
+                style = Style.WRAPPED;
+            }
+
+            if (!hasMIME) {
+                pw.println("        oper.setStyle(" + styles.get(style) + ");");
+                pw.println("        oper.setUse(" + uses.get(use) + ");");
+            }
+
+            // Register fault/exception information for this operation
+            writeFaultInfo(pw, operation);
+
+            pw.println(indent + "_operations[" + i + "] = oper;");
+            pw.println("");
+        }
+        pw.println("    };");
+    }
 
     /**
      * This method returns a set of all the TypeEntry in a given PortType.
@@ -345,17 +490,17 @@ public class JavaStubWriter extends JavaClassWriter {
         Vector v = new Vector();
 
         Parameters params = bEntry.getParameters(operation);
-        
+
         // Loop over parameter types for this operation
         for (int i=0; i < params.list.size(); i++) {
             Parameter p = (Parameter) params.list.get(i);
             v.add(p.getType());
         }
-        
+
         // Add the return type
         if (params.returnParam != null)
             v.add(params.returnParam.getType());
-        
+
         // Collect all the types in faults
         Map faults = operation.getFaults();
 
@@ -365,9 +510,7 @@ public class JavaStubWriter extends JavaClassWriter {
             while (i.hasNext()) {
                 Fault f = (Fault) i.next();
                 partTypes(v,
-                        f.getMessage().getOrderedParts(null),
-                        (bEntry.getFaultBodyType(operation, 
-                                                 f.getName()) == Use.LITERAL));
+                        f.getMessage().getOrderedParts(null));
             }
         }
         // Put all these types into a set.  This operation eliminates all duplicates.
@@ -380,13 +523,13 @@ public class JavaStubWriter extends JavaClassWriter {
     /**
      * This method returns a vector of TypeEntry for the parts.
      */
-    private void partTypes(Vector v, Collection parts, boolean literal) {
+    private void partTypes(Vector v, Collection parts) {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
             Part part = (Part) i.next();
-            
-            QName qType = part.getTypeName(); 
+
+            QName qType = part.getTypeName();
             if (qType != null) {
                 v.add(symbolTable.getType(qType));
             } else {
@@ -396,17 +539,17 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
             }
         } // while
-        
+
     } // partTypes
 
     /**
      * This function writes the regsiterFaultInfo API calls
      */
-    private void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) throws IOException {
+    private void writeFaultInfo(PrintWriter pw, BindingOperation bindOp) {
         Map faultMap = bEntry.getFaults();
         // Get the list of faults for this operation
         ArrayList faults = (ArrayList) faultMap.get(bindOp);
-        
+
         // check for no faults
         if (faults == null) {
             return;
@@ -416,25 +559,25 @@ public class JavaStubWriter extends JavaClassWriter {
             FaultInfo info = (FaultInfo) faultIt.next();
             QName qname = info.getQName();
             Message message = info.getMessage();
-            
+
             // if no parts in fault, skip it!
             if (qname == null) {
                 continue;
             }
-            
+
             // Get the Exception class name
             String className = Utils.getFullExceptionName(message, symbolTable);
-            
+
             // output the registration API call
-            pw.print("        _call.addFault(");
-            pw.print( Utils.getNewQName(qname) + ", ");
-            pw.print( className + ".class, ");
-            pw.print( Utils.getNewQName(info.getXMLType()) + ", ");
-            pw.print( Utils.isFaultComplex(message, symbolTable));
-            pw.println(");");
+            pw.println("        oper.addFault(new org.apache.axis.description.FaultDesc(");
+            pw.println("                      " + Utils.getNewQName(qname) + ",");
+            pw.println("                      \"" + className + "\",");
+            pw.println("                      " + Utils.getNewQName(info.getXMLType()) + ", ");
+            pw.println("                      " + Utils.isFaultComplex(message, symbolTable));
+            pw.println("                     ));");
         }
     }
-    
+
     /**
      * In the stub constructor, write the serializer code for the complex types.
      */
@@ -470,7 +613,7 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     } // writeSerializationDecls
 
-    private void writeSerializationInit(PrintWriter pw, TypeEntry type) throws IOException {
+    private void writeSerializationInit(PrintWriter pw, TypeEntry type) {
 
         QName qname = type.getQName();
 
@@ -483,7 +626,7 @@ public class JavaStubWriter extends JavaClassWriter {
         if (type.getName().endsWith("[]")) {
             pw.println("            cachedSerFactories.add(arraysf);");
             pw.println("            cachedDeserFactories.add(arraydf);");
-        } else if (type.getNode() != null && 
+        } else if (type.getNode() != null &&
                    Utils.getEnumerationBaseAndValues(
                      type.getNode(), symbolTable) != null) {
             pw.println("            cachedSerFactories.add(enumsf);");
@@ -518,7 +661,8 @@ public class JavaStubWriter extends JavaClassWriter {
             Parameters parms,
             String soapAction,
             String opStyle,
-            boolean oneway) throws IOException {
+            boolean oneway,
+            int opIndex) {
 
         writeComment(pw, operation.getDocumentationElement());
 
@@ -528,104 +672,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("        }");
         pw.println("        org.apache.axis.client.Call _call = createCall();");
 
-        // loop over paramters and set up in/out params
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-
-            String mimeType = p.getMIMEType();
-
-            // Get the QName representing the parameter type
-            QName paramType = Utils.getXSIType(p);
-
-            // Set the javaType to the name of the type
-            String javaType = null;
-            if (mimeType != null) {
-                javaType = "javax.activation.DataHandler.class, ";
-            }
-            else {
-                javaType = p.getType().getName();
-                if (javaType != null) {
-                    javaType += ".class, ";
-                } else {
-                    javaType = "";
-                }
-            }
-
-            // Get the text representing newing a QName for the name and type
-            String paramNameText = Utils.getNewQName(p.getQName());
-            String paramTypeText = Utils.getNewQName(paramType);
-
-            // Generate the addParameter call with the
-            // name qname, typeQName, optional javaType, and mode
-            boolean isInHeader = p.isInHeader();
-            boolean isOutHeader = p.isOutHeader();
-            if (isInHeader || isOutHeader) {
-                String headerMode = isInHeader ?
-                        (isOutHeader ? "javax.xml.rpc.ParameterMode.INOUT" :
-                        "javax.xml.rpc.ParameterMode.IN") :
-                        "javax.xml.rpc.ParameterMode.OUT";
-                pw.println("        _call.addParameterAsHeader("
-                           + paramNameText + ", "
-                           + paramTypeText + ", " 
-                           + javaType
-                           + "javax.xml.rpc.ParameterMode.IN, "
-                           + headerMode + ");");
-            }
-            else if (p.getMode() == Parameter.IN) {
-                pw.println("        _call.addParameter(" + paramNameText + ", "
-                           + paramTypeText + ", " 
-                           + javaType + "javax.xml.rpc.ParameterMode.IN);");
-            }
-            else if (p.getMode() == Parameter.INOUT) {
-                pw.println("        _call.addParameter(" + paramNameText + ", "
-                           + paramTypeText + ", " 
-                           + javaType + "javax.xml.rpc.ParameterMode.INOUT);");
-            }
-            else { // p.getMode() == Parameter.OUT
-                pw.println("        _call.addParameter(" + paramNameText + ", "
-                           + paramTypeText + ", " 
-                           + javaType + "javax.xml.rpc.ParameterMode.OUT);");
-            }
-        }
-        // set output type
-        if (parms.returnParam != null) {
-
-            // Get the QName for the return Type
-            QName returnType = Utils.getXSIType(parms.returnParam);
-
-            // Get the javaType
-            String javaType = null;
-            if (parms.returnParam.getMIMEType() != null) {
-                javaType = "javax.activation.DataHandler";
-            }
-            else {
-                javaType = parms.returnParam.getType().getName();
-            }
-            if (javaType == null) {
-                javaType = "";
-            }
-            else {
-                javaType = ", " + javaType + ".class";
-            }
-            String method = "setReturnType";
-            if (parms.returnParam.isOutHeader()) {
-                method = "setReturnTypeAsHeader";
-            }
-            pw.println("        _call." + method + "("
-                    + Utils.getNewQName(returnType)
-                    + javaType + ");");
-            QName returnQName = parms.returnParam.getQName();
-            if (returnQName != null) {
-                pw.println("        _call.setReturnQName(" + Utils.getNewQName(returnQName) + ");");
-            }
-        }
-        else {
-            pw.println("        _call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
-        }
-
-        // Register fault/exception information for this operation
-        writeFaultInfo(pw, operation);
-
+        pw.println("        _call.setOperation(_operations[" + opIndex + "]);");
 
         // SoapAction
         if (soapAction != null) {
@@ -657,11 +704,6 @@ public class JavaStubWriter extends JavaClassWriter {
             style = Style.WRAPPED;
         }
 
-        if (!hasMIME) {
-            pw.println("        _call.setOperationStyle(\"" + style.getName() + "\");");
-            pw.println("        _call.setOperationUse(\"" + use.getName() + "\");");
-        }
-
         // Operation name
         if (style == Style.WRAPPED) {
             // We need to make sure the operation name, which is what we
@@ -672,7 +714,7 @@ public class JavaStubWriter extends JavaClassWriter {
             QName q = p.getElementName();
             pw.println("        _call.setOperationName(" + Utils.getNewQName(q) + ");" );
         } else {
-            QName elementQName = 
+            QName elementQName =
                 Utils.getOperationQName(operation, bEntry, symbolTable);
             if (elementQName != null) {
                 pw.println("        _call.setOperationName(" +
@@ -750,7 +792,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     }
                     String javifiedName = Utils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQName(p.getQName());
-                               
+
                     pw.println("            java.util.Map _output;");
                     pw.println("            _output = _call.getOutputParams();");
                     writeOutputAssign(pw, javifiedName + ".value = ",
@@ -759,7 +801,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
             }
             else {
-                // There is more than 1 output.  Get the outputs from getOutputParams.    
+                // There is more than 1 output.  Get the outputs from getOutputParams.
                 pw.println("            java.util.Map _output;");
                 pw.println("            _output = _call.getOutputParams();");
                 for (int i = 0; i < parms.list.size (); ++i) {
@@ -782,11 +824,11 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     } // writeResponseHandling
 
-    /** 
+    /**
      * writeOutputAssign
      * @param target (either "return" or "something ="
      * @param type (source TypeEntry)
-     * @param source (source String)   
+     * @param source (source String)
      *
      */
     private void writeOutputAssign(PrintWriter pw, String target,
@@ -802,10 +844,10 @@ public class JavaStubWriter extends JavaClassWriter {
 
             pw.println("            } catch (java.lang.Exception _exception) {");
             pw.println("                " + target +
-                    Utils.getResponseString(type, mimeType, 
+                    Utils.getResponseString(type, mimeType,
                     "org.apache.axis.utils.JavaUtils.convert(" +
                     source + ", " + type.getName() + ".class)"));
-            pw.println("            }"); 
+            pw.println("            }");
         } else {
             pw.println("              " + target +
                        Utils.getResponseString(type, mimeType, source));
