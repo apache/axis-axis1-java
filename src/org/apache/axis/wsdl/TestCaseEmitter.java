@@ -169,7 +169,7 @@ public class TestCaseEmitter {
         writer.print(portName);
         writer.println("();");
 
-        writer.println("        assertTrue(binding != null);");
+        writer.println("        assertTrue(\"Binding is null\", binding != null);");
 
         this.writePortTestCode(portType);
 
@@ -252,12 +252,12 @@ public class TestCaseEmitter {
 
                 if ( this.emitter.isPrimitiveType( params.returnType ) ) {
                     if ( "boolean".equals( params.returnType ) ) {
-                        writer.println("assertTrue(value != false);");
+                        writer.println("assertTrue(\"Value is still false\", value != false);");
                     } else {
-                        writer.println("assertTrue(value != -3);");
+                        writer.println("\"Value is still -3\", assertTrue(value != -3);");
                     }
                 } else {
-                    writer.println("assertTrue(value != null);");
+                    writer.println("assertTrue(\"Value is null\", value != null);");
                 }
             }
 
