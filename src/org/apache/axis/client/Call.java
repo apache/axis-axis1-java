@@ -1113,7 +1113,13 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         body = (RPCElement)resEnv.getFirstBody();
-        resArgs = body.getParams();
+        try {
+            resArgs = body.getParams();
+        } catch (Exception e) {
+            category.error(e);
+            if (!(e instanceof AxisFault)) e = new AxisFault(e);
+            throw (AxisFault) e ;
+        }
 
         if (resArgs != null && resArgs.size() > 0) {
             RPCParam param = (RPCParam)resArgs.get(0);

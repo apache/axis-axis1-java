@@ -60,6 +60,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.Constants;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
@@ -104,7 +105,7 @@ public class RPCElement extends SOAPBodyElement
         return name;
     }
     
-    public void deserialize() throws Exception
+    public void deserialize() throws SAXException
     {
         context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
         context.setCurElement(this);
@@ -117,14 +118,10 @@ public class RPCElement extends SOAPBodyElement
     /** This gets the FIRST param whose name matches.
      * !!! Should it return more in the case of duplicates?
      */
-    public RPCParam getParam(String name)
+    public RPCParam getParam(String name) throws SAXException
     {
         if (needDeser) {
-            try {
-                deserialize();
-            } catch (Exception e) {
-                return null;
-            }
+            deserialize();
         }
         
         for (int i = 0; i < params.size(); i++) {
@@ -136,15 +133,10 @@ public class RPCElement extends SOAPBodyElement
         return null;
     }
     
-    public Vector getParams()
+    public Vector getParams() throws SAXException
     {
         if (needDeser) {
-            try {
-                deserialize();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+            deserialize();
         }
 
         return params;
