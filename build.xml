@@ -78,6 +78,9 @@ Copyright:
   </path>
 
   <target name="setenv">
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.lib}"/>
+
     <available property="xerces.present"
       classname="org.apache.xml.serialize.XMLSerializer"
       classpathref="classpath"/>
@@ -109,15 +112,12 @@ Copyright:
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
   <target name="compile" depends="setenv">
-    <mkdir dir="${build.dest}"/>
-
     <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
       classpathref="classpath">
+      <exclude name="**/old/**/*" />
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
-
-    <mkdir dir="${build.lib}"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" />
   </target>
 
