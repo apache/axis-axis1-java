@@ -141,6 +141,8 @@ public class Utils {
                 return "java.util.Date";
             } else if (localName.equals("void")) {   // Not defined in JSR-101
                 return "void";
+            } else if (localName.equals("anyType")) { 
+                return "java.lang.Object";
             }
         }
         else if (Constants.isSOAP_ENC(qName.getNamespaceURI())) {
