@@ -15,6 +15,9 @@
  */
 package org.apache.axis.utils;
 
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisProperties;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,19 +34,87 @@ import java.io.OutputStream;
  */
 public class ByteArray extends OutputStream {
 
+    protected static double DEFAULT_CACHE_INCREMENT = 2.5;
+    protected static int DEFAULT_RESIDENT_SIZE = 1 * 1024 * 1024; // 1 MB
+    protected static boolean DEFAULT_ENABLE_BACKING_STORE = true;
+    protected static int WORKING_BUFFER_SIZE = 8192;
+
     protected byte cache[] = null;
     protected int cache_fp = 0;
-    protected double cache_increment = 1.3;
+    protected double cache_increment = DEFAULT_CACHE_INCREMENT;
     protected int max_size = 0;
     protected File bs_handle = null;
     protected OutputStream bs_stream = null;
     protected long count = 0;
+    protected boolean enableBackingStore = DEFAULT_ENABLE_BACKING_STORE;
+
+    public boolean isEnableBackingStore() {
+      return enableBackingStore;
+    }
+
+    public void setEnableBackingStore(boolean enableBackingStore) {
+      this.enableBackingStore = enableBackingStore;
+    }
+
+    public static boolean isDEFAULT_ENABLE_BACKING_STORE() {
+      return DEFAULT_ENABLE_BACKING_STORE;
+    }
+
+    public static void setDEFAULT_ENABLE_BACKING_STORE(boolean DEFAULT_ENABLE_BACKING_STORE) {
+      ByteArray.DEFAULT_ENABLE_BACKING_STORE = DEFAULT_ENABLE_BACKING_STORE;
+    }
+
+    public static int getDEFAULT_RESIDENT_SIZE() {
+      return DEFAULT_RESIDENT_SIZE;
+    }
+
+    public static void setDEFAULT_RESIDENT_SIZE(int DEFAULT_RESIDENT_SIZE) {
+      ByteArray.DEFAULT_RESIDENT_SIZE = DEFAULT_RESIDENT_SIZE;
+    }
+
+    public static double getDEFAULT_CACHE_INCREMENT() {
+      return DEFAULT_CACHE_INCREMENT;
+    }
+
+    public static void setDEFAULT_CACHE_INCREMENT(double DEFAULT_CACHE_INCREMENT) {
+      ByteArray.DEFAULT_CACHE_INCREMENT = DEFAULT_CACHE_INCREMENT;
+    }
+
+
+
+    static {
+      String value;
+
+      value = AxisProperties.getProperty(AxisEngine.PROP_BYTE_BUFFER_CACHE_INCREMENT,
+                                                ""+DEFAULT_CACHE_INCREMENT);
+      DEFAULT_CACHE_INCREMENT=Double.parseDouble(value);
+
+      value = AxisProperties.getProperty(AxisEngine.PROP_BYTE_BUFFER_RESIDENT_MAX_SIZE,
+                                                ""+DEFAULT_RESIDENT_SIZE);
+      DEFAULT_RESIDENT_SIZE=Integer.parseInt(value);
+
+      value = AxisProperties.getProperty(AxisEngine.PROP_BYTE_BUFFER_WORK_BUFFER_SIZE,
+                                                ""+WORKING_BUFFER_SIZE);
+      WORKING_BUFFER_SIZE=Integer.parseInt(value);
+
+      value = AxisProperties.getProperty(AxisEngine.PROP_BYTE_BUFFER_BACKING,
+                                                ""+DEFAULT_ENABLE_BACKING_STORE);
+      if (value.equalsIgnoreCase("true") ||
+          value.equals("1") ||
+          value.equalsIgnoreCase("yes") )
+      {
+        DEFAULT_ENABLE_BACKING_STORE=true;
+      }
+      else {
+        DEFAULT_ENABLE_BACKING_STORE=false;
+      }
+    }
 
     /**
      * Constructor ByteArray
      */
     public ByteArray() {
-        this(16 * 512);
+        this(DEFAULT_RESIDENT_SIZE);
     }
 
     /**
@@ -65,8 +136,8 @@ public class ByteArray extends OutputStream {
         if (probable_size > max_resident_size) {
             probable_size = 0;
         }
-        if (probable_size < 1024) {
-            probable_size = 1024;
+        if (probable_size < WORKING_BUFFER_SIZE) {
+            probable_size = WORKING_BUFFER_SIZE;
         }
         cache = new byte[probable_size];
         max_size = max_resident_size;
@@ -99,8 +170,11 @@ public class ByteArray extends OutputStream {
         if (cache != null) {
             System.arraycopy(bytes, start, cache, cache_fp, length);
             cache_fp += length;
-        } else {
+        } else if (bs_stream!=null) {
             bs_stream.write(bytes, start, length);
+        }
+        else {
+          throw new IOException("ByteArray does not have a backing store!");
         }
     }
 
@@ -117,8 +191,11 @@ public class ByteArray extends OutputStream {
         }
         if (cache != null) {
             cache[cache_fp++] = (byte) b;
-        } else {
+        } else if (bs_stream!=null) {
             bs_stream.write(b);
+        }
+        else {
+          throw new IOException("ByteArray does not have a backing store!");
         }
     }
 
@@ -168,10 +245,16 @@ public class ByteArray extends OutputStream {
         if (new_fp < cache.length) {
             return;
         }
+
         if (new_fp < max_size) {
             grow(count);
-        } else {
+        }
+        else if (enableBackingStore) {
             switchToBackingStore();
+        }
+        else {
+            throw new IOException("ByteArray can not increase capacity by "+count+
+                " due to max size limit of "+max_size);
         }
     }
 
@@ -184,8 +267,8 @@ public class ByteArray extends OutputStream {
     protected void grow(int count) throws IOException {
         int new_fp = cache_fp + count;
         int new_size = (int) (cache.length * cache_increment);
-        if (new_size < cache_fp + 1024) {
-            new_size = cache_fp + 1024;
+        if (new_size < cache_fp + WORKING_BUFFER_SIZE) {
+            new_size = cache_fp + WORKING_BUFFER_SIZE;
         }
         if (new_size < new_fp) {
             new_size = new_fp;
@@ -197,7 +280,12 @@ public class ByteArray extends OutputStream {
         } catch (OutOfMemoryError e) {
             // Couldn't allocate a new, bigger vector!
             // That's fine, we'll just switch to backing-store mode.
-            switchToBackingStore();
+            if (enableBackingStore) {
+              switchToBackingStore();
+            }
+            else {
+              throw new IOException("ByteArray exhausted memory: "+e.getMessage());
+            }
         }
     }
 
@@ -265,6 +353,20 @@ public class ByteArray extends OutputStream {
         cache_fp = 0;
     }
 
+
+  /**
+   *  Method getBackingStoreFileName
+   *
+   * @throws IOException
+   */
+  public String getBackingStoreFileName() throws IOException {
+    String fileName = null;
+    if (bs_handle!=null) {
+      fileName=bs_handle.getCanonicalPath();
+    }
+    return fileName;
+  }
+
     /**
      * Method discardBackingStore
      */
@@ -301,9 +403,9 @@ public class ByteArray extends OutputStream {
         InputStream inp = this.makeInputStream();
         byte[] buf = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        buf = new byte[4096];
+        buf = new byte[WORKING_BUFFER_SIZE];
         int len;
-        while ((len = inp.read(buf, 0, 4096)) != -1) {
+        while ((len = inp.read(buf, 0, WORKING_BUFFER_SIZE)) != -1) {
             baos.write(buf, 0, len);
         }
         inp.close();
@@ -320,9 +422,9 @@ public class ByteArray extends OutputStream {
     public void writeTo(OutputStream os) throws IOException {
         InputStream inp = this.makeInputStream();
         byte[] buf = null;
-        buf = new byte[4096];
+        buf = new byte[WORKING_BUFFER_SIZE];
         int len;
-        while ((len = inp.read(buf, 0, 4096)) != -1) {
+        while ((len = inp.read(buf, 0, WORKING_BUFFER_SIZE)) != -1) {
             os.write(buf, 0, len);
         }
         inp.close();
