@@ -320,6 +320,10 @@ public class Message extends javax.xml.soap.SOAPMessage
                 String charsetPart = contentType.substring(delimiterIndex);
                 int charsetIndex = charsetPart.indexOf('=');
                 String charset = charsetPart.substring(charsetIndex + 1).trim();
+                if ((charset.startsWith("\"") && charset.endsWith("\""))
+                || (charset.startsWith("'") && charset.endsWith("'"))) {
+                    charset = charset.substring(1, charset.length() - 1);
+                }
                 try {
                     setProperty(SOAPMessage.CHARACTER_SET_ENCODING, charset);
                 } catch (SOAPException e) {
