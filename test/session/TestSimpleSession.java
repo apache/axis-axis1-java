@@ -90,7 +90,7 @@ public class TestSimpleSession extends TestCase {
         // Set up the client side (using the WSDD above)
         Service svc = new Service(provider);
         Call call = (Call)svc.createCall();
-        call.setMaintainSession(true);
+        svc.setMaintainSession(true);
         call.setTransport(new LocalTransport(server));
 
         // Try it - first invocation should return 1.
@@ -108,7 +108,7 @@ public class TestSimpleSession extends TestCase {
         // Now start fresh and confirm a new session
         Service svc2 = new Service(provider);
         Call call2 = (Call)svc2.createCall();
-        call2.setMaintainSession(true);
+        svc2.setMaintainSession(true);
         call2.setTransport(new LocalTransport(server));
 
         // New session should cause us to return 1 again.

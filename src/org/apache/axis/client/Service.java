@@ -99,11 +99,12 @@ import java.lang.reflect.Proxy;
  */
 
 public class Service implements javax.xml.rpc.Service {
-    private AxisEngine          engine         = null;
+    private AxisEngine          engine          = null;
 
-    private URL                 wsdlLocation   = null ;
-    private Definition          wsdlDefinition = null ;
-    private javax.wsdl.Service  wsdlService    = null ;
+    private URL                 wsdlLocation    = null ;
+    private Definition          wsdlDefinition  = null ;
+    private javax.wsdl.Service  wsdlService     = null ;
+    private boolean             maintainSession = false ;
 
     private ConfigurationProvider configProvider =
             new FileProvider(Constants.CLIENT_CONFIG_FILE);
@@ -471,5 +472,25 @@ public class Service implements javax.xml.rpc.Service {
      */
     public void setConfigProvider(ConfigurationProvider configProvider) {
         this.configProvider = configProvider;
+    }
+
+    /**
+     * Determine whether we'd like to track sessions or not.
+     *
+     * This just passes through the value into the MessageContext.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param yesno true if session state is desired, false if not.
+     */
+    public void setMaintainSession(boolean yesno) {
+        maintainSession = yesno;
+    }
+
+    /**
+     * If true, this service wants to track sessions.
+     */
+    public boolean getMaintainSession() {
+        return maintainSession;
     }
 }
