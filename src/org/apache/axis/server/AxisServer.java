@@ -64,6 +64,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,7 +88,7 @@ public class AxisServer extends AxisEngine
             String factoryClassName = getGlobalProperty("axis.ServerFactory");
             if (factoryClassName != null) {
                 try {
-                    Class factoryClass = Class.forName(factoryClassName);
+                    Class factoryClass = ClassUtils.forName(factoryClassName);
                     if (AxisServerFactory.class.isAssignableFrom(factoryClass))
                         factory = (AxisServerFactory)factoryClass.newInstance();
                 } catch (Exception e) {
@@ -187,7 +188,7 @@ public class AxisServer extends AxisEngine
                     ClassLoader cl = msgContext.getClassLoader();
                     try {
                         log.debug( JavaUtils.getMessage("tryingLoad00", hName) );
-                        Class cls = cl.loadClass( hName );
+                        Class cls = ClassUtils.forName(hName, true, cl);
                         h = (Handler) cls.newInstance();
                     }
                     catch( Exception e ) {
@@ -344,7 +345,7 @@ public class AxisServer extends AxisEngine
                     ClassLoader cl = msgContext.getClassLoader();
                     try {
                         log.debug( JavaUtils.getMessage("tryingLoad00", hName) );
-                        Class cls = cl.loadClass( hName );
+                        Class cls = ClassUtils.forName(hName, true, cl);
                         h = (Handler) cls.newInstance();
                     }
                     catch( Exception e ) {

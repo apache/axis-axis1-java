@@ -72,6 +72,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.encoding.*;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -1081,7 +1082,7 @@ public class Emitter {
      * @param className the name of the <code>Class</code> to export
      */
     public void setCls(String className) throws ClassNotFoundException {
-        cls = Class.forName(className);
+        cls = ClassUtils.forName(className);
     }
 
     /**
@@ -1106,7 +1107,7 @@ public class Emitter {
      */
     public void setImplCls(String className) {
         try {
-            implCls = Class.forName(className);
+            implCls = ClassUtils.forName(className);
         }
         catch (Exception ex) {
             ex.printStackTrace();

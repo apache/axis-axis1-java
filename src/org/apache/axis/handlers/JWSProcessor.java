@@ -63,6 +63,7 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.JWSClassLoader;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.compiler.Compiler;
@@ -251,12 +252,12 @@ public class JWSProcessor extends BasicHandler
                          JavaUtils.getMessage("badCompile00", jFile),
                         null, new Element[] { root } );
                 }
-                JWSClassLoader.removeClassLoader( clsName );
+                ClassUtils.removeClassLoader( clsName );
                 // And clean out the cached service.
                 soapServices.remove(clsName);
             }
 
-            JWSClassLoader cl = JWSClassLoader.getClassLoader(clsName);
+            ClassLoader cl = ClassUtils.getClassLoader(clsName);
             if (cl == null) {
                 cl = new JWSClassLoader(clsName,
                                         msgContext.getClassLoader(),
@@ -288,7 +289,7 @@ public class JWSProcessor extends BasicHandler
 
                 // Set up service description
                 ServiceDesc sd = rpc.getServiceDescription();
-                sd.setImplClass(cl.loadClass(clsName));
+                sd.setImplClass(ClassUtils.forName(clsName, true, cl));
                 sd.setTypeMapping(msgContext.getTypeMapping());
 
                 soapServices.put(clsName, rpc);

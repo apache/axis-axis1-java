@@ -67,7 +67,6 @@ import java.io.*;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class JWSClassLoader extends ClassLoader {
-    private static Hashtable classloaders = new Hashtable();
 
     private String classFile = null;
     private String name = null;
@@ -106,29 +105,7 @@ public class JWSClassLoader extends ClassLoader {
 //        Class  cls =
         defineClass( name, data, 0, data.length );
 
-        classloaders.put(name, this);
-    }
-
-    /**
-     * Obtain the JWSClassLoader (if any) associated with the given
-     * className.
-     *
-     * @param className the name of a class
-     */
-    public static JWSClassLoader getClassLoader(String className)
-    {
-        if (className == null) return null;
-        return (JWSClassLoader)classloaders.get(className);
-    }
-
-    /**
-     * Deregister the JWSClassLoader for a given className.
-     *
-     * @param className the name of a class
-     */
-    public static void removeClassLoader(String className)
-    {
-        classloaders.remove(className);
+        ClassUtils.setClassLoader(name,this);
     }
 
     /**

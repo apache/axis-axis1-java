@@ -61,6 +61,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -237,13 +238,10 @@ public class ArrayDeserializer extends DeserializerImpl
                 getClassForQName(compQName);
             if (arrayItemClass != null) {
                 try {
-                    ClassLoader cl = 
-                        context.getMessageContext().getClassLoader();
-                    arrayClass = Class.forName(
+                    arrayClass = ClassUtils.forName(
                       JavaUtils.getLoadableClassName(
                         JavaUtils.getTextClassName(arrayItemClass.getName()) +
-                        dims),
-                      true, cl);   
+                        dims));
                 } catch (Exception e) {
                     throw new SAXException(
                        JavaUtils.getMessage("noComponent00",  

@@ -55,6 +55,7 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,12 +96,12 @@ public class Javac extends AbstractCompiler
         // Use reflection to be able to build on all JDKs
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            cl.loadClass(MODERN_CLASS);
+            ClassUtils.forName(MODERN_CLASS, true, cl);
             modern = true;
         } catch (ClassNotFoundException e) {
             log.debug(JavaUtils.getMessage("noModernCompiler"));
             try {
-                cl.loadClass(CLASSIC_CLASS);
+                ClassUtils.forName(CLASSIC_CLASS, true, cl);
                 modern = false;
             } catch (Exception ex) {
                 log.error(JavaUtils.getMessage("noCompiler00"), ex);
@@ -126,7 +127,7 @@ public class Javac extends AbstractCompiler
 
         try {
             // Create an instance of the compiler, redirecting output to err
-            Class c = Class.forName("sun.tools.javac.Main");
+            Class c = ClassUtils.forName("sun.tools.javac.Main");
             Constructor cons =
                 c.getConstructor(new Class[] { OutputStream.class,
                                                String.class });

@@ -61,6 +61,7 @@ import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.ComProvider;
+import org.apache.axis.utils.ClassUtils;
 import org.w3c.dom.Element;
 
 
@@ -74,7 +75,7 @@ public class WSDDComProvider
                                        EngineConfiguration registry)
         throws Exception
     {
-        Class _class = Class.forName("org.apache.axis.handlers.providers.ComProvider");
+        Class _class = ClassUtils.forName("org.apache.axis.handlers.providers.ComProvider");
 
         BasicProvider provider = (BasicProvider) _class.newInstance();
 

@@ -56,6 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -218,8 +219,7 @@ public class WSDDTypeMapping
             if (JavaUtils.getWrapper(loadName) != null) {
                 // We're
             }
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            return Class.forName(loadName, true, cl);
+            return ClassUtils.forName(loadName);
         }
         
         throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));
@@ -253,8 +253,7 @@ public class WSDDTypeMapping
     public Class getSerializer()
         throws ClassNotFoundException
     {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return Class.forName(serializer, true, cl);
+        return ClassUtils.forName(serializer);
     }
 
     /**
@@ -291,8 +290,7 @@ public class WSDDTypeMapping
     public Class getDeserializer()
         throws ClassNotFoundException
     {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return Class.forName(deserializer, true, cl);
+        return ClassUtils.forName(deserializer);
     }
 
     /**

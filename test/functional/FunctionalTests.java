@@ -1,5 +1,7 @@
 package test.functional;
 
+import org.apache.axis.utils.ClassUtils;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -60,9 +62,9 @@ public class FunctionalTests extends TestCase
 
         // Attachments service test.
         try{
-          if( null !=  Class.forName("javax.activation.DataHandler") &&
-              null != Class.forName("javax.mail.internet.MimeMultipart")){
-                suite.addTestSuite( Class.forName("test.functional.TestAttachmentsSample"));
+          if( null != ClassUtils.forName("javax.activation.DataHandler") &&
+              null != ClassUtils.forName("javax.mail.internet.MimeMultipart")){
+                suite.addTestSuite( ClassUtils.forName("test.functional.TestAttachmentsSample"));
           }
         }catch( Throwable t){;}
 

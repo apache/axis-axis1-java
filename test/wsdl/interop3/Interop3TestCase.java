@@ -1,5 +1,7 @@
 package test.wsdl.interop3;
 
+import org.apache.axis.utils.ClassUtils;
+
 import java.io.FileInputStream;
 
 import java.lang.reflect.Field;
@@ -33,7 +35,7 @@ public class Interop3TestCase {
                 String key = (String) it.next();
                 URL value = new URL((String) props.get(key));
                 try {
-                    Class test = Class.forName(key);
+                    Class test = ClassUtils.forName(key);
                     Field urlField = test.getField("url");
                     urlField.set(null, value);
                     TestRunner.run(new TestSuite(test));                    

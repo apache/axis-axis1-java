@@ -55,6 +55,7 @@
 
 package org.apache.axis.description;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
@@ -98,8 +99,7 @@ public class TypeDesc {
             } catch (NoSuchMethodException e) {}
             if (getTypeDesc == null) {
                 // Look for a Helper Class
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Class helper = Class.forName(cls.getName() + "_Helper", true, cl);
+                Class helper = ClassUtils.forName(cls.getName() + "_Helper");
                 try {
                     getTypeDesc =
                         helper.getMethod("getTypeDesc", noClasses);

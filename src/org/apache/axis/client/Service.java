@@ -59,6 +59,7 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -307,9 +308,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             pkg = pkg.substring(0, pkg.lastIndexOf('.'));
             Port port = wsdlService.getPort(portName.getLocalPart());
             String binding = port.getBinding().getQName().getLocalPart();
-            ClassLoader classLoader =
-              Thread.currentThread().getContextClassLoader();
-            Class stubClass = classLoader.loadClass(
+            Class stubClass = ClassUtils.forName(
                     pkg + "." + binding + "Stub");
             if (proxyInterface.isAssignableFrom(stubClass)) {
                 Class[] formalArgs = {javax.xml.rpc.Service.class};

@@ -73,6 +73,7 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -207,9 +208,7 @@ public class WSDDService
         String className = this.getParameter(JavaProvider.OPTION_CLASSNAME);
         if (className != null) {
             try {
-                // Will this always be the right classloader?
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Class cls = cl.loadClass(className);
+                Class cls = ClassUtils.forName(className);
                 desc.setImplClass(cls);
                 initTMR();
                 desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));

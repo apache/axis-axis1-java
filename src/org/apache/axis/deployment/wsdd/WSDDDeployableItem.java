@@ -64,6 +64,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -384,7 +385,7 @@ public abstract class WSDDDeployableItem
         QName type = getType();
         if (type != null &&
                 URI_WSDD_JAVA.equals(type.getNamespaceURI())) {
-            return Class.forName(type.getLocalPart());
+            return ClassUtils.forName(type.getLocalPart());
         }
         return null;
     }

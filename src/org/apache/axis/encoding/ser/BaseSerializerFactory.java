@@ -66,6 +66,7 @@ import java.util.Vector;
 import java.util.Iterator;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
@@ -192,10 +193,8 @@ public abstract class BaseSerializerFactory
                 } catch (NoSuchMethodException e) {}
                 if (getSerializer == null) {
                     try {
-                        ClassLoader cl = 
-                            Thread.currentThread().getContextClassLoader();
-                        Class helper = Class.forName(
-                            javaType.getName() + "_Helper", true, cl);
+                        Class helper = ClassUtils.forName(
+                            javaType.getName() + "_Helper");
                         getSerializer =
                             helper.getMethod("getSerializer", 
                                              new Class[] {String.class, 
