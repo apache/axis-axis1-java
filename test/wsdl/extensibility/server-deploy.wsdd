@@ -13,10 +13,33 @@
     xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
 
     <service name="ExtensibilityQueryPort" provider="java:RPC" style="wrapped">
-      <parameter name="className" value="test.wsdl.extensibility.ExtensibilityQueryBindingSkeleton"/>
-      <parameter name="allowedMethods" value="*"/>
-      <parameter name="scope" value="Session"/>
+
+        <parameter name="wsdlTargetNamespace" value="urn:ExtensibilityQuery"/>
+        <parameter name="wsdlServiceElement" value="ExtensibilityQuery"/>
+        <parameter name="wsdlServicePort" value="ExtensibilityQueryPort"/>
+        <parameter name="className" value="test.wsdl.extensibility.ExtensibilityQueryBindingImpl"/>
+        <parameter name="wsdlPortType" value="ExtensibilityQueryPortType"/>
+        <operation name="query" qname="operNS:query" xmlns:operNS="urn:ExtensibilityQuery" returnQName="retNS:queryResult" xmlns:retNS="urn:ExtensibilityQuery" returnType="rtns:ExtensibilityType" xmlns:rtns="urn:ExtensibilityQuery" >
+          <parameter qname="pns:queryExpression" xmlns:pns="urn:ExtensibilityQuery" type="tns:ExtensibilityType" xmlns:tns="urn:ExtensibilityQuery"/>
+        </operation>
+        <parameter name="allowedMethods" value="query"/>
+        <parameter name="scope" value="Session"/>
+
+        <typeMapping
+          xmlns:ns="urn:ExtensibilityQuery"
+          qname="ns:>queryResponse"
+          type="java:test.wsdl.extensibility._queryResponse"
+          serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+          deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+          encodingStyle=""
+        />
+        <typeMapping
+          xmlns:ns="urn:ExtensibilityQuery"
+          qname="ns:ExtensibilityType"
+          type="java:test.wsdl.extensibility.ExtensibilityType"
+          serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+          deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+          encodingStyle=""
+        />
     </service>
-
-
 </deployment>
