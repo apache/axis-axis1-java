@@ -64,10 +64,13 @@ import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import java.awt.Image;
 import java.beans.Introspector;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.Collator;
@@ -257,8 +260,8 @@ public class JavaUtils
                 String destName = destClass.getName();
                 if (destClass == String.class
                         || destClass == Image.class
-                        || destName.equals("javax.mail.internet.MimeMultipart")
-                        || destName.equals("javax.xml.transform.Source")) {
+                        || destClass == Source.class
+                        || destName.equals("javax.mail.internet.MimeMultipart")) {
                     DataHandler handler;
                     if (arg instanceof AttachmentPart) {
                         handler = ((AttachmentPart) arg).getDataHandler();
@@ -285,6 +288,13 @@ public class JavaUtils
                                 return arg;
                             }
                         }
+                    }
+                    else if (destClass == javax.xml.transform.Source.class) {
+                        // For a reason unknown to me, the handler's
+                        // content is a String.  Convert it to a
+                        // StreamSource.
+                        return new StreamSource(new StringReader(
+                                (String) handler.getContent()));
                     }
                     else {
                         return handler.getContent();

@@ -324,9 +324,6 @@ public class RPCProvider extends JavaProvider
                 returnQName = new QName("", methodName + "Return");
             }
 
-            // Convert any MIME type returns into a DataHandler.
-            objRes = convertMIMEType(objRes, operation.getReturnType());
-
             // For SOAP 1.2, add a result
             if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
             {
@@ -349,10 +346,6 @@ public class RPCProvider extends JavaProvider
                 Object value = JavaUtils.getHolderValue(holder);
                 ParameterDesc paramDesc = param.getParamDesc();
 
-                // Convert any MIME attachment outputs into a DataHandler.
-                value = convertMIMEType(value,
-                        paramDesc == null ? null : paramDesc.getTypeQName());
-
                 param.setValue(value);
                 resBody.addParam(param);
             }
@@ -362,96 +355,7 @@ public class RPCProvider extends JavaProvider
     }
 
     /**
-     * If the object is a MIME type, convert it to a DataHandler.
-     * If it is not a MIME type, the input object is simply returned.
-     */
-    private Object convertMIMEType(Object object, QName qname) {
-        if (object != null && qname != null &&
-                qname.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
-            // We have a potential attachment, put the return
-            // into a DataHandler.
-            if (qname.equals(Constants.MIME_IMAGE)) {
-                object = instantiateDataHandler(
-                        "org.apache.axis.attachments.ImageDataSource",
-                        "java.awt.Image",
-                        object);
-            }
-            else if (qname.equals(Constants.MIME_PLAINTEXT)) {
-                object = instantiateDataHandler(
-                        "org.apache.axis.attachments.PlainTextDataSource",
-                        "java.lang.String",
-                        object);
-            }
-            else if (qname.equals(Constants.MIME_MULTIPART)) {
-                object = instantiateDataHandler(
-                        "org.apache.axis.attachments.MimeMultipartDataSource",
-                        "javax.mail.internet.MimeMultipart",
-                        object);
-            }
-            else if (qname.equals(Constants.MIME_SOURCE)) {
-            }
-        }
-        return object;
-    } // convertMIMEType
-
-    /**
-     * This method is the same as:
-     *   new DataHandler(new DataSource("out", value));
-     * but we want to be able to instantiate an RPCProvider without
-     * requiring activation.jar and mail.jar.  If we use the raw
-     * new statement, we get an error on instantiation of RPCProvider.
-     */
-    private Object instantiateDataHandler(String dataSourceName,
-            String valueClass, Object value) {
-        try {
-            // Instantiate the DataSource
-            Class dataSource = ClassUtils.forName(dataSourceName);
-            Class[] dsFormalParms = {String.class,
-                    ClassUtils.forName(valueClass)};
-            Object[] dsActualParms = {"out", value};
-            Constructor ctor = dataSource.getConstructor(dsFormalParms);
-            Object ds = ctor.newInstance(dsActualParms);
-
-            // Instantiate the DataHandler
-            Class dataHandler = ClassUtils.forName(
-                    "javax.activation.DataHandler");
-            Class[] dhFormalParms = {ClassUtils.forName(
-                    "javax.activation.DataSource")};
-            Object[] dhActualParms = {ds};
-            ctor = dataHandler.getConstructor(dhFormalParms);
-            value = ctor.newInstance(dhActualParms);
-        }
-        catch (Throwable t) {
-            // If we have a problem, just return the input value
-            String realValueClass = value.getClass().getName();
-            log.debug(JavaUtils.getMessage("noDataHandler", realValueClass, realValueClass), t);
-        }
-        return value;
-    } // instantiateDataHandler
-
-    /**
-     * Get the data from the DataHandler.
-     */
-    private Object getDataFromDataHandler(Object handler, ParameterDesc paramDesc) {
-        Object value = handler;
-        QName qname = paramDesc.getTypeQName();
-        if (qname != null &&
-                (qname.equals(Constants.MIME_IMAGE) ||
-                 qname.equals(Constants.MIME_PLAINTEXT) ||
-                 qname.equals(Constants.MIME_MULTIPART) ||
-                 qname.equals(Constants.MIME_SOURCE))) {
-            try {
-                value = ((DataHandler) handler).getContent();
-            }
-            catch (IOException ioe) {
-                // If there are any problems, just return the DataHandler.
-            }
-        }
-        return value;
-    } // getDataFromDataHandler
-
-    /**
-     * This method encapsulates the method invocation.
+     * This method encapsulates the method invocation.             
      * @param msgContext MessageContext
      * @param method the target method.
      * @param obj the target object

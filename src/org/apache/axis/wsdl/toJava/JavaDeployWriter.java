@@ -189,6 +189,7 @@ public class JavaDeployWriter extends JavaWriter {
         Vector types = symbolTable.getTypes();
 
         pw.println();
+
         if (hasMIME) {
             QName bQName = binding.getQName();
             writeTypeMapping(pw, bQName.getNamespaceURI(), "DataHandler",
@@ -302,6 +303,11 @@ public class JavaDeployWriter extends JavaWriter {
                          + service.getQName().getLocalPart() + "\"/>");
         pw.println("      <parameter name=\"wsdlServicePort\" value=\""
                          + serviceName + "\"/>");
+
+        // MIME attachments don't work with multiref, so turn it off.
+        if (hasMIME) {
+            pw.println("      <parameter name=\"sendMultiRefs\" value=\"false\"/>");
+        }
 
         writeDeployBinding(pw, binding);
         writeDeployTypes(pw, binding, hasLiteral, hasMIME);
@@ -418,9 +424,7 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramType = Utils.getXSIType(param);
 
             if (param.getMIMEType() != null) {
-                paramType = new QName(
-                        bindingQName.getNamespaceURI(),
-                        "DataHandler");
+                paramType = Utils.getMIMETypeQName(param.getMIMEType());
             }
 
             pw.print("        <parameter");

@@ -57,7 +57,7 @@
     <wsdl2java url="test/wsdl/attachments/mime.wsdl"
                output="build/work"
                serverSide="yes"
-               skeletonDeploy="yes"
+               skeletonDeploy="no"
                testcase="yes">
     </wsdl2java>
 

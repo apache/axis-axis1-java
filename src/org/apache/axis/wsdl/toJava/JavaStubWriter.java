@@ -560,17 +560,25 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("        _call.setSOAPActionURI(\"" + soapAction + "\");");
         }
 
+        boolean hasMIME = Utils.hasMIME(bEntry, operation);
+
         // Encoding: literal or encoded use.
         int use = bEntry.getInputBodyType(operation.getOperation());
         if (use == BindingEntry.USE_LITERAL) {
             // Turn off encoding
             pw.println("        _call.setEncodingStyle(null);");
-            // turn off multirefs
-            pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
             pw.println("        _call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
-        
+        if (hasMIME || use == BindingEntry.USE_LITERAL) {
+            // If it is literal, turn off multirefs.
+            //
+            // If there are any MIME types, turn off multirefs.
+            // I don't know enough about the guts to know why
+            // attachments don't work with multirefs, but they don't.
+            pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+        }
+
         // Style: document, RPC, or wrapped
         int style = bEntry.getBindingStyle();
         String styleStr = "rpc";
@@ -582,7 +590,7 @@ public class JavaStubWriter extends JavaClassWriter {
             }
         }
 
-        if (!Utils.hasMIME(bEntry, operation)) {
+        if (!hasMIME) {
             pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
         }
 
@@ -603,41 +611,6 @@ public class JavaStubWriter extends JavaClassWriter {
             }
         }
 
-        // Initialize any MIME parameters
-        int numberOfInMIMES = 0;
-        for (int i = 0; i < parms.list.size(); ++i) {
-            Parameter p = (Parameter) parms.list.get(i);
-            String mimeType = p.getMIMEType();
-            byte mode = p.getMode();
-            if (mode != Parameter.OUT && mimeType != null) {
-                String javifiedName = Utils.xmlNameToJava(p.getName());
-                if (mode == Parameter.INOUT) {
-                    javifiedName += ".value";
-                }
-
-                if (mimeType.equals("text/plain")) {
-                    pw.println("        javax.activation.DataHandler _dh" +
-                            numberOfInMIMES++ +
-                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.PlainTextDataSource(\"" +
-                            javifiedName + "\", " + javifiedName + "));");
-                }
-                else if (mimeType.startsWith("multipart/")) {
-                    pw.println("        javax.activation.DataHandler _dh" +
-                            numberOfInMIMES++ +
-                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.MimeMultipartDataSource(\"" +
-                            javifiedName + "\", " + javifiedName + "));");
-                }
-                else if (mimeType.startsWith("image/")) {
-                    pw.println("        javax.activation.DataHandler _dh" +
-                            numberOfInMIMES++ +
-                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.ImageDataSource(\"" +
-                            javifiedName + "\", \"" + mimeType + "\", " +
-                            javifiedName + "));");
-                }
-            }
-        }
-        numberOfInMIMES = 0;
-        
         // Invoke the operation
         pw.println();
         pw.print("        java.lang.Object _resp = _call.invoke(");
@@ -656,27 +629,15 @@ public class JavaStubWriter extends JavaClassWriter {
                     needComma = true;
                 }
 
-                String mimeType = p.getMIMEType();
-                if (mimeType != null) {
-                    if (mimeType.equals("text/plain") ||
-                            mimeType.startsWith("multipart/") ||
-                            mimeType.startsWith("image/")) {
-                        pw.print("_dh" + numberOfInMIMES++);
-                        continue;
-                    }
-                }
-
-                // If we get here, then we didn't find a MIME type
                 String javifiedName = Utils.xmlNameToJava(p.getName());
-                if (p.getMode() == Parameter.IN) {
-                    pw.print(Utils.wrapPrimitiveType(p.getType(),
-                            javifiedName));
+                if (p.getMode() != Parameter.IN) {
+                    javifiedName += ".value";
                 }
-                else { 
-                    pw.print(
-                            Utils.wrapPrimitiveType(p.getType(),
-                            javifiedName + ".value"));
+                if (p.getMIMEType() == null) {
+                    javifiedName = Utils.wrapPrimitiveType(
+                            p.getType(), javifiedName);
                 }
+                pw.print(javifiedName);
             }
         }
         pw.println("});");
@@ -747,36 +708,19 @@ public class JavaStubWriter extends JavaClassWriter {
     private void writeOutputAssign(PrintWriter pw, String target,
                                    TypeEntry type, String mimeType,
                                    String source) {
-        String realTarget = null;
-        if (mimeType != null) {
-            realTarget = target;
-            if(mimeType != null) {
-                target = "javax.activation.DataHandler _returnDH = ";
-            }
-        }
         if (type != null && type.getName() != null) {
             // Try casting the output to the expected output.
             // If that fails, use JavaUtils.convert()
             pw.println("            try {");
-            pw.println("                " + target +
-                       Utils.getResponseString(type, mimeType, source));
 
-            if (mimeType != null) {
-                writeMIMETypeReturn(pw, realTarget, source, type, mimeType);
-                target = realTarget;
-            }
+            pw.println("                " + target +
+                    Utils.getResponseString(type, mimeType, source));
 
             pw.println("            } catch (java.lang.Exception _exception) {");
-            if (mimeType != null) {
-                pw.println("                // Is there anything we can do for MIME types?");
-                pw.println("                " + target + "null;");
-            }
-            else {
-                pw.println("                " + target +
-                        Utils.getResponseString(type, null, 
-                        "org.apache.axis.utils.JavaUtils.convert(" +
-                        source + ", " + type.getName() + ".class)"));
-            }
+            pw.println("                " + target +
+                    Utils.getResponseString(type, mimeType, 
+                    "org.apache.axis.utils.JavaUtils.convert(" +
+                    source + ", " + type.getName() + ".class)"));
             pw.println("            }"); 
         } else {
             pw.println("              " + target +
@@ -784,42 +728,4 @@ public class JavaStubWriter extends JavaClassWriter {
         }
     }
 
-    /**
-     * Write the statements that convert the returned DataHandler to the appropriate
-     * MIME mapping type.
-     */
-    private void writeMIMETypeReturn(PrintWriter pw, String target,
-            String source, TypeEntry type, String mimeType) {
-        if (mimeType.equals("text/plain")) {
-            pw.println("                " + target + "(java.lang.String) _returnDH.getContent();");
-        }
-        else if (mimeType.startsWith("multipart/")) {
-            pw.println("                javax.mail.internet.MimeMultipart _mmp = new javax.mail.internet.MimeMultipart(_returnDH.getDataSource());");
-            pw.println("                if (_mmp.getCount() == 0) {");
-            pw.println("                    " + target + "null;");
-            pw.println("                }");
-            pw.println("                else {");
-            pw.println("                    " + target + "_mmp;");
-            pw.println("                }");
-        }
-        else if (mimeType.equals("image/jpeg") ||
-                mimeType.equals("image/gif")) {
-            pw.println("                if (_returnDH == null) {");
-            pw.println("                    return null;");
-            pw.println("                }");
-            pw.println("                // " + JavaUtils.getMessage("needImageIO"));
-            pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
-            pw.println("                java.awt.Image _DHI = org.apache.axis.components.image.ImageIOFactory.getImageIO().loadImage(_DHIS);");
-            pw.println("                " + target + "_DHI;");
-        }
-        else if (mimeType.equals("text/xml") ||
-                 mimeType.equals("applications/xml")) {
-            pw.println("                " + target +
-                    "(javax.xml.transform.Source) _returnDH.getContent();");
-        }
-        else {
-            pw.println("                " + target +
-                       Utils.getResponseString(type, mimeType, source));
-        }
-    } // writeMIMETypeReturn
 } // class JavaStubWriter

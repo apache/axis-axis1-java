@@ -55,28 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.Image;
+
+import javax.mail.internet.MimeMultipart;
 
 import javax.xml.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
 
-import org.apache.axis.InternalException;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
+import javax.xml.transform.Source;
 
 /**
  * A JAFDataHandlerSerializer Factory
@@ -86,9 +71,29 @@ import org.apache.axis.encoding.Deserializer;
 public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
 
     public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(JAFDataHandlerSerializer.class, false, xmlType, javaType); 
+        super(getSerializerClass(javaType, xmlType), false, xmlType, javaType); 
     }
     public JAFDataHandlerSerializerFactory() {
         super(JAFDataHandlerSerializer.class, false); 
     }
+
+    private static Class getSerializerClass(Class javaType, QName xmlType) {
+        Class ser;
+        if (Image.class.isAssignableFrom(javaType)) {
+            ser = ImageDataHandlerSerializer.class;
+        }
+        else if (String.class.isAssignableFrom(javaType)) {
+            ser = PlainTextDataHandlerSerializer.class;
+        }
+        else if (Source.class.isAssignableFrom(javaType)) {
+            ser = SourceDataHandlerSerializer.class;
+        }
+        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
+            ser = MimeMultipartDataHandlerSerializer.class;
+        }
+        else {
+            ser = JAFDataHandlerSerializer.class;
+        }
+        return ser;
+    } // getSerializerClass
 }

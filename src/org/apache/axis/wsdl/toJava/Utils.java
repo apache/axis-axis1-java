@@ -497,7 +497,22 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             return ";";
         }
         else if (mimeType != null) {
-            return "(javax.activation.DataHandler) " + var + ";";
+            if (mimeType.equals("image/jpeg")) {
+                return "(java.awt.Image) " + var + ";";
+            }
+            else if (mimeType.equals("text/plain")) {
+                return "(java.lang.String) " + var + ";";
+            }
+            else if (mimeType.equals("text/xml") ||
+                     mimeType.equals("application/xml")) {
+                return "(javax.xml.transform.Source) " + var + ";";
+            }
+            else if (mimeType.startsWith("multipart/")) {
+                return "(javax.mail.internet.MimeMultipart) " + var + ";";
+            }
+            else {
+                return "(" + type.getName() + ") " + var + ";";
+            }
         }
         else {
             String objType = (String) TYPES.get(type.getName());
@@ -743,14 +758,18 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
              } else {
                  out = "0";
              }
-         } else if (mimeType != null) {
-             if (mimeType.equals("image/gif") ||
-                     mimeType.equals("image/jpeg")) {
-                 out = "java.awt.Toolkit.getDefaultToolkit().getImage(new byte[0])";
-             }
-             else {
-                 out = "new " + Utils.getParameterTypeName(param) + "()";
-             }
+        } else if (mimeType != null) {
+            if (mimeType.equals("image/gif") ||
+                mimeType.equals("image/jpeg")) {
+                out = "null";
+            }
+            else if (mimeType.equals("text/xml") ||
+                     mimeType.equals("application/xml")) {
+                out = "new javax.xml.transform.stream.StreamSource()";
+            }
+            else {
+                out = "new " + Utils.getParameterTypeName(param) + "()";
+            }
          } else if (paramType.equals("java.lang.Boolean")) {
              out = "new java.lang.Boolean(false)";
          } else if (paramType.equals("java.lang.Byte")) {

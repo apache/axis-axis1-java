@@ -88,8 +88,9 @@ public class ImageDataSource implements DataSource {
         this.contentType = contentType == null ? CONTENT_TYPE : contentType;
         os = new ByteArrayOutputStream();
         try {
-            if (data != null)
+            if (data != null) {
                 ImageIOFactory.getImageIO().saveImage(this.contentType, data, os);
+            }
         }
         catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
