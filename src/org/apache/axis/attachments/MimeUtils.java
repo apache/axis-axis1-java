@@ -94,10 +94,13 @@ public class MimeUtils {
         String boundaryStr = ct.getParameter("boundary");
         int boundaryStrLen = boundaryStr.length() + 4; //must add two for -- prefix and another two for crlf
 
+        //there is one more boundary than parts
+        //each parts data must have crlf after it.
+        //last boundary has an additional --crlf
         return totalContentLength
-            + boundaryStrLen * (totalParts + 1) //there is one more boundary than parts
-            + 2 * totalParts +  //each parts data must have crlf after it.
-            +4;  // last boundary has an additional --crlf
+            + boundaryStrLen * (totalParts + 1)
+            + 2 * totalParts +
+            +4;
     }
 
     /**

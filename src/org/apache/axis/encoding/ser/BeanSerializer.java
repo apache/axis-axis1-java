@@ -77,7 +77,8 @@ import org.apache.axis.wsdl.fromJava.Types;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -97,8 +98,8 @@ import java.util.Vector;
  */
 public class BeanSerializer implements Serializer, Serializable {
 
-    static Category category =
-            Category.getInstance(BeanSerializer.class.getName());
+    static Log log =
+            LogFactory.getLog(BeanSerializer.class.getName());
 
     private static final Object[] noArgs = new Object[] {};  // For convenience
 

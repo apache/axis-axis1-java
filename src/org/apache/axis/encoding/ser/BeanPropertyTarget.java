@@ -56,7 +56,8 @@
 package org.apache.axis.encoding.ser;
 
 import org.xml.sax.SAXException;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import org.apache.axis.utils.JavaUtils;
@@ -66,8 +67,8 @@ import org.apache.axis.encoding.Target;
  * Class which knows how to update a bean property
  */
 class BeanPropertyTarget implements Target {
-    static Category category =
-            Category.getInstance(BeanPropertyTarget.class.getName());
+    static Log log =
+            LogFactory.getLog(BeanPropertyTarget.class.getName());
 
     private Object object;
     private BeanPropertyDescriptor pd;
@@ -117,12 +118,11 @@ class BeanPropertyTarget implements Target {
                     field += "[" + index + "]";
                     i = 1;
                 }
-                category.error(JavaUtils.getMessage(
-                                                    "cantConvert02",
-                                                    new String[] {
-                                                        value.getClass().getName(),
-                                                        field,
-                                                        pd.getType().getName()}));
+                log.error(JavaUtils.getMessage("cantConvert02",
+                                               new String[] {
+                                                   value.getClass().getName(),
+                                                   field,
+                                                   pd.getType().getName()}));
                 throw new SAXException(ex);
             }
         }

@@ -57,8 +57,10 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /** This handler simply prints a custom message to the debug log.
  *
@@ -66,18 +68,13 @@ import org.apache.log4j.Priority;
  */
 public class LogMessage extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(LogMessage.class.getName());
-
-    static {
-        category.setPriority(Priority.INFO);
-    }
-
+    static Log log =
+            LogFactory.getLog(LogMessage.class.getName());
 
     public void invoke(MessageContext context)
     {
         String msg = (String)getOption("message");
         if (msg != null)
-            category.log(Priority.INFO, msg);
+            log.info(msg);
     }
 }

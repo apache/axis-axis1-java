@@ -76,7 +76,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Deserializer for SOAP Vectors for compatibility with SOAP 2.2.
@@ -86,8 +87,8 @@ import org.apache.log4j.Category;
  */
 public class VectorDeserializer extends DeserializerImpl implements Deserializer  {
 
-    static Category category =
-            Category.getInstance(VectorDeserializer.class.getName());
+    static Log log =
+            LogFactory.getLog(VectorDeserializer.class.getName());
 
     public int curIndex = 0;
 
@@ -106,8 +107,8 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
                                String qName, Attributes attributes,
                                DeserializationContext context)
         throws SAXException {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.startElement()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.startElement()"));
         }
         
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -117,8 +118,8 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         // Create a vector to hold the deserialized values.
         setValue(new java.util.Vector());
         
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.startElement()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.startElement()"));
         }
     }
     
@@ -140,8 +141,8 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.onStartChild()"));
         }
         
         if (attributes == null)
@@ -172,8 +173,8 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         dSer.registerValueTarget(new DeserializerTarget(this, new Integer(curIndex)));
         curIndex++;
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.onStartChild()"));
         }
         return (SOAPHandler) dSer;
     }
@@ -186,8 +187,8 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
      */
     public void setValue(Object value, Object hint) throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("gotValue00", "VectorDeserializer", "" + value));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("gotValue00", "VectorDeserializer", "" + value));
         }
         int offset = ((Integer)hint).intValue();
         Vector v = (Vector)this.value;

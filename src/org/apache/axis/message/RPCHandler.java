@@ -73,7 +73,8 @@ import org.apache.axis.encoding.FieldTarget;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.utils.cache.ClassCache;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -83,8 +84,8 @@ import java.util.Vector;
 
 public class RPCHandler extends SOAPHandler
 {
-    static Category category =
-            Category.getInstance(RPCHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(RPCHandler.class.getName());
     
     private RPCElement call;
     private RPCParam currentParam;
@@ -111,8 +112,8 @@ public class RPCHandler extends SOAPHandler
             JavaClass       jc   = cache.lookup(clsName, cl);
             Class           cls  = jc.getJavaClass();
             
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage(
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage(
                         "lookup00", methodName, clsName));
             }
 
@@ -149,8 +150,8 @@ public class RPCHandler extends SOAPHandler
          * - Cache typeMappingRegistry
          * - Cache service description
          */
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "RPCHandler.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "RPCHandler.onStartChild()"));
         }
         
         Vector params = call.getParams();
@@ -174,8 +175,8 @@ public class RPCHandler extends SOAPHandler
                                                    localName,
                                                    attributes);
         }
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
 
         String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,"nil");
@@ -216,8 +217,8 @@ public class RPCHandler extends SOAPHandler
                 if (index+1<defaultParamTypes.length)
                     if (defaultParamTypes[0]==MessageContext.class) index++;
                 type = typeMap.getTypeQName(defaultParamTypes[index]);
-                if (category.isDebugEnabled()) {
-                    category.debug(JavaUtils.getMessage("typeFromParms00", "" + type));
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage("typeFromParms00", "" + type));
                 }
             }
         }
@@ -238,8 +239,8 @@ public class RPCHandler extends SOAPHandler
              new FieldTarget(currentParam, 
                  RPCParam.getValueField()));
         
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));
         }
         return (SOAPHandler) dser;
     }
@@ -248,8 +249,8 @@ public class RPCHandler extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("setProp00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("setProp00",
                     "MessageContext", "RPCHandler.endElement()."));
         }
         context.getMessageContext().setProperty("RPC", call);

@@ -77,7 +77,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /*
  * A <code>MapSerializer</code> is be used to deserialize
@@ -89,8 +90,8 @@ import org.apache.log4j.Category;
  */
 public class MapDeserializer extends DeserializerImpl implements Deserializer  {
 
-    static Category category =
-            Category.getInstance(MapDeserializer.class.getName());
+    static Log log =
+            LogFactory.getLog(MapDeserializer.class.getName());
 
     // Fixed objects to act as hints to the set() callback
     public static final Object KEYHINT = new Object();
@@ -113,8 +114,8 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
                                String qName, Attributes attributes,
                                DeserializationContext context)
         throws SAXException {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "MapDeserializer.startElement()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "MapDeserializer.startElement()"));
         }
         
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -124,8 +125,8 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
         // Create a hashmap to hold the deserialized values.
         setValue(new HashMap());
         
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "MapDeserializer.startElement()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "MapDeserializer.startElement()"));
         }
     }
     
@@ -148,8 +149,8 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
                                     DeserializationContext context)
         throws SAXException {
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "MapDeserializer.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "MapDeserializer.onStartChild()"));
         }
 
         if (!localName.equals("item"))
@@ -167,8 +168,8 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
      */
     public void setValue(Object value, Object hint) throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("gotValue00", "MapDeserializer", "" + value));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("gotValue00", "MapDeserializer", "" + value));
         }
         ((Map)this.value).put(hint, value);
     }

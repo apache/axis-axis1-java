@@ -59,7 +59,8 @@ import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
 import org.apache.axis.Part;
 import javax.mail.internet.MimeUtility;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -88,8 +89,8 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
     protected String contentLocation= null;          
     protected String contentId= null;
 
-    static Category category =
-            Category.getInstance(MultiPartRelatedInputStream.class.getName());
+    static Log log =
+            LogFactory.getLog(MultiPartRelatedInputStream.class.getName());
 
     /**
      * Multipart stream.
@@ -245,7 +246,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         if ( null == ret) {
             ret = readTillFound(id);
         }
-        category.debug("getAttachmentByReference(\"" + id + "\") returns" + (ret == null? "null" : ret.toString()));
+        log.debug("getAttachmentByReference(\"" + id + "\") returns" + (ret == null? "null" : ret.toString()));
         return ret;
     }
 

@@ -60,7 +60,8 @@ import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -78,8 +79,8 @@ import java.util.HashMap;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class ServletSecurityProvider implements SecurityProvider {
-    static Category category =
-            Category.getInstance(ServletSecurityProvider.class.getName());
+    static Log log =
+            LogFactory.getLog(ServletSecurityProvider.class.getName());
 
     static HashMap users = null;
 
@@ -96,15 +97,15 @@ public class ServletSecurityProvider implements SecurityProvider {
         if (req == null)
             return null;
 
-        category.debug(JavaUtils.getMessage("got00", "HttpServletRequest"));
+        log.debug(JavaUtils.getMessage("got00", "HttpServletRequest"));
 
         Principal principal = req.getUserPrincipal();
         if (principal == null) {
-            category.debug(JavaUtils.getMessage("noPrincipal00"));
+            log.debug(JavaUtils.getMessage("noPrincipal00"));
             return null;
         }
 
-        category.debug(JavaUtils.getMessage("gotPrincipal00",  principal.getName()));
+        log.debug(JavaUtils.getMessage("gotPrincipal00",  principal.getName()));
 
         return new ServletAuthenticatedUser(req);
     }

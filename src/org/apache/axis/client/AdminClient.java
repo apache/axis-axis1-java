@@ -60,7 +60,8 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
@@ -86,8 +87,8 @@ import java.util.Vector;
 
 public class AdminClient
 {
-    static Category category =
-            Category.getInstance(AdminClient.class.getName());
+    static Log log =
+            LogFactory.getLog(AdminClient.class.getName());
 
     private static ThreadLocal defaultConfiguration = new ThreadLocal();
 
@@ -126,7 +127,7 @@ public class AdminClient
             }
             call = (Call) service.createCall();
         } catch (ServiceException e) {
-            category.fatal(JavaUtils.getMessage("couldntCall00"), e);
+            log.fatal(JavaUtils.getMessage("couldntCall00"), e);
             call = null;
         }
     }
@@ -250,7 +251,7 @@ public class AdminClient
         opts.setDefaultURL("http://localhost:8080/axis/services/AdminService");
 
         if (opts.isFlagSet('d') > 0) {
-            // Set log4j properties... !!!
+            // Set logger properties... !!!
         }
 
         args = opts.getRemainingArgs();

@@ -57,7 +57,10 @@ package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,8 +74,8 @@ import java.util.Enumeration;
  */
 public class SimpleTargetedChain extends SimpleChain implements TargetedChain
 {
-   static Category category =
-            Category.getInstance(SimpleTargetedChain.class.getName());
+   static Log log =
+            LogFactory.getLog(SimpleTargetedChain.class.getName());
 
    protected Handler    requestHandler ;
    protected Handler    pivotHandler ;

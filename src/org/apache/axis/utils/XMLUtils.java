@@ -56,7 +56,8 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -446,8 +447,8 @@ public class XMLUtils {
   }
     
     public static class ParserErrorHandler implements ErrorHandler {
-        static Category category =
-                Category.getInstance(ParserErrorHandler.class.getName());
+        static Log log =
+                LogFactory.getLog(ParserErrorHandler.class.getName());
         /**
          * Returns a string describing parse exception details
          */
@@ -466,8 +467,8 @@ public class XMLUtils {
         // See SAX documentation for more info.
 
         public void warning(SAXParseException spe) throws SAXException {
-            if (category.isDebugEnabled())
-                category.debug( JavaUtils.getMessage("warning00", getParseExceptionInfo(spe)));
+            if (log.isDebugEnabled())
+                log.debug( JavaUtils.getMessage("warning00", getParseExceptionInfo(spe)));
         }
         
         public void error(SAXParseException spe) throws SAXException {

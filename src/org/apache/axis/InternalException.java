@@ -55,7 +55,9 @@
 
 package org.apache.axis;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.StringWriter;
 import java.io.PrintWriter;
 
@@ -69,8 +71,8 @@ import java.io.PrintWriter;
  */
 public class InternalException extends RuntimeException {
 
-    private static Category category =
-                Category.getInstance(InternalException.class.getName());
+    private static Log log =
+                LogFactory.getLog(InternalException.class.getName());
 
     /**
      * Attribute which controls whether or not logging of such events should
@@ -114,16 +116,16 @@ public class InternalException extends RuntimeException {
             // if the exception is merely bubbling up the stack, only log the
             // event if debug is turned on.
             if (!(e instanceof InternalException)) {
-                category.fatal(e);
+                log.fatal(e);
             } else {
-                category.debug(e);
+                log.debug(e);
             }
 
             // if the debug is enabled, add a stack trace.
-            if (category.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
-                category.debug(writer.getBuffer().toString());
+                log.debug(writer.getBuffer().toString());
             }
         }
     }

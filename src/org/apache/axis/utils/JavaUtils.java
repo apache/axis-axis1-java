@@ -55,7 +55,8 @@
 
 package org.apache.axis.utils;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -78,8 +79,8 @@ import org.apache.axis.encoding.Hex;
  */
 public class JavaUtils
 {
-    static Category category =
-            Category.getInstance(JavaUtils.class.getName());
+    static Log log =
+            LogFactory.getLog(JavaUtils.class.getName());
 
     /**
      * It the argument to the convert(...) method implements
@@ -109,8 +110,8 @@ public class JavaUtils
      */
     public static Object convert(Object arg, Class destClass)
     {  
-        if (category.isDebugEnabled()) {
-            category.debug( getMessage("convert00",
+        if (log.isDebugEnabled()) {
+            log.debug( getMessage("convert00",
                 arg.getClass().getName(), destClass.getName()));
         }
 

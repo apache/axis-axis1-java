@@ -60,7 +60,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.utils.Options;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.misc.TestClient;
 
 import java.io.ByteArrayInputStream;
@@ -68,8 +69,8 @@ import java.io.ByteArrayInputStream;
 /** Test the stock sample code.
  */
 public class TestMiscSample extends TestCase {
-    static Category category =
-            Category.getInstance(TestMiscSample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestMiscSample.class.getName());
 
     static final String deployDoc =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
@@ -110,12 +111,12 @@ public class TestMiscSample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            category.info("Testing misc sample.");
+            log.info("Testing misc sample.");
             doDeploy();
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTest();
             doUndeploy();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

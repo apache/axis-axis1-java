@@ -75,7 +75,8 @@ import java.beans.IntrospectionException;
 
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ObjectStreamField;
@@ -88,8 +89,8 @@ import java.io.Serializable;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class BeanDeserializer extends DeserializerImpl implements Deserializer, Serializable  {
-    static Category category =
-        Category.getInstance(BeanDeserializer.class.getName());
+    static Log log =
+        LogFactory.getLog(BeanDeserializer.class.getName());
 
     QName xmlType;
     Class javaType;

@@ -65,7 +65,8 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
 import samples.transport.tcp.TCPSender;
@@ -78,8 +79,8 @@ import java.net.URL;
 /** Test the stock sample code.
  */
 public class TestTCPTransportSample extends TestCase {
-    static Category category =
-            Category.getInstance(TestTCPTransportSample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestTCPTransportSample.class.getName());
 
     public TestTCPTransportSample(String name) {
         super(name);
@@ -97,7 +98,7 @@ public class TestTCPTransportSample extends TestCase {
 
     public void doTestStock() throws Exception {
         try {
-            category.info("Testing TCP stock service...");
+            log.info("Testing TCP stock service...");
             GetQuote tester = new GetQuote();
             tester.getQuote(new String [] { "-ltcp://localhost:8088", "XXX" });
             String   symbol = "XXX"; // args[0] ;
@@ -139,26 +140,26 @@ public class TestTCPTransportSample extends TestCase {
 
     public void testTCPTransportSample () throws Exception {
         try {
-            category.info("Testing TCP transport.");
+            log.info("Testing TCP transport.");
 
-            category.info("Testing deployment...");
+            log.info("Testing deployment...");
             doTestDeploy();
-            category.info("OK!");
+            log.info("OK!");
 
-            category.info("Testing service...");
+            log.info("Testing service...");
             doTestStock();
-            category.info("OK!");
+            log.info("OK!");
 
             // Commented out for now, because namespaced-based dispatch for the
             // TCPListener doesn't work yet.  Possible solutions:
             // 1. Deploy the AdminService at the WSDD namespace's name
             // 2. Build another dispatch mechanism into the TCP transport
             //
-//            category.info("Testing undeployment...");
+//            log.info("Testing undeployment...");
 //            doTestUndeploy();
-//            category.info("OK!");
+//            log.info("OK!");
 
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

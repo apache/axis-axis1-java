@@ -81,7 +81,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart; 
 import org.apache.axis.InternalException;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -133,7 +134,8 @@ import java.util.HashMap;
  */
 
 public class Call implements javax.xml.rpc.Call {
-    static Category category = Category.getInstance(Call.class.getName());
+    static Log log =
+            LogFactory.getLog(Call.class.getName());
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
@@ -1187,8 +1189,8 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setTransport(Transport trans) {
         transport = trans;
-        if (category.isInfoEnabled())
-            category.info(JavaUtils.getMessage("transport00", "" + transport));
+        if (log.isInfoEnabled())
+            log.info(JavaUtils.getMessage("transport00", "" + transport));
     }
 
     /** Get the Transport registered for the given protocol.
@@ -1232,7 +1234,7 @@ public class Call implements javax.xml.rpc.Call {
 
             attachments.setAttachmentParts(attachmentParts);
             }catch(org.apache.axis.AxisFault ex){
-              category.debug(ex);
+              log.debug(ex);
               throw  new RuntimeException(ex.getMessage());
             }
         }
@@ -1380,8 +1382,8 @@ public class Call implements javax.xml.rpc.Call {
     public Object invoke(String namespace, String method, Object[] args)
                     throws AxisFault {
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "Call::invoke(ns, meth, args)") );
         }
 
@@ -1389,8 +1391,8 @@ public class Call implements javax.xml.rpc.Call {
         
         Object ret = invoke( body );
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "Call::invoke(ns, meth, args)") );
         }
 
@@ -1426,8 +1428,8 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "Call::invoke(RPCElement)") );
         }
 
@@ -1460,7 +1462,7 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
         }
         catch( Exception e ) {
-            category.error( e );
+            log.error( e );
             throw AxisFault.makeFault(e);
         }
 
@@ -1470,7 +1472,7 @@ public class Call implements javax.xml.rpc.Call {
             body = (RPCElement)resEnv.getFirstBody();
             resArgs = body.getParams();
         } catch (Exception e) {
-            category.error(e);
+            log.error(e);
             throw AxisFault.makeFault(e);
         }
 
@@ -1510,8 +1512,8 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00",
                 "Call::invoke(RPCElement)") );
         }
 
@@ -1545,8 +1547,8 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
         }
 
         Message      reqMsg  = null ;
@@ -1597,8 +1599,8 @@ public class Call implements javax.xml.rpc.Call {
             msgContext.setTargetService(body.getNamespaceURI());
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug("TargetService:" + msgContext.getTargetService());
+        if (log.isDebugEnabled()) {
+            log.debug("TargetService:" + msgContext.getTargetService());
         }
 
         // set up transport if there is one
@@ -1609,7 +1611,7 @@ public class Call implements javax.xml.rpc.Call {
             msgContext.setTransportName( transportName );
 
         // For debugging - print request message
-        if (category.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringWriter writer = new StringWriter();
             try {
                 SerializationContext ctx = new SerializationContextImpl(writer,
@@ -1619,7 +1621,7 @@ public class Call implements javax.xml.rpc.Call {
             } catch (Exception e) {
                 e.printStackTrace(new PrintWriter(writer));
             } finally {
-                category.debug(writer.getBuffer().toString());
+                log.debug(writer.getBuffer().toString());
             }
         }
 
@@ -1645,8 +1647,8 @@ public class Call implements javax.xml.rpc.Call {
             throw ((SOAPFaultElement)respBody).getFault();
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
         }
     }
 

@@ -54,7 +54,8 @@
  */
 package org.apache.axis.utils;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -65,8 +66,8 @@ import java.util.Stack;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class NSStack {
-    static Category category =
-            Category.getInstance(NSStack.class.getName());
+    static Log log =
+            LogFactory.getLog(NSStack.class.getName());
     
     private static final ArrayList EMPTY = new ArrayList();
 
@@ -86,15 +87,15 @@ public class NSStack {
     
     public void push() {
         if (stack == null) stack = new Stack();
-        if (category.isDebugEnabled())
-            category.debug("NSPush (" + stack.size() + ")");
+        if (log.isDebugEnabled())
+            log.debug("NSPush (" + stack.size() + ")");
         stack.push(EMPTY);
     }
     
     public void push(ArrayList table) {
         if (stack == null) stack = new Stack();
-        if (category.isDebugEnabled())
-            category.debug("NSPush (" + stack.size() + ")");
+        if (log.isDebugEnabled())
+            log.debug("NSPush (" + stack.size() + ")");
         if (table.size() == 0) 
            stack.push(EMPTY);
         else
@@ -114,16 +115,16 @@ public class NSStack {
     
     public ArrayList pop() {
         if (stack.isEmpty()) {
-            if (category.isDebugEnabled())
-                category.debug("NSPop (" + JavaUtils.getMessage("empty00") + ")");
+            if (log.isDebugEnabled())
+                log.debug("NSPop (" + JavaUtils.getMessage("empty00") + ")");
             if (parent != null)
                 return parent.pop();
             return null;
         }
         
-        if (category.isDebugEnabled()){
+        if (log.isDebugEnabled()){
             ArrayList t = (ArrayList)stack.pop();
-            category.debug("NSPop (" + stack.size() + ")");
+            log.debug("NSPop (" + stack.size() + ")");
             return t;
         } else {
             return (ArrayList)stack.pop();
@@ -198,8 +199,8 @@ public class NSStack {
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        if (category.isDebugEnabled()){
-            category.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+        if (log.isDebugEnabled()){
+            log.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
             dump();
         }
 

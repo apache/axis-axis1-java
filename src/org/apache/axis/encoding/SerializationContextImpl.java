@@ -65,7 +65,10 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -94,8 +97,8 @@ import java.util.Stack;
  */
 public class SerializationContextImpl implements SerializationContext
 {
-    static Category category =
-            Category.getInstance(SerializationContextImpl.class.getName());
+    static Log log =
+            LogFactory.getLog(SerializationContextImpl.class.getName());
 
     private NSStack nsStack = new NSStack();
     private boolean writingStartTag = false;
@@ -315,8 +318,8 @@ public class SerializationContextImpl implements SerializationContext
      */
     public void registerPrefixForURI(String prefix, String uri)
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("register00", prefix, uri));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("register00", prefix, uri));
         }
 
         if ((uri != null) && (prefix != null)) {
@@ -578,8 +581,8 @@ public class SerializationContextImpl implements SerializationContext
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("startElem00",
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
         }
 
@@ -668,8 +671,8 @@ public class SerializationContextImpl implements SerializationContext
     {
         String elementQName = (String)elementStack.pop();
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("endElem00", "" + elementQName));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("endElem00", "" + elementQName));
         }
 
         nsStack.pop();

@@ -76,7 +76,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.attachments.AttachmentUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * JAFDataHandler Serializer
@@ -85,8 +86,8 @@ import org.apache.log4j.Category;
  */
 public class JAFDataHandlerDeserializer extends DeserializerImpl implements Deserializer  {
 
-    static Category category =
-            Category.getInstance(JAFDataHandlerDeserializer.class.getName());
+    static Log log =
+            LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
@@ -96,12 +97,12 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl implements Dese
         QName type = context.getTypeFromAttributes(namespace,
                                                    localName,
                                                    attributes);
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
         }
         
         String href = attributes.getValue("href");
-        category.debug("href=" + href);
+        log.debug("href=" + href);
         if (href != null) {
             Object ref = context.getObjectByRef(href);
             try{

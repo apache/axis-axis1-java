@@ -62,8 +62,8 @@ package org.apache.axis.utils ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -71,8 +71,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Options {
-    static Category category =
-            Category.getInstance(Options.class.getName());
+    static Log log =
+            LogFactory.getLog(Options.class.getName());
 
     String  args[]     = null ;
     Vector  usedArgs   = null ;
@@ -100,26 +100,11 @@ public class Options {
         try {
             getURL();
         } catch( MalformedURLException e ) {
-            category.error( JavaUtils.getMessage("cantDoURL00") );
+            log.error( JavaUtils.getMessage("cantDoURL00") );
             throw e ;
         }
         getUser();
         getPassword();
-
-        // Increase log4j verbosity based on number of "-d" options specified.
-        int debug = isFlagSet('d');
-        if (debug>0) {
-            Priority[] allPriorities = Priority.getAllPossiblePriorities(); 
-            Priority currentPriority = Category.getRoot().getPriority();
-            for (int i=0; i<allPriorities.length; i++) {
-                if (currentPriority == allPriorities[i]) {
-                    i += debug;
-                    if (i>=allPriorities.length) i=allPriorities.length-1;
-                    Category.getRoot().setPriority(allPriorities[i]);
-                    break;
-                }
-            }
-        }
 
         // EOASS
         ///////////////////////////////////////////////////////////////////////
@@ -316,7 +301,7 @@ public class Options {
             if ( port != null && !port.equals("-1")) tmp += ":" + port ;
             if ( servlet != null ) tmp += servlet ;
         } else tmp = url.toString();
-        category.debug( JavaUtils.getMessage("return02", "getURL", tmp) );
+        log.debug( JavaUtils.getMessage("return02", "getURL", tmp) );
         return( tmp );
     }
     

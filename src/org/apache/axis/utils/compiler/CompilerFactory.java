@@ -55,7 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class implements a factory to instantiate a Compiler.
@@ -65,12 +66,12 @@ import org.apache.log4j.Category;
  * @since 2.0
  */
 public class CompilerFactory {
-    static Category category =
-            Category.getInstance(CompilerFactory.class.getName());
+    static Log log =
+            LogFactory.getLog(CompilerFactory.class.getName());
         public static Compiler getCompiler()
         {
             String compilerClassName = System.getProperty("axis.Compiler");
-            category.debug("axis.Compiler:" + compilerClassName);
+            log.debug("axis.Compiler:" + compilerClassName);
             if (compilerClassName != null) {
                 try {
                     Class compilerClass = Class.forName(compilerClassName);
@@ -80,10 +81,10 @@ public class CompilerFactory {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
                     e.printStackTrace(System.err);
-                    category.error(e.getLocalizedMessage(),e);
+                    log.error(e.getLocalizedMessage(),e);
                 }
             }
-            category.debug("Using default compiler Javac");
+            log.debug("Using default compiler Javac");
             Compiler compiler = new Javac();
             return compiler;
         }

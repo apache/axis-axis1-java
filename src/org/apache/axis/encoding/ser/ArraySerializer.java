@@ -59,7 +59,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
@@ -100,8 +101,8 @@ import java.beans.IntrospectionException;
  */
 public class ArraySerializer implements Serializer {
 
-    static Category category =
-            Category.getInstance(ArraySerializer.class.getName());
+    static Log log =
+            LogFactory.getLog(ArraySerializer.class.getName());
 
     /**
      * Serialize an element that is an array.

@@ -58,7 +58,10 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -69,8 +72,8 @@ import org.apache.log4j.Category;
  */
 public class JWSHandler extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(JWSHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(JWSHandler.class.getName());
 
     // Keep the processor Handler around so we can make it the service
     // Handler for this request if appropriate.
@@ -78,8 +81,8 @@ public class JWSHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "JWSHandler::invoke") );
         }
 
@@ -90,8 +93,8 @@ public class JWSHandler extends BasicHandler
             msgContext.setServiceHandler(processor);
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "JWSHandler::invoke") );
         }
     }

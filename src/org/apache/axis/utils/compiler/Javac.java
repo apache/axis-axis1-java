@@ -55,7 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -78,8 +79,8 @@ import java.util.StringTokenizer;
 
 public class Javac extends AbstractCompiler {
 
-    static Category category =
-            Category.getInstance(Javac.class.getName());
+  static Log log =
+            LogFactory.getLog(Javac.class.getName());
     
   public final static String CLASSIC_CLASS = "sun.tools.javac.Main";
   public final static String MODERN_CLASS = "com.sun.tools.javac.Main";
@@ -94,16 +95,16 @@ public class Javac extends AbstractCompiler {
         cl.loadClass(MODERN_CLASS);
         modern = true;
     } catch (ClassNotFoundException e) {
-        category.debug("Javac connector could not find modern compiler -- falling back to classic.");
+        log.debug("Javac connector could not find modern compiler -- falling back to classic.");
         try {
             cl.loadClass(CLASSIC_CLASS);
             modern = false;
         } catch (Exception ex) {
-            category.error("No compiler found in your classpath. Make sure you added 'tools.jar'", ex);
+            log.error("No compiler found in your classpath. Make sure you added 'tools.jar'", ex);
             throw new RuntimeException("No compiler found in your classpath. Make sure you added 'tools.jar'");
         }
     }
-    category.debug("Javac compiler class: " + (modern?MODERN_CLASS:CLASSIC_CLASS));
+    log.debug("Javac compiler class: " + (modern?MODERN_CLASS:CLASSIC_CLASS));
   }
 
   /**
@@ -166,7 +167,7 @@ public class Javac extends AbstractCompiler {
             }
             return errors;
         }
-        category.debug(line);
+        log.debug(line);
         buffer.append(line);
         buffer.append('\n');
       } while (!line.endsWith("^"));
@@ -224,7 +225,7 @@ public class Javac extends AbstractCompiler {
       // each error has 3 lines
       for (int i = 0; i < 3 ; i++) {
         if ((line = input.readLine()) == null) return errors;
-        category.debug(line);
+        log.debug(line);
         buffer.append(line);
         buffer.append('\n');
       }

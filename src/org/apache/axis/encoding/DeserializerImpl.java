@@ -63,7 +63,8 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -85,8 +86,8 @@ import java.util.Vector;
 
 public class DeserializerImpl extends SOAPHandler implements Deserializer
 {
-    static Category category =
-            Category.getInstance(DeserializerImpl.class.getName());
+    static Log log =
+            LogFactory.getLog(DeserializerImpl.class.getName());
 
     protected Object value = null;
 
@@ -224,8 +225,8 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
                 while (e.hasMoreElements()) {
                     Target target = (Target)e.nextElement();
                     target.set(value);
-                    if (category.isDebugEnabled()) {
-                        category.debug(JavaUtils.getMessage("setValueInTarget00",
+                    if (log.isDebugEnabled()) {
+                        log.debug(JavaUtils.getMessage("setValueInTarget00",
                                                             "" + value, "" + target));
                     }
                 }
@@ -303,8 +304,8 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
         id = attributes.getValue("id");
         if (id != null) {
             context.addObjectById(id, value);
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
             }     
         }
 
@@ -313,8 +314,8 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             isHref = true;
 
             Object ref = context.getObjectByRef(href);            
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage(
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage(
                         "gotForID00",
                         new String[] {"" + ref, href, "" + ref.getClass()}));
             }
@@ -369,8 +370,8 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
                                                        localName,
                                                        attributes);
             
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
             }
             
             // We know we're deserializing, but we don't have
@@ -447,8 +448,8 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
         // This is necessary for proper multi-reference deserialization.
         if (id != null) {
             context.addObjectById(id, value);
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("deserPutValueDebug00", "" + value, id));
             }     
         }
     }

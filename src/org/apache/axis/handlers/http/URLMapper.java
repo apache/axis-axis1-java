@@ -59,7 +59,10 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /** An <code>URLMapper</code> attempts to use the extra path info
  * of this request as the service name.
@@ -68,12 +71,12 @@ import org.apache.log4j.Category;
  */
 public class URLMapper extends BasicHandler
 {
-    static Category category =
-            Category.getInstance(URLMapper.class.getName());
+    static Log log =
+            LogFactory.getLog(URLMapper.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug(JavaUtils.getMessage("enter00", "URLMapper::invoke") );
+        log.debug(JavaUtils.getMessage("enter00", "URLMapper::invoke") );
 
         /** If there's already a targetService then just return.
          */
@@ -87,7 +90,7 @@ public class URLMapper extends BasicHandler
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "URLMapper::invoke") );
+        log.debug(JavaUtils.getMessage("exit00", "URLMapper::invoke") );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {

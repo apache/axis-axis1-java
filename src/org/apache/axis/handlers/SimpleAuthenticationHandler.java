@@ -61,7 +61,10 @@ import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.simple.SimpleSecurityProvider;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * Just a simple Authentication Handler to see if the user
@@ -75,15 +78,15 @@ import org.apache.log4j.Category;
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
-    static Category category =
-            Category.getInstance(SimpleAuthenticationHandler.class.getName());
+    static Log log =
+            LogFactory.getLog(SimpleAuthenticationHandler.class.getName());
 
     /**
      * Authenticate the user and password from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", 
                 "SimpleAuthenticationHandler::invoke"));
         }
 
@@ -95,8 +98,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
         if (provider != null) {
             String  userID = msgContext.getUsername();
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("user00", userID) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("user00", userID) );
             }
 
             // in order to authenticate, the user must exist
@@ -106,8 +109,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                     null, null );
 
             String passwd = msgContext.getPassword();
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("password00", passwd) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("password00", passwd) );
             }
 
             AuthenticatedUser authUser = provider.authenticate(msgContext);
@@ -118,15 +121,15 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                     JavaUtils.getMessage("cantAuth01", userID),
                     null, null );
 
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("auth00", userID) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("auth00", userID) );
             }
 
             msgContext.setProperty(MessageContext.AUTHUSER, authUser);
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", 
                 "SimpleAuthenticationHandler::invoke") );
         }
     }

@@ -58,14 +58,15 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import samples.transport.FileTest;
 
 /** Test the stock sample code.
  */
 public class TestTransportSample extends TestCase {
-    static Category category =
-            Category.getInstance(TestTransportSample.class.getName());
+    static Log log =
+            LogFactory.getLog(TestTransportSample.class.getName());
 
     public TestTransportSample(String name) {
         super(name);
@@ -89,9 +90,9 @@ public class TestTransportSample extends TestCase {
             if (fault == null) throw e;
             if (fault.indexOf("java.net.UnknownHost")<0) {
                 int start = fault.indexOf(": ");
-                category.info(fault.substring(start+2));
+                log.info(fault.substring(start+2));
             } else if (fault.equals("timeout")) {
-                category.info("timeout");
+                log.info("timeout");
             } else {
                 throw e;
             }
@@ -105,14 +106,14 @@ public class TestTransportSample extends TestCase {
     
     public void testService () throws Exception {
         try {
-            category.info("Testing transport sample.");
-            category.info("Testing deployment...");
+            log.info("Testing transport sample.");
+            log.info("Testing deployment...");
             doTestDeploy();
-            category.info("Testing service with symbol IBM...");
+            log.info("Testing service with symbol IBM...");
             doTestIBM();
-            category.info("Testing service with symbol XXX...");
+            log.info("Testing service with symbol XXX...");
             doTestXXX();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

@@ -68,7 +68,8 @@ import org.apache.axis.encoding.ser.*;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.server.AxisServer;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -95,8 +96,8 @@ import java.util.Vector;
  */
 public class Admin {
 
-    static Category category =
-            Category.getInstance(Admin.class.getName());
+    static Log log =
+            LogFactory.getLog(Admin.class.getName());
 
     /**
      * Fill in options for a given handler.
@@ -168,11 +169,11 @@ public class Admin {
     public Element[] AdminService(MessageContext msgContext, Vector xml)
         throws Exception
     {
-        category.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
+        log.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, (Element) xml.get(0) );
         Element[] result = new Element[1];
         result[0] = doc.getDocumentElement();
-        category.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
+        log.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
         return( result );
     }
 
@@ -335,11 +336,11 @@ public class Admin {
 
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
-                        category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
+                        log.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
                         dep.undeployService( new QName(null,name) );
                     }
                     else if ( type.equals("handler") || type.equals("chain") ) {
-                        category.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
+                        log.info( JavaUtils.getMessage("undeploy00", type + ": " + name) );
                         dep.undeployHandler( new QName(null,name) );
                     }
                     else
@@ -449,7 +450,7 @@ public class Admin {
         if ("".equals(name)) name = null;
 
         if (flow != null) {
-            category.info( JavaUtils.getMessage("deployChain00", name) );
+            log.info( JavaUtils.getMessage("deployChain00", name) );
             Vector names = new Vector();
 
             getOptions( elem, options );
@@ -492,7 +493,7 @@ public class Admin {
         if ( pivot  != null && pivot.equals("") )  pivot = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        category.info( JavaUtils.getMessage("deployService01", name) );
+        log.info( JavaUtils.getMessage("deployService01", name) );
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;
@@ -579,7 +580,7 @@ public class Admin {
 
         String   cls   = elem.getAttribute( "class" );
         if ( cls != null && cls.equals("") ) cls = null ;
-        category.info( JavaUtils.getMessage("deployHandler00", name) );
+        log.info( JavaUtils.getMessage("deployHandler00", name) );
 
         handler = new WSDDHandler();
 
@@ -609,7 +610,7 @@ public class Admin {
         if ( sender  != null && sender.equals("") )  sender = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        category.info( JavaUtils.getMessage("deployTransport00", name) );
+        log.info( JavaUtils.getMessage("deployTransport00", name) );
         StringTokenizer      st = null ;
         Vector reqNames = new Vector();
         Vector respNames = new Vector();
@@ -688,7 +689,7 @@ public class Admin {
             String localName    = elem.getLocalName();
             qn = new QName(namespaceURI, localName);
 
-            category.debug( JavaUtils.getMessage("registerTypeMap00", "" + qn, classname));
+            log.debug( JavaUtils.getMessage("registerTypeMap00", "" + qn, classname));
 
             // register both serializers and deserializers for this bean
             mapping.setQName(qn);
@@ -704,7 +705,7 @@ public class Admin {
 
             mapping.setQName(qn);
             classname = elem.getAttribute("serializer");
-            category.debug( JavaUtils.getMessage("serializer00", classname));
+            log.debug( JavaUtils.getMessage("serializer00", classname));
             try {
                 cls = cl.loadClass(classname);
                 mapping.setSerializer(cls);
@@ -714,7 +715,7 @@ public class Admin {
                     null, null);
             }
             classname = elem.getAttribute("deserializerFactory");
-            category.debug( JavaUtils.getMessage("deserFact00", classname));
+            log.debug( JavaUtils.getMessage("deserFact00", classname));
             try {
                 cls = cl.loadClass(classname);
                 mapping.setDeserializer(cls);

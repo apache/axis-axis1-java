@@ -17,9 +17,10 @@ import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
 /**
-* This TestCase verifies the contents of resources.properties for well-formedness and tests calls
-* to JavaUtils.getMessage.
-*/
+ * This TestCase verifies:
+ *   - the contents of resources.properties for well-formedness, and
+ *   - tests calls to JavaUtils.getMessage.
+ */
 public class TestMessages extends TestCase {
     public TestMessages(String name) {
         super(name);

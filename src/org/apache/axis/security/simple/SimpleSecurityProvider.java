@@ -60,7 +60,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -74,8 +75,8 @@ import java.util.StringTokenizer;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class SimpleSecurityProvider implements SecurityProvider {
-    static Category category =
-            Category.getInstance(SimpleSecurityProvider.class.getName());
+    static Log log =
+            LogFactory.getLog(SimpleSecurityProvider.class.getName());
 
     HashMap users = null;
     HashMap perms = null;
@@ -110,8 +111,8 @@ public class SimpleSecurityProvider implements SecurityProvider {
                         String userID = st.nextToken();
                         String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-                        if (category.isDebugEnabled()) {
-                            category.debug( JavaUtils.getMessage("fromFile00", 
+                        if (log.isDebugEnabled()) {
+                            log.debug( JavaUtils.getMessage("fromFile00", 
                                 userID, passwd) );
                         }
 
@@ -122,7 +123,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 lnr.close();
 
             } catch( Exception e ) {
-                category.error( e );
+                log.error( e );
                 return;
             }
         }
@@ -145,8 +146,8 @@ public class SimpleSecurityProvider implements SecurityProvider {
         String password = msgContext.getPassword();
 
         if (users != null) {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("user00", username) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("user00", username) );
             }
 
             // in order to authenticate, the user must exist
@@ -157,16 +158,16 @@ public class SimpleSecurityProvider implements SecurityProvider {
 
             String valid = (String) users.get(username);
 
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("password00", password) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("password00", password) );
             }
 
             // if a password is defined, then it must match
             if ( valid.length()>0 && !valid.equals(password) )
                 return null;
 
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("auth00", username) );
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("auth00", username) );
             }
 
             return new SimpleAuthenticatedUser(username);

@@ -57,13 +57,14 @@ package test.wsdl.multiref;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /** Test the multiref sample code.
  */
 public class MultiRefTestCase extends TestCase {
-    static Category category =
-            Category.getInstance(MultiRefTestCase.class.getName());
+    static Log log =
+            LogFactory.getLog(MultiRefTestCase.class.getName());
 
     public MultiRefTestCase(String name) {
         super(name);
@@ -76,9 +77,9 @@ public class MultiRefTestCase extends TestCase {
 
     public void testMultiRefService () throws Exception {
         try {
-            category.info("Testing multiref sample.");
+            log.info("Testing multiref sample.");
             doTest();
-            category.info("Test complete.");
+            log.info("Test complete.");
         }
         catch( Exception e ) {
             if ( e instanceof AxisFault ) ((AxisFault)e).dump();

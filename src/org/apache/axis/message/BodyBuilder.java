@@ -67,14 +67,15 @@ import org.apache.axis.Handler;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.log4j.Category;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class BodyBuilder extends SOAPHandler
 {
-    static Category category =
-            Category.getInstance(BodyBuilder.class.getName());
+    static Log log =
+            LogFactory.getLog(BodyBuilder.class.getName());
 
     private SOAPBodyElement element;
     boolean gotRPCElement = false;
@@ -94,8 +95,8 @@ public class BodyBuilder extends SOAPHandler
                                      DeserializationContext context)
         throws SAXException
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
         }
         SOAPHandler handler = null;
         
@@ -117,8 +118,8 @@ public class BodyBuilder extends SOAPHandler
         if (isRoot &&
             msgContext.getServiceHandler() == null) {
 
-            if (category.isDebugEnabled()) {
-                category.debug(JavaUtils.getMessage("dispatching00",namespace));
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage("dispatching00",namespace));
             }
 
             try {
@@ -163,8 +164,8 @@ public class BodyBuilder extends SOAPHandler
         
         handler.myElement = element;
         
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onStartChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onStartChild()"));
         }
         return handler;
     }
@@ -172,8 +173,8 @@ public class BodyBuilder extends SOAPHandler
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onEndChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onEndChild()"));
         }
         
         if (element != null) {
@@ -181,8 +182,8 @@ public class BodyBuilder extends SOAPHandler
             element = null;
         }
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onEndChild()"));
+        if (log.isDebugEnabled()) {
+            log.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onEndChild()"));
         }
     }
 }
