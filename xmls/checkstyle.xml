@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+]>
 <project name="CheckStyle" default="usage">
 
   <description>
   this is a library task file that is only to be invoked in an ant task.
   </description>
-  
+
+    &properties;
+    &paths;
+    
   <!-- Load in all standard app-wide properties -->
 
   <property name="checkstyle.project" value="axis"/>
