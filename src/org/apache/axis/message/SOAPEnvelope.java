@@ -84,7 +84,7 @@ public class SOAPEnvelope extends MessageElement
     public Vector bodyElements = new Vector();
     public Vector trailers = new Vector();
     public String encodingStyleURI = null;
-    
+
     // This is a hint to any service description to tell it what
     // "type" of message we are.  This might be "request", "response",
     // or anything else your particular service descripton requires.
@@ -325,17 +325,17 @@ public class SOAPEnvelope extends MessageElement
         }
         
         Enumeration enum;
-        AttributesImpl attrs = null;
         if (encodingStyleURI != null) {
-            attrs = new AttributesImpl();
-            attrs.addAttribute(Constants.URI_SOAP_ENV,
+            if(attributes == null)
+                attributes = new AttributesImpl();
+            attributes.addAttribute(Constants.URI_SOAP_ENV,
                                Constants.ATTR_ENCODING_STYLE,
                                "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE,
                                "CDATA", encodingStyleURI);
         }
         
         context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                       Constants.ELEM_ENVELOPE), attrs);
+                                       Constants.ELEM_ENVELOPE), attributes);
         
         if (category.isDebugEnabled())
             category.debug(headers.size() + " "
