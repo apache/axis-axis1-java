@@ -121,10 +121,10 @@ public class HTTPMessage {
 
     reqEnv.addBody( reqBody );
 
-    if ( Debug.DebugOn(1) ) {
-      Debug.Print( 1, "Request Message:" );
-      Debug.Print( 1, (String) reqMsg.getAs("String") );
-    }
+    // if ( Debug.DebugOn(1) ) {
+      // Debug.Print( 1, "Request Message:" );
+      // Debug.Print( 1, (String) reqMsg.getAs("String") );
+    // }
 
     msgContext.setProperty( "HTTP_URL", url );   // horrible name!
     msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!

@@ -115,6 +115,10 @@ public class HTTPDispatchHandler implements Handler {
       out.write( header.getBytes() );
       out.write( reqEnv.getBytes() );
 
+      Debug.Print( 1, "XML sent:" );
+      Debug.Print( 1, header );
+      Debug.Print( 1, reqEnv );
+
       byte       lastB=0, b ;
       int        len = 0 ;
       int        colonIndex = -1 ;
