@@ -76,12 +76,19 @@ public class CompilerFactory {
     protected static Log log =
         LogFactory.getLog(CompilerFactory.class.getName());
 
+    static {
+        AxisProperties.setClassOverrideProperty(Compiler.class, "axis.Compiler");
+
+        AxisProperties.setClassDefault(Compiler.class,
+                                       "org.apache.axis.components.compiler.Javac");
+    }
+
     public static Compiler getCompiler() {
-        Compiler compiler =
-            (Compiler)AxisProperties.newInstance(
-                         new SPInterface(Compiler.class, "axis.Compiler"),
-                         Javac.class);
+        Compiler compiler = (Compiler)AxisProperties.newInstance(Compiler.class);
         
+        /**
+         * This shouldn't be needed, but seems to be a common feel-good:
+         */
         if (compiler == null) {
             log.debug(Messages.getMessage("defaultCompiler"));
             compiler = new Javac();

@@ -73,6 +73,21 @@ public class ImageIOFactory {
     protected static Log log =
             LogFactory.getLog(ImageIOFactory.class.getName());
 
+    static {
+        AxisProperties.setClassOverrideProperty(ImageIO.class, "axis.ImageIO");
+
+        // If the imageIO is not configured look for the following:
+        // 1.  Try the JDK 1.4 classes
+        // 2.  Try the JIMI classes
+        // 3.  If all else fails, try the JDK 1.3 classes
+        AxisProperties.setClassDefaults(ImageIO.class,
+                                        new String [] {
+                                             "org.apache.axis.components.image.MerlinIO",
+                                             "org.apache.axis.components.image.JimiIO",
+                                             "org.apache.axis.components.image.JDK13IO",
+                                        });
+    }
+
     /**
      * Get the ImageIO implementation.  This method follows a precedence:
      * 1.  Use the class defined by the System property axis.ImageIO.
@@ -81,40 +96,16 @@ public class ImageIOFactory {
      * 4.  If that fails, instantiate the limited JDK13IO implementation.
      */
     public static ImageIO getImageIO() {
-        // If the imageIO property is configured, use it.
-        // Note:  I wish AxisProperties.newInstance could return null,
-        // but it doesn't seem to; makes the following if check a bit more complex,
-        // and disallows someone explicitly forcing JDK13IO over the others.
-        ImageIO imageIO =
-            (ImageIO)AxisProperties.newInstance(
-                         new SPInterface(ImageIO.class, "axis.ImageIO"), "org.apache.axis.components.image.JDK13IO");
+        ImageIO imageIO = (ImageIO)AxisProperties.newInstance(ImageIO.class);
         
-        if (imageIO == null || imageIO.getClass() ==
-                org.apache.axis.components.image.JDK13IO.class) {
-            // If the imageIO is not configured look for the following:
-            // 1.  Try the JDK 1.4 classes
-            // 2.  Try the JIMI classes
-            // 3.  If all else fails, try the JDK 1.3 classes
-            try {
-                ClassUtils.forName("javax.imageio.ImageWriter");
-                imageIO = (ImageIO) ClassUtils.forName(
-                        "org.apache.axis.components.image.MerlinIO").
-                        newInstance();
-            }
-            catch (Throwable t1) {
-                try {
-                    ClassUtils.forName("com.sun.jimi.core.Jimi");
-                    imageIO = (ImageIO) ClassUtils.forName(
-                            "org.apache.axis.components.image.JimiIO").
-                            newInstance();
-                }
-                catch (Throwable t2) {
-                    imageIO = new JDK13IO();
-                }
-            }
+        /**
+         * This shouldn't be needed, but seems to be a common feel-good:
+         */
+        if (imageIO == null) {
+            imageIO = new JDK13IO();
         }
 
-        log.debug("axis.ImageIO:" + imageIO.getClass().getName());
+        log.debug("axis.ImageIO: " + imageIO.getClass().getName());
         return imageIO;
     }
 }

@@ -192,6 +192,7 @@ public class TestChainFault extends TestCase
 
         } catch (Exception ex) {
             assertTrue("Unexpected exception", false);
+            ex.printStackTrace();
         }
     }
 

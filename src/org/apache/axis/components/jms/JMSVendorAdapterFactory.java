@@ -75,14 +75,16 @@ import org.apache.commons.discovery.tools.SPInterface;
  */
 public class JMSVendorAdapterFactory
 {
-    private static final SPInterface spInterface = new SPInterface(JMSVendorAdapter.class);
-    private static final Class defaultClass = JNDIVendorAdapter.class;
+    static {
+//        AxisProperties.setClassOverrideProperty(JMSVendorAdapter.class, "?");
+
+        AxisProperties.setClassDefault(JMSVendorAdapter.class,
+                                       "org.apache.axis.components.jms.JNDIVendorAdapter");
+    }
 
     public static final JMSVendorAdapter getJMSVendorAdapter()
     {
-        return (JMSVendorAdapter)AxisProperties.newInstance(spInterface,
-                                                            defaultClass);
-
+        return (JMSVendorAdapter)AxisProperties.newInstance(JMSVendorAdapter.class);
     }
 
 }
