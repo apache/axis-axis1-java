@@ -57,26 +57,21 @@ Copyright:
 <target name="compile" depends="copy">
   <echo message="Compiling test.wsdl.multithread"/>
 
+    <mkdir dir="${build.dir}/work/test/wsdl/multithread" />
+
     <!-- Multithread Test -->
     <copy todir="${build.dir}/work/test/wsdl/multithread" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/multithread">
-        <include name="**/*Impl.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/multithread">
-        <include name="**/*TestCase.java"/>
-        <exclude name="**/EmptySATestCase.java"/>
-        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/multithread">
-        <include name="**/Main.java"/>
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
       </fileset>
     </copy>
 
-  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
-    <include name="${componentName}/*.java"/>
+    <include name="test/wsdl/multithread/*.java"/>
   </javac>
 </target>
 

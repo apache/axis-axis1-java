@@ -65,6 +65,13 @@ Copyright:
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/names" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/names">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />

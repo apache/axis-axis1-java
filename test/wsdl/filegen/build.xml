@@ -43,9 +43,10 @@ Copyright:
         &targets;
 
 <target name="clean">
-    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
-    <delete dir="${build.dir}/classes/${componentName}"/>
-    <delete dir="${build.dir}/work/${componentName}"/>
+    <echo message="Removing ${build.dir}/**/test/wsdl/filegen" />
+    <echo message="componentName is ${componentName}"/>
+    <delete dir="${build.dir}/classes/test/wsdl/filegen"/>
+    <delete dir="${build.dir}/work/test/wsdl/filegen"/>
 </target>
 
 <target name="copy" depends="setenv,clean"/>
@@ -73,15 +74,8 @@ Copyright:
 
     <copy todir="${build.dir}/work/test/wsdl/filegen" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/filegen">
-        <include name="**/*Impl.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/filegen">
-        <include name="**/*TestCase.java"/>
-        <exclude name="**/EmptySATestCase.java"/>
-        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/filegen">
-        <include name="**/Main.java"/>
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
       </fileset>
     </copy>
 

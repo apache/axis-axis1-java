@@ -61,11 +61,12 @@ Copyright:
         <mapping namespace="urn:AddressFetcher2" package="test.wsdl.include"/>
     </wsdl2java>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
-           debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="test/wsdl/include/*.java" />
-    </javac>
+    <copy todir="${build.dir}/work/test/wsdl/include" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/include">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
 
     <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">

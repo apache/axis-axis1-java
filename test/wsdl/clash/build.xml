@@ -49,7 +49,7 @@ Copyright:
 </target>
 
 <target name="copy" depends="setenv,clean">
-    <ant inheritAll="true" antfile="${axis.home}/buildTest.xml" target="filegen"/>
+    <ant antfile="${axis.home}/test/wsdl/filegen/build.xml" target="compile"/>
 </target>
 
 <target name="compile" depends="copy">
@@ -61,7 +61,12 @@ Copyright:
                serverSide="yes">
     </wsdl2java>
 
-    <copy file="${test.dir}/wsdl/clash/VerifyFilesTestCase.java" tofile="${build.dir}/work/test/wsdl/clash/VerifyFilesTestCase.java" />
+    <copy todir="${build.dir}/work/test/wsdl/clash" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/clash">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
