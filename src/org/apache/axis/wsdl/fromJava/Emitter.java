@@ -521,9 +521,16 @@ public class Emitter {
         }
 
         if (encodingList == null) {
-            clsName = cls.getName();
-            clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
-
+          
+            // if cls contains a Class object with the service implementation use the Name of the
+            // class else use the service name
+            if ( cls != null ) {            
+                clsName = cls.getName();                  
+                clsName = clsName.substring(clsName.lastIndexOf('.') + 1);
+            } else {              
+                clsName = getServiceDesc().getName();
+            }
+            
             // Default the portType name
             if (getPortTypeName() == null) {
                 setPortTypeName(clsName);
