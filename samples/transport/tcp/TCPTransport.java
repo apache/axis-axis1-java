@@ -55,16 +55,13 @@
 
 package samples.transport.tcp;
 
-import java.net.URL;
-import java.util.* ;
-import org.apache.axis.* ;
-
-import org.apache.axis.handlers.* ;
-import org.apache.axis.registries.* ;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
 import org.apache.axis.client.Transport;
-import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.ServiceClient;
 import org.apache.log4j.Category;
+
+import java.net.URL;
 
 /**
  *
@@ -103,7 +100,7 @@ public class TCPTransport extends Transport
      * @param engine the engine containing the registries
      */
     public void setupMessageContextImpl(MessageContext mc,
-                                        ServiceClient serv,
+                                        Call call,
                                         AxisEngine engine)
     {
         try {

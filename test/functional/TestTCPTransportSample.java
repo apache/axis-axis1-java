@@ -62,10 +62,14 @@ import java.util.*;
 import org.apache.axis.AxisFault ;
 import samples.transport.tcp.TCPTransport;
 import samples.transport.tcp.AdminClient;
+import samples.transport.tcp.GetQuote;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.XMLType;
 import org.apache.log4j.Category;
 
 import junit.framework.TestCase;
@@ -99,24 +103,24 @@ public class TestTCPTransportSample extends TestCase {
     public void doTestStock() throws Exception {
         try {
             category.info("Testing TCP stock service...");
+            GetQuote tester = new GetQuote();
+            tester.getQuote(new String [] { "-ltcp://localhost:8088", "XXX" });
             String   symbol = "XXX"; // args[0] ;
 
-            ServiceClient call   = new ServiceClient
-                ( new TCPTransport("localhost", "8088") );
+            Service  service = new Service();
+            Call     call    = (Call) service.createCall();
 
-            // reconstruct URL
-            ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-            sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
-            call.setServiceDescription(sd);
+            call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
+            call.setOperationName( "getQuote" );
+            call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+            call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+            call.setReturnType( XMLType.XSD_FLOAT );
 
-            Float res = new Float(0.0F);
-            //      for (int i=0; i<count; i++) {
             Object ret = call.invoke(
                 "urn:xmltoday-delayed-quotes", "getQuote",
                 new Object[] {symbol} );
             if (ret instanceof Float) {
-                res = (Float) ret;
-                // System.out.println( symbol + ": " + res );
+                Float res = (Float) ret;
                 assertEquals("TestTCPTransportSample: stock price should be 55.25 +/- 0.000001", res.floatValue(), 55.25, 0.000001);
             } else {
                 throw new AssertionFailedError("Bad return value from TCP stock test: "+ret);
@@ -135,19 +139,19 @@ public class TestTCPTransportSample extends TestCase {
         try {
             category.info("Testing TCP transport.");
 
-            System.out.print("Deploying TCP client transport...");
+            category.info("Deploying TCP client transport...");
             doTransportDeploy();
             category.info("OK!");
 
-            System.out.print("Testing deployment...");
+            category.info("Testing deployment...");
             doTestDeploy();
             category.info("OK!");
 
-            System.out.print("Testing service...");
+            category.info("Testing service...");
             doTestStock();
             category.info("OK!");
 
-            System.out.print("Testing undeployment...");
+            category.info("Testing undeployment...");
             doTestUndeploy();
             category.info("OK!");
 

@@ -60,8 +60,9 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.message.RPCParam ;
 
@@ -69,6 +70,7 @@ import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.XMLType;
 
 /**
  *
@@ -79,7 +81,8 @@ public class GetQuote {
     
   // helper function; does all the real work
     public float getQuote (String args[]) throws Exception {
-      ServiceClient.addTransportPackage("samples.transport");
+      Call.addTransportPackage("samples.transport");
+        Call.setTransportForProtocol("tcp", TCPTransport.class);
 
       Options opts = new Options( args );
 
@@ -93,21 +96,24 @@ public class GetQuote {
       String namespace = "urn:xmltoday-delayed-quotes";
       symbol = args[0] ;
 
-      ServiceClient call = new ServiceClient(opts.getURL());
+      Service service = new Service();
+      Call call = (Call)service.createCall();
       call.setTransport(new TCPTransport());
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addInputParam("symbol", SOAPTypeMappingRegistry.XSD_STRING);
-      sd.setReturnType(SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-      
+
+        call.setTargetEndpointAddress( new URL(opts.getURL()) );
+        call.setOperationName( "getQuote" );
+        call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+        call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+        call.setReturnType( XMLType.XSD_FLOAT );
+
       // TESTING HACK BY ROBJ
       if (symbol.equals("XXX_noaction")) {
           symbol = "XXX";
-          call.set(HTTPConstants.MC_HTTP_SOAPACTION, "");
+          call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
       }
 
-      call.set( Transport.USER, opts.getUser() );
-      call.set( Transport.PASSWORD, opts.getPassword() );
+        call.setProperty( Transport.USER, opts.getUser() );
+        call.setProperty( Transport.PASSWORD, opts.getPassword() );
 
       // useful option for profiling - perhaps we should remove before
       // shipping?
@@ -120,8 +126,7 @@ public class GetQuote {
 
       Float res = new Float(0.0F);
       for (int i=0; i<count; i++) {
-          Object ret = call.invoke(
-          namespace, "getQuote", new Object[] {symbol} );
+          Object ret = call.invoke(new Object[] {symbol} );
           if (ret instanceof String) {
               System.out.println("Received problem response from server: "+ret);
               throw new AxisFault("", (String)ret, null, null);

@@ -56,7 +56,7 @@
 package samples.transport.tcp ;
 
 import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
 import org.apache.axis.transport.http.HTTPConstants;
 import java.net.URL;
 
@@ -72,8 +72,8 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
       
-        ServiceClient.addTransportPackage("samples.transport");
-        ServiceClient.setTransportForProtocol("tcp", TCPTransport.class);
+        Call.addTransportPackage("samples.transport");
+        Call.setTransportForProtocol("tcp", TCPTransport.class);
         
         try {
             org.apache.axis.client.AdminClient.main(args);
