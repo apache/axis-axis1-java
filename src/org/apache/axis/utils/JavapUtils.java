@@ -82,10 +82,10 @@ public class JavapUtils
     private static Hashtable cache = new Hashtable();
 
     /**
-     * Get the parameter names for the indicated method.
+     * Get the return/parameter names for the indicated method.
      * Returns null if no parameter names are available or accessible.
      * @param method is the Method
-     * @return String[] of parameter names or null
+     * @return String[] of return followed by parameter names (or null)
      **/
     public static String[] getParameterNames(Method method) {
         // Get the javap output
@@ -94,11 +94,12 @@ public class JavapUtils
             return null;
 
         // Allocate the parameter names array
-        int numParams = method.getParameterTypes().length;
+        int numParams = method.getParameterTypes().length + 1;
         if (numParams ==0)
             return null;
-        String[] paramNames = new String[numParams];
-        
+        String[] paramNames = new String[numParams + 1];
+        paramNames[0] = null;  // Don't know the return name
+
         // Get the Method signature without modifiers, return type and throws
         // Also javap puts a space after each comma
         String signature = method.toString();
@@ -134,7 +135,7 @@ public class JavapUtils
         //   java.lang.Object parameter2  pc=0, length=6, slot=3
         //   short parameter3  pc=0, length=6, slot=4
         //   int localvar  pc=3, length=3, slot=5
-        int paramIndex = 0;
+        int paramIndex = 1;
         index++;
         while(paramIndex < paramNames.length && index < text.size()) {
             String line = (String) text.elementAt(index++);

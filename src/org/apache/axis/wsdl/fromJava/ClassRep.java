@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Field;
@@ -62,6 +63,7 @@ import java.util.HashMap;
 
 import org.apache.axis.utils.JavapUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.Skeleton;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
@@ -215,7 +217,10 @@ public class ClassRep {
             m = cls.getDeclaredMethods();
         for (int i=0; i < m.length; i++) {
             int mod = m[i].getModifiers();
-            if (Modifier.isPublic(mod)) {
+            if (Modifier.isPublic(mod) &&
+                // Ignore the getParameterName method from the Skeleton class
+                (!m[i].getName().equals("getParameterName") ||
+                 !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
                 short[] modes = getParameterModes(m[i]);
                 Class[] types = getParameterTypes(m[i]);
                 _methods.add(new MethodRep(m[i], types, modes,
@@ -334,7 +339,7 @@ public class ClassRep {
 
     /**
      * Get the list of parameter names for the specified method.
-     * This implementation uses javap to get the parameter names
+     * This implementation uses Skeleton.getParameterNames or javap to get the parameter names
      * from the class file.  If parameter names are not available 
      * for the method (perhaps the method is in an interface), the
      * corresponding method in the implClass is queried.
@@ -342,12 +347,18 @@ public class ClassRep {
      * @param implClass  If the first search fails, the corresponding  
      *                   Method in this class is searched.           
      * @param types  are the parameter types after converting Holders.
-     * @return array of parameter names or null.                              
+     * @return array of Strings which represent the return name followed by parameter names
      */ 
     protected String[] getParameterNames(Method method, Class implClass, Class[] types) {
         String[] paramNames = null;
+        
+        paramNames = getParameterNamesFromSkeleton(method);
+        if (paramNames != null) {
+            return paramNames;
+        }
+        
         paramNames = JavapUtils.getParameterNames(method); 
-
+        
         // If failed, try getting a method of the impl class
         // It is possible that the impl class is a skeleton, thus the
         // method may have a different signature (no Holders).  This is
@@ -373,10 +384,52 @@ public class ClassRep {
                 } catch (Exception e) {}
             }
             if (m != null) {
+                paramNames = getParameterNamesFromSkeleton(m);
+                if (paramNames != null) {
+                    return paramNames;
+                }
                 paramNames = JavapUtils.getParameterNames(m); 
             }
         }            
 
+        return paramNames;
+    }
+
+    /**
+     * Get the list of parameter names for the specified method.
+     * This implementation uses Skeleton.getParameterNames to get the parameter names
+     * from the class file.  If parameter names are not available, returns null. 
+     * @param method is the Method to search.                
+     * @return array of Strings which represent the return name followed by parameter names
+     */ 
+    protected String[] getParameterNamesFromSkeleton(Method method) {
+        String[] paramNames = null;
+        Class cls = method.getDeclaringClass();
+        Class skel = Skeleton.class;
+        if (!cls.isInterface() && skel.isAssignableFrom(cls)) {
+            try {
+                // Use the getParameterNameStatic method so that we don't have to new up 
+                // an object.
+                Method getParameterName = cls.getMethod("getParameterNameStatic",
+                                                         new Class [] {String.class, int.class});
+                Skeleton skelObj = null;
+                if (getParameterName == null) {
+                    // Fall back to getting new instance
+                    skelObj = (Skeleton) cls.newInstance();
+                    getParameterName = cls.getMethod("getParameterName",
+                                                     new Class [] {String.class, int.class});
+                }
+
+                int numNames = method.getParameterTypes().length + 1; // Parms + return
+                paramNames = new String[numNames];
+                for (int i=0; i < numNames; i++) {
+                    paramNames[i] = (String) getParameterName.invoke(skelObj, 
+                                                                     new Object[] {method.getName(), 
+                                                                                   new Integer(i-1)});
+                }
+            } catch (Exception e) {
+            }
+        }
         return paramNames;
     }
 
