@@ -73,6 +73,11 @@ import java.text.* ;
 public class tcpmon extends JFrame {
   private JTabbedPane  notebook = null ;
 
+  static private int STATE_COLUMN    = 0 ;
+  static private int TIME_COLUMN     = 1 ;
+  static private int INHOST_COLUMN   = 2 ;
+  static private int OUTHOST_COLUMN  = 3 ;
+
   class AdminPage extends JPanel {
     public JTextField  port, host, tport ;
     public JTabbedPane noteb ;
@@ -351,7 +356,9 @@ public class tcpmon extends JFrame {
   
         int count = listener.connections.size();
         listener.tableModel.insertRow(count+1, new Object[] { "Active",
-                                                              fromHost, time });
+                                                              time,
+                                                              fromHost, 
+                                                              "---" });
         listener.connections.add( this );
         inputText  = new JTextArea( null, null, 20, 80 );
         inputScroll = new JScrollPane( inputText );
@@ -422,7 +429,9 @@ public class tcpmon extends JFrame {
             targetHost = url.getHost();
             targetPort = url.getPort();
             if ( targetPort == -1 ) targetPort = 80 ;
-            System.err.println("Routing to: " + targetHost + ":" + targetPort );
+            int index = listener.connections.indexOf( this );
+            listener.tableModel.setValueAt( targetHost, index+1, 
+                                            OUTHOST_COLUMN );
 
             bufferedData = bufferedData.substring( 0, start) +
                            url.getFile() +
@@ -462,7 +471,7 @@ public class tcpmon extends JFrame {
 
         int index = listener.connections.indexOf( this );
         if ( index >= 0 )
-          listener.tableModel.setValueAt( "Done", 1+index, 0 );
+          listener.tableModel.setValueAt( "Done", 1+index, STATE_COLUMN );
       }
       catch( Exception e ) {
         e.printStackTrace();
@@ -578,14 +587,18 @@ public class tcpmon extends JFrame {
       /////////////////////////////////////////////////////////////////////
 
       tableModel = new DefaultTableModel(new String[] {"State",
-                                                       "Host",
-                                                       "Time"}, 
+                                                       "Time",
+                                                       "Request Host",
+                                                       "Target Host"}, 
                                          0 );
 
       connectionTable = new JTable(1,2);
       connectionTable.setModel( tableModel );
       connectionTable.setSelectionMode(ListSelectionModel.
                                           MULTIPLE_INTERVAL_SELECTION);
+      TableColumn col ;
+      col = connectionTable.getColumnModel().getColumn(STATE_COLUMN);
+      col.setMaxWidth( col.getPreferredWidth()/2 );
       
       ListSelectionModel sel = connectionTable.getSelectionModel();
       sel.addListSelectionListener( new ListSelectionListener() {
@@ -634,7 +647,7 @@ public class tcpmon extends JFrame {
           }
           outPane.setDividerLocation(divLoc);
         }} );
-      tableModel.addRow( new Object[] { "---", "Most Recent", "---" } );
+      tableModel.addRow( new Object[] { "---", "Most Recent", "---", "---" } );
 
       JPanel  tablePane = new JPanel();
       tablePane.setLayout( new BorderLayout() );
