@@ -109,8 +109,12 @@ public class ArraySerializer implements Serializer
             throw new IOException(Messages.getMessage("cantDoNullArray00"));
 
         MessageContext msgContext = context.getMessageContext();
-        SchemaVersion schema = msgContext.getSchemaVersion();
-        SOAPConstants soap = msgContext.getSOAPConstants();
+        SchemaVersion schema = SchemaVersion.SCHEMA_2001;
+        SOAPConstants soap = SOAPConstants.SOAP11_CONSTANTS;
+        if(msgContext != null) {
+            schema = msgContext.getSchemaVersion();
+            soap = msgContext.getSOAPConstants();
+        }
 
         Class cls = value.getClass();
         Collection list = null;
@@ -224,7 +228,7 @@ public class ArraySerializer implements Serializer
         // actual schema array or for a maxOccurs usage.
         // For the maxOccurs case, the currentXMLType of the context is
         // the same as the componentQName.
-        boolean maxOccursUsage = !context.getMessageContext().isEncoded() &&
+        boolean maxOccursUsage = (msgContext != null && !msgContext.isEncoded()) &&
                                           componentQName.equals(context.getCurrentXMLType());
 
         if (!maxOccursUsage) {
