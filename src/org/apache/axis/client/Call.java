@@ -147,6 +147,8 @@ public class Call implements javax.xml.rpc.Call {
     // invoke() time
     private Hashtable          myProperties    = null ;
 
+    private boolean            maintainSession = false;
+
 
     // Our Transport, if any
     private Transport          transport       = null ;
@@ -185,6 +187,7 @@ public class Call implements javax.xml.rpc.Call {
     public Call(Service service) {
         this.service = service ;
         msgContext = new MessageContext( service.getEngine() );
+        maintainSession = service.getMaintainSession();
         if ( !initialized ) initialize();
     }
 
@@ -1005,6 +1008,21 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Determine whether we'd like to track sessions or not.  This
+     *
+     * overrides the default setting from the service.
+     *
+     * This just passes through the value into the MessageContext.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param yesno true if session state is desired, false if not.
+     */
+    public void setMaintainSession (boolean yesno) {
+        maintainSession = yesno;
+    }
+
+    /**
      * Obtain a reference to our MessageContext.
      *
      * Note: Not part of JAX-RPC specification.
@@ -1275,8 +1293,7 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.reset();
         msgContext.setResponseMessage(null);
         msgContext.setProperty( MessageContext.CALL, this );
-        msgContext.setMaintainSession(
-                service.getMaintainSession());
+        msgContext.setMaintainSession(maintainSession);
 
         /**
          * Go thru the properties and ones that are Axis specific, and
