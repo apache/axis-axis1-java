@@ -105,16 +105,7 @@ public class SimpleSerializer implements Serializer {
         if (SimpleType.class.isAssignableFrom(javaType)) {
             // get the bean properties and the list of attributes from the bean
             propertyDescriptor = BeanSerializer.getPd(javaType);
-            // Get the class' TypeDesc if it provides one
-            try {
-                Method getTypeDesc =
-                        javaType.getMethod("getTypeDesc",
-                                           new Class [] {});
-                // get string array
-                typeDesc = (TypeDesc)getTypeDesc.invoke(null,
-                                                        BeanSerializer.noArgs);
-            } catch (Exception e) {
-            }
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
         }
     }
     /**

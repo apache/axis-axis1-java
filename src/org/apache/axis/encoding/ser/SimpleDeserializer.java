@@ -124,16 +124,7 @@ public class SimpleDeserializer extends DeserializerImpl {
                 propertyMap.put(descriptor.getName(), descriptor);
             }
 
-            // Get the class' TypeDesc if it provides one
-            try {
-                Method getTypeDesc =
-                        javaType.getMethod("getTypeDesc",
-                                           new Class [] {});
-                // get string array
-                typeDesc = (TypeDesc)getTypeDesc.invoke(null,
-                                                        BeanSerializer.noArgs);
-            } catch (Exception e) {
-            }
+            typeDesc = TypeDesc.getTypeDescForClass(javaType);
         }
         
     }
