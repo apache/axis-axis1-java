@@ -58,8 +58,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeEventListener;
 
-import java.io.Serializable;
-
 /**
  * Note: the only challenge with making this class serializable
  * is that org.apache.axis.MessageContext is currently NOT
@@ -72,36 +70,26 @@ import java.io.Serializable;
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public final class MessageExchangeSendContext
-        implements Serializable {
+        extends MessageExchangeReceiveContext {
 
     public static MessageExchangeSendContext newInstance(
             MessageExchangeCorrelator correlator,
             MessageContext context,
-            MessageExchangeEventListener eventListener) {
+            MessageExchangeEventListener listener) {
         MessageExchangeSendContext mectx =
                 new MessageExchangeSendContext();
         mectx.correlator = correlator;
         mectx.context = context;
-        mectx.eventListener = eventListener;
+        mectx.listener = listener;
         return mectx;
     }
 
-    protected MessageExchangeCorrelator correlator;
-    protected MessageExchangeEventListener eventListener;
     protected MessageContext context;
 
-    protected MessageExchangeSendContext() {
-    }
-
-    public MessageExchangeCorrelator getMessageExchangeCorrelator() {
-        return this.correlator;
-    }
+    protected MessageExchangeSendContext() {}
 
     public MessageContext getMessageContext() {
         return this.context;
     }
 
-    public MessageExchangeEventListener getMessageExchangeEventListener() {
-        return this.eventListener;
-    }    
 }

@@ -121,17 +121,15 @@ public class MessageExchangeImpl
                     MessageExchangeConstants.MESSAGE_CORRELATOR_PROPERTY,
                     correlator);
         }
-        if (listener != null) {
-            provider.processReceive(
-                MessageExchangeReceiveContext.newInstance(
-                    correlator,
-                    listener));
-        }
-        provider.processSend(
+        MessageExchangeSendContext sendContext = 
             MessageExchangeSendContext.newInstance(
                 correlator,
                 context,
-                listener));
+                listener);     
+        if (listener != null) {
+            provider.processReceive(sendContext);
+        }
+        provider.processSend(sendContext);
         if (log.isDebugEnabled()) {
             log.debug("Exit: MessageExchangeImpl::send");
         }
