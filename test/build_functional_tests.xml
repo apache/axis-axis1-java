@@ -190,6 +190,7 @@ Copyright:
       </fileset>
       <fileset dir="${test.dir}/wsdl">
         <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
       </fileset>
       <fileset dir="${test.dir}/wsdl">
         <include name="**/Main.java"/>
