@@ -48,7 +48,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Testing tools.ant"/>
+  <echo message="Testing Tools"/>
 </target>
 
 <target name="run" />
