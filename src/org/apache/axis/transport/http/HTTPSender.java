@@ -64,6 +64,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.NonBlockingBufferedInputStream;
 import org.apache.axis.encoding.Base64 ;
@@ -92,8 +93,13 @@ public class HTTPSender extends BasicHandler {
       byte[]   buf    = new byte[4097];
       int      rc     = 0 ;
         
-        String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
-        if (action == null) action = "";
+      // default SOAPAction to request namespaceURI/method
+      String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
+      if (action == null) {
+        Message rm = msgContext.getRequestMessage();
+        MessageElement body = rm.getAsSOAPEnvelope().getFirstBody();
+        action = body.getNamespaceURI() + "/" + body.getName();
+      }
         
       host = tmpURL.getHost();
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
