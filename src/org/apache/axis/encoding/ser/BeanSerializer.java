@@ -420,6 +420,12 @@ public class BeanSerializer implements Serializer, Serializable {
                             boolean isUnbounded,
                             boolean isOmittable, Element where) throws Exception {
         String elementType = types.writeType(fieldType);
+        if (elementType == null) {
+            // If writeType returns null, then emit an anytype in such situations.
+            QName anyQN = Constants.XSD_ANYTYPE;
+            String prefix = types.getNamespaces().getCreatePrefix(anyQN.getNamespaceURI());
+            elementType = prefix + ":" + anyQN.getLocalPart();
+        }
         Element elem = types.createElement(fieldName,
                                            elementType,
                                            types.isNullable(fieldType),

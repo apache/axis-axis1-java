@@ -146,6 +146,13 @@ public class Types {
     }
 
     /**
+     * Return the namespaces object for the current context
+     */ 
+    public Namespaces getNamespaces() {
+        return namespaces;
+    }
+
+    /**
      * Load the types from the input wsdl file.
      * @param inputWSDL file or URL
      */
@@ -519,7 +526,7 @@ public class Types {
             if (isBeanCompatible(type, true)) {
                 factory = new BeanSerializerFactory(type, qName);
             } else {
-                return null; // Don't return an element name
+                return null;  // Don't return an element name
             }
         }
 
