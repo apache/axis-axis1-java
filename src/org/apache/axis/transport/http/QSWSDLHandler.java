@@ -110,7 +110,7 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
 
             if (doc != null) {
                 response.setContentType ("text/xml");
-                XMLUtils.DocumentToWriter (doc, writer);
+                XMLUtils.PrettyDocumentToWriter (doc, writer);
             }
 
             else {
