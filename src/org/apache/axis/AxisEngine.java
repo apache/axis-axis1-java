@@ -158,8 +158,12 @@ public abstract class AxisEngine extends BasicHandler
             e.printStackTrace();
         }
         
-        String propVal = props.getProperty(PROP_DEBUG_LEVEL, "0");
-        Debug.setDebugLevel(Integer.parseInt(propVal));
+        String propVal;
+        
+        if (!Debug.isLevelSet()) {
+            propVal = props.getProperty(PROP_DEBUG_LEVEL, "0");
+            Debug.setDebugLevel(Integer.parseInt(propVal));
+        }
         
         propVal = props.getProperty(PROP_DEBUG_FILE);
         Debug.setToFile(propVal != null);

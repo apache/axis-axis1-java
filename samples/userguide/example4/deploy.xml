@@ -1,0 +1,12 @@
+<admin:deploy xmlns:admin="AdminService">
+ <!-- define the logging handler configuration -->
+ <handler name="track" class="samples.userguide.example4.LogHandler">
+  <option name="filename" value="MyService.log"/>
+ </handler>
+
+ <!-- define the service, using the log handler we just defined -->
+ <service name="LogTestService" request="track" pivot="RPCDispatcher">
+  <option name="className" value="samples.userguide.example4.Service"/>
+  <option name="methodName" value="*"/>
+ </service>
+</admin:deploy>

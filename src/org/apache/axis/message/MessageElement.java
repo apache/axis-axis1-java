@@ -315,7 +315,7 @@ public class MessageElement
     protected void outputImpl(SerializationContext context) throws Exception
     {
         if (elementRep != null) {
-            outputElement(elementRep, context);
+            context.writeDOMElement(elementRep);
             return;
         }
         
@@ -323,41 +323,6 @@ public class MessageElement
             context.registerPrefixForURI(prefix, namespaceURI);
         
         context.startElement(new QName(namespaceURI, name), attributes);
-        context.endElement();
-    }
-    
-    /** Output a DOM representation to a SerializationContext
-     */
-    protected void outputElement(Element el, SerializationContext context)
-        throws IOException
-    {
-        AttributesImpl attributes = null;
-        NamedNodeMap attrMap = el.getAttributes();
-        
-        if (attrMap.getLength() > 0) {
-            attributes = new AttributesImpl();
-            for (int i = 0; i < attrMap.getLength(); i++) {
-              Attr attr = (Attr)attrMap.item(i);
-                            
-              attributes.addAttribute("", attr.getName(), attr.getName(),
-                                      "CDATA", attr.getValue());
-            }
-        }
-        
-        QName qName = new QName(el.getNamespaceURI(), el.getTagName());
-        
-        context.startElement(qName, attributes);
-        
-        NodeList children = el.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child instanceof Element) {
-                outputElement((Element)child, context);
-            } else if (child instanceof Text) {
-                context.writeString(((Text)child).getData());
-            }
-        }
-        
         context.endElement();
     }
     

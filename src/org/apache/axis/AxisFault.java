@@ -100,13 +100,15 @@ public class AxisFault extends Exception {
         setFaultString( e.toString() );
         
         // need to set details if we were in the body at the time!!
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        PrintStream           ps = new PrintStream( stream );
-        e.printStackTrace(ps);
-        ps.close();
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        e.printStackTrace(printWriter);
+        printWriter.close();
         
-        Element elem = XMLUtils.newDocument().createElement("details");
-        elem.setNodeValue(ps.toString());
+        Document doc = XMLUtils.newDocument();
+        Element elem = doc.createElement("stackTrace");
+        Node textNode = doc.createTextNode(writer.getBuffer().toString());
+        elem.appendChild(textNode);
         
         Element [] details = new Element [] { elem };
         setFaultDetails( details );

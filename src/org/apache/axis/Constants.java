@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.QFault;
+import org.apache.axis.utils.QName;
 
 public class Constants {
     // Some common Constants that should be used in local handler options
@@ -160,6 +161,17 @@ public class Constants {
                                   new QFault(URI_SOAP_ENV, "MustUnderstand");
 
 
+    // QNames
+    //////////////////////////////////////////////////////////////////////////
+    public static final QName QNAME_FAULTCODE = 
+                                         new QName(URI_SOAP_ENV, "faultcode");
+    public static final QName QNAME_FAULTSTRING = 
+                                       new QName(URI_SOAP_ENV, "faultstring");
+    public static final QName QNAME_FAULTACTOR = 
+                                        new QName(URI_SOAP_ENV, "faultactor");
+    public static final QName QNAME_FAULTDETAILS =
+                                         new QName(URI_SOAP_ENV, "details");
+    
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
     public static final String URI_DEBUG = "http://xml.apache.org/axis/debug";

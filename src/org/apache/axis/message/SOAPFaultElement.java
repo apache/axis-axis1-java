@@ -98,32 +98,30 @@ public class SOAPFaultElement extends SOAPBodyElement
             // Do this BEFORE starting the element, so the prefix gets
             // registered if needed.
             String faultCode = context.qName2String(fault.getFaultCode());
-            context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                           "faultcode"),
-                                 null);
+            context.startElement(Constants.QNAME_FAULTCODE, null);
             context.writeSafeString(faultCode);
             context.endElement();
         }
         
         if (fault.getFaultString() != null) {
-            context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                           "faultstring"),
-                                 null);
+            context.startElement(Constants.QNAME_FAULTSTRING, null);
             context.writeSafeString(fault.getFaultString());
             context.endElement();
         }
         
         if (fault.getFaultActor() != null) {
-            context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                           "faultactor"),
-                                 null);
+            context.startElement(Constants.QNAME_FAULTACTOR, null);
             context.writeSafeString(fault.getFaultActor());
             context.endElement();
         }
         
         Element[] faultDetails = fault.getFaultDetails();
         if (faultDetails != null) {
-            //*** TBD ***
+            context.startElement(Constants.QNAME_FAULTDETAILS, null);
+            for (int i = 0; i < faultDetails.length; i++) {
+                context.writeDOMElement(faultDetails[i]);
+            }
+            context.endElement();
         }
         
         context.endElement();

@@ -29,10 +29,6 @@ h1 {  margin-left: -30px}
   <A href="#DeploymentReference">Deployment Reference</a><br>
   <A href="#Glossary">Glossary</a></p>
 <h2><a name="Introduction"></a>Introduction</h2>
-<ul>
-  <li>Bugzilla link</li>
-  <li>ServiceDescription desc.</li>
-</ul>
 <p>Welcome to Axis! This is the <b>alpha 1</b> version, our first publically annouced 
   milestone. Please note that this is a work in progress, and although the basic 
   functionality is there, there are still a lot of unfinished areas and rough 
@@ -51,26 +47,26 @@ h1 {  margin-left: -30px}
   manner. This system is the result of months of continued discussion and coding 
   effort in this direction. Some of the key Axis features include the following:</p>
 <ul>
-  <li> Speed. Axis uses SAX (event-based) parsing to acheive 
-  significantly greater speed than earlier versions of Apache SOAP. 
-  <li>Flexibility. The Axis architecture gives the 
-  developer complete freedom to insert extensions into the engine for custom 
-  header processing, system management, or anything else you can imagine. 
-  <li>Component-oriented deployment. You can easily define 
-  reusable networks of Handlers to implement common patterns of processing for 
-  your applications, or to distribute to partners. 
-  <li>Transport framework. We have a clean and simple 
-  abstraction for designing transports (i.e. senders and listeners for SOAP over 
-  various protocols such as SMTP, FTP, message-oriented middleware, etc), and 
-  the core of the engine is completely transport-independent. 
-  <li>...</li>
+  <li> Speed. Axis uses SAX (event-based) parsing to acheive significantly greater 
+    speed than earlier versions of Apache SOAP. 
+  <li>Flexibility. The Axis architecture gives the developer complete freedom 
+    to insert extensions into the engine for custom header processing, system 
+    management, or anything else you can imagine. 
+  <li>Component-oriented deployment. You can easily define reusable networks of 
+    Handlers to implement common patterns of processing for your applications, 
+    or to distribute to partners. 
+  <li>Transport framework. We have a clean and simple abstraction for designing 
+    transports (i.e. senders and listeners for SOAP over various protocols such 
+    as SMTP, FTP, message-oriented middleware, etc), and the core of the engine 
+    is completely transport-independent. 
 </ul>
 <p>We hope you enjoy using Axis, and please note that this is an open-source effort 
   - if you feel the code could use some new features or fixes, please get involved 
   and lend a hand! The Axis developer community would welcome your participation.</p>
-<p><b>Let us know what you think!</b> Please send feedback about the package to 
-  "<A href="mailto:axis-dev@xml.apache.org">axis-dev@xml.apache.org</a>" 
-</p>
+<h4><b>Let us know what you think!</b></h4>
+<p>Please send feedback about the package to "<A href="mailto:axis-dev@xml.apache.org">axis-dev@xml.apache.org</a>". 
+  Also, Axis is regsitered in <a href="http://nagoya.apache.org/bugzilla">bugzilla</a>, 
+  the Apache bug tracking and feature-request database.</p>
 <h3>What is SOAP?</h3>
 <p>SOAP is an XML<i>-</i>based communitcation protocol and encoding format for 
   inter-application communication. Originally conceived by Microsoft and Userland 
@@ -104,10 +100,11 @@ h1 {  margin-left: -30px}
 <h3>What's missing?</h3>
 <ul>
   <li>Support for the SOAP with Attachments specification 
-  <li>Supprt for multi-dimensional and &quot;sparse&quot; arrays
+  <li>Supprt for multi-dimensional and &quot;sparse&quot; arrays 
   <li>A final deployment descriptor syntax (WSDD)</li>
-  <li>...</li>
+  <li>WSDL tooling</li>
 </ul>
+<p>All of these items are on the list for the final release.</p>
 <h2><a name="Installation"></a>Installing Axis and Using this Guide</h2>
 <p>See the <a href="install.html">Axis Installation Guide</a> for instructions 
   on installing Axis as a webapp on your J2EE server. </p>
@@ -231,7 +228,7 @@ Now when you run the program you'll get a message that looks like this:
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
   &lt;SOAP-ENV:Body&gt;
     &lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"&gt;
-      &lt;result&gt;Hello!&lt;/result&gt;
+      &lt;result&gt;Hello, I'm a string!&lt;/result&gt;
     &lt;/ns1:echoStringResponse&gt;
   &lt;/SOAP-ENV:Body&gt;
 &lt;/SOAP-ENV:Envelope&gt;</div></pre>
@@ -242,7 +239,7 @@ Now when you run the program you'll get a message that looks like this:
   side in Axis:</p>
 <div class="example">
   <pre>  ServiceDescription sd = new ServiceDescription(&quot;name&quot;, true);
-  sd.setOutputType(new QName(Constants.SCHEMA_URI, &quot;string&quot;));
+  sd.setOutputType(new QName(Constants.URI_2001_SCHEMA_XSD, &quot;string&quot;));
   client.setServiceDescription(sd);</pre>
 </div>
 <p>The ServiceDescription constructor takes a name (can be anything) and a boolean 
@@ -250,7 +247,8 @@ Now when you run the program you'll get a message that looks like this:
   it is, so we use &quot;true&quot;. Then we call &quot;setOutputType()&quot;, 
   which tells the ServiceDescription that if the return element is not typed, 
   act as if the return value has an xsi:type attribute set to the QName which 
-  we supply.</p>
+  we supply. (you can see an example of this in action in the interop echo-test 
+  client - samples/echo/TestClient.java)</p>
 <p>OK - so now you know the basics of accessing SOAP services as a client. But 
   how do you publish your own services?</p>
 <h2><a name="PublishingServices"></a>Publishing Web Services with Axis</h2>
@@ -359,10 +357,10 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
  &lt;/handler&gt;
 
  &lt;!-- define the service, using the log handler we just defined --&gt;
- &lt;service name="MyService" <b>request="track"</b> pivot="RPCDispatcher"&gt;
-  &lt;option name="className" value="samples.log.Service"/&gt;
+ &lt;service name="LogTestService" <b>request="track"</b> pivot="RPCDispatcher"&gt;
+  &lt;option name="className" value="samples.userguide.example4.Service"/&gt;
   &lt;option name="methodName" value="*"/&gt;
-&lt;/service&gt;
+ &lt;/service&gt;
 &lt;/admin:deploy&gt;</pre>
 <p>The first section defines a Handler called "track" which is implemented 
   by the class "samples.log.LogHandler". We give this Handler an option 
@@ -502,23 +500,31 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
 <h2>Pre-Configured Axis Components Reference</h2>
 <h3>On the server:</h3>
 <dl> 
-  <dt><b>LogHandler</b>
-  <dd>The LogHandler will simply log a message to a logger 
-  when it gets invoked. 
-  <dt>
-  <dt><b>EchoHandler</b>
-  <dd>The EchoHandler copies the request message into the 
-  response message. 
-  <dt>
-  <dt><b>RPCDispatcher</b>
-  <dd>The RPCDispatcher is the pivot point for all RPC 
-  services. It accepts the following options: 
-  <dt>
-  <dt><b>MsgDispatcher</b>
-  <dd>The MsgDispatcher is the pivot point for all 
-  messaging services. It accepts the following options: 
-  <dt>
-  <dt><b>LocalResponder</b>
+  <dt><b>LogHandler</b> 
+  <dd>The LogHandler will simply log a message to a logger when it gets invoked. 
+  <dt> 
+  <dt><b>EchoHandler</b> 
+  <dd>The EchoHandler copies the request message into the response message. 
+  <dt> 
+  <dt><b>RPCDispatcher</b> 
+  <dd>The RPCDispatcher is the pivot point for all RPC services. It accepts the 
+    following options: <br>
+    <b><i>className</i></b> = the class of the backend object to invoke<br>
+    <b><i>methodName</i></b> = a space-separated list of methods which are exported 
+    as web services. The special value &quot;*&quot; matches all public methods 
+    in the class.
+  <dt> 
+  <dt><b>MsgDispatcher</b> 
+  <dd>The MsgDispatcher is the pivot point for all messaging services. It accepts 
+    the following options: <br>
+  <dd><b><i>className</i></b> = the class of the backend object to invoke<br>
+    <b><i>methodName</i></b> = a space-separated list of methods which are exported 
+    as web services. The special value &quot;*&quot; matches all public methods 
+    in the class. 
+  <dt> 
+  <dt><b></b> 
+  <dt> 
+  <dt><b>LocalResponder</b> 
   <dd>The LocalResponder is a Handler whose job in life is to serialize the response 
     message coming back from a local invocation into a String. It is by default 
     on the server's local transport response chain, and it ensures that serializing 
