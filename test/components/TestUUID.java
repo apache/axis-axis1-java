@@ -26,6 +26,7 @@ package test.components;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.axis.components.uuid.FastUUIDGen;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 
@@ -52,5 +53,19 @@ public class TestUUID extends TestCase {
         }
         endTime = System.currentTimeMillis();
         System.out.println("UUIDGen took " + (endTime - startTime) + " milliseconds");
+    }
+
+    public void testSequence() {
+        String current = null;
+        String prev = null;
+        
+        FastUUIDGen g = new FastUUIDGen();
+        for (int i=0;i<1000;i++) {
+            current = g.nextUUID();
+            if (current.equals(prev)) {
+                fail("same uuid generated: " + current + " " + prev);
+            }
+            prev = current;
+        }
     }
 }
