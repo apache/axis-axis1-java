@@ -120,7 +120,7 @@ public class TestCaseEmitter {
         writer.println(" */");
         writer.print("public class ");
         writer.print(this.className);
-        writer.println(" extends junit.framework.TestCaseTestCase {");
+        writer.println(" extends junit.framework.TestCase {");
 
         writer.print("    public ");
         writer.print(this.className);
@@ -178,7 +178,7 @@ public class TestCaseEmitter {
         Iterator ops = port.getOperations().iterator();
 
         while (ops.hasNext()) {
-            writer.println("        {");
+            writer.println("        try {");
             Operation op = (Operation) ops.next();
             Emitter.Parameters params = this.emitter.parameters(op);
             writer.print(INDENT);
@@ -221,9 +221,12 @@ public class TestCaseEmitter {
 
             if ( !"void".equals(params.returnType) ) {
                 writer.print(INDENT);
-                writer.println("assertTrue(value != null)");
+                writer.println("assertTrue(value != null);");
             }
 
+            writer.println("        } catch (java.rmi.RemoteException re) {");
+            writer.print(INDENT);
+            writer.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re.getMessage());");
             writer.println("        }");
         }
     }
