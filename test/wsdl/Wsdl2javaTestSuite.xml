@@ -113,7 +113,7 @@
                noimports="no"
                verbose="no"
                testcase="no">
-        <mapping namespace="http://www.ibm.com/inout" package="test.inout"/>
+        <mapping namespace="http://www.apache.org/inout" package="test.inout"/>
     </wsdl2java>
 
     <!-- SOAPBuilders Interoperability Lab "Round 1" -->
