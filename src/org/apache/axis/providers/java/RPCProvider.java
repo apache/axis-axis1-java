@@ -72,8 +72,8 @@ public class RPCProvider extends JavaProvider {
     private static final boolean DEBUG_LOG = false;
     
     public void processMessage (MessageContext msgContext,
-                                String clsName,
-                                String methodName,
+                                String serviceUrn,
+                                String allowedMethods,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
                                 JavaClass jc,
@@ -106,11 +106,14 @@ public class RPCProvider extends JavaProvider {
                     }
                 }
             }
-            
-            // methodName may be a comma-delimited string of method names.
+
+			// stays this way if allowedMethods is only one name, not a list
+			String methodNameMatch = allowedMethods; 
+
+            // allowedMethods may be a comma-delimited string of method names.
             // If so, look for the one matching mname.
-            if (methodName != null && methodName.indexOf(' ') != -1) {
-                StringTokenizer tok = new StringTokenizer(methodName, " ");
+            if (allowedMethods != null && allowedMethods.indexOf(' ') != -1) {
+                StringTokenizer tok = new StringTokenizer(allowedMethods, " ");
                 String nextMethodName = null;
                 while (tok.hasMoreElements()) {
                     String token = tok.nextToken();
@@ -124,26 +127,38 @@ public class RPCProvider extends JavaProvider {
                     throw new AxisFault( "AxisServer.error",
                                         "Method names don't match\n" +
                                             "Body method name=" + mName + "\n" +
-                                            "Service method names=" + methodName,
+                                            "Service method names=" + allowedMethods,
                                         null, null );  // should they??
                 }
-                methodName = nextMethodName;
+                methodNameMatch = nextMethodName;
             }
             
-            if ( methodName != null && !methodName.equals(mName) )
+            if ( methodNameMatch != null && !methodNameMatch.equals(mName) )
                 throw new AxisFault( "AxisServer.error",
                                     "Method names don't match\n" +
                                         "Body name=" + mName + "\n" +
-                                        "Service name=" + methodName,
+                                        "Service name=" + methodNameMatch + "\n" +
+                                        "Service nameList=" + allowedMethods,
                                     null, null );  // should they??
             
             Debug.Print( 2, "mName: ", mName );
-            Debug.Print( 2, "MethodName: ", methodName );
-            Method       method = jc.getMethod(mName, args.size());
+            Debug.Print( 2, "MethodNameMatch: ", methodNameMatch );
+            Debug.Print( 2, "MethodName List: ", allowedMethods );
 
-            // if the method wasn't found, try with one more parameter...
-            if ( method == null ) method = jc.getMethod(mName, args.size()+1);
+			///////////////////////////////////////////////////////////////
+			// If allowedMethods (i.e. methodNameMatch) is null, 
+			//  then treat it as a wildcard automatically matching mName
+			///////////////////////////////////////////////////////////////
 
+			int			numberOfBodyArgs = args.size();
+            Method      method = getMethod(jc, mName, args);
+
+            // if the method wasn't found, try again with msgContext as an
+			//   additional, initial argument...
+            if ( method == null ) {
+	              args.add( 0, msgContext );
+	              method = getMethod(jc, mName, args);
+	        }
 
             if ( method == null )
                 throw new AxisFault( "AxisServer.error",
@@ -152,23 +167,19 @@ public class RPCProvider extends JavaProvider {
                                         "Service name=" + msgContext.getTargetService(),
                                     null, null );
             
-            // If method has an additional parameter of the right parameter
-            // type, add MessageContext as the first parameter
-            Class params[] = method.getParameterTypes();
-            if (params.length > args.size()
-              && params[0].equals(msgContext.getClass()))
-            {
-              args.add( 0, msgContext );
-              method = jc.getMethod(mName, args.size());
-              if ( method != null ) {
-                Object[] tmpArgs = new Object[args.size()];
-                for ( int i = 1 ; i < args.size() ; i++ )
-                  tmpArgs[i] = argValues[i-1];
-                tmpArgs[0] = msgContext ;
-                argValues = tmpArgs ;
-              }
-            }
-            
+			Class params[] = method.getParameterTypes();
+			
+			// if we got the version of the method that takes msgContext,
+			//   add msgContext to argValues[] 
+			if ( params.length == numberOfBodyArgs + 1 ) {
+				Object[] tmpArgs = new Object[numberOfBodyArgs + 1];
+				for ( int i = 1 ; i < args.size() ; i++ )
+				  tmpArgs[i] = argValues[i-1];
+				tmpArgs[0] = msgContext ;
+				argValues = tmpArgs ;
+			}
+				  
+			
             /*
             for (int i = 0; i < params.length; i++) {
               String argClass = argValues[i].getClass().getName();
@@ -216,4 +227,9 @@ public class RPCProvider extends JavaProvider {
             resEnv.setEncodingStyleURI(Constants.URI_SOAP_ENC);
         }
     }
+	
+	protected Method getMethod(JavaClass jc, String mName, Vector args)
+	{
+		return jc.getMethod(mName, args.size());
+	}
 }

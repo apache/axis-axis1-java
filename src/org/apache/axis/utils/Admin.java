@@ -765,7 +765,8 @@ public class Admin {
         QName qn;
         
         try {
-            cls = Class.forName(classname);
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            cls = cl.loadClass(classname);
         } catch (Exception e) {
             throw new AxisFault( "Admin.error", e.toString(), null, null);
         }
