@@ -158,7 +158,7 @@ public class MethodCache {
         
         // Check the cache first.
         MethodKey key = new MethodKey(methodName, parameterTypes);
-        methods = (Map) cache.get(className);
+        methods = (Map) cache.get(clazz);
         if (methods != null) {
             Object o = methods.get(key);
             if (o != null) {  // cache hit
@@ -193,7 +193,7 @@ public class MethodCache {
         // first time we've seen this class: set up its method cache
         if (methods == null) {
             methods = new HashMap();
-            cache.put(className, methods);
+            cache.put(clazz, methods);
         }
 
         // when no method is found, cache the NULL_OBJECT
