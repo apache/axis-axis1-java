@@ -65,24 +65,11 @@ public class RPCElement extends SOAPBodyElement
         MessageContext msgContext = context.getMessageContext();
 
         // Obtain our possible operations
-        if (operations == null && msgContext != null) {
-            SOAPService service    = msgContext.getService();
-            if (service != null) {
-                ServiceDesc serviceDesc =
-                        service.getInitializedServiceDesc(msgContext);
-
-                String lc = Utils.xmlNameToJava(name);
-                if (serviceDesc == null) {
-                    throw AxisFault.makeFault(
-                            new ClassNotFoundException(
-                                    Messages.getMessage("noClassForService00",
-                                                         lc)));
-                }
-
-                operations = serviceDesc.getOperationsByName(lc);
-            }
+        if (operations == null) {
+            updateOperations();
+        } else {
+            this.operations = operations;
         }
-        this.operations = operations;
     }
 
     public RPCElement(String namespace, String methodName, Object [] args)
@@ -104,6 +91,38 @@ public class RPCElement extends SOAPBodyElement
     public RPCElement(String methodName)
     {
         this.name = methodName;
+    }
+
+    public void updateOperations() throws AxisFault
+    {
+        if (context == null) {
+            return;
+        }
+
+        MessageContext msgContext = context.getMessageContext();
+
+        if (msgContext == null) {
+            return;
+        }
+
+        // Obtain our possible operations
+        SOAPService service = msgContext.getService();
+        if (service == null) {
+            return;
+        }
+
+        ServiceDesc serviceDesc =
+            service.getInitializedServiceDesc(msgContext);
+
+        String lc = Utils.xmlNameToJava(name);
+        if (serviceDesc == null) {
+            throw AxisFault.makeFault(
+                   new ClassNotFoundException(
+                           Messages.getMessage("noClassForService00",
+                                               lc)));
+        }
+
+        this.operations = serviceDesc.getOperationsByName(lc);
     }
 
     public String getMethodName()
