@@ -159,7 +159,7 @@ public class JavaImplWriter extends JavaWriter {
      * @return " implements <classes>"
      */
     protected String getImplementsText() {
-        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
+        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         String implementsText = " implements " + portTypeName;
         return implementsText;
     }

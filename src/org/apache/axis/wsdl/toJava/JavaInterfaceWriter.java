@@ -91,7 +91,7 @@ public class JavaInterfaceWriter extends JavaWriter {
         this.bEntry = bEntry;
 
         super.className = Utils.getJavaLocalName(
-                (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME));
+                (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME));
         super.fileName = className + ".java";
     } // ctor
 

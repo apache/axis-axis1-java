@@ -111,7 +111,7 @@ public class JavaSkelWriter extends JavaWriter {
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(portType.getQName());
 
-        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
+        String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;
