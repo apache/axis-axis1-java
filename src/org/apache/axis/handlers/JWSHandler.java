@@ -356,7 +356,7 @@ public class JWSHandler extends BasicHandler
                 {
                     String path = urls[i].getPath();
                     //If it is a drive letter, adjust accordingly.
-                    if(path.charAt(0)=='/'&&path.charAt(2)==':')
+                    if(path.length() >= 3 && path.charAt(0)=='/' && path.charAt(2)==':')
                         path = path.substring(1);
                     classpath.append(path);
                     classpath.append(File.pathSeparatorChar);
