@@ -368,5 +368,5 @@
 
 <target name="transport-layer" depends="setenv" >
   <mkdir dir="${test.functional.reportdir}" />
-  <ant antfile="${axis.home}/samples/transport/buildComponent.xml" target="compile" />
+  <ant antfile="${axis.home}/samples/transport/build.xml" target="compile" />
 </target>
