@@ -157,27 +157,27 @@ public class RETURN implements java.io.Serializable {
     static {
         org.apache.axis.description.FieldDesc field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("LOGNO");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "LOG_NO"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "LOG_NO"));
         typeDesc.addFieldDesc(field);
         field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("MESSAGEV4");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "MESSAGE_V4"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "MESSAGE_V4"));
         typeDesc.addFieldDesc(field);
         field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("MESSAGEV3");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "MESSAGE_V3"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "MESSAGE_V3"));
         typeDesc.addFieldDesc(field);
         field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("MESSAGEV2");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "MESSAGE_V2"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "MESSAGE_V2"));
         typeDesc.addFieldDesc(field);
         field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("MESSAGEV1");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "MESSAGE_V1"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "MESSAGE_V1"));
         typeDesc.addFieldDesc(field);
         field = new org.apache.axis.description.ElementDesc();
         field.setFieldName("LOGMSGNO");
-        field.setXmlName(new javax.xml.rpc.namespace.QName("urn:test.encoding", "LOG_MSG_NO"));
+        field.setXmlName(new javax.xml.rpc.namespace.QName("", "LOG_MSG_NO"));
         typeDesc.addFieldDesc(field);
     };
 
