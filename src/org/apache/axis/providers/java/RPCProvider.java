@@ -88,8 +88,10 @@ public class RPCProvider extends JavaProvider {
     {
         category.debug("Enter::RPCProvider.processMessage()");
         Vector          bodies = reqEnv.getBodyElements();
-        category.debug("There are " + bodies.size() + " body elements.");
-        category.debug("body is " + bodies.get(0));
+        if (category.isDebugEnabled()) {
+            category.debug("There are " + bodies.size() + " body elements.");
+            category.debug("body is " + bodies.get(0));
+        }
 
         /* Loop over each entry in the SOAPBody - each one is a different */
         /* RPC call.                                                      */
@@ -148,9 +150,11 @@ public class RPCProvider extends JavaProvider {
                                         "Service nameList=" + allowedMethods,
                                     null, null );  // should they??
             
-            category.debug( "mName: " + mName );
-            category.debug( "MethodNameMatch: " + methodNameMatch );
-            category.debug( "MethodName List: " + allowedMethods );
+            if (category.isDebugEnabled()) {
+                category.debug( "mName: " + mName );
+                category.debug( "MethodNameMatch: " + methodNameMatch );
+                category.debug( "MethodName List: " + allowedMethods );
+            }
 
 			///////////////////////////////////////////////////////////////
 			// If allowedMethods (i.e. methodNameMatch) is null, 
@@ -221,7 +225,8 @@ public class RPCProvider extends JavaProvider {
               }
             }
 
-            category.debug("Got result: " + objRes);
+            if (category.isDebugEnabled())
+                category.debug("Got result: " + objRes);
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/
