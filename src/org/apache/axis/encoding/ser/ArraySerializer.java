@@ -235,6 +235,19 @@ public class ArraySerializer implements Serializer {
             }
 
             // Force type to be SOAP_ARRAY for all array serialization.
+            //
+            // There are two choices here:
+            // Force the type to type=SOAP_ARRAY
+            //   Pros:  More interop test successes.                  
+            //   Cons:  Since we have specific type information it 
+            //          is more correct to use it.  Plus the specific
+            //          type information may be important on the 
+            //          server side to disambiguate overloaded operations.
+            // Use the specific type information:
+            //   Pros:  The specific type information is more correct
+            //          and may be useful for operation overloading.
+            //   Cons:  More interop test failures (as of 2/6/2002).
+            //
             int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                        "type");
             if (typeI != -1) {
@@ -248,7 +261,6 @@ public class ArraySerializer implements Serializer {
                                    "CDATA",
                                    context.qName2String(Constants.SOAP_ARRAY));
             }
-            
             attributes = attrs;
         }
 
