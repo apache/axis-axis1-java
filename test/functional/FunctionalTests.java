@@ -12,17 +12,15 @@ public class FunctionalTests extends TestCase
     public FunctionalTests(String name)
     {
         super(name);
-System.out.println("Creating FunctionalTests(name)");
     }
 
     public static Test suite() throws Exception
     {
-System.out.println("Creating FunctionalTests suite.");
         TestSuite suite = new TestSuite();
 
-        // misc (echo) test
-        // BROKEN AS OF RIGHT NOW, 11:26 PST 20010531 -- RobJ
-        // suite.addTestSuite(TestMiscSample.class);
+        // Echo test - end to end serialization and deserialization / 
+        // interop tests.
+        suite.addTestSuite(TestEchoSample.class);
         
         // stock sample test
         // run this BEFORE ALL OTHER TESTS to minimize confusion;
