@@ -9,7 +9,8 @@
  <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
 			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
-  <service name="http://soapinterop.org/" provider="java:RPC" >
+  <service name="echo" provider="java:RPC" >
+    <namespace>http://soapinterop.org/</namespace>
     <parameter name="className" value="samples.echo.EchoService" />
     <parameter name="allowedMethods" value="*" />
     <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStructStruct"

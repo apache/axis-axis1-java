@@ -233,6 +233,17 @@ public class FileProvider implements EngineConfiguration {
     }
 
     /**
+     * Get a service which has been mapped to a particular namespace
+     * 
+     * @param namespace a namespace URI
+     * @return an instance of the appropriate Service, or null
+     */
+    public Handler getServiceByNamespaceURI(String namespace)
+            throws ConfigurationException {
+        return deployment.getServiceByNamespaceURI(namespace);
+    }
+
+    /**
      * retrieve an instance of the named transport
      * @param qname XXX
      * @return XXX

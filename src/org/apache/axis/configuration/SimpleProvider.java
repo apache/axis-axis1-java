@@ -208,6 +208,20 @@ public class SimpleProvider implements EngineConfiguration
         return service;
     }
 
+    /**
+     * Get a service which has been mapped to a particular namespace
+     * 
+     * @param namespace a namespace URI
+     * @return an instance of the appropriate Service, or null
+     */
+    public Handler getServiceByNamespaceURI(String namespace)
+            throws ConfigurationException {
+        Handler service = (Handler)services.get(new QName("",namespace));
+        if ((service == null) && (defaultConfiguration != null))
+            service = defaultConfiguration.getServiceByNamespaceURI(namespace);
+        return service;
+    }
+
     public Handler getHandler(QName qname) throws ConfigurationException {
         Handler handler = (Handler)handlers.get(qname);
         if ((defaultConfiguration != null) && (handler == null))

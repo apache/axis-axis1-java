@@ -201,9 +201,9 @@ public class WSDDChain
     }
 
     public void deployToRegistry(WSDDDeployment registry)
-            throws WSDDException {
+    {
         if (getQName() != null)
-            registry.deployHandler(this);
+            registry.addHandler(this);
         
         for (int n = 0; n < handlers.size(); n++) {
             WSDDHandler handler = (WSDDHandler)handlers.get(n);

@@ -120,7 +120,7 @@ public class WSDDHandler
     }
 
     public void deployToRegistry(WSDDDeployment deployment)
-            throws WSDDException {
-        deployment.deployHandler(this);
+    {
+        deployment.addHandler(this);
     }
 }
