@@ -295,13 +295,13 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
-            throw new IllegalArgumentException(
+            throw new JAXRPCException(
                     JavaUtils.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
         else if (name.equals(USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
@@ -309,7 +309,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(PASSWORD_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
@@ -317,7 +317,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
@@ -327,7 +327,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(OPERATION_STYLE_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
@@ -335,7 +335,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.Boolean",
@@ -345,7 +345,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(SOAPACTION_URI_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
@@ -355,7 +355,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
@@ -365,7 +365,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[]
                         {name,
                         "java.lang.String",
@@ -375,7 +375,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if ( name.equals(TRANSPORT_NAME) ) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
@@ -385,19 +385,19 @@ public class Call implements javax.xml.rpc.Call {
         }
         else if ( name.equals(ATTACHMENT_ENCAPSULATION_FORMAT) ) {
             if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
             if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) && 
                !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
-                throw new IllegalArgumentException(
+                throw new JAXRPCException(
                         JavaUtils.getMessage("badattachmenttypeerr", new String[] {
                         (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
                         +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
         }
-        else {
-            throw new IllegalArgumentException(
+        else if (name.startsWith("java.") || name.startsWith("javax.")) {
+            throw new JAXRPCException(
                     JavaUtils.getMessage("badProp05", name));
         }
         callProperties.put(name, value);
@@ -407,13 +407,14 @@ public class Call implements javax.xml.rpc.Call {
      * Returns the value associated with the named property
      *
      * @return Object value of the property or null if the property is not set
-     * @throws IllegalArgumentException if the requested property is not a supported property
+     * @throws JAXRPCException if the requested property is not a supported property
      */
     public Object getProperty(String name) {
-        if (name == null || !isPropertySupported(name))
-            throw new IllegalArgumentException(name == null ?
+        if (name == null || !isPropertySupported(name)) {
+            throw new JAXRPCException(name == null ?
                   JavaUtils.getMessage("badProp03") :
                   JavaUtils.getMessage("badProp05", name));
+        }
         return callProperties.get(name);
     } // getProperty
 
@@ -423,13 +424,17 @@ public class Call implements javax.xml.rpc.Call {
       * @param name name of the property to remove
       */
      public void removeProperty(String name) {
-         if ( name == null || callProperties == null ) return ;
-         callProperties.remove( name );
+         if (name == null || !isPropertySupported(name)) {
+            throw new JAXRPCException(name == null ?
+                  JavaUtils.getMessage("badProp03") :
+                  JavaUtils.getMessage("badProp05", name));
+         }
+         callProperties.remove(name);
      } // removeProperty
 
     public void setScopedProperty(String name, Object value) {
         if (name == null || value == null) {
-            throw new IllegalArgumentException(
+            throw new JAXRPCException(
                     JavaUtils.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
@@ -470,7 +475,8 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     public boolean isPropertySupported(String name) {
-        return propertyNames.contains(name);
+        return propertyNames.contains(name) || !name.startsWith("java.")
+               || !name.startsWith("javax.");
     }
 
     /**
