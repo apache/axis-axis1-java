@@ -66,6 +66,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Properties;
 
 /**
@@ -131,11 +132,19 @@ public class FileProvider implements ConfigurationProvider
         myInputStream = null;
     }
 
+    /**
+     * Save the engine configuration.  In case there's a problem, we
+     * write it to a string before saving it out to the actual file so
+     * we don't screw up the file.
+     */ 
     public void writeEngineConfig(AxisEngine engine) throws Exception
     {
         Document doc = Admin.listConfig(engine);
+        StringWriter writer = new StringWriter();
+        XMLUtils.DocumentToWriter(doc, writer);
+        writer.close();
         FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
-        XMLUtils.DocumentToStream(doc, fos);
+        fos.write(writer.getBuffer().toString().getBytes());
         fos.close();
     }
 }
