@@ -61,6 +61,7 @@ import org.apache.axis.utils.Messages;
 
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.MimeHeaders;
 import java.util.Iterator;
 
 /**
@@ -118,6 +119,11 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
                     call.addAttachmentPart(attachment);
                 }
             }
+            
+            String soapActionURI = checkForSOAPActionHeader(request);
+            if (soapActionURI != null)
+                call.setSOAPActionURI(soapActionURI);
+            
             call.setTimeout(timeout);
             call.setReturnClass(SOAPMessage.class);
             call.invoke(env);
@@ -131,6 +137,23 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
         }
     }
 
+    /** 
+     * Checks whether the request has an associated SOAPAction MIME header
+     * and returns its value.
+     * @param request the message to check
+     * @return the value of any associated SOAPAction MIME header or null
+     * if there is no such header.
+     */
+    private String checkForSOAPActionHeader(SOAPMessage request) {
+        MimeHeaders hdrs = request.getMimeHeaders();
+        if (hdrs != null) {
+            String[] saHdrs = hdrs.getHeader("SOAPAction");
+            if (saHdrs != null && saHdrs.length > 0)
+                return saHdrs[0];
+        }
+        return null;
+    }    
+    
     /**
      * Closes this <CODE>SOAPConnection</CODE> object.
      * @throws  SOAPException if there is a SOAP error
