@@ -54,7 +54,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdlgen;
+package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
