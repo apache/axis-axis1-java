@@ -369,7 +369,7 @@ public class ServiceClient {
      */
     public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
     {
-        msgContext.clearProperties();
+        msgContext.reset();
         msgContext.setRequestMessage(new Message(env));
         invoke();
         return msgContext.getResponseMessage().getAsSOAPEnvelope();
