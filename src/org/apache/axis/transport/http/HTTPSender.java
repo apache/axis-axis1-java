@@ -673,8 +673,13 @@ public class HTTPSender extends BasicHandler {
                 : contentLength.trim();
 
         String transferEncoding =
-                ((String) headers
-                .get(HTTPConstants.HEADER_TRANSFER_ENCODING)).toLowerCase();
+                (String) headers
+                .get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+
+        if (null != transferEncoding) {
+            transferEncoding = transferEncoding.toLowerCase();
+        }
+
         if (null != transferEncoding
                 && transferEncoding.trim()
                 .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
