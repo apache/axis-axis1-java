@@ -88,9 +88,8 @@ import java.util.Stack;
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
  *
- * WARNING : HIGHLY PRELIMINARY!!!
- *
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class SerializationContext
 {
@@ -147,6 +146,11 @@ public class SerializationContext
     private boolean sendXSIType = true;
 
     /**
+     * Should I send any xsi attributes?
+     */
+    private boolean sendXSI = true;
+
+    /**
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
@@ -194,9 +198,10 @@ public class SerializationContext
                 sendXSIType = false ;
             
             Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
-            if ((opt != null) && (opt.equals(Boolean.FALSE)))
+            if ((opt != null) && (opt.equals(Boolean.FALSE))) {
+                sendXSI = false;
                 sendXSIType = false;
-            
+            }
         }
     }
     
@@ -221,6 +226,13 @@ public class SerializationContext
      */ 
     public boolean shouldSendXSIType() {
         return sendXSIType;
+    }
+
+    /**
+     * Set whether or not to write any xsi attributes
+     */ 
+    public boolean shouldSendXSI() {
+        return sendXSI;
     }
 
     /**
@@ -344,8 +356,10 @@ public class SerializationContext
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null)
                 attrs.setAttributes(attributes);
-            attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
-                               "CDATA", "true");
+            if (sendXSI) {
+                attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                                   "CDATA", "true");
+            }
             startElement(qName, attrs);
             endElement();
         }
