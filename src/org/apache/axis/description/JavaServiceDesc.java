@@ -1167,7 +1167,18 @@ public class JavaServiceDesc implements ServiceDesc {
             // For other styles, continue here.
             Class retClass = method.getReturnType();
             operation.setReturnClass(retClass);
-            operation.setReturnType(tm.getTypeQName(method.getReturnType()));
+            QName typeQName = null;
+            if (style == Style.RPC) {
+                typeQName = tm.getTypeQName(retClass);
+            } else {
+                typeQName = tm.getTypeQNameExact(retClass);
+                if (typeQName == null && retClass.isArray()) {
+                    typeQName = tm.getTypeQName(retClass.getComponentType());
+                } else {
+                    typeQName = tm.getTypeQName(retClass);
+                }
+            }
+            operation.setReturnType(typeQName);
 
             String [] paramNames = getParamNames(method);
 

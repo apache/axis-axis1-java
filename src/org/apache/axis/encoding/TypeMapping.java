@@ -116,6 +116,16 @@ public interface TypeMapping
      * @return xmlType qname or null
      */
     public QName getTypeQName(Class javaType);
+    
+    /**
+     * Get the QName for this Java class, but only return a specific
+     * mapping if there is one.  In other words, don't do special array
+     * processing, etc.
+     * 
+     * @param javaType
+     * @return
+     */ 
+    public QName getTypeQNameExact(Class javaType);
 
     /**
      * Gets the Class mapped to QName.
