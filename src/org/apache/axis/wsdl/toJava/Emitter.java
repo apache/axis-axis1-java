@@ -142,7 +142,7 @@ public class Emitter {
      */
     public void emit(String context, Document doc) throws IOException, WSDLException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        reader.setVerbose(bVerbose);
+        reader.setFeature("verbose", bVerbose);
         def = reader.readWSDL(context, doc);
         this.doc = doc;
         namespaces = new Namespaces(outputDir);

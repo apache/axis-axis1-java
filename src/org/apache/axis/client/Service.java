@@ -211,7 +211,7 @@ public class Service implements javax.xml.rpc.Service {
             // Start by reading in the WSDL using WSDL4J
             WSDLReader           reader = WSDLFactory.newInstance()
                                                      .newWSDLReader();
-            reader.setVerbose( false );
+            reader.setFeature("verbose", false);
             Definition           def    = reader.readWSDL( null, doc );
 
             this.wsdlLocation   = null ;
