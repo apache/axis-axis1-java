@@ -1631,6 +1631,9 @@ public class Call implements javax.xml.rpc.Call {
         if (SOAPActionURI != null) {
             msgContext.setSOAPActionURI(SOAPActionURI);
         }
+        if (timeout != null) {
+            msgContext.setTimeout(timeout.intValue());
+        }
         msgContext.setEncodingStyle(encodingStyle);
 
         /**

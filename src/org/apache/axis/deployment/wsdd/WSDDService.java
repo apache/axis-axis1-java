@@ -86,10 +86,11 @@ public class WSDDService
 {
     public static final QName elMapQName = new QName("", "elementMapping");
     public TypeMappingRegistry tmr = null;
-    
+
     private Vector faultFlows = new Vector();
     private Vector typeMappings = new Vector();
-    
+    private Vector operations = new Vector();
+
     /** Which namespaces should auto-dispatch to this service? */
     private Vector namespaces = new Vector();
 
@@ -97,25 +98,25 @@ public class WSDDService
     private HashMap qName2MethodMap = null;
 
     private String descriptionURL;
-    
+
     /** Style - document or RPC (the default) */
     private int style = SOAPService.STYLE_RPC;
 
     private SOAPService cachedService = null;
-    
+
     /**
      * Our provider - used to figure out which Handler we use as a service
      * pivot (see getInstance() below)
-     */ 
+     */
     private QName providerQName;
 
     /**
      * Default constructor
-     */ 
+     */
     public WSDDService()
     {
     }
-    
+
     /**
      *
      * @param e (Element) XXX
@@ -125,21 +126,27 @@ public class WSDDService
         throws WSDDException
     {
         super(e);
-        
+
+        Element [] operationElements = getChildElements(e, "operation");
+        for (int i = 0; i < operationElements.length; i++) {
+            WSDDOperation operation = new WSDDOperation(operationElements[i]);
+            operations.add(operation);
+        }
+
         Element [] typeMappingElements = getChildElements(e, "typeMapping");
         for (int i = 0; i < typeMappingElements.length; i++) {
             WSDDTypeMapping mapping =
                     new WSDDTypeMapping(typeMappingElements[i]);
             typeMappings.add(mapping);
         }
-        
+
         Element [] beanMappingElements = getChildElements(e, "beanMapping");
         for (int i = 0; i < beanMappingElements.length; i++) {
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
             typeMappings.add(mapping);
         }
-        
+
         Element [] namespaceElements = getChildElements(e, "namespace");
         for (int i = 0; i < namespaceElements.length; i++) {
             // Register a namespace for this service
@@ -150,7 +157,7 @@ public class WSDDService
         String typeStr = e.getAttribute("provider");
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
-        
+
         String modeStr = e.getAttribute("style");
         if (modeStr != null && modeStr.equals("document")) {
             style = SOAPService.STYLE_DOCUMENT;
@@ -173,22 +180,22 @@ public class WSDDService
 
     /**
      * Add a WSDDTypeMapping to the Service.
-     * @param mapping 
+     * @param mapping
      **/
     public void addTypeMapping(WSDDTypeMapping mapping) {
         typeMappings.add(mapping);
     }
-   
+
 
     protected QName getElementName()
     {
         return WSDDConstants.SERVICE_QNAME;
     }
-    
+
     /**
      * Get any service description URL which might be associated with this
      * service.
-     * 
+     *
      * @return a String containing a URL, or null.
      */
     public String getServiceDescriptionURL()
@@ -198,7 +205,7 @@ public class WSDDService
 
     /**
      * Set the service description URL for this service.
-     * 
+     *
      * @param sdUrl a String containing a URL
      */
     public void setServiceDescriptionURL(String sdUrl)
@@ -216,14 +223,14 @@ public class WSDDService
 
     /**
      * Get the service style - document or RPC
-     */ 
+     */
     public int getStyle() {
         return style;
     }
 
     /**
      * Set the service style - document or RPC
-     */ 
+     */
     public void setStyle(int style) {
         this.style = style;
     }
@@ -238,12 +245,12 @@ public class WSDDService
         faultFlows.toArray(t);
         return t;
     }
-    
+
     /**
      * Obtain the list of namespaces registered for this service
      * @return a Vector of namespaces (Strings) which should dispatch to
      *         this service
-     */ 
+     */
     public Vector getNamespaces()
     {
         return namespaces;
@@ -279,10 +286,10 @@ public class WSDDService
         if (cachedService != null) {
             return cachedService;
         }
-        
+
         Handler reqHandler = null;
         WSDDChain request = getRequestFlow();
- 
+
         if (request != null) {
             reqHandler = request.getInstance(registry);
         }
@@ -308,7 +315,7 @@ public class WSDDService
         if (response != null) {
             respHandler = response.getInstance(registry);
         }
-  
+
         SOAPService service = new SOAPService(reqHandler, providerHandler,
                                               respHandler);
         service.setStyle(style);
@@ -340,6 +347,12 @@ public class WSDDService
 
         service.setElementMap(qName2MethodMap);
 
+        for (Iterator i = operations.iterator(); i.hasNext();) {
+            WSDDOperation operation = (WSDDOperation) i.next();
+            service.addOperationDesc(operation.getName(),
+                                     operation.getOperationDesc());
+        }
+
         cachedService = service;
         return service;
     }
@@ -370,28 +383,28 @@ public class WSDDService
                 tm.setSupportedNamespaces(new String[] {encodingStyle});
                 tmr.register(encodingStyle, tm);
             }
-            
+
             SerializerFactory   ser   = null;
             DeserializerFactory deser = null;
-            
+
             // Try to construct a serializerFactory by introspecting for the
             // following:
             // public static create(Class javaType, QName xmlType)
             // public <constructor>(Class javaType, QName xmlType)
             // public <constructor>()
-            // 
-            // The BaseSerializerFactory createFactory() method is a utility 
+            //
+            // The BaseSerializerFactory createFactory() method is a utility
             // that does this for us.
             if (mapping.getSerializerName() != null &&
                 !mapping.getSerializerName().equals("")) {
-                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(), 
+                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
                                                           mapping.getLanguageSpecificType(),
                                                           mapping.getQName());
             }
-            
+
             if (mapping.getDeserializerName() != null &&
                 !mapping.getDeserializerName().equals("")) {
-                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(), 
+                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(),
                                                           mapping.getLanguageSpecificType(),
                                                           mapping.getQName());
             }
@@ -421,8 +434,13 @@ public class WSDDService
         if (style == SOAPService.STYLE_DOCUMENT) {
             attrs.addAttribute("", "style", "style", "CDATA", "document");
         }
-        
+
         context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
+
+        for (int i = 0; i < operations.size(); i++) {
+            WSDDOperation operation = (WSDDOperation) operations.elementAt(i);
+            operation.writeToContext(context);
+        }
         writeFlowsToContext(context);
         writeParamsToContext(context);
 
@@ -449,7 +467,7 @@ public class WSDDService
         for (int i=0; i < typeMappings.size(); i++) {
             ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
         }
-        
+
         for (int i=0; i < namespaces.size(); i++ ) {
             context.startElement(new QName("", "namespace"), null);
             context.writeString((String)namespaces.get(i));
@@ -458,7 +476,7 @@ public class WSDDService
 
         context.endElement();
     }
-    
+
     public void setCachedService(SOAPService service)
     {
         cachedService = service;
@@ -467,19 +485,19 @@ public class WSDDService
     public void deployToRegistry(WSDDDeployment registry)
     {
         registry.addService(this);
-        
+
         // Register the name of the service as a valid namespace, just for
         // backwards compatibility
         registry.registerNamespaceForService(getQName().getLocalPart(), this);
-        
+
         for (int i = 0; i < namespaces.size(); i++) {
             String namespace = (String) namespaces.elementAt(i);
-            registry.registerNamespaceForService(namespace, this);            
+            registry.registerNamespaceForService(namespace, this);
         }
-        
+
         super.deployToRegistry(registry);
     }
-    
+
     public void removeNamespaceMappings(WSDDDeployment registry)
     {
         for (int i = 0; i < namespaces.size(); i++) {

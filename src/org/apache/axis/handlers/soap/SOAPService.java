@@ -62,6 +62,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.Serializer;
@@ -122,6 +123,22 @@ public class SOAPService extends SimpleTargetedChain
      * not in wrapped mode.
      */
     private HashMap qName2MethodMap = null;
+
+    private HashMap method2OperationMap = null;
+
+    public void addOperationDesc(String method, OperationDesc operation)
+    {
+        if (method2OperationMap == null)
+            method2OperationMap = new HashMap();
+        method2OperationMap.put(method, operation);
+    }
+
+    public OperationDesc getOperationDescByName(String methodName)
+    {
+        if (method2OperationMap == null)
+            return null;
+        return (OperationDesc)method2OperationMap.get(methodName);
+    }
 
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before

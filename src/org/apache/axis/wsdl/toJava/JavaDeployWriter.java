@@ -60,6 +60,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -189,13 +190,33 @@ public class JavaDeployWriter extends JavaWriter {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = true;
+        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
         boolean hasLiteral = bEntry.hasLiteral();
 
         String prefix = Constants.NSPREFIX_WSDD_JAVA;
         pw.println("  <service name=\"" + serviceName
                 + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG")
-                + "\"" + (hasLiteral ? " style=\"document\"" : "") +  ">");
+                + "\"" + (hasLiteral ? " style=\"literal\"" : "") + ">");
+
+        List operations = binding.getBindingOperations();
+        for (Iterator i = operations.iterator(); i.hasNext();) {
+            BindingOperation bOperation = (BindingOperation) i.next();
+            Operation operation = bOperation.getOperation();
+            // We pass "" as the namespace argument because we're just
+            // interested in the return type for now.
+            Parameters params =
+                    symbolTable.getOperationParameters(operation, "", bEntry);
+            if (params.returnType instanceof DefinedElement) {
+                QName returnQName = params.returnType.getQName();
+                pw.print("      <operation name=\"" + operation.getName() +
+                         "\" returnQName=\"retNS:" +
+                         returnQName.getLocalPart() +
+                         "\" xmlns:retNS=\"" +
+                         returnQName.getNamespaceURI() +
+                         "\"");
+                pw.println("/>");
+            }
+        }
 
         writeDeployBinding(binding);
         writeDeployTypes(hasLiteral);
