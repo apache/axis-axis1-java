@@ -79,6 +79,13 @@ import org.apache.axis.transport.http.HTTPConstants;
  */
 
 public class AdminClient {
+
+    // Temporary home until we find something better.
+    static {
+        // System.out.println("Registering URL stream handler factory.");
+        URL.setURLStreamHandlerFactory(Transport.getURLStreamHandlerFactory());
+    }
+
     public static void main(String args[]) {
         try {
             new AdminClient().doAdmin(args);
@@ -94,8 +101,6 @@ public class AdminClient {
     public void doAdmin (String[] args)
         throws Exception
     {
-        org.apache.axis.AxisEngine.staticInit();
-        
         Options opts = new Options( args );
         
         Debug.setDebugLevel( opts.isFlagSet('d') );

@@ -108,16 +108,6 @@ public abstract class AxisEngine extends BasicHandler
     private Session session = new SimpleSession();
     
     /**
-     * Initialize static stuff - this is kind of kludgey here.  Probably
-     * wants to live somewhere more reasonable. ???
-     * 
-     */
-    public static void staticInit() {
-        // System.out.println("Registering URL stream handler factory.");
-        URL.setURLStreamHandlerFactory(Transport.getURLStreamHandlerFactory());
-    }
-    
-    /**
      * No-arg constructor.  Loads properties from the "axis.properties"
      * file if it exists.
      *
