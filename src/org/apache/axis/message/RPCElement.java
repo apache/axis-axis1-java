@@ -248,7 +248,7 @@ public class RPCElement extends SOAPBodyElement
         boolean isRPC = true;
         if (msgContext != null) {
             if ((msgContext.getOperationStyle() != SOAPService.STYLE_RPC) &&
-                ! msgContext.isPropertyTrue("wrapit"))
+                ! msgContext.isPropertyTrue("wrapped"))
                 isRPC = false;
         }
 
