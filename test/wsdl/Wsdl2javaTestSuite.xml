@@ -982,6 +982,25 @@
                testcase="no">
     </wsdl2java>
 
+    <wsdl2java url="test/wsdl/jaxrpchandler/jaxrpchandler.wsdl"
+               output="build/work"
+               serverSide="no"
+               testcase="no">
+    </wsdl2java>
+    <!-- Copy modified files to work directory -->
+    <copy todir="${build.dir}/work/test/wsdl/jaxrpchandler" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/jaxrpchandler">
+        <include name="*.java"/>
+        <include name="*.wsdd"/>
+      </fileset>
+    </copy>
+    <!-- Compile Java -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="test/wsdl/jaxprchandler/**.java" />
+    </javac>
+
+
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 

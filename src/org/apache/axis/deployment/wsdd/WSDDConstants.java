@@ -155,6 +155,7 @@ public class WSDDConstants
     public static final QName QNAME_JAXRPC_HANDLERINFO = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_HANDLERINFO);
     public static final QName QNAME_JAXRPC_HANDLERINFOCHAIN = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_CHAIN);
     public static final QName QNAME_JAXRPC_HEADER = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_HEADER);
+    public static final QName QNAME_JAXRPC_ROLE = new QName(URI_WSDD,ELEM_WSDD_JAXRPC_ROLE);
 
     public static final String ATTR_LANG_SPEC_TYPE = "languageSpecificType";
     public static final String ATTR_QNAME = "qname";

@@ -73,8 +73,8 @@ public class HandlerInfoChainFactory {
         this.handlerInfos = handlerInfos;
     }
 
-    public HandlerInfo getHandlerInfo(int index) {
-        return (HandlerInfo) handlerInfos.get(index);
+    public List getHandlerInfos() {
+        return this.handlerInfos;
     }
 
     public HandlerChain createHandlerChain() {
