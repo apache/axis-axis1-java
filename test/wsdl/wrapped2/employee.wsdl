@@ -1,0 +1,167 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.sun.com/JSR172UseCases" xmlns:xsd1="http://www.sun.com/JSR172AppendixA.xsd" targetNamespace="http://www.sun.com/JSR172UseCases" name="JSR172AppendixA">
+	<types>
+		<xsd:schema elementFormDefault="qualified" targetNamespace="http://www.sun.com/JSR172AppendixA.xsd" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://www.sun.com/JSR172AppendixA.xsd">
+			<xsd:complexType name="NameType">
+				<xsd:sequence>
+					<xsd:element name="firstName" type="xsd:string"/>
+					<xsd:element name="lastName" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="NameArrayType">
+				<xsd:sequence>
+					<xsd:element name="Name" maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd1:NameType"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="EmployeeType">
+				<xsd:sequence>
+					<xsd:element name="empName" type="xsd1:NameType"/>
+					<xsd:element name="empID" type="xsd:int"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="EmployeeArrayType">
+				<xsd:sequence>
+					<xsd:element name="Employee" maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd1:EmployeeType"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="EmployeeArray" type="xsd1:EmployeeArrayType"/>
+			<xsd:element name="getEmployeeCount" type="xsd:int"/>
+			<xsd:element name="addGroups">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="group" maxOccurs="unbounded" minOccurs="1" nillable="true" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="isManager" type="xsd1:NameType"/>
+			<xsd:element name="promoteEmployee" type="xsd1:EmployeeType"/>
+			<xsd:element name="getEmployees" type="xsd1:NameArrayType"/>
+			<xsd:element name="scheduleMtg" type="xsd1:EmployeeArrayType"/>
+			<xsd:element name="EmpCount" type="xsd:int"/>
+			<xsd:element name="RetVal" type="xsd:boolean"/>
+		</xsd:schema>
+	</types>
+	<message name="getEmployeeCountReq">
+		<part name="EmpCountReq" element="xsd1:getEmployeeCount"/>
+	</message>
+	<message name="getEmployeeCountRes">
+		<part name="EmpCountRes" element="xsd1:EmpCount"/>
+	</message>
+	<message name="addGroupsReq">
+		<part name="AddGroupReq" element="xsd1:addGroups"/>
+	</message>
+	<message name="addGroupsRes">
+		<part name="AddGroupRes" element="xsd1:RetVal"/>
+	</message>
+	<message name="isManagerReq">
+		<part name="ManagerReq" element="xsd1:isManager"/>
+	</message>
+	<message name="isManagerRes">
+		<part name="ManagerRes" element="xsd1:RetVal"/>
+	</message>
+	<message name="promoteEmployeeReq">
+		<part name="promoteReq" element="xsd1:promoteEmployee"/>
+	</message>
+	<message name="promoteEmployeeRes">
+		<part name="promoteRes" element="xsd1:RetVal"/>
+	</message>
+	<message name="getEmployeesReq">
+		<part name="employeesReq" element="xsd1:getEmployees"/>
+	</message>
+	<message name="getEmployeesRes">
+		<part name="employeesRes" element="xsd1:EmployeeArray"/>
+	</message>
+	<message name="scheduleMtgReq">
+		<part name="scheduleReq" element="xsd1:scheduleMtg"/>
+	</message>
+	<message name="scheduleMtgRes">
+		<part name="scheduleRes" element="xsd1:RetVal"/>
+	</message>
+	<portType name="EmployeeDBPort">
+		<operation name="getEmployeeCount">
+			<input message="tns:getEmployeeCountReq"/>
+			<output message="tns:getEmployeeCountRes"/>
+		</operation>
+		<operation name="addGroups">
+			<input message="tns:addGroupsReq"/>
+			<output message="tns:addGroupsRes"/>
+		</operation>
+		<operation name="isManager">
+			<input message="tns:isManagerReq"/>
+			<output message="tns:isManagerRes"/>
+		</operation>
+		<operation name="promoteEmployee">
+			<input message="tns:promoteEmployeeReq"/>
+			<output message="tns:promoteEmployeeRes"/>
+		</operation>
+		<operation name="getEmployees">
+			<input message="tns:getEmployeesReq"/>
+			<output message="tns:getEmployeesRes"/>
+		</operation>
+		<operation name="scheduleMtg">
+			<input message="tns:scheduleMtgReq"/>
+			<output message="tns:scheduleMtgRes"/>
+		</operation>
+	</portType>
+	<binding name="EmployeeDBBinding" type="tns:EmployeeDBPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="getEmployeeCount">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/getEmployeeCount"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="addGroups">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/addGroups"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="isManager">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/isManager"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="promoteEmployee">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/promoteEmployee"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="getEmployees">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/getEmployees"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="scheduleMtg">
+			<soap:operation soapAction="http://www.sun.com/JSR172UseCases/scheduleMtg"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="EmployeeDatabase">
+		<port name="EmployeeDatabase" binding="tns:EmployeeDBBinding">
+			<soap:address location="http://localhost:8080/axis/services/EmployeeDatabase"/>
+		</port>
+	</service>
+</definitions>
