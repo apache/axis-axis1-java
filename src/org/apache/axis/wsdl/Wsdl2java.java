@@ -76,6 +76,7 @@ public class Wsdl2java {
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
     protected static final int TEST_OPT = 't';
+    protected static final int NOIMPORTS_OPT = 'n';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -118,7 +119,11 @@ public class Wsdl2java {
         new CLOptionDescriptor("testCase",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 TEST_OPT,
-                "emit junit testcase class for web service")
+                "emit junit testcase class for web service"),
+        new CLOptionDescriptor("noImports",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                NOIMPORTS_OPT,
+                "only generate code for the immediate WSDL document")
     };
 
     /**
@@ -205,9 +210,14 @@ public class Wsdl2java {
                             System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
                         }
                         break;
+
                     case TEST_OPT:
                         bTestClass = true;
                         emitter.generateTestCase(true);
+                        break;
+
+                    case NOIMPORTS_OPT:
+                        emitter.generateImports(false);
                         break;
                 }
             }
