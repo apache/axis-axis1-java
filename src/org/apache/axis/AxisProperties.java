@@ -55,26 +55,21 @@
 
 package org.apache.axis;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.commons.discovery.DiscoverClass;
-import org.apache.commons.discovery.DiscoveryException;
-import org.apache.commons.discovery.base.Environment;
-import org.apache.commons.discovery.base.SPInterface;
-import org.apache.commons.discovery.base.ImplClass;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.discovery.tools.DefaultClassHolder;
+import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
-
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import org.apache.commons.discovery.tools.PropertiesHolder;
+import org.apache.commons.discovery.tools.SPInterface;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
-import org.apache.axis.utils.JavaUtils;
 
 
 /**
@@ -110,40 +105,25 @@ import org.apache.axis.utils.JavaUtils;
 public class AxisProperties {
     protected static Log log =
         LogFactory.getLog(AxisProperties.class.getName());
-
-    public static Environment getDiscoverEnvironment() {
-        return new Environment(getCommonsGroupContext());
-    }
     
     public static Object newInstance(Class spiClass, String defaultClass)
     {
-        return newInstance(new SPInterface(spiClass), defaultClass);
+        return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
     }
     
     public static Object newInstance(Class spiClass, Class defaultClass)
     {
-        return newInstance(new SPInterface(spiClass), defaultClass);
+        return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
     }
-
+    
     public static Object newInstance(SPInterface spi, String defaultClass)
     {
-        return newInstance(spi, spi.createImplClass(defaultClass));
+        return newInstance(spi, new DefaultClassHolder(defaultClass));
     }
-
+    
     public static Object newInstance(SPInterface spi, Class defaultClass)
     {
-        return newInstance(spi, spi.createImplClass(defaultClass));
-    }
-    
-
-    private static String commonsGroupContext = null;
-    
-    public static void setCommonsGroupContext(String groupContext) {
-        commonsGroupContext  = groupContext;
-    }
-    
-    public static String getCommonsGroupContext() {
-        return commonsGroupContext ;
+        return newInstance(spi, new DefaultClassHolder(defaultClass));
     }
         
     /**
@@ -251,15 +231,15 @@ public class AxisProperties {
      * where we can reasonably rearchitect for security.
      */
     private static final Object newInstance(final SPInterface spi,
-                                            final ImplClass defaultClass)
+                                            final DefaultClassHolder defaultClass)
     {
         return AccessController.doPrivileged(
             new PrivilegedAction() {
                 public Object run() {
                     try {
-                        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                        return DiscoverClass.newInstance(null,
                                                          spi,
-                                                         (String)null,
+                                                         (PropertiesHolder)null,
                                                          defaultClass);
                     } catch (Exception e) {
                         log.error(JavaUtils.getMessage("exception00"), e);

@@ -61,7 +61,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.tools.SPInterface;
 
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;

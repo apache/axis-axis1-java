@@ -59,7 +59,7 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
-import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.tools.SPInterface;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
