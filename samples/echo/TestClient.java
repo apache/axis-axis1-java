@@ -57,6 +57,7 @@ package samples.echo ;
 
 import java.lang.reflect.Array;
 import java.util.Date;
+import java.math.BigDecimal;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
@@ -171,6 +172,8 @@ public abstract class TestClient {
           new SOAPStruct(3, "three", 3.3F)});
         test("Void", null);
         test("Date", new Date());
+        test("Decimal", new BigDecimal("3.14159"));
+        test("Boolean", Boolean.TRUE);
     }
 
     /**

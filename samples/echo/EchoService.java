@@ -56,6 +56,7 @@
 package samples.echo ;
 
 import java.util.*;
+import java.math.BigDecimal;
 
 /**
  * Test implementation of the echo interop service.  Original description of
@@ -145,6 +146,20 @@ public class EchoService {
      * This method accepts a Date/Time and echoes it back to the client.
      */
     public Date echoDate(Date input) {
+        return input;
+    }
+
+    /**
+     * This method accepts a boolean and echoes it back to the client.
+     */
+    public BigDecimal echoDecimal(BigDecimal input) {
+        return input;
+    }
+
+    /**
+     * This method accepts a boolean and echoes it back to the client.
+     */
+    public boolean echoBoolean(boolean input) {
         return input;
     }
 }
