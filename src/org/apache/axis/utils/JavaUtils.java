@@ -71,7 +71,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
@@ -224,6 +226,11 @@ public class JavaUtils
         // Convert between Calendar and Date
         if (arg instanceof Calendar && destClass == Date.class) {
             return ((Calendar) arg).getTime();
+        }
+
+        // Convert between HashMap and Hashtable
+        if (arg instanceof HashMap && destClass == Hashtable.class) {
+            return new Hashtable((HashMap)arg);
         }
 
 
@@ -405,6 +412,9 @@ public class JavaUtils
                 (src == byte[].class && dest == Hex.class))
                 return true;
             
+            // Allow mapping of HashMaps to Hasttables
+            if (src == HashMap.class && dest == Hashtable.class)
+                return true;
         }
         
         Class destHeld = JavaUtils.getHolderValueType(dest);
