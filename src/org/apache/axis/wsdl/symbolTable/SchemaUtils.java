@@ -1149,10 +1149,12 @@ public class SchemaUtils {
     /**
      * Determine if a string is a simple XML Schema type 
      */ 
-    public static boolean isSimpleSchemaType(String s) {
+    private static boolean isSimpleSchemaType(String s) {
         if (s == null)
             return false;
         
+        // This is rather expensive.  Probably should be
+        // a hash lookup.  
         for (int i = 0; i < schemaTypes.length; i++) {
             if (schemaTypes[i].equals(s))
                 return true;
