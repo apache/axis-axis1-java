@@ -104,9 +104,10 @@ public class URLHashSet extends HashSet {
      */
     public static URL normalize(URL url) {
         if (url.getProtocol().equals("file")) {
-            File f = new File(cleanup(url.toString().substring(5)));// 5 == "file:".length()
             try {
-                return f.toURL();
+                File f = new File(cleanup(url.getFile()));
+                if(f.exists())
+                    return f.toURL();
             } catch (Exception e) {}
         }
         return url;
