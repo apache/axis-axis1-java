@@ -74,8 +74,9 @@ public class JavaHolderWriter extends JavaWriter {
                 emitter,
                 new QName(
                         type.getQName().getNamespaceURI(),
-                        Utils.xmlNameToJavaClass(type.getQName().getLocalPart())),
-                "Holder",
+                        Utils.holder(type,emitter.getSymbolTable()).substring(
+                        Utils.holder(type,emitter.getSymbolTable()).lastIndexOf('.')+1)),
+                null,
                 "java",
                 JavaUtils.getMessage("genHolder00"), "holder");
         this.type = type;
