@@ -71,7 +71,7 @@ public class DispatchHandler implements Handler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In DispatchHandler");
 
-    Document  doc = msgContext.getIncomingMessage().getAsDOMDocument();
+    Document  doc = (Document) msgContext.getIncomingMessage().getAs("Document");
     Message msg = new Message( doc, "Document" );
     msgContext.setOutgoingMessage( msg );
 
