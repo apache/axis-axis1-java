@@ -183,8 +183,13 @@ public class SerializationContext
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
 
             // Only turn this off is the user tells us to
-            if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ) )
+            if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ))
                 sendXSIType = false ;
+            
+            Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
+            if ((opt != null) && (opt.equals(Boolean.FALSE)))
+                sendXSIType = false;
+            
         }
     }
     
