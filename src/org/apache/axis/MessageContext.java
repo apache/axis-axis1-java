@@ -598,7 +598,7 @@ public class MessageContext implements SOAPMessageContext {
         return( serviceHandler );
     }
 
-    public void setService(SOAPService sh)
+    public void setService(SOAPService sh) throws AxisFault
     {
         log.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;
@@ -619,18 +619,16 @@ public class MessageContext implements SOAPMessageContext {
             // new service.
             highFidelity = service.needsHighFidelityRecording();
 
-            ServiceDesc sd = null;
-            try {
-                sd = service.getInitializedServiceDesc();
-            } catch (AxisFault axisFault) {
-                // FIXME
-            }
+            ServiceDesc sd = service.getInitializedServiceDesc();
 
             if (service.getStyle() == Style.MESSAGE) {
                 // There should be only one operation
                 List ops = sd.getOperations();
                 if (ops.size() != 1) {
-                    // ERROR
+                    throw new AxisFault(
+                            JavaUtils.getMessage("onlyOneMessageOp",
+                                                 targetService,
+                                                 ""+ops.size()));
                 }
                 this.currentOperation = (OperationDesc)ops.get(0);
             }
