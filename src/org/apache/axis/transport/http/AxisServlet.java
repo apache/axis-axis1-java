@@ -109,19 +109,7 @@ public class AxisServlet extends HttpServlet {
     /*******************************************************************/
     MessageContext    msgContext = new MessageContext();
     InputStream       inp        = req.getInputStream();
-    //Message         msg        = new Message( inp, "InputStream" );
-
-    /**********************************************************/
-    /* BEGIN TEMP HACK: stream may not be fully available yet */
-    int expectedLength = req.getContentLength();
-    byte buf[] = new byte[expectedLength];
-    InputStream is = req.getInputStream();
-    is.read(buf, 0, expectedLength);
-    ByteArrayInputStream bais =
-      new ByteArrayInputStream(buf, 0, expectedLength);
-    Message msg = new Message( bais, "InputStream" );
-    /* END TEMP HACK: stream may not be fully available yet */
-    /**********************************************************/
+    Message         msg        = new Message( inp, "InputStream" );
 
     /* Set the request(incoming) message field in the context */
     /**********************************************************/
