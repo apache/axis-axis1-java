@@ -56,8 +56,10 @@
 package org.apache.axis;
 
 import java.io.*;
+import java.net.URL;
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.client.Transport;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.handlers.soap.* ;
@@ -65,6 +67,11 @@ import org.apache.axis.registries.* ;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.encoding.*;
+
+/** Temporary - this will be replaced by deployment
+ */
+import org.apache.axis.client.http.HTTPTransport;
+import org.apache.axis.client.tcp.TCPTransport;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -89,6 +96,10 @@ public abstract class AxisEngine extends BasicHandler
     
     protected Properties props = new Properties();
     
+    /** A map of protocol names to "client" (sender) transports
+     */
+    protected Hashtable protocolSenders = new Hashtable();
+    
     /**
      * This engine's Session.  This Session supports "application scope"
      * in the Apache SOAP sense... if you have a service with "application
@@ -96,6 +107,15 @@ public abstract class AxisEngine extends BasicHandler
      */
     private Session session = new SimpleSession();
     
+    /**
+     * Initialize static stuff - this is kind of kludgey here.  Probably
+     * wants to live somewhere more reasonable. ???
+     * 
+     */
+    public static void staticInit() {
+        // System.out.println("Registering URL stream handler factory.");
+        URL.setURLStreamHandlerFactory(Transport.getURLStreamHandlerFactory());
+    }
     
     /**
      * No-arg constructor.  Loads properties from the "axis.properties"
@@ -115,6 +135,20 @@ public abstract class AxisEngine extends BasicHandler
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        /** Load default transports
+         * 
+         * (these will be shared - really should be a factory, but
+         *  we need to go over the architecture / patterns here
+         *  anyway, so this is a quick P.O.C. for now)
+         */
+        protocolSenders.put("http", new HTTPTransport());
+        protocolSenders.put("tcp", new TCPTransport());
+        
+        // Once we've got a LocalTransport class...
+        //
+        //protocolSenders.put("local", new LocalTransport());
+        
         Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
     }
     
@@ -213,6 +247,16 @@ public abstract class AxisEngine extends BasicHandler
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return _typeMappingRegistry;
+    }
+    
+    public Transport getTransportForProtocol(String protocol)
+        throws Exception
+    {
+        Transport transport = (Transport)protocolSenders.get(protocol);
+        if (transport == null)
+            throw new Exception("Couldn't find Transport for protocol '" +
+                                    protocol + "'");
+        return transport;
     }
     
     /*********************************************************************

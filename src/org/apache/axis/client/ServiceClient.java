@@ -56,6 +56,7 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
+import java.net.*;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.*;
 import org.apache.axis.handlers.* ;
@@ -111,7 +112,6 @@ public class ServiceClient {
     // Our Transport, if any
     private Transport transport;
     
-    
     /**
      * Construct a ServiceClient with no properties.
      * Set it up yourself!
@@ -123,10 +123,33 @@ public class ServiceClient {
     }
     
     /**
+     * Construct a ServiceClient with a given endpoint URL
+     */
+    public ServiceClient(String endpointURL)
+    {
+        this();
+        
+        try {
+            URL url = new URL(endpointURL);          
+            String protocol = url.getProtocol();
+            setTransport(engine.getTransportForProtocol(protocol));
+            set(MessageContext.TRANS_URL, endpointURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
      * Construct a ServiceClient with the given Transport.
      */
     public ServiceClient (Transport transport) {
         this();
+        setTransport(transport);
+    }
+    
+    public void setTransport(Transport transport) {
         this.transport = transport;
         
         // set up the message context with the transport

@@ -56,12 +56,39 @@
 package org.apache.axis.client;
 
 import java.util.* ;
+import java.net.*;
+import java.io.IOException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Handler;
 
 public abstract class Transport {
+    static class AxisURLHandler extends URLStreamHandler {
+        /** This is just for parsing purposes, so don't really open any
+         * connections.  At some point we may actually want to do something
+         * here...
+         */
+        public URLConnection openConnection(URL url) throws IOException
+        {
+            return null;
+        }
+    }
+    
+    static class AxisURLStreamHandlerFactory implements URLStreamHandlerFactory {
+        public URLStreamHandler createURLStreamHandler(String protocol)
+        {
+            // For now, just accept anything.  Later we might want to
+            // generate MalformedURLExceptions for non-supported protocols.
+            return new AxisURLHandler();
+        }
+    }
+    
+    public static URLStreamHandlerFactory getURLStreamHandlerFactory()
+    {
+        return new AxisURLStreamHandlerFactory();
+    }
+    
     /**
      * Synonyms for MessageContext userid / password.
      */
