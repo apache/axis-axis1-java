@@ -133,6 +133,9 @@ public class SOAPEnvelope
             handler.parseToEnd();
         }
         
+        if (bodyElements.isEmpty())
+            return null;
+        
         return (SOAPBodyElement)bodyElements.elementAt(0);
     }
     

@@ -93,8 +93,6 @@ public class ArraySerializer extends DeserializerBase
     {
         super.startElement(namespace, localName, qName, attributes);
         
-        System.out.println("In Array.startElement");
-
         QName arrayTypeValue = context.getQNameFromString(
                  attributes.getValue(Constants.URI_SOAP_ENC,
                                      Constants.ATTR_ARRAY_TYPE));
@@ -164,9 +162,6 @@ public class ArraySerializer extends DeserializerBase
                              String qName, Attributes attributes)
         throws SAXException
     {
-        // Array element
-        System.out.println("In array element...");
-        
         // !!! Check position attribute, type attribute....
         QName itemType = context.getTypeFromAttributes(attributes);
         

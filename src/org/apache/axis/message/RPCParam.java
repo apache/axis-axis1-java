@@ -83,8 +83,6 @@ public class RPCParam extends MessageElement
     {
         super(namespace, localName, attrs, context);
         name = localName;
-        
-        typeQName = context.getTypeFromAttributes(attrs);
     }
     
     /** Constructor for building up messages.
@@ -119,8 +117,52 @@ public class RPCParam extends MessageElement
         return super.getEnvelope();
     }
     
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes)
+        throws SAXException
+    {
+        if (DEBUG_LOG) {
+            System.err.println("Start element in RPCParam.");
+        }
+        typeQName = context.getTypeFromAttributes(attributes);
+        if (typeQName == null) {
+            // No type inline, so check service description.
+            ServiceDescription serviceDesc = context.getServiceDescription();
+            if (serviceDesc != null) {
+                setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
+                                                             name));
+            }
+        } else {
+            /** !!! If we have a service description and this is an
+            * explicitly-typed param, we might want to check here to
+            * see if the xsi:type val is indeed a subtype of the type
+            * we expect from the service description.
+            */
+        }
+        
+        DeserializerBase dSer = getContentHandler(context);
+        
+        context.getSAXHandler().replaceElementHandler(dSer);
+        
+        dSer.startElement(namespace,localName,qName,attributes);
+    }
+    
     public DeserializerBase getContentHandler(DeserializationContext context)
     {
+        // !!! Does this check want to live here?
+        if (typeQName == null) {
+            QName myQName = new QName(namespaceURI, name);
+            if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
+                typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
+            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
+                typeQName = SOAPTypeMappingRegistry.XSD_INT;
+            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
+                typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
+            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
+                typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
+            }
+        }
+
         // Look up type and return an appropriate deserializer
         if (typeQName != null) {
             deserializer = context.getDeserializer(typeQName);

@@ -209,35 +209,6 @@ public class DeserializerBase extends DefaultHandler
                              String qName, Attributes attributes)
         throws SAXException
     {
-        String href = attributes.getValue("href");
-        if (href != null) {
-            if (DEBUG_LOG) {
-                System.err.println("looking for href " + href);
-            }
-            
-            MessageElement target = context.getElementByID(href.substring(1));
-            if (target != null) {
-                if (DEBUG_LOG)
-                    System.out.println("found target " + target);
-                
-                DeserializerBase rec = target.getContentHandler();
-                if (rec == null)
-                    throw new SAXException("No handler in target element?");
-                
-                if (rec instanceof ElementRecorder) {
-                    ((ElementRecorder)rec).publishChildrenToHandler(context.getSAXHandler());
-                } else {
-                    this.value = rec.value;
-                }
-                
-                // Might want to somehow write deserialized version
-                // back to the IDmapping table...
-                
-                return;
-            }
-            
-            context.addFixupHandler(href.substring(1), this);
-        }
     }
     
     public void endElement(String namespace, String localName,

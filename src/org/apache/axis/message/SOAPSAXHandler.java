@@ -131,7 +131,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             if ((serviceDesc != null) && (!serviceDesc.isRPC())) {
                 return new SOAPBodyElement(namespace, localName, attributes, context);
             }
-            
+
             return RPCElement.getFactory().createElement(namespace,
                                                          localName,
                                                          attributes,
@@ -333,6 +333,15 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         }
     }
     
+    /** This is so RPCParams can replace themselves on the handler stack
+     * without pushing.  Allows deserialization of multi-refs to work
+     * correctly.
+     */
+    public void replaceElementHandler(DeserializerBase newHandler)
+    {
+        elementHandler = newHandler;
+    }
+    
     /****************************************************************
      * SAX event handlers
      */
@@ -391,6 +400,44 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         if (elementHandler != null) elementHandler.skippedEntity(p1);
     }
 
+    public boolean needsStartElement(Attributes attributes)
+        throws SAXException
+    {
+        String href = attributes.getValue(Constants.ATTR_HREF);
+        if (href != null) {
+            if (DEBUG_LOG) {
+                System.err.println("looking for href " + href);
+            }
+            
+            MessageElement target = context.getElementByID(href.substring(1));
+            if (target != null) {
+                if (DEBUG_LOG)
+                    System.out.println("found target " + target);
+                
+                DeserializerBase rec = target.getContentHandler();
+                if (rec == null)
+                    throw new SAXException("No handler in target element?");
+                
+                if (rec instanceof ElementRecorder) {
+                    ((ElementRecorder)rec).publishToHandler(context.getSAXHandler());
+                } else {
+                    System.out.println("Setting value to " + rec.getValue());
+                    elementHandler.setValue(rec.getValue());
+                }
+                
+                // Might want to somehow write deserialized version
+                // back to the IDmapping table...
+                
+                return false;
+            }
+            
+            context.addFixupHandler(href.substring(1), elementHandler);
+            return false;
+        }
+
+        return true;
+    }
+    
     /** This is a big workhorse.  Manage the state of the parser, check for
      * basic SOAP compliance (envelope, then optional header, then body, etc).
      * 
@@ -415,8 +462,10 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             // push another handler onto the element stack.
             elementHandler.onStartChild(namespace, localName, qName, attributes);
             
-            // This may, therefore, refer to a different handler than the last line.
-            elementHandler.startElement(namespace, localName, qName, attributes);
+            if (needsStartElement(attributes)) {
+                // This may, therefore, refer to a different handler than the last one.
+                elementHandler.startElement(namespace, localName, qName, attributes);
+            }
             
             recordingDepth++;
             
@@ -506,7 +555,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             default:
                 throw new SAXException("In unknown parsing state!");
             }
-            
+
             // Let the event stream run until the end of this element,
             // sending the events to an appropriate handler.
             if (element != null) {
@@ -536,7 +585,9 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 pushElementHandler(handler);
 
                 elementHandler.setDeserializationContext(context);
-                elementHandler.startElement(namespace, localName, qName, attributes);
+                
+                if (needsStartElement(attributes))
+                    elementHandler.startElement(namespace, localName, qName, attributes);
             }
         } catch (SAXException saxEx) {
             throw saxEx;

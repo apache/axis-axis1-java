@@ -144,25 +144,8 @@ public class RPCElement extends SOAPBodyElement
         RPCParam param = new RPCParam(namespace, name, attributes, context);
         
         params.addElement(param);
-        if (param.getType() == null) {
-            // No type inline, so check service description.
-            ServiceDescription serviceDesc = context.getServiceDescription();
-            if (serviceDesc != null) {
-                param.setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
-                                                             param.getName()));
-            }
-        } else {
-            /** !!! If we have a service description and this is an
-            * explicitly-typed param, we might want to check here to
-            * see if the xsi:type val is indeed a subtype of the type
-            * we expect from the service description.
-            */
-            
-        }
         
-        DeserializerBase handler = param.getContentHandler(context);
-        
-        context.pushElementHandler(handler);
+        context.pushElementHandler(param);
     }
 
     public void output(SerializationContext context)
