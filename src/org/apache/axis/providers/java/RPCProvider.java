@@ -333,14 +333,7 @@ public class RPCProvider extends JavaProvider
                 if (msgContext.getSOAPConstants() ==
                         SOAPConstants.SOAP12_CONSTANTS)
                 {
-                    RPCParam result = new RPCParam
-                      (Constants.QNAME_RPC_RESULT, returnQName.getLocalPart());
-                    if (!operation.isReturnHeader()) {
-                        resBody.addParam(result);
-                    } else {
-                        resEnv.addHeader(new RPCHeaderParam(result));
-                    }
-
+                    returnQName = Constants.QNAME_RPC_RESULT;
                 }
 
                 RPCParam param = new RPCParam(returnQName, objRes);

@@ -419,6 +419,10 @@ public class SOAPEnvelope extends MessageElement
         return soapConstants;
     }
 
+    public void setSoapConstants(SOAPConstants soapConstants) {
+        this.soapConstants = soapConstants;
+    }
+
     // JAXM methods
 
     public javax.xml.soap.SOAPBody addBody() throws SOAPException {
