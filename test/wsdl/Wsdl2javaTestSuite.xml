@@ -285,14 +285,14 @@
     </wsdl2java>
 
     <!-- WSDL fault generation test -->
-    <wsdl2java url="test/faults/wsdl/FaultService.wsdl"
+    <wsdl2java url="test/wsdl/faults/FaultService.wsdl"
                output="build/work"
                testcase="yes"
                deployscope="none"
                skeleton="yes"
                verbose="no"
                noimports="no">
-        <mapping namespace="http://test.com/wsdl/faults" package="test.faults.wsdl"/>
+        <mapping namespace="http://test.com/wsdl/faults" package="test.wsdl.faults"/>
     </wsdl2java>
 
     <!-- UDDI 1.0 WSDL's -->

@@ -5,7 +5,7 @@
  * by the Apache Axis Wsdl2java emitter.
  */
 
-package test.faults.wsdl;
+package test.wsdl.faults;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Assert;
@@ -23,7 +23,7 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
     }
     
     public void testFaultService() {
-        test.faults.wsdl.FaultServicePortType binding = new FaultService().getFaultService();
+        test.wsdl.faults.FaultServicePortType binding = new FaultService().getFaultService();
         assertTrue("binding is null", binding != null);
         String symbol = new String("MACR");
         try {
