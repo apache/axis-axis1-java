@@ -62,6 +62,13 @@ writing code to provide functionality to calling programs. If that
 functionality is offered to the wrong people, or if the code you wrote
 creates a security hole, "unexpected functionality", then you have a
 problem. 
+<p>
+
+There is a large body of literature which covers securing web sites, such 
+as the 
+<A href="http://www.owasp.org/">Open Web Application Security Project</A>
+Top Ten List of vulnerabilities, and their Guide to Building Secure Web
+Applications.   
 
 <h3>Special XML attacks</h3>
 XML messages have a few intrinsic weakness, that Web Service creators
@@ -69,13 +76,15 @@ should know about. None of these problems are unique to SOAP; anyone
 processing incoming XML needs to know and resist these. 
 
 <ol>
-<li>The 'billion laughs' attack. Have a client post an XML doc of
+<li>Large XML Docukents<br>. Have a client post an XML doc of
 extreme length/depth
 <tt>&lt;ha&gt;&lt;ha&gt;&lt;ha&gt;....&lt;/ha&gt;&lt;/ha&gt;&lt;/ha&gt;</tt>.
 This does bad things to DOM parsers and memory consumption on the
-server: a DoS attack.
+server: a DoS attack. The issue here is that the costs of handling a
+large XML document are much greater than the cost of generating one. 
 
-<li>entity expansion attacks. If an XML doc header declares some
+<li>Entity Expansion Attacks.<be>
+If an XML doc header declares some
 recursive entity declarations, and the file refers to them, then bad
 things happen. Axis became immune to this between versions 1.0 and 1.1.
 
@@ -89,7 +98,7 @@ messages, you may recreate this problem.
 
 The other thing to know about XML is that string matching is not
 enough to be sure that the content is safe, because of the many ways to
-reformat the XML. 
+reformat the same XML. 
 
 <h2>Authenticating the caller</h2>
 
@@ -128,19 +137,17 @@ authentication is literally off-axis when it comes to SOAP calls, the
 UserPrincipal notion and integration with server configuration gives
 some incentive for integration. (this is a hint to developers out there)
 
-<h2> Automate Security Tests</h2>
+<p>
 
-If you find a security problem, write a test for it, such as a JUnit or
-HttpUnit test, so that you can regression test the application and
-installations for the problem. This is particularly important where it
-is a configuration problem that creates the hole; it is almost
-inevitable the same problem will re-occur on future installations.
+Axis does not (yet) support HTTP1.1 Digest Authentication; if it does get added
+it will be via the 
+<a href="http://jakarta.apache.org/commons/httpclient/">HttpClient</a>
 
 
 <h2>Securing your Services</h2>
 
 One of the key security holes in any Web Service is the code you write
-yourself. It wont have as many eyes examining it as the Axis source
+yourself. It won't have as many eyes examining it as the Axis source
 gets, deadlines get in the way of rigorous testing, and a complex web
 service will bind to the valued items: private data, databases, other
 servers, etc, that you want to defend against. 
@@ -174,6 +181,47 @@ ties up the CPUs. Authenticate before long requests, and consider
 watchdog threads to track really long execution times. If any bug causes
 a request to spin forever. 
 
+<h3>Parameter Attacks</h3>
+
+If any parameter in the XML is fed straight into a database query, or
+some other routine that depends on valid data, then that data
+<i>must</i> be validated. Otherwise someone malicious could send a
+database update request, or some other string which lets a malicious
+user manipulate the system. This could even be as simple as changing
+their UserID in a request from that they set up in the session. Database
+attacks come from any situation where a parameter is inserted into an
+SQL query; the insertion of a semicolon ";" often permits the caller to
+append a whole new SQL command to the end of the first, and have it
+executed with the rights of the Web Service.
+
+<p>
+
+The key to defending against malicious parameters is to validate all
+data. Only accept a string containing only the characters/regular
+expression expected, and check its length. Better yet apply any other
+higher level checks 'userID==session.userID' that you can. Prepared
+Statements are the followon way of defending against SQL injection, as the
+JDBC runtime handles escaping of things. Dont try and build SQL strings
+by hand; it is a recipe for security holes. 
+
+<p>
+Note that this would seem to argue strongly against mapping Session EJB
+objects to SOAP Endpoints. This is not the case. The Session bean must
+merely assume that all incoming data is untrusted, and so validate it
+all before processing further. This is exactly the kind of task a
+<i>Service Layer</i> should be doing.
+ 
+<h3>Cross Site Scripting</h3>
+
+In theory, a pure Web Service should be immune to XSS attacks, at least
+those that rely on having uploaded script displayed in an HTML Web Page
+server-side, script that is executed when the client views it. But the
+moment one takes Axis and integrates with one's own webapplication, any
+loopholes in the rest of the webapp expose this exact problem. We don't
+think Axis itself is vulnerable, because although it may include
+supplied data in a SOAPFault, this is displayed as XML, not HTML.
+Clients which don't distinguish the two could be an issue, as could
+anything we missed, especially in GET handling.  
 
 <h2>Securing Axis</h2>
 
@@ -183,7 +231,9 @@ A core philosophy is 'defend in depth', with monitoring for trouble.
 
 One tactic here is to hide the fact that you are running Axis...look at
 all the headers that we send back to describe the service, and if any
-identify Axis, edit that constant in the source
+identify Axis, edit that constant in the source. While obscurity on its
+own is inadequate; it can slow down attacks or make you seem less
+vulnerable to known holes.  
 
 <h3>Cut down the build</h3>
 
@@ -209,7 +259,8 @@ To do this, set the Axis global configuration property
 
 <h3>Keep stack traces out of the responses </h3>
 
-By default, Axis ships in <i>production</i> mode; if you set
+By default, Axis ships in <i>production</i> mode; stack traces do not
+get sent back to the caller. If you set
 <tt>axis.development.system</tt> to true in the configuration, stack
 traces get sent over the wire in faults. This exposes internal
 information about the implementation that may be used in finding
@@ -269,6 +320,12 @@ anyone sends a SOAP message to it. You then need a policy to act on the
 alerts, of course. A real honeypot would emulate an entire back end
 service -it would be an interesting little experiment to build and play
 with. 
+
+<h3>Monitor the Mailing Lists</h3>
+
+We tend to discuss security on Axis-Dev, whenever it is an issue, but if
+demand is high we may add an axis-announce mailing list for important
+announcements.
  
 <h2>What to do if you find a security hole in Axis</h2>
 
@@ -299,7 +356,16 @@ from the finder, just stops people panicing.
 
 </ol>
 
-<h3>Conclusions</h3>
+<h2> Automate Security Tests</h2>
+
+If you find a security problem, write a test for it, such as a JUnit or
+HttpUnit test, so that you can regression test the application and
+installations for the problem. This is particularly important where it
+is a configuration problem that creates the hole; it is almost
+inevitable the same problem will re-occur on future installations.
+
+
+<h2>Conclusions</h2>
 
 We have shown some of the issues with Web Service security, things
 you need to think of in your own service, and how to harden Axis itself.
