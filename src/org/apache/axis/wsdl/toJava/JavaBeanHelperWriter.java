@@ -60,6 +60,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
 
 import org.apache.axis.utils.Messages;
 
@@ -236,10 +237,12 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i += 2) {
+                    TypeEntry te = (TypeEntry) attributes.get(i);
                     QName attrName = (QName) attributes.get(i + 1);
                     String attrLocalName = attrName.getLocalPart();
                     String fieldName = Utils.xmlNameToJava(attrLocalName);
                     fieldName = getAsFieldName(fieldName);
+                    QName attrXmlType = te.getQName();
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -247,10 +250,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     pw.println("field = new org.apache.axis.description.AttributeDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.print("        field.setXmlName(");
-                    pw.print("new javax.xml.namespace.QName(\"");
-                    pw.print(attrName.getNamespaceURI() +  "\", \"");
-                    pw.println(attrName.getLocalPart() + "\"));");
+                    pw.println("        field.setXmlName(" + Utils.getNewQName(attrName) + ");");
+                    if (attrXmlType != null) {
+                        pw.println("        field.setXmlType(" + Utils.getNewQName(attrXmlType) + ");");
+                    }
                     pw.println("        typeDesc.addFieldDesc(field);");
                 }
             }
@@ -267,6 +270,14 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
                     fieldName = getAsFieldName(fieldName);
                     QName xmlName = elem.getName();
+                    
+                    // Some special handling for arrays
+                    QName xmlType = elem.getType().getQName();
+                    if (xmlType != null && xmlType.getLocalPart().indexOf("[") > 0) {
+                        // Skip array types, because they are special
+                        xmlType = null;
+                    }
+                    
                     pw.print("        ");
                     if (!wroteFieldType) {
                         pw.print("org.apache.axis.description.FieldDesc ");
@@ -274,9 +285,10 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     pw.println("field = new org.apache.axis.description.ElementDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.print(  "        field.setXmlName(new javax.xml.namespace.QName(\"");
-                    pw.println(xmlName.getNamespaceURI() + "\", \"" +
-                               xmlName.getLocalPart() + "\"));");
+                    pw.println("        field.setXmlName(" + Utils.getNewQName(xmlName) + ");");
+                    if (xmlType != null) {
+                        pw.println("        field.setXmlType(" + Utils.getNewQName(xmlType) + ");");
+                    }
                     if (elem.getMinOccursIs0()) {
                         pw.println("        field.setMinOccursIs0(true);");
                     }

@@ -126,6 +126,20 @@ public class FieldDesc {
     }
 
     /**
+     * Returns the XML type (e.g. xsd:string) for this field
+     */ 
+    public QName getXmlType() {
+        return xmlType;
+    }
+
+    /**
+     * Returns the XML type (e.g. xsd:string) for this field
+     */ 
+    public void setXmlType(QName xmlType) {
+        this.xmlType = xmlType;
+    }
+
+    /**
      * Check if this is an element or an attribute.
      *
      * @return true if this is an ElementDesc, or false if an AttributeDesc

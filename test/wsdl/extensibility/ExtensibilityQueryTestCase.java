@@ -9,6 +9,7 @@ package test.wsdl.extensibility;
 
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.utils.Options;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -21,6 +22,10 @@ import org.apache.log4j.Logger;
 import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.namespace.QName;
 import java.util.Calendar;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
 
 public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     public ExtensibilityQueryTestCase(String name) {
@@ -56,11 +61,15 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             bookQuery.setBookQuery(book);
             MessageElement el = new MessageElement("foo", "Bar", bookQuery);
             expression.set_any(new MessageElement [] { el });
+            // call the operation
             ExtensibilityType any = binding.query(expression);
+            // validate results
             MessageElement [] anyContent = any.get_any();
             assertEquals(1, anyContent.length);
             QueryResultElement resEl = (QueryResultElement )anyContent[0].getObjectValue();
+            assertNotNull("QueryResultElement back from anyContent[0].getObjectValue()", resEl);
             ResultListType result = resEl.getResultList();
+            assertNotNull("ResultListType back from getResultList()", result);
             QueryResultType[] queryResult = result.getResult();
             assertTrue(queryResult.length == 2); 
             isValid(queryResult[0], "Computer Science", "The Grid"); 
@@ -86,7 +95,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         TypeMapping mapping = registry.createTypeMapping();
         addBeanMapping(mapping, "FindBooksQueryExpressionElement", FindBooksQueryExpressionElement.class);
         addBeanMapping(mapping, "BookType", BookType.class);
-        addBeanMapping(mapping, "resultList", ResultListType.class);
+        addBeanMapping(mapping, "ResultListType", ResultListType.class);
         addBeanMapping(mapping, "QueryResultType", QueryResultType.class);
         addBeanMapping(mapping, "QueryResultElement", QueryResultElement.class);
         registry.register("",mapping);
@@ -103,7 +112,26 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     }
 
     private void deployServer() {
-        AdminClient.main(new String[] { "test/wsdl/extensibility/server-deploy.wsdd" });
+        final String INPUT_FILE = "server-deploy.wsdd";
+
+        InputStream is = getClass().getResourceAsStream(INPUT_FILE);
+        if (is == null) {
+            // try current directory
+            try {
+                is = new FileInputStream(INPUT_FILE);
+            } catch (FileNotFoundException e) {
+                is = null;
+            }
+        }
+        assertNotNull("Unable to find " + INPUT_FILE + ". Make sure it is on the classpath or in the current directory.", is);
+        AdminClient admin = new AdminClient();
+        try {
+            Options opts = new Options( null );
+            opts.setDefaultURL("http://localhost:8080/axis/services/AdminService");
+            admin.process(opts, is);
+        } catch (Exception e) {
+            assertTrue("Unable to deploy " + INPUT_FILE + ". ERROR: " + e, false);
+        }
     }
 }
 
