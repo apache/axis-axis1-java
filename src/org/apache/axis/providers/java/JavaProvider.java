@@ -64,6 +64,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.log4j.Category;
@@ -184,7 +185,7 @@ public abstract class JavaProvider extends BasicProvider {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (category.isDebugEnabled())
-            category.debug( "Enter: JavaProvider::invoke (for provider "+this+")");
+            category.debug( JavaUtils.getMessage("enter00", "JavaProvider::invoke (" + this + ")"));
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -198,18 +199,12 @@ public abstract class JavaProvider extends BasicProvider {
 
         if ((clsName == null) || clsName.equals(""))
             throw new AxisFault("Server.NoClassForService",
-                "No '" +
-                getServiceClassNameOptionName() +
-                "' option was configured for the service '" +
-                serviceName + "'",
+                JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
                 null, null);
 
         if ((allowedMethods == null) || allowedMethods.equals(""))
             throw new AxisFault("Server.NoMethodConfig",
-                "No '" +
-                getServiceAllowedMethodsOptionName() +
-                "' option was configured for the service '" +
-                serviceName + "'",
+                JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
                 null, null);
 
         if (allowedMethods.equals("*"))
@@ -253,12 +248,12 @@ public abstract class JavaProvider extends BasicProvider {
             throw (AxisFault) exp ;
         }
         if (category.isDebugEnabled())
-            category.debug("Exit: JavaProvider::invoke (for provider "+this+")");
+            category.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (category.isDebugEnabled())
-            category.debug("Enter: JavaProvider::editWSDL (for provider "+this+")" );
+            category.debug(JavaUtils.getMessage("enter00", "JavaProvider::editWSDL (" + this + ")"));
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -290,9 +285,7 @@ public abstract class JavaProvider extends BasicProvider {
          */
         if ((allowedMethods == null) || allowedMethods.equals(""))
           throw new AxisFault("Server.NoMethodConfig",
-            "No '" + getServiceAllowedMethodsOptionName() +
-               "' option was configured for the service '" +
-               serviceName + "'",
+            JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
             null, null);
 
         if (allowedMethods.equals("*"))
@@ -310,7 +303,7 @@ public abstract class JavaProvider extends BasicProvider {
             Class           cls    = jc.getJavaClass();
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
-            String description = "Some service or other";
+            String description = "Service";
             Document doc = WSDLUtils.writeWSDLDoc(cls, allowedMethods,
                     url, urn, description, msgContext);
 
@@ -322,8 +315,8 @@ public abstract class JavaProvider extends BasicProvider {
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: RPCDispatchHandler::undo" );
-        category.debug("Exit: RPCDispatchHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "RPCDispatchHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "RPCDispatchHandler::undo") );
     }
 
     ///////////////////////////////////////////////////////////////

@@ -89,11 +89,11 @@ public class RPCProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        category.debug("Enter::RPCProvider.processMessage()");
+        category.debug(JavaUtils.getMessage("enter00", "RPCProvider.processMessage()"));
         Vector          bodies = reqEnv.getBodyElements();
         if (category.isDebugEnabled()) {
-            category.debug("There are " + bodies.size() + " body elements.");
-            category.debug("body is " + bodies.get(0));
+            category.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
+            category.debug(JavaUtils.getMessage("bodyIs00", "" + bodies.get(0)));
         }
 
         /* Loop over each entry in the SOAPBody - each one is a different */
@@ -115,7 +115,7 @@ public class RPCProvider extends JavaProvider {
                 for ( int i = 0 ; i < args.size() ; i++ ) {
                     argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
                     
-                    category.debug("  value: " + argValues[i] );
+                    category.debug("  " + JavaUtils.getMessage("value00", "" + argValues[i]) );
                 }
             }
 
@@ -137,21 +137,17 @@ public class RPCProvider extends JavaProvider {
                 // didn't find a matching one...
                 if (nextMethodName == null) {
                     throw new AxisFault( "AxisServer.error",
-                                        "Method names don't match\n" +
-                                            "Body method name=" + mName + "\n" +
-                                            "Service method names=" + allowedMethods,
-                                        null, null );  // should they??
+                            JavaUtils.getMessage("namesDontMatch00", mName, allowedMethods),
+                            null, null );  // should they??
                 }
                 methodNameMatch = nextMethodName;
             }
             
             if ( methodNameMatch != null && !methodNameMatch.equals(mName) )
                 throw new AxisFault( "AxisServer.error",
-                                    "Method names don't match\n" +
-                                        "Body name=" + mName + "\n" +
-                                        "Service name=" + methodNameMatch + "\n" +
-                                        "Service nameList=" + allowedMethods,
-                                    null, null );  // should they??
+                        JavaUtils.getMessage("namesDontMatch01",
+                            new String[] {mName, methodNameMatch, allowedMethods}),
+                        null, null );  // should they??
             
             if (category.isDebugEnabled()) {
                 category.debug( "mName: " + mName );
@@ -176,10 +172,8 @@ public class RPCProvider extends JavaProvider {
 
             if ( method == null )
                 throw new AxisFault( "AxisServer.error",
-                                    "Method not found\n" +
-                                        "Method name=" + mName + "\n" +
-                                        "Service name=" + msgContext.getTargetService(),
-                                    null, null );
+                        JavaUtils.getMessage("noMethod00", mName, msgContext.getTargetService()),
+                        null, null );
             
 			Class params[] = method.getParameterTypes();
 			
@@ -229,7 +223,7 @@ public class RPCProvider extends JavaProvider {
             }
 
             if (category.isDebugEnabled())
-                category.debug("Got result: " + objRes);
+                category.debug(JavaUtils.getMessage("result00", "" + objRes));
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/
