@@ -61,6 +61,7 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -163,9 +164,13 @@ public class RPCHandler extends SOAPHandler
         }
 
         if (!context.isDoneParsing()) {
-            context.pushNewElement(new MessageElement(namespace, localName,
-                                                      prefix, attributes,
-                                                      context));
+            try {
+                context.pushNewElement(new MessageElement(namespace, localName,
+                                                          prefix, attributes,
+                                                          context));
+            } catch (AxisFault axisFault) {
+                throw new SAXException(axisFault);
+            }
         }
         
         MessageElement curEl = context.getCurElement();
@@ -290,7 +295,7 @@ public class RPCHandler extends SOAPHandler
               if(null != destClass && dser == null && destClass.isAssignableFrom( org.w3c.dom.Element.class )){
                 //If a DOM element is expected, as last resort always allow direct mapping 
                 // of parameter's SOAP xml to a DOM element.  Support of literal  parms by default.
-                dser = context.getDeserializer(destClass, Constants.SOAP_ELEMENT);
+                dser = context.getDeserializerForType(Constants.SOAP_ELEMENT);
 
               }
               if (dser == null) {

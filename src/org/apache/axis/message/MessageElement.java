@@ -57,6 +57,8 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.enum.Style;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
@@ -81,6 +83,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.rpc.encoding.TypeMapping;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -197,6 +200,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     public MessageElement(String namespace, String localPart, String prefix,
                    Attributes attributes, DeserializationContext context)
+        throws AxisFault
     {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("newElem00", super.toString(),
@@ -258,6 +262,27 @@ public class MessageElement implements SOAPElement, Serializable
             // if no-encoding style was defined, we don't define as well
             if (Constants.URI_SOAP12_NOENC.equals(encodingStyle))
                 encodingStyle = null;
+
+            // If we have an encoding style, and are not a MESSAGE style
+            // operation (in other words - we're going to do some data 
+            // binding), AND we're SOAP 1.2, check the encoding style against
+            // the ones we've got type mappings registered for.  If it isn't
+            // registered, throw a DataEncodingUnknown fault as per the
+            // SOAP 1.2 spec.
+            if (encodingStyle != null &&
+                    sc.equals(SOAPConstants.SOAP12_CONSTANTS) &&
+                    (mc.getOperationStyle() != Style.MESSAGE)) {
+                TypeMapping tm = mc.getTypeMappingRegistry().
+                        getTypeMapping(encodingStyle);
+                if (tm == null ||
+                        (tm.equals(mc.getTypeMappingRegistry().
+                                                getDefaultTypeMapping()))) {
+                    AxisFault badEncodingFault = new AxisFault(
+                            Constants.FAULT_SOAP12_DATAENCODINGUNKNOWN,
+                            "bad encoding style", null, null);
+                    throw badEncodingFault;
+                }
+            }
 
         }
     }

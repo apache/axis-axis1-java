@@ -73,11 +73,29 @@ public class IDRefs extends NCName {
      * @exception IllegalArgumentException will be thrown if validation fails
      */
     public IDRefs (String stValue) throws IllegalArgumentException {
+        setValue(stValue);
+    }
+
+    public void setValue(String stValue) {
         StringTokenizer tokenizer = new StringTokenizer(stValue);
         int count = tokenizer.countTokens();
         idrefs = new IDRef[count];
         for(int i=0;i<count;i++){
             idrefs[i] = new IDRef(tokenizer.nextToken());
         }
+    }
+
+    public String toString() {
+        String val = "";
+        for (int i = 0; i < idrefs.length; i++) {
+            IDRef ref = idrefs[i];
+            if (i > 0) val += " ";
+            val += ref.toString();
+        }
+        return val;
+    }
+
+    public boolean equals(Object object) {
+        return (toString().equals(object.toString()));
     }
 }

@@ -72,11 +72,29 @@ public class NMTokens extends NCName {
      * @exception IllegalArgumentException will be thrown if validation fails
      */
     public NMTokens (String stValue) throws IllegalArgumentException {
+        setValue(stValue);
+    }
+
+    public void setValue(String stValue) {
         StringTokenizer tokenizer = new StringTokenizer(stValue);
         int count = tokenizer.countTokens();
         tokens = new NMToken[count];
         for(int i=0;i<count;i++){
             tokens[i] = new NMToken(tokenizer.nextToken());
         }
+    }
+
+    public String toString() {
+        String val = "";
+        for (int i = 0; i < tokens.length; i++) {
+            NMToken token = tokens[i];
+            if (i > 0) val += " ";
+            val += token.toString();
+        }
+        return val;
+    }
+
+    public boolean equals(Object object) {
+        return (toString().equals(object.toString()));
     }
 }

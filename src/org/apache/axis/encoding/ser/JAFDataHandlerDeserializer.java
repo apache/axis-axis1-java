@@ -62,6 +62,7 @@ import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -84,7 +85,11 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
 
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = makeNewElement(namespace, localName, prefix, attributes, context);
+                try {
+                    myElement = makeNewElement(namespace, localName, prefix, attributes, context);
+                } catch (AxisFault axisFault) {
+                    throw new SAXException(axisFault);
+                }
                 context.pushNewElement(myElement);
             }
         }

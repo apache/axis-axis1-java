@@ -106,7 +106,7 @@ public class RPCElement extends SOAPBodyElement
             if (service != null) {
                 ServiceDesc serviceDesc =
                         service.getInitializedServiceDesc(msgContext);
-                
+
                 String lc = Utils.xmlNameToJava(name);
                 if (serviceDesc == null) {
                     AxisFault.makeFault(
@@ -154,7 +154,7 @@ public class RPCElement extends SOAPBodyElement
     public void deserialize() throws SAXException
     {
         needDeser = false;
-        
+
         MessageContext msgContext = context.getMessageContext();
 
         // Figure out if we should be looking for out params or in params
@@ -173,6 +173,12 @@ public class RPCElement extends SOAPBodyElement
 
             SAXException savedException = null;
 
+            // By default, accept missing parameters as nulls, and
+            // allow the message context to override.
+            boolean acceptMissingParams = msgContext.isPropertyTrue(
+                    MessageContext.ACCEPTMISSINGPARAMS,
+                    true);
+
             // We now have an array of all operations by this name.  Try to
             // find the right one.  For each matching operation which has an
             // equal number of "in" parameters, try deserializing.  If we
@@ -187,11 +193,11 @@ public class RPCElement extends SOAPBodyElement
 
                 // Make a quick check to determine if the operation
                 // could be a match.
-                //  1) The element is the first param, DOCUMENT, (i.e. 
+                //  1) The element is the first param, DOCUMENT, (i.e.
                 //     don't know the operation name or the number
                 //     of params, so try all operations).
                 //  or (2) Style is literal
-                //     If the Style is LITERAL, the numParams may be inflated 
+                //     If the Style is LITERAL, the numParams may be inflated
                 //     as in the following case:
                 //     <getAttractions xmlns="urn:CityBBB">
                 //         <attname>Christmas</attname>
@@ -199,17 +205,19 @@ public class RPCElement extends SOAPBodyElement
                 //     </getAttractions>
                 //   for getAttractions(String[] attName)
                 //   numParams will be 2 and and operation.getNumInParams=1
-                //  or (3) Number of expected params is 
+                //  or (3) Number of expected params is
                 //         >= num params in message
                 if (operation.getStyle() == Style.DOCUMENT ||
                     operation.getStyle() == Style.WRAPPED ||
                     operation.getUse() == Use.LITERAL ||
-                    operation.getNumInParams() >= numParams) {
+                    (acceptMissingParams ?
+                        (operation.getNumInParams() >= numParams) :
+                        (operation.getNumInParams() == numParams))) {
 
                     rpcHandler.setOperation(operation);
                     try {
                         // If no operation name and more than one
-                        // parameter is expected, don't 
+                        // parameter is expected, don't
                         // wrap the rpcHandler in an EnvelopeHandler.
                         if ((operation.getStyle() == Style.DOCUMENT) &&
                             operation.getNumInParams() > 0) {
@@ -231,7 +239,7 @@ public class RPCElement extends SOAPBodyElement
                                            context, rpcHandler);
                         }
 
-                        // Check if the RPCParam's value match the signature of the 
+                        // Check if the RPCParam's value match the signature of the
                         // param in the operation.
                         boolean match = true;
                         for ( int j = 0 ; j < params.size() && match ; j++ ) {
@@ -257,7 +265,7 @@ public class RPCElement extends SOAPBodyElement
                             params = new Vector();
                             continue;
                         }
-                        
+
                         // Success!!  This is the right one...
                         msgContext.setOperation(operation);
                         return;
@@ -274,6 +282,13 @@ public class RPCElement extends SOAPBodyElement
                         continue;
                     }
                 }
+            }
+
+            // If we're SOAP 1.2, getting to this point means bad arguments.
+            if (!msgContext.isClient() && soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER, "string", null, null);
+                fault.addFaultSubCode(Constants.FAULT_SUBCODE_BADARGS);
+                throw new SAXException(fault);
             }
 
             if (savedException != null) {
@@ -383,7 +398,7 @@ public class RPCElement extends SOAPBodyElement
      * @return true if the operation description indicates parameters/results
      * are located in the soap header.
      */
-    private boolean needHeaderProcessing(OperationDesc operation, 
+    private boolean needHeaderProcessing(OperationDesc operation,
                                          boolean isResponse) {
 
         // Search parameters/return to see if any indicate
@@ -391,7 +406,7 @@ public class RPCElement extends SOAPBodyElement
         ArrayList paramDescs = operation.getParameters();
         if (paramDescs != null) {
             for (int j=0; j<paramDescs.size(); j++) {
-                ParameterDesc paramDesc = 
+                ParameterDesc paramDesc =
                     (ParameterDesc) paramDescs.get(j);
                 if ((!isResponse && paramDesc.isInHeader()) ||
                     (isResponse && paramDesc.isOutHeader())) {
@@ -399,11 +414,11 @@ public class RPCElement extends SOAPBodyElement
                 }
             }
         }
-        if (isResponse && 
+        if (isResponse &&
             operation.getReturnParamDesc() != null &&
             operation.getReturnParamDesc().isOutHeader()) {
             return true;
-        }        
+        }
         return false;
     }
 
@@ -431,15 +446,15 @@ public class RPCElement extends SOAPBodyElement
                    !(envelope instanceof SOAPEnvelope)) {
                 envelope = envelope.getParentElement();
             }
-            if (envelope == null) 
+            if (envelope == null)
                 return;
-            
+
             // Find parameters that have instance
             // data in the header.
             ArrayList paramDescs = operation.getParameters();
             if (paramDescs != null) {
                 for (int j=0; j<paramDescs.size(); j++) {
-                    ParameterDesc paramDesc = 
+                    ParameterDesc paramDesc =
                         (ParameterDesc) paramDescs.get(j);
                     if ((!isResponse && paramDesc.isInHeader()) ||
                         (isResponse && paramDesc.isOutHeader())) {
@@ -452,7 +467,7 @@ public class RPCElement extends SOAPBodyElement
                                  true);
                         // Publish each of the found elements to the
                         // handler.  The pushElementHandler and
-                        // setCurElement calls are necessary to 
+                        // setCurElement calls are necessary to
                         // have the message element recognized as a
                         // child of the RPCElement.
                         while(headers != null &&
@@ -466,9 +481,9 @@ public class RPCElement extends SOAPBodyElement
                     }
                 }
             }
-            
+
             // Now do the same processing for the return parameter.
-            if (isResponse && 
+            if (isResponse &&
                 operation.getReturnParamDesc() != null &&
                 operation.getReturnParamDesc().isOutHeader()) {
                 ParameterDesc paramDesc = operation.getReturnParamDesc();
@@ -482,10 +497,10 @@ public class RPCElement extends SOAPBodyElement
                       headers.hasMoreElements()) {
                     context.pushElementHandler(handler);
                     context.setCurElement(null);
-                    
+
                     ((MessageElement) headers.nextElement()).
                         publishToHandler((org.xml.sax.ContentHandler)context);
-                }                                                                 
+                }
             }
         } finally {
             handler.setHeaderElement(false);

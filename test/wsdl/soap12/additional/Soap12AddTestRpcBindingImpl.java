@@ -18,7 +18,7 @@ public class Soap12AddTestRpcBindingImpl implements test.wsdl.soap12.additional.
     // getTime is a notification style operation and is unsupported.
 
     public java.lang.String echoString(java.lang.String inputString) throws java.rmi.RemoteException {
-        return null;
+        return inputString;
     }
 
     public test.wsdl.soap12.additional.xsd.SOAPStructTypes echoSimpleTypesAsStructOfSchemaTypes(java.lang.Object input1, java.lang.Object input2, java.lang.Object input3, java.lang.Object input4) throws java.rmi.RemoteException {

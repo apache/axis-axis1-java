@@ -103,9 +103,13 @@ public class HeaderBuilder extends SOAPHandler
 
         if (!context.isDoneParsing()) {
             if (myElement == null) {
-                myElement = new SOAPHeader(namespace, localName, prefix,
-                                           attributes, context,
-                                           envelope.getSOAPConstants());
+                try {
+                    myElement = new SOAPHeader(namespace, localName, prefix,
+                                               attributes, context,
+                                               envelope.getSOAPConstants());
+                } catch (AxisFault axisFault) {
+                    throw new SAXException(axisFault);
+                }
                 envelope.setHeader((SOAPHeader)myElement);
             }
             context.pushNewElement(myElement);
@@ -119,8 +123,12 @@ public class HeaderBuilder extends SOAPHandler
                                     DeserializationContext context)
         throws SAXException
     {
-        header = new SOAPHeaderElement(namespace, localName, prefix,
-                                       attributes, context);
+        try {
+            header = new SOAPHeaderElement(namespace, localName, prefix,
+                                           attributes, context);
+        } catch (AxisFault axisFault) {
+            throw new SAXException(axisFault);
+        }
 
         SOAPHandler handler = new SOAPHandler();
         handler.myElement = header;
