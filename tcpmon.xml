@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+]>
+
+<project name="tcpmon" default="default" basedir=".">
+    <!-- =================================================================== -->
+    <description>
+    build file to run the tcpmonitor application.
+    by default the tool is run; the all task actually builds it first
+    </description>
+
+    &properties;
+
+    <target name="run" description="run tcpmon" >
+        <java
+            classname="org.apache.axis.utils.tcpmon"
+            fork="true"
+            failonerror="true">
+            <classpath>
+                <fileset dir="${build.lib}" includes="*.jar" />
+            </classpath>
+            </java>
+
+    </target>
+
+    <!--build by calling the default target on axis-->
+    <target name="build" description="build axis" >
+        <ant antfile="build.xml" inheritall="false" />
+    </target>
+
+    <target name="all" description="build and run tcpmon"
+        depends="build,run" />
+
+    <target name="default" description="run tcpmon" depends="run" />
+
+</project>
