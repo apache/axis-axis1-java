@@ -10,15 +10,15 @@
   <property name="checkstyle.project" value="axis"/>
 
   <property name="checkstyle.src.dir" location="${axis.home}/src"/>
-  <property name="checkstyle.dest.dir" location="${build.dir}/checkstyle/${project}"/>
+  <property name="checkstyle.dest.dir" location="${build.dir}/checkstyle/${checkstyle.project}"/>
   <property name="checkstyle-noframes.xsl"
             location="${axis.home}/xmls/checkstyle-noframes.xsl"/>
 
   <property name="checkstyle.failonerror" value="false"/>            
-  <path id="checkstyle.classpath">
+<!--   <path id="checkstyle.classpath">
     <path refid="ant.classpath" />
   </path>
-  
+   -->
 
 
   <!-- look for checkstyle; fail gracefully -->
@@ -43,16 +43,27 @@
     description="Check the style of a project">
     <echo message="Checking style of ${checkstyle.project}"/>
     <mkdir dir="${checkstyle.dest.dir}"/>
+    <property name="report.stem" value="checkstyle-${checkstyle.project}" />
+    <property name="results.xml" value="${report.stem}.xml" />
     <property name="resultsfile.xml" 
-      location="${checkstyle.dest.dir}/checkstyle-${checkstyle.project}.xml" />
+      location="${checkstyle.dest.dir}/${results.xml}" />
     <property name="resultsfile.html" 
-      location="${checkstyle.dest.dir}/checkstyle-${checkstyle.project}.html" />
-      <!-- line length cranked up from apache's 68 rule.  -->
+      location="${checkstyle.dest.dir}/${report.stem}.html" />
+      <!-- 
+        to keep the 5000+ errors manageable and so pick on the key issues 
+          line length cranked up from apache's 68 rule.
+          javadocs are unchecked
+          whitespace is ignored
+          protected data is allowed
+        some time these can be cranked back, though protected vs accessors is a major 
+        design issue, not a simple source layout problem. 
+        -->
     <checkstyle failOnViolation="${checkstyle.failonerror}"
-                maxLineLen="85"
+                maxLineLen="100"
                 allowNoAuthor="true"
                 ignoreWhitespace="true"
                 allowProtected="true"
+                javadocScope="nothing"
                 cacheFile="${checkstyle.dest.dir}/checkstyle.cache">
       <formatter type="plain"/>
       <formatter type="xml" toFile="${resultsfile.xml}"/>
@@ -60,7 +71,7 @@
     </checkstyle>
     
     <style basedir="${checkstyle.dest.dir}" destdir="${checkstyle.dest.dir}"
-           includes="${resultsfile.xml}"
+           includes="${results.xml}"
            style="${checkstyle-noframes.xsl}"/>
      <echo>
       Style checked, results are in ${resultsfile.html}
