@@ -74,12 +74,10 @@ public class AxisServer extends AxisEngine
     /** Lifecycle routines for managing a static AxisServer
      */
     private static AxisServer singleton = null;
-    public static AxisServer getSingleton()
+    public static synchronized AxisServer getSingleton()
     {
         if (singleton == null) {
             singleton = new AxisServer();
-            singleton.init();
-            // ??? Why doesn't init just happen in the constructor?
         }
         return singleton;
     }
@@ -95,6 +93,7 @@ public class AxisServer extends AxisEngine
      */
     public void start()
     {
+        // re-init...
         init();
         running = true;
     }
