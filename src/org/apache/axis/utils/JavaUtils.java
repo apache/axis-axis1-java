@@ -722,7 +722,7 @@ public class JavaUtils
      * verbose mode) then there is no need to read the properties file.
      */
     private static void initializeMessages() {
-        messages = ResourceBundle.getBundle("org.apache.axis.utils.resources");
+        messages = ResourceBundle.getBundle("org.apache.axis.utils.axisNLS");
     } // initializeMessages
 
     /**
