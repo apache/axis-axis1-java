@@ -113,9 +113,9 @@ public abstract class TestClient {
        }
 
        if (obj1 instanceof List)
-         obj1 = JavaUtils.convert(obj1, (new Object[]{}).getClass());
+         obj1 = JavaUtils.convert(obj1, Object[].class);
        if (obj2 instanceof List)
-         obj2 = JavaUtils.convert(obj2, (new Object[]{}).getClass());
+         obj2 = JavaUtils.convert(obj2, Object[].class);
 
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
