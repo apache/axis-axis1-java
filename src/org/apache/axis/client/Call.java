@@ -661,7 +661,7 @@ public class Call implements javax.xml.rpc.Call {
             if (msg == null)
                 throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
 
-            env = msg.getSOAPPart().getAsSOAPEnvelope();
+            env = msg.getSOAPEnvelope();
             return( env.getBodyElements() );
         }
 
@@ -732,7 +732,7 @@ public class Call implements javax.xml.rpc.Call {
             msg = msgContext.getResponseMessage();
             if (msg == null)
                 throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
-            return( msg.getSOAPPart().getAsSOAPEnvelope() );
+            return( msg.getSOAPEnvelope() );
         }
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
@@ -1118,7 +1118,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         resMsg = msgContext.getResponseMessage();
-        resEnv = (SOAPEnvelope)resMsg.getSOAPPart().getAsSOAPEnvelope();
+        resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
         try {
             body = (RPCElement)resEnv.getFirstBody();
             resArgs = body.getParams();
@@ -1213,7 +1213,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // Determine client target service
         reqMsg = msgContext.getRequestMessage();
-        reqEnv = reqMsg.getSOAPPart().getAsSOAPEnvelope();
+        reqEnv = reqMsg.getSOAPEnvelope();
         SOAPBodyElement body = reqEnv.getFirstBody();
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );

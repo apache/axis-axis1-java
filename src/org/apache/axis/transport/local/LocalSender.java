@@ -158,7 +158,7 @@ public class LocalSender extends BasicHandler {
                 serverContext.setResponseMessage(respMsg);
             } else {
                 SOAPFaultElement faultEl = new SOAPFaultElement(fault);
-                SOAPEnvelope env = respMsg.getSOAPPart().getAsSOAPEnvelope();
+                SOAPEnvelope env = respMsg.getSOAPEnvelope();
                 env.clearBody();
                 env.addBodyElement(faultEl);
             }

@@ -113,7 +113,7 @@ public class HTTPSender extends BasicHandler {
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
             if (action == null) {
                 Message rm = msgContext.getRequestMessage();
-                MessageElement body = rm.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
+                MessageElement body = rm.getSOAPEnvelope().getFirstBody();
                 action = body.getNamespaceURI();
                 if (action == null) action = "";
                 if (!action.endsWith("/")) action += "/";
