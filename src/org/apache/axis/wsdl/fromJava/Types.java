@@ -222,7 +222,7 @@ public class Types {
      * @param full input class name
      * @return package name
      */
-    private String getPackageNameFromFullName(String full) {
+    public static String getPackageNameFromFullName(String full) {
         if (full.lastIndexOf('.') < 0)
             return "";
         else 
@@ -234,7 +234,7 @@ public class Types {
      * @param full input class name
      * @return package name
      */
-    private String getLocalNameFromFullName(String full) {
+    public static String getLocalNameFromFullName(String full) {
         if (full.lastIndexOf('.') < 0)
             return full;
         else 

@@ -65,8 +65,8 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
@@ -302,8 +302,14 @@ public abstract class JavaProvider extends BasicProvider {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
             String description = "Service";
-            Document doc = WSDLUtils.writeWSDLDoc(cls, allowedMethods,
-                    url, urn, description, msgContext);
+
+            Emitter emitter = new Emitter();
+            emitter.setClsSmart(cls,url);
+            emitter.setAllowedMethods(allowedMethods);
+            emitter.setIntfNamespace(url);
+            emitter.setLocationUrl(url);
+            emitter.setReg(msgContext.getTypeMappingRegistry());
+            Document  doc = emitter.emit(Emitter.MODE_ALL);
 
             msgContext.setProperty("WSDL", doc);
         } catch (Exception e) {
@@ -311,6 +317,8 @@ public abstract class JavaProvider extends BasicProvider {
         }
 
     }
+
+
 
     public void undo(MessageContext msgContext) {
         category.debug(JavaUtils.getMessage("enter00", "RPCDispatchHandler::undo") );
