@@ -71,9 +71,6 @@ public class SOAPService extends SimpleTargetedChain
 {
     public static final String OPTION_PIVOT = "pivot";
 
-    private static final SOAPTypeMappingRegistry soapTMR =
-        new SOAPTypeMappingRegistry();
-
     /** Service-specific type mappings
      */
     private TypeMappingRegistry typeMap;
@@ -83,7 +80,7 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService()
     {
         typeMap = new TypeMappingRegistry();
-        typeMap.setParent(soapTMR);
+        typeMap.setParent(SOAPTypeMappingRegistry.getSingleton());
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()
