@@ -34,7 +34,7 @@ Copyright:
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
     <pathelement location="${java.home}/../lib/tools.jar"/>
-    <fileset dir="../java/lib">
+    <fileset dir="lib">
      <include name="*.jar"/>
     </fileset>
   </path>
