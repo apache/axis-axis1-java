@@ -449,6 +449,8 @@ public class WSDDService
                 tm.setSupportedEncodings(new String[] {encodingStyle});
                 tmr.register(encodingStyle, tm);
             }
+            desc.setTypeMappingRegistry(tmr);
+            desc.setTypeMapping(tm);
 
             SerializerFactory   ser   = null;
             DeserializerFactory deser = null;

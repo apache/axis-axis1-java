@@ -57,6 +57,7 @@ package org.apache.axis.providers.java ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.MimeMultipartDataSource;
 import org.apache.axis.attachments.PlainTextDataSource;
@@ -122,6 +123,23 @@ public class RPCProvider extends JavaProvider
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
         OperationDesc operation = msgContext.getOperation();
+        
+        // Assert that the operation is in the serviceDesc
+        if (serviceDesc != null && operation != null) {
+            ArrayList list = serviceDesc.getOperations();
+            boolean found = false;
+            int length = list.size();
+            for (int i=0; i < length && !found; i++) {
+                if (list.get(i) == operation) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new InternalException(
+                    JavaUtils.getMessage("rpcProviderOperAssert00", 
+                                         operation.getName()));
+            }
+        }
 
         Vector          bodies = reqEnv.getBodyElements();
         if (log.isDebugEnabled()) {
