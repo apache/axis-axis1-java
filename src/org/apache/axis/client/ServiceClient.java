@@ -57,10 +57,7 @@ package org.apache.axis.client ;
 
 import java.util.* ;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.*;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
@@ -235,6 +232,11 @@ public class ServiceClient {
         resMsg.setMessageType(ServiceDescription.RESPONSE);
         
         resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
+
+        SOAPBodyElement respBody = resEnv.getFirstBody();
+        if (respBody instanceof SOAPFaultElement) {
+            throw ((SOAPFaultElement)respBody).getAxisFault();
+        }
         
         body = (RPCElement)resEnv.getFirstBody();
         resArgs = body.getParams();
