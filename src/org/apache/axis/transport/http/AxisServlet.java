@@ -159,7 +159,7 @@ public class AxisServlet extends HttpServlet
         if (param != null) {
             jwsClassDir = homeDir + param;
         } else {
-            jwsClassDir = context.getRealPath("/");
+            jwsClassDir = webInfPath + "jwsClasses";
         }
     }
     
