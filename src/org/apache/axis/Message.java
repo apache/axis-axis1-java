@@ -58,7 +58,9 @@ package org.apache.axis ;
 import java.io.* ;
 
 import org.w3c.dom.* ;
+import org.xml.sax.*;
 
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
@@ -76,6 +78,7 @@ public class Message {
   private Object originalMessage ;
   private Object currentMessage ;
   private String currentForm ;
+  private boolean isResponse = false;
 
   /**
    * Just something to us working...
@@ -98,6 +101,8 @@ public class Message {
   public String getCurrentForm() {
     return( currentForm );
   }
+  
+  public void markAsResponse() { isResponse = true; }
 
   public void setCurrentMessage(Object currMsg, String form) {
     Debug.Print( 2, "Setting current message form to: " + form );
@@ -181,8 +186,18 @@ public class Message {
     }
 
     if ( currentForm.equals("SOAPEnvelope") ||
-         currentForm.equals("AxisFault") )
-      getAsDocument();
+         currentForm.equals("AxisFault") ) {
+        StringWriter writer = new StringWriter();
+        SOAPEnvelope env = (SOAPEnvelope)currentMessage;
+        try {
+            env.output(new SerializationContext(writer));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        currentMessage = writer.getBuffer().toString();
+        return (String)currentMessage;
+    }
 
     if ( currentForm.equals("Document") ) { 
       currentForm = "String" ;
@@ -219,19 +234,24 @@ public class Message {
       else if ( currentForm.equals("AxisFault") ) {
         AxisFault     fault = (AxisFault) currentMessage ;
         SOAPEnvelope  env   = new SOAPEnvelope();
-        SOAPBody      body  = new SOAPBody( fault.getElement(null) );
+        //SOAPBody      body  = new SOAPBody( fault.getElement(null) );
 
-        env.addBody( body );
+        // !!! env.addBodyElement( body );
 
-        setCurrentMessage( env.getDocument(), "Document" );
+        // !!! setCurrentMessage( env.getDocument(), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else if ( currentForm.equals("SOAPEnvelope") ) {
+        System.err.println("Can't convert " + currentForm + " to Document" );
+        Debug.Print( 2, "Exit: Message::getAsDocument" );
+        return( null );
+        /*
         SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
-        setCurrentMessage( env.getDocument(), "Document" );
+        // !!! setCurrentMessage( env.getDocument(), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
+        */
       }
       else {
         System.err.println("Can't convert " + currentForm + " to Document" );
@@ -254,9 +274,13 @@ public class Message {
     Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope" );
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
-    getAsDocument();
-    setCurrentMessage( new SOAPEnvelope( (Document) currentMessage ),
-                       "SOAPEnvelope" );
+    
+    InputSource is = new InputSource(new StringReader(getAsString()));
+    
+    ThreadedSAXAdapter parser = 
+        new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+    
+    setCurrentMessage( parser.getEnvelope(), "SOAPEnvelope" );
     Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );
   }
