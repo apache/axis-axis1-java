@@ -502,15 +502,12 @@ public class Emitter {
 
                 p.name = name;
                 p.type = (String) inputs.get(i - 1);
-                // If we have more than 1 output, check for inouts
-                if (outputs.size() > 2) {
-                    for (int j = 1; j < outputs.size(); j += 2) {
-                        if (name.equals(outputs.get(j))) {
-                            p.mode = Parameter.INOUT;
-                            outputs.remove(j);
-                            outputs.remove(j - 1);
-                            break;
-                        }
+                for (int j = 1; j < outputs.size(); j += 2) {
+                    if (name.equals(outputs.get(j))) {
+                        p.mode = Parameter.INOUT;
+                        outputs.remove(j);
+                        outputs.remove(j - 1);
+                        break;
                     }
                 }
                 if (p.mode == Parameter.IN)
@@ -1064,30 +1061,31 @@ public class Emitter {
 
         // Call the real implementation
         if (parms.outputs == 0)
-            pw.print("        impl." + name + "(");
+            pw.print("        ");
         else
-            pw.print("        Object ret = impl." + name + "(");
-
+            pw.print("        Object ret = ");
+        String call = "impl." + name + "(";
         if (bMessageContext) {
-            pw.print("ctx");
+            call = call + "ctx";
             if (parms.list.size() > 0)
-                pw.print(", ");
+                call = call + ", ";
         }
 
         boolean needComma = false;
         for (int i = 0; i < parms.list.size(); ++i) {
             if (needComma)
-                pw.print(", ");
+                call = call + ", ";
             else
                 needComma = true;
             Parameter p = (Parameter) parms.list.get(i);
 
             if (p.mode == Parameter.IN)
-                pw.print(p.name);
+                call = call + p.name;
             else
-                pw.print(p.name + "Holder");
+                call = call + p.name + "Holder";
         }
-        pw.println(");");
+        call = call + ")";
+        pw.print(wrapPrimitiveType(parms.returnType, call) + ";");
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
