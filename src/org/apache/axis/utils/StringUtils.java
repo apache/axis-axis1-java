@@ -55,7 +55,15 @@
 
 package org.apache.axis.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StringUtils {
+    /**
+     * An empty immutable <code>String</code> array.
+     */
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    
     /**
      * Tests if this string starts with the specified prefix (Ignoring whitespaces) 
      * @param prefix
@@ -88,5 +96,58 @@ public class StringUtils {
         if(index1 < length1 && index2 >= length2)
             return false;
         return true;
+    }
+
+    /**
+     * <p>Splits the provided text into an array, separator specified.
+     * This is an alternative to using StringTokenizer.</p>
+     *
+     * <p>The separator is not included in the returned String array.
+     * Adjacent separators are treated as one separator.</p>
+     *
+     * <p>A <code>null</code> input String returns <code>null</code>.</p>
+     *
+     * <pre>
+     * StringUtils.split(null, *)         = null
+     * StringUtils.split("", *)           = []
+     * StringUtils.split("a.b.c", '.')    = ["a", "b", "c"]
+     * StringUtils.split("a..b.c", '.')   = ["a", "b", "c"]
+     * StringUtils.split("a:b:c", '.')    = ["a:b:c"]
+     * StringUtils.split("a\tb\nc", null) = ["a", "b", "c"]
+     * StringUtils.split("a b c", ' ')    = ["a", "b", "c"]
+     * </pre>
+     *
+     * @param str  the String to parse, may be null
+     * @param separatorChar  the character used as the delimiter,
+     *  <code>null</code> splits on whitespace
+     * @return an array of parsed Strings, <code>null</code> if null String input
+     */
+    public static String[] split(String str, char separatorChar) {
+        if (str == null) {
+            return null;
+        }
+        int len = str.length();
+        if (len == 0) {
+            return EMPTY_STRING_ARRAY;
+        }
+        List list = new ArrayList();
+        int i = 0, start = 0;
+        boolean match = false;
+        while (i < len) {
+            if (str.charAt(i) == separatorChar) {
+                if (match) {
+                    list.add(str.substring(start, i));
+                    match = false;
+                }
+                start = ++i;
+                continue;
+            }
+            match = true;
+            i++;
+        }
+        if (match) {
+            list.add(str.substring(start, i));
+        }
+        return (String[]) list.toArray(new String[list.size()]);
     }
 }
