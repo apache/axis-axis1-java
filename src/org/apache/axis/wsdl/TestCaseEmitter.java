@@ -71,7 +71,7 @@ import java.util.Map;
  * @version CVS $Revision$ $Date$
  */
 
-public class TestCaseEmitter {
+public class TestCaseEmitter extends JavaWriter {
     private final static int IMPORTS = 1;
     private final static int HEADER = 2;
     private final static int TESTS = 3;
@@ -85,10 +85,13 @@ public class TestCaseEmitter {
     private int state = IMPORTS;
 
     public TestCaseEmitter(PrintWriter testCase, String className, Emitter emit) {
+        super(emit, new javax.wsdl.QName(), "", "", "");
         this.emitter = emit;
         this.writer = testCase;
         this.className = className;
     }
+
+    public void writeFileBody() {};
 
     public final void writeHeader(String filename, String namespace) {
         if (this.state > IMPORTS) {
@@ -168,7 +171,7 @@ public class TestCaseEmitter {
                 writer.print(params.returnType);
                 writer.print(" value = ");
 
-                if (  this.emitter.isPrimitiveType( params.returnType ) ) {
+                if (  isPrimitiveType( params.returnType ) ) {
                     if ( "boolean".equals( params.returnType ) ) {
                         writer.println("false;");
                     } else {
@@ -208,10 +211,10 @@ public class TestCaseEmitter {
                         break;
 
                     default:
-                        paramType = emitter.holder(param.type);
+                        paramType = Utils.holder(param.type);
                 }
                 
-                if ( this.emitter.isPrimitiveType(paramType) ) {
+                if ( isPrimitiveType(paramType) ) {
                     if ( "boolean".equals(paramType) ) {
                         writer.print("true");
                     } else {

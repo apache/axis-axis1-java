@@ -59,6 +59,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import java.util.HashMap;
+
 import javax.wsdl.QName;
 
 import org.w3c.dom.Element;
@@ -166,6 +168,55 @@ public abstract class JavaWriter implements Writer {
             }
         }
     } // writeComment
+
+    /**
+     * A simple map of the primitive types and their holder objects
+     */
+    private static HashMap TYPES = new HashMap(7);
+
+    static {
+        TYPES.put("int", "Integer");
+        TYPES.put("float", "Float");
+        TYPES.put("boolean", "Boolean");
+        TYPES.put("double", "Double");
+        TYPES.put("byte", "Byte");
+        TYPES.put("short", "Short");
+        TYPES.put("long", "Long");
+    }
+
+    /**
+     * Return a string with "var" wrapped as an Object type if needed
+     */
+    protected String wrapPrimitiveType(String type, String var) {
+        String objType = (String) TYPES.get(type);
+        if (objType != null) {
+            return "new " + objType + "(" + var + ")";
+        }
+        else {
+            return var;
+        }
+    } // wrapPrimitiveType
+
+    /**
+     * Return the Object variable 'var' cast to the appropriate type
+     * doing the right thing for the primitive types.
+     */
+    protected String getResponseString(String type, String var) {
+        String objType = (String) TYPES.get(type);
+        if (objType != null) {
+            return "((" + objType + ") " + var + ")." + type + "Value();";
+        }
+        else if (type.equals("void")) {
+            return ";";
+        }
+        else {
+            return "(" + type + ") " + var + ";";
+        }
+    } // getResponseString
+
+    protected boolean isPrimitiveType(String type) {
+        return TYPES.get(type) != null;
+    }
 
     /**
      * Write the body of the file.  This is what extenders of this class must

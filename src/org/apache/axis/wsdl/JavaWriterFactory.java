@@ -92,7 +92,7 @@ public class JavaWriterFactory implements WriterFactory {
      * Return Wsdl2java's JavaBindingWriter object.
      */
     public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return null;//new JavaBindingWriter(emitter, binding, operationParameters);
+        return new JavaBindingWriter(emitter, binding, operationParameters);
     } // getWriter
 
     /**
