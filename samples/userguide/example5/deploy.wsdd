@@ -5,7 +5,7 @@
   <parameter name="className" value="samples.userguide.example5.BeanService"/>
   <parameter name="methodName" value="processOrder"/>
 
-  <beanMapping qname="myNS:order" xmlns:myNS="urn:BeanService"
+  <beanMapping qname="myNS:Order" xmlns:myNS="urn:BeanService"
                languageSpecificType="java:samples.userguide.example5.Order"/>
  </service>
 
