@@ -19,6 +19,8 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.Base64SerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
+import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 
 /**
  *
@@ -84,5 +86,43 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
                    new Base64DeserializerFactory(byte[].class,
                                                  Constants.SOAP_BASE64)
         );
+
+        myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+        myRegister(Constants.SOAP_ARRAY12,     java.util.ArrayList.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        myRegister(Constants.SOAP_ARRAY12,     Object[].class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        // All array objects automatically get associated with the SOAP_ARRAY.
+        // There is no way to do this with a hash table,
+        // so it is done directly in getTypeQName.
+        // Internally the runtime uses ArrayList objects to hold arrays...
+        // which is the reason that ArrayList is associated with SOAP_ARRAY.
+        // In addition, handle all objects that implement the List interface
+        // as a SOAP_ARRAY
+        myRegister(Constants.SOAP_ARRAY,     java.util.Collection.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        myRegister(Constants.SOAP_ARRAY,     Object[].class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+
     }
 }

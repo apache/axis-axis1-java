@@ -614,41 +614,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             myRegisterSimple(Constants.XSD_UNSIGNEDLONG, java.math.BigInteger.class);
             myRegisterSimple(Constants.XSD_POSITIVEINTEGER, java.math.BigInteger.class);
         }
-        
-        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
-        myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
-        myRegister(Constants.SOAP_ARRAY12,     java.util.ArrayList.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
 
-        myRegister(Constants.SOAP_ARRAY12,     Object[].class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-
+        // Need this at the default TypeMapping level so that we can correctly
+        // obtain the ArraySerializer when in doc/lit mode and only have a
+        // Java class available (no XML type metadata) - see TypeMappingImpl
+        // (getSerializer())
         myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-        
-        // All array objects automatically get associated with the SOAP_ARRAY.
-        // There is no way to do this with a hash table,
-        // so it is done directly in getTypeQName.
-        // Internally the runtime uses ArrayList objects to hold arrays...
-        // which is the reason that ArrayList is associated with SOAP_ARRAY.
-        // In addition, handle all objects that implement the List interface
-        // as a SOAP_ARRAY
-        myRegister(Constants.SOAP_ARRAY,     java.util.Collection.class,
-                   new ArraySerializerFactory(),
-                   new ArrayDeserializerFactory()
-        );
-
-        myRegister(Constants.SOAP_ARRAY,     Object[].class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
         );

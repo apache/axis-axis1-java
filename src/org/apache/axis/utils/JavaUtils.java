@@ -509,7 +509,7 @@ public class JavaUtils
             // If destination is an array, and src is a component, we're good
             // if we're not encoded!
             if (!isEncoded && dest.isArray() &&
-                !dest.getComponentType().equals(Object.class) &&
+//                !dest.getComponentType().equals(Object.class) &&
                 dest.getComponentType().isAssignableFrom(src)) 
                 return true;
 
