@@ -62,10 +62,10 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.SOAPUtils;
 import org.apache.axis.transport.http.HTTPConstants;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.InputSource;
@@ -144,7 +144,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
 
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SessionGeneratorFactory.getFactory().generateSessionId());
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , "text/xml");
 
         msgObject=parent;
@@ -521,12 +521,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
         //Do not let the contentID ever be empty.
         if(ret == null){
-            ret=SOAPUtils.getNewContentIdValue();
+            ret=SessionGeneratorFactory.getFactory().generateSessionId();
             setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
         }
         ret= ret.trim();
         if(ret.length() ==0){
-            ret=SOAPUtils.getNewContentIdValue();
+            ret=SessionGeneratorFactory.getFactory().generateSessionId();
             setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
         }
         return ret;

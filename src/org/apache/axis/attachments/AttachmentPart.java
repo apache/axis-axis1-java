@@ -58,9 +58,9 @@ import org.apache.axis.AxisProperties;
 import org.apache.axis.Part;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.SOAPUtils;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
@@ -98,7 +98,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * Constructor AttachmentPart
      */
     public AttachmentPart() {
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SOAPUtils.getNewContentIdValue());
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SessionGeneratorFactory.getFactory().generateSessionId());
     }
 
     /**
@@ -108,7 +108,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public AttachmentPart(javax.activation.DataHandler dh) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
-                SOAPUtils.getNewContentIdValue());
+                SessionGeneratorFactory.getFactory().generateSessionId());
         datahandler = dh;
         if(dh != null)
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
@@ -197,13 +197,13 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     }
 
     /**
-     *     Sets Content-Id of this part. 
+     *     Sets Content-Id of this part.
      *      already defined.
      *     @param newCid new Content-Id
      *     @returns void
      */
     public void setContentId(String newCid) {
-        
+
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
@@ -216,13 +216,13 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         String ret = getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
         // Do not let the contentID ever be empty.
         if (ret == null) {
-            ret = SOAPUtils.getNewContentIdValue();
+            ret = SessionGeneratorFactory.getFactory().generateSessionId();
             setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
 
         ret = ret.trim();
         if (ret.length() == 0) {
-            ret = SOAPUtils.getNewContentIdValue();
+            ret = SessionGeneratorFactory.getFactory().generateSessionId();
             setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
 

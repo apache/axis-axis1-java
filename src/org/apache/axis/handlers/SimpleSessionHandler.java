@@ -66,6 +66,7 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -126,8 +127,7 @@ public class SimpleSessionHandler extends BasicHandler
                                                             SESSION_LOCALPART);
 
     private Hashtable activeSessions = new Hashtable();
-    private long curSessionID = 0;
-    
+
     // Reap timed-out sessions on the first request after this many
     // seconds.
     private long reapPeriodicity = 30;
@@ -313,7 +313,7 @@ public class SimpleSessionHandler extends BasicHandler
      */
     private synchronized Long getNewSession()
     {
-        Long id = new Long(curSessionID++);
+        Long id = SessionGeneratorFactory.getFactory().generateSession();
         SimpleSession session = new SimpleSession();
         session.setTimeout(defaultSessionTimeout);
         activeSessions.put(id, session);

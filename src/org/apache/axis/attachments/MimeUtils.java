@@ -64,6 +64,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.net.SessionGeneratorFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -271,7 +272,7 @@ public class MimeUtils {
         javax.mail.internet.MimeMultipart multipart = null;
 
         try {
-            String rootCID = getNewContentIdValue();
+            String rootCID = SessionGeneratorFactory.getFactory().generateSessionId();
 
             multipart = new javax.mail.internet.MimeMultipart(
                     "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
@@ -331,21 +332,5 @@ public class MimeUtils {
         }
 
         return multipart;
-    }
-
-    /** Field thisHost           */
-    static String thisHost = null;
-
-    /** Field count           */
-    private static int count = (int) (Math.random() * 100);
-
-    /**
-     * Method getNewContentIdValue
-     *
-     * @return
-     */
-    public static String getNewContentIdValue() {
-
-         return org.apache.axis.utils.SOAPUtils.getNewContentIdValue();
     }
 }
