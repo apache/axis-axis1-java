@@ -107,7 +107,7 @@ class NoopWriterFactory extends JavaWriterFactory {
     public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
         return new NoopWriter();
     }
-    
+
     public Writer getWriter(Definition definition, SymbolTable symbolTable) {
         return new NoopWriter();
     }

@@ -134,6 +134,7 @@ public class Emitter {
     } // ctor
 
     public SymbolTable getSymbolTable() { return symbolTable;}
+    public WriterFactory getWriterFactory() { return writerFactory;}
     /**
      * Call this method if you have a uri for the WSDL document
      * @param String wsdlURI the location of the WSDL file.

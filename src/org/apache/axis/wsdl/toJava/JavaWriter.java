@@ -145,6 +145,27 @@ public abstract class JavaWriter implements Writer {
     } // ctor
 
     /**
+     * Generate as an inner class
+     */
+    public void write(PrintWriter pw) throws IOException {
+        String packageDirName = namespaces.toDir(packageName);
+        String path = packageDirName + fileName;
+        String fqClass = packageName + "." + className;
+        
+        // Check for duplicates, probably the result of namespace mapping
+        if (emitter.fileInfo.getClassNames().contains(fqClass)) {
+            throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
+        }
+        if (emitter.fileInfo.getFileNames().contains(path)) {
+            throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
+        }
+        
+        emitter.fileInfo.add(path, fqClass, type);
+        this.pw = pw;
+        writeFileBody();
+    }
+
+    /**
      * Create the file, write the header, write the body.
      */
     public void write() throws IOException {
