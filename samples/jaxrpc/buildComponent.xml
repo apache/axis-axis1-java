@@ -34,6 +34,28 @@
       <include name="samples/addr/**.java" />
       <include name="samples/jaxrpc/address/**.java" />
     </javac>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${build.dir}/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${build.dir}/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- Compile the echo sample generated java files -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="samples/jaxrpc/**/*.java" />
+      <include name="samples/jaxrpc/*.java" />
+    </javac>
+
 </target>
 
 <target name="deploy"/>
