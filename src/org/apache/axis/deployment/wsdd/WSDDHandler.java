@@ -90,6 +90,9 @@ public class WSDDHandler
         throws WSDDException
     {
         super(e);
+        if (type == null && (this.getClass() == WSDDHandler.class)) {
+            throw new WSDDException("Must include type attribute for Handlers");
+        }
     }
 
     protected QName getElementName()

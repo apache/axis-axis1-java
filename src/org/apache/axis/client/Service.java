@@ -58,6 +58,7 @@ package org.apache.axis.client ;
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
+import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -94,14 +95,13 @@ import java.util.Set;
  */
 
 public class Service implements javax.xml.rpc.Service {
-    private AxisEngine          engine         = 
-            new AxisClient(configProvider);
-    
+    private AxisEngine          engine         = null;
+
     private URL                 wsdlLocation   = null ;
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
 
-    private static FileProvider configProvider =
+    private static FileProvider defaultConfigProvider =
                            new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     Definition getWSDLDefinition() {
@@ -120,6 +120,17 @@ public class Service implements javax.xml.rpc.Service {
      * @exception JAXRPCException If there's an error
      */
     public Service() throws JAXRPCException { 
+        engine = new AxisClient(defaultConfigProvider);
+    }
+
+    /**
+     * Constructs a new Service object as above, but also passing in
+     * the ConfigurationProvider which should be used to set up the
+     * AxisClient.
+     */
+    public Service(ConfigurationProvider configProvider)
+            throws JAXRPCException {
+        engine = new AxisClient(configProvider);
     }
 
     /**
@@ -131,6 +142,7 @@ public class Service implements javax.xml.rpc.Service {
      * @throws JAXRPCExceptionIif there's an error finding or parsing the WSDL
      */
     public Service(URL wsdlDoc, QName serviceName) throws JAXRPCException {
+        engine = new AxisClient(defaultConfigProvider);
         Document doc = XMLUtils.newDocument(wsdlDoc.toString());
         initService(doc, serviceName);
     }
@@ -148,6 +160,7 @@ public class Service implements javax.xml.rpc.Service {
      */
     public Service(String wsdlLocation, QName serviceName) 
                            throws JAXRPCException {
+        engine = new AxisClient(defaultConfigProvider);
         try {
             // Start by reading in the WSDL using WSDL4J
             FileInputStream      fis = new FileInputStream(wsdlLocation);
@@ -172,6 +185,7 @@ public class Service implements javax.xml.rpc.Service {
      */
     public Service(InputStream wsdlInputStream, QName serviceName) 
                            throws JAXRPCException {
+        engine = new AxisClient(defaultConfigProvider);
         Document doc = XMLUtils.newDocument(wsdlInputStream);
         initService(doc, serviceName);
     }
