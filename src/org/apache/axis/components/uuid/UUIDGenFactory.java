@@ -41,7 +41,7 @@ public abstract class UUIDGenFactory {
     protected static Log log = LogFactory.getLog(UUIDGenFactory.class.getName());
 
     static {
-        AxisProperties.setClassOverrideProperty(Compiler.class, "axis.UUIDGenerator");
+        AxisProperties.setClassOverrideProperty(UUIDGen.class, "axis.UUIDGenerator");
         AxisProperties.setClassDefault(UUIDGen.class, "org.apache.axis.components.uuid.FastUUIDGen");
     }
 
