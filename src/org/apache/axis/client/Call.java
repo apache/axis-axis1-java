@@ -1785,6 +1785,41 @@ public class Call implements javax.xml.rpc.Call {
     /************************************************************************/
 
     /**
+     * Invoke the service with a custom Message.
+     * This method simplifies invoke(SOAPEnvelope).
+     * <p>
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param msg a Message to send
+     * @throws AxisFault if there is any failure
+     */
+    public SOAPEnvelope invoke(Message msg) throws AxisFault {
+        try {
+            setRequestMessage( msg );
+            invoke();
+            msg = msgContext.getResponseMessage();
+            if (msg == null) {
+                if (msgContext.isPropertyTrue(FAULT_ON_NO_RESPONSE, false)) {
+                    throw new AxisFault(Messages.getMessage("nullResponse00"));
+                } else {
+                    return null;
+                }
+            }
+            SOAPEnvelope res = null;
+            res = msg.getSOAPEnvelope();
+            return res;
+        }
+        catch (Exception exp) {
+            if (exp instanceof AxisFault) {
+                throw (AxisFault) exp ;
+            }
+            entLog.debug(Messages.getMessage("toAxisFault00"), exp);
+            throw new AxisFault(
+                    Messages.getMessage("errorInvoking00", "\n" + exp));
+        }
+    }
+
+    /**
      * Invoke the service with a custom SOAPEnvelope.
      * <p>
      * Note: Not part of JAX-RPC specification.
