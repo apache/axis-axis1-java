@@ -2,6 +2,6 @@
     <service name="OrderProcessor" provider="java:RPC">
         <parameter name="className" value="samples.userguide.example5.BeanService"/>
         <parameter name="allowedMethods" value="processOrder"/>
-        <beanMapping qName="myNS:Order" xmlns:myNS="urn:BeanService" languageSpecificType="java:samples.userguide.example5.Order"/>
+        <beanMapping qname="myNS:Order" xmlns:myNS="urn:BeanService" languageSpecificType="java:samples.userguide.example5.Order"/>
     </service>
 </deployment>
