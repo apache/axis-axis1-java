@@ -55,16 +55,26 @@
 
 package org.apache.axis.transport.http ;
 
-import java.io.*;
-import javax.servlet.* ;
-import javax.servlet.http.* ;
-import org.apache.axis.* ;
+import org.apache.axis.*;
 import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.server.* ;
-import org.apache.axis.utils.*;
-import org.apache.axis.message.*;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 
 /**
  *
@@ -131,9 +141,29 @@ public class AxisServlet extends HttpServlet {
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
-                if (req.getParameter("WSDL") != null) {
+                boolean wsdlRequested = false;
+                boolean listRequested = false;
+
+                Enumeration enum = req.getParameterNames();
+                while (enum.hasMoreElements()) {
+                    String param = (String) enum.nextElement();
+                    if (param.equalsIgnoreCase("wsdl")) {
+                        wsdlRequested = true;
+                    } else if (param.equalsIgnoreCase("list")) {
+                        listRequested = true;
+                    }
+                }
+
+                if (wsdlRequested) {
                     engine.generateWSDL(msgContext);
                     Document doc = (Document) msgContext.getProperty("WSDL");
+                    if (doc != null) {
+                        res.setContentType("text/xml");
+                        XMLUtils.DocumentToWriter(doc, res.getWriter());
+                        res.getWriter().close();
+                    }
+                } else if (listRequested) {
+                    Document doc = Admin.listConfig(engine);
                     if (doc != null) {
                         res.setContentType("text/xml");
                         XMLUtils.DocumentToWriter(doc, res.getWriter());
