@@ -44,6 +44,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.management.ServiceAdmin;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -180,8 +181,15 @@ public class AxisServlet extends AxisServletBase {
         }
 
         initQueryStringHandlers();
-    }
 
+        // Setup the service admin
+        try {
+            ServiceAdmin.setEngine(this.getEngine());
+        } catch (AxisFault af) {
+            exceptionLog.info("Exception setting AxisEngine on ServiceAdmin " +
+                    af);
+        } 
+    }
 
 
     /**
