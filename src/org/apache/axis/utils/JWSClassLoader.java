@@ -63,8 +63,6 @@ import java.io.*;
  * to reload a JWS, we replace the ClassLoader for that class and let the
  * old one get GC'ed.
  *
- * This is a simplified version of the former AxisClassLoader.
- *
  * @author Glen Daniels (gdaniels@apache.org)
  * @author Doug Davis (dug@us.ibm.com)
  */

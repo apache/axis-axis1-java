@@ -15,7 +15,6 @@ public class PackageTests
     {
         TestSuite suite = new TestSuite("All axis.utils tests");
 
-        suite.addTest(TestAxisClassLoader.suite());
         // suite.addTest(TestOptions.suite()); //comment out for now - this
         // class is a mess
         suite.addTest(TestQName.suite());
