@@ -60,7 +60,9 @@ Copyright:
   <property name="Name" value="Axis"/>
   <property name="year" value="2001"/>
 
-  <property name="debug" value="true"/>
+  <!-- debug flag for ant javac, values are "on" and "off" -->
+  <property name="debug" value="off"/>  
+
   <property name="deprecation" value="true"/>
 
   <property name="src.dir" value="./src"/>
@@ -204,8 +206,6 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/client"/>
     <copy file="${src.dir}/log4j.properties"
           toDir="${build.dest}"/>
-    <copy file="${test.dir}/wsdl/Wsdl2javaTestSuite.list"
-          toDir="${build.dest}/test/wsdl"/>
     <copy file="${src.dir}/org/apache/axis/utils/resources.properties"
           toDir="${build.dest}/org/apache/axis/utils"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
@@ -269,12 +269,7 @@ Copyright:
       <include name="test/**/*.java" />
       <exclude name="test/inout/*.java" />
       <exclude name="test/faults/wsdl/*.java" />
-      <exclude name="test/multiref/*.java" />
-      <exclude name="test/arrays/*.java" />
-      <exclude name="test/refattr/*.java" />
-      <exclude name="test/*/impl/*.java" />
-      <exclude name="test/wsdl/marrays/*.java"/>
-      <exclude name="test/wsdl/types/*.java"/>
+      <exclude name="test/wsdl/*/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
     </javac>

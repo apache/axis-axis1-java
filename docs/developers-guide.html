@@ -86,14 +86,11 @@ code:
 <br><tt><font color="#009900">G:\\xml-axis\\java\\build\\lib\\clutil.jar</font></tt>
 <br><tt><font color="#009900">G:\\xml-axis\\java\\build\\classes</font></tt></blockquote>
 </blockquote>
-
 If you access the internet via a proxy server, you'll need to set an environment
 variable so that the Axis tests do the same. Set ANT_OPTS to, for example:
 <blockquote>
-<blockquote>
-<tt><font color="#009900">-Dhttp.proxyHost=proxy.somewhere.com
--Dhttp.proxyPort=80 -Dhttp.nonProxyHosts="localhost"</font></tt>
-</blockquote>
+<blockquote><tt><font color="#009900">-Dhttp.proxyHost=proxy.somewhere.com
+-Dhttp.proxyPort=80 -Dhttp.nonProxyHosts="localhost"</font></tt></blockquote>
 </blockquote>
 
 <h2>
@@ -123,13 +120,11 @@ To compile the source code:
 To run the tests:
 <blockquote><tt>cd xml-axis/java</tt>
 <br><tt>ant functional-tests</tt></blockquote>
-
-<b>Note: </b>these tests start a
-server on port 8080. If this clashes with the port used by your web application
-server (such as Tomcat), you'll need to change one of the ports or
-stop your web application server when running the tests.<br><br>
-
-<b>Please run <tt><font color="#009900">ant functional-tests</font></tt>
+<b>Note: </b>these tests start a server on port 8080. If this clashes with
+the port used by your web application server (such as Tomcat), you'll need
+to change one of the ports or stop your web application server when running
+the tests.
+<p><b>Please run <tt><font color="#009900">ant functional-tests</font></tt>
 and <tt><font color="#009900">ant all-tests</font></tt> before checking
 in new code.</b>
 <h2>
@@ -152,6 +147,10 @@ Here is an example message:</li>
 
 <br>&nbsp;
 <p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <p><font color="#009900">sample00=My name is {0}, and my title is {1}.</font>
 <br>&nbsp;
 <ol>
@@ -173,6 +172,10 @@ method to obtain the text and add inserts.&nbsp; Here is an example usage:</li>
 
 <br>&nbsp;
 <p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <p><font color="#009900">JavaUtils.getMessage("sample00", "Rich Scheuerle",
 "Software Developer");</font>
 <br>&nbsp;
@@ -252,7 +255,8 @@ test:</font>
 <br>&nbsp;
 <ol>
 <li>
-<font color="#000000">Created a <tt>xml-axis/java/test/sequence</tt> directory.</font></li>
+<font color="#000000">Created a <tt>xml-axis/java/test/wsdl/sequence</tt>
+directory.</font></li>
 
 <br>&nbsp;
 <li>
@@ -261,11 +265,15 @@ the webservice.</font></li>
 
 <br>&nbsp;
 <li>
-<font color="#000000">Ran the Wsdl2java emitter to create java files:</font><br>
-<BR></li>
+<font color="#000000">Ran the Wsdl2java emitter to create java files:</font></li>
 
-<p><br><tt><font color="#993366">java org.apache.axis.wsdl.Wsdl2java -t
--s SequenceTest.wsdl</font></tt>
+<br>&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<p><tt><font color="#993366">java org.apache.axis.wsdl.Wsdl2java -t -s
+SequenceTest.wsdl</font></tt>
 <br>&nbsp;
 <ol>
 <li>
@@ -275,10 +283,12 @@ any additional changes.&nbsp; Copy the *TestCase.java file into the same
 directory as your wsdl file.&nbsp; (Ideally only the java files that are
 changed need to be in your directory.&nbsp; So this file is not needed,
 but please make sure to modify your &lt;wsdl2java ...> clause (described
-below) to emit a testcase.</font><br>
-<br>
-<BR></li>
+below) to emit a testcase.</font></li>
 
+<br>&nbsp;
+<p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <li>
 <font color="#000000">The -s option causes the emitter to generate a *SOAPBindingImpl.java
 file.&nbsp; The java file contains empty methods for the service.&nbsp;
@@ -295,17 +305,7 @@ So you should have three files in your directory (wsdl file, *TestCase.java,
 and *SOAPBindingImpl.java).&nbsp; My sequence test has an another file
 due to some additional logic that I needed.</font></li>
 </ol>
-
-<li>
-<font color="#000000">In the build.xml file, locate the "buildTest" target.&nbsp;
-You will need to add an &lt;exclude .../> clause to prevent your two java
-files from being compiled.&nbsp; (Note it would be nice if there was a
-better way to prevent this.) Here is the exclude clause for the sequence
-test:</font></li>
-
-<br>&nbsp;
-<p>&nbsp;
-<p><tt><font color="#993366">&lt;exclude name="test/sequence/*.java" /></font></tt>
+<tt><font color="#993366"></font></tt>
 <br>&nbsp;
 <li>
 <font color="#000000">The <tt>test/build_functional_tests.xml</tt> file
@@ -314,12 +314,15 @@ You will see a clause that runs the Wsdl2java code:</font></li>
 
 <br>&nbsp;
 <p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <p><tt><font color="#993366">&lt;ant antfile="test/wsdl/Wsdl2javaTestSuite.xml"/></font></tt>
 <p><font color="#000000">Following this clause you will see some clauses
 that copy java files from the test directories.&nbsp; If you have additional
-files, you need to copy them over.&nbsp; Examine the clause that I added
-to copy over SequenceInfo.java.&nbsp; (Note it would be nice if there was
-a better way to do this.)</font>
+files, you may need to copy them over.&nbsp; Examine the clause that I
+added to copy over SequenceInfo.java.</font>
 <br>&nbsp;
 <li>
 <font color="#000000">Now go to the <tt>test/wsdl/Wsdl2javaTestSuite.xml
@@ -329,9 +332,13 @@ clause.&nbsp; Here is the one for SequenceTest:</font></li>
 
 <br>&nbsp;
 <p>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <p><tt><font color="#663366">&nbsp;&nbsp;&nbsp; </font><font color="#993366">&lt;!--
 Sequence Test --></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;wsdl2java url="test/sequence/SequenceTest.wsdl"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 output="build/work"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -347,7 +354,7 @@ verbose="no"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 testcase="no"></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;mapping namespace="urn:SequenceTest2" package="test.sequence"/></font></tt>
+&lt;mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;/wsdl2java></font></tt>
 <br>&nbsp;
 <li>
@@ -366,8 +373,10 @@ Here is an easy way to monitor the messages while running functional-tests
 (or all-tests).
 <br>Start up tcpmon listening on 8080 and forwarding to a different port:
 <blockquote><tt>java org.apache.axis.utils.tcpmon 8080 localhost 8011</tt></blockquote>
-Run your tests, but use the forwarded port for the SimpleAxisServer:
-<blockquote><tt>ant functional-tests -Dtest.functional.SimpleAxisPort=8011</tt></blockquote>
+Run your tests, but use the forwarded port for the SimpleAxisServer, and
+indicate that functional-tests should continue if a failure occurs.
+<blockquote><tt>ant functional-tests -Dtest.functional.SimpleAxisPort=8011
+-Dtest.functional.fail=no</tt></blockquote>
 The SOAP messages for all of the tests should appear in the tcpmon window.
 </body>
 </html>

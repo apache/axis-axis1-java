@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package test.multiref;
+package test.wsdl.multiref;
 
 import org.apache.axis.utils.Options;
 

@@ -4,11 +4,11 @@
  * @author: Rich Scheuerle (scheu@us.ibm.com)
  */
 
-package test.sequence;
+package test.wsdl.sequence;
 import java.util.Vector;
 
-public class SequenceTestSoapBindingImpl implements test.sequence.SequenceTestPortType {
-    public int testSequence(test.sequence.SequenceInfo info) throws java.rmi.RemoteException {
+public class SequenceTestSoapBindingImpl implements test.wsdl.sequence.SequenceTestPortType {
+    public int testSequence(test.wsdl.sequence.SequenceInfo info) throws java.rmi.RemoteException {
         Vector v = info.order();
         if (v == null || v.size() != 6) 
             return -100;

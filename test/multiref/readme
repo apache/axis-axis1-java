@@ -1,6 +1,0 @@
-To generate files from the wsdl:
-
-java org.apache.axis.wsdl.Wsdl2java -s test\multiref\MultiRefTest.wsdl 
-                                    -p test.multiref
-
-from the xml-axis\java directory.
