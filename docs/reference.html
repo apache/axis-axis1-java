@@ -773,11 +773,20 @@ also special logs for special categories.
 <h2>Pre-Configured Axis Components Reference</h2>
 <h3>On the server:</h3>
 <dl> 
+  <dt><b>SimpleSessionHandler</b>
+  <dd>uses SOAP headers to do simple session management
+  <dt>&nbsp;
   <dt><b>LogHandler</b> 
   <dd>The LogHandler will simply log a message to a logger when it gets invoked. 
   <dt> 
+  <dt><b>SoapMonitorHandler</b>
+  <dd>Provides the hook into the message pipeline sending the SOAP request and
+  response messages to the SoapMonitor utility.
+  <dt>&nbsp;
+  <dt> 
   <dt><b>EchoHandler</b> 
   <dd>The EchoHandler copies the request message into the response message. 
+  <dt>&nbsp;
   <dt><b>HTTPAuth</b>
   <dd>The HTTPAuthHandler takes HTTP-specific authentication information (right 
     now, just Basic authentication) and turns it into generic MessageContext properties 
@@ -791,6 +800,7 @@ also special logs for special categories.
     (a chain called &quot;authChecks&quot; is predefined for just this combination), 
     checks to make sure that the currently authenticated user satisfies one of 
     the allowed roles for the target service. Throws a Fault if access is denied.
+  <dt>&nbsp;
   <dt><b>URLMapper</b> 
   <dd>The URLMapper, an HTTP-specific handler, usually goes on HTTP transport 
     chains (it is deployed by default). It serves to do service dispatch based 
@@ -798,25 +808,25 @@ also special logs for special categories.
     like http://localhost:8080/axis/services/MyService?wsdl 
     to work.
   <dt>&nbsp;
-  <dt> 
-  <dt><b>RPCDispatcher</b> 
-  <dd>The RPCDispatcher is the pivot point for all RPC services. It accepts the 
+  <dt><b>RPCProvider</b>
+  <dd>The RPCProvider is the pivot point for all RPC services. It accepts the
     following options: <br>
     <b><i>className</i></b> = the class of the backend object to invoke<br>
-    <b><i>methodName</i></b> = a space-separated list of methods which are exported 
-    as web services. The special value &quot;*&quot; matches all public methods 
-    in the class. 
-  <dt> 
-  <dt><b>MsgDispatcher</b> 
-  <dd>The MsgDispatcher is the pivot point for all messaging services. It accepts 
+    <b><i>methodName</i></b> = a space-separated list of methods which are exported
+    as web services. The special value &quot;*&quot; matches all public methods
+    in the class.
+  <dt>
+  <dt><b>MsgProvider</b>
+  <dd>The MsgProvider is the pivot point for all messaging services. It accepts
     the following options: <br>
   <dd><b><i>className</i></b> = the class of the backend object to invoke<br>
-    <b><i>methodName</i></b> = a space-separated list of methods which are exported 
-    as web services. The special value &quot;*&quot; matches all public methods 
-    in the class. 
-  <dt> 
-  <dt><b></b> 
-  <dt> 
+    <b><i>methodName</i></b> = a space-separated list of methods which are exported
+    as web services. The special value &quot;*&quot; matches all public methods
+    in the class.
+  <dt>
+  <dt><b>JAXRPCHandler</b>
+  <dd>Wrapper around JAX-RPC compliant handlers that exposes an Axis handler interface to the engine.
+  <dt>&nbsp;
   <dt><b>LocalResponder</b> 
   <dd>The LocalResponder is a Handler whose job in life is to serialize the response 
     message coming back from a local invocation into a String. It is by default 
@@ -825,6 +835,12 @@ also special logs for special categories.
 </dl>
 <h3>On the client:</h3>
 <dl> 
+  <dt><b>SimpleSessionHandler</b>
+  <dd>uses SOAP headers to do simple session management
+  <dt>&nbsp;
+  <dt><b>JAXRPCHandler</b>
+  <dd>Wrapper around JAX-RPC compliant handlers that exposes an Axis handler interface to the engine.
+  <dt>&nbsp;
   <dt><b>HTTPSender</b> 
   <dd>A Handler which sends the request message to a remote server via HTTP, and 
     collects the response message.
