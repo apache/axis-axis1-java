@@ -95,7 +95,7 @@ public class HTTPSender extends BasicHandler {
             int      port   = 80 ;
             URL      tmpURL = new URL( targetURL );
             byte[]   buf    = new byte[4097];
-            int      rc     = 0 ;
+            int      returnCode     = 0 ;
 
             // default SOAPAction to request namespaceURI/method
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
@@ -268,6 +268,7 @@ public class HTTPSender extends BasicHandler {
             int        colonIndex = -1 ;
             Hashtable  headers = new Hashtable();
             String     name, value ;
+            String     statusMessage = "";
 
             // Need to add logic for getting the version # and the return code
             // but that's for tomorrow!
@@ -298,16 +299,35 @@ public class HTTPSender extends BasicHandler {
                         String tmp = name.substring(start).trim();
                         int end   = tmp.indexOf( ' ' );
                         if ( end != -1 ) tmp = tmp.substring( 0, end );
-                        rc = Integer.parseInt( tmp );
+                        returnCode = Integer.parseInt( tmp );
                         msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
-                                                new Integer(rc) );
+                                                new Integer(returnCode) );
+                        statusMessage = name.substring(start + end + 1);
                         msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                                                name.substring(end+1));
+                                                statusMessage);
                     }
                     else
                         headers.put( name.toLowerCase(), value );
                     len = 0 ;
                 }
+            }
+
+            if (returnCode > 199 && returnCode < 300) {
+                // SOAP return is OK - so fall through
+            } else if (returnCode > 499 && returnCode < 600) {
+                // SOAP Fault should be in here - so fall through
+            } else {
+                // Unknown return code - so wrap up the content into a
+                // SOAP Fault.
+
+                len = 0;
+                while ((b = (byte)inp.read()) != -1) {
+                    buf[len++] = b;
+                }
+                buf[len] = (byte)0;
+
+                throw new AxisFault("HTTP", statusMessage, null,
+                                    new String(buf, 0, len));
             }
 
             if ( b != -1 ) {
