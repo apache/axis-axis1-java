@@ -57,8 +57,8 @@
 package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.XMLUtils;
 
 import org.w3c.dom.Attr;
@@ -100,7 +100,7 @@ public class Types {
 
     Definition def;
     Namespaces namespaces = null;
-    TypeMappingRegistry reg;
+    TypeMapping tm;
     String targetNamespace;
     Element wsdlTypesElem = null;
     HashMap schemaTypes = null;
@@ -125,7 +125,9 @@ public class Types {
                  Java2WSDLFactory factory) {
         this.def = def;
         createDocumentFragment();
-        this.reg = reg;
+        if (reg != null) {
+            tm = (TypeMapping) reg.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC);
+        }
         this.namespaces = namespaces;
         this.targetNamespace = targetNamespace;
         schemaElementNames = new HashMap();
@@ -149,7 +151,7 @@ public class Types {
         if (type.getName().equals("void"))
           return null;
         if (isSimpleType(type)) {
-            javax.xml.rpc.namespace.QName qName = reg.getTypeQName(type);
+            javax.xml.rpc.namespace.QName qName = getTypeQName(type);
             return getWsdlQName(qName);
         }else {
             if (wsdlTypesElem == null)
@@ -200,11 +202,11 @@ public class Types {
 
             // Check for Byte[], byte[] and Object[]
             if (componentType == java.lang.Byte.class) {
-                qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "base64");
+                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SOAP_ENC, "base64");
             } else if (componentType == java.lang.Byte.TYPE) {
                 qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SCHEMA_XSD, "base64Binary");
             } else if (componentType == java.lang.Object.class) {
-                qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "Array");
+                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
             } else {
                 // Construct ArrayOf in targetNamespace
                 javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
@@ -215,7 +217,7 @@ public class Types {
             } 
         } else {
             // Get the QName from the registry, or create our own.
-            qName = reg.getTypeQName(type);
+            qName = tm.getTypeQName(type);
             if (qName == null) {
                 String pkg = getPackageNameFromFullName(type.getName());
                 String lcl = getLocalNameFromFullName(type.getName());
@@ -306,9 +308,9 @@ public class Types {
 
         // Quick return if schema type
         if (isSimpleSchemaType(type))
-            return Constants.NSPREFIX_SCHEMA_XSD + ":" + reg.getTypeQName(type).getLocalPart();
+            return Constants.NSPREFIX_SCHEMA_XSD + ":" + getTypeQName(type).getLocalPart();
         if (isSimpleSoapEncodingType(type))
-            return Constants.NSPREFIX_SOAP_ENC + ":" + reg.getTypeQName(type).getLocalPart();
+            return Constants.NSPREFIX_SOAP_ENC + ":" + getTypeQName(type).getLocalPart();
 
         // Write the namespace
         QName qName = writeTypeNamespace(type);

@@ -141,7 +141,7 @@ public class JavaStubWriter extends JavaWriter {
         if (types.size() > 0) {
             pw.println("    private java.util.Vector cachedSerClasses = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedSerQNames = new java.util.Vector();");
-            pw.println("    private java.util.Vector cachedSerializers = new java.util.Vector();");
+            pw.println("    private java.util.Vector cachedSerFactories = new java.util.Vector();");
             pw.println("    private java.util.Vector cachedDeserFactories = new java.util.Vector();");
         }
         pw.println();
@@ -240,17 +240,15 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("                call.setProperty(key, cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
-            pw.println("            for (int i = 0; i < cachedSerializers.size(); ++i) {");
+            pw.println("            for (int i = 0; i < cachedSerFactories.size(); ++i) {");
             pw.println("                Class cls = (Class) cachedSerClasses.get(i);");
             pw.println("                javax.xml.rpc.namespace.QName qname =");
             pw.println("                        (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
-            pw.println("                org.apache.axis.encoding.Serializer ser =");
-            pw.println("                        (org.apache.axis.encoding.Serializer) cachedSerializers.get(i);");
-            pw.println("                org.apache.axis.encoding.DeserializerFactory deserFac =");
-            pw.println("                        (org.apache.axis.encoding.DeserializerFactory)");
+            pw.println("                Class sf = (Class)");
+            pw.println("                         cachedSerFactories.get(i);");
+            pw.println("                Class df = (Class)");
             pw.println("                         cachedDeserFactories.get(i);");
-            pw.println("                call.addSerializer(cls, qname, ser);");
-            pw.println("                call.addDeserializerFactory(qname, cls, deserFac);");
+            pw.println("                call.registerTypeMapping(cls, qname, sf, df, false);");
             pw.println("            }");
         }
         pw.println("            return call;");
@@ -432,19 +430,21 @@ public class JavaStubWriter extends JavaWriter {
         }
         if ( firstSer ) {
             pw.println("            Class cls;" );
-            pw.println("            org.apache.axis.encoding.Serializer ser;");
-            pw.println("            org.apache.axis.encoding.DeserializerFactory deserFac;");
+            pw.println("            javax.xml.rpc.namespace.QName qName;" );
+            pw.println("            Class sf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
+            pw.println("            Class df = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
         }
         firstSer = false ;
 
         QName qname = type.getQName();
-        pw.println("            cachedSerQNames.add(new javax.xml.rpc.namespace.QName(\""
-                + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
-                + "\"));");
+        pw.println("            qName = new javax.xml.rpc.namespace.QName(\""
+                   + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
+                   + "\");");
+        pw.println("            cachedSerQNames.add(qName);");
         pw.println("            cls = " + type.getName() + ".class;");
         pw.println("            cachedSerClasses.add(cls);");
-        pw.println("            cachedSerializers.add(new org.apache.axis.encoding.BeanSerializer(cls));");
-        pw.println("            cachedDeserFactories.add(org.apache.axis.encoding.BeanSerializer.getFactory());");
+        pw.println("            cachedSerFactories.add(sf);");
+        pw.println("            cachedDeserFactories.add(df);");
         pw.println();
     } // writeSerializationInit
 
