@@ -1794,8 +1794,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         // Convert type if needed
-        if (returnJavaType != null &&
-                !(returnJavaType.isAssignableFrom(result.getClass()))) {
+        if (returnJavaType != null) {
             result = JavaUtils.convert(result, returnJavaType);
         }
 
