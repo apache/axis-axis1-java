@@ -58,10 +58,11 @@ package javax.xml.rpc.encoding;
 import javax.xml.rpc.JAXRPCException;
 
 /**
- * The javax.xml.rpc.encoding.DeserializerFactory is a factory of deserializers. A DeserializerFactory is 
- * registered with a TypeMapping instance as part of the TypeMappingRegistry. 
+ * The javax.xml.rpc.encoding.DeserializerFactory is a factory of
+ * deserializers. A DeserializerFactory is registered with a
+ * TypeMapping instance as part of the TypeMappingRegistry.
  *
- * @version 0.6
+ * @version 1.0
  */
 public interface DeserializerFactory extends java.io.Serializable {
 
@@ -73,8 +74,7 @@ public interface DeserializerFactory extends java.io.Serializable {
      * @return Returns a Deserializer for the specified XML processing mechanism type.
      *
      * @throws JAXRPCException If DeserializerFactory does not support
-     * the specified XML processing mechanism
-     * java.lang.IllegalArgumentException If an invalid mechanism type is specified.
+     *             the specified XML processing mechanism
      */
     public Deserializer getDeserializerAs(String mechanismType);
 

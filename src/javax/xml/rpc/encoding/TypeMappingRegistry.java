@@ -33,7 +33,7 @@
  *    nor may "Apache" appear in their name, without prior written
  *    permission of the Apache Software Foundation.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -55,113 +55,126 @@
 
 package javax.xml.rpc.encoding;
 
-import javax.xml.rpc.JAXRPCException;
-import java.util.Iterator;
 
 /**
- * The interface javax.xml.rpc.encoding.TypeMappingRegistry 
- * defines a registry for TypeMapping instances for 
- * the different encoding styles. 
+ * The interface <code>javax.xml.rpc.encoding.TypeMappingRegistry</code>
+ * defines a registry of TypeMapping instances for various encoding
+ * styles.
  *
- * @version 0.7
+ * @version 1.0
  */
 public interface TypeMappingRegistry extends java.io.Serializable {
 
     /**
-     * Registers a TypeMapping instance with the TypeMappingRegistry. This
-     * method replaces any existing registered TypeMapping instance for the
-     * specified namespaceURI.
+     * Registers a <code>TypeMapping</code> instance with the
+     * <code>TypeMappingRegistry</code>. This method replaces any
+     * existing registered <code>TypeMapping</code> instance for
+     * the specified <code>encodingStyleURI</code>.
      *
-     * @param namespaceURI - An encoding style or XML schema namespace specified
-     *                       as an URI. An example is
-     *                       "http://schemas.xmlsoap.org/soap/encoding/"
-     * @param mapping - TypeMapping instance
+     * @param encodingStyleURI An encoding style specified as an URI.
+     *             An example is "http://schemas.xmlsoap.org/soap/encoding/"
+     * @param mapping TypeMapping instance
      *
-     * @return Previous TypeMapping associated with the specified namespaceURI,
-     * or null if there was no TypeMapping associated with the specified namespaceURI
+     * @return Previous TypeMapping associated with the specified
+     *     <code>encodingStyleURI</code>, or <code>null</code>
+     *     if there was no TypeMapping associated with the specified
+     *     <code>encodingStyleURI</code>
      *
-     * @throws JAXRPCException - If there is any error in the registration
-     * of the TypeMapping for the specified namespace URI
+     * @throws JAXRPCException If there is an error in the
+     *              registration of the <code>TypeMapping</code> for
+     *              the specified <code>encodingStyleURI</code>.
      */
-    public TypeMapping register(String namespace, TypeMapping mapping);
+    public TypeMapping register(String encodingStyleURI, TypeMapping mapping);
 
 
     /**
-     * Registers the TypeMapping instance that is default for all encoding
-     * styles and XML schema namespaces supported by the TypeMappingRegistry. A
-     * default TypeMapping should include serializers and deserializers that are
-     * independent of and usable with any encoding style or XML namespaces. The
-     * successive invocations of the registerDefault method replace any existing
-     * default TypeMapping instance.
+     * Registers the <code>TypeMapping</code> instance that is default
+     * for all encoding styles supported by the
+     * <code>TypeMappingRegistry</code>. A default <code>TypeMapping</code>
+     * should include serializers and deserializers that are independent
+     * of and usable with any encoding style. Successive invocations
+     * of the <code>registerDefault</code> method replace any existing
+     * default <code>TypeMapping</code> instance.
      * <p>
-     * If the default TypeMapping is registered, any other TypeMapping instances
-     * registered through the TypeMappingRegistry.register method (for a set of
-     * namespace URIs) override the default TypeMapping.
+     * If the default <code>TypeMapping</code> is registered, any
+     * other TypeMapping instances registered through the
+     * <code>TypeMappingRegistry.register</code> method (for a set
+     * of encodingStyle URIs) override the default <code>TypeMapping</code>.
      *
-     * @param mapping - TypeMapping instance
+     * @param mapping TypeMapping instance
      *
-     * @throws JAXRPCException - If there is any error in the registration
-     * of the TypeMapping for the specified namespace URI
+     * @throws JAXRPCException If there is an error in the
+     *             registration of the default <code>TypeMapping</code>
      */
     public void registerDefault(TypeMapping mapping);
 
     /**
-     * Return the registered default TypeMapping instance
-     * @return TypeMapping or null
-     **/
+     * Gets the registered default <code>TypeMapping</code> instance.
+     * This method returns <code>null</code> if there is no registered
+     * default TypeMapping in the registry.
+     *
+     * @return The registered default <code>TypeMapping</code> instance
+     *     or <code>null</code>
+     */
     public TypeMapping getDefaultTypeMapping();
 
     /**
-     * Returns the registered TypeMapping for the specified namespace URI. If
-     * there is no registered TypeMapping for the specified namespaceURI, this
-     * method returns null.
+     * Returns a list of registered encodingStyle URIs in this
+     * <code>TypeMappingRegistry</code> instance.
      *
-     * @param namespaceURI - Encoding style or XML schema namespace specified
-     *                       as an URI
-     * @return TypeMapping for the specified namespace URI or null
+     * @return Array of the registered encodingStyle URIs
      */
-    public TypeMapping getTypeMapping(String namespaceURI);
+    public String[] getRegisteredEncodingStyleURIs();
 
     /**
-     * Unregisters a TypeMapping instance, if present, from the specified
-     * namespaceURI.
+     * Returns the registered <code>TypeMapping</code> for the specified
+     * encodingStyle URI. If there is no registered <code>TypeMapping</code>
+     * for the specified <code>encodingStyleURI</code>, this method
+     * returns <code>null</code>.
      *
-     * @param namespaceURI - Encoding style or XML schema namespace specified
-     *                       as an URI
-     * @return The registered TypeMapping or null.
+     * @param encodingStyleURI Encoding style specified as an URI
+     * @return TypeMapping for the specified encodingStyleURI or
+     *     <code>null</code>
      */
-    public TypeMapping unregisterTypeMapping(String namespaceURI);
+    public TypeMapping getTypeMapping(String encodingStyleURI);
 
     /**
-     * Removes a TypeMapping from the TypeMappingRegistry. A TypeMapping is
-     * associated with 1 or more namespaceURIs. This method unregisters the
-     * specified TypeMapping instance from all associated namespaceURIs and then
-     * removes this TypeMapping instance from the registry.
-     *
-     * @param mapping - TypeMapping to remove
-     * @return true if specified TypeMapping is removed from the TypeMappingRegistry;
-     *         false if the specified TypeMapping was not in the TypeMappingRegistry
-     */
-    public boolean removeTypeMapping(TypeMapping mapping);
-
-
-    /**
-     * Creates a new empty TypeMapping object.
+     * Creates a new empty <code>TypeMapping</code> object.
      *
      * @return TypeMapping instance.
      */
     public TypeMapping createTypeMapping();
 
     /**
-     * Gets a list of namespace URIs registered with this TypeMappingRegistry.
+     * Unregisters a TypeMapping instance, if present, from the specified
+     * encodingStyleURI.
      *
-     * @return String[] containing names of all registered namespace URIs
+     * @param encodingStyleURI Encoding style specified as an URI
+     * @return <code>TypeMapping</code> instance that has been unregistered
+     *     or <code>null</code> if there was no TypeMapping
+     *     registered for the specified <code>encodingStyleURI</code>
      */
-    public String[] getRegisteredEncodingStyleURIs();
-
+    public TypeMapping unregisterTypeMapping(String encodingStyleURI);
 
     /**
-     * Removes all TypeMappings and namespaceURIs from this TypeMappingRegistry.
+     * Removes a <code>TypeMapping</code> from the TypeMappingRegistry. A
+     * <code>TypeMapping</code> is associated with 1 or more
+     * encodingStyleURIs. This method unregisters the specified
+     * <code>TypeMapping</code> instance from all associated
+     * <code>encodingStyleURIs</code> and then removes this
+     * TypeMapping instance from the registry.
+     *
+     * @param mapping TypeMapping to remove
+     * @return <code>true</code> if specified <code>TypeMapping</code>
+     *     is removed from the TypeMappingRegistry; <code>false</code>
+     *     if the specified <code>TypeMapping</code> was not in the
+     *     <code>TypeMappingRegistry</code>
+     */
+    public boolean removeTypeMapping(TypeMapping mapping);
+
+    /**
+     * Removes all registered TypeMappings and encodingStyleURIs
+     * from this TypeMappingRegistry.
      */
     public void clear();
 

@@ -58,23 +58,15 @@ package javax.xml.namespace;
 import java.io.Serializable;
 
 /**
- * QName class represents a qualified name based on "Namespaces in XML"
- * specification.  A QName is represented as: 
+ * <code>QName</code> class represents the value of a qualified name
+ * as specified in <a href="http://www.w3.org/TR/xmlschema-2/#QName">XML
+ * Schema Part2: Datatypes specification</a>.
+ * <p>
+ * The value of a QName contains a <b>namespaceURI</b> and a <b>localPart</b>.
+ * The localPart provides the local part of the qualified name. The
+ * namespaceURI is a URI reference identifying the namespace.
  *
- *     QName ::= (Prefix ':') ? LocalPart 
- *
- * Upgraded the implementation so that the namespaceURI and localPart are
- * always non-null.  This simplifies the implementation, increases performance,
- * and cleans up NullPointerException problems.
- * 
- * Upgraded the implemenation to make QName a final class, changed the 
- * namespaceURI and localPart to final (and interned) Strings, changed equals()
- * to use == comparison on interned Strings.
- *
- * Updated to optimize use of empty string, and remove erroneous
- * (or at least (possibly?) optimizer-dependent) equivalence checks.
- *
- * @version 0.1
+ * @version 1.0
  */
 public class QName implements Serializable {
     /** comment/shared empty string     */
@@ -89,7 +81,7 @@ public class QName implements Serializable {
     /**
      * Constructor for the QName.
      *
-     * @param localPart - Local part of the QName
+     * @param localPart Local part of the QName
      */
     public QName(String localPart) {
         this.namespaceURI = emptyString;
@@ -99,8 +91,8 @@ public class QName implements Serializable {
     /**
      * Constructor for the QName.
      *
-     * @param namespaceURI - Namespace URI for the QName
-     * @param localPart - Local part of the QName.
+     * @param namespaceURI Namespace URI for the QName
+     * @param localPart Local part of the QName.
      */
     public QName(String namespaceURI, String localPart) {
         this.namespaceURI =
@@ -113,7 +105,7 @@ public class QName implements Serializable {
     /**
      * Gets the Namespace URI for this QName
      *
-     * @return namespaceURI
+     * @return Namespace URI
      */
     public String getNamespaceURI() {
         return namespaceURI;
@@ -122,7 +114,7 @@ public class QName implements Serializable {
     /**
      * Gets the Local part for this QName
      *
-     * @return the Local part for this QName.
+     * @return Local part
      */
     public String getLocalPart() {
         return localPart;
@@ -140,41 +132,51 @@ public class QName implements Serializable {
     }
 
     /**
-     * Indicates whether some other object is "equal to" this QName object.
+     * Tests this QName for equality with another object.
+     * <p>
+     * If the given object is not a QName or is null then this method
+     * returns <tt>false</tt>.
+     * <p>
+     * For two QNames to be considered equal requires that both
+     * localPart and namespaceURI must be equal. This method uses
+     * <code>String.equals</code> to check equality of localPart
+     * and namespaceURI. Any class that extends QName is required
+     * to satisfy this equality contract.
+     * <p>
+     * This method satisfies the general contract of the <code>Object.equals</code> method.
      *
-     * @param p1 - the reference object with which to compare
+     * @param obj the reference object with which to compare
      *
-     * @return true if this object is the same as the obj argument; false otherwise.
+     * @return <code>true</code> if the given object is identical to this
+     *      QName: <code>false</code> otherwise.
      */
-    public final boolean equals(Object p1) {
-        if (p1 == this) {
+    public final boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
 
-        if (!(p1 instanceof QName)) {
+        if (!(obj instanceof QName)) {
             return false;
         }
         
-        if (namespaceURI == ((QName)p1).namespaceURI &&
-            localPart == ((QName) p1).localPart) {
+        if (namespaceURI == ((QName)obj).namespaceURI &&
+            localPart == ((QName)obj).localPart) {
             return true;
         }
-
-        // Since the strings are interned, a direct == of the strings
-        // is all that is needed.  Here is the old code.
-        //    if (namespaceURI.equals(((QName)p1).namespaceURI) &&
-        //        localPart.equals(((QName)p1).localPart)) {
-        //        return true;
-        //    }
         return false;
     }
 
     /**
-     * Returns a QName holding the value of the specified String. The string must be in the form returned by the
-     * QName.toString() method, i.e. "{namespaceURI}localPart", with the "{namespaceURI}" part being optional.
-     * This method doesn't do a full validation of the resulting QName. In particular, it doesn't check that the
-     * resulting namespace URI is a legal URI (per RFC 2396 and RFC 2732), nor that the resulting local part is a
-     * legal NCName per the XML Namespaces specification.
+     * Returns a QName holding the value of the specified String.
+     * <p>
+     * The string must be in the form returned by the QName.toString()
+     * method, i.e. "{namespaceURI}localPart", with the "{namespaceURI}"
+     * part being optional.
+     * <p>
+     * This method doesn't do a full validation of the resulting QName.
+     * In particular, it doesn't check that the resulting namespace URI
+     * is a legal URI (per RFC 2396 and RFC 2732), nor that the resulting
+     * local part is a legal NCName per the XML Namespaces specification.
      *
      * @param s the string to be parsed
      * @throws java.lang.IllegalArgumentException If the specified String cannot be parsed as a QName
@@ -200,7 +202,10 @@ public class QName implements Serializable {
     }
 
     /**
-     * Returns a hash code value for this QName object.
+     * Returns a hash code value for this QName object. The hash code
+     * is based on both the localPart and namespaceURI parts of the
+     * QName. This method satisfies the  general contract of the
+     * <code>Object.hashCode</code> method.
      *
      * @return a hash code value for this Qname object
      */
