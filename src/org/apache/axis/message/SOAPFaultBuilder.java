@@ -277,7 +277,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
             if (qName == null) {
                 QName thisQName = new QName(namespace, name);
                 if (thisQName.equals(Constants.QNAME_FAULTCODE_SOAP12))
-                    return (code = new SOAPFaultCodeBuilder(context));
+                    return (code = new SOAPFaultCodeBuilder());
                 else if (thisQName.equals(Constants.QNAME_FAULTDETAIL_SOAP12))
                     return new SOAPFaultDetailsBuilder(this);
 
