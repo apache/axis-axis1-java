@@ -113,17 +113,18 @@ public class BeanUtils {
                 new PrivilegedAction() {
                     public Object run() {
                         PropertyDescriptor[] result = null;
+// START FIX http://nagoya.apache.org/bugzilla/showattachment.cgi?attach_id=4937
                         try {
                             // privileged code goes here
-                            Class superClass = secJavaType.getSuperclass();
-                            if(superClass == Exception.class) {
-                                result = Introspector.
-                                        getBeanInfo(secJavaType,Exception.class).
-                                        getPropertyDescriptors();
-                            } else if (AxisFault.class.isAssignableFrom(secJavaType)) {
+                            if (AxisFault.class.isAssignableFrom(secJavaType)) {
                                 // Don't include AxisFault data
                                 result = Introspector.
                                         getBeanInfo(secJavaType,AxisFault.class).
+                                        getPropertyDescriptors();
+                            } else if (Throwable.class.isAssignableFrom(secJavaType)) {
+                                // Don't include Throwable data
+                                result = Introspector.
+                                        getBeanInfo(secJavaType,Throwable.class).
                                         getPropertyDescriptors();
                             } else {
                                 // privileged code goes here
@@ -131,6 +132,7 @@ public class BeanUtils {
                                         getBeanInfo(secJavaType).
                                         getPropertyDescriptors();
                             }
+// END FIX http://nagoya.apache.org/bugzilla/showattachment.cgi?attach_id=4937
                         } catch (java.beans.IntrospectionException Iie) {
                         }
                         return result;
