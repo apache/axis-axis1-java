@@ -56,13 +56,9 @@
 package test.functional;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.AdminClient;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import samples.message.TestMsg;
 
 

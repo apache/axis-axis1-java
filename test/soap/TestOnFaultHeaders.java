@@ -55,17 +55,17 @@
 
 package test.soap;
 
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.transport.local.LocalTransport;
+import junit.framework.TestCase;
+import org.apache.axis.SimpleChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.SimpleChain;
-import junit.framework.TestCase;
+import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.local.LocalTransport;
 
 import java.util.Vector;
 

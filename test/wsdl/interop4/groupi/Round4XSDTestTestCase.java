@@ -7,10 +7,9 @@
 
 package test.wsdl.interop4.groupi;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.TimeZone;
-import java.util.Calendar;
-import java.net.URL;
 
 public class Round4XSDTestTestCase extends junit.framework.TestCase {
     

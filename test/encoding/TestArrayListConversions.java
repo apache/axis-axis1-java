@@ -3,12 +3,12 @@ package test.encoding;
 import junit.framework.TestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.description.ServiceDesc;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;

@@ -56,29 +56,25 @@
 package test.wsdl.interop3.groupE.client;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.types.HexBinary;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.Options;
-import org.apache.axis.client.Call;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
-import javax.xml.rpc.Service;
-import javax.xml.namespace.QName;
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-
-import java.lang.reflect.Array;
+import javax.xml.namespace.QName;
+import javax.xml.rpc.Service;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Iterator;
-import java.net.URL;
-import java.io.StringWriter;
-import java.io.PrintWriter;
 
 /**
  * Test Client for part of interop group 3E.  See the main entrypoint

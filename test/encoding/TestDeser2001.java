@@ -1,37 +1,34 @@
 package test.encoding;
 
 import org.apache.axis.Constants;
-
+import org.apache.axis.types.Day;
+import org.apache.axis.types.Duration;
 import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.Month;
+import org.apache.axis.types.MonthDay;
+import org.apache.axis.types.NCName;
+import org.apache.axis.types.NMToken;
+import org.apache.axis.types.Name;
 import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.PositiveInteger;
-import org.apache.axis.types.Token;
-import org.apache.axis.types.UnsignedLong;
-import org.apache.axis.types.UnsignedInt;
-import org.apache.axis.types.UnsignedShort;
-import org.apache.axis.types.UnsignedByte;
 import org.apache.axis.types.Time;
-import org.apache.axis.types.YearMonth;
-import org.apache.axis.types.Year;
-import org.apache.axis.types.Month;
-import org.apache.axis.types.Day;
-import org.apache.axis.types.MonthDay;
-import org.apache.axis.types.Name;
-import org.apache.axis.types.NCName;
-import org.apache.axis.types.NMToken;
-import org.apache.axis.types.Duration;
+import org.apache.axis.types.Token;
 import org.apache.axis.types.URI;
+import org.apache.axis.types.UnsignedByte;
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.types.Year;
+import org.apache.axis.types.YearMonth;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.SimpleTimeZone;
 import java.util.TimeZone;
-
-import javax.xml.namespace.QName;
 
 /**
  * Test deserialization of SOAP responses

@@ -55,27 +55,16 @@
 
 package test.wsdl.roundtrip;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import test.wsdl.roundtrip.RoundtripPortType;
-import test.wsdl.roundtrip.BondInvestment;
-import test.wsdl.roundtrip.StockInvestment;
-import test.wsdl.roundtrip.PreferredStockInvestment;
-import test.wsdl.roundtrip.CallOptions;
-import test.wsdl.roundtrip.InvalidTickerSymbol;
-import test.wsdl.roundtrip.InvalidTradeExchange;
-import test.wsdl.roundtrip.InvalidCompanyId;
-
 import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 
-import java.rmi.RemoteException;
-
 import javax.xml.rpc.holders.StringHolder;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * This class contains the implementations of the methods defined in the

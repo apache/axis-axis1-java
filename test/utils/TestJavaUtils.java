@@ -5,18 +5,16 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
-import javax.xml.rpc.holders.LongHolder;
 import javax.xml.rpc.holders.ByteHolder;
+import javax.xml.rpc.holders.LongHolder;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Vector;
-import java.util.Calendar;
-import java.lang.reflect.Array;
 
 public class TestJavaUtils extends TestCase
 {

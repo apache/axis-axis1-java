@@ -7,7 +7,7 @@
 
 package test.wsdl.wrapped_holders;
 
-import java.rmi.RemoteException;
+
 
 /**
  * This test verify's that arrays in a wrapped doc/lit service get holders

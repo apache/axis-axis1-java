@@ -1,7 +1,6 @@
 package test.wsdl.parameterOrder;
 
-import test.wsdl.parameterOrder.ParameterOrderService;
-import test.wsdl.parameterOrder.ParameterOrderTest;
+
 
 /**
 * This class is taken from the generated TestCase.  The generated test case is still generated

@@ -1,15 +1,12 @@
 package test.badWSDL;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axis.wsdl.toJava.Emitter;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 
 /**
  * This test grabs each WSDL file in the directory and runs WSDL2Java against them.

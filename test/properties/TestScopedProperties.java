@@ -54,19 +54,16 @@
  */
 package test.properties;
 
+import junit.framework.TestCase;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.configuration.BasicClientConfig;
+import org.apache.axis.configuration.BasicServerConfig;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
-import org.apache.axis.configuration.BasicServerConfig;
-import org.apache.axis.configuration.BasicClientConfig;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.Handler;
-import junit.framework.TestCase;
+import org.apache.axis.transport.local.LocalTransport;
 
 /**
  * Test scoped properties.  This test confirms that MessageContext.getProperty

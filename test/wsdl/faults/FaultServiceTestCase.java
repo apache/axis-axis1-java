@@ -7,9 +7,7 @@
 
 package test.wsdl.faults;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Assert;
-import junit.framework.TestCase;
+
 
 
 public class FaultServiceTestCase extends junit.framework.TestCase {

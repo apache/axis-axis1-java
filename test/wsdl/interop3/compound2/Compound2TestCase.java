@@ -1,13 +1,12 @@
 package test.wsdl.interop3.compound2;
 
 
-import java.net.URL;
-import java.util.Properties;
-
-import test.wsdl.interop3.compound2.xsd.Employee;
-import test.wsdl.interop3.compound2.xsd.Person;
 import test.wsdl.interop3.compound2.Compound2Locator;
 import test.wsdl.interop3.compound2.SoapInteropCompound2PortType;
+import test.wsdl.interop3.compound2.xsd.Employee;
+import test.wsdl.interop3.compound2.xsd.Person;
+
+import java.net.URL;
 
 /*
     <!-- SOAP Builder's round III web services          -->

@@ -54,20 +54,17 @@
  */
 package test.chains;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPEnvelope;
-import org.apache.axis.Message;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.axis.SimpleChain;
-import org.apache.axis.Handler;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleChain;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.server.AxisServer;
+
+import javax.xml.soap.SOAPBody;
 
 /**
 * Used to verify that Faults are processed properly in the Handler chain

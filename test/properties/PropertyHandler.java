@@ -54,10 +54,9 @@
  */
 package test.properties;
 
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 
 /**
  * Combination of two functions for this test.

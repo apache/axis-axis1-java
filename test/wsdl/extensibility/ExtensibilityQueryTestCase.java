@@ -7,25 +7,23 @@
 
 package test.wsdl.extensibility;
 
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.utils.Options;
-import org.apache.axis.message.MessageElement;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.utils.Options;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.namespace.QName;
-import java.util.Calendar;
+import javax.xml.rpc.encoding.TypeMapping;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Calendar;
 
 public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     public ExtensibilityQueryTestCase(String name) {

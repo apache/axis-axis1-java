@@ -3,9 +3,6 @@ package test.wsdd;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axis.deployment.wsdd.WSDDDocument;
-import org.apache.axis.deployment.wsdd.WSDDDeployment;
-import org.apache.axis.deployment.wsdd.WSDDHandler;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.server.AxisServer;
 

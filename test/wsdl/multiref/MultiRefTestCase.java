@@ -56,12 +56,6 @@
 package test.wsdl.multiref;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import test.wsdl.multiref.holders.NodeHolder;
 
 
 /** Test the multiref sample code.

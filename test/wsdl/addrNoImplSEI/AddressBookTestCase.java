@@ -56,7 +56,6 @@
 package test.wsdl.addrNoImplSEI;
 
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
 
 
 /** Test the address book sample code.

@@ -54,10 +54,10 @@
  */
 package test;
 
-import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

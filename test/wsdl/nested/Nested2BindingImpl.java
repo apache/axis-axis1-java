@@ -6,9 +6,9 @@
  */
 
 package test.wsdl.nested;
-import test.wsdl.nested.holders.RETURNHolder;
-import test.wsdl.nested.holders.PE_ADDRESSHolder;
 import org.apache.axis.message.MessageElement;
+import test.wsdl.nested.holders.PE_ADDRESSHolder;
+import test.wsdl.nested.holders.RETURNHolder;
 
 import javax.xml.namespace.QName;
 

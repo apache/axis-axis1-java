@@ -55,34 +55,18 @@
 
 package test.wsdl.roundtrip;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
-import java.math.BigInteger;
-import java.math.BigDecimal;
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
-
-import java.rmi.RemoteException;
+import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 
 import javax.xml.rpc.ServiceException;
-
 import javax.xml.rpc.holders.StringHolder;
-
-import test.wsdl.roundtrip.BondInvestment;
-import test.wsdl.roundtrip.StockInvestment;
-import test.wsdl.roundtrip.PreferredStockInvestment;
-import test.wsdl.roundtrip.RoundtripPortType;
-import test.wsdl.roundtrip.RoundtripPortTypeServiceLocator;
-import test.wsdl.roundtrip.CallOptions;
-import test.wsdl.roundtrip.InvalidTickerSymbol;
-import test.wsdl.roundtrip.InvalidTradeExchange;
-import test.wsdl.roundtrip.InvalidCompanyId;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-
-import test.wsdl.roundtrip.holders.BondInvestmentHolder;
+import java.util.TimeZone;
 
 /**
  * This class contains the test methods to verify that Java mapping

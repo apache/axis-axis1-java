@@ -1,20 +1,14 @@
 package test.wsdl.interop3;
 
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 import org.apache.axis.utils.ClassUtils;
 
 import java.io.FileInputStream;
-
 import java.lang.reflect.Field;
-
 import java.net.URL;
-
 import java.util.Iterator;
 import java.util.Properties;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import junit.textui.TestRunner;
 
 public class Interop3TestCase {
 

@@ -1,12 +1,11 @@
 package test.encoding;
 
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.Constants;
-import org.xml.sax.Attributes;
-import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;

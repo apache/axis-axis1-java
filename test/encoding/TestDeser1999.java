@@ -1,8 +1,9 @@
 package test.encoding;
 
+import org.apache.axis.Constants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.apache.axis.Constants;
 
 /** 
  * Test deserialization of SOAP responses

@@ -1,24 +1,24 @@
 package test.session;
 
 import junit.framework.TestCase;
-import org.apache.axis.session.SimpleSession;
-import org.apache.axis.session.Session;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.handlers.SimpleSessionHandler;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
-import org.apache.axis.transport.local.LocalTransport;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.XMLStringProvider;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.handlers.SimpleSessionHandler;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.session.Session;
+import org.apache.axis.session.SimpleSession;
+import org.apache.axis.transport.local.LocalTransport;
 
-import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.server.ServiceLifecycle;
 
 /**
  * Test the SimpleSession implementation (using SOAP headers for session

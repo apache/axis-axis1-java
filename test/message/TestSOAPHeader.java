@@ -69,9 +69,6 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 

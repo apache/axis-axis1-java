@@ -11,8 +11,9 @@
 package test.wsdl.literal;
 
 import org.apache.axis.AxisFault;
-import java.io.IOException;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {

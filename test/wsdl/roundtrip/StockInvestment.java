@@ -55,7 +55,7 @@
 
 package test.wsdl.roundtrip;
 
-import test.wsdl.roundtrip.Investment;
+
 
 /**
  * The StockInvestment class extends the Investment class so that

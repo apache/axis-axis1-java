@@ -54,19 +54,15 @@
  */
 package test.dynamic;
 
-import java.net.URL;
-
-import java.rmi.Remote;
-
-import javax.xml.namespace.QName;
-
-import javax.xml.rpc.Service;
-import javax.xml.rpc.ServiceFactory;
-
 import junit.framework.TestCase;
-
 import samples.addr.AddressBook;
 import samples.addr.AddressBookSOAPBindingStub;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.Service;
+import javax.xml.rpc.ServiceFactory;
+import java.net.URL;
+import java.rmi.Remote;
 
 /**
  * This class tests Fault deserialization.

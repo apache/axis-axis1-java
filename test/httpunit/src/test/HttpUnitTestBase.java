@@ -54,13 +54,12 @@
 
 package test;
 
-import junit.framework.TestCase;
 import com.meterware.httpunit.*;
-
-import java.io.*;
-import java.net.MalformedURLException;
-
+import junit.framework.TestCase;
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 /**
  * class to make it that much easier to validate httpunit requests

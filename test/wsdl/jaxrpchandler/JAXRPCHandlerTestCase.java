@@ -1,20 +1,13 @@
 package test.wsdl.jaxrpchandler;
 
 import junit.framework.TestCase;
-
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.utils.Admin;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.namespace.QName;
-import javax.xml.rpc.handler.HandlerRegistry;
-import javax.xml.rpc.handler.HandlerInfo;
-
-import org.apache.axis.AxisFault;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
+import javax.xml.namespace.QName;
+import javax.xml.rpc.handler.HandlerInfo;
+import javax.xml.rpc.handler.HandlerRegistry;
 import java.net.URL;
 
 /**

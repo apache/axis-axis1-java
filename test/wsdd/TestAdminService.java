@@ -3,22 +3,14 @@ package test.wsdd;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axis.deployment.wsdd.WSDDDocument;
-import org.apache.axis.deployment.wsdd.WSDDDeployment;
-import org.apache.axis.deployment.wsdd.WSDDHandler;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.configuration.XMLStringProvider;
-import org.apache.axis.server.AxisServer;
 import org.apache.axis.Handler;
-import org.apache.axis.utils.Options;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.client.Call;
+import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
-import java.io.StringReader;
-import java.io.StringBufferInputStream;
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
 /**

@@ -4,18 +4,16 @@ import junit.framework.TestCase;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import samples.echo.SOAPStruct;
+import samples.echo.SOAPStructStruct;
+
 import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -26,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import samples.echo.SOAPStruct;
-import samples.echo.SOAPStructStruct;
 /**
  * Test deserialization of SOAP responses
  */

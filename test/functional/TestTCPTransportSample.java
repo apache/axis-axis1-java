@@ -57,25 +57,21 @@ package test.functional;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
-import org.apache.axis.EngineConfiguration;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.XMLType;
 import org.apache.commons.logging.Log;
-
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
 import samples.transport.tcp.TCPSender;
 
-import javax.xml.rpc.ParameterMode;
 import javax.xml.namespace.QName;
-
+import javax.xml.rpc.ParameterMode;
 import java.net.URL;
 
 /** Test the stock sample code.

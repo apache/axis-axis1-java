@@ -2,18 +2,13 @@ package test.wsdl.inout;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import junit.swingui.TestRunner;
-
-import org.apache.axis.utils.Options;
 import org.apache.axis.holders.DateHolder;
-
-import javax.xml.rpc.ServiceException;
-
-import javax.xml.rpc.holders.IntHolder;
-import javax.xml.rpc.holders.StringHolder;
 import test.wsdl.inout.holders.AddressHolder;
 import test.wsdl.inout.holders.PhoneHolder;
 
+import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.StringHolder;
 import java.util.Date;
 
 /**

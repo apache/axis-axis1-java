@@ -59,12 +59,11 @@
  */ 
 package test.wsdl.clash;
 
-import java.io.File;
+import test.wsdl.filegen.FileGenTestCase;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
-import test.wsdl.filegen.FileGenTestCase;
 
 public class VerifyFilesTestCase extends FileGenTestCase {
     public VerifyFilesTestCase(String name) {

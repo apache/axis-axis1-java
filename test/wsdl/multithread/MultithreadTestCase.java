@@ -3,10 +3,8 @@ package test.wsdl.multithread;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import samples.addr.Address;
 import samples.addr.AddressBook;
 import samples.addr.AddressBookSOAPBindingStub;
