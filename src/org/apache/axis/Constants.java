@@ -60,6 +60,8 @@ import org.apache.axis.schema.SchemaVersion1999;
 import org.apache.axis.schema.SchemaVersion2000;
 import org.apache.axis.schema.SchemaVersion2001;
 
+import org.apache.axis.soap.SOAPConstants;
+
 import javax.xml.namespace.QName;
 
 public class Constants {
@@ -91,13 +93,20 @@ public class Constants {
     public static final String NS_URI_JAVA = "http://xml.apache.org/axis/java";
 
     //
+    // Default SOAP version
+    //
+    public static final SOAPConstants DEFAULT_SOAP_VERSION = 
+        SOAPConstants.SOAP11_CONSTANTS;
+
+    //
     // SOAP-ENV Namespaces
     //
     public static final String URI_SOAP11_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
     public static final String URI_SOAP12_ENV =
                                    "http://www.w3.org/2002/06/soap-envelope";
-    public static final String URI_DEFAULT_SOAP_ENV = URI_SOAP11_ENV;  // SOAP 1.1 over the wire
+    public static final String URI_DEFAULT_SOAP_ENV = 
+        DEFAULT_SOAP_VERSION.getEnvelopeURI();
 
     public static final String[] URIS_SOAP_ENV = {
         URI_SOAP11_ENV,
@@ -135,7 +144,8 @@ public class Constants {
                                 "http://schemas.xmlsoap.org/soap/encoding/" ;
     public static final String URI_SOAP12_ENC =
                                    "http://www.w3.org/2002/06/soap-encoding";
-    public static final String URI_DEFAULT_SOAP_ENC = URI_SOAP11_ENC; // SOAP 1.1 over the wire
+    public static final String URI_DEFAULT_SOAP_ENC = 
+        DEFAULT_SOAP_VERSION.getEncodingURI();
 
     public static final String[] URIS_SOAP_ENC = {
         URI_SOAP11_ENC,
