@@ -377,7 +377,7 @@ public class Emitter {
 
         Service service = def.createService();
 
-        service.setQName(new javax.wsdl.QName(implNS, clsName));
+        service.setQName(new javax.wsdl.QName(implNS, getServiceName()));
         def.addService(service);
 
         Port port = def.createPort();
