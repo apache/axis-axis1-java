@@ -87,7 +87,7 @@ public class JavaSender extends BasicHandler {
         msgContext.setService( null );
         msgContext.setOperation( null );
 
-        if ( msgContext.getProperty(msgContext.IS_MSG) == null ) 
+        if ( msgContext.getProperty(MessageContext.IS_MSG) == null ) 
           service   = new SOAPService(new RPCProvider());
         else
           service   = new SOAPService(new MsgProvider());

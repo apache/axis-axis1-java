@@ -73,7 +73,7 @@ public class LogFactory {
         getLogFactory();
 
     public static Log getLog(String name) {
-        return logFactory.getLog(name);
+        return org.apache.commons.logging.LogFactory.getLog(name);
     }
     
     private static final org.apache.commons.logging.LogFactory getLogFactory() {
