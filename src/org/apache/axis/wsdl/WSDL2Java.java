@@ -73,6 +73,7 @@ import javax.wsdl.QName;
 
 import org.w3c.dom.Document;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.HashMap;
@@ -335,6 +336,13 @@ public class WSDL2Java {
      */
     public byte getScope() {
         return emitter.getScope();
+    } // getScope
+
+    /**
+     * Get the scope for the deploy.xml file.
+     */
+    public void setNStoPkg(File NStoPkg) {
+        emitter.setNStoPkg(NStoPkg);
     } // getScope
 
     //

@@ -74,6 +74,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import java.util.Vector;
 import javax.wsdl.QName;
 
@@ -123,6 +124,7 @@ public class Emitter {
     protected WriterFactory writerFactory = null;
     protected SymbolTable symbolTable = null;
     protected String currentWSDLURI = null;
+    protected File NStoPkg = new File("NStoPkg.properties");
 
     /**
      * Default constructor.
@@ -238,15 +240,17 @@ public class Emitter {
      * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
      * then collect the namespace->package mappings from it.
      */
-    private static void getNStoPkgFromPropsFile(HashMap namespaces)
+    private void getNStoPkgFromPropsFile(HashMap namespaces)
     {
         try {
-            ResourceBundle mappings = ResourceBundle.getBundle("NStoPkg");
-            Enumeration keys = mappings.getKeys();
+            Properties mappings = new Properties();
+            mappings.load(new FileInputStream(NStoPkg));
+            Enumeration keys = mappings.propertyNames();
             while (keys.hasMoreElements()) {
                 try {
                     String key = (String) keys.nextElement();
-                    namespaces.put(key, mappings.getString(key));
+System.out.println(key + " => " + mappings.getProperty(key));
+                    namespaces.put(key, mappings.getProperty(key));
                 }
                 catch (Throwable t) {
                 }
@@ -409,6 +413,13 @@ public class Emitter {
      */
     public byte getScope() {
         return scope;
+    } // getScope
+
+    /**
+     * set the package to namespace mappings
+     */
+    public void setNStoPkg(File NStoPkg) {
+        this.NStoPkg = NStoPkg;
     } // getScope
 
     ///////////////////////////////////////////////////
