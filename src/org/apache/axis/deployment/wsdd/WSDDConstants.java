@@ -115,4 +115,6 @@ public class WSDDConstants
                                                      "typeMapping");
     public static final QName BEANMAPPING_QNAME = new QName(WSDD_NS,
                                                      "beanMapping");
+    public static final QName OPERATION_QNAME = new QName(WSDD_NS,
+                                                          "operation");
 }

@@ -58,6 +58,8 @@ package org.apache.axis.providers.java ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -67,6 +69,7 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
@@ -291,6 +294,7 @@ public class RPCProvider extends JavaProvider
             resBody.setPrefix( body.getPrefix() );
             resBody.setNamespaceURI( body.getNamespaceURI() );
             resBody.setEncodingStyle(msgContext.getEncodingStyle());
+            SOAPService service = msgContext.getService();
             if ( objRes != null ) {
                 // In the old skeleton a param list was returned, which 
                 // contained the RPC params.  Preserve this for now.
@@ -307,11 +311,13 @@ public class RPCProvider extends JavaProvider
                     }
                 }
                 else {
-                    RPCParam param = new RPCParam(getParameterName(obj, method[m],-1, mName), objRes);
+                    QName returnQName = getReturnQName(service, mName);
+                    RPCParam param = new RPCParam(returnQName, objRes);
                     resBody.addParam(param);
                 }
             } else if (method[m].getReturnType() != Void.TYPE) {
-                RPCParam param = new RPCParam(getParameterName(obj, method[m],-1, mName), objRes);
+                QName returnQName = getReturnQName(service, mName);
+                RPCParam param = new RPCParam(returnQName, objRes);
                 resBody.addParam(param);
             }
 
@@ -377,10 +383,26 @@ public class RPCProvider extends JavaProvider
                 } else {
                     parmName = mName + "Result" + i;
                 }
-            } else {
-                parmName = mName + "Result";  
             }
         }
         return parmName;
+    }
+
+    protected QName getReturnQName(SOAPService service, String methodName)
+    {
+        QName ret = null;
+
+        if (service != null) {
+            OperationDesc oper = service.getOperationDescByName(methodName);
+            if (oper != null) {
+                ret = oper.getReturnQName();
+            }
+        }
+
+        if (ret == null) {
+            ret = new QName("", methodName + "Result");
+        }
+
+        return ret;
     }
 }

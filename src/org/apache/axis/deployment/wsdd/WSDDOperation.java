@@ -58,6 +58,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.description.OperationDesc;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
@@ -68,6 +71,12 @@ import java.io.IOException;
 public class WSDDOperation
     extends WSDDElement
 {
+    /** The operation name (String, or QName?) */
+    private String name;
+
+    /** The return QName (if it should be different from <method>Result) */
+    private QName returnQName;
+
     /**
      *
      * @param e (Element) XXX
@@ -77,6 +86,12 @@ public class WSDDOperation
         throws WSDDException
     {
         super(e);
+
+        name = e.getAttribute("name");
+
+        String retQNameStr = e.getAttribute("returnQName");
+        if (retQNameStr != null && !retQNameStr.equals(""))
+            returnQName = XMLUtils.getQNameFromString(retQNameStr, e);
     }
 
     /**
@@ -84,9 +99,46 @@ public class WSDDOperation
      */
     public void writeToContext(SerializationContext context)
             throws IOException {
+        AttributesImpl attrs = new AttributesImpl();
+
+        if (returnQName != null) {
+            attrs.addAttribute("", "returnQName", "returnQName",
+                               "CDATA", context.qName2String(returnQName));
+        }
+
+        if (name != null) {
+            attrs.addAttribute("", "name", "name", "CDATA", name);
+        }
+
+        context.startElement(getElementName(), attrs);
+        context.endElement();
     }
 
     protected QName getElementName() {
-        return new QName("", "operation");
+        return WSDDConstants.OPERATION_QNAME;
+    }
+
+    public QName getReturnQName() {
+        return returnQName;
+    }
+
+    public void setReturnQName(QName returnQName) {
+        this.returnQName = returnQName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public OperationDesc getOperationDesc()
+    {
+        OperationDesc desc = new OperationDesc();
+        desc.setName(name);
+        desc.setReturnQName(returnQName);
+        return desc;
     }
 }

@@ -868,7 +868,7 @@ public class SymbolTable {
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
      */
-    private Parameters getOperationParameters(Operation operation, 
+    public Parameters getOperationParameters(Operation operation,
                                               String namespace, 
                                               BindingEntry bindingEntry) throws IOException {
         Parameters parameters = new Parameters();
@@ -1039,8 +1039,15 @@ public class SymbolTable {
      */
     private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
         Parameter p = new Parameter();
-        p.setName((String) outputs.get(outdex));
         p.type = (TypeEntry) outputs.get(outdex - 1);
+
+        if (p.type instanceof DefinedElement) {
+            DefinedElement de = (DefinedElement)p.type;
+            p.setQName(de.getQName());
+        } else {
+            p.setName((String) outputs.get(outdex));
+        }
+
         if (trim) {
             outputs.remove(outdex);
             outputs.remove(outdex - 1);
