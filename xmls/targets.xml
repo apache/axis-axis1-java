@@ -148,6 +148,10 @@
       </and>
     </condition>
 
+    <condition property="jms.present" >
+      <available classname="javax.jms.Message" classpathref="classpath" />
+    </condition>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <property environment="env"/>
@@ -202,6 +206,7 @@
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />
     <echo message="axis-ant.present=${axis-ant.present}" />
     <echo message="httpunit.present=${httpunit.present}" />
+    <echo message="jms.present=${jms.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />

@@ -103,6 +103,10 @@ Copyright:
     <ant inheritAll="true" antfile="${axis.home}/samples/jaxrpc/build.xml"/>
   </target>
 
+  <target name="jms" depends="setenv">
+    <ant inheritAll="true" antfile="${axis.home}/samples/jms/build.xml"/>
+  </target>
+
 <!-- =========================================================================== -->
   <target name="copy"/>
 
