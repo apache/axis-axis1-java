@@ -24,7 +24,8 @@ public class NonBlockingBufferedInputStream extends InputStream {
     public void setInputStream (InputStream in) {
         this.in = in;
         numbytes = 0;
-        remainingContent = Integer.MAX_VALUE;
+        offset = 0;
+        remainingContent = (in==null)? 0 : Integer.MAX_VALUE;
     }
 
     /**
@@ -33,7 +34,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @param value the Content Length
      */
     public void setContentLength (int value) {
-        this.remainingContent = value;
+        if (in != null) this.remainingContent = value;
     }
 
     /**
@@ -44,7 +45,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @return the byte read
      */
     private void refillBuffer() throws IOException {
-        if (remainingContent == 0) return;
+        if (remainingContent == 0 || in == null) return;
 
         // determine number of bytes to read
         numbytes = in.available();
@@ -65,6 +66,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @return the byte read
      */
     public int read() throws IOException {
+        if (in == null) return -1;
         if (offset >= numbytes) refillBuffer();
         if (offset >= numbytes) return -1;
         return buffer[offset++];
@@ -105,6 +107,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
             offset = numbytes;
             return ready;
         } else {
+            if (in == null) return -1;
             refillBuffer();
             if (offset >= numbytes) return -1;
             return read(dest,off,len);
@@ -128,16 +131,17 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @return the number of bytes
      */
     public int available() throws IOException {
+        if (in == null) return 0;
+
         // return buffered + available from the stream
-        return (numbytes-offset) + available();
+        return (numbytes-offset) + in.available();
     }
 
     /**
-     * close the underlying file
+     * disassociate from the underlying input stream
      */
     public void close() throws IOException {
-        in.close();
-        in = null;
+        setInputStream(null);
     }
 }
 
