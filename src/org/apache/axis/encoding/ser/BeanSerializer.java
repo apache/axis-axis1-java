@@ -347,6 +347,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         writeAttribute(types, attrName.getLocalPart(),
                                        field.getType(),
                                        complexType);
+                        continue;
                     } else {
                         QName xmlName = typeDesc.getElementNameForField(
                                 field.getName());
@@ -356,9 +357,11 @@ public class BeanSerializer implements Serializer, Serializable {
                                 // schema for this correctly?
                             }
                             name = xmlName.getLocalPart();
+                            writeField(types, name, field.getType(),
+                                       field.getIndexed(), all);
+                            continue;
                         }
                     }
-                    return true;
                 }
             }
 
