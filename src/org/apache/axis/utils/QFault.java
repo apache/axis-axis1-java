@@ -81,6 +81,11 @@ public class QFault extends QName {
         appendMinorCode(minorCode);
     }
     
+    public QFault(QName qname)
+    {
+        super(qname.getNamespaceURI(), qname.getLocalPart());
+    }
+    
     public QFault(QName qname, String minorCode) {
         super(qname.getNamespaceURI(), qname.getLocalPart());
         appendMinorCode(minorCode);
