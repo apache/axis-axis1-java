@@ -154,7 +154,7 @@ public class SAX2EventRecorder {
         }        
         for (int n = start; n <= stop; n++) {
             Object event = events.get(n,0);
-             if (event == STATE_START_ELEMENT) {
+            if (event == STATE_START_ELEMENT) {
                 handler.startElement((String)events.get(n,1), 
                                      (String)events.get(n,2),
                                      (String)events.get(n,3),
@@ -171,7 +171,7 @@ public class SAX2EventRecorder {
                 
             } else if (event == STATE_IGNORABLE_WHITESPACE) {
                 char chars[] = ((String)(events.get(n,1))).toCharArray();
-                handler.characters(chars, 0, chars.length);
+                handler.ignorableWhitespace(chars, 0, chars.length);
                 
             } else if (event == STATE_PROCESSING_INSTRUCTION) {
                 handler.processingInstruction((String)events.get(n,1),
