@@ -112,9 +112,6 @@ public class JavaImplWriter extends JavaWriter {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
         String portTypeName = ptEntry.getName();
         pw.print("public class " + className + " implements " + portTypeName);
-        if (emitter.bMessageContext) {
-            pw.print("Axis");
-        }
         pw.println(" {");
 
         List operations = binding.getBindingOperations();
@@ -129,12 +126,7 @@ public class JavaImplWriter extends JavaWriter {
     } // writeFileBody
 
     private void writeOperation(Parameters parms) throws IOException {
-        if (emitter.bMessageContext) {
-            pw.println(parms.axisSignature + " {");
-        }
-        else {
-            pw.println(parms.signature + " {");
-        }
+        pw.println(parms.signature + " {");
         if (parms.returnType != null) {
             pw.print("        return ");
 

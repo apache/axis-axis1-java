@@ -286,7 +286,6 @@ public class JavaWriterFactory implements WriterFactory {
         int allOuts = parms.outputs + parms.inouts;
         String ret = parms.returnType == null ? "void" : parms.returnType.getName();
         String signature = "    public " + ret + " " + name + "(";
-        String axisSig = "    public " + ret + " " + name + "(";
         String skelSig = null;
 
         if (allOuts == 0)
@@ -294,16 +293,6 @@ public class JavaWriterFactory implements WriterFactory {
         else
             skelSig = "    public Object " + name + "(";
 
-        if (emitter.bMessageContext) {
-            skelSig = skelSig + "org.apache.axis.MessageContext ctx";
-            axisSig = axisSig + "org.apache.axis.MessageContext ctx";
-            if ((parms.inputs + parms.inouts) > 0) {
-                skelSig = skelSig + ", ";
-            }
-            if (parms.list.size() > 0) {
-                axisSig = axisSig + ", ";
-            }
-        }
         boolean needComma = false;
 
         for (int i = 0; i < parms.list.size(); ++i) {
@@ -311,7 +300,6 @@ public class JavaWriterFactory implements WriterFactory {
 
             if (needComma) {
                 signature = signature + ", ";
-                axisSig = axisSig + ", ";
                 if (p.mode != Parameter.OUT)
                     skelSig = skelSig + ", ";
             }
@@ -319,30 +307,24 @@ public class JavaWriterFactory implements WriterFactory {
                 needComma = true;
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type.getName() + " " + p.name;
-                axisSig = axisSig + p.type.getName() + " " + p.name;
                 skelSig = skelSig + p.type.getName() + " " + p.name;
             }
             else if (p.mode == Parameter.INOUT) {
                 signature = signature + Utils.holder(p.type) + " " + p.name;
-                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
                 skelSig = skelSig + p.type.getName() + " " + p.name;
             }
             else// (p.mode == Parameter.OUT)
             {
                 signature = signature + Utils.holder(p.type) + " " + p.name;
-                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
-        axisSig = axisSig + ") throws java.rmi.RemoteException";
         skelSig = skelSig + ") throws java.rmi.RemoteException";
         if (parms.faultString != null) {
             signature = signature + ", " + parms.faultString;
-            axisSig = axisSig + ", " + parms.faultString;
             skelSig = skelSig + ", " + parms.faultString;
         }
         parms.signature = signature;
-        parms.axisSignature = axisSig;
         parms.skelSignature = skelSig;
     } // constructSignatures
 

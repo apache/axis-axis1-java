@@ -73,7 +73,6 @@ public class Wsdl2java {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int VERBOSE_OPT = 'v';
-    protected static final int MESSAGECONTEXT_OPT = 'm';
     protected static final int SKELETON_OPT = 's';
     protected static final int NAMESPACE_OPT = 'N';
     protected static final int OUTPUT_OPT = 'o';
@@ -104,10 +103,6 @@ public class Wsdl2java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 SKELETON_OPT,
                 JavaUtils.getMessage("optionSkel00")),
-        new CLOptionDescriptor("messageContext",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                MESSAGECONTEXT_OPT,
-                JavaUtils.getMessage("optionMsgCtx00")),
         new CLOptionDescriptor("NStoPkg",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
@@ -139,7 +134,6 @@ public class Wsdl2java {
      */
     public static void main(String args[]) {
         boolean bSkeleton = false;
-        boolean bMessageContext = false;
         boolean bTestClass = false;
         String wsdlURI = null;
         HashMap namespaceMap = new HashMap();
@@ -191,11 +185,6 @@ public class Wsdl2java {
                         emitter.generateSkeleton(true);
                         break;
 
-                    case MESSAGECONTEXT_OPT:
-                        bMessageContext = true;
-                        emitter.generateMessageContext(true);
-                        break;
-
                     case NAMESPACE_OPT:
                         String namespace = option.getArgument(0);
                         String packageName = option.getArgument(1);
@@ -241,10 +230,6 @@ public class Wsdl2java {
 
             // validate argument combinations
             //
-            if (bMessageContext && !bSkeleton) {
-                System.out.println(JavaUtils.getMessage("badMsgCtx00"));
-                printUsage();
-            }
             if (wsdlURI == null) {
                 printUsage();
             }

@@ -107,9 +107,6 @@ public class JavaSkelWriter extends JavaWriter {
         }
 
         String implType = portTypeName + " impl";
-        if (emitter.bMessageContext) {
-            implType = portTypeName + "Axis impl";
-        }
         pw.println("public class " + className + " {");
         pw.println("    private " + implType + ";");
         pw.println();
@@ -191,12 +188,6 @@ public class JavaSkelWriter extends JavaWriter {
         else
             pw.print("        Object ret = ");
         String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
-        if (emitter.bMessageContext) {
-            call = call + "ctx";
-            if (parms.list.size() > 0)
-                call = call + ", ";
-        }
-
         boolean needComma = false;
         for (int i = 0; i < parms.list.size(); ++i) {
             if (needComma)

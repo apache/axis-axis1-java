@@ -71,7 +71,6 @@ public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
     private boolean skeleton = true ;
-    private boolean messageContext = false;
     private boolean testCase = false;
     private boolean noImports = false;
     private HashMap namespaceMap = new HashMap();
@@ -85,7 +84,6 @@ public class Wsdl2javaAntTask extends Task
             log("Running Wsdl2javaAntTask with parameters:", Project.MSG_VERBOSE);
             log("\tverbose:" + verbose, Project.MSG_VERBOSE);
             log("\tskeleton:" + skeleton, Project.MSG_VERBOSE);
-            log("\tmessageContext:" + messageContext, Project.MSG_VERBOSE);
             log("\ttestCase:" + testCase, Project.MSG_VERBOSE);
             log("\tnoImports:" + noImports, Project.MSG_VERBOSE);
             log("\tNStoPkg:" + namespaceMap, Project.MSG_VERBOSE);
@@ -119,7 +117,6 @@ public class Wsdl2javaAntTask extends Task
             emitter.generateTestCase(testCase);
             emitter.generateImports(!noImports);
             emitter.setOutputDir(output);
-            emitter.generateMessageContext(messageContext);
             emitter.generateSkeleton(skeleton);
             emitter.verbose(verbose);
             emitter.emit(url);
@@ -136,11 +133,6 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "skeleton" attribute
     public void setSkeleton(String parameter) {
         this.skeleton = Project.toBoolean(parameter);
-    }
-
-    // The setter for the "messagecontext" attribute
-    public void setMessageContext(String parameter) {
-        this.messageContext = Project.toBoolean(parameter);
     }
 
     // The setter for the "testcase" attribute

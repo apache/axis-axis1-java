@@ -94,7 +94,6 @@ public class Emitter {
     protected Document doc = null;
     protected Definition def = null;
     protected boolean bEmitSkeleton = false;
-    protected boolean bMessageContext = false;
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
@@ -113,22 +112,6 @@ public class Emitter {
      */
     public Emitter(WriterFactory writerFactory) {
         this.writerFactory = writerFactory;
-    } // ctor
-
-    /**
-     * Construct an Emitter that initially looks like the given Emitter.
-     */
-    public Emitter(Emitter that) {
-        this.bEmitSkeleton    = that.bEmitSkeleton;
-        this.bMessageContext  = that.bMessageContext;
-        this.bEmitTestCase    = that.bEmitTestCase;
-        this.bVerbose         = that.bVerbose;
-        this.bGenerateImports = that.bGenerateImports;
-        this.outputDir        = that.outputDir;
-        this.scope            = that.scope;
-        this.namespaces       = that.namespaces;
-        this.writerFactory    = that.writerFactory;
-        this.symbolTable      = that.symbolTable;
     } // ctor
 
     /**
@@ -288,22 +271,6 @@ public class Emitter {
      */
     public void generateTestCase(boolean value) {
         this.bEmitTestCase = value;
-    }
-
-    /**
-     * Turn on/off server Message Context parameter in skeleton
-     * @param boolean value
-     */
-    public void generateMessageContext(boolean value) {
-        this.bMessageContext = value;
-    }
-
-    /**
-     * Is Message Context parm creation flag set
-     * @return boolean value
-     */
-    public boolean getMessageContext() {
-        return this.bMessageContext;
     }
 
     /**
