@@ -149,9 +149,11 @@ public class Java2WsdlAntTask extends Task
             }
             if (style != null) {
                 if (style.equalsIgnoreCase("DOCUMENT")) {
-                    emitter.setMode(Emitter.MODE_DOCUMENT);
+                    emitter.setMode(Emitter.STYLE_DOCUMENT);
                 } else if (style.equalsIgnoreCase("RPC")) {
-                    emitter.setMode(Emitter.MODE_RPC);
+                    emitter.setMode(Emitter.STYLE_RPC);
+                } else if (style.equalsIgnoreCase("WRAPPED")) {
+                    emitter.setMode(Emitter.STYLE_DOC_WRAPPED);
                 }
             }
             if (input != null) {
