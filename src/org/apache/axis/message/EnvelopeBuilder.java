@@ -29,7 +29,8 @@ public class EnvelopeBuilder extends SOAPHandler
         throws SAXException
     {
         if (!namespace.equals(Constants.URI_SOAP_ENV))
-            throw new SAXException("Bad envelope namespace " + namespace);
+            throw new SAXException("Bad envelope namespace '" + namespace +
+                                         "'");
         
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new SAXException("Bad envelope tag " + localName);

@@ -106,6 +106,17 @@ public abstract class AdminClient {
                     System.out.println("Doing a quit");
                     String str = "<m:quit xmlns:m=\"AdminService\"/>";
                     input = new ByteArrayInputStream(str.getBytes());
+                } else if (args[i].equals("passwd")) {
+                    System.out.println("Changing admin password");
+                    if (args[i + 1] == null) {
+                        System.err.println("Must specify a password!");
+                        return;
+                    }
+                    String str = "<m:passwd xmlns:m=\"AdminService\">";
+                    str += args[i + 1];
+                    str += "</m:passwd>";
+                    input = new ByteArrayInputStream(str.getBytes());
+                    i++;
                 }
                 else {
                     System.out.println( "Processing file: " + args[i] );
