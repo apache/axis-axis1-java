@@ -60,6 +60,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Creates a non-persistent KeyedBuffer.  Queued messages
@@ -94,6 +95,28 @@ public class NonPersistentKeyedBuffer
             return null;
         }
     }
+
+
+    public Object[] peekAll() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::selectAll");
+        }
+        Vector v = new Vector();
+        KeyedNode node = null;
+        synchronized (messages) {
+            for (Iterator i = messages.iterator(); i.hasNext();) {
+              v.add(i.next());
+            }
+        }
+        Object[] objects = new
+                Object[v.size()];
+        v.copyInto(objects);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::selectAll");
+        }
+        return objects;
+    }
+
 
     public void put(
             Object key,
@@ -367,6 +390,33 @@ public class NonPersistentKeyedBuffer
             return node;
         }
 
+        protected Iterator iterator() {
+          return new KeyedQueueIterator(head);
+        }
     }
 
+    protected static class KeyedQueueIterator
+      implements Iterator {
+        protected KeyedNode current;
+        protected KeyedNode next;
+        public KeyedQueueIterator(KeyedNode node) {
+          this.next = node;
+        }
+        
+        public boolean hasNext() {
+          return (next != null);
+        }
+
+        public Object next() {
+          KeyedNode node = null;
+          if (next != null) {
+            node = next.next;
+          }
+          current = next;
+          next = node;
+          return current;
+        }
+
+        public void remove() {}
+    }
 }

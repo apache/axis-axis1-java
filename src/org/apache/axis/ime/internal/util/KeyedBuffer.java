@@ -83,6 +83,12 @@ public interface KeyedBuffer {
     public Object peek();
 
     /**
+     * Select, but do not remove all messages on the 
+     * channel.  This method will not block.
+     */
+    public Object[] peekAll();
+
+    /**
      * Put a message onto the channel
      */
     public void put(
