@@ -279,6 +279,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     /**
      * Common code for building up the Service from a WSDL document
      *
+     * @param context           Context URL
      * @param doc               A DOM document containing WSDL
      * @param serviceName       Qualified name of the desired service
      * @throws ServiceException  If there's an error finding or parsing the WSDL
