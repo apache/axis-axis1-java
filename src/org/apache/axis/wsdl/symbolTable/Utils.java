@@ -401,7 +401,8 @@ public class Utils {
         if (type != null && type.getNode() != null) {
             getDerivedTypes(type, types, symbolTable);
         } else if (Constants.isSchemaXSD(type.getQName().getNamespaceURI()) &&
-                   type.getQName().getLocalPart().equals("anyType")) {
+                   (type.getQName().getLocalPart().equals("anyType")||
+                    type.getQName().getLocalPart().equals("any"))) {
             // All types are derived from anyType
             types.addAll(symbolTable.getTypes());
         }

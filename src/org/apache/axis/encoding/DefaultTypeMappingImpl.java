@@ -220,6 +220,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,
                    null, null, false);
 
+        // This is the special type for the xsd:any element used for 
+        // extensibility.
+        myRegister(Constants.XSD_ANY,    java.lang.Object.class,
+                   new ElementSerializerFactory(),
+                   new ElementDeserializerFactory(), false);
+
         // The xsd primitive for date has changed through the various
         // namespace versions.
         // XSD_DATE is the current one, which is why it is
