@@ -73,9 +73,8 @@ WSDL from Java</a></li>
 
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
-Welcome to Axis, the third generation of Apache SOAP! This is the <b>alpha
-3 </b>version. Please note that Axis is a work in progress, and although
-the basic functionality is there, there are still a lot of unfinished areas
+Welcome to Axis, the third generation of Apache SOAP! This is the <b>beta 1</b> version. Please note that Axis is a work in progress, and although
+the basic functionality is there, there are still some unfinished areas
 and rough edges. That said, we're very psyched about the package so far
 and would love to get your take on how we can make it better.
 <h3>
@@ -197,13 +196,8 @@ What's missing?</h3>
 Support for the SOAP with Attachments specification</li>
 
 <li>
-Supprt for multi-dimensional arrays</li>
-
-<li>
 Support for the SOAP actor attribute</li>
 
-<li>
-Support for generating complex type definitions in WSDL</li>
 </ul>
 All of these items are on the list for the final release.
 <h2>
@@ -211,8 +205,16 @@ All of these items are on the list for the final release.
 See the <a href="xml-axis/java/docs/install.html">Axis Installation Guide</a>
 for instructions on installing Axis as a web application on your J2EE server.
 <p>Before running the examples in this guide, you'll need to make sure
-that axis.jar is in your classpath. You should find it in the build/lib
-directory of the distribution.
+that your CLASSPATH includes (note:  if you build axis from a CVS checkout, these will be in xml-axis/java/build/lib instead of xml-axis-beta1/lib):
+<ul>
+<li>xml-axis-beta1/lib/axis.jar</li>
+<li>xml-axis-beta1/lib/clutil.jar</li>
+<li>xml-axis-beta1/lib/commons-logging.jar</li>
+<li>xml-axis-beta1/lib/tt-bytecode.jar</li>
+<li>xml-axis-beta1/lib/wsdl4j.jar</li>
+<li>xml-axis-beta1/ # for the sample code</li>
+<li>An XML parser such as xerces</li>
+</ul>
 <h2>
 <a NAME="ConsumingServices"></a>Consuming Web Services with Axis</h2>
 
@@ -235,19 +237,18 @@ method on the public Axis server at Apache.
 12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Call&nbsp;&nbsp;&nbsp;&nbsp; call&nbsp;&nbsp;&nbsp; = (Call) service.createCall();
 13&nbsp;&nbsp;
 14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setOperationName( "echoString" );
-16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
-17&nbsp;&nbsp;
-18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ret = (String) call.invoke( new Object[] { "Hello!" } );
-19&nbsp;&nbsp;
-20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("Sent 'Hello!', got '" + ret + "'");
-21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception e) {
-22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.err.println(e.toString());
-23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
-24&nbsp;&nbsp;&nbsp;&nbsp; }
-25&nbsp; }</pre>
+15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; call.setOperationName( new QName("http://soapinterop.org/", "echoString")  );
+16&nbsp;&nbsp;
+17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ret = (String) call.invoke( new Object[] { "Hello!" } );
+18&nbsp;&nbsp;
+19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("Sent 'Hello!', got '" + ret + "'");
+20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception e) {
+21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.err.println(e.toString());
+22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+23&nbsp;&nbsp;&nbsp;&nbsp; }
+24&nbsp; }</pre>
 </div>
-(You'll find this file in <a href="xml-axis/java/samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
+(You'll find this file in <a href="../samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
 <p>Assuming you have a network connection active, this program can be run
 as follows:
 <pre>% java samples.userguide.example1.TestClient
@@ -257,8 +258,7 @@ So what's happening here? On lines 11 and 12 we create new Service and
 Call objects. These are the standard JAX-RPC objects that are used to store
 metadata about the service to invoke. On line 14, we set up our endpoint
 URL - this is the destination for our SOAP message. On line 15 we define
-the operation (method) name of the Web Service. Line 16 defines the namespace
-to use on the Body of the SOAP message. And on line 18 we actually invoke
+the operation (method) name of the Web Service. And on line 17 we actually invoke
 the desired service, passing in an array of parameters - in this case just
 one String.
 <p>You can see what happens to the arguments by looking at the SOAP request
@@ -291,7 +291,7 @@ you need to call <tt>addParameter</tt> for each parameter, like so:
 <div class="example">
 <pre>&nbsp; call.addParameter("testParam",&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; org.apache.axis.encoding.XMLType.XSD_STRING,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Call.PARAM_MODE_IN);</pre>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.xml.rpc.ParameterMode.PARAM_MODE_IN);</pre>
 </div>
 This will assign the name <b>testParam</b> to the 1st (and only) parameter
 on the invoke call. This will also define the type of the parameter (<tt>org.apache.axis.encoding.XMLType.XSD_STRING</tt>)
@@ -366,7 +366,7 @@ Let's say we have a simple class like the following:
 &nbsp;&nbsp;&nbsp; return i1 - i2;
 &nbsp; }
 }</pre>
-(You'll find this very class in <a href="xml-axis/java/samples/userguide/example2/Calculator.java">samples/userguide/example2/Calculator.java</a>.)
+(You'll find this very class in <a href="../samples/userguide/example2/Calculator.java">samples/userguide/example2/Calculator.java</a>.)
 <p>How do we go about making this class available via SOAP? There are a
 couple of answers to that question, but we'll start with the easiest way
 Axis provides to do this, which takes almost no effort at all!
@@ -383,10 +383,9 @@ is on port 8080):
 SOAP calls correctly into Java invocations of your service class. Try it
 out - there's a calculator client in samples/userguide/example2/CalcClient.java,
 which you can use like this:
-<pre>% javac CalcClient.java
-% java CalcClient -p8080 add 2 5
+<pre>% java samples.userguide.example2.CalcClient -p8080 add 2 5
 Got result : 7
-% java CalcClient -p8080 subtract 10 9
+% java samples.userguide.example2.CalcClient -p8080 subtract 10 9
 Got result : 1
 %</pre>
 (note that you may need to replace the "-p8080" with whatever port your
@@ -407,20 +406,19 @@ familiar with the Axis <b>Web Service Deployment Descriptor (WSDD)</b>
 format. A deployment descriptor contains a bunch of things you want to
 "deploy" into Axis - i.e. make available to the Axis engine. The most common
 thing to deploy is a Web Service, so let's start by taking a look at a
-deployment descriptor for a basic service (this file is samples/userguide/example3/deploy.wsdd):
+deployment descriptor for a basic service (this file is <a href="../samples/userguide/example3/deploy.wsdd">samples/userguide/example3/deploy.wsdd</a>):
 <div class="example">
 <pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
 &nbsp;&lt;service name="MyService" provider="java:RPC">
 &nbsp; &lt;parameter name="className" value="samples.userguide.example3.MyService"/>
-&nbsp; &lt;parameter name="methodName" value="*"/>
+&nbsp; &lt;parameter name="allowedMethods" value="*"/>
 &nbsp;&lt;/service>
 &lt;/deployment></pre>
 </div>
 Pretty simple, really - the outermost element tells the engine that this
 is a WSDD deployment, and defines the "java" namespace. Then the service
-element actually defines the service for us. If you remember from the architecture
-overview, a service is a <b>targeted chain</b>, which means it may have
+element actually defines the service for us. A service is a <b>targeted chain</b> (see the <a href="architecture-guide.html">Architecture Guide</a>), which means it may have
 any/all of: a request Handler, a pivot Handler (which for a service is
 called a "provider"), and a response Handler. In this case, our provider
 is "java:RPC", which is predefined to indicate a Java RPC service.
@@ -463,8 +461,8 @@ engine. Let's say you want to track how many times your service has been
 called. We've included a sample handler in the samples/log directory to
 do just this. To use a handler class like this, you first need to deploy
 the Handler itself, and then use the name that you give it in deploying
-a service. Here's a sample deploy.wsdd file (this is example 4in samples/userguide):
-<pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
+a service. Here's a sample deploy.wsdd file (this is example 4 in samples/userguide):
+<div class="example"><pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
 &nbsp;
 &nbsp;&lt;!-- define the logging handler configuration -->
@@ -479,9 +477,9 @@ a service. Here's a sample deploy.wsdd file (this is example 4in samples/usergui
 &nbsp; &lt;/requestFlow>
 
 &nbsp; &lt;parameter name="className" value="samples.userguide.example4.Service"/>
-&nbsp; &lt;parameter name="methodName" value="*"/>
+&nbsp; &lt;parameter name="allowedMethods" value="*"/>
 &nbsp;&lt;/service>
-&lt;/deployment></pre>
+&lt;/deployment></pre></div>
 The first section defines a Handler called "track" that is implemented
 by the class samples.userguide.example4.LogHandler. We give this Handler
 an option to let it know which file to write its messages into.
