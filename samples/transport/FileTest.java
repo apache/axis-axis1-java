@@ -6,7 +6,6 @@ import org.apache.axis.AxisFault ;
 import org.apache.axis.client.AxisClient ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
-import org.apache.axis.client.http.HTTPTransport ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.encoding.* ;
@@ -36,8 +35,7 @@ public class FileTest {
       }
     
       String   symbol = args[0] ;
-      ServiceClient call = new ServiceClient
-            (new HTTPTransport(opts.getURL(), "urn:xmltoday-delayed-quotes"));
+      ServiceClient call = new ServiceClient();
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);

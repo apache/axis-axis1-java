@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client.tcp ;
+package samples.transport.tcp;
 
 import java.util.* ;
 import org.apache.axis.* ;
@@ -63,9 +63,10 @@ import org.apache.axis.registries.* ;
 import org.apache.axis.client.Transport;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.http.HTTPTransport; // UGLY!!!!!
-import org.apache.axis.transport.tcp.TCPSender;
-import org.apache.axis.handlers.tcp.TCPActionHandler;
+
+// UGLY!!!!! -- see below in setupMessageContext -- RobJ
+import org.apache.axis.client.Transport;
+import org.apache.axis.client.http.HTTPTransport;
 
 /**
  * Extends Client by implementing the setupMessageContext function to
@@ -105,10 +106,8 @@ public class TCPTransport extends Transport
         // add the TCPSender
         HandlerRegistry hr = engine.getHandlerRegistry();
         hr.add("TCPSender", new TCPSender());
-        hr.add("TCPAction", new TCPActionHandler());
         
         SimpleChain c = new SimpleChain();
-        c.addHandler( hr.find( "TCPAction" ) );
         hr.add( "TCP.request", c );
     }
     

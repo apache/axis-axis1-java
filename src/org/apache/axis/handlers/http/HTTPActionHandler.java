@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9,7 +9,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -17,7 +17,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -25,7 +25,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -66,10 +66,10 @@ import javax.servlet.http.* ;
  * property from the HTTPAction property.  We expect there to be a
  * Router on the chain after us, to dispatch to the service named in
  * the SOAPAction.
- * 
+ *
  * In the real world, this might do some more complex mapping of
  * SOAPAction to a TargetService.
- * 
+ *
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
@@ -90,24 +90,34 @@ public class HTTPActionHandler extends BasicHandler
              * service does a mapping between SOAPAction and target.  Therefore
              * if we get here with no action, we're in trouble.
              */
-            if (action == null)
-                throw new AxisFault( "Server.NoHTTPAction",
-                    "No HTTPAction property in context",
+            if (action == null) {
+                 throw new AxisFault( "Server.NoHTTPSOAPAction",
+                    "No HTTP SOAPAction property in context",
                     null, null );
+            }
             
             action = action.trim();
-    
-            if (action.charAt(0) == '\"') {
+
+            // handle empty SOAPAction
+            if (action.length() > 0 && action.charAt(0) == '\"') {
                 // assert(action.endsWith("\"")
-                action = action.substring(1, action.length() - 1);
+                if (action.equals("\"\"")) {
+                    action = "";
+                } else {
+                    action = action.substring(1, action.length() - 1);
+                }
             }
-            msgContext.setTargetService( action );
+            
+            // if action is zero-length string, don't set anything
+            if (action.length() > 0) {
+                msgContext.setTargetService( action );
+            }
         }
 
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
     }
 
-    public void undo(MessageContext msgContext) 
+    public void undo(MessageContext msgContext)
     {
         Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
         Debug.Print( 1, "Exit: HTTPActionHandler::undo" );

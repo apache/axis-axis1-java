@@ -123,13 +123,13 @@ public class Admin {
 
     try {
       AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
-      String            action = root.getTagName();
-
+      String            action = root.getLocalName();
+        
       if ( !action.equals("deploy") && !action.equals("undeploy") &&
            !action.equals("list") && !action.equals("quit") )
         throw new AxisFault( "Admin.error",
-                             "Root element must be 'deploy', 'undeploy' " +
-                             "or 'list'",
+                             "Root element must be 'deploy', 'undeploy', " +
+                             "'list', or 'quit'",
                              null, null );
 
         if (action.equals("quit")) {
@@ -500,7 +500,7 @@ public class Admin {
     Admin admin = new Admin();
 
     AxisEngine engine;
-    if ( args[0].equals("client") ) 
+    if ( args[0].equals("client") )
       engine = new AxisClient();
     else
       engine = new AxisServer();

@@ -7,7 +7,8 @@
 <!--      after the axis server is running                      -->
 <!-- This file will be replaced by WSDD once it's ready         -->
 
-<deploy>
+<m:deploy xmlns:m="AdminService">
+
   <chain   name="book"     flow="RPCDispatcher" />
 
   <service name="urn:AddressFetcher2" pivot="book" >
@@ -41,4 +42,4 @@ See commented-out code in Main.main() - RobJ
   </bean>
 -->
 
-</deploy>
+</m:deploy>

@@ -89,8 +89,16 @@ public class GetQuote {
         System.exit(1);
       }
 
-      String action = "urn:xmltoday-delayed-quotes";
+      String service = "urn:xmltoday-delayed-quotes";
+      String action = service;
       symbol = args[0] ;
+
+      // TESTING HACK BY ROBJ
+      if (symbol.equals("XXX_noaction")) {
+          symbol = "XXX";
+          action = "";
+      }
+
       ServiceClient call = new ServiceClient
             (new HTTPTransport(opts.getURL(), action));
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
@@ -116,7 +124,7 @@ public class GetQuote {
         // the namespace of the call should be the service.
         // ...according to Glen... -- RobJ
           Object ret = call.invoke(
-          action, "getQuote", new Object[] {symbol} );
+          service, "getQuote", new Object[] {symbol} );
           if (ret instanceof String) {
               System.out.println("Received problem response from server: "+ret);
               throw new AxisFault("", (String)ret, null, null);

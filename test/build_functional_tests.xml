@@ -36,7 +36,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="start-functional-test-tcp-server" if="junit.present">
     <echo message="Starting test tcp server."/>
-    <java classname="org.apache.axis.transport.tcp.AxisListener" fork="yes" dir="./build">
+    <java classname="samples.transport.tcp.TCPListener" fork="yes" dir="./build">
       <arg line="-p 8088" /> <!-- arbitrary port -->
       <classpath refid="test-classpath" />
     </java>
@@ -56,6 +56,12 @@ Copyright:
   <!-- Runs the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional" if="junit.present">
+  
+    <!-- first, put the JWS where the functional test can see it -->
+    <mkdir dir="build/jws" />
+    <copy file="samples/stock/StockQuoteService.jws" todir="build/jws" />
+    
+    <!-- now, run the actual test -->
     <junit dir="." printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
       <formatter type="plain" />

@@ -71,7 +71,6 @@ import org.apache.axis.encoding.*;
 /** Temporary - this will be replaced by deployment
  */
 import org.apache.axis.client.http.HTTPTransport;
-import org.apache.axis.client.tcp.TCPTransport;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -125,13 +124,12 @@ public abstract class AxisEngine extends BasicHandler
         }
         
         /** Load default transports
-         * 
+         *
          * (these will be shared - really should be a factory, but
          *  we need to go over the architecture / patterns here
          *  anyway, so this is a quick P.O.C. for now)
          */
         protocolSenders.put("http", new HTTPTransport());
-        protocolSenders.put("tcp", new TCPTransport());
         
         // Once we've got a LocalTransport class...
         //
@@ -242,12 +240,17 @@ public abstract class AxisEngine extends BasicHandler
         return transport;
     }
     
+    public void addTransportForProtocol(String protocol, Transport transport)
+    {
+        protocolSenders.put(protocol, transport);
+    }
+    
     /*********************************************************************
      * Administration and management APIs
-     * 
+     *
      * These can get called by various admin adapters, such as JMX MBeans,
      * our own Admin client, web applications, etc...
-     * 
+     *
      *********************************************************************
      */
     
@@ -304,7 +307,7 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployService(String key)
     {
         getHandlerRegistry().remove(key);
-	}
+    }
 
     /**
      * accessor only, for application session

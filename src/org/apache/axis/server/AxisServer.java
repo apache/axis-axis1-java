@@ -236,7 +236,7 @@ public class AxisServer extends AxisEngine
                 if (h == null)
                   throw new AxisFault("Server.NoService",
                                       "The Axis engine couldn't find a " +
-                                      "target service to invoke!",
+                                      "target service to invoke! targetService is "+msgContext.getTargetService(),
                                       null, null );
               }
 

@@ -57,8 +57,10 @@ import java.io.*;
 import java.util.* ;
 import java.net.URL;
 
-import org.jdom.* ;
-import org.jdom.input.SAXBuilder ;
+import org.w3c.dom.* ;
+import org.apache.axis.utils.XMLUtils ;
+
+import org.apache.axis.utils.Debug;
 
 /**
  * See \samples\stock\readme for info.
@@ -72,21 +74,21 @@ public class StockQuoteService {
     // http://www.xmltoday.com/examples/stockquote/. The IP addr 
     // below came from the host that the above form posts to ..
 
-    if ( symbol.equals("XXX") ) return( (float) 55.25 );
+    // NOTE THAT THIS RETURNS 66.25 WHERE THE ORDINARY EXAMPLE RETURNS 55.25!
+    if ( symbol.equals("XXX") ) return( (float) 66.25 );
 
-    URL          url = new URL( "http://www.xmltoday.com/examples/" +
+    Document doc = null ;
+    
+    doc = XMLUtils.newDocument( "http://www.xmltoday.com/examples/" +
                                 "stockquote/getxmlquote.vep?s="+symbol );
 
-    SAXBuilder   parser = new SAXBuilder();
+    Element  elem = doc.getDocumentElement();
+    NodeList list = elem.getElementsByTagName("stock_quote");
 
-    Document doc  = parser.build( url );
-    Element  elem = doc.getRootElement();
-    elem = elem.getChild( "stock_quote" );
-
-    List         list = elem.getChildren( "price" );
-
-    elem = (Element) list.get( 0 );
-    String quoteStr = elem.getAttributeValue("value");
+    elem = (Element) list.item(0);
+    list = elem.getElementsByTagName( "price" );
+    elem = (Element) list.item( 0 );
+    String quoteStr = elem.getAttribute("value");
     try {
       return Float.valueOf(quoteStr).floatValue();
     } catch (NumberFormatException e1) {

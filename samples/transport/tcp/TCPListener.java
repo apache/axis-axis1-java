@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.tcp;
+package samples.transport.tcp;
 
 import java.io.*;
 import java.util.*;
@@ -61,7 +61,6 @@ import org.apache.axis.* ;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.handlers.tcp.TCPActionHandler;
 import org.apache.axis.transport.http.NonBlockingBufferedInputStream;
 import org.apache.axis.handlers.soap.SOAPService;
 
@@ -74,7 +73,7 @@ import java.net.*;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class AxisListener implements Runnable {
+public class TCPListener implements Runnable {
     // These have default values.
     private String transportReqName = "TCP.request";
     private String transportRespName = "TCP.response";
@@ -90,10 +89,10 @@ public class AxisListener implements Runnable {
     private boolean done = false;
     
     public static void main (String args[]) {
-        new AxisListener(args).run();
+        new TCPListener(args).run();
     }
     
-    public AxisListener (String[] args) {
+    public TCPListener (String[] args) {
         // look for -p, -d arguments
         try {
             Options options = new Options(args);
@@ -149,23 +148,15 @@ public class AxisListener implements Runnable {
                 engine = new AxisServer();
                 engine.init();
                 
+                engine.addTransportForProtocol("tcp", new TCPTransport());
+                
                 HandlerRegistry hr = engine.getHandlerRegistry();
                 HandlerRegistry sr = engine.getServiceRegistry();
                 // add the TCPSender
                 hr.add("TCPSender", new TCPSender());
-                hr.add("TCPAction", new TCPActionHandler());
                 
                 SimpleChain c = new SimpleChain();
-                c.addHandler( hr.find( "TCPAction" ) );
                 hr.add( transportReqName, c );
-                
-                // self-register the PseudoStockQuoteService, for testing purposes
-                SOAPService service = new SOAPService();
-                service.setPivotHandler( hr.find( "RPCDispatcher" ) );
-                service.addOption(SOAPService.OPTION_PIVOT, "RPCDispatcher");
-                service.addOption( "className", "org.apache.axis.transport.tcp.PseudoStockQuoteService" );
-                service.addOption( "methodName", "getQuote" );
-                sr.add( "urn:xmltoday-delayed-quotes", service ); // ???
             }
             
             /* Place the Request message in the MessagContext object - notice */

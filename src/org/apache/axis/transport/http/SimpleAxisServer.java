@@ -146,7 +146,7 @@ public class SimpleAxisServer implements Runnable {
         // create an Axis server
         AxisServer engine = new AxisServer();
         engine.init();
-
+        
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
         Message        requestMsg;
@@ -222,12 +222,13 @@ public class SimpleAxisServer implements Runnable {
                         continue;
                     }
                         
+                    // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
+                    // for now, do not complain if no SOAPAction at all
                     String soapActionString = soapAction.toString();
-                    requestMsg = new Message(is);
-                    msgContext.setRequestMessage(requestMsg);
-                    msgContext.setTargetService(soapActionString);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION,
                                            soapActionString);
+                    requestMsg = new Message(is);
+                    msgContext.setRequestMessage(requestMsg);
                     msgContext.setProperty(Constants.MC_REALPATH,
                                            fileName.toString());
                     

@@ -1,7 +1,8 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ *
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,40 +53,41 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers;
+package samples.transport.tcp ;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.utils.Debug;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.transport.http.HTTPConstants;
+import java.net.URL;
 
-/** A <code>JWSHandler</code> sets the target service and JWS filename
- * in the context depending on the JWS configuration and the target URL.
+/**
+ * An admin client object, specific to HTTP.
  *
- * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
- * @author Sam Ruby (rubys@us.ibm.com)
  */
-public class JWSHandler extends BasicHandler
-{
-    public void invoke(MessageContext msgContext) throws AxisFault
-    {
-        Debug.Print( 1, "Enter: JWSHandler::invoke" );
 
-        // FORCE the targetService to be JWS if the URL is right.
-        String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
+public class AdminClient extends org.apache.axis.client.AdminClient {
 
-        if ((realpath!=null) && (realpath.endsWith(".jws"))) {
-            msgContext.setTargetService(Constants.JWSPROCESSOR_TARGET) ;
+    public static void main(String args[]) {
+        try {
+            new samples.transport.tcp.AdminClient().doAdmin(args);
         }
-
-        Debug.Print( 1, "Exit : JWSHandler::invoke" );
+        catch( Exception e ) {
+            System.err.println( e );
+            e.printStackTrace( System.err );
+        }
     }
 
-    public void undo(MessageContext msgContext)
-    {
-        Debug.Print( 1, "Enter: JWSHandler::undo" );
-        Debug.Print( 1, "Exit: JWSHandler::undo" );
+    /**
+     * create an appropriate ServiceClient
+     */
+    public ServiceClient getServiceClient (Options opts, String[] args) throws Exception {
+        URL url = new URL(opts.getURL());
+        ServiceClient client = new ServiceClient
+            ( new TCPTransport(url.getHost(), ""+url.getPort()) );
+        return client;
     }
+        
 }
+
