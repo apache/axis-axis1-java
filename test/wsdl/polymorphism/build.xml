@@ -62,7 +62,7 @@ Copyright:
       </wsdl2java>
 
     <copy todir="${build.dir}/work/test/wsdl/polymorphism" overwrite="yes">
-      <fileset dir="${componentName}">
+      <fileset dir="${axis.home}/${componentName}">
         <include name="*TestCase.java"/>
         <include name="*Impl.java"/>
          <include name="C.java"/>
