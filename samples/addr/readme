@@ -1,6 +1,6 @@
 To generate files from the wsdl:
 
 java org.apache.axis.wsdl.Wsdl2java -s samples\addr\AddressBook.wsdl 
-                                    -p samples.addr
+                                    -N urn:AddressFetcher2=samples.addr
 
 from the xml-axis\java directory.
