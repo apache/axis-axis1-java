@@ -238,8 +238,6 @@ public class AxisServlet extends AxisServletBase {
                 realpath = request.getServletPath();
             }
 
-            boolean hasParameters = request.getParameterNames().hasMoreElements();
-
             //JWS pages are special; they are the servlet path and there
             //is no pathinfo...we map the pathinfo to the servlet path to keep
             //it happy
