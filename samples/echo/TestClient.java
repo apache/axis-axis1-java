@@ -222,8 +222,8 @@ public abstract class TestClient {
         test("Map         ", map);
 
         HashMap map2 = new HashMap();
-        map.put("this is the second map", new Boolean(true));
-        map.put("test", new Float(411));
+        map2.put("this is the second map", new Boolean(true));
+        map2.put("test", new Float(411));
         test("MapArray    ", new HashMap [] { map, map2 });
     }
 
