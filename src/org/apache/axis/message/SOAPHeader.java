@@ -94,8 +94,8 @@ public class SOAPHeader extends MessageElement
     SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts) {
         super(Constants.ELEM_HEADER,
               Constants.NS_PREFIX_SOAP_ENV,
-              soapConsts != null? soapConsts.getEnvelopeURI() : SOAPConstants.SOAP11_CONSTANTS.getEnvelopeURI());
-        soapConstants = soapConsts;
+              (soapConsts != null) ? soapConsts.getEnvelopeURI() : Constants.DEFAULT_SOAP_VERSION.getEnvelopeURI());
+        soapConstants = (soapConsts != null) ? soapConsts : Constants.DEFAULT_SOAP_VERSION;
         try {
             setParentElement(env);
             setEnvelope(env);
@@ -109,7 +109,7 @@ public class SOAPHeader extends MessageElement
                       Attributes attributes, DeserializationContext context,
                       SOAPConstants soapConsts) throws AxisFault {
         super(namespace, localPart, prefix, attributes, context);
-        soapConstants = soapConsts;
+        soapConstants = (soapConsts != null) ? soapConsts : Constants.DEFAULT_SOAP_VERSION;
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {

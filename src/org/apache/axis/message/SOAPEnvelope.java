@@ -127,6 +127,15 @@ public class SOAPEnvelope extends MessageElement
                         SOAPConstants soapConstants,
                         SchemaVersion schemaVersion)
     {    
+        // FIX BUG http://nagoya.apache.org/bugzilla/show_bug.cgi?id=18108
+        super(Constants.ELEM_ENVELOPE,
+               Constants.NS_PREFIX_SOAP_ENV,
+               (soapConstants != null) ? soapConstants.getEnvelopeURI() : Constants.DEFAULT_SOAP_VERSION.getEnvelopeURI());
+
+        if (soapConstants == null)
+          soapConstants = Constants.DEFAULT_SOAP_VERSION;
+        // FIX BUG http://nagoya.apache.org/bugzilla/show_bug.cgi?id=18108        
+        
         this.soapConstants = soapConstants;
         this.schemaVersion = schemaVersion;
         header = new SOAPHeader(this, soapConstants);
@@ -149,7 +158,10 @@ public class SOAPEnvelope extends MessageElement
     
     public SOAPEnvelope(InputStream input) throws SAXException {
         InputSource is = new InputSource(input);
-        header = new SOAPHeader(this, soapConstants); // soapConstants = null!
+        // FIX BUG http://nagoya.apache.org/bugzilla/show_bug.cgi?id=18108
+        //header = new SOAPHeader(this, soapConstants); // soapConstants = null!
+        header = new SOAPHeader(this, Constants.DEFAULT_SOAP_VERSION); // soapConstants = null!
+        // FIX BUG http://nagoya.apache.org/bugzilla/show_bug.cgi?id=18108
         DeserializationContext dser = null ;
         AxisClient     tmpEngine = new AxisClient(new NullProvider());
         MessageContext msgContext = new MessageContext(tmpEngine);
