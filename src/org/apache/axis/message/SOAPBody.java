@@ -36,6 +36,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * Holder for body elements.
@@ -47,13 +49,12 @@ public class SOAPBody extends MessageElement
 
     private static Log log = LogFactory.getLog(SOAPBody.class.getName());
 
-    private Vector bodyElements = new Vector();
-
     private SOAPConstants soapConstants;
 
     private boolean disableFormatting = false;
     private boolean doSAAJEncodingCompliance = false;
     private static ArrayList knownEncodingStyles = new ArrayList();
+
     static {
         knownEncodingStyles.add(Constants.URI_SOAP11_ENC);
         knownEncodingStyles.add(Constants.URI_SOAP12_ENC);
@@ -80,11 +81,13 @@ public class SOAPBody extends MessageElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
-        if(parent == null)
+        if(parent == null) {
             throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
+        }
         try {
-            // cast to force exception if wrong type
-            super.setParentElement((SOAPEnvelope)parent);
+            SOAPEnvelope env = (SOAPEnvelope)parent;
+            super.setParentElement(env);
+            setEnvelope(env);
         } catch (Throwable t) {
             throw new SOAPException(t);
         }
@@ -123,7 +126,9 @@ public class SOAPBody extends MessageElement
              context.setPretty(false);
         }
 
-        if (bodyElements.isEmpty()) {
+        List bodyElements = getChildren();
+
+        if (bodyElements == null || bodyElements.isEmpty()) {
             // This is a problem.
             // throw new Exception("No body elements!");
             // If there are no body elements just return - it's ok that
@@ -132,12 +137,16 @@ public class SOAPBody extends MessageElement
 
         // Output <SOAP-ENV:Body>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
-                                       Constants.ELEM_BODY), getAttributesEx());
-        Enumeration enumeration = bodyElements.elements();
-        while (enumeration.hasMoreElements()) {
-            SOAPBodyElement body = (SOAPBodyElement)enumeration.nextElement();
-            body.output(context);
-            // Output this body element.
+                                       Constants.ELEM_BODY),
+                             getAttributesEx());
+        
+        if (bodyElements != null) {
+            Iterator e = bodyElements.iterator();
+            while (e.hasNext()) {
+                SOAPBodyElement body = (SOAPBodyElement)e.next();
+                body.output(context);
+                // Output this body element.
+            }
         }
         
         // Output multi-refs if appropriate
@@ -149,50 +158,57 @@ public class SOAPBody extends MessageElement
         context.setPretty(oldPretty);
     }
 
-    Vector getBodyElements() throws AxisFault
+    protected void initializeChildren()
     {
-        return bodyElements;
+        if (children == null) {
+            children = new Vector();
+        }
+    }
+    
+    Vector getBodyElements() throws AxisFault {
+        initializeChildren();
+        return (Vector)getChildren();
     }
 
     SOAPBodyElement getFirstBody() throws AxisFault
     {
-        if (bodyElements.isEmpty())
-            return null;
-        
-        return (SOAPBodyElement)bodyElements.elementAt(0);
+        List bodyElements = getChildren();
+        return (bodyElements == null) ? 
+            null : (SOAPBodyElement)bodyElements.get(0);
     }
 
-    void addBodyElement(SOAPBodyElement element)
+    void addBodyElement(SOAPBodyElement element) 
     {
         if (log.isDebugEnabled())
             log.debug(Messages.getMessage("addBody00"));
         try {
-            element.setParentElement(this);
+            addChildElement(element);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPBody
             log.fatal(Messages.getMessage("exception00"), ex);
         }
     }
 
-    void removeBodyElement(SOAPBodyElement element)
+    void removeBodyElement(SOAPBodyElement element) 
     {
         if (log.isDebugEnabled())
             log.debug(Messages.getMessage("removeBody00"));
-        bodyElements.removeElement(element);
+        removeChild( (MessageElement)element );
     }
 
-    void clearBody()
+    void clearBody() 
     {
-        if (!bodyElements.isEmpty())
-            bodyElements.removeAllElements();
+        List bodyElements = getChildren();
+        if (bodyElements != null) {
+            bodyElements.clear();
+        }
     }
 
     SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
-        return (SOAPBodyElement)findElement(bodyElements,
-                                            namespace,
-                                            localPart);
+        QName name = new QName(namespace, localPart);
+        return (SOAPBodyElement)getChildElement(name);
     }
 
     // JAXM methods
@@ -200,21 +216,21 @@ public class SOAPBody extends MessageElement
     public javax.xml.soap.SOAPBodyElement addBodyElement(Name name)
         throws SOAPException {
         SOAPBodyElement bodyElement = new SOAPBodyElement(name);
-        addBodyElement(bodyElement);
+        addChildElement(bodyElement);
         return bodyElement;
     }
 
     public javax.xml.soap.SOAPFault addFault(Name name, String s, Locale locale) throws SOAPException {
         AxisFault af = new AxisFault(new QName(name.getURI(), name.getLocalName()), s, "", new Element[0]);
         SOAPFault fault = new SOAPFault(af);
-        addBodyElement(fault);
+        addChildElement(fault);
         return fault;
     }
 
     public javax.xml.soap.SOAPFault addFault(Name name, String s) throws SOAPException {
         AxisFault af = new AxisFault(new QName(name.getURI(), name.getLocalName()), s, "", new Element[0]);
         SOAPFault fault = new SOAPFault(af);
-        addBodyElement(fault);
+        addChildElement(fault);
         return fault;
     }
 
@@ -226,79 +242,81 @@ public class SOAPBody extends MessageElement
         
         AxisFault af = new AxisFault(new QName(Constants.NS_URI_AXIS, Constants.FAULT_SERVER_GENERAL), "", "", new Element[0]);
         SOAPFault fault = new SOAPFault(af);
-        addBodyElement(fault);
+        addChildElement(fault);
         return fault;
     }
 
     public javax.xml.soap.SOAPFault getFault() {
-        Enumeration e = bodyElements.elements();
-        while (e.hasMoreElements()) {
-            Object element = e.nextElement();
-            if(element instanceof javax.xml.soap.SOAPFault) {
-                return (javax.xml.soap.SOAPFault) element;
+        List bodyElements = getChildren();
+        if (bodyElements != null) {
+            Iterator e = bodyElements.iterator();
+            while (e.hasNext()) {
+                Object element = e.next();
+                if(element instanceof javax.xml.soap.SOAPFault) {
+                    return (javax.xml.soap.SOAPFault) element;
+                }
             }
         }
         return null;
     }
-
-    public boolean hasFault() {
-        Enumeration e = bodyElements.elements();
-        while (e.hasMoreElements()) {
-            if(e.nextElement() instanceof javax.xml.soap.SOAPFault) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addChild(MessageElement el) throws SOAPException {
-        bodyElements.addElement(el);
-    }
-
-    public java.util.Iterator getChildElements() {
-        return bodyElements.iterator();
-    }
-
-    public java.util.Iterator getChildElements(Name name) {
-        Vector v = new Vector();
-        Enumeration e = bodyElements.elements();
-        SOAPElement bodyEl;
-        while (e.hasMoreElements()) {
-            bodyEl = (SOAPElement)e.nextElement();
-            Name cname = bodyEl.getElementName(); 
-            if (cname.getURI().equals(name.getURI()) &&
-                cname.getLocalName().equals(name.getLocalName())) {
-                v.addElement(bodyEl);
-            }
-        }
-        return v.iterator();
-    }
-
-    public void removeChild(MessageElement child) {
-        // Remove all occurrences in case it has been added multiple times.
-        int i;
-        while ((i = bodyElements.indexOf(child)) != -1) {
-            bodyElements.remove(i);
-        }
-    }
-
     
-    /**
-     * we have to override this to enforce that SOAPHeader immediate 
-     * children are exclusively of type SOAPHeaderElement (otherwise
-     * we'll get mysterious ClassCastExceptions down the road...) 
-     * 
-     * @param element
-     * @return
-     * @throws SOAPException
-     */ 
-    public SOAPElement addChildElement(SOAPElement element) 
-      throws SOAPException {
+    public boolean hasFault() {
+        return (getFault() != null);
+    }
+
+    // overwrite the one in MessageElement and set envelope
+    public void addChild(MessageElement element) throws SOAPException {
 // Commented out for SAAJ compatibility - gdaniels, 05/19/2003
 //      if (!(element instanceof javax.xml.soap.SOAPBodyElement)) {
 //        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
 //      }
-      return super.addChildElement(element);
+        element.setEnvelope(getEnvelope());
+        super.addChild(element);
+    }
+
+    // overwrite the one in MessageElement and sets dirty flag
+    public SOAPElement addChildElement(SOAPElement element)
+        throws SOAPException {
+// Commented out for SAAJ compatibility - gdaniels, 05/19/2003
+//      if (!(element instanceof javax.xml.soap.SOAPBodyElement)) {
+//        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
+//      }
+        SOAPElement child = super.addChildElement(element);
+        setDirty(true);
+        return child;
+    }
+
+    public SOAPElement addChildElement(Name name) throws SOAPException {
+        SOAPBodyElement child = new SOAPBodyElement(name);
+        addChildElement(child);
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName) throws SOAPException {
+        // Inherit parent's namespace
+        SOAPBodyElement child = new SOAPBodyElement(getNamespaceURI(),
+                                                    localName);
+        addChildElement(child);
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName,
+                                       String prefix) throws SOAPException {
+        SOAPBodyElement child = 
+            new SOAPBodyElement(getNamespaceURI(prefix), localName);
+        child.setPrefix(prefix);
+        addChildElement(child);
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName,
+                                       String prefix,
+                                       String uri) throws SOAPException {
+        SOAPBodyElement child = new SOAPBodyElement(uri, localName);
+        child.setPrefix(prefix);
+        child.addNamespaceDeclaration(prefix, uri);
+        addChildElement(child);
+        return child;
     }
 
     public void setSAAJEncodingCompliance(boolean comply) {

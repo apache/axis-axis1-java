@@ -29,9 +29,10 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.List;
 import java.rmi.RemoteException;
 
 /** 
@@ -293,7 +294,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
             throws SAXException {
         if (Constants.ELEM_FAULT_DETAIL.equals(localName)) {
             MessageElement el = context.getCurElement();
-            ArrayList children = el.getChildren();
+            List children = el.getChildren();
             if (children != null) {
                 Element [] elements = new Element [children.size()];
                 for (int i = 0; i < elements.length; i++) {

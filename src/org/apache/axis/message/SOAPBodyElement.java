@@ -35,8 +35,8 @@ import java.io.InputStream;
  * A Body element.
  */
 public class SOAPBodyElement extends MessageElement
-    implements javax.xml.soap.SOAPBodyElement
-{
+    implements javax.xml.soap.SOAPBodyElement {
+
     private static Log log =
         LogFactory.getLog(SOAPBodyElement.class.getName());
 
@@ -45,12 +45,12 @@ public class SOAPBodyElement extends MessageElement
                            String prefix,
                            Attributes attributes,
                            DeserializationContext context)
-        throws AxisFault
+        throws AxisFault 
     {
         super(namespace, localPart, prefix, attributes, context);
     }
 
-    public SOAPBodyElement(Name name)
+    public SOAPBodyElement(Name name) 
     {
         super(name);
     }
@@ -70,7 +70,7 @@ public class SOAPBodyElement extends MessageElement
         super(elem);
     }
     
-    public SOAPBodyElement()
+    public SOAPBodyElement() 
     {
     }
 
@@ -79,7 +79,13 @@ public class SOAPBodyElement extends MessageElement
         super( getDocumentElement(input) );
     }
 
-    private static Element getDocumentElement(InputStream input) {
+    public SOAPBodyElement(String namespace, String localPart)
+    {
+        super(namespace, localPart);
+    }
+
+    private static Element getDocumentElement(InputStream input)
+    {
         try {
             return XMLUtils.newDocument(input).getDocumentElement();
         } catch (Exception e) {
@@ -88,25 +94,19 @@ public class SOAPBodyElement extends MessageElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
-        if(parent == null)
+        if(parent == null) {
             throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
+        }
         // migration aid
         if (parent instanceof SOAPEnvelope) {
             log.warn(Messages.getMessage("bodyElementParent"));
             parent = ((SOAPEnvelope)parent).getBody();
         }
-        try {
-            // cast to force exception if wrong type
-            super.setParentElement(parent);
-        } catch (Throwable t) {
-            throw new SOAPException(t);
+        if (!(parent instanceof SOAPBody)) {
+            throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
         }
+        
+        super.setParentElement(parent);
     }
 
-    public void detachNode() {
-        if (parent != null) {
-            ((SOAPBody)parent).removeBodyElement(this);
-        }
-        super.detachNode();
-    }
 }

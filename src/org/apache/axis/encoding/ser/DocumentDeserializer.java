@@ -25,7 +25,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.xml.sax.SAXException;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Deserializer for DOM Document
@@ -53,7 +53,7 @@ public class DocumentDeserializer extends DeserializerImpl
                     messageContext.setProperty(DESERIALIZE_CURRENT_ELEMENT, Boolean.FALSE);
                     return;
                 }
-                ArrayList children = msgElem.getChildren();
+                List children = msgElem.getChildren();
                 if ( children != null ) {
                     msgElem = (MessageElement) children.get(0);
                     if ( msgElem != null )

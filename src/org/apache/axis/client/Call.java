@@ -2002,8 +2002,12 @@ public class Call implements javax.xml.rpc.Call {
 
         if ( params == null || numParams != params.length ) {
             throw new JAXRPCException(
-                    Messages.getMessage("parmMismatch00",
-                    "" + params.length, "" + numParams) );
+                    Messages.getMessage(
+                              "parmMismatch00",
+                              (params == null) ? "no params" : "" + params.length, 
+                              "" + numParams
+                   ) 
+           );
         }
 
         log.debug( "getParamList number of params: " + params.length);

@@ -32,6 +32,8 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -48,8 +50,6 @@ public class SOAPHeader extends MessageElement
 
     private static Log log = LogFactory.getLog(SOAPHeader.class.getName());
 
-    private Vector headers = new Vector();
-
     private SOAPConstants soapConstants;
 
     SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts) {
@@ -59,7 +59,6 @@ public class SOAPHeader extends MessageElement
         soapConstants = (soapConsts != null) ? soapConsts : Constants.DEFAULT_SOAP_VERSION;
         try {
             setParentElement(env);
-            setEnvelope(env);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPEnvelope
             log.fatal(Messages.getMessage("exception00"), ex);
@@ -74,11 +73,12 @@ public class SOAPHeader extends MessageElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
-        if(parent == null)
+        if(parent == null) {
             throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
+        }
         try {
-            SOAPEnvelope env = (SOAPEnvelope)parent;
             // cast to force exception if wrong type
+            SOAPEnvelope env = (SOAPEnvelope)parent;
             super.setParentElement(env);
             setEnvelope(env);
         } catch (Throwable t) {
@@ -96,10 +96,7 @@ public class SOAPHeader extends MessageElement
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)
         throws SOAPException {
         SOAPHeaderElement headerElement = new SOAPHeaderElement(name);
-        SOAPEnvelope envelope = getEnvelope();
-        headerElement.setEnvelope(envelope);
-        addHeader(headerElement);
-        envelope.setDirty(true);
+        addChildElement(headerElement);
         return headerElement;
     }
     
@@ -129,13 +126,15 @@ public class SOAPHeader extends MessageElement
         if (actor == null) return null;
 
         Vector result = new Vector();
-
-        for(int i = 0; i < headers.size(); i++) {
-            SOAPHeaderElement she = (SOAPHeaderElement)headers.get(i);
-            if (she.getMustUnderstand()) {
-                String candidate = she.getActor();
-                if (actor.equals(candidate)) {
-                    result.add(headers.get(i));
+        List headers = getChildren();
+        if (headers != null) {
+            for(int i = 0; i < headers.size(); i++) {
+                SOAPHeaderElement she = (SOAPHeaderElement)headers.get(i);
+                if (she.getMustUnderstand()) {
+                    String candidate = she.getActor();
+                    if (actor.equals(candidate)) {
+                        result.add(headers.get(i));
+                    }
                 }
             }
         }
@@ -143,20 +142,30 @@ public class SOAPHeader extends MessageElement
     }
 
     public Iterator examineAllHeaderElements() {
-        return headers.iterator();
+        return getChildElements();
     }
 
     public Iterator extractAllHeaderElements() {
         Vector result = new Vector();
-        for(int i = 0; i < headers.size(); i++) {
-            result.add(headers.get(i));
+        List headers = getChildren();
+        if (headers != null) {
+            for(int i = 0; i < headers.size(); i++) {
+                result.add(headers.get(i));
+            }
+            headers.clear();
         }
-        headers.clear();
         return result.iterator();
     }
 
+    protected void initializeChildren() {
+        if (children == null) {
+            children = new Vector();
+        }
+    }
+
     Vector getHeaders() {
-        return headers;
+        initializeChildren();
+        return (Vector)getChildren();
     }
 
     /**
@@ -164,6 +173,10 @@ public class SOAPHeader extends MessageElement
      */ 
     Vector getHeadersByActor(ArrayList actors) {
         Vector results = new Vector();
+        List headers = getChildren();
+        if (headers == null) {
+            return results;
+        }
         Iterator i = headers.iterator();
         SOAPConstants soapVer = getEnvelope().getSOAPConstants();
         boolean isSOAP12 = soapVer == SOAPConstants.SOAP12_CONSTANTS;
@@ -194,7 +207,7 @@ public class SOAPHeader extends MessageElement
         if (log.isDebugEnabled())
             log.debug(Messages.getMessage("addHeader00"));
         try {
-            header.setParentElement(this);
+            addChildElement(header);
         } catch (SOAPException ex) {
             // class cast should never fail when parent is a SOAPHeader
             log.fatal(Messages.getMessage("exception00"), ex);
@@ -204,7 +217,7 @@ public class SOAPHeader extends MessageElement
     void removeHeader(SOAPHeaderElement header) {
         if (log.isDebugEnabled())
             log.debug(Messages.getMessage("removeHeader00"));
-        headers.removeElement(header);
+        removeChild((MessageElement)header);
     }
 
     /**
@@ -214,9 +227,8 @@ public class SOAPHeader extends MessageElement
     SOAPHeaderElement getHeaderByName(String namespace,
                                       String localPart,
                                       boolean accessAllHeaders) {
-        SOAPHeaderElement header = (SOAPHeaderElement)findElement(headers,
-                                                                  namespace,
-                                                                  localPart);
+        QName name = new QName(namespace, localPart);
+        SOAPHeaderElement header = (SOAPHeaderElement)getChildElement(name);
 
         // If we're operating within an AxisEngine, respect its actor list
         // unless told otherwise
@@ -268,12 +280,16 @@ public class SOAPHeader extends MessageElement
          * returning only the next one each time.... this is Q&D for now.
          */
         Vector v = new Vector();
-        Enumeration e = headers.elements();
+        List headers = getChildren();
+        if (headers == null) {
+            return v.elements();
+        }
+        Iterator e = headers.iterator();
         SOAPHeaderElement header;
         String nextActor = getEnvelope().getSOAPConstants().getNextRoleURI();
         
-        while (e.hasMoreElements()) {
-            header = (SOAPHeaderElement)e.nextElement();
+        while (e.hasNext()) {
+            header = (SOAPHeaderElement)e.next();
             if (header.getNamespaceURI().equals(namespace) &&
                 header.getName().equals(localPart)) {
 
@@ -302,6 +318,10 @@ public class SOAPHeader extends MessageElement
     }
 
     protected void outputImpl(SerializationContext context) throws Exception {
+        List headers = getChildren();
+        if (headers == null) {
+            return;
+        }
         boolean oldPretty = context.getPretty();
         context.setPretty(true);
 
@@ -313,10 +333,10 @@ public class SOAPHeader extends MessageElement
             // Output <SOAP-ENV:Header>
             context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                            Constants.ELEM_HEADER), null);
-            Enumeration enumeration = headers.elements();
-            while (enumeration.hasMoreElements()) {
+            Iterator enumeration = headers.iterator();
+            while (enumeration.hasNext()) {
                 // Output this header element
-                ((SOAPHeaderElement)enumeration.nextElement()).output(context);
+                ((SOAPHeaderElement)enumeration.next()).output(context);
             }
             // Output </SOAP-ENV:Header>
             context.endElement();
@@ -325,93 +345,56 @@ public class SOAPHeader extends MessageElement
         context.setPretty(oldPretty);
     }
 
+    // overwrite the one in MessageElement and set envelope
     public void addChild(MessageElement element) throws SOAPException {
         if (!(element instanceof SOAPHeaderElement)) {
-          throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
+            throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
         }
-        ((SOAPHeaderElement)element).setEnvelope(getEnvelope());
-        headers.addElement(element);
+        element.setEnvelope(getEnvelope());
+        super.addChild(element);
     }
 
-    public java.util.Iterator getChildElements() {
-        return headers.iterator();
-    }
-
-    public java.util.Iterator getChildElements(Name name) {
-        Vector v = new Vector();
-        Enumeration e = headers.elements();
-        SOAPHeaderElement header;
-        while (e.hasMoreElements()) {
-            header = (SOAPHeaderElement)e.nextElement();
-            if (header.getNamespaceURI().equals(name.getURI()) &&
-                header.getName().equals(name.getLocalName())) {
-                v.addElement(header);
-            }
+    // overwrite the one in MessageElement and sets dirty flag
+    public SOAPElement addChildElement(SOAPElement element)
+        throws SOAPException {
+        if (!(element instanceof SOAPHeaderElement)) {
+            throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
         }
-        return v.iterator();
-    }
-    public void removeChild(MessageElement child) {
-        // Remove all occurrences in case it has been added multiple times.
-        int i;
-        while ((i = headers.indexOf(child)) != -1) {
-            headers.remove(i);
-        }
-    }
-
-    /**
-     * we have to override this to enforce that SOAPHeader immediate 
-     * children are exclusively of type SOAPHeaderElement (otherwise
-     * we'll get mysterious ClassCastExceptions down the road... )
-     * 
-     * @param element child element
-     * @return soap element
-     * @throws SOAPException
-     */ 
-    public SOAPElement addChildElement(SOAPElement element) 
-      throws SOAPException
-    {
-      if (!(element instanceof SOAPHeaderElement)) {
-        throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
-      }
-      ((SOAPHeaderElement)element).setEnvelope(getEnvelope());
-      return super.addChildElement(element);
+        SOAPElement child = super.addChildElement(element);
+        setDirty(true);
+        return child;
     }
 
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        SOAPHeaderElement child = new SOAPHeaderElement(name.getURI(),
-                                                  name.getLocalName());
-        addChild(child);
-        child.setEnvelope(getEnvelope());
+        SOAPHeaderElement child = new SOAPHeaderElement(name);
+        addChildElement(child);
         return child;
     }
 
     public SOAPElement addChildElement(String localName) throws SOAPException {
         // Inherit parent's namespace
         SOAPHeaderElement child = new SOAPHeaderElement(getNamespaceURI(),
-                                                  localName);
-        addChild(child);
-        child.setEnvelope(getEnvelope());
+                                                        localName);
+        addChildElement(child);
         return child;
     }
 
     public SOAPElement addChildElement(String localName,
                                        String prefix) throws SOAPException {
-        SOAPHeaderElement child = new SOAPHeaderElement(getNamespaceURI(prefix),
-                                                  localName);
-        addChild(child);
-        child.setEnvelope(getEnvelope());
+        SOAPHeaderElement child = 
+            new SOAPHeaderElement(getNamespaceURI(prefix), localName);
+        child.setPrefix(prefix);
+        addChildElement(child);
         return child;
     }
 
     public SOAPElement addChildElement(String localName,
                                        String prefix,
                                        String uri) throws SOAPException {
-        SOAPHeaderElement child = new SOAPHeaderElement(uri,
-                                                  localName);
+        SOAPHeaderElement child = new SOAPHeaderElement(uri, localName);
         child.setPrefix(prefix);
         child.addNamespaceDeclaration(prefix, uri);
-        addChild(child);
-        child.setEnvelope(getEnvelope());
+        addChildElement(child);
         return child;
     }
 }
