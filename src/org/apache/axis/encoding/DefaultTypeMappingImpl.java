@@ -200,12 +200,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             myRegister(Constants.SOAP_LONG,       java.lang.Long.class,       null, null, false);
             myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,      null, null, false);
             myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,       null, null, false);
-
             // Note that a SOAP_BASE64 is mapped to a Byte[] not a byte[].  This is 
             // the reason why the array serialization is used.
             myRegister(Constants.SOAP_BASE64,     java.lang.Byte[].class,       
                        new ArraySerializerFactory(),
                        new ArrayDeserializerFactory(),true);
+
         } else {
             // Even though the java class is an object, since these are all 
             // xsd primitives, treat them as a primitive.
@@ -219,6 +219,15 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             myRegister(Constants.XSD_LONG,       java.lang.Long.class,       null, null, true);
             myRegister(Constants.XSD_SHORT,      java.lang.Short.class,      null, null, true);
             myRegister(Constants.XSD_BYTE,       java.lang.Byte.class,       null, null, true);
+
+            // Need to accept a SOAP_BASE64 over the wire...which maps to byte[].         
+            // Note that this is serialized over the wire as XSD_BASE64.
+            myRegister(Constants.SOAP_BASE64,    byte[].class,       
+                       null,
+                       new Base64DeserializerFactory(),true);
+            myRegister(Constants.XSD_BASE64,     byte[].class,                                   
+                       new Base64SerializerFactory(),
+                       new Base64DeserializerFactory(),true);
         }
 
     }

@@ -378,9 +378,28 @@ public class SerializationContextImpl implements SerializationContext
         if (Element.class.isAssignableFrom(javaType)) return true;
         if (byte[].class.isAssignableFrom(javaType)) return true;
         
-        // Note that arrays are not primitives.
-        // Also note that java.lang wrapper classes (i.e. java.lang.Integer) are
+        // There has been discussion as to whether arrays themselves should
+        // be regarded as multi-ref.
+        // Here are the three options:
+        //   1) Arrays are full-fledged Objects and therefore should always be
+        //      multi-ref'd  (Pro: This is like java.  Con: Some runtimes don't
+        //      support this yet, and it requires more stuff to be passed over the wire.)
+        //   2) Arrays are not full-fledged Objects and therefore should
+        //      always be passed as single ref (note the elements of the array
+        //      may be multi-ref'd.) (Pro:  This seems reasonable, if a user
+        //      wants multi-referencing put the array in a container.  Also 
+        //      is more interop compatible.  Con: Not like java serialization.)
+        //   3) Arrays of primitives should be single ref, and arrays of 
+        //      non-primitives should be multi-ref.  (Pro: Takes care of the
+        //      looping case.  Con: Seems like an obtuse rule.)
+        //
+        // Changing the code from (1) to (2) to see if interop fairs better.
+        if (javaType.isArray()) return true;
+
+        // Note that java.lang wrapper classes (i.e. java.lang.Integer) are
         // not primitives unless the corresponding type is an xsd type.
+        // (If the wrapper maps to a soap encoded primitive, it can be nillable
+        // and multi-ref'd).  
         QName qName = getQNameForClass(javaType);
         if (qName != null && Constants.isSchemaXSD(qName.getNamespaceURI())) {
             if (qName.equals(Constants.XSD_BOOLEAN) ||
