@@ -160,6 +160,8 @@ public class Constants {
     public static final String FAULT_SERVER_GENERAL =
                                                    "Server.generalException";
     
+    public static final String FAULT_SERVER_USER =
+                                                   "Server.userException";
     public static final QFault FAULT_MUSTUNDERSTAND =
                                   new QFault(URI_SOAP_ENV, "MustUnderstand");
 
@@ -167,13 +169,13 @@ public class Constants {
     // QNames
     //////////////////////////////////////////////////////////////////////////
     public static final QName QNAME_FAULTCODE = 
-                                         new QName(URI_SOAP_ENV, "faultcode");
+                                         new QName(URI_SOAP_ENV, ELEM_FAULT_CODE);
     public static final QName QNAME_FAULTSTRING = 
-                                       new QName(URI_SOAP_ENV, "faultstring");
+                                       new QName(URI_SOAP_ENV, ELEM_FAULT_STRING);
     public static final QName QNAME_FAULTACTOR = 
-                                        new QName(URI_SOAP_ENV, "faultactor");
+                                        new QName(URI_SOAP_ENV, ELEM_FAULT_ACTOR);
     public static final QName QNAME_FAULTDETAILS =
-                                         new QName(URI_SOAP_ENV, "details");
+                                         new QName(URI_SOAP_ENV, ELEM_FAULT_DETAIL);
     
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////

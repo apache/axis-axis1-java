@@ -63,6 +63,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -259,6 +260,22 @@ public class XMLUtils {
         privateElementToWriter(doc.getDocumentElement(), writer, false, false);
     }
 
+    /**
+     * Convert a simple string to an element with a text node
+     * 
+     * @param namespace - element namespace
+     * @param name - element name
+     * @param string - value of the text node
+     * @return element - an XML Element
+     */ 
+    public static Element StringToElement(String namespace, String name, String string) {
+        Document doc = XMLUtils.newDocument();
+        Element element = doc.createElementNS(namespace, name);
+        Text text = doc.createTextNode(string);
+        element.appendChild(text);
+        return element;
+    }
+    
     public static String getInnerXMLString(Element element) {
         String elementString = ElementToString(element);
         int start, end;

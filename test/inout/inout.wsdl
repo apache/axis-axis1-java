@@ -34,6 +34,8 @@
   </types>
 
   <!-- message declns -->
+  <message name="TestFailedMessage"/>
+
   <message name="Msg0"/>
 
   <message name="Msg1">
@@ -123,137 +125,137 @@
     <operation name="out0_inout0_in0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg0"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inout0_in1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg0"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inout0_inMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg0"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inout1_in0">
       <input message="tns:Msg3"/>
       <output message="tns:Msg3"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inout1_in1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg1"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inout1_inMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg3"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inoutMany_in0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg2"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inoutMany_in1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg2"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out0_inoutMany_inMany">
       <input message="tns:Msg234"/>
       <output message="tns:Msg2"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout0_in0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg4"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout0_in1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg4"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout0_inMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg4"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout1_in0">
       <input message="tns:Msg1"/>
       <output message="tns:Msg2"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout1_in1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg15"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inout1_inMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg15"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inoutMany_in0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg25"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inoutMany_in1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg25"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="out1_inoutMany_inMany">
       <input message="tns:Msg234"/>
       <output message="tns:Msg25"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout0_in0">
       <input message="tns:Msg0"/>
       <output message="tns:Msg2"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout0_in1">
       <input message="tns:Msg1"/>
       <output message="tns:Msg45"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout0_inMany">
       <input message="tns:Msg2"/>
       <output message="tns:Msg45"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout1_in0">
       <input message="tns:Msg1"/>
       <output message="tns:Msg145"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout1_in1">
       <input message="tns:Msg2"/>
       <output message="tns:Msg145"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inout1_inMany">
       <input message="tns:Msg23"/>
       <output message="tns:Msg345"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inoutMany_in0">
       <input message="tns:Msg2"/>
       <output message="tns:Msg245"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inoutMany_in1">
       <input message="tns:Msg23"/>
       <output message="tns:Msg245"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
     <operation name="outMany_inoutMany_inMany">
       <input message="tns:Msg236"/>
       <output message="tns:Msg245"/>
-      <fault name="TestFailed" message="tns:Msg0"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
 
   </portType>

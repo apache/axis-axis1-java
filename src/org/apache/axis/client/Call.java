@@ -672,8 +672,11 @@ public class Call implements javax.xml.rpc.Call {
             else
                 return( this.invoke(ns,operationName,getParamList(params)) );
         }
+        catch( AxisFault af) {
+            throw af;
+        }
         catch( Exception exp ) {
-            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+            //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
@@ -1125,7 +1128,7 @@ public class Call implements javax.xml.rpc.Call {
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFaultElement) {
-            throw ((SOAPFaultElement)respBody).getAxisFault();
+            throw ((SOAPFaultElement)respBody).getFault();
         }
 
         body = (RPCElement)resEnv.getFirstBody();
