@@ -102,6 +102,22 @@ public class ParameterDesc implements Serializable {
     }
 
     /**
+     * Constructor-copy
+     *
+     * @param copy the copy 
+     */
+    public ParameterDesc(ParameterDesc copy) {
+      name= copy.name;
+      typeEntry= copy.typeEntry;
+      mode= copy.mode;
+      typeQName= copy.typeQName;
+      javaType= copy.javaType;
+      order= copy.order;
+      isReturn= copy.isReturn;
+      mimeType= copy.mimeType;
+    }
+
+    /**
      * Constructor
      *
      * @param name the parameter's fully qualified XML name
