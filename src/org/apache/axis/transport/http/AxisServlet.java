@@ -93,6 +93,13 @@ public class AxisServlet extends HttpServlet {
     private AxisEngine engine = null;
     private ServletSecurityProvider securityProvider = null;
 
+    /**
+     * Should we enable the "?list" functionality on GETs?  (off by
+     * default because deployment information is a potential security
+     * hole)
+     */
+    private boolean enableList = false;
+
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
     public void init() {
@@ -107,6 +114,11 @@ public class AxisServlet extends HttpServlet {
         param = getInitParameter("use-servlet-security");
         if ((param != null) && (param.equalsIgnoreCase("true"))) {
             securityProvider = new ServletSecurityProvider();
+        }
+
+        param = System.getProperty("axis.enableListQuery");
+        if (!(param == null) && (param.equalsIgnoreCase("true"))) {
+            enableList = true;
         }
     }
 
@@ -178,17 +190,23 @@ public class AxisServlet extends HttpServlet {
                     } else {
                         res.setContentType("text/html");
                         writer.println("<h2>Axis Error</h2>");
-                        writer.println("<p>No WSDL can be found!</p>");
+                        writer.println("<p>Couldn't generate WSDL!</p>");
                     }
                 } else if (listRequested) {
-                    Document doc = Admin.listConfig(engine);
-                    if (doc != null) {
-                        res.setContentType("text/xml");
-                        XMLUtils.DocumentToWriter(doc, writer);
+                    if (enableList) {
+                        Document doc = Admin.listConfig(engine);
+                        if (doc != null) {
+                            res.setContentType("text/xml");
+                            XMLUtils.DocumentToWriter(doc, writer);
+                        } else {
+                            res.setContentType("text/html");
+                            writer.println("<h2>Axis Error</h2>");
+                            writer.println("<p>Couldn't generate deployment list!</p>");
+                        }
                     } else {
                         res.setContentType("text/html");
                         writer.println("<h2>Axis Error</h2>");
-                        writer.println("<p>No Configuration list can be found!</p>");
+                        writer.println("<p><i>?list</i> functionality disabled.</p>");
                     }
                 } else if (req.getParameterNames().hasMoreElements()) {
                     res.setContentType("text/html");
@@ -206,6 +224,7 @@ public class AxisServlet extends HttpServlet {
                         }
                     }
                     if (method == null) {
+                        writer.println("<h2>Axis Error : invoking via GET</h2>");
                         writer.println("<p>No method!</p>");
                         return;
                     }
