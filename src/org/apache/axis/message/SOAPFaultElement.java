@@ -62,6 +62,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
+import org.apache.axis.utils.QFault;
 import java.util.*;
 import java.io.*;
 
@@ -109,7 +110,11 @@ public class SOAPFaultElement extends SOAPBodyElement
             fault = new AxisFault();
         
         if (currentSubElement.equals("faultcode")) {
-            fault.setFaultCode(currentValue.toString());
+            fault.setFaultCode(
+                      new QFault(
+                         context.getQNameFromString(currentValue.toString())
+                                )
+                              );
         } else if (currentSubElement.equals("faultstring")) {
             fault.setFaultString(currentValue.toString());
         } else if (currentSubElement.equals("faultactor")) {
@@ -146,7 +151,9 @@ public class SOAPFaultElement extends SOAPBodyElement
         if (fault.getFaultCode() != null) {
           MessageElement element = new 
             MessageElement(Constants.URI_SOAP_ENV, "faultcode", null, null);
-          element.setValue(fault.getFaultCode());
+          QFault code = fault.getFaultCode();
+          String prefix = context.getPrefixForURI(code.getNamespaceURI());
+          element.setValue(prefix + ":" + code.getLocalPart());
           element.output(context);
         }
     
