@@ -72,7 +72,9 @@ import javax.xml.soap.AttachmentPart;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Iterator;
 
 /**
@@ -425,7 +427,8 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                OutputStreamWriter writer = new OutputStreamWriter(os,"UTF-8");
+                Writer writer = new OutputStreamWriter(os,"UTF-8");
+                writer = new BufferedWriter(writer);
                 mSOAPPart.writeTo(writer);
                 writer.flush();
             } catch (java.io.IOException e) {
