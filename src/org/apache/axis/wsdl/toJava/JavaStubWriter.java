@@ -179,34 +179,34 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println();
         pw.println("    private org.apache.axis.client.Call createCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
-        pw.println("            org.apache.axis.client.Call call =");
+        pw.println("            org.apache.axis.client.Call _call =");
         pw.println("                    (org.apache.axis.client.Call) super.service.createCall();");
         pw.println("            if (super.maintainSessionSet) {");
-        pw.println("                call.setMaintainSession(super.maintainSession);");
+        pw.println("                _call.setMaintainSession(super.maintainSession);");
         pw.println("            }");
         pw.println("            if (super.cachedUsername != null) {");
-        pw.println("                call.setUsername(super.cachedUsername);");
+        pw.println("                _call.setUsername(super.cachedUsername);");
 
         pw.println("            }");
         pw.println("            if (super.cachedPassword != null) {");
-        pw.println("                call.setPassword(super.cachedPassword);");
+        pw.println("                _call.setPassword(super.cachedPassword);");
         pw.println("            }");
         pw.println("            if (super.cachedEndpoint != null) {");
-        pw.println("                call.setTargetEndpointAddress(super.cachedEndpoint);");
+        pw.println("                _call.setTargetEndpointAddress(super.cachedEndpoint);");
         pw.println("            }");
         pw.println("            if (super.cachedTimeout != null) {");
-        pw.println("                call.setTimeout(super.cachedTimeout);");
+        pw.println("                _call.setTimeout(super.cachedTimeout);");
         pw.println("            }");
         pw.println("            if (super.cachedPortName != null) {");
-        pw.println("                call.setPortName(super.cachedPortName);");
+        pw.println("                _call.setPortName(super.cachedPortName);");
         pw.println("            }");
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
         pw.println("                String key = (String) keys.nextElement();");
-        pw.println("                if(call.isPropertySupported(key))");
-        pw.println("                    call.setProperty(key, super.cachedProperties.get(key));");
+        pw.println("                if(_call.isPropertySupported(key))");
+        pw.println("                    _call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("                else");
-        pw.println("                    call.setScopedProperty(key, super.cachedProperties.get(key));");
+        pw.println("                    _call.setScopedProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
             pw.println("            // " + JavaUtils.getMessage("typeMap00"));
@@ -222,9 +222,9 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("                    // "
                     + JavaUtils.getMessage("mustSetStyle"));
             if (bEntry.hasLiteral()) {
-                pw.println("                    call.setEncodingStyle(null);");
+                pw.println("                    _call.setEncodingStyle(null);");
             } else {
-                pw.println("                    call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
+                pw.println("                    _call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
             }
             
             pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
@@ -235,12 +235,12 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("                                 cachedSerFactories.get(i);");
             pw.println("                        Class df = (Class)");
             pw.println("                                 cachedDeserFactories.get(i);");
-            pw.println("                        call.registerTypeMapping(cls, qName, sf, df, false);");
+            pw.println("                        _call.registerTypeMapping(cls, qName, sf, df, false);");
             pw.println("                    }");
             pw.println("                }");
             pw.println("            }");
         }
-        pw.println("            return call;");
+        pw.println("            return _call;");
         pw.println("        }");
         pw.println("        catch (Throwable t) {");
         pw.println("            throw new org.apache.axis.AxisFault(\""
@@ -470,31 +470,18 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
-        pw.println("        org.apache.axis.client.Call call = createCall();");
+        pw.println("        org.apache.axis.client.Call _call = createCall();");
 
         // loop over paramters and set up in/out params
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            // Get the TypeEntry of the actual type not the Element.
-            TypeEntry type = p.getType();
-            if (type instanceof DefinedElement &&
-                type.getRefType() != null) {
-                type = type.getRefType();
-            }
-            // Set the javaType to the name of the type
-            String javaType = type.getName();
+            // Get the QNames representing the parameter name and type
+            QName paramName = p.getQName();
+            QName paramType = Utils.getXSIType(p.getType());
 
-            // If the TypeEntry is a collectionType then
-            // set use the QName of the componentType.
-            // So for example if the following is the expected parameter:
-            // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
-            // then the QName type is "xsd:string" and the javaType=String[]
-            if (type instanceof CollectionType &&
-                type.getRefType() != null) {
-                type = type.getRefType();
-            }
-            QName qn = type.getQName();
+            // Set the javaType to the name of the type
+            String javaType = p.getType().getName();
 
             if (javaType != null) {
                 javaType += ".class, ";
@@ -502,86 +489,64 @@ public class JavaStubWriter extends JavaClassWriter {
                 javaType = "";
             }
 
-            String typeString = "new javax.xml.namespace.QName(\"" +
-                    qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\")";
-            QName paramQName = p.getQName();
-            String qnName = "p" + i + "QName";
-            pw.println("        javax.xml.namespace.QName " + qnName + " = new javax.xml.namespace.QName(\"" +
-                    paramQName.getNamespaceURI() + "\", \"" +
-                    paramQName.getLocalPart() + "\");");
+            // Get the text representing newing a QName for the name and type
+            String paramNameText = Utils.getNewQName(paramName);
+            String paramTypeText = Utils.getNewQName(paramType);
+
+            // Generate the addParameter call with the
+            // name qname, typeQName, optional javaType, and mode
             if (p.getMode() == Parameter.IN) {
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", " 
+                pw.println("        _call.addParameter(" + paramNameText + ", "
+                           + paramTypeText + ", " 
                            + javaType + "javax.xml.rpc.ParameterMode.IN);");
             }
             else if (p.getMode() == Parameter.INOUT) {
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", " 
+                pw.println("        _call.addParameter(" + paramNameText + ", "
+                           + paramTypeText + ", " 
                            + javaType + "javax.xml.rpc.ParameterMode.INOUT);");
             }
             else { // p.getMode() == Parameter.OUT
-                pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", " 
+                pw.println("        _call.addParameter(" + paramNameText + ", "
+                           + paramTypeText + ", " 
                            + javaType + "javax.xml.rpc.ParameterMode.OUT);");
             }
         }
         // set output type
         if (parms.returnType != null) {
 
-            // Get the TypeEntry of the actual type not the Element.
-            TypeEntry returnTE = parms.returnType;
-            if (returnTE instanceof DefinedElement &&
-                returnTE.getRefType() != null) {
-                returnTE = returnTE.getRefType();
-            }
-            // Set the javaType to the name of the type
-            String javaType = returnTE.getName();
-
-            // If the return TypeEntry is a collectionType then
-            // set the use the QName of the componentType.
-            // So for example if the following is the expected return:
-            // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
-            // this is generated:
-            // setReturnType(<QName of xsd:string>, String[]);
-            if (returnTE instanceof CollectionType &&
-                returnTE.getRefType() != null) {
-                returnTE = returnTE.getRefType();
-            }
+            // Get the QName for the return Type
+            QName returnType = Utils.getXSIType(parms.returnType);
             
-            // Get the QName and Java Class name
-            QName qn = returnTE.getQName();
- 
-            String outputType = "new javax.xml.namespace.QName(\"" +
-                qn.getNamespaceURI() + "\", \"" +
-                qn.getLocalPart() + "\")";
+            // Get the javaType
+            String javaType = parms.returnType.getName();
             if (javaType == null) {
-                pw.println("        call.setReturnType(" + 
-                           outputType + ");");
+                pw.println("        _call.setReturnType(" + 
+                           Utils.getNewQName(returnType) + ");");
             } else {
-                pw.println("        call.setReturnType(" + 
-                           outputType + "," + javaType + ".class);");
+                pw.println("        _call.setReturnType(" + 
+                           Utils.getNewQName(returnType) + 
+                           "," + javaType + ".class);");
             }
         }
         else {
-            pw.println("        call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
+            pw.println("        _call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
         }
 
         // SoapAction
         if (soapAction != null) {
-            pw.println("        call.setUseSOAPAction(true);");
-            pw.println("        call.setSOAPActionURI(\"" + soapAction + "\");");
+            pw.println("        _call.setUseSOAPAction(true);");
+            pw.println("        _call.setSOAPActionURI(\"" + soapAction + "\");");
         }
 
         // Encoding: literal or encoded use.
         int use = bEntry.getInputBodyType(operation.getOperation());
         if (use == BindingEntry.USE_LITERAL) {
             // Turn off encoding
-            pw.println("        call.setEncodingStyle(null);");
+            pw.println("        _call.setEncodingStyle(null);");
             // turn off multirefs
-            pw.println("        call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+            pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
-            pw.println("        call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
+            pw.println("        _call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
         
         // Style: document, RPC, or wrapped
@@ -594,7 +559,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 styleStr = "document";
             }
         }
-        pw.println("        call.setOperationStyle(\"" + styleStr + "\");");
+        pw.println("        _call.setOperationStyle(\"" + styleStr + "\");");
 
         // Operation name
         if (styleStr.equals("wrapped")) {
@@ -604,18 +569,18 @@ public class JavaStubWriter extends JavaClassWriter {
             Map partsMap = operation.getOperation().getInput().getMessage().getParts();
             Part p = (Part)partsMap.values().iterator().next();
             QName q = p.getElementName();
-            pw.println("        call.setOperationName(new javax.xml.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
+            pw.println("        _call.setOperationName(new javax.xml.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
         } else {
             QName elementQName = Utils.getOperationQName(operation);
             if (elementQName != null) {
-                pw.println("        call.setOperationName(" +
+                pw.println("        _call.setOperationName(" +
                         Utils.getNewQName(elementQName) + ");" );
             }
         }
         
         // Invoke the operation
         pw.println();
-        pw.print("        Object resp = call.invoke(");
+        pw.print("        Object _resp = _call.invoke(");
         pw.print("new Object[] {");
 
         // Write the input and inout parameter list
@@ -644,8 +609,8 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         pw.println("});");
         pw.println();
-        pw.println("        if (resp instanceof java.rmi.RemoteException) {");
-        pw.println("            throw (java.rmi.RemoteException)resp;");
+        pw.println("        if (_resp instanceof java.rmi.RemoteException) {");
+        pw.println("            throw (java.rmi.RemoteException)_resp;");
         pw.println("        }");
 
         int allOuts = parms.outputs + parms.inouts;
@@ -654,7 +619,7 @@ public class JavaStubWriter extends JavaClassWriter {
             if (allOuts == 1) {
                 if (parms.returnType != null) {
                     writeOutputAssign(pw, "return ",
-                                      parms.returnType, "resp");
+                                      parms.returnType, "_resp");
                 }
                 else {
                     // The resp object must go into a holder
@@ -667,17 +632,17 @@ public class JavaStubWriter extends JavaClassWriter {
                     String javifiedName = Utils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQName(p.getQName());
                                
-                    pw.println("            java.util.Map output;");
-                    pw.println("            output = call.getOutputParams();");
+                    pw.println("            java.util.Map _output;");
+                    pw.println("            _output = _call.getOutputParams();");
                     writeOutputAssign(pw, javifiedName + ".value =",
                                       p.getType(),
-                                      "output.get(" + qnameName + ")");
+                                      "_output.get(" + qnameName + ")");
                 }
             }
             else {
                 // There is more than 1 output.  Get the outputs from getOutputParams.    
-                pw.println("            java.util.Map output;");
-                pw.println("            output = call.getOutputParams();");
+                pw.println("            java.util.Map _output;");
+                pw.println("            _output = _call.getOutputParams();");
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
@@ -685,13 +650,13 @@ public class JavaStubWriter extends JavaClassWriter {
                     if (p.getMode() != Parameter.IN) {
                         writeOutputAssign(pw, javifiedName + ".value =",
                                           p.getType(),
-                                          "output.get(" + qnameName + ")");
+                                          "_output.get(" + qnameName + ")");
                     }
                 }
                 if (parms.returnType != null) {
                     writeOutputAssign(pw, "return ",
                                       parms.returnType,
-                                      "resp");
+                                      "_resp");
                 }
 
             }
@@ -717,7 +682,7 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("            try {");
             pw.println("                " + target +
                        Utils.getResponseString(type, source));
-            pw.println("            } catch (java.lang.Exception e) {");
+            pw.println("            } catch (java.lang.Exception _exception) {");
             pw.println("                " + target +
                        Utils.getResponseString(type, 
                                          "org.apache.axis.utils.JavaUtils.convert(" +

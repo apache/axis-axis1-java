@@ -75,8 +75,6 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
-import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -178,65 +176,38 @@ public class JavaSkelWriter extends JavaClassWriter {
                                 JavaUtils.getMessage("badParmMode00", 
                                         (new Byte(p.getMode())).toString()));
                     }
-                    // Construct a parameter with the parameter name, 
-                    // mode, type qname and type javaType.
-                    TypeEntry paramType = p.getType();
-                    if (paramType instanceof Element && 
-                        paramType.getRefType() != null) {
-                        paramType = paramType.getRefType();
-                    }
-                    // For collections, set the paramType to the 
-                    // component type QName.
-                    // The javaType is the type expected by the method.
-                    // So for example a parameter that takes a 
-                    // collection type for
-                    // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
-                    // will be 
-                    // new ParameterDesc(<QName of A>, IN,
-                    //                   <QName of xsd:string>,
-                    //                   String[])
-                    if (paramType instanceof CollectionType &&
-                        paramType.getRefType() != null) {
-                        paramType = paramType.getRefType();
-                    }
+
+                    // Get the QNames representing the parameter name and type
+                    QName paramName = p.getQName();
+                    QName paramType = Utils.getXSIType(p.getType());
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
-                        Utils.getNewQName(
-                             p.getQName()) +
-                        ", " + modeStr + "," +
-                        Utils.getNewQName(
-                             paramType.getQName())
-                        +","+
-                        p.getType().getName() + ".class" 
-                        +"),");
+                               Utils.getNewQName(paramName) +
+                               ", " + modeStr + "," +
+                               Utils.getNewQName(paramType) +
+                               ","+
+                               p.getType().getName() + ".class" 
+                               +"),");
                 }
 
                 pw.println("        };");
 
+                // Get the return name QName and type
+                QName retName = parameters.returnName;
+                QName retType = Utils.getXSIType(parameters.returnType);
+
                 String returnStr;
-                if (parameters.returnType != null) {
+                if (retName != null) {
                     returnStr = Utils.getNewQName(parameters.returnName);
                 } else {
                     returnStr = "null";
                 }
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
-                            javaOpName + "\", _params, " + returnStr + ");");
+                           javaOpName + "\", _params, " + returnStr + ");");
 
-                // Set the return type QName
-                TypeEntry returnTE = parameters.returnType;
-                if (returnTE != null &&
-                    returnTE instanceof Element &&
-                    returnTE.getRefType() != null) {
-                    returnTE = returnTE.getRefType();
-                } 
-                if (returnTE != null &&
-                    returnTE instanceof CollectionType &&
-                    returnTE.getRefType() != null) {
-                    returnTE = returnTE.getRefType();
-                }
-                if (returnTE != null) {
+                if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
-                               Utils.getNewQName(returnTE.getQName()) + ");");
+                               Utils.getNewQName(retType) + ");");            
                 }
 
                 // If we need to know the QName (if we have a namespace or

@@ -83,7 +83,7 @@
     <available property="post-compile.present" file="post-compile.xml" />
 
     <condition property="debug" value="on">
-      <istrue value="${env.debug}"/>
+      <istrue value="${env.debug}" />
     </condition>
 
    </target>

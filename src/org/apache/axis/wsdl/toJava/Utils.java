@@ -56,6 +56,8 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -546,6 +548,43 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         return "new javax.xml.namespace.QName(\"" +
                 qname.getNamespaceURI() + "\", \"" +
                 qname.getLocalPart() + "\")";
+    }
+
+    /** 
+     * Get the QName that could be used in the xsi:type
+     * when serializing an object for this parameter/return
+     * @param te is the typeEntry from the Parameters object,
+     *           which represents the parameter
+     * @return the QName of the type
+     */
+    public static QName getXSIType(TypeEntry te) {
+        QName xmlType = null;
+
+        // If the TypeEntry describes an Element, get
+        // the referenced Type.
+        if (te != null &&
+            te instanceof Element &&
+            te.getRefType() != null) {
+            te = te.getRefType();
+        } 
+        // If the TypeEntry is a CollectionType, use
+        // the TypeEntry representing the component Type
+        // So for example a parameter that takes a 
+        // collection type for
+        // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+        // will be 
+        // new ParameterDesc(<QName of A>, IN,
+        //                   <QName of xsd:string>,
+        //                   String[])
+        if (te != null &&
+            te instanceof CollectionType &&
+            te.getRefType() != null) {
+            te = te.getRefType();
+        }
+        if (te != null) {
+            xmlType = te.getQName();
+        }
+        return xmlType;
     }
     
 } // class Utils

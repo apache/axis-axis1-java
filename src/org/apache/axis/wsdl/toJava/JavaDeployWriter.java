@@ -78,9 +78,8 @@ import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -339,30 +338,17 @@ public class JavaDeployWriter extends JavaWriter {
                 Parameters params =
                         symbolTable.getOperationParameters(operation, "", bEntry);
                 if (params != null) {
-                    QName returnQName = null;
-                    QName returnType = null;
                     
                     // Get the operation QName
                     QName elementQName = Utils.getOperationQName(bindingOper);
 
                     // Get the operation's return QName
+                    QName returnQName = null;
                     if (params.returnName != null)
                         returnQName = params.returnName;
 
-                    TypeEntry returnTE = params.returnType;
-                    if (returnTE != null &&
-                        returnTE instanceof DefinedElement &&
-                        returnTE.getRefType() != null) {
-                        returnTE = returnTE.getRefType();
-                    } 
-                    if (returnTE != null &&
-                        returnTE instanceof CollectionType &&
-                        returnTE.getRefType() != null) {
-                        returnTE = returnTE.getRefType();
-                    }
-                    if (returnTE != null) {
-                        returnType = returnTE.getQName();
-                    }
+                    // Get the QName representing the type
+                    QName returnType = Utils.getXSIType(params.returnType);
 
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, 
@@ -416,22 +402,9 @@ public class JavaDeployWriter extends JavaWriter {
         for (int i = 0; i < paramList.size(); i++) {
             Parameter param = (Parameter) paramList.elementAt(i);
 
-            // Get the typeEntry for the parameter.
-            // Use the referenced type if an Element
-            // Use the referenced type (the component type) if a Collection
-            TypeEntry typeEntry = param.getType();
-            if (typeEntry instanceof DefinedElement &&
-                typeEntry.getRefType() != null) {
-                typeEntry = typeEntry.getRefType();
-            } 
-            if (typeEntry instanceof CollectionType &&
-                typeEntry.getRefType() != null) {
-                typeEntry = typeEntry.getRefType();
-            }
-
-            // Get the parameter name QName
+            // Get the parameter name QName and type QName
             QName paramQName = param.getQName();
-            QName paramType = typeEntry.getQName();
+            QName paramType = Utils.getXSIType(param.getType());
 
             pw.print("        <parameter");
             if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
