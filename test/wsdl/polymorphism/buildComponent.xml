@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.polymorphism"/>
+    <!-- This tests polymorphism of return values -->
+      <wsdl2java url="test/wsdl/polymorphism/polymorphism.wsdl"
+                 output="build/work"
+                 serverSide="yes"
+                 testcase="yes">
+          <mapping namespace="http://xml.apache.org/axis/PolymorphismTest"
+              package="test.wsdl.polymorphism"/>
+      </wsdl2java>
+      <copy todir="${build.dir}/work/test/wsdl/polymorphism" overwrite="yes">
+        <fileset dir="${test.dir}/wsdl/polymorphism">
+          <include name="C.java"/>
+        </fileset>
+      </copy>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/polymorphism/*.java" />
+    </javac>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/polymorphism/*.java" />
+    </javac>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"  depends="compile" />
+
+<target name="undeploy"/>
+
+</project>

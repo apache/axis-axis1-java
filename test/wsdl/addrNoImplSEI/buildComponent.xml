@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.addrNoImplSEI"/>
+
+    <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
+    <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
+    <wsdl2java url="test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </wsdl2java>
+
+    <!-- Copy over original classes -->
+    <copy todir="${build.dir}/work/test/wsdl/addrNoImplSEI" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/addrNoImplSEI">
+        <include name="*.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Compile the Web Service -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/addrNoImplSEI/**.java" />
+      <exclude name="test/wsdl/addrNoImplSEI/*TestCase.java" />
+      <exclude name="test/wsdl/addrNoImplSEI/Main.java" />
+    </javac>
+
+    <!-- Now run java to wsdl to make sure we don't have any strange artifacts -->
+    <java2wsdl output="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               className= "test.wsdl.addrNoImplSEI.AddressBookNoImplSEISoapBindingImpl"
+               useInheritedMethods="false"
+               portTypeName="AddressBookNoImplSEI"
+               namespace="http://addrNoImplSEI.wsdl.test"
+               location="http://localhost:8080/axis/services/AddressBookNoImplSEI">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </java2wsdl>
+
+    <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
+    <wsdl2java url="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </wsdl2java>
+    <!-- Copy over original classes -->
+    <copy todir="${build.dir}/work/test/wsdl/addrNoImplSEI" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/addrNoImplSEI">
+        <include name="*.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/addrNoImplSEI/*.java" />
+    </javac>
+
+</target>
+
+<target name="deploy"/>
+
+<target name="run"  depends="compile" />
+
+<target name="undeploy"/>
+
+</project>
