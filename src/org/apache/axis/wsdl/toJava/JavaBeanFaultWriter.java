@@ -1,4 +1,4 @@
- /*
+/*
  * The Apache Software License, Version 1.1
  *
  *
@@ -66,24 +66,22 @@ import java.util.Vector;
  * in a operation fault message.
  */
 public class JavaBeanFaultWriter extends JavaBeanWriter {
+
     /**
      * Constructor.
-     * @param emitter   
-     * @param type        The type representing this class
-     * @param elements    Vector containing the Type and name of each property
-     * @param extendType  The type representing the extended class (or null)
-     * @param attributes  Vector containing the attribute types and names    
-     * @param helper      Helper class writer                                
+     * 
+     * @param emitter    
+     * @param type       The type representing this class
+     * @param elements   Vector containing the Type and name of each property
+     * @param extendType The type representing the extended class (or null)
+     * @param attributes Vector containing the attribute types and names
+     * @param helper     Helper class writer
      */
-    protected JavaBeanFaultWriter(
-            Emitter emitter,
-            TypeEntry type,
-            Vector elements,
-            TypeEntry extendType,
-            Vector attributes,
-            JavaWriter helper) {
-        super(emitter, type, elements, 
-              extendType, attributes, helper);
+    protected JavaBeanFaultWriter(Emitter emitter, TypeEntry type,
+                                  Vector elements, TypeEntry extendType,
+                                  Vector attributes, JavaWriter helper) {
+
+        super(emitter, type, elements, extendType, attributes, helper);
 
         // The Default Constructor is not JSR 101 v1.0 compliant, but
         // is the only way that Axis can get something back over the wire.
@@ -96,44 +94,52 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
 
         // JSR 101 v1.0 does not support write access methods
         enableSetters = true;
-    } // ctor
-    
+    }    // ctor
+
     /**
      * Returns the appropriate extends text
+     * 
      * @return "" or " extends <class> "
      */
     protected String getExtendsText() {
+
         // See if this class extends another class
         String extendsText = super.getExtendsText();
+
         if (extendsText.equals("")) {
+
             // JSR 101 compliant code should extend java.lang.Exception!
-            //extendsText = " extends java.lang.Exception ";
+            // extendsText = " extends java.lang.Exception ";
             extendsText = " extends org.apache.axis.AxisFault ";
         }
+
         return extendsText;
     }
 
     /**
      * Write the Exception serialization code
+     * <p/>
+     * NOTE: This function is written in JavaFaultWriter.java also.
      * 
-     * NOTE: This function is written in JavaFaultWriter.java also. 
-     */ 
+     * @param pw 
+     * @throws IOException 
+     */
     protected void writeFileFooter(PrintWriter pw) throws IOException {
+
         // We need to have the Exception class serialize itself
         // with the correct namespace, which can change depending on which
         // operation the exception is thrown from.  We therefore have the
         // framework call this generated routine with the correct QName,
         // and allow it to serialize itself.
-
         // method that serializes this exception (writeDetail)
         pw.println();
         pw.println("    /**");
         pw.println("     * Writes the exception data to the faultDetails");
         pw.println("     */");
-        pw.println("    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
+        pw.println(
+                "    public void writeDetails(javax.xml.namespace.QName qname, org.apache.axis.encoding.SerializationContext context) throws java.io.IOException {");
         pw.println("        context.serialize(qname, null, this);");
         pw.println("    }");
-        
         super.writeFileFooter(pw);
-    } // writeFileFooter
-} // class JavaBeanFaultWriter
+    }    // writeFileFooter
+}    // class JavaBeanFaultWriter

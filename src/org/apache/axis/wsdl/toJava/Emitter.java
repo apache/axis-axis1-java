@@ -64,123 +64,166 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;												   
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.Iterator;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
  * WSDL document.
- *
+ * 
  * @author Russell Butek (butek@us.ibm.com)
  * @author Tom Jordahl (tjordahl@macromedia.com)
  * @author Rich Scheuerle (scheu@us.ibm.com)
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter extends Parser {
-    
+
+    /** Field DEFAULT_NSTOPKG_FILE */
     public static final String DEFAULT_NSTOPKG_FILE = "NStoPkg.properties";
-    
+
+    /** Field namespaceMap */
     protected HashMap namespaceMap = new HashMap();
+
+    /** Field typeMappingVersion */
     protected String typeMappingVersion = "1.1";
+
+    /** Field baseTypeMapping */
     protected BaseTypeMapping baseTypeMapping = null;
+
+    /** Field namespaces */
     protected Namespaces namespaces = null;
+
+    /** Field NStoPkgFilename */
     protected String NStoPkgFilename = null;
 
+    /** Field bEmitServer */
     private boolean bEmitServer = false;
+
+    /** Field bDeploySkeleton */
     private boolean bDeploySkeleton = false;
+
+    /** Field bEmitTestCase */
     private boolean bEmitTestCase = false;
+
+    /** Field bGenerateAll */
     private boolean bGenerateAll = false;
+
+    /** Field bHelperGeneration */
     private boolean bHelperGeneration = false;
+
+    /** Field packageName */
     private String packageName = null;
+
+    /** Field scope */
     private Scope scope = null;
+
+    /** Field fileInfo */
     private GeneratedFileInfo fileInfo = new GeneratedFileInfo();
+
+    /** Field delayedNamespacesMap */
     private HashMap delayedNamespacesMap = new HashMap();
+
+    /** Field outputDir */
     private String outputDir = null;
 
     /**
      * Default constructor.
      */
-    public Emitter () {
+    public Emitter() {
         setFactory(new JavaGeneratorFactory(this));
-    } // ctor
+    }    // ctor
 
-    ///////////////////////////////////////////////////
-    //
+    // /////////////////////////////////////////////////
+    // 
     // Command line switches
-    //
+    // 
 
     /**
      * Turn on/off server skeleton creation
-     * @param value
+     * 
+     * @param value 
      */
     public void setServerSide(boolean value) {
         this.bEmitServer = value;
-    } // setServerSide
+    }    // setServerSide
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
-     */ 
+     * 
+     * @return 
+     */
     public boolean isServerSide() {
         return bEmitServer;
-    } // isServerSide
+    }    // isServerSide
 
     /**
      * Turn on/off server skeleton deploy
-     * @param value
+     * 
+     * @param value 
      */
     public void setSkeletonWanted(boolean value) {
         bDeploySkeleton = value;
-    } // setSkeletonWanted
+    }    // setSkeletonWanted
 
     /**
      * Indicate if we should be deploying skeleton or implementation
-     */ 
+     * 
+     * @return 
+     */
     public boolean isSkeletonWanted() {
         return bDeploySkeleton;
-    } // isSkeletonWanted
+    }    // isSkeletonWanted
 
     /**
      * Turn on/off Helper class generation
-     * @param value
+     * 
+     * @param value 
      */
     public void setHelperWanted(boolean value) {
         bHelperGeneration = value;
-    } // setHelperWanted
+    }    // setHelperWanted
 
     /**
-     * Indicate if we should be generating Helper classes           
-     */ 
+     * Indicate if we should be generating Helper classes
+     * 
+     * @return 
+     */
     public boolean isHelperWanted() {
         return bHelperGeneration;
-    } // isHelperWanted
+    }    // isHelperWanted
 
     /**
      * Turn on/off test case creation
-     * @param value
+     * 
+     * @param value 
      */
     public void setTestCaseWanted(boolean value) {
         this.bEmitTestCase = value;
-    } // setTestCaseWanted
+    }    // setTestCaseWanted
 
+    /**
+     * Method isTestCaseWanted
+     * 
+     * @return 
+     */
     public boolean isTestCaseWanted() {
         return bEmitTestCase;
-    } // isTestCaseWanted
+    }    // isTestCaseWanted
 
     /**
      * By default, code is generated only for referenced elements.
@@ -188,28 +231,44 @@ public class Emitter extends Parser {
      * elements in the scope regardless of whether they are
      * referenced.  Scope means:  by default, all WSDL files; if
      * generateImports(false), then only the immediate WSDL file.
+     * 
+     * @param all 
      */
     public void setAllWanted(boolean all) {
         bGenerateAll = all;
-    } // setAllWanted
-
-    public boolean isAllWanted() {
-        return bGenerateAll;
-    } // isAllWanted
-
-    public Namespaces getNamespaces() {
-        return namespaces;
-    } // getNamespaces
+    }    // setAllWanted
 
     /**
-      * Set the output directory to use in emitted source files
-      */
+     * Method isAllWanted
+     * 
+     * @return 
+     */
+    public boolean isAllWanted() {
+        return bGenerateAll;
+    }    // isAllWanted
+
+    /**
+     * Method getNamespaces
+     * 
+     * @return 
+     */
+    public Namespaces getNamespaces() {
+        return namespaces;
+    }    // getNamespaces
+
+    /**
+     * Set the output directory to use in emitted source files
+     * 
+     * @param outputDir 
+     */
     public void setOutputDir(String outputDir) {
         this.outputDir = outputDir;
     }
 
     /**
      * Get the output directory to use for emitted source files
+     * 
+     * @return 
      */
     public String getOutputDir() {
         return outputDir;
@@ -217,6 +276,8 @@ public class Emitter extends Parser {
 
     /**
      * Get global package name to use instead of mapping namespaces
+     * 
+     * @return 
      */
     public String getPackageName() {
         return packageName;
@@ -224,6 +285,8 @@ public class Emitter extends Parser {
 
     /**
      * Set a global package name to use instead of mapping namespaces
+     * 
+     * @param packageName 
      */
     public void setPackageName(String packageName) {
         this.packageName = packageName;
@@ -231,89 +294,102 @@ public class Emitter extends Parser {
 
     /**
      * Set the scope for the deploy.xml file.
+     * 
      * @param scope One of 'null',
-     * Scope.APPLICATION, Scope.REQUEST, Scope.SESSION.
-     * Anything else is equivalent to 'null' null and no explicit
-     * scope tag will appear in deploy.xml.
+     *              Scope.APPLICATION, Scope.REQUEST, Scope.SESSION.
+     *              Anything else is equivalent to 'null' null and no explicit
+     *              scope tag will appear in deploy.xml.
      */
     public void setScope(Scope scope) {
         this.scope = scope;
-    } // setScope
+    }    // setScope
 
     /**
      * Get the scope for the deploy.xml file.
+     * 
+     * @return 
      */
     public Scope getScope() {
         return scope;
-    } // getScope
+    }    // getScope
 
     /**
      * Set the NStoPkg mappings filename.
+     * 
+     * @param NStoPkgFilename 
      */
     public void setNStoPkg(String NStoPkgFilename) {
+
         if (NStoPkgFilename != null) {
             this.NStoPkgFilename = NStoPkgFilename;
         }
-    } // setNStoPkg
-
-
+    }    // setNStoPkg
 
     /**
      * Set a map of namespace -> Java package names
-     */ 
+     * 
+     * @param map 
+     */
     public void setNamespaceMap(HashMap map) {
         delayedNamespacesMap = map;
     }
 
     /**
      * Get the map of namespace -> Java package names
-     */ 
+     * 
+     * @return 
+     */
     public HashMap getNamespaceMap() {
         return delayedNamespacesMap;
     }
 
-   /**
-    * Sets the <code>WriterFactory Class</code> to use
-    * @param factory the name of the factory <code>Class</code>
-    */
+    /**
+     * Sets the <code>WriterFactory Class</code> to use
+     * 
+     * @param factory the name of the factory <code>Class</code>
+     */
     public void setFactory(String factory) {
+
         try {
-             Class clazz = ClassUtils.forName(factory);
-             GeneratorFactory genFac = null;
-             try {
-                 Constructor ctor = 
-                     clazz.getConstructor(new Class[] { getClass() });
-                 genFac = (GeneratorFactory) 
-                     ctor.newInstance(new Object[] { this });
-             } catch (NoSuchMethodException ex) {
-                 genFac = (GeneratorFactory) clazz.newInstance();
-             }
-             setFactory(genFac);
-        }
-        catch (Exception ex) {
+            Class clazz = ClassUtils.forName(factory);
+            GeneratorFactory genFac = null;
+
+            try {
+                Constructor ctor = clazz.getConstructor(new Class[]{
+                    getClass()});
+
+                genFac = (GeneratorFactory) ctor.newInstance(new Object[]{
+                    this});
+            } catch (NoSuchMethodException ex) {
+                genFac = (GeneratorFactory) clazz.newInstance();
+            }
+
+            setFactory(genFac);
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-    } // setFactory
+    }    // setFactory
 
-    //
+    // 
     // Command line switches
-    //
-    ///////////////////////////////////////////////////
+    // 
+    // /////////////////////////////////////////////////
 
     /**
      * Returns an object which contains of information on all generated files
      * including the class name, filename and a type string.
-     *
+     * 
      * @return An org.apache.axis.wsdl.toJava.GeneratedFileInfo object
      * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
      */
-    public GeneratedFileInfo getGeneratedFileInfo()
-    {
+    public GeneratedFileInfo getGeneratedFileInfo() {
         return fileInfo;
     }
 
     /**
      * This method returns a list of all generated class names.
+     * 
+     * @return 
      */
     public List getGeneratedClassNames() {
         return fileInfo.getClassNames();
@@ -321,6 +397,8 @@ public class Emitter extends Parser {
 
     /**
      * This method returns a list of all generated file names.
+     * 
+     * @return 
      */
     public List getGeneratedFileNames() {
         return fileInfo.getFileNames();
@@ -328,6 +406,9 @@ public class Emitter extends Parser {
 
     /**
      * Get the Package name for the specified namespace
+     * 
+     * @param namespace 
+     * @return 
      */
     public String getPackage(String namespace) {
         return namespaces.getCreate(namespace);
@@ -335,6 +416,9 @@ public class Emitter extends Parser {
 
     /**
      * Get the Package name for the specified QName
+     * 
+     * @param qName 
+     * @return 
      */
     public String getPackage(QName qName) {
         return getPackage(qName.getNamespaceURI());
@@ -342,14 +426,19 @@ public class Emitter extends Parser {
 
     /**
      * Convert the specified QName into a full Java Name.
+     * 
+     * @param qName 
+     * @return 
      */
     public String getJavaName(QName qName) {
 
         // If this is one of our special 'collection' qnames.
         // get the element type and append []
         if (qName.getLocalPart().indexOf("[") > 0) {
-            String localPart = qName.getLocalPart().substring(0,qName.getLocalPart().indexOf("["));
+            String localPart = qName.getLocalPart().substring(0,
+                    qName.getLocalPart().indexOf("["));
             QName eQName = new QName(qName.getNamespaceURI(), localPart);
+
             return getJavaName(eQName) + "[]";
         }
 
@@ -359,88 +448,118 @@ public class Emitter extends Parser {
         }
 
         // The QName may represent a base java name, so check this first
-        String fullJavaName = getFactory().getBaseTypeMapping().getBaseName(qName);
-        if (fullJavaName != null) 
+        String fullJavaName =
+                getFactory().getBaseTypeMapping().getBaseName(qName);
+
+        if (fullJavaName != null) {
             return fullJavaName;
-        
+        }
+
         // Use the namespace uri to get the appropriate package
         String pkg = getPackage(qName.getNamespaceURI());
+
         if (pkg != null) {
-            fullJavaName = pkg + "." + Utils.xmlNameToJavaClass(qName.getLocalPart());
+            fullJavaName = pkg + "."
+                    + Utils.xmlNameToJavaClass(qName.getLocalPart());
         } else {
             fullJavaName = Utils.xmlNameToJavaClass(qName.getLocalPart());
         }
-        return fullJavaName;
-    } // getJavaName
 
+        return fullJavaName;
+    }    // getJavaName
 
     /**
      * Emit appropriate Java files for a WSDL at a given URL.
-     *
+     * <p/>
      * This method will time out after the number of milliseconds specified
      * by our timeoutms member.
-     *
+     * 
+     * @param wsdlURL 
+     * @throws Exception 
      */
     public void run(String wsdlURL) throws Exception {
         setup();
         super.run(wsdlURL);
-    } // run
+    }    // run
 
     /**
      * Call this method if your WSDL document has already been
      * parsed as an XML DOM document.
+     * 
      * @param context context This is directory context for the Document.
-     * If the Document were from file "/x/y/z.wsdl" then the context
-     * could be "/x/y" (even "/x/y/z.wsdl" would work).  
-     * If context is null, then the context becomes the current directory.
-     * @param doc doc This is the XML Document containing the WSDL.
+     *                If the Document were from file "/x/y/z.wsdl" then the context
+     *                could be "/x/y" (even "/x/y/z.wsdl" would work).
+     *                If context is null, then the context becomes the current directory.
+     * @param doc     doc This is the XML Document containing the WSDL.
+     * @throws IOException                  
+     * @throws SAXException                 
+     * @throws WSDLException                
+     * @throws ParserConfigurationException 
      */
-    public void run(String context, Document doc) throws 
-        IOException, SAXException, WSDLException, 
-        ParserConfigurationException {
+    public void run(String context, Document doc)
+            throws IOException, SAXException, WSDLException,
+            ParserConfigurationException {
         setup();
         super.run(context, doc);
-    } // run
+    }    // run
 
+    /**
+     * Method setup
+     * 
+     * @throws IOException 
+     */
     private void setup() throws IOException {
+
         if (baseTypeMapping == null) {
             setTypeMappingVersion(typeMappingVersion);
         }
+
         getFactory().setBaseTypeMapping(baseTypeMapping);
 
         namespaces = new Namespaces(outputDir);
 
         if (packageName != null) {
-             namespaces.setDefaultPackage(packageName);
+            namespaces.setDefaultPackage(packageName);
         } else {
+
             // First, read the namespace mapping file - configurable, by default
             // NStoPkg.properties - if it exists, and load the namespaceMap HashMap
             // with its data.
             getNStoPkgFromPropsFile(namespaces);
-            
+
             if (delayedNamespacesMap != null) {
                 namespaces.putAll(delayedNamespacesMap);
             }
         }
-    } // setup
+    }    // setup
 
-
+    /**
+     * Method sanityCheck
+     * 
+     * @param symbolTable 
+     */
     protected void sanityCheck(SymbolTable symbolTable) {
+
         Iterator it = symbolTable.getHashMap().values().iterator();
+
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
+
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                 String namespace = entry.getQName().getNamespaceURI();
                 String packageName =
-                        org.apache.axis.wsdl.toJava.Utils.makePackageName(namespace);
+                        org.apache.axis.wsdl.toJava.Utils.makePackageName(
+                                namespace);
                 String localName = entry.getQName().getLocalPart();
-                if (localName.equals(packageName) &&
-                        packageName.equals(namespaces.getCreate(namespace))) {
+
+                if (localName.equals(packageName)
+                        && packageName.equals(
+                                namespaces.getCreate(namespace))) {
                     packageName += "_pkg";
+
                     namespaces.put(namespace, packageName);
                 }
-
             }
         }
     }
@@ -448,61 +567,65 @@ public class Emitter extends Parser {
     /**
      * Tries to load the namespace-to-package mapping file.
      * <ol>
-     *   <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
-     *      to load the mapping from this file. If this fails, the built-in default
-     *      mapping is used.
-     * 
-     *    <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
-     *       as a java resource. If this fails, the built-in dfault mapping is used.
+     * <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
+     * to load the mapping from this file. If this fails, the built-in default
+     * mapping is used.
+     * <p/>
+     * <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
+     * as a java resource. If this fails, the built-in dfault mapping is used.
      * </ol>
      * 
-     * @param namespaces  a hashmap which is filled with the namespace-to-package mapping
-     *    in this method
-     * 
+     * @param namespaces a hashmap which is filled with the namespace-to-package mapping
+     *                   in this method
+     * @throws IOException 
      * @see #setNStoPkg(String)
      * @see #DEFAULT_NSTOPKG_FILE
      * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
-     * 
      */
-    private void getNStoPkgFromPropsFile(HashMap namespaces) throws IOException
-    {
+    private void getNStoPkgFromPropsFile(HashMap namespaces)
+            throws IOException {
 
         Properties mappings = new Properties();
+
         if (NStoPkgFilename != null) {
             try {
                 mappings.load(new FileInputStream(NStoPkgFilename));
+
                 if (verbose) {
                     System.out.println(
-                        Messages.getMessage("nsToPkgFileLoaded00", NStoPkgFilename)
-                    );
+                            Messages.getMessage(
+                                    "nsToPkgFileLoaded00", NStoPkgFilename));
                 }
             } catch (Throwable t) {
+
                 // loading the custom mapping file failed. We do not try
                 // to load the mapping from a default mapping file.
                 throw new IOException(
-                        Messages.getMessage("nsToPkgFileNotFound00", NStoPkgFilename)
-                );
+                        Messages.getMessage(
+                                "nsToPkgFileNotFound00", NStoPkgFilename));
             }
-        }
-        else {
+        } else {
             try {
                 mappings.load(new FileInputStream(DEFAULT_NSTOPKG_FILE));
+
                 if (verbose) {
                     System.out.println(
-                      Messages.getMessage("nsToPkgFileLoaded00", DEFAULT_NSTOPKG_FILE)
-                    );
+                            Messages.getMessage(
+                                    "nsToPkgFileLoaded00", DEFAULT_NSTOPKG_FILE));
                 }
             } catch (Throwable t) {
                 try {
-                    mappings.load(ClassUtils.getResourceAsStream(
-                        Emitter.class, DEFAULT_NSTOPKG_FILE));
+                    mappings.load(ClassUtils.getResourceAsStream(Emitter.class,
+                            DEFAULT_NSTOPKG_FILE));
+
                     if (verbose) {
                         System.out.println(
-                          Messages.getMessage("nsToPkgDefaultFileLoaded00", DEFAULT_NSTOPKG_FILE)
-                        );
+                                Messages.getMessage(
+                                        "nsToPkgDefaultFileLoaded00",
+                                        DEFAULT_NSTOPKG_FILE));
                     }
+                } catch (Throwable t1) {
 
-                } catch(Throwable t1) {
                     // loading the default mapping file failed.
                     // The built-in default mapping is used
                     // No message is given, since this is generally what happens
@@ -511,45 +634,63 @@ public class Emitter extends Parser {
         }
 
         Enumeration keys = mappings.propertyNames();
+
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
+
             namespaces.put(key, mappings.getProperty(key));
         }
-    } // getNStoPkgFromPropsFile
+    }    // getNStoPkgFromPropsFile
 
+    /**
+     * Method setTypeMappingVersion
+     * 
+     * @param typeMappingVersion 
+     */
     public void setTypeMappingVersion(String typeMappingVersion) {
+
         if (typeMappingVersion.equals("1.1")) {
-            baseTypeMapping =
-                    new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
-                        public String getBaseName(QName qNameIn) {
-                            javax.xml.namespace.QName qName =
-                                new javax.xml.namespace.QName(
-                                  qNameIn.getNamespaceURI(),
-                                  qNameIn.getLocalPart());
-                            Class cls = defaultTM.getClassForQName(qName);
-                            if (cls == null)
-                                return null;
-                            else
-                                return JavaUtils.getTextClassName(cls.getName());
-                        }
-                    };
+            baseTypeMapping = new BaseTypeMapping() {
+
+                final TypeMapping defaultTM =
+                        DefaultTypeMappingImpl.getSingleton();
+
+                public String getBaseName(QName qNameIn) {
+
+                    javax.xml.namespace.QName qName =
+                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
+                                    qNameIn.getLocalPart());
+                    Class cls =
+                            defaultTM.getClassForQName(qName);
+
+                    if (cls == null) {
+                        return null;
+                    } else {
+                        return JavaUtils.getTextClassName(cls.getName());
+                    }
+                }
+            };
         } else {
-            baseTypeMapping =
-                    new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultSOAPEncodingTypeMappingImpl.create();
-                        public String getBaseName(QName qNameIn) {
-                            javax.xml.namespace.QName qName =
-                                new javax.xml.namespace.QName(
-                                  qNameIn.getNamespaceURI(),
-                                  qNameIn.getLocalPart());
-                            Class cls = defaultTM.getClassForQName(qName);
-                            if (cls == null)
-                                return null;
-                            else
-                                return JavaUtils.getTextClassName(cls.getName());
-                        }
-                    };
+            baseTypeMapping = new BaseTypeMapping() {
+
+                final TypeMapping defaultTM =
+                        DefaultSOAPEncodingTypeMappingImpl.create();
+
+                public String getBaseName(QName qNameIn) {
+
+                    javax.xml.namespace.QName qName =
+                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
+                                    qNameIn.getLocalPart());
+                    Class cls =
+                            defaultTM.getClassForQName(qName);
+
+                    if (cls == null) {
+                        return null;
+                    } else {
+                        return JavaUtils.getTextClassName(cls.getName());
+                    }
+                }
+            };
         }
     }
 
@@ -557,41 +698,51 @@ public class Emitter extends Parser {
 
     /**
      * Get the GeneratorFactory.
+     * 
+     * @return 
      * @deprecated Call getFactory instead.  This doesn't return
-     * a WriterFactory, it returns a GeneratorFactory.
+     *             a WriterFactory, it returns a GeneratorFactory.
      */
     public GeneratorFactory getWriterFactory() {
         return getFactory();
-    } // getWriterFactory
+    }    // getWriterFactory
 
     /**
      * Call this method if you have a uri for the WSDL document
+     * 
      * @param uri wsdlURI the location of the WSDL file.
+     * @throws Exception 
      * @deprecated Call run(uri) instead.
      */
     public void emit(String uri) throws Exception {
         run(uri);
-    } // emit
+    }    // emit
 
     /**
      * Call this method if your WSDL document has already been
      * parsed as an XML DOM document.
+     * 
      * @param context context This is directory context for the Document.
-     * If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y"
-     * (even "/x/y/z.wsdl" would work).  If context is null, then the context
-     * becomes the current directory.
-     * @param doc doc This is the XML Document containing the WSDL.
+     *                If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y"
+     *                (even "/x/y/z.wsdl" would work).  If context is null, then the context
+     *                becomes the current directory.
+     * @param doc     doc This is the XML Document containing the WSDL.
+     * @throws IOException                  
+     * @throws SAXException                 
+     * @throws WSDLException                
+     * @throws ParserConfigurationException 
      * @deprecated Call run(context, doc) instead.
      */
     public void emit(String context, Document doc)
-        throws IOException, SAXException, WSDLException, 
-               ParserConfigurationException {
+            throws IOException, SAXException, WSDLException,
+            ParserConfigurationException {
         run(context, doc);
-    } // emit
+    }    // emit
 
     /**
      * Turn on/off server-side binding generation
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setServerSide(value)
      */
     public void generateServerSide(boolean value) {
@@ -600,15 +751,18 @@ public class Emitter extends Parser {
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
+     * 
+     * @return 
      * @deprecated Use isServerSide()
-     */ 
+     */
     public boolean getGenerateServerSide() {
         return isServerSide();
     }
 
     /**
      * Turn on/off server skeleton deploy
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setSkeletonWanted(value)
      */
     public void deploySkeleton(boolean value) {
@@ -617,15 +771,18 @@ public class Emitter extends Parser {
 
     /**
      * Indicate if we should be deploying skeleton or implementation
+     * 
+     * @return 
      * @deprecated Use isSkeletonWanted()
-     */ 
+     */
     public boolean getDeploySkeleton() {
         return isSkeletonWanted();
     }
 
     /**
      * Turn on/off Helper class generation
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setHelperWanted(value)
      */
     public void setHelperGeneration(boolean value) {
@@ -634,41 +791,48 @@ public class Emitter extends Parser {
 
     /**
      * Indicate if we should be generating Helper classes
+     * 
+     * @return 
      * @deprecated Use isHelperWanted()
-     */ 
+     */
     public boolean getHelperGeneration() {
         return isHelperWanted();
     }
 
     /**
      * Turn on/off generation of elements from imported files.
-     * @param generateImports
+     * 
+     * @param generateImports 
      * @deprecated Use setImports(generateImports)
      */
     public void generateImports(boolean generateImports) {
         setImports(generateImports);
-    } // generateImports
+    }    // generateImports
 
     /**
      * Turn on/off debug messages.
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setDebug(value)
      */
     public void debug(boolean value) {
         setDebug(value);
-    } // debug
+    }    // debug
 
     /**
      * Return the status of the debug switch.
+     * 
+     * @return 
      * @deprecated Use isDebug()
      */
     public boolean getDebug() {
         return isDebug();
-    } // getDebug
+    }    // getDebug
 
     /**
      * Turn on/off verbose messages
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setVerbose(value)
      */
     public void verbose(boolean value) {
@@ -677,15 +841,18 @@ public class Emitter extends Parser {
 
     /**
      * Return the status of the verbose switch
+     * 
+     * @return 
      * @deprecated Use isVerbose()
-     */ 
+     */
     public boolean getVerbose() {
         return isVerbose();
     }
 
     /**
      * Turn on/off test case creation
-     * @param value
+     * 
+     * @param value 
      * @deprecated Use setTestCaseWanted()
      */
     public void generateTestCase(boolean value) {
@@ -693,9 +860,10 @@ public class Emitter extends Parser {
     }
 
     /**
+     * @param all 
      * @deprecated Use setAllWanted(all)
      */
-     public void generateAll(boolean all) {
-         setAllWanted(all);
-     } // generateAll
+    public void generateAll(boolean all) {
+        setAllWanted(all);
+    }    // generateAll
 }

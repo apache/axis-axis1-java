@@ -63,30 +63,40 @@ import java.io.IOException;
  */
 public class UndefinedType extends Type implements Undefined {
 
-   private UndefinedDelegate delegate = null;
+    /** Field delegate */
+    private UndefinedDelegate delegate = null;
 
     /**
-     * Construct a referenced (but as of yet undefined) type 
+     * Construct a referenced (but as of yet undefined) type
+     * 
+     * @param pqName 
      */
     public UndefinedType(QName pqName) {
+
         super(pqName, null);
+
         undefined = true;
         delegate = new UndefinedDelegate(this);
     }
 
     /**
-     *  Register referrant TypeEntry so that 
-     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     * Register referrant TypeEntry so that
+     * the code can update the TypeEntry when the Undefined Element or Type is defined
+     * 
+     * @param referrant 
      */
     public void register(TypeEntry referrant) {
         delegate.register(referrant);
     }
 
     /**
-     *  Call update with the actual TypeEntry.  This updates all of the
-     *  referrant TypeEntry's that were registered.
+     * Call update with the actual TypeEntry.  This updates all of the
+     * referrant TypeEntry's that were registered.
+     * 
+     * @param def 
+     * @throws IOException 
      */
     public void update(TypeEntry def) throws IOException {
         delegate.update(def);
     }
-};
+}

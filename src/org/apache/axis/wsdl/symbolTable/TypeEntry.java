@@ -69,123 +69,162 @@ import java.io.Serializable;
  * A TypeEntry object extends SymTabEntry and is built by the SymbolTable class for
  * each supported root complexType, simpleType, and elements that are
  * defined or encountered.
- *
- *                    SymTabEntry
- *                        |
- *                    TypeEntry
- *                  /           \
- *            Type                Element
- *             |                     |
+ * <p/>
+ * SymTabEntry
+ * |
+ * TypeEntry
+ * /           \
+ * Type                Element
+ * |                     |
  * (BaseType,                    (DefinedElement,
- *  CollectionType                CollectionElement,
- *  DefinedType,                  UndefinedElement)
- *  UndefinedType)
- *
- *  UndefinedType and UndefinedElement are placeholders when the real type or element
- *  is not encountered yet.  Both of these implement the Undefined interface.
- *  
- *  A TypeEntry whose java (or other language) name depends on an Undefined type, will
- *  have its name initialization deferred until the Undefined type is replaced with
- *  a defined type.  The updateUndefined() method is invoked by the UndefinedDelegate to
- *  update the information.
- *
- *  Each TypeEntry whose language name depends on another TypeEntry will have the refType
- *  field set.  For example:
- *      <element name="foo" type="bar" />
- *  The TypeEntry for "foo" will have a refType set to the TypeEntry of "bar".
+ * CollectionType                CollectionElement,
+ * DefinedType,                  UndefinedElement)
+ * UndefinedType)
+ * <p/>
+ * UndefinedType and UndefinedElement are placeholders when the real type or element
+ * is not encountered yet.  Both of these implement the Undefined interface.
+ * <p/>
+ * A TypeEntry whose java (or other language) name depends on an Undefined type, will
+ * have its name initialization deferred until the Undefined type is replaced with
+ * a defined type.  The updateUndefined() method is invoked by the UndefinedDelegate to
+ * update the information.
+ * <p/>
+ * Each TypeEntry whose language name depends on another TypeEntry will have the refType
+ * field set.  For example:
+ * <element name="foo" type="bar" />
+ * The TypeEntry for "foo" will have a refType set to the TypeEntry of "bar".
+ * <p/>
+ * Another Example:
+ * <xsd:complexType name="hobbyArray">
+ * <xsd:complexContent>
+ * <xsd:restriction base="soapenc:Array">
+ * <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+ * </xsd:restriction>
+ * </xsd:complexContent>
+ * </xsd:complexType>
+ * The TypeEntry for "hobbyArray" will have a refType that locates the TypeEntry for xsd:string
+ * and the dims field will be "[]"
  * 
- *  Another Example:
- *     <xsd:complexType name="hobbyArray">
- *       <xsd:complexContent>
- *         <xsd:restriction base="soapenc:Array">
- *           <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
- *         </xsd:restriction>
- *       </xsd:complexContent>
- *     </xsd:complexType>
- *  The TypeEntry for "hobbyArray" will have a refType that locates the TypeEntry for xsd:string
- *  and the dims field will be "[]"
- *
- *
- *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
-    protected Node    node;      // Node
+    /** Field node */
+    protected Node node;                               // Node
 
-    protected TypeEntry refType; // Some TypeEntries refer to other types.
-                                 
+    /** Field refType */
+    protected TypeEntry refType;                       // Some TypeEntries refer to other types.
 
-    protected String  dims ="";  // If refType is an element, dims indicates 
-                                 // the array dims (for example "[]").
-                              
-    protected boolean undefined; // If refType is an Undefined type 
-                                 // (or has a refType that is Undefined) 
-                                 // then the undefined flag is set.
-                                 //  The name cannot be determined
-                                 // until the Undefined type is found.
-    protected boolean isBaseType;// Indicates if represented by a 
-                                 // primitive or util class
-    protected boolean isSimpleType = false; // Indicates if this type is a simple type
-    protected boolean onlyLiteralReference = false; // Indicates
-                                 // whether this type is only referenced
-                                 // via a binding's literal use.
+    /** Field dims */
+    protected String dims = "";                        // If refType is an element, dims indicates
+
+    // the array dims (for example "[]").
+
+    /** Field undefined */
+    protected boolean undefined;                       // If refType is an Undefined type
+
+    // (or has a refType that is Undefined)
+    // then the undefined flag is set.
+    // The name cannot be determined
+    // until the Undefined type is found.
+
+    /** Field isBaseType */
+    protected boolean isBaseType;                      // Indicates if represented by a
+
+    // primitive or util class
+
+    /** Field isSimpleType */
+    protected boolean isSimpleType =
+            false;                                         // Indicates if this type is a simple type
+
+    /** Field onlyLiteralReference */
+    protected boolean onlyLiteralReference = false;    // Indicates
+
+    // whether this type is only referenced
+    // via a binding's literal use.
 
     /**
-     * Create a TypeEntry object for an xml construct that references another type. 
+     * Create a TypeEntry object for an xml construct that references another type.
      * Defer processing until refType is known.
-     */  
-    protected TypeEntry(QName pqName, TypeEntry refType, Node pNode, String dims) {
+     * 
+     * @param pqName  
+     * @param refType 
+     * @param pNode   
+     * @param dims    
+     */
+    protected TypeEntry(QName pqName, TypeEntry refType, Node pNode,
+                        String dims) {
+
         super(pqName);
+
         node = pNode;
         this.undefined = refType.undefined;
         this.refType = refType;
-        if (dims == null)
+
+        if (dims == null) {
             dims = "";
+        }
+
         this.dims = dims;
-        
+
         if (refType.undefined) {
+
             // Need to defer processing until known.
             TypeEntry uType = refType;
+
             while (!(uType instanceof Undefined)) {
                 uType = uType.refType;
             }
-            ((Undefined)uType).register(this);
-        } else {
-            isBaseType = (refType.isBaseType && refType.dims.equals("") && dims.equals(""));
-        }
-        
-        //System.out.println(toString());
 
+            ((Undefined) uType).register(this);
+        } else {
+            isBaseType = (refType.isBaseType && refType.dims.equals("")
+                    && dims.equals(""));
+        }
+
+        // System.out.println(toString());
     }
-       
+
     /**
      * Create a TypeEntry object for an xml construct that is not a base type
-     */  
+     * 
+     * @param pqName 
+     * @param pNode  
+     */
     protected TypeEntry(QName pqName, Node pNode) {
+
         super(pqName);
-        node  = pNode;
+
+        node = pNode;
         refType = null;
         undefined = false;
         dims = "";
         isBaseType = false;
-        //System.out.println(toString());
+
+        // System.out.println(toString());
     }
 
     /**
      * Create a TypeEntry object for an xml construct name that represents a base type
+     * 
+     * @param pqName 
      */
     protected TypeEntry(QName pqName) {
+
         super(pqName);
+
         node = null;
         undefined = false;
         dims = "";
         isBaseType = true;
-        //System.out.println(toString());
+
+        // System.out.println(toString());
     }
-       
+
     /**
      * Query the node for this type.
+     * 
+     * @return 
      */
     public Node getNode() {
         return node;
@@ -195,24 +234,41 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
      * Returns the Base Type Name.
      * For example if the Type represents a schema integer, "int" is returned.
      * If this is a user defined type, null is returned.
+     * 
+     * @return 
      */
     public String getBaseType() {
+
         if (isBaseType) {
             return name;
-        }
-        else {
+        } else {
             return null;
         }
     }
 
+    /**
+     * Method isBaseType
+     * 
+     * @return 
+     */
     public boolean isBaseType() {
         return isBaseType;
     }
 
+    /**
+     * Method isSimpleType
+     * 
+     * @return 
+     */
     public boolean isSimpleType() {
         return isSimpleType;
     }
 
+    /**
+     * Method setSimpleType
+     * 
+     * @param simpleType 
+     */
     public void setSimpleType(boolean simpleType) {
         isSimpleType = simpleType;
     }
@@ -225,92 +281,128 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
      * that is ONLY referenced as a literal may cause a generator to act
      * differently (like WSDL2Java), this extra reference distinction is
      * needed.
+     * 
+     * @return 
      */
     public boolean isOnlyLiteralReferenced() {
         return onlyLiteralReference;
-    } // isOnlyLiteralReferenced
+    }    // isOnlyLiteralReferenced
 
     /**
      * Set the isOnlyLiteralReference flag.
+     * 
+     * @param set 
      */
     public void setOnlyLiteralReference(boolean set) {
         onlyLiteralReference = set;
-    } // setOnlyLiteralRefeerence
+    }    // setOnlyLiteralRefeerence
 
     /**
      * getUndefinedTypeRef returns the Undefined TypeEntry that this entry depends on or NULL.
+     * 
+     * @return 
      */
     protected TypeEntry getUndefinedTypeRef() {
-        if (this instanceof Undefined) 
+
+        if (this instanceof Undefined) {
             return this;
-        if (undefined && refType != null) {
+        }
+
+        if (undefined && (refType != null)) {
             if (refType.undefined) {
                 TypeEntry uType = refType;
+
                 while (!(uType instanceof Undefined)) {
                     uType = uType.refType;
                 }
+
                 return uType;
             }
         }
+
         return null;
     }
 
     /**
      * UpdateUndefined is called when the ref TypeEntry is finally known.
+     * 
      * @param oldRef The TypeEntry representing the Undefined TypeEntry
      * @param newRef The replacement TypeEntry
      * @return true if TypeEntry is changed in any way.
+     * @throws IOException 
      */
-    protected boolean updateUndefined(TypeEntry oldRef, TypeEntry newRef) throws IOException {
+    protected boolean updateUndefined(TypeEntry oldRef, TypeEntry newRef)
+            throws IOException {
+
         boolean changedState = false;
+
         // Replace refType with the new one if applicable
         if (refType == oldRef) {
             refType = newRef;
             changedState = true;
+
             // Detect a loop
             TypeEntry te = refType;
-            while(te != null && te != this) {
+
+            while ((te != null) && (te != this)) {
                 te = te.refType;
             }
+
             if (te == this) {
+
                 // Detected a loop.
                 undefined = false;
                 isBaseType = false;
-                node = null;                   
-                throw new IOException(Messages.getMessage("undefinedloop00", getQName().toString()));
+                node = null;
+
+                throw new IOException(
+                        Messages.getMessage(
+                                "undefinedloop00", getQName().toString()));
             }
         }
 
         // Update information if refType is now defined
-        if (refType != null && undefined && refType.undefined==false) {
+        if ((refType != null) && undefined && (refType.undefined == false)) {
             undefined = false;
             changedState = true;
-            isBaseType = (refType.isBaseType && refType.dims.equals("") && dims.equals(""));
+            isBaseType = (refType.isBaseType && refType.dims.equals("")
+                    && dims.equals(""));
         }
+
         return changedState;
     }
 
-
     /**
      * If this type references another type, return that type, otherwise return null.
+     * 
+     * @return 
      */
     public TypeEntry getRefType() {
         return refType;
-    } // getRefType
+    }    // getRefType
 
+    /**
+     * Method setRefType
+     * 
+     * @param refType 
+     */
     public void setRefType(TypeEntry refType) {
         this.refType = refType;
     }
 
     /**
      * Return the dimensions of this type, which can be 0 or more "[]".
+     * 
+     * @return 
      */
     public String getDimensions() {
         return dims;
-    } // getDimensions
+    }    // getDimensions
 
     /**
      * Get string representation.
+     * 
+     * @return 
      */
     public String toString() {
         return toString("");
@@ -318,18 +410,24 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
 
     /**
      * Get string representation with indentation
+     * 
+     * @param indent 
+     * @return 
      */
     protected String toString(String indent) {
+
         String refString = indent + "RefType:       null \n";
-        if (refType != null)
-            refString = indent + "RefType:\n" + refType.toString(indent + "  ") + "\n";
-        return super.toString(indent) + 
-            indent + "Class:         " + this.getClass().getName() + "\n" + 
-            indent + "Base?:         " + isBaseType + "\n" + 
-            indent + "Undefined?:    " + undefined + "\n" + 
-            indent + "isSimpleType?  " + isSimpleType + "\n" +
-            indent + "Node:          " + getNode() + "\n" +
-            indent + "Dims:          " + dims + "\n" +
-            refString;
+
+        if (refType != null) {
+            refString = indent + "RefType:\n" + refType.toString(indent + "  ")
+                    + "\n";
+        }
+
+        return super.toString(indent) + indent + "Class:         "
+                + this.getClass().getName() + "\n" + indent + "Base?:         "
+                + isBaseType + "\n" + indent + "Undefined?:    " + undefined
+                + "\n" + indent + "isSimpleType?  " + isSimpleType + "\n"
+                + indent + "Node:          " + getNode() + "\n" + indent
+                + "Dims:          " + dims + "\n" + refString;
     }
-};
+}

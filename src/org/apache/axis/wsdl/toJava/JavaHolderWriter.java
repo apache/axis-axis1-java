@@ -60,38 +60,54 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
-*/
+ * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
+ */
 public class JavaHolderWriter extends JavaClassWriter {
+
+    /** Field type */
     private TypeEntry type;
 
     /**
      * Constructor.
+     * 
+     * @param emitter 
+     * @param type    
      */
     protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
+
         super(emitter, Utils.holder(null, type, emitter), "holder");
+
         this.type = type;
-    } // ctor
+    }    // ctor
 
     /**
      * Return "public final ".
+     * 
+     * @return 
      */
     protected String getClassModifiers() {
         return super.getClassModifiers() + "final ";
-    } // getClassModifiers
+    }    // getClassModifiers
 
     /**
      * Return "implements javax.xml.rpc.holders.Holder ".
+     * 
+     * @return 
      */
     protected String getImplementsText() {
         return "implements javax.xml.rpc.holders.Holder ";
-    } // getImplementsText
+    }    // getImplementsText
 
     /**
      * Generate the holder for the given complex type.
+     * 
+     * @param pw 
+     * @throws IOException 
      */
     protected void writeFileBody(PrintWriter pw) throws IOException {
+
         String holderType = type.getName();
+
         pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");
@@ -101,6 +117,5 @@ public class JavaHolderWriter extends JavaClassWriter {
         pw.println("        this.value = value;");
         pw.println("    }");
         pw.println();
-    } // writeOperation
-
-} // class JavaHolderWriter
+    }    // writeOperation
+}    // class JavaHolderWriter

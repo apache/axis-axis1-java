@@ -54,26 +54,36 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 
 /**
- * This Type is for a QName that is an element, these types are only emitted if 
+ * This Type is for a QName that is an element, these types are only emitted if
  * referenced by a ref= or an element=.
  * An element type can be defined inline or it can be defined via
  * a ref/type attribute.
  */
 public class DefinedElement extends Element {
+
     /**
      * Create an element type defined by a ref/type attribute
+     * 
+     * @param pqName  
+     * @param refType 
+     * @param pNode   
+     * @param dims    
      */
-    public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
+    public DefinedElement(QName pqName, TypeEntry refType, Node pNode,
+                          String dims) {
         super(pqName, refType, pNode, dims);
     }
+
     /**
-     * Create an element type defined directly.               
+     * Create an element type defined directly.
+     * 
+     * @param pqName 
+     * @param pNode  
      */
     public DefinedElement(QName pqName, Node pNode) {
         super(pqName, pNode);

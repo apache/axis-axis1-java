@@ -54,37 +54,46 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 
 /**
  * This class represents a TypeEntry that is a type (complexType, simpleType, etc.
- *
+ * 
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public abstract class Type extends TypeEntry {
 
     /**
      * Create a Type object for an xml construct name that represents a base type
+     * 
+     * @param pqName 
      */
     protected Type(QName pqName) {
         super(pqName);
     }
-       
+
     /**
-     * Create a TypeEntry object for an xml construct that references a type that has 
+     * Create a TypeEntry object for an xml construct that references a type that has
      * not been defined yet.  Defer processing until refType is known.
-     */ 
+     * 
+     * @param pqName  
+     * @param refType 
+     * @param pNode   
+     * @param dims    
+     */
     protected Type(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
     }
-       
+
     /**
      * Create a Type object for an xml construct that is not a base type
-     */  
+     * 
+     * @param pqName 
+     * @param pNode  
+     */
     protected Type(QName pqName, Node pNode) {
         super(pqName, pNode);
     }
-};
+}

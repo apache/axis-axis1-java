@@ -54,11 +54,14 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-
-
 /*
  * Common marker interface for CollectionType and CollectionElement
  */
-public interface CollectionTE {
-};
 
+/**
+ * Interface CollectionTE
+ * 
+ * @version %I%, %G%
+ */
+public interface CollectionTE {
+}

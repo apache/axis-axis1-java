@@ -62,11 +62,11 @@ import java.util.List;
  * File info available after emit to describe what
  * exactly was created by the Emitter.
  * 
- * 
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class GeneratedFileInfo {
 
+    /** Field list */
     protected ArrayList list = new ArrayList();
 
     /**
@@ -77,37 +77,53 @@ public class GeneratedFileInfo {
      * <li><code>className</code> - The name of the class in the file.</li>
      * <li><code>type</code> - The type of the file.<br>
      * Valid types are:<br>
-     *  <code>
-     * stub, interface, complexType, enumType, fault, holder, skeleton, 
-     *  skeletonImpl, service, deploy, undeploy, testCase
+     * <code>
+     * stub, interface, complexType, enumType, fault, holder, skeleton,
+     * skeletonImpl, service, deploy, undeploy, testCase
      * </code></li>
-     * </ul> 
-     * 
-     * 
+     * </ul>
      */
     public class Entry {
+
         // relative path of the emitted file
+
+        /** Field fileName */
         public String fileName;
+
         // name of emitted class
+
+        /** Field className */
         public String className;
+
         // function of the emitted class
+
+        /** Field type */
         public String type;
-        
+
+        /**
+         * Constructor Entry
+         * 
+         * @param name      
+         * @param className 
+         * @param type      
+         */
         public Entry(String name, String className, String type) {
+
             this.fileName = name;
             this.className = className;
             this.type = type;
         }
 
+        /**
+         * Method toString
+         * 
+         * @return 
+         */
         public String toString() {
-            return "Name: " + fileName +
-                    " Class: " + className +
-                    " Type: " + type;
+            return "Name: " + fileName + " Class: " + className + " Type: "
+                    + type;
         }
-
-
-    } // Entry
-
+    }    // Entry
 
     /**
      * Construct an empty file info list.
@@ -117,6 +133,8 @@ public class GeneratedFileInfo {
 
     /**
      * Return the entire list of generated files
+     * 
+     * @return 
      */
     public List getList() {
         return list;
@@ -124,6 +142,10 @@ public class GeneratedFileInfo {
 
     /**
      * Add an entry
+     * 
+     * @param name      
+     * @param className 
+     * @param type      
      */
     public void add(String name, String className, String type) {
         list.add(new Entry(name, className, type));
@@ -133,95 +155,127 @@ public class GeneratedFileInfo {
      * Lookup an entry by type.
      * <br>
      * Valid type values are:
-     *  stub, interface, complexType, enumType, fault, holder, skeleton, 
-     *  skeletonImpl, service, deploy, undeploy, testCase
+     * stub, interface, complexType, enumType, fault, holder, skeleton,
+     * skeletonImpl, service, deploy, undeploy, testCase
      * 
      * @param type of objects you want info about
-     * @return A list of <code>org.apache.axis.wsdl.toJava.GeneratedFileInfo.Entry</code> objects.  Null if no objects found. 
+     * @return A list of <code>org.apache.axis.wsdl.toJava.GeneratedFileInfo.Entry</code> objects.  Null if no objects found.
      */
     public List findType(String type) {
+
         // look at each entry for the type we want
         ArrayList ret = null;
+
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry e = (Entry) i.next();
+
             if (e.type.equals(type)) {
-                if (ret == null)
+                if (ret == null) {
                     ret = new ArrayList();
+                }
+
                 ret.add(e);
             }
         }
+
         return ret;
     }
 
     /**
      * Lookup an entry by file name
      * 
-     * @param file name you want info about
+     * @param file     name you want info about
+     * @param fileName 
      * @return The entry for the file name specified.  Null if not found
      */
     public Entry findName(String fileName) {
+
         // look at each entry for the type we want
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry e = (Entry) i.next();
+
             if (e.fileName.equals(fileName)) {
                 return e;
             }
         }
+
         return null;
     }
 
     /**
      * Lookup an entry by class name
      * 
-     * @param class name you want info about
+     * @param class     name you want info about
+     * @param className 
      * @return The entry for the class specified.  Null if not found
      */
     public Entry findClass(String className) {
+
         // look at each entry for the type we want
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry e = (Entry) i.next();
+
             if (e.className.equals(className)) {
                 return e;
             }
         }
+
         return null;
     }
 
     /**
      * Get the list of generated classes
+     * 
+     * @return 
      */
     public List getClassNames() {
+
         // is there a better way to do this?
         ArrayList ret = new ArrayList(list.size());
+
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry e = (Entry) i.next();
+
             ret.add(e.className);
         }
+
         return ret;
     }
 
     /**
      * Get the list of generated filenames
+     * 
+     * @return 
      */
     public List getFileNames() {
+
         // is there a better way to do this?
         ArrayList ret = new ArrayList(list.size());
+
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry e = (Entry) i.next();
+
             ret.add(e.fileName);
         }
+
         return ret;
     }
 
     /**
      * Convert all entries in the list to a string
+     * 
+     * @return 
      */
     public String toString() {
+
         String s = "";
+
         for (Iterator i = list.iterator(); i.hasNext();) {
             Entry entry = (Entry) i.next();
+
             s += entry.toString() + "\n";
         }
+
         return s;
     }
 }

@@ -52,30 +52,37 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.wsdl.symbolTable;
 
 import javax.wsdl.Message;
 
 /**
-* This class represents a WSDL message.  It simply encompasses the WSDL4J Message object so it can
-* reside in the SymbolTable.
-*/
+ * This class represents a WSDL message.  It simply encompasses the WSDL4J Message object so it can
+ * reside in the SymbolTable.
+ */
 public class MessageEntry extends SymTabEntry {
+
+    /** Field message */
     private Message message;
 
     /**
      * Construct a MessageEntry from a WSDL4J Message object.
+     * 
+     * @param message 
      */
     public MessageEntry(Message message) {
+
         super(message.getQName());
+
         this.message = message;
-    } // ctor
+    }    // ctor
 
     /**
      * Get this entry's Message object.
+     * 
+     * @return 
      */
     public Message getMessage() {
         return message;
-    } // getMessage
-} // class MessageEntry
+    }    // getMessage
+}    // class MessageEntry
