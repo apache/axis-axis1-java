@@ -22,10 +22,11 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.MethodCache;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -34,7 +35,7 @@ import java.util.Hashtable;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class TypeDesc {
+public class TypeDesc implements Serializable {
     public static final Class [] noClasses = new Class [] {};
     public static final Object[] noObjects = new Object[] {};
     

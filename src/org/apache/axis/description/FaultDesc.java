@@ -17,6 +17,7 @@
 package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -25,7 +26,7 @@ import java.util.ArrayList;
  * @author Glen Daniels (gdaniels@apache.org)
  * @author Tom Jordahl (tomj@apache.org)
  */
-public class FaultDesc {
+public class FaultDesc implements Serializable {
     private String name;
     private QName qname;
     private ArrayList parameters;

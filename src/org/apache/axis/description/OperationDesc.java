@@ -21,6 +21,7 @@ import org.apache.axis.enum.Use;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,7 +34,7 @@ import java.util.Iterator;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class OperationDesc {
+public class OperationDesc implements Serializable {
     // Constants for "message style" operation patterns.  If this OperationDesc
     // is message style, the Java method will have one of these signatures:
 
