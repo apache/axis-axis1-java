@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.client.Call;
 
 /**
  * Little utility to get the version and build date of the axis.jar.
@@ -72,7 +73,23 @@ public class Version {
                JavaUtils.getMessage("builtOn");
     }
     
+    /**
+     * Entry point.
+     * 
+     * Calling this with no arguments returns the version of the client-side
+     * axis.jar.  Passing a URL which points to a remote Axis server will
+     * attempt to retrieve the version of the server via a SOAP call.
+     */ 
     public static void main(String[] args) {
-        System.out.println(getVersion());
+        if (args.length != 1)
+            System.out.println(getVersion());
+        
+        try {
+            Call call = new Call(args[0]);
+            String result = (String)call.invoke("Version", "getVersion", null);
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
