@@ -30,7 +30,7 @@ public class JAXRPCHandler extends BasicHandler {
     protected static Log log =
             LogFactory.getLog(JAXRPCHandler.class.getName());
 
-    HandlerChainImpl impl = null;
+    protected HandlerChainImpl impl = null;
 
     public void init() {
         super.init();
