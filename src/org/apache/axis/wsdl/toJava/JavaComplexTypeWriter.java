@@ -57,8 +57,11 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Node;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -68,6 +71,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
     private Vector elements;
     private Vector attributes;
     private TypeEntry extendType;
+    private HashMap elementMappings = null;
 
     /**
      * Constructor.
@@ -108,8 +112,20 @@ public class JavaComplexTypeWriter extends JavaWriter {
         // We are only interested in the java names of the types, so create a names list
         Vector names = new Vector();
         for (int i = 0; i < elements.size(); i += 2) {
-            names.add(((TypeEntry) elements.get(i)).getName());
-            names.add(Utils.xmlNameToJava((String) elements.get(i + 1)));
+            TypeEntry type = (TypeEntry) elements.get(i);
+            String elemName = (String) elements.get(i + 1);
+            String javaName = Utils.xmlNameToJava(elemName);
+            if (false && !javaName.equals(elemName)) {
+                // If we did some mangling, make sure we'll write out the XML
+                // the correct way.
+                if (elementMappings == null)
+                    elementMappings = new HashMap();
+
+                elementMappings.put(Utils.capitalizeFirstChar(javaName),
+                                    new QName("", elemName));
+            }
+            names.add(type.getName());
+            names.add(javaName);
         }
         // add the attributes to the names list (which will be bean elements too)
         if (attributes != null) {
@@ -122,15 +138,6 @@ public class JavaComplexTypeWriter extends JavaWriter {
         String implementsText = "";
         if (type.isSimpleType())
             implementsText = ", org.apache.axis.encoding.SimpleType";
-
-        // For now, do the imports only if we have attributes.  This will
-        // need to happen for any mapping later.
-        if (attributes != null) {
-            pw.println("import org.apache.axis.description.FieldDesc;");
-            pw.println("import org.apache.axis.description.TypeDesc;");
-            pw.println("import org.apache.axis.description.AttributeDesc;");
-            pw.println();
-        }
 
         pw.println("public class " + className + extendsText +
                    " implements java.io.Serializable" + implementsText + " {");
@@ -239,21 +246,48 @@ public class JavaComplexTypeWriter extends JavaWriter {
         // mappings as well, but right now this is just to keep the attribute
         // mechanism working.
 
-        if (attributes != null) {
+        if (attributes != null || elementMappings != null) {
+            boolean wroteFieldType = false;
             pw.println("    // Type metadata");
             pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
             pw.println("        new org.apache.axis.description.TypeDesc();");
             pw.println();
             pw.println("    static {");
-            for (int i = 0; i < attributes.size(); i += 2) {
-                String fieldName =
-                        Utils.xmlNameToJava((String) attributes.get(i + 1));
-                pw.print("        ");
-                if (i == 0) pw.print("org.apache.axis.description.FieldDesc ");
-                pw.println("field = new org.apache.axis.description.AttributeDesc();");
-                pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                pw.println("        typeDesc.addFieldDesc(field);");
+
+            if (attributes != null) {
+                for (int i = 0; i < attributes.size(); i += 2) {
+                    String fieldName =
+                            Utils.xmlNameToJava((String) attributes.get(i + 1));
+                    pw.print("        ");
+                    if (!wroteFieldType) {
+                        pw.print("org.apache.axis.description.FieldDesc ");
+                        wroteFieldType = true;
+                    }
+                    pw.println("field = new org.apache.axis.description.AttributeDesc();");
+                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
+                    pw.println("        typeDesc.addFieldDesc(field);");
+                }
             }
+
+            if (elementMappings != null) {
+                Iterator i = elementMappings.keySet().iterator();
+                while (i.hasNext()) {
+                    String fieldName = (String)i.next();
+                    QName xmlName = (QName)elementMappings.get(fieldName);
+                    pw.print("        ");
+                    if (!wroteFieldType) {
+                        pw.print("org.apache.axis.description.FieldDesc ");
+                        wroteFieldType = true;
+                    }
+                    pw.println("field = new org.apache.axis.description.ElementDesc();");
+                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
+                    pw.print(  "        field.setXmlName(new javax.xml.rpc.namespace.QName(\"");
+                    pw.println(xmlName.getNamespaceURI() + "\", \"" +
+                               xmlName.getLocalPart() + "\"));");
+                    pw.println("        typeDesc.addFieldDesc(field);");
+                }
+            }
+
             pw.println("    };");
             pw.println();
 

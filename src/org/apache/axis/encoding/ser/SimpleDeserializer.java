@@ -271,9 +271,6 @@ public class SimpleDeserializer extends DeserializerImpl {
                 continue;
 
             String attrName = attributes.getLocalName(i);
-            String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
-            String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
-            String mangledName = JavaUtils.xmlNameToJava(attrName);
 
             // look for the attribute property
             BeanPropertyDescriptor bpd =

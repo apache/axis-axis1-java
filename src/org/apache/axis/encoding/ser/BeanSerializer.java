@@ -113,23 +113,12 @@ public class BeanSerializer implements Serializer, Serializable {
 
     public static final Object[] noArgs = new Object[] {};  // For convenience
 
-    // When serializing, the property element names passed over the wire
-    // are the names of the properties (format=PROPERTY_NAME).
-    // Setting the format to FORCE_UPPER will cause the
-    // serializer to uppercase the first letter of the property element name.
-    // Setting the format to FORCE_LOWER will cause the
-    // serializer to uppercase the first letter of the property element name.
-    private short elementPropertyFormat = PROPERTY_NAME;
-    public static short PROPERTY_NAME = 0;
-    public static short FORCE_UPPER   = 1;
-    public static short FORCE_LOWER   = 2;
-
     QName xmlType;
     Class javaType;
 
     private BeanPropertyDescriptor[] propertyDescriptor = null;
     private TypeDesc typeDesc = null;
-    
+
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType) {
@@ -138,12 +127,6 @@ public class BeanSerializer implements Serializer, Serializable {
         propertyDescriptor = getPd(javaType);
 
         typeDesc = TypeDesc.getTypeDescForClass(javaType);
-    }
-
-    // Construct BeanSerializer for the indicated class/qname and format
-    public BeanSerializer(Class javaType, QName xmlType, short format) {
-        this(javaType, xmlType);
-        setElementPropertyFormat(format);
     }
 
     /**
@@ -159,7 +142,7 @@ public class BeanSerializer implements Serializer, Serializable {
     {
         boolean isSOAP_ENC = Constants.
                 isSOAP_ENC(context.getMessageContext().getEncodingStyle());
-        
+
         // Check for meta-data in the bean that will tell us if any of the
         // properties are actually attributes, add those to the element
         // attribute list
@@ -170,32 +153,32 @@ public class BeanSerializer implements Serializer, Serializable {
             // Serialize each property
             for (int i=0; i<propertyDescriptor.length; i++) {
                 String propName = propertyDescriptor[i].getName();
-                if (propName.equals("class")) 
+                if (propName.equals("class"))
                     continue;
 
                 QName qname = null;
-                
+
                 // If we have type metadata, check to see what we're doing
                 // with this field.  If it's an attribute, skip it.  If it's
                 // an element, use whatever qname is in there.  If we can't
                 // find any of this info, use the default.
-                
+
                 if (typeDesc != null) {
                     FieldDesc field = typeDesc.getFieldByName(propName);
                     if (field != null) {
                         if (!field.isElement())
                             continue;
-                        
+
                         qname = field.getXmlName();
                     }
                 }
-                
+
                 if (qname == null) {
                     // Use the default...
-                    propName = format(propName, elementPropertyFormat);
+                    propName = propName;
                     qname = new QName("", propName);
                 }
-                
+
                 Method readMethod = propertyDescriptor[i].getReadMethod();
                 if (readMethod != null && readMethod.getParameterTypes().length == 0) {
                     // Normal case: serialize the value
@@ -246,25 +229,25 @@ public class BeanSerializer implements Serializer, Serializable {
         }
         return pd;
     }
-    
+
     /**
      * Return a list of properties in the bean which should be attributes
-     */ 
+     */
     static Vector getBeanAttributes(Class javaType, TypeDesc typeDesc) {
         Vector ret = new Vector();
-        
+
         if (typeDesc == null) {
             // !!! Support old-style beanAttributeNames for now
-            
+
             // See if this object defined the 'getAttributeElements' function
             // which returns a Vector of property names that are attributes
             try {
-                Method getAttributeElements = 
+                Method getAttributeElements =
                         javaType.getMethod("getAttributeElements",
                                            new Class [] {});
                 // get string array
                 String[] array = (String[])getAttributeElements.invoke(null, noArgs);
-                
+
                 // convert it to a Vector
                 ret = new Vector(array.length);
                 for (int i = 0; i < array.length; i++) {
@@ -284,43 +267,10 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
             }
         }
-        
+
         return ret;
     }
-    
-    
-    /**
-     * Get the format of the elements for the properties
-     */
-    public short getElementPropertyFormat() {
-        return elementPropertyFormat;
-    }
-    /**
-     * Set the format of the elements for the properties
-     */
-    public void setElementPropertyFormat(short format) {
-        if (format > FORCE_LOWER ||
-            format < PROPERTY_NAME)
-            format = PROPERTY_NAME;
-        elementPropertyFormat = format;
-    }
-    /**
-     * Returns the property name string formatted in the specified manner
-     * @param name to format
-     * @param fmt (PROPERTY_NAME, FORCE_LOWER, FORCE_UPPER)
-     * @return formatted name
-     */
-    static String format(String name, short fmt) {
-        if (fmt == PROPERTY_NAME)
-            return name;
-        String theRest = "";
-        if (name.length() > 1)
-            theRest = name.substring(1);
-        if (fmt == FORCE_UPPER)
-            return Character.toUpperCase(name.charAt(0)) + theRest;
-        else
-            return Character.toLowerCase(name.charAt(0)) + theRest;
-    }
+
 
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
@@ -348,7 +298,7 @@ public class BeanSerializer implements Serializer, Serializable {
         Vector stopClasses = types.getStopClasses();
         if (superClass != null &&
                 superClass != java.lang.Object.class &&
-                (stopClasses == null || 
+                (stopClasses == null ||
                 !(stopClasses.contains(superClass.getName()))) ) {
             // Write out the super class
             String base = types.writeType(superClass);
@@ -363,7 +313,7 @@ public class BeanSerializer implements Serializer, Serializable {
         }
 
         // Add fields under sequence element.
-        // Note: In most situations it would be okay 
+        // Note: In most situations it would be okay
         // to put the fields under an all element.
         // However it is illegal schema to put an
         // element with minOccurs=0 or maxOccurs>1 underneath
@@ -390,7 +340,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         QName attrName = typeDesc.getAttributeNameForField(
                                                     field.getName());
                         writeAttribute(types, attrName.getLocalPart(),
-                                       field.getType(), 
+                                       field.getType(),
                                        complexType);
                     } else {
                         QName xmlName = typeDesc.getElementNameForField(
@@ -414,7 +364,7 @@ public class BeanSerializer implements Serializer, Serializable {
     }
 
     /**
-     * write a schema representation of the given Class field and append it to    
+     * write a schema representation of the given Class field and append it to
      * the where Node, recurse on complex types
      * @param fieldName name of the field
      * @param fieldType type of the field
@@ -436,7 +386,7 @@ public class BeanSerializer implements Serializer, Serializable {
         }
         where.appendChild(elem);
     }
-    
+
     /**
      * write aa attribute element and append it to the 'where' Node
      * @param fieldName name of the field
@@ -444,17 +394,17 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param where location for the generated schema node
      * @throws Exception
      */
-    private void writeAttribute(Types types, 
+    private void writeAttribute(Types types,
                                 String fieldName,
                                 Class fieldType,
                                 Element where) throws Exception {
-        
+
         // Attribute must be a simple type.
         if (!types.isSimpleSchemaType(fieldType))
-            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00", 
+            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
                                                      fieldName,
                                                      fieldType.getName()));
-        
+
         String elementType = types.writeType(fieldType);
         Element elem = types.createAttributeElement(fieldName,
                                            elementType,
@@ -467,15 +417,15 @@ public class BeanSerializer implements Serializer, Serializable {
      * Check for meta-data in the bean that will tell us if any of the
      * properties are actually attributes, add those to the element
      * attribute list
-     * 
+     *
      * @param value the object we are serializing
      * @param pd the properties of this class
      * @return attributes for this element, null if none
-     */ 
+     */
     private Attributes getObjectAttributes(Object value,
                                            Attributes attributes,
                                            SerializationContext context) {
-        
+
         if (typeDesc == null || !typeDesc.hasAttributes())
             return attributes;
 
@@ -484,46 +434,45 @@ public class BeanSerializer implements Serializer, Serializable {
             attrs = new AttributesImpl(attributes);
         else
             attrs = new AttributesImpl();
-        
+
         try {
-            // Find each property that is an attribute 
+            // Find each property that is an attribute
             // and add it to our attribute list
             for (int i=0; i<propertyDescriptor.length; i++) {
                 String propName = propertyDescriptor[i].getName();
                 if (propName.equals("class"))
                     continue;
-                
+
                 FieldDesc field = typeDesc.getFieldByName(propName);
                 // skip it if its not an attribute
                 if (field == null || field.isElement())
                     continue;
-                
+
                 QName qname = field.getXmlName();
                 if (qname == null) {
-                    qname = new QName("",
-                                      format(propName, elementPropertyFormat));
+                    qname = new QName("", propName);
                 }
-                
+
                 Method readMethod = propertyDescriptor[i].getReadMethod();
-                if (readMethod != null && 
+                if (readMethod != null &&
                     readMethod.getParameterTypes().length == 0) {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].
                                         getReadMethod().invoke(value,noArgs);
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
-                    // the attribute may be more sophisticated.  For example, don't 
+                    // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
                         String propString = propValue != null ? propValue.toString() : "";
-                        
+
                         String namespace = qname.getNamespaceURI();
                         String localName = qname.getLocalPart();
-                        
-                        attrs.addAttribute(namespace, 
-                                           localName, 
-                                           context.qName2String(qname), 
-                                           "CDATA", 
+
+                        attrs.addAttribute(namespace,
+                                           localName,
+                                           context.qName2String(qname),
+                                           "CDATA",
                                            propString);
                     }
                 }
@@ -532,7 +481,7 @@ public class BeanSerializer implements Serializer, Serializable {
             // no attributes
             return attrs;
         }
-        
+
         return attrs;
     }
 }

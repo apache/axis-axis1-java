@@ -190,6 +190,9 @@ public class TypeDesc {
      */
     public String getFieldNameForElement(QName qname)
     {
+        if (fields == null)
+            return null;
+
         for (int i = 0; i < fields.length; i++) {
             FieldDesc field = fields[i];
             if (field.isElement() && qname.equals(field.getXmlName()))
@@ -205,6 +208,9 @@ public class TypeDesc {
      */
     public String getFieldNameForAttribute(QName qname)
     {
+        if (fields == null)
+            return null;
+
         String possibleMatch = null;
 
         for (int i = 0; i < fields.length; i++) {

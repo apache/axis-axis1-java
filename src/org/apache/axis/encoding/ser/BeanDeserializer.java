@@ -163,22 +163,8 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         if (propDesc == null) {
             // look for a field by this name.  Assumes the the number of
             // properties in a bean is (relatively) small, so uses a linear
-            // search.  Accept a property if it differs only by the 
-            // capitalization of the first character.
-            String localNameUp = 
-                    BeanSerializer.format(localName, 
-                                          BeanSerializer.FORCE_UPPER);
-            String localNameLo = 
-                    BeanSerializer.format(localName, 
-                                          BeanSerializer.FORCE_LOWER);
-            String mangledName = JavaUtils.xmlNameToJava(localName);
+            // search.
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
-            if(propDesc == null)
-                propDesc = (BeanPropertyDescriptor) propertyMap.get(localNameUp);
-            if(propDesc == null)
-                propDesc = (BeanPropertyDescriptor) propertyMap.get(localNameLo);
-            if(propDesc == null)
-                propDesc = (BeanPropertyDescriptor) propertyMap.get(mangledName);
         }
         
         if (propDesc == null) {
@@ -250,10 +236,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                 continue;
 
             String attrName = attributes.getLocalName(i);
-            String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
-            String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
-            String mangledName = JavaUtils.xmlNameToJava(attrName);
-            
+
             // look for the attribute property
             BeanPropertyDescriptor bpd = 
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
