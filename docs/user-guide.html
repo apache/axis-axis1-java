@@ -859,15 +859,15 @@ before for the client, but it generates a few new files:
 </tr>
 
 <tr>
-<td>For each service</td>
+<td>For all services</td>
 
-<td>deploy.wsdd</td>
+<td>One deploy.wsdd file</td>
 </tr>
 
 <tr>
 <td></td>
 
-<td>undeploy.wsdd</td>
+<td>One undeploy.wsdd file</td>
 </tr>
 </table>
 
@@ -1035,7 +1035,7 @@ as necessary, once for each unique namespace mapping.&nbsp; For example,
 if there is a namespace in the WSDL document called "urn:AddressFetcher2",
 and you want files generated from the objects within this namespace to
 reside in the package samples.addr, you would provide the following option
-to Wsdl2java:
+to WSDL2Java:
 <pre>--NStoPkg urn:AddressFetcher2=samples.addr</pre>
 (Note that if you use the short option tag, "-N", then there must not be
 a space between "-N" and the namespace.)
@@ -1320,7 +1320,7 @@ could be the actual implementation class, a stub class or a skeleton class.
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated WSDL file to build the appropriate client/server bindings
 for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java</a>):
-<div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.Wsdl2java -o . -d session -s&nbsp; -Nurn:Example6 samples.userguide.example6 ws.wsdl</font></div>
+<div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java -o . -d session -s&nbsp; -Nurn:Example6 samples.userguide.example6 ws.wsdl</font></div>
 <p>This will generate the following files:
 <ul>
 <li>
@@ -1336,7 +1336,10 @@ the appropriate <b><tt>java.rmi.Remote</tt></b> usages.</li>
 
 <li>
 <b><tt>WidgetPriceService.java</tt></b>: Java file containing the client
-side service class.</li>
+side service interface.</li>
+
+<li>
+<b><tt>WidgetPriceServiceLocator.java</tt></b>: Java file containing the client side service implementation class.</li>
 
 <li>
 <b><tt>WidgetPriceSoapBindingSkeleton.java</tt></b>: Server side skeleton.</li>
