@@ -1096,7 +1096,9 @@ public class JavaServiceDesc implements ServiceDesc {
         Class superClass = implClass.getSuperclass();
         if (superClass != null &&
                 !superClass.getName().startsWith("java.") &&
-                !superClass.getName().startsWith("javax.")) {
+                !superClass.getName().startsWith("javax.") &&
+                    (stopClasses == null ||
+                        !stopClasses.contains(superClass.getName()))) {
             createOperationsForName(superClass, methodName);
         }
     }
