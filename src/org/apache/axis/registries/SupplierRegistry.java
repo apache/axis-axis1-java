@@ -70,6 +70,8 @@ import org.apache.axis.registries.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SupplierRegistry implements HandlerRegistry {
+    private static final boolean DEBUG_LOG = false;
+    
     protected String     fileName;
     protected Hashtable  suppliers = null ;
     
@@ -89,12 +91,18 @@ public class SupplierRegistry implements HandlerRegistry {
      * Add a new Handler to the registry.
      */
     public void add(String key, Handler handler) {
+        if (DEBUG_LOG)
+            System.out.println("Registry " + this + " adding '" + key +
+                               "' (" + handler + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, new SimpleSupplier(handler) );
         save();
     }
     
     public void add(String key, Supplier supplier) {
+        if (DEBUG_LOG)
+            System.out.println("Registry " + this + " adding '" + key +
+                               "' (" + supplier + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, supplier );
         save();
