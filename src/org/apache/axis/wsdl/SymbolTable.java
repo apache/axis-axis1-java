@@ -142,6 +142,7 @@ public class SymbolTable {
         checkForUndefined(def);
         populate(def, doc);
         setReferences(def, doc);
+        checkForUndefined();
     } // add
 
     /**
@@ -185,6 +186,24 @@ public class SymbolTable {
 */
         }
     }
+
+    /**
+     * Scan the symbol table for undefined types and throw an exception.
+     */
+    private void checkForUndefined() throws IOException {
+        Iterator it = symbolTable.values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                if (v.get(i) instanceof RefdType) {
+                    throw new IOException(
+                            JavaUtils.getMessage("undefined00",
+                            "" + ((RefdType)v.get(i)).getQName()));
+                }
+            }
+        }
+    } // checkForUndefined
+
     /**
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
