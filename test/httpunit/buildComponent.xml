@@ -7,6 +7,30 @@
         <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant <target>
+   To execute
+        ant <target>
+
+Author:
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
 <project name="httpunit" default="default" basedir=".">
   <description>
     Test a Web application with HttpUnit. Based on example code in 
