@@ -58,7 +58,7 @@ Copyright:
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
-               testcase="yes">
+               testcase="no">
         <mapping namespace="urn:dataTypes" package="test.wsdl.datatypes"/>
     </wsdl2java>
 

@@ -66,4 +66,8 @@ public class DataTypes_BindingImpl implements DataTypes_Port {
 
         return outputList;
     }
+
+    public test.wsdl.datatypes.UsageType getUsageType() throws java.rmi.RemoteException { 
+	return new test.wsdl.datatypes.UsageType(test.wsdl.datatypes.UsageType._value1);
+    }
 }

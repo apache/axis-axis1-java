@@ -116,6 +116,9 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
                                 "l")) {    // doesn't complain about precision.
                     value += "L";
                 }
+            } else if (baseClass.equals("javax.xml.namespace.QName")) {
+                value = org.apache.axis.wsdl.symbolTable.Utils.getQNameFromPrefixedName(type.getNode(), value).toString();
+                value = "javax.xml.namespace.QName.valueOf(\"" + value + "\")";
             } else if (baseClass.equals(baseType)) {
 
                 // Construct baseClass object with literal string
@@ -194,6 +197,14 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 
         if (baseClass.equals("java.lang.String")) {
             pw.println("        return fromValue(value);");
+        } else if (baseClass.equals("javax.xml.namespace.QName")) {
+            pw.println("        try {");
+            pw.println("            return fromValue(javax.xml.namespace.QName.valueOf"
+                    + "(value));");
+            pw.println("        } catch (Exception e) {");
+            pw.println(
+                    "            throw new java.lang.IllegalArgumentException();");
+            pw.println("        }");
         } else if (baseClass.equals(baseType)) {
             pw.println("        try {");
             pw.println("            return fromValue(new " + baseClass
