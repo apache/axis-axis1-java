@@ -27,6 +27,9 @@
     <copy file="WSDLInteropTestRpcEncPortBindingImpl.java" overwrite="true"
           todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
 
+    <copy file="RpcEncTestCase.java" overwrite="true"
+          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work" 
       destdir="${build.dest}" debug="on">

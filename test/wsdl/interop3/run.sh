@@ -76,7 +76,7 @@ fi
 
 # RpcEnc
 echo RpcEnc
-if [ ! -z "${RpcEnv}" ]; then
+if [ ! -z "${RpcEnc}" ]; then
 java test.wsdl.interop3.rpcEnc.RpcEncTestCase ${RpcEnc}
 echo "======================================================="
 fi
@@ -84,7 +84,7 @@ fi
 # TestList
 echo TestList
 if [ ! -z "${TestList}" ]; then
-java test.wsdl.interop3.groupE.client.InteropTestListServiceTestClient ${TestList}
+java test.wsdl.interop3.groupE.client.InteropTestListServiceTestClient -l ${TestList}
 echo "======================================================="
 fi
 
