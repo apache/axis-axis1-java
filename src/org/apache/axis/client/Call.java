@@ -143,16 +143,21 @@ public class Call implements javax.xml.rpc.Call {
     private Vector             paramNames      = null ;
     private Vector             paramTypes      = null ;
     private Vector             paramModes      = null ;
-    private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC ;
     private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
 
     // Collection of properties to store and put in MessageContext at
-    // invoke() time
-    private Hashtable          myProperties    = null ;
-
+    // invoke() time.  Known ones are stored in actual variables for
+    // efficiency/type-consistency.  Unknown ones are in myProperties.
+    private Hashtable          myProperties    = new Hashtable();
+    private String             username        = null;
+    private String             password        = null;
     private boolean            maintainSession = false;
+    private String             operationStyle  = null;
+    private boolean            useSOAPAction   = false;
+    private String             SOAPActionURI   = null;
+    private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
 
 
     // Our Transport, if any
@@ -183,7 +188,7 @@ public class Call implements javax.xml.rpc.Call {
             "javax.xml.rpc.soap.http.soapaction.use";
     public static final String SOAPACTION_URI_PROPERTY =
             "javax.xml.rpc.soap.http.soapaction.uri";
-    public static final String NAMESPACE_URI_PROPERTY =
+    public static final String ENCODING_STYLE_PROPERTY =
             "javax.xml.rpc.encodingstyle.namespace.uri";
 
     /**
@@ -233,15 +238,250 @@ public class Call implements javax.xml.rpc.Call {
         setTargetEndpointAddress(url);
     }
 
+    ////////////////////////////
+    //
+    // Properties and the shortcuts for common ones.
+    //
+
     /**
-     * Returns the encoding style as a URI that should be used for the SOAP
-     * message.
+     * Allows you to set a named property to the passed in value.
+     * There are a few known properties (like username, password, etc)
+     * that are variables in Call.  The rest of the properties are
+     * stored in a Hashtable.  These common properties should be
+     * accessed via the accessors for speed/type safety, but they may
+     * still be obtained via this method.  It's up to one of the
+     * Handlers (or the Axis engine itself) to go looking for
+     * one of them.
      *
-     * @return String URI of the encoding style to use
+     * @param name  Name of the property
+     * @param value Value of the property
      */
-    public String getEncodingStyle() {
-        return( encodingStyle );
+    public void setProperty(String name, Object value) {
+        if (name == null || value == null) {
+            return;
+            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
+        }
+        else if (name.equals(USERNAME_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setUsername((String) value);
+        }
+        else if (name.equals(PASSWORD_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setPassword((String) value);
+        }
+        else if (name.equals(SESSION_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+            setMaintainSession(((Boolean) value).booleanValue());
+        }
+        else if (name.equals(OPERATION_STYLE_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setOperationStyle((String) value);
+        }
+        else if (name.equals(SOAPACTION_USE_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+            setUseSOAPAction(((Boolean) value).booleanValue());
+        }
+        else if (name.equals(SOAPACTION_URI_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            setSOAPActionURI((String) value);
+        }
+        else if (name.equals(ENCODING_STYLE_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            setEncodingStyle((String) value);
+        }
+        else if ( name.equals(TRANSPORT_NAME) ) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            transportName = (String) value ;
+            if (transport != null)
+                transport.setTransportName((String) value);
+        }
+        else {
+            myProperties.put(name, value);
+        }
+    } // setProperty
+
+    /**
+     * Returns the value associated with the named property - or null if not
+     * defined/set.
+     *
+     * @return Object value of the property - or null
+     */
+    public Object getProperty(String name) {
+        if (name != null) {
+            if (name.equals(USERNAME_PROPERTY)) {
+                return getUsername();
+            }
+            else if (name.equals(PASSWORD_PROPERTY)) {
+                return getPassword();
+            }
+            else if (name.equals(SESSION_PROPERTY)) {
+                return new Boolean(getMaintainSession());
+            }
+            else if (name.equals(OPERATION_STYLE_PROPERTY)) {
+                return getOperationStyle();
+            }
+            else if (name.equals(SOAPACTION_USE_PROPERTY)) {
+                return new Boolean(useSOAPAction());
+            }
+            else if (name.equals(SOAPACTION_URI_PROPERTY)) {
+                return getSOAPActionURI();
+            }
+            else if (name.equals(ENCODING_STYLE_PROPERTY)) {
+                return getEncodingStyle();
+            }
+            else if (name.equals(TRANSPORT_NAME)) {
+                return transportName;
+            }
+            else {
+                return myProperties.get(name);
+            }
+        }
+        else {
+            return null;
+        }
     }
+
+    /**
+     * Set the username.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    } // setUsername
+
+    /**
+     * Get the user name
+     */
+    public String getUsername() {
+        return username;
+    } // getUsername
+
+    /**
+     * Set the password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    } // setPassword
+
+    /**
+     * Get the password
+     */
+    public String getPassword() {
+        return password;
+    } // getPassword
+
+    /**
+     * Determine whether we'd like to track sessions or not.  This
+     * overrides the default setting from the service.
+     * This just passes through the value into the MessageContext.
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param yesno true if session state is desired, false if not.
+     */
+    public void setMaintainSession(boolean yesno) {
+        maintainSession = yesno;
+    }
+
+    /**
+     * Get the value of maintainSession flag.
+     */
+    public boolean getMaintainSession() {
+        return maintainSession;
+    }
+
+    /**
+     * Set the operation style.  IllegalArgumentException is thrown if operationStyle
+     * is not "rpc" or "document".
+     *
+     * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
+     */
+    public void setOperationStyle(String operationStyle) {
+        if ("rpc".equalsIgnoreCase(operationStyle)
+                || "document".equalsIgnoreCase(operationStyle)) {
+            this.operationStyle = operationStyle;
+        }
+        else {
+            throw new IllegalArgumentException(JavaUtils.getMessage(
+                    "badProp01",
+                    new String[] {OPERATION_STYLE_PROPERTY,
+                    "\"rpc\", \"document\"", operationStyle}));
+        }
+    } // setOperationStyle
+
+    /**
+     * Get the operation style.
+     */
+    public String getOperationStyle() {
+        return operationStyle;
+    } // getOperationStyle
+
+    /**
+     * Should soapAction be used?
+     */
+    public void setUseSOAPAction(boolean useSOAPAction) {
+        this.useSOAPAction = useSOAPAction;
+    } // setUseSOAPAction
+
+    /**
+     * Are we using soapAction?
+     */
+    public boolean useSOAPAction() {
+        return useSOAPAction;
+    } // useSOAPAction
+
+    /**
+     * Set the soapAction URI.
+     */
+    public void setSOAPActionURI(String SOAPActionURI)
+            throws IllegalArgumentException {
+        this.SOAPActionURI = SOAPActionURI;
+    } // setSOAPActionURI
+
+    /**
+     * Get the soapAction URI.
+     */
+    public String getSOAPActionURI() {
+        return SOAPActionURI;
+    } // getSOAPActionURI
 
     /**
      * Sets the encoding style to the URL passed in.
@@ -249,8 +489,107 @@ public class Call implements javax.xml.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
-        encodingStyle = namespaceURI ;
+        encodingStyle = namespaceURI;
     }
+
+    /**
+     * Returns the encoding style as a URI that should be used for the SOAP
+     * message.
+     *
+     * @return String URI of the encoding style to use
+     */
+    public String getEncodingStyle() {
+        return encodingStyle;
+    }
+
+   /**
+     * Removes (if set) the named property.
+     *
+     * @param name name of the property to remove
+     */
+    public void removeProperty(String name) {
+        if ( name == null || myProperties == null ) return ;
+        myProperties.remove( name );
+    }
+
+    /**
+     * Sets the URL of the target Web Service.
+     *
+     * @param address URL of the target Web Service
+     */
+    public void setTargetEndpointAddress(java.net.URL address) {
+        try {
+            if ( address == null ) {
+                setTransport(null);
+                return ;
+            }
+
+            String protocol = address.getProtocol();
+
+            // Handle the case where the protocol is the same but we
+            // just want to change the URL - if so just set the URL,
+            // creating a new Transport object will drop all session
+            // data - and we want that stuff to persist between invoke()s.
+            // Technically the session data should be in the message
+            // context so that it can be persistent across transports
+            // as well, but for now the data is in the Transport object.
+            ////////////////////////////////////////////////////////////////
+            if ( this.transport != null ) {
+                String oldAddr = this.transport.getUrl();
+                if ( oldAddr != null && !oldAddr.equals("") ) {
+                    URL     tmpURL   = new URL( oldAddr );
+                    String  oldProto = tmpURL.getProtocol();
+                    if ( protocol.equals(oldProto) ) {
+                        this.transport.setUrl( address.toString() );
+                        return ;
+                    }
+                }
+            }
+
+            // Do we already have a transport for this address?
+            Transport transport = (Transport) transportImpls.get(address);
+            if (transport != null) {
+                setTransport(transport);
+            }
+            else {
+            // We don't already have a transport for this address.  Create one.
+                transport = getTransportForProtocol(protocol);
+                if (transport == null)
+                    throw new AxisFault("Call.setTargetEndpointAddress",
+                                 JavaUtils.getMessage("noTransport01",
+                                 protocol), null, null);
+                transport.setUrl(address.toString());
+                setTransport(transport);
+                transportImpls.put(address, transport);
+            }
+        }
+        catch( Exception exp ) {
+            exp.printStackTrace();
+            // do what?
+            // throw new AxisFault("Call.setTargetEndpointAddress",
+                    //"Malformed URL Exception: " + e.getMessage(), null, null);
+        }
+    }
+
+    /**
+     * Returns the URL of the target Web Service.
+     *
+     * @return URL URL of the target Web Service
+     */
+    public java.net.URL getTargetEndpointAddress() {
+        try {
+            if ( transport == null ) return( null );
+            return( new java.net.URL( transport.getUrl() ) );
+        }
+        catch( Exception exp ) {
+            return( null );
+        }
+    }
+
+    //
+    // end properties code.
+    //
+    ////////////////////////////
 
     /**
      * Is the caller required to provide the parameter and return type specification?  If true, then
@@ -565,202 +904,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setPortTypeName(QName portType) {
         portTypeName = portType ;
-    }
-
-    /**
-     * Sets the URL of the target Web Service.
-     *
-     * @param address URL of the target Web Service
-     */
-    public void setTargetEndpointAddress(java.net.URL address) {
-        try {
-            if ( address == null ) {
-                setTransport(null);
-                return ;
-            }
-
-            String protocol = address.getProtocol();
-
-            // Handle the case where the protocol is the same but we
-            // just want to change the URL - if so just set the URL,
-            // creating a new Transport object will drop all session
-            // data - and we want that stuff to persist between invoke()s.
-            // Technically the session data should be in the message
-            // context so that it can be persistent across transports
-            // as well, but for now the data is in the Transport object.
-            ////////////////////////////////////////////////////////////////
-            if ( this.transport != null ) {
-                String oldAddr = this.transport.getUrl();
-                if ( oldAddr != null && !oldAddr.equals("") ) {
-                    URL     tmpURL   = new URL( oldAddr );
-                    String  oldProto = tmpURL.getProtocol();
-                    if ( protocol.equals(oldProto) ) {
-                        this.transport.setUrl( address.toString() );
-                        return ;
-                    }
-                }
-            }
-
-            // Do we already have a transport for this address?
-            Transport transport = (Transport) transportImpls.get(address);
-            if (transport != null) {
-                setTransport(transport);
-            }
-            else {
-            // We don't already have a transport for this address.  Create one.
-                transport = getTransportForProtocol(protocol);
-                if (transport == null)
-                    throw new AxisFault("Call.setTargetEndpointAddress",
-                                 JavaUtils.getMessage("noTransport01",
-                                 protocol), null, null);
-                transport.setUrl(address.toString());
-                setTransport(transport);
-                transportImpls.put(address, transport);
-            }
-        }
-        catch( Exception exp ) {
-            exp.printStackTrace();
-            // do what?
-            // throw new AxisFault("Call.setTargetEndpointAddress",
-                    //"Malformed URL Exception: " + e.getMessage(), null, null);
-        }
-    }
-
-    /**
-     * Returns the URL of the target Web Service.
-     *
-     * @return URL URL of the target Web Service
-     */
-    public java.net.URL getTargetEndpointAddress() {
-        try {
-            if ( transport == null ) return( null );
-            return( new java.net.URL( transport.getUrl() ) );
-        }
-        catch( Exception exp ) {
-            return( null );
-        }
-    }
-
-    /**
-     * Allows you to set a named property to the passed in value.
-     * This will just be stored in a Hashtable - it's then up to
-     * one of the Handler (or the Axis engine itself) to go looking for
-     * one of them.
-     *
-     * @param name  Name of the property
-     * @param value Value of the property
-     */
-    public void setProperty(String name, Object value) {
-        if (name == null || value == null) {
-            return;
-            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
-        }
-        else if (name.equals(USERNAME_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
-        }
-        else if (name.equals(PASSWORD_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
-        }
-        else if (name.equals(SESSION_PROPERTY)) {
-            if (!(value instanceof Boolean)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.Boolean",
-                        value.getClass().getName()}));
-            }
-        }
-        else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
-            String style = (String) value;
-            if (!style.equals("rpc") && !style.equals("document")) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp01", new String[] {
-                        name, "\"rpc\", \"document\"", style}));
-            }
-        }
-        else if (name.equals(SOAPACTION_USE_PROPERTY)) {
-            if (!(value instanceof Boolean)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.Boolean",
-                        value.getClass().getName()}));
-            }
-        }
-        else if (name.equals(SOAPACTION_URI_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.String",
-                        value.getClass().getName()}));
-            }
-            Boolean useSOAP =
-                    (Boolean) myProperties.get(SOAPACTION_USE_PROPERTY);
-            if (useSOAP == null || !useSOAP.booleanValue()) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp02", new String[]
-                        {name, SOAPACTION_USE_PROPERTY, "true"}));
-            }
-        }
-        else if (name.equals(NAMESPACE_URI_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.String",
-                        value.getClass().getName()}));
-            }
-        }
-        else if ( name.equals(TRANSPORT_NAME) ) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
-            transportName = (String) value ;
-            if (transport != null)
-                transport.setTransportName((String) value);
-            return;
-        }
-
-        if (myProperties == null)
-            myProperties = new Hashtable();
-        myProperties.put(name, value);
-    }
-
-    /**
-     * Returns the value associated with the named property - or null if not
-     * defined/set.
-     *
-     * @return Object value of the property - or null
-     */
-    public Object getProperty(String name) {
-        return (name == null || myProperties == null) ? null :
-                                                        myProperties.get(name);
-    }
-
-    /**
-     * Removes (if set) the named property.
-     *
-     * @param name name of the property to remove
-     */
-    public void removeProperty(String name) {
-        if ( name == null || myProperties == null ) return ;
-        myProperties.remove( name );
     }
 
     /**
@@ -1107,21 +1250,6 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Determine whether we'd like to track sessions or not.  This
-     *
-     * overrides the default setting from the service.
-     *
-     * This just passes through the value into the MessageContext.
-     *
-     * Note: Not part of JAX-RPC specification.
-     *
-     * @param yesno true if session state is desired, false if not.
-     */
-    public void setMaintainSession (boolean yesno) {
-        maintainSession = yesno;
-    }
-
-    /**
      * Obtain a reference to our MessageContext.
      *
      * Note: Not part of JAX-RPC specification.
@@ -1422,15 +1550,29 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.reset();
         msgContext.setResponseMessage(null);
         msgContext.setProperty( MessageContext.CALL, this );
+        if (username != null) {
+            msgContext.setUsername(username);
+        }
+        if (password != null) {
+            msgContext.setPassword(password);
+        }
         msgContext.setMaintainSession(maintainSession);
+        if (operationStyle != null) {
+            msgContext.setOperationStyle(operationStyle);
+        }
+        if (useSOAPAction) {
+            msgContext.setUseSOAPAction(true);
+        }
+        if (SOAPActionURI != null) {
+            msgContext.setSOAPActionURI(SOAPActionURI);
+        }
+        msgContext.setEncodingStyle(encodingStyle);
 
         /**
          * Go thru the properties and ones that are Axis specific, and
          * need to be moved to the msgContext - do so.
          * TBD:
          *   security.auth.subject
-         *   soap.operation.style
-         *   encodingstyle.namespace.uri
          */
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();
@@ -1446,21 +1588,6 @@ public class Call implements javax.xml.rpc.Call {
                         intValue = Integer.parseInt((String)value);
 
                     msgContext.setTimeout( intValue );
-                }
-                else if (name.equals("http.auth.user")) {
-                    msgContext.setProperty(MessageContext.USERID, value);
-                }
-                else if (name.equals("http.auth.password")) {
-                    msgContext.setProperty(MessageContext.PASSWORD, value);
-                }
-                else if (name.equals("soap.http.soapaction.uri")) {
-                    Object b = getProperty("soap.http.soapaction.use");
-                    boolean use = false;  
-                    if (b != null && b instanceof Boolean) {
-                        use = ((Boolean)b).booleanValue();
-                    }
-                    if (use == true) 
-                        msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, value);
                 }
                 else // Just pass the property through to the message context
                     msgContext.setProperty(name, value);

@@ -99,7 +99,7 @@ public class HTTPConstants {
      *  This can be moved to MessageContext.TRANS_SOAPACTION if more transports
      *  have it.
      */
-    public static String MC_HTTP_SOAPACTION     = "transport.http.soapAction";
+    public static String MC_HTTP_SOAPACTION = org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY;
 
     /** HttpServlet
      */
