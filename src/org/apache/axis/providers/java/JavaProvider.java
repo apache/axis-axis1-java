@@ -102,7 +102,11 @@ public abstract class JavaProvider extends BasicProvider
     public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
-    
+    public static final String OPTION_WSDL_PORTTYPE="wsdlPortType";
+    public static final String OPTION_WSDL_SERVICEELEMENT="wsdlServiceElement";
+    public static final String OPTION_WSDL_SERVICEPORT="wsdlServicePort";
+    public static final String OPTION_WSDL_TARGETNAMESPACE="wsdlTargetNamespace";
+
     public static final String OPTION_SCOPE = "scope";
 
     /**
@@ -341,8 +345,9 @@ public abstract class JavaProvider extends BasicProvider
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String interfaceNamespace = 
                     msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
-            if (interfaceNamespace == null) 
+            if (interfaceNamespace == null) {
                 interfaceNamespace = url;
+            }
             String locationUrl = 
                     msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
             
@@ -387,13 +392,37 @@ public abstract class JavaProvider extends BasicProvider
 
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
-            emitter.setIntfNamespace(interfaceNamespace);
+
+            // If a wsdl target namespace was provided, use the targetNamespace.
+            // Otherwise use the interfaceNamespace constructed above.
+            String targetNamespace = (String) service.getOption(OPTION_WSDL_TARGETNAMESPACE);
+            if (targetNamespace == null || 
+                targetNamespace.length() == 0) {
+                targetNamespace = interfaceNamespace;
+            }            
+            emitter.setIntfNamespace(targetNamespace);
+
             emitter.setLocationUrl(locationUrl);
             emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                    getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                           getDefaultTypeMapping());
+
+            String wsdlPortType = (String) service.getOption(OPTION_WSDL_PORTTYPE);
+            String wsdlServiceElement = (String) service.getOption(OPTION_WSDL_SERVICEELEMENT);
+            String wsdlServicePort = (String) service.getOption(OPTION_WSDL_SERVICEPORT);
+
+            if (wsdlPortType != null && wsdlPortType.length() > 0) {
+                emitter.setPortTypeName(wsdlPortType);
+            }
+            if (wsdlServiceElement != null && wsdlServiceElement.length() > 0) {
+                emitter.setServiceElementName(wsdlServiceElement);
+            }
+            if (wsdlServicePort != null && wsdlServicePort.length() > 0) {
+                emitter.setServicePortName(wsdlServicePort);
+            }
+
             Document  doc = emitter.emit(Emitter.MODE_ALL);
 
             msgContext.setProperty("WSDL", doc);
