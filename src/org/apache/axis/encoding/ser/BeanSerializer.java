@@ -514,6 +514,14 @@ public class BeanSerializer implements Serializer, Serializable {
                     !propertyDescriptor[i].isIndexed()) {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].get(value);
+                    // Convert true/false to 1/0 in case of soapenv:mustUnderstand
+                    if (qname.equals(new QName(Constants.URI_SOAP11_ENV, Constants.ATTR_MUST_UNDERSTAND))) {
+                    	if (propValue.equals(Boolean.TRUE)) {
+                    		propValue = "1";
+                    	} else if (propValue.equals(Boolean.FALSE)) {
+                    		propValue = "0";
+                    	}
+                    }
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
                     // the attribute may be more sophisticated.  For example, don't
