@@ -100,7 +100,7 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
-    private TypeMappingRegistry tmr = null;
+    private TypeMappingRegistry tmr = new TypeMappingRegistryImpl();;
 
     private Vector faultFlows = new Vector();
     private Vector typeMappings = new Vector();
@@ -186,6 +186,7 @@ public class WSDDService
             WSDDTypeMapping mapping =
                     new WSDDTypeMapping(typeMappingElements[i]);
             typeMappings.add(mapping);
+            deployTypeMapping(mapping);
         }
 
         Element [] beanMappingElements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
@@ -193,6 +194,7 @@ public class WSDDService
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
             typeMappings.add(mapping);
+            deployTypeMapping(mapping);
         }
 
         Element [] namespaceElements = getChildElements(e, ELEM_WSDD_NAMESPACE);
@@ -230,8 +232,6 @@ public class WSDDService
         if (hcEl != null) {
 	    	_wsddHIchain = new WSDDJAXRPCHandlerInfoChain(hcEl);
         }
-
-        initTMR();
 
         // call to validate standard descriptors for this service
         validateDescriptors();
@@ -435,7 +435,6 @@ public class WSDDService
 
         AxisEngine.normaliseOptions(service);
 
-        initTMR();
         tmr.delegate(registry.getTypeMappingRegistry());
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
@@ -627,16 +626,6 @@ public class WSDDService
             registry.removeNamespaceMapping(namespace);
         }
         registry.removeNamespaceMapping(getQName().getLocalPart());
-    }
-
-    public void initTMR() throws WSDDException
-    {
-        if (tmr == null) {
-            tmr = new TypeMappingRegistryImpl();
-            for (int i = 0; i < typeMappings.size(); i++) {
-                deployTypeMapping((WSDDTypeMapping)typeMappings.get(i));
-            }
-        }
     }
 
     public TypeMapping getTypeMapping(String encodingStyle) {
