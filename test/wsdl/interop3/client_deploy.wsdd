@@ -1,0 +1,25 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- on the client.  To do this simply run:                     -->
+<!--   java org.apache.axis.utils.Admin client client_deploy.xml -->
+<!--      from the same dir that the Axis client will run in    -->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" 
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <handler name="log" type="java:org.apache.axis.handlers.LogHandler" />
+
+  <globalConfiguration>
+    <requestFlow>
+      <handler type="log"/>
+    </requestFlow>
+    <responseFlow>
+      <handler type="log"/>
+    </responseFlow>
+  <globalConfiguration>
+
+<!--
+  <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
+  <transport name="local" pivot="java:org.apache.axis.transport.local.LocalSender"/>
+  -->
+
+</deployment>
