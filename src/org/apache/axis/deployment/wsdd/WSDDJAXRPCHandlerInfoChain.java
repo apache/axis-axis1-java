@@ -15,9 +15,12 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -33,6 +36,8 @@ import java.util.Map;
  *
  */
 public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
+    protected static Log log =
+        LogFactory.getLog(WSDDJAXRPCHandlerInfoChain.class.getName());
     
     private ArrayList _hiList;
     private HandlerInfoChainFactory _hiChainFactory;
@@ -66,7 +71,7 @@ public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
                 try {
                     handlerClass = ClassUtils.forName(handlerClassName);
                 } catch (ClassNotFoundException cnf) { 
-                    // GLT - do something here
+                    log.error(Messages.getMessage("handlerInfoChainNoClass00", handlerClassName), cnf);
                 }
 
                 Map handlerMap = handlerInfo.getHandlerMap();
