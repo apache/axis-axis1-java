@@ -2,6 +2,8 @@ package test.wsdl.interop3.compound1;
 
 import test.wsdl.interop3.compound1.xsd.Document;
 
+import java.net.URL;
+
 /*
     <!-- SOAP Builder's round III web services          -->
     <!-- interoperability testing:  import1             -->
@@ -23,8 +25,17 @@ import test.wsdl.interop3.compound1.xsd.Document;
 */
 
 public class Compound1TestCase extends junit.framework.TestCase {
+    URL url;
+
     public Compound1TestCase(String name) {
         super(name);
+    }
+
+    protected void setUp() throws Exception {
+        try {
+            url = new URL("http://localhost:8080/stkv3/wsdl/Compound1.wsdl");
+        } catch (Exception e) {
+        }
     }
 
     public void testStep3() {
@@ -51,6 +62,7 @@ public class Compound1TestCase extends junit.framework.TestCase {
         }
     }
 
+    /*
     public void testStep5() {
         SoapInteropCompound1Binding binding;
         try {
@@ -117,9 +129,21 @@ public class Compound1TestCase extends junit.framework.TestCase {
     }
 */
 
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(new junit.framework.TestSuite(Compound1TestCase.class));
+        String str;
+        str = AppendBaby(args);
+        System.out.println(str);
+
+        String s2 = args[0] + ", baby";
     } // main
+
+    private static String AppendBaby(String[] args) {
+        String str;
+        str = args[0] + ", baby";
+        return str;
+    }
 
 }
 
