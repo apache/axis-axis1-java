@@ -37,7 +37,7 @@ public class DocLitParamTestCase extends junit.framework.TestCase {
     }
 
     public void testStep3() throws Exception {
-        WSDLInteropTestDocLitPortBinding binding;
+        WSDLInteropTestDocLitPortType binding;
         try {
             if (url != null) {
                 binding = new WSDLInteropTestDocLitServiceLocator().getWSDLInteropTestDocLitParamPort(url);

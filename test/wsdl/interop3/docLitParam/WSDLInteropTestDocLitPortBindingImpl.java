@@ -7,7 +7,7 @@
 
 package test.wsdl.interop3.docLitParam;
 
-public class WSDLInteropTestDocLitPortBindingImpl implements test.wsdl.interop3.docLitParam.WSDLInteropTestDocLitPortBinding {
+public class WSDLInteropTestDocLitPortBindingImpl implements test.wsdl.interop3.docLitParam.WSDLInteropTestDocLitPortType {
     public java.lang.String echoString(java.lang.String param0) throws java.rmi.RemoteException {
         return param0;
     }
