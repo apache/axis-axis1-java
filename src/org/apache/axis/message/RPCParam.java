@@ -83,6 +83,7 @@ public class RPCParam
     public Object value;
 
     private ParameterDesc paramDesc;
+    private boolean wantXSIType = true;
 
     private static Field valueField;
     static {
@@ -153,6 +154,14 @@ public class RPCParam
         this.paramDesc = paramDesc;
     }
 
+    public void setXSITypeGeneration(boolean value) {
+        this.wantXSIType = value; 
+    }
+
+    public boolean getXSITypeGeneration() {
+        return this.wantXSIType;
+    }
+
     public void serialize(SerializationContext context)
         throws IOException
     {
@@ -172,6 +181,6 @@ public class RPCParam
                           null,   // no extra attrs
                           value,  // value
                           javaType, xmlType, // java/xml type
-                          true, true); 
+                          true, wantXSIType); 
     }
 }
