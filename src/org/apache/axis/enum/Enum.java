@@ -58,9 +58,12 @@ package org.apache.axis.enum;
 import java.util.Vector;
 import java.util.Hashtable;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 /**
  * General support for 'enumerated' data types.
@@ -72,7 +75,7 @@ public abstract class Enum implements java.io.Serializable {
     private static final Hashtable types = new Hashtable(13);
     
     protected static Log log =
-        AxisInternalServices.getLog(Enum.class.getName());
+        LogFactory.getLog(Enum.class.getName());
 
     private final Type   type;
     public  final int    value;

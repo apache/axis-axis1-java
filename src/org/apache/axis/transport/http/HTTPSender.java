@@ -56,7 +56,7 @@ package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
@@ -64,6 +64,8 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.SOAPException;
@@ -91,7 +93,7 @@ import java.util.StringTokenizer;
  */
 public class HTTPSender extends BasicHandler {
 
-    protected static Log log = AxisInternalServices.getLog(HTTPSender.class.getName());
+    protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
 
     /** Hook for creating a different SSL socket factory
      * XXX The whole thing can be refactored to use something like tomcat.util, which

@@ -85,8 +85,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -98,7 +99,7 @@ import org.w3c.dom.Document;
 public class JAFDataHandlerSerializer implements Serializer {
 
     protected static Log log =
-        AxisInternalServices.getLog(JAFDataHandlerSerializer.class.getName());
+        LogFactory.getLog(JAFDataHandlerSerializer.class.getName());
 
     /**
      * Serialize a JAF DataHandler quantity.

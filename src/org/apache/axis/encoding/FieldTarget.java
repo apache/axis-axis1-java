@@ -62,17 +62,18 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.axis.AxisInternalServices;
-import org.apache.axis.encoding.Target;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 // Target is a field.  The set method places the value in the field.
 public class FieldTarget implements Target
 {
     protected static Log log =
-        AxisInternalServices.getLog(FieldTarget.class.getName());
+        LogFactory.getLog(FieldTarget.class.getName());
 
     private Object targetObject;
     private Field targetField;

@@ -53,45 +53,45 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.bytecode;
+package org.apache.axis.components.bytecode;
 
-import com.techtrader.modules.tools.bytecode.BCClass;
-import com.techtrader.modules.tools.bytecode.BCMethod;
-import com.techtrader.modules.tools.bytecode.Code;
-import com.techtrader.modules.tools.bytecode.LocalVariableTableAttribute;
-import com.techtrader.modules.tools.bytecode.Constants;
-import com.techtrader.modules.tools.bytecode.LocalVariable;
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Code;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.LocalVariable;
+import org.apache.bcel.classfile.LocalVariableTable;
+import org.apache.bcel.classfile.Method;
 
-import java.lang.reflect.Method;
-import java.util.Vector;
-import java.util.Hashtable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
- * This class implements an Extractor using "TechTrader Bytecode Toolkit"
- * from <a href="http://tt-bytecode.sourceforge.net/">tt-bytecode</a>
+ * This class implements an Extractor using BCEL
+ *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.1 $ $Date: 2002/06/12 15:02:59 $
  */
-public class TechTrader implements Extractor {
+public class BCEL implements Extractor {
 
     /**
-     * Cache of tt-bytecode BCClass objects which correspond to particular
+     * Cache of BCEL JavaClass objects which correspond to particular
      * Java classes.
      *
      * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
      */
-    private static Hashtable ttClassCache = new Hashtable();
+    private static Hashtable clazzCache = new Hashtable();
 
     /**
-     * Get Parameter Names using tt-bytecode
+     * Get Parameter Names using BCEL
      *
      * @param method the Java method we're interested in
      * @return list of names or null
      */
-    public String[] getParameterNamesFromDebugInfo(Method method) {
-        Class c = method.getDeclaringClass();
-        int numParams = method.getParameterTypes().length;
+    public String[] getParameterNamesFromDebugInfo(java.lang.reflect.Method m) {
+        Class c = m.getDeclaringClass();
+        int numParams = m.getParameterTypes().length;
         Vector temp = new Vector();
 
         // Don't worry about it if there are no params.
@@ -99,40 +99,54 @@ public class TechTrader implements Extractor {
             return null;
 
         // Try to obtain a tt-bytecode class object
-        BCClass bclass = (BCClass)ttClassCache.get(c);
+        JavaClass bclass = (JavaClass) clazzCache.get(c);
 
-        if(bclass == null) {
+        if (bclass == null) {
             try {
-                bclass = new BCClass(c);
-                ttClassCache.put(c, bclass);
+                String className = c.getName();
+                String classFile = className.replace('.', '/');
+                InputStream is =
+                        c.getClassLoader().getResourceAsStream(classFile + ".class");
+
+                ClassParser parser = new ClassParser(is, className);
+                bclass = parser.parse();
+
+                clazzCache.put(c, bclass);
             } catch (IOException e) {
                 // what now?
             }
         }
 
-        // Obtain the exact method we're interested in.
-        BCMethod bmeth = bclass.getMethod(method.getName(),
-                                          method.getParameterTypes());
+        Method[] methods = bclass.getMethods();
+        Method method = null;
+        // Get the BCEL Method corresponding to the
+        // ava.lang.reflect.Method
+        for (int i = 0; i < methods.length; i++) {
+            if (m.getName().equals(methods[i].getName()) &&
+                    getSignature(m).equals(methods[i].getSignature())) {
+                method = methods[i];
+                break;
+            }
+        }
 
-        if (bmeth == null)
+        // Obtain the exact method we're interested in.
+        if (method == null)
             return null;
 
         // Get the Code object, which contains the local variable table.
-        Code code = bmeth.getCode();
+        Code code = method.getCode();
         if (code == null)
             return null;
 
-        LocalVariableTableAttribute attr =
-                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
-
+        LocalVariableTable attr = method.getLocalVariableTable();
         if (attr == null)
             return null;
 
         // OK, found it.  Now scan through the local variables and record
         // the names in the right indices.
-        LocalVariable [] vars = attr.getLocalVariables();
+        LocalVariable[] vars = attr.getLocalVariableTable();
 
-        String [] argNames = new String[numParams + 1];
+        String[] argNames = new String[numParams + 1];
         argNames[0] = null; // don't know return name
 
         // NOTE: we scan through all the variables here, because I have been
@@ -140,8 +154,8 @@ public class TechTrader implements Extractor {
         // local variable table.
         for (int j = 0; j < vars.length; j++) {
             LocalVariable var = vars[j];
-            if (! var.getName().equals("this")) {
-                if(temp.size() < var.getIndex() + 1)
+            if (!var.getName().equals("this")) {
+                if (temp.size() < var.getIndex() + 1)
                     temp.setSize(var.getIndex() + 1);
                 temp.setElementAt(var.getName(), var.getIndex());
             }
@@ -150,11 +164,72 @@ public class TechTrader implements Extractor {
         for (int j = 0; j < temp.size(); j++) {
             if (temp.elementAt(j) != null) {
                 k++;
-                argNames[k] = (String)temp.elementAt(j);
-                if(k + 1 == argNames.length)
+                argNames[k] = (String) temp.elementAt(j);
+                if (k + 1 == argNames.length)
                     break;
             }
         }
         return argNames;
+    }
+
+    /**
+     * Compute the JVM signature for the class.
+     */
+    String getSignature(Class clazz) {
+        String type = null;
+        if (clazz.isArray()) {
+            Class cl = clazz;
+            int dimensions = 0;
+            while (cl.isArray()) {
+                dimensions++;
+                cl = cl.getComponentType();
+            }
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < dimensions; i++) {
+                sb.append("[");
+            }
+            sb.append(getSignature(cl));
+            type = sb.toString();
+        } else if (clazz.isPrimitive()) {
+            if (clazz == Integer.TYPE) {
+                type = "I";
+            } else if (clazz == Byte.TYPE) {
+                type = "B";
+            } else if (clazz == Long.TYPE) {
+                type = "J";
+            } else if (clazz == Float.TYPE) {
+                type = "F";
+            } else if (clazz == Double.TYPE) {
+                type = "D";
+            } else if (clazz == Short.TYPE) {
+                type = "S";
+            } else if (clazz == Character.TYPE) {
+                type = "C";
+            } else if (clazz == Boolean.TYPE) {
+                type = "Z";
+            } else if (clazz == Void.TYPE) {
+                type = "V";
+            }
+        } else {
+            type = "L" + clazz.getName().replace('.', '/') + ";";
+        }
+        return type;
+    }
+
+    /*
+     * Compute the JVM method descriptor for the method.
+     */
+    String getSignature(java.lang.reflect.Method meth) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("(");
+
+        Class[] params = meth.getParameterTypes(); // avoid clone
+        for (int j = 0; j < params.length; j++) {
+            sb.append(getSignature(params[j]));
+        }
+        sb.append(")");
+        sb.append(getSignature(meth.getReturnType()));
+        return sb.toString();
     }
 }

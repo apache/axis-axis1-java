@@ -56,7 +56,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.attachments.Attachments; 
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
@@ -71,6 +71,7 @@ import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;
@@ -98,7 +99,7 @@ import java.util.Stack;
 public class DeserializationContextImpl extends DefaultHandler implements DeserializationContext
 {
     protected static Log log =
-            AxisInternalServices.getLog(DeserializationContextImpl.class.getName());
+            LogFactory.getLog(DeserializationContextImpl.class.getName());
 
     private NSStack namespaces = new NSStack();
     

@@ -53,14 +53,14 @@
  * <http://www.apache.org/>.
  */
  
-package org.apache.axis.utils.compiler;
+package org.apache.axis.components.compiler;
 
 /**
  * This class encapsulates an error message produced by a programming language
  * processor (whether interpreted or compiled)
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.1 $ $Date: 2001/12/10 22:25:53 $
  * @since 2.0
  */
 

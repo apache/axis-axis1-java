@@ -56,7 +56,7 @@ package org.apache.axis.handlers.soap;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -78,7 +78,10 @@ import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -88,6 +91,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -99,7 +103,7 @@ import java.util.Vector;
 public class SOAPService extends SimpleTargetedChain
 {
     protected static Log log =
-        AxisInternalServices.getLog(SOAPService.class.getName());
+        LogFactory.getLog(SOAPService.class.getName());
 
     /** Valid transports for this service
      * (server side only!)

@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
+ *    Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -53,60 +53,18 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis;
 
-import org.apache.axis.AxisProperties;
-import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.xml.sax.SAXException;
-
-import java.util.ArrayList;
 
 /**
- * Deserializer for DOM elements
- *
- * @author Glen Daniels (gdaniels@macromedia.com)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @author Richard A. Sitze
  */
-public class ElementDeserializer extends DeserializerImpl
-{
-    protected static Log log =
-        LogFactory.getLog(ElementDeserializer.class.getName());
-
-   public static final String DESERIALIZE_CURRENT_ELEMENT = "DeserializeCurrentElement";
-
-    public final void onEndElement(String namespace, String localName,
-                                   DeserializationContext context)
-        throws SAXException
-    {
-        try {
-            MessageElement msgElem = context.getCurElement();
-            if ( msgElem != null ) {
-                MessageContext messageContext = context.getMessageContext();
-                Boolean currentElement = (Boolean) messageContext.getProperty(DESERIALIZE_CURRENT_ELEMENT);
-                if (currentElement != null && currentElement.booleanValue()) {
-                    value = msgElem.getAsDOM();
-                    messageContext.setProperty(DESERIALIZE_CURRENT_ELEMENT, Boolean.FALSE);
-                    return;
-                }
-                ArrayList children = msgElem.getChildren();
-                if ( children != null ) {
-                    msgElem = (MessageElement) children.get(0);
-                    if ( msgElem != null )
-                        value = msgElem.getAsDOM();
-                }
-            }
-        }
-        catch( Exception exp ) {
-            log.error(JavaUtils.getMessage("exception00"), exp);
-            throw new SAXException( exp );
-        }
+public class AxisProperties {
+    /**
+     * Central access point for AXIS to obtain "global" configuration properties.
+     * To be extended in the future... or replaced with non-global properties.
+     */
+    public static String getGlobalProperty(String property) {
+        return System.getProperty(property);
     }
 }

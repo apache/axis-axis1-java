@@ -57,14 +57,14 @@ package org.apache.axis.handlers;
 
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 
 
 /**
@@ -74,7 +74,7 @@ import org.apache.commons.logging.Log;
  */
 public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(MD5AttachHandler.class.getName());
+        LogFactory.getLog(MD5AttachHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: EchoHandler::invoke");

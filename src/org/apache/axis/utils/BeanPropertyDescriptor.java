@@ -59,9 +59,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 /**
  * This class is essentially a copy of the PropertyDescriptor information, except
@@ -72,7 +74,7 @@ import org.apache.commons.logging.Log;
 public class BeanPropertyDescriptor
 {
     protected static Log log =
-        AxisInternalServices.getLog(BeanPropertyDescriptor.class.getName());
+        LogFactory.getLog(BeanPropertyDescriptor.class.getName());
 
     private String name = null;
     private Method getter = null;

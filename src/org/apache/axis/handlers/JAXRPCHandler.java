@@ -56,8 +56,10 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -67,7 +69,7 @@ import org.apache.commons.logging.Log;
  */
 public class JAXRPCHandler extends BasicHandler {
     protected static Log log =
-            AxisInternalServices.getLog(JAXRPCHandler.class.getName());
+            LogFactory.getLog(JAXRPCHandler.class.getName());
 
     HandlerChainImpl impl = null;
 

@@ -54,7 +54,7 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
@@ -64,7 +64,10 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -91,7 +94,7 @@ public abstract class WSDDDeployableItem
                                              "singleton" };
     
     protected static Log log =
-        AxisInternalServices.getLog(WSDDDeployableItem.class.getName());
+        LogFactory.getLog(WSDDDeployableItem.class.getName());
 
     /** Our parameters */
     LockableHashtable parameters;

@@ -54,10 +54,12 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.File;
@@ -73,7 +75,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
     /** Field log           */
     protected static Log log =
-         AxisInternalServices.getLog(ManagedMemoryDataSource.class.getName());
+         LogFactory.getLog(ManagedMemoryDataSource.class.getName());
 
     /** Field contentType           */
     protected String contentType = "application/octet-stream";    // Is the default.
@@ -524,7 +526,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
     /** Field is_log           */
     protected static Log is_log =
-        AxisInternalServices.getLog(Instream.class.getName());
+        LogFactory.getLog(Instream.class.getName());
 
     /**
      * Inner class to handle getting an input stream to this data source

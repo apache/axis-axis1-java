@@ -57,10 +57,12 @@ package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.servlet.http.HttpServlet;
@@ -90,7 +92,7 @@ public class AxisServletBase extends HttpServlet {
     protected AxisServer axisServer = null;
 
     private static Log log =
-        AxisInternalServices.getLog(AxisServlet.class.getName());
+        LogFactory.getLog(AxisServlet.class.getName());
         
     private static boolean isDebug = false;
 

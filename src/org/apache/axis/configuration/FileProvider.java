@@ -56,7 +56,7 @@
 package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
@@ -70,7 +70,10 @@ import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.InternalException;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -94,7 +97,7 @@ import java.util.Iterator;
  */
 public class FileProvider implements EngineConfiguration {
     protected static Log log =
-        AxisInternalServices.getLog(FileProvider.class.getName());
+        LogFactory.getLog(FileProvider.class.getName());
 
     protected WSDDDeployment deployment = null;
 

@@ -55,11 +55,12 @@
 
 package org.apache.axis.handlers ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -70,7 +71,7 @@ import org.apache.commons.logging.Log;
  */
 public class ErrorHandler extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(ErrorHandler.class.getName());
+        LogFactory.getLog(ErrorHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: ErrorHandler::invoke");

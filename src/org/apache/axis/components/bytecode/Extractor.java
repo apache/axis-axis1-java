@@ -53,42 +53,15 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.compiler;
+package org.apache.axis.components.bytecode;
 
-import org.apache.axis.AxisInternalServices;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.commons.logging.Log;
+import java.lang.reflect.Method;
 
 /**
- * This class implements a factory to instantiate a Compiler.
+ * This class defines a Extractor interface.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision$ $Date$
- * @since 2.0
+ * @version $Revision: 1.1 $ $Date: 2002/04/02 19:07:17 $
  */
-public class CompilerFactory {
-    protected static Log log =
-        AxisInternalServices.getLog(CompilerFactory.class.getName());
-
-        public static Compiler getCompiler()
-        {
-            String compilerClassName = System.getProperty("axis.Compiler");
-            log.debug("axis.Compiler:" + compilerClassName);
-            if (compilerClassName != null) {
-                try {
-                    Class compilerClass = ClassUtils.forName(compilerClassName);
-                    if (Compiler.class.isAssignableFrom(compilerClass))
-                        return (Compiler)compilerClass.newInstance();
-                } catch (Exception e) {
-                    // If something goes wrong here, should we just fall
-                    // through and use the default one?
-                    log.error(JavaUtils.getMessage("exception00"), e);
-                }
-            }
-            log.debug(JavaUtils.getMessage("defaultCompiler"));
-            Compiler compiler = new Javac();
-            return compiler;
-        }
+public interface Extractor {
+    public String[] getParameterNamesFromDebugInfo(Method method);
 }
