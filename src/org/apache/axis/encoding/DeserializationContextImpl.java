@@ -330,6 +330,25 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
     /**
      * Create a QName for the type of the element defined by localName and
+     * namespace from the XSI type.
+     * @param namespace of the element
+     * @param localName is the local name of the element
+     * @param attrs are the attributes on the element
+     */
+    public QName getTypeFromXSITypeAttr(String namespace, String localName,
+                                          Attributes attrs) {
+        // Check for type
+        String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
+                                         "type");
+        if (type != null) {
+            // Return the type attribute value converted to a QName
+            return getQNameFromString(type);
+        } 
+        return null;
+    }
+
+    /** 
+     * Create a QName for the type of the element defined by localName and
      * namespace with the specified attributes.
      * @param namespace of the element
      * @param localName is the local name of the element
@@ -338,45 +357,38 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public QName getTypeFromAttributes(String namespace, String localName,
                                        Attributes attrs)
     {
-        QName typeQName = null;
-
-        // Check for type
-        String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
-                                         "type");
-        if (type != null) {
-            // Return the type attribute value converted to a QName
-            return getQNameFromString(type);
-        }
-
+        QName typeQName = getTypeFromXSITypeAttr(namespace, localName, attrs);
         if (typeQName == null) {
 
             // If the element is a SOAP-ENC element, the name of the element is the type.
             // If the default type mapping accepts SOAP 1.2, then use then set
             // the typeQName to the SOAP-ENC type.
-            // Else if the default type mapping accepts SOAP 1.1, then
-            // convert the SOAP-ENC type to the appropriate XSD Schema Type.
-            QName myQName = new QName(namespace, localName);
-            if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
-                Constants.isSOAP_ENC(namespace)) {
-                typeQName = myQName;
-            } else if (myQName.equals(Constants.SOAP_ARRAY)) {
-                typeQName = Constants.SOAP_ARRAY;
-            } else if (myQName.equals(Constants.SOAP_STRING)) {
-                typeQName = Constants.SOAP_STRING;
-            } else if (myQName.equals(Constants.SOAP_BOOLEAN)) {
-                typeQName = Constants.SOAP_BOOLEAN;
-            } else if (myQName.equals(Constants.SOAP_DOUBLE)) {
-                typeQName = Constants.SOAP_DOUBLE;
-            } else if (myQName.equals(Constants.SOAP_FLOAT)) {
-                typeQName = Constants.SOAP_FLOAT;
-            } else if (myQName.equals(Constants.SOAP_INT)) {
-                typeQName = Constants.SOAP_INT;
-            } else if (myQName.equals(Constants.SOAP_LONG)) {
-                typeQName = Constants.SOAP_LONG;
-            } else if (myQName.equals(Constants.SOAP_SHORT)) {
-                typeQName = Constants.SOAP_SHORT;
-            } else if (myQName.equals(Constants.SOAP_BYTE)) {
-                typeQName = Constants.SOAP_BYTE;
+            // Else if the default type mapping accepts SOAP 1.1, then 
+            // convert the SOAP-ENC type to the appropriate SOAP Schema Type.
+            if (Constants.isSOAP_ENC(namespace)) {
+                QName myQName = new QName(namespace, localName);
+                if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
+                    Constants.isSOAP_ENC(namespace)) {
+                    typeQName = myQName;
+                } else if (myQName.equals(Constants.SOAP_ARRAY)) {
+                    typeQName = Constants.SOAP_ARRAY;
+                } else if (myQName.equals(Constants.SOAP_STRING)) {
+                    typeQName = Constants.SOAP_STRING;
+                } else if (myQName.equals(Constants.SOAP_BOOLEAN)) {
+                    typeQName = Constants.SOAP_BOOLEAN;
+                } else if (myQName.equals(Constants.SOAP_DOUBLE)) {
+                    typeQName = Constants.SOAP_DOUBLE;
+                } else if (myQName.equals(Constants.SOAP_FLOAT)) {
+                    typeQName = Constants.SOAP_FLOAT;
+                } else if (myQName.equals(Constants.SOAP_INT)) {
+                    typeQName = Constants.SOAP_INT;
+                } else if (myQName.equals(Constants.SOAP_LONG)) {
+                    typeQName = Constants.SOAP_LONG;
+                } else if (myQName.equals(Constants.SOAP_SHORT)) {
+                    typeQName = Constants.SOAP_SHORT;
+                } else if (myQName.equals(Constants.SOAP_BYTE)) {
+                    typeQName = Constants.SOAP_BYTE;
+                }
             }
         }
 

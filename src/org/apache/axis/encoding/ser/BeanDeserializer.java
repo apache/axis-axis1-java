@@ -64,6 +64,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -248,21 +249,43 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
         // Look at the type attribute specified.  If this fails,
         // use the javaType of the property to get the type qname.
-        QName qn = context.getTypeFromAttributes(namespace, localName,
-                                                 attributes);
+        QName qn = context.getTypeFromXSITypeAttr(namespace, 
+                                                  localName,
+                                                  attributes);
 
         // get the deserializer
-        Deserializer dSer = context.getDeserializerForType(qn);
+        Deserializer dSer = null;
+        if (qn !=null) {
+            dSer = context.getDeserializerForType(qn);
+        }
 
-        // If no deserializer, use the base DeserializerImpl.
-        // There may not be enough information yet to choose the
-        // specific deserializer.
+        // We don't have a deserializer, the safest thing to do
+        // is to set up using the DeserializerImpl below.  
+        // The DeserializerImpl will take care of href/id and
+        // install the appropriate deserializer, etc.  The problem 
+        // is that takes a lot of time and will occur 
+        // all the time if no xsi:types are sent.  Most of the
+        // time an element of a bean is a simple schema type (i.e. String)
+        // so the following shortcut is used to get a Deserializer
+        // for these cases.
         if (dSer == null) {
-            dSer = new DeserializerImpl();
-            // determine a default type for this child element
+            Class javaType = propDesc.getType();
             TypeMapping tm = context.getTypeMapping();
-            Class type = propDesc.getType();
-            dSer.setDefaultType(tm.getTypeQName(type));
+            QName qName = tm.getTypeQName(javaType);
+            if (qn == null && dSer == null) {
+                if (qName != null && SchemaUtils.isSimpleSchemaType(qName)) {
+                    dSer = context.getDeserializer(javaType, qName);
+                }
+            }
+            
+            // If no deserializer, use the base DeserializerImpl
+            // There may not be enough information yet to choose the
+            // specific deserializer.
+            if (dSer == null) {
+                dSer = new DeserializerImpl();
+                // determine a default javaType for this child element
+                dSer.setDefaultType(qName);
+            }
         }
                 
         if (propDesc.isWriteable()) {

@@ -143,6 +143,15 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
 
     /** 
      * Create a QName for the type of the element defined by localName and
+     * namespace from the XSI type.
+     * @param namespace of the element
+     * @param localName is the local name of the element
+     * @param attrs are the attributes on the element
+     */
+    public QName getTypeFromXSITypeAttr(String namespace, String localName,
+                                        Attributes attrs);
+    /** 
+     * Create a QName for the type of the element defined by localName and
      * namespace with the specified attributes.
      * @param namespace of the element
      * @param localName is the local name of the element

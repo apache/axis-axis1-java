@@ -63,7 +63,7 @@ import org.apache.axis.encoding.DeserializerTarget;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
@@ -391,27 +391,48 @@ public class ArrayDeserializer extends DeserializerImpl
                                                        localName,
                                                        attributes);
 
-        // Get the deserializer for the type.  If no deserializer is 
-        // found, the deserializer is set to DeserializerImpl().
-        // It is possible that the element has an href, thus we
-        // won't know the type until the definitition is encountered.
+        // Get the deserializer for the type. 
         Deserializer dSer = null;
         if (itemType != null) {
             dSer = context.getDeserializerForType(itemType);
         }
+
         if (dSer == null) {
-            dSer = new DeserializerImpl();
-            // Determine a default type for the deserializer
-            if (itemType == null) {
-                QName defaultType = defaultItemType;
-                // If defaultType is not known, try using the arrayClass info
-                if (defaultType == null &&
-                    arrayClass != null &&
-                    arrayClass.isArray()) {
-                    defaultType = context.getTypeMapping().
-                        getTypeQName(arrayClass.getComponentType());
+            // No deserializer can be found directly.  Need to look harder
+            QName defaultType = defaultItemType;
+            Class javaType = null;
+            if (arrayClass != null &&
+                arrayClass.isArray() &&
+                defaultType == null) {
+                javaType = arrayClass.getComponentType();
+                defaultType = context.getTypeMapping().getTypeQName(javaType);
+            }
+
+            // We don't have a deserializer, the safest thing to do
+            // is to set up using the DeserializerImpl below.  
+            // The DeserializerImpl will take care of href/id and
+            // install the appropriate serializer, etc.  The problem 
+            // is that takes a lot of time and will occur 
+            // all the time if no xsi:types are sent.  Most of the
+            // time an item is a simple schema type (i.e. String)
+            // so the following shortcut is used to get a Deserializer
+            // for these cases. 
+            if (itemType == null && dSer == null) {
+                if (defaultType != null && SchemaUtils.isSimpleSchemaType(defaultType)) {
+                    dSer = context.getDeserializer(javaType, defaultType);
                 }
-                dSer.setDefaultType(defaultType);
+            }
+            
+            // If no deserializer is 
+            // found, the deserializer is set to DeserializerImpl().
+            // It is possible that the element has an href, thus we
+            // won't know the type until the definitition is encountered.
+            if (dSer == null) {
+                dSer = new DeserializerImpl();
+                // Determine a default type for the deserializer
+                if (itemType == null) {
+                    dSer.setDefaultType(defaultType);
+                }
             }
         }
 

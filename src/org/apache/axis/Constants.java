@@ -166,7 +166,7 @@ public class Constants {
     public static String getValue(Attributes attributes,
                                   String [] search,
                                   String localPart) {
-        if (attributes == null || search == null || localPart == null)
+        if (attributes == null || attributes.getLength() == 0 || search == null || localPart == null)
             return null;
 
         int len = attributes.getLength();
