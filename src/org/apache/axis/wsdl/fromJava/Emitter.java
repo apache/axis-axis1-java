@@ -863,7 +863,7 @@ public class Emitter {
 
         // Input SOAP Body
         SOAPBody soapBodyIn = new SOAPBodyImpl();
-        // for now, if its document, it literal use.
+        // for now, if its document, it is literal use.
         if (mode == MODE_RPC) {
             soapBodyIn.setUse("encoded");
             soapBodyIn.setEncodingStyles(encodingList);
@@ -879,7 +879,6 @@ public class Emitter {
             !operQName.getNamespaceURI().equals("")) {
             soapBodyIn.setNamespaceURI(operQName.getNamespaceURI());
         }
-        soapBodyIn.setEncodingStyles(encodingList);
         bindingInput.addExtensibilityElement(soapBodyIn);
 
         // Output SOAP Body
