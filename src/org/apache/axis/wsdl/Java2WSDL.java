@@ -52,12 +52,14 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdlgen;
+package org.apache.axis.wsdl;
 
 import org.apache.avalon.excalibur.cli.CLArgsParser;
 import org.apache.avalon.excalibur.cli.CLOption;
 import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
+
+import org.apache.axis.wsdl.fromJava.Emitter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +70,7 @@ import java.util.List;
  * @author Ravi Kumar (rkumar@borland.com)
  */
 
-public class Java2Wsdl {
+public class Java2WSDL {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int OUTPUT_WSDL_MODE_OPT = 'w';
@@ -122,7 +124,7 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
                 "space separated list of methods to export"),
-        new CLOptionDescriptor("methods",
+        new CLOptionDescriptor("all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 INHERITED_CLASS_OPT,
                 "look for allowed methods in inherited class"),
@@ -292,10 +294,10 @@ public class Java2Wsdl {
     private static void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append("Java2Wsdl generator").append(lSep);
-        msg.append("Usage: java " + Java2Wsdl.class.getName() + " [options] class-of-portType").append(lSep);
+        msg.append("Java2WSDL generator").append(lSep);
+        msg.append("Usage: java " + Java2WSDL.class.getName() + " [options] class-of-portType").append(lSep);
         msg.append("Options: ").append(lSep);
-        msg.append(CLUtil.describeOptions(Java2Wsdl.options).toString());
+        msg.append(CLUtil.describeOptions(Java2WSDL.options).toString());
         msg.append("Details: ").append(lSep);
         msg.append("\tportType    name= <class-of-portType name>").append(lSep);
         msg.append("\tbinding     name= <--service value>SoapBinding").append(lSep);

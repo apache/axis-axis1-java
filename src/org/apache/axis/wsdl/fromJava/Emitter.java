@@ -54,7 +54,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdlgen;
+package org.apache.axis.wsdl.fromJava;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;

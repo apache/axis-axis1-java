@@ -1,4 +1,4 @@
-This is a todo list for Java2Wsdl stuff
+This is a todo list for Java2WSDL stuff
 ---------------------------------------
 Initial Version: Ravi Kumar(rkumar@borland.com) - Dec 2, 2001
 
@@ -14,7 +14,9 @@ Group 1
 Group 2
 -------
 * samples
+  - Rich: I added samples/userguide/example6
 * User documentation
+  - Rich: I have user-guide.html doc for example6 in my sandbox
 * Internationalization
 
 
@@ -40,7 +42,7 @@ Group 4
 Group 5
 -------
 * Style/use support: rpc/encoded, document/literal, rpc/literal and document/encoded
-* Switch the runtime WSDL generation to use Java2Wsdl
+* Switch the runtime WSDL generation to use Java2WSDL
 
 
 
@@ -51,7 +53,7 @@ Use this place to clarify features if they are not immediately obvious
  
 Note 1: Generate JAX-RPC style classes
 --------------------------------------
-Java2Wsdl needs to satisfy the following scenarios
+Java2WSDL needs to satisfy the following scenarios
 1. Export a class as a Web service 
         no wsdl is required, just the deploy.wsdd and undeploy.wsdd
 2. Export a class and generate WSD

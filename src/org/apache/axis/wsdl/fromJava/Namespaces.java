@@ -52,7 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdlgen;
+package org.apache.axis.wsdl.fromJava;
 
 import java.util.HashMap;
 import java.util.Iterator;
