@@ -237,9 +237,15 @@ public class BeanSerializer implements Serializer, Serializable {
             Method getAttributeElements = 
                     javaType.getMethod("getAttributeElements",
                                        new Class [] {});
-            
-            return (Vector) getAttributeElements.invoke(null, noArgs);
-            
+            // get string array
+            String[] array = (String[])getAttributeElements.invoke(null, noArgs);
+
+            // convert it to a Vector
+            Vector v = new Vector(array.length);
+            for (int i = 0; i < array.length; i++) {
+                v.add(array[i]);
+            }
+            return v;
         } catch (Exception e) {
             return new Vector();  // empty vector
         }

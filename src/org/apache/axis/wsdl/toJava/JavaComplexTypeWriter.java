@@ -215,12 +215,19 @@ public class JavaComplexTypeWriter extends JavaWriter {
        // if we have attributes, create metadata function which returns the
        // list of properties that are attributes instead of elements
        if (attributes != null) {
-           pw.println("    public static java.util.Vector getAttributeElements() {");
-           pw.println("        java.util.Vector v = new java.util.Vector();");
+           pw.println("    // List of fields that are XML attributes");
+           pw.println("    public static java.lang.String[] _attrs = new String[] {");
            for (int i=0; i < attributes.size(); i+=2) {
-               pw.println("        v.add(\"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\");");
+               pw.println("        \"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\", ");
            }
-           pw.println("        return v;");
+           pw.println("    };");
+           pw.println();
+           
+           pw.println("    /**");
+           pw.println("     * Return list of bean field names that are attributes");
+           pw.println("     */");
+           pw.println("    public static java.lang.String[] getAttributeElements() {");
+           pw.println("        return _attrs;");
            pw.println("    }");
            pw.println();
        }
