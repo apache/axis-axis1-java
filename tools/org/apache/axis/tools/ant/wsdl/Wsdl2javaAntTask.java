@@ -241,7 +241,7 @@ public class Wsdl2javaAntTask extends Task
             if (classpath != null) {
                 AntClassLoader cl = new AntClassLoader(
                         getClass().getClassLoader(),
-                        project,
+                        getProject(),
                         classpath,
                         false);
                 log("Using CLASSPATH " + cl.getClasspath(),
@@ -533,7 +533,7 @@ public class Wsdl2javaAntTask extends Task
      */
     public Path createClasspath() {
         if (classpath == null) {
-            classpath = new Path(project);
+            classpath = new Path(getProject());
         }
         return classpath.createPath();
     }

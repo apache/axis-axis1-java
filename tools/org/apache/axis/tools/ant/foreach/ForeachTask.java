@@ -210,7 +210,7 @@ public class ForeachTask extends Task {
             executeTarget();
         } else {
             ParamSet paramSet = (ParamSet) params.elementAt(paramNumber);
-            Enumeration values = paramSet.getValues(project);
+            Enumeration values = paramSet.getValues(getProject());
             while (values.hasMoreElements()) {
                 String val = (String) values.nextElement();
                 buildProperty(paramSet.getName(), val);
