@@ -623,7 +623,8 @@ public class Emitter {
                 }
             }
 
-            writeMessages(def, oper, messageOper);
+            writeMessages(def, oper, messageOper, 
+                          bindingOper);
             portType.addOperation(oper);
         }
 
@@ -634,27 +635,29 @@ public class Emitter {
 
     /** Create a Message
      *
-     * @param def
-     * @param oper
+     * @param Definition, the WSDL definition
+     * @param Operation, the wsdl operation
+     * @param OperationDesc, the Operation Description
+     * @param BindingOperation, corresponding Binding Operation
      * @throws Exception
      */
     private void writeMessages(Definition def,
                                Operation oper,
-                               OperationDesc desc)
+                               OperationDesc desc,
+                               BindingOperation bindingOper)
             throws Exception{
         Input input = def.createInput();
 
         Message msg = writeRequestMessage(def, desc);
         input.setMessage(msg);
 
+        // Give the input element a name that matches the
+        // message.  This is necessary for overloading.
+        // The msg QName is unique.
+        String name = msg.getQName().getLocalPart();
+        input.setName(name);
+        bindingOper.getBindingInput().setName(name);
 
-        // Iff this method is overloaded, then give the input
-        // stanzas a name.
-//        if (method.isOverloaded()) {
-//            String name = msg.getQName().getLocalPart();
-//            input.setName(name);
-//            bindingOper.getBindingInput().setName(name);
-//        }
         oper.setInput(input);
 
         def.addMessage(msg);
@@ -663,13 +666,13 @@ public class Emitter {
         Output output = def.createOutput();
         output.setMessage(msg);
 
-        // Iff this method is overloaded, then give the output
-        // stanzas a name.
-//        if (method.isOverloaded()) {
-//            String name = msg.getQName().getLocalPart();
-//            output.setName(name);
-//            bindingOper.getBindingOutput().setName(name);
-//        }
+        // Give the output element a name that matches the
+        // message.  This is necessary for overloading.
+        // The message QName is unique.
+        name = msg.getQName().getLocalPart();
+        output.setName(name);
+        bindingOper.getBindingOutput().setName(name);
+
         oper.setOutput(output);
 
         def.addMessage(msg);
