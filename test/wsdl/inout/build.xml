@@ -44,7 +44,11 @@ Copyright:
         &taskdefs_post_compile;
         &targets;
 
-<target name="clean"/>
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
 
 <target name="copy" depends="setenv"/>
 
