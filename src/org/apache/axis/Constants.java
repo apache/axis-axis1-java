@@ -414,6 +414,14 @@ public class Constants {
     public static final String ELEM_FAULT_DETAIL = "detail" ;
     public static final String ELEM_FAULT_ACTOR  = "faultactor" ;
 
+    public static final String ELEM_FAULT_CODE_SOAP12 = "Code" ;
+    public static final String ELEM_FAULT_VALUE_SOAP12 = "Value" ;
+    public static final String ELEM_FAULT_SUBCODE_SOAP12 = "Subcode" ;
+    public static final String ELEM_FAULT_REASON_SOAP12 = "Reason" ;
+    public static final String ELEM_FAULT_NODE_SOAP12 = "Node" ;
+    public static final String ELEM_FAULT_ROLE_SOAP12 = "Role" ;
+    public static final String ELEM_FAULT_DETAIL_SOAP12 = "Detail" ;
+
     public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
     public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
     public static final String ATTR_ACTOR           = "actor" ;
@@ -439,6 +447,21 @@ public class Constants {
                                   new QName(URI_SOAP11_ENV, "MustUnderstand");
 
 
+    public static final QName FAULT_SOAP12_MUSTUNDERSTAND =
+                                  new QName(URI_SOAP12_ENV, "MustUnderstand");
+
+    public static final QName FAULT_SOAP12_VERSIONMISMATCH =
+                                  new QName(URI_SOAP12_ENV, "VersionMismatch");
+
+    public static final QName FAULT_SOAP12_DATAENCODINGUNKNOW =
+                                  new QName(URI_SOAP12_ENV, "DataEncodingUnknow");
+
+    public static final QName FAULT_SOAP12_SENDER =
+                                  new QName(URI_SOAP12_ENV, "Sender");
+
+    public static final QName FAULT_SOAP12_RECEIVER =
+                                  new QName(URI_SOAP12_ENV, "Receiver");
+
     // QNames
     //////////////////////////////////////////////////////////////////////////
     public static final QName QNAME_FAULTCODE =
@@ -450,6 +473,21 @@ public class Constants {
     public static final QName QNAME_FAULTDETAILS =
                                          new QName("", ELEM_FAULT_DETAIL);
 
+    public static final QName QNAME_FAULTCODE_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_CODE_SOAP12);
+    public static final QName QNAME_FAULTVALUE_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_VALUE_SOAP12);
+    public static final QName QNAME_FAULTSUBCODE_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_SUBCODE_SOAP12);
+    public static final QName QNAME_FAULTREASON_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_REASON_SOAP12);
+
+    public static final QName QNAME_FAULTNODE_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_NODE_SOAP12);
+    public static final QName QNAME_FAULTROLE_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_ROLE_SOAP12);
+    public static final QName QNAME_FAULTDETAIL_SOAP12 =
+                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_DETAIL_SOAP12);
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");

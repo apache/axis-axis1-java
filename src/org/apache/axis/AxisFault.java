@@ -95,9 +95,11 @@ public class AxisFault extends java.rmi.RemoteException {
         LogFactory.getLog(AxisFault.class.getName());
 
     protected QName     faultCode ;
+    protected Vector    faultSubCode ;
     protected String    faultString = "";
     protected String    faultActor ;
     protected Vector    faultDetails ;  // vector of Element's
+    protected String    faultNode ;
 
     /** SOAP headers which should be serialized with the Fault */
     protected ArrayList faultHeaders = null;
@@ -127,7 +129,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * make a fault
-     * @param code fault code which will be pased into the Axis namespace
+     * @param code fault code which will be passed into the Axis namespace
      * @param faultString fault string
      * @param actor fault actor
      * @param details details; if null the current stack trace and classname is
@@ -141,7 +143,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * make a fault in any namespace
-     * @param code fault code which will be pased into the Axis namespace
+     * @param code fault code which will be passed into the Axis namespace
      * @param faultString fault string
      * @param actor fault actor
      * @param details details; if null the current stack trace and classname is
@@ -158,13 +160,38 @@ public class AxisFault extends java.rmi.RemoteException {
             initFromException(this);
     }
 
+/**
+     * make a fault in any namespace
+     * @param code fault code which will be passed into the Axis namespace
+     * @param subcodes fault subcodes which will be pased into the Axis namespace
+     * @param faultString fault string
+     * @param actor fault actor, same as fault role in SOAP 1.2
+     * @param node which node caused the fault on the SOAP path
+     * @param details details; if null the current stack trace and classname is
+     * inserted into the details.
+     */
+    public AxisFault(QName code, QName[] subcodes, String faultString,
+                     String actor, String node, Element[] details) {
+        super (faultString);
+        setFaultCode( code );
+        if (subcodes != null)
+            for (int i = 0; i < subcodes.length; i++)
+                addFaultSubCode( subcodes[i] );
+        setFaultString( faultString );
+        setFaultActor( actor );
+        setFaultNode( node );
+        setFaultDetail( details );
+        if (details == null)
+            initFromException(this);
+    }
+
     /**
      * Wrap an AxisFault around an existing Exception - this is private
      * to force everyone to use makeFault() above, which sanity-checks us.
      */ 
     protected AxisFault(Exception target) {
         super ("", target);
-
+        // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
         
         initFromException(target);
@@ -178,6 +205,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault(String message)
     {
         super (message);
+        //TODO: SOAP 1.2 or 1.1 ?
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
         initFromException(this);
@@ -189,6 +217,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault()
     {
         super();
+        //TODO: 1.2 or 1.1 ?
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);     
         initFromException(this);
     }
@@ -203,6 +232,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault (String message, Throwable t)
     {
         super (message, t);
+        //TODO: SOAP 1.2 or 1.1 ?
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
     }
@@ -277,10 +307,21 @@ public class AxisFault extends java.rmi.RemoteException {
             }
         }
         
+        String subCodes = new String();
+        if (faultSubCode != null) {
+            for (int i = 0; i < faultSubCode.size(); i++) {
+                subCodes += JavaUtils.LS
+                            + (QName)faultSubCode.elementAt(i);
+
+            }
+        }
+
         return "AxisFault" + JavaUtils.LS
             + " faultCode: " + faultCode + JavaUtils.LS
+            + " faultSubcode: " + subCodes + JavaUtils.LS
             + " faultString: " + faultString + JavaUtils.LS
             + " faultActor: " + faultActor + JavaUtils.LS
+            + " faultNode: " + faultNode + JavaUtils.LS
             + " faultDetail: " + details + JavaUtils.LS
             ;
     }
@@ -299,7 +340,7 @@ public class AxisFault extends java.rmi.RemoteException {
      * @param code fault code
      */
     public void setFaultCodeAsString(String code) {
-        faultCode = new QName(Constants.NS_URI_AXIS, code);
+        faultCode = new QName(Constants.URI_SOAP12_ENV, code);
     }
 
     /**
@@ -309,6 +350,44 @@ public class AxisFault extends java.rmi.RemoteException {
     public QName getFaultCode() {
         return( faultCode );
     }
+
+    /**
+     * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * @return
+     */
+    public void addFaultSubCodeAsString(String code) {
+        if (faultSubCode == null)
+            faultSubCode = new Vector();
+        faultSubCode.add(new QName(Constants.NS_URI_AXIS, code));
+    }
+
+    /**
+     * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * @return
+     */
+    public void addFaultSubCode(QName code) {
+        if (faultSubCode == null)
+            faultSubCode = new Vector();
+        faultSubCode.add(code);
+    }
+
+    /**
+     * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * @return
+     */
+    public void clearFaultSubCodes() {
+        faultSubCode = null;
+    }
+
+    public QName[] getFaultSubCodes() {
+        if (faultSubCode == null)
+            return null;
+        QName[] q = new QName[faultSubCode.size()];
+        return (QName[])faultSubCode.toArray(q);
+    }
+
+
+
 
     /**
      * set a fault string;
@@ -332,6 +411,22 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     /**
+     * This is SOAP 1.2 equivalent of {@link #setFaultString(java.lang.String)}
+     * @return
+     */
+    public void setFaultReason(String str) {
+        setFaultString(str);
+    }
+
+    /**
+     * This is SOAP 1.2 equivalent of {@link #getFaultString()}
+     * @return
+     */
+    public String getFaultReason() {
+        return getFaultString();
+    }
+
+    /**
      * set the fault actor
      * @param actor fault actor
      */
@@ -345,6 +440,38 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public String getFaultActor() {
         return( faultActor );
+    }
+
+    /**
+     * This is SOAP 1.2 equivalent of {@link #getFaultActor()}
+     * @return
+     */
+    public String getFaultRole() {
+        return getFaultActor();
+    }
+
+    /**
+     * This is SOAP 1.2 equivalent of {@link #setFaultActor(java.lang.String)}
+     * @return
+     */
+    public void setFaultRole(String role) {
+        setFaultActor(role);
+    }
+
+    /**
+     * This is new in SOAP 1.2
+     * @return
+     */
+    public String getFaultNode() {
+        return( faultNode );
+    }
+
+    /**
+     * This is new in SOAP 1.2
+     * @return
+     */
+    public void setFaultNode(String node) {
+        faultNode = node;
     }
 
     /**

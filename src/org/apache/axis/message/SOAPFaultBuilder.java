@@ -60,12 +60,14 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
+import org.apache.axis.soap.SOAPConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
+import java.util.Vector;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.lang.reflect.Constructor;
@@ -84,22 +86,34 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
 
     protected SOAPFault element;
     protected DeserializationContext context;
-    static HashMap fields = new HashMap();
+    static HashMap fields_soap11 = new HashMap();
+    static HashMap fields_soap12 = new HashMap();
     
     // Fault data
     protected QName faultCode = null;
+    protected QName[] faultSubCode = null;
     protected String faultString = null;
     protected String faultActor = null;
     protected Element[] faultDetails;
+    protected String    faultNode = null;
+    
+    protected SOAPFaultCodeBuilder code;
 
     protected Class faultClass = null;
     protected Object faultData = null;
 
     static {
-        fields.put(Constants.ELEM_FAULT_CODE, Constants.XSD_QNAME);
-        fields.put(Constants.ELEM_FAULT_STRING, Constants.XSD_STRING);
-        fields.put(Constants.ELEM_FAULT_ACTOR, Constants.XSD_STRING);
-        fields.put(Constants.ELEM_FAULT_DETAIL, null);
+        fields_soap11.put(Constants.ELEM_FAULT_CODE, Constants.XSD_QNAME);
+        fields_soap11.put(Constants.ELEM_FAULT_STRING, Constants.XSD_STRING);
+        fields_soap11.put(Constants.ELEM_FAULT_ACTOR, Constants.XSD_STRING);
+        fields_soap11.put(Constants.ELEM_FAULT_DETAIL, null);
+    }
+
+    static {
+        fields_soap12.put(Constants.ELEM_FAULT_REASON_SOAP12, Constants.XSD_STRING);
+        fields_soap12.put(Constants.ELEM_FAULT_ROLE_SOAP12, Constants.XSD_STRING);
+        fields_soap12.put(Constants.ELEM_FAULT_NODE_SOAP12, Constants.XSD_STRING);
+        fields_soap12.put(Constants.ELEM_FAULT_DETAIL_SOAP12, null);
     }
     
     public SOAPFaultBuilder(SOAPFault element,
@@ -145,9 +159,13 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
      */
     private void createFault() {
         AxisFault f = null;
+        
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+
         if (faultClass != null) {
             // Custom fault handling
             try {
+                
                 // If we have an element which is fault data, It can be:
                 // 1. A simple type that needs to be passed in to the constructor
                 // 2. A complex type that is the exception itself
@@ -171,22 +189,47 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         // this is to support the <exceptionName> detail
                         f = (AxisFault) faultClass.newInstance();
                     }
-                    f.setFaultCode(faultCode);
+    
+                    if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                        f.setFaultCode(code.getFaultCode());
+
+                        SOAPFaultCodeBuilder c = code;
+                        while ((c = c.getNext()) != null) {
+                            f.addFaultSubCode(c.getFaultCode());
+                        }
+                    }
+
                     f.setFaultString(faultString);
                     f.setFaultActor(faultActor);
-                    f.setFaultDetail(faultDetails);
+                    f.setFaultNode(faultNode);
+                    f.setFaultDetail(faultDetails);                
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // Don't do anything here, since a problem above means
                 // we'll just fall through and use a plain AxisFault.
             }
         }
 
         if (f == null) {
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                faultCode = code.getFaultCode();
+                if (code.getNext() != null)
+                {
+                    Vector v = new Vector();
+
+                    SOAPFaultCodeBuilder c = code;
+                    while ((c = c.getNext()) != null)
+                        v.add(c.getFaultCode());
+                    
+                    faultSubCode = (QName[])v.toArray(new QName[v.size()]);
+                }   
+            }
+    
             f  = new AxisFault(faultCode,
+                               faultSubCode,
                                faultString,
                                faultActor,
+                               faultNode,
                                faultDetails);
         }
 
@@ -201,21 +244,36 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         throws SAXException
     {
         SOAPHandler retHandler = null;
+
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
         
-        QName qName = (QName)fields.get(name);
-        
+        QName qName = null;
         // If we found the type for this field, get the deserializer
         // otherwise, if this is the details element, use the special 
         // SOAPFaultDetailsBuilder handler to take care of custom fault data 
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+            qName = (QName)fields_soap12.get(name);
+            if (qName == null) {
+                QName thisQName = new QName(namespace, name);
+                if (thisQName.equals(Constants.QNAME_FAULTCODE_SOAP12))
+                    return (code = new SOAPFaultCodeBuilder(context));
+                else if (thisQName.equals(Constants.QNAME_FAULTDETAIL_SOAP12))
+                    return new SOAPFaultDetailsBuilder(this);
+
+            }
+        } else {
+            qName = (QName)fields_soap11.get(name);
+            if (qName == null && name.equals(Constants.ELEM_FAULT_DETAIL))
+                return new SOAPFaultDetailsBuilder(this);
+        }
+        
         if (qName != null) {
             Deserializer currentDeser = context.getDeserializerForType(qName);
             if (currentDeser != null) {
-                currentDeser.registerValueTarget(new CallbackTarget(this, name));
+                currentDeser.registerValueTarget(new CallbackTarget(this, new QName(namespace, name)));
             }
             retHandler = (SOAPHandler) currentDeser;
-        } else if (name.equals(Constants.ELEM_FAULT_DETAIL)) {
-            retHandler = new SOAPFaultDetailsBuilder(this);
-        }
+        } 
         
         return retHandler;
     }
@@ -250,14 +308,25 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
      */
     public void setValue(Object value, Object hint)
     {
-        String name = (String)hint;
-        if (name.equals(Constants.ELEM_FAULT_CODE)) {
-            faultCode = (QName)value;
-        } else if (name.equals(Constants.ELEM_FAULT_STRING)) {
-            faultString = (String) value;
-        } else if (name.equals(Constants.ELEM_FAULT_ACTOR)) {
-            faultActor = (String) value;
+        String local = ((QName)hint).getLocalPart();
+        if (((QName)hint).getNamespaceURI().equals(Constants.URI_SOAP12_ENV)) {
+            if (local.equals(Constants.ELEM_FAULT_ROLE_SOAP12)) {
+                faultActor = (String) value;
+            } else if (local.equals(Constants.ELEM_FAULT_REASON_SOAP12)) {
+                faultString = (String) value;
+            } else if (local.equals(Constants.ELEM_FAULT_NODE_SOAP12)) {
+                faultNode = (String) value;
+            }
+        } else {
+            if (local.equals(Constants.ELEM_FAULT_CODE)) {
+                faultCode = (QName)value;
+            } else if (local.equals(Constants.ELEM_FAULT_STRING)) {
+                faultString = (String) value;
+            } else if (local.equals(Constants.ELEM_FAULT_ACTOR)) {
+                faultActor = (String) value;
+            }
         }
+
     }
 
     /**
