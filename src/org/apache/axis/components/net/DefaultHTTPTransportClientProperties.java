@@ -109,7 +109,7 @@ public class DefaultHTTPTransportClientProperties
     }
 
     /**
-     * @see org.apache.axis.components.net.TransportClientProperties#getUser()
+     * @see org.apache.axis.components.net.TransportClientProperties#getProxyUser()
      */
     public String getProxyUser() {
         if (proxyUser == null) {
@@ -121,7 +121,7 @@ public class DefaultHTTPTransportClientProperties
     }
 
     /**
-     * @see org.apache.axis.components.net.TransportClientProperties#getPassword()
+     * @see org.apache.axis.components.net.TransportClientProperties#getProxyPassword()
      */
     public String getProxyPassword() {
         if (proxyPassword == null) {
