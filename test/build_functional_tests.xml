@@ -24,7 +24,7 @@ Copyright:
   <property name="test.functional.usefile" value="true"/>
   <property name="test.functional.reportdir" value="test-reports"/>
   <property name="test.functional.SimpleAxisPort" value="8080"/>
-  <property name="test.functional.fail" value="no"/>
+  <property name="test.functional.fail" value="yes"/>
 
   <path id="test-classpath">
     <pathelement location="${build.dest}" />
