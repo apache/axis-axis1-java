@@ -78,7 +78,7 @@ public class RunAxisFunctionalTestsTask extends Task
     private String testTarget;
     private String stopTarget;
     private URL url;
-    
+
     /**
      * Executes the task.
      */
@@ -93,7 +93,7 @@ public class RunAxisFunctionalTestsTask extends Task
             callStop();
         }
     }
-    
+
     /**
      * Call the start server task
      */
@@ -115,10 +115,10 @@ public class RunAxisFunctionalTestsTask extends Task
                 // loop & try again
             }
         }
-        
+
         // NOTREACHED since the while loop returns if it successfully pings
     }
-    
+
     /**
      * Call the run tests target
      */
@@ -126,7 +126,7 @@ public class RunAxisFunctionalTestsTask extends Task
     {
         antcall(testTarget);
     }
-    
+
     /**
      * Call the stop server task
      */
@@ -135,7 +135,7 @@ public class RunAxisFunctionalTestsTask extends Task
         try {
             // first, stop the tcp server
             sendOnSocket("quit\r\n");
-            
+
             // second, and more involvedly, stop the http server
             // Try connecting in case the server is already stopped.
             URL url = new URL("http://localhost:8080/");
@@ -149,17 +149,17 @@ public class RunAxisFunctionalTestsTask extends Task
                 System.out.println("Error from HTTP read: " + e);
                 return;
             }
-            
+
             // Call the target that stops the server
             antcall(stopTarget);
-            
+
             // Wait a few ms more (just to make sure)
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new BuildException("Interruption during sleep", e);
             }
-            
+
             /*
              // Continuously try calling the test URL until it fails
             while (true) {
@@ -172,15 +172,15 @@ System.out.println("Trying localhost:8080...");
                 } catch (IOException e) {
                     break;
                 }
-                
+
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ee) {
                     throw new BuildException("Interruption during sleep", ee);
                 }
-                
+
             }
-            
+
             // Wait a few ms more (just to be sure !)
             try {
                 Thread.sleep(500);
@@ -193,8 +193,8 @@ System.out.println("Trying localhost:8080...");
             // ignore; if socket not there, presume dead already
         }
     }
-    
-    
+
+
     /**
      * Call the selected ant task.
      */
@@ -208,7 +208,7 @@ System.out.println("Trying localhost:8080...");
         callee.setTarget(taskName);
         callee.execute();
     }
-    
+
     /**
      * Make a socket to the url, and send the given string
      */
@@ -231,8 +231,8 @@ System.out.println("Trying localhost:8080...");
             }
          }*/
     }
-    
-    
+
+
     /**
      * Read all the contents that are to be read
      */
@@ -254,7 +254,7 @@ System.out.println("Trying localhost:8080...");
     {
         startTarget1 = theStartTarget;
     }
-    
+
     /**
      * Sets the target to call to start server 2.
      *
@@ -264,17 +264,17 @@ System.out.println("Trying localhost:8080...");
     {
         startTarget2 = theStartTarget;
     }
-    
+
     /**
      * Sets the target to call to run the tests.
      *
-     * @param theTerstTarget the Ant target to call
+     * @param theTestTarget the Ant target to call
      */
     public void setTestTarget(String theTestTarget)
     {
         testTarget = theTestTarget;
     }
-    
+
     /**
      * Sets the stop target.  This is the target which does
      * a HTTP admin shutdown on the simple server.
@@ -283,7 +283,7 @@ System.out.println("Trying localhost:8080...");
     {
         stopTarget = theStopTarget;
     }
-    
+
     /**
      * Sets the target URL (just http://host:port)
      */
@@ -294,8 +294,8 @@ System.out.println("Trying localhost:8080...");
             System.err.println("Can't make URL from "+theUrl);
         }
     }
-    
-    
+
+
     /**
      * Helper class to execute a task in a thread.
      */

@@ -74,7 +74,7 @@ import java.util.HashMap;
  * As well as the nested parameters, this task uses  the file 
  * <tt>NStoPkg.properties</tt> in the project base directory
  * for namespace mapping
- * @ant.task category="xml"
+ * @ant.task category="axis"
  * @author steve loughran
  * @author Davanum Srinivas (dims@yahoo.com)
  */
@@ -299,8 +299,8 @@ public class Wsdl2javaAntTask extends Task
     }
     
     /**
-     * url to fetch and generate WSDL for. Can be remote or a local file.
-     * required.
+     * URL to fetch and generate WSDL for.
+     * Can be remote or a local file.
      */
     public void setURL(String parameter) {
         this.url = parameter;
@@ -315,7 +315,7 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
-     * set the type mapping version. default is "1.2"
+     * Set the type mapping version; default is "1.2"
      */
     public void setTypeMappingVersion(String parameter) {
         this.tm = parameter;

@@ -66,9 +66,10 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 /**
- * Simple Ant task for running Java2Wsdl utility. 
+ * Generates a WSDL description from a Java class.
  *
  * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @ant.task category="axis"
  */
 public class Java2WsdlAntTask extends Task
 {
