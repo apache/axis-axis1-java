@@ -1794,34 +1794,27 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @see org.w3c.dom.Element#getElementsByTagName(String)
      * @param tagName tag to look for.
      * @return a list of elements
-     * @todo this code looks dubious. Is it tested yet?
      */
     public NodeList getElementsByTagName(String tagName) {
-        //use this MessageElement class for Nodelist store
-        MessageElement nodelist = new MessageElement();
-
-        try{
-            if(children != null){
-                // add 2nd Generation
-                for(int i =0; i < children.size(); i++){
-                    nodelist.addChild((MessageElement)children.get(i));
-                }
-                // add 3rd Generation
-                for(int i =0; i < children.size(); i++){
-                    MessageElement child = (MessageElement)children.get(i);
-                    NodeList grandsons = child.getElementsByTagName(tagName);
-                    for(int j =0; j < grandsons.getLength(); j++){
-                        nodelist.addChild((MessageElement)grandsons.item(j));
+        NodeListImpl nodelist = new NodeListImpl();
+        for (int i = 0; children != null && i < children.size(); i++) {
+            if (children.get(i) instanceof Node) {
+                Node el = (Node)children.get(i);
+                if (el.getLocalName() != null && el.getLocalName()
+                                .equals(tagName))
+                    nodelist.addNode(el);
+                if (el instanceof Element) {
+                    NodeList grandchildren =
+                            ((Element)el).getElementsByTagName(tagName);
+                    for (int j = 0; j < grandchildren.getLength(); j++) {
+                        nodelist.addNode(grandchildren.item(j));
                     }
                 }
             }
-        }catch(SOAPException se){
-            // TODO: handle properly
-            log.debug("silently ignoring",se);
         }
         return nodelist;
     }
-
+    
     /**
      * get the attribute with namespace/local name match.
      * @see org.w3c.dom.Element#getAttributeNS(String, String)
