@@ -348,6 +348,7 @@ public class WSDDDeployment
             //log.debug("registered");
         } catch (ClassNotFoundException e) {
             log.info(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
+            throw new WSDDException(e);
         } catch (Exception e) {
             throw new WSDDException(e);
         }
