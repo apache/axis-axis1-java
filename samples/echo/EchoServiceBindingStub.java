@@ -547,9 +547,9 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
         }
         org.apache.axis.client.Call call = getCall();
         call.addParameter("inputStruct", new javax.xml.rpc.namespace.QName("http://soapinterop.org/xsd", "SOAPStruct"), javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
-        call.addParameter("outputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);
-        call.addParameter("outputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);
-        call.addParameter("outputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);
+        call.addParameter("outputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
+        call.addParameter("outputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
+        call.addParameter("outputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
         call.setReturnType(null);
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStructAsSimpleTypes" : "";
@@ -559,7 +559,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
         call.setOperationStyle("rpc");
         call.setOperationName(new javax.xml.rpc.namespace.QName("http://soapinterop.org/", "echoStructAsSimpleTypes"));
 
-        Object resp = call.invoke(new Object[] {inputStruct, outputString.value, new Integer(outputInteger.value), new Float(outputFloat.value)});
+        Object resp = call.invoke(new Object[] {inputStruct});
 
         if (resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)resp;
