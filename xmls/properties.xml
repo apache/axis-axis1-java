@@ -83,3 +83,7 @@ them.
 <property name="http.proxyUser" value=""/>
 <property name="http.proxyPassword" value=""/>
 
+<!-- Give user a chance to override without editing this file
+     (and without typing -D each time it compiles it) -->
+<property file="${axis.home}/build.properties"/>
+<property file="${user.home}/build.properties"/>

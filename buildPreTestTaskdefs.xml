@@ -14,10 +14,6 @@
         &paths;
         &taskdefs;
 
-  <!-- Give user a chance to override without editing this file
-       (and without typing -D each time it compiles it) -->
-  <property file="${user.home}/build.properties"/>
-
   <property name="ant.dir" value="${env.ANT_HOME}/lib" />
 
   <target name="compile">
