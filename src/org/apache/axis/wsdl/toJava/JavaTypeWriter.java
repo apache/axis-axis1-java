@@ -96,9 +96,10 @@ public class JavaTypeWriter implements Generator {
             // the appropriate Writer.
             Node node = type.getNode();
 
+            boolean isSimpleList = SchemaUtils.isListWithItemType(node);
             // If it's an array, don't emit a class
-            if (!type.getName().endsWith("[]")) {
-
+            if (!type.getName().endsWith("[]") && !isSimpleList) {
+                
                 // Generate the proper class for either "complex" or "enumeration" types
                 Vector v = Utils.getEnumerationBaseAndValues(node, symbolTable);
 
