@@ -55,6 +55,8 @@
 
 package org.apache.axis.security;
 
+import org.apache.axis.MessageContext;
+
 /** The Axis security provider interface
  * 
  * As Axis is designed for use in embedded environments, those
@@ -69,16 +71,10 @@ public interface SecurityProvider
 {
     /** Authenticate a user from a username/password pair.
      * 
-     * @param username the user name to check
-     * @param password the password to check
+     * @param msgContext the MessageContext containing authentication info
      * @return an AuthenticatedUser or null
-     * 
-     * NOTE: Since the classes implementing this are going to need to
-     * be Axis-aware anyway, we might just pass the MessageContext
-     * here instead, and let the provider authenticate against whatever
-     * it wants...?
      */
-    public AuthenticatedUser authenticate(String username, String password);
+    public AuthenticatedUser authenticate(MessageContext msgContext);
     
     /** See if a user matches a principal name.  The name might be a user
      * or a group.
