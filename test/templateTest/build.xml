@@ -3,15 +3,12 @@
 My Test.... Documentation Abounds!
 -->
 
-<!-- =========================================================================================== -->
-<!--  Every project should begin with this next block -->
-<!-- =========================================================================================== -->
-
 <!DOCTYPE project [
-        <!ENTITY properties SYSTEM "file:../../xmls/properties.xml">
-        <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
-        <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
-        <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -19,10 +16,13 @@ My Test.... Documentation Abounds!
 
 <project name="mattTest" default="compile">
 
+<property name="axis.home" location="../.." />
+<property name="componentName" value="test/templateTest" />
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+        &targets;
 
 <!-- ============================================================================================ -->
 <!--
@@ -62,10 +62,8 @@ Then, we construct a classpath that includes, hopefully, all of the things that 
   ]]></script>
 </target>
 
-<target name="deploy"/>
-
-<target name="run"/>
-
-<target name="undeploy"/>
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
 
 </project>
