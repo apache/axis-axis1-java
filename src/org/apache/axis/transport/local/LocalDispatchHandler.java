@@ -68,16 +68,15 @@ import org.apache.axis.utils.*;
  */
 public class LocalDispatchHandler extends BasicHandler {
 
-  private AxisServer server;
-  private MessageContext serverContext;
+  private volatile AxisServer server;
 
   /**
    * Allocate an embedded Axis server to process requests and initialize it.
    */
-  public void init() {
-    server = new AxisServer();
+  public synchronized void init() {
+    AxisServer server = new AxisServer();
     server.init();
-    serverContext = new MessageContext(server);
+    this.server=server;
   }
 
   public void invoke(MessageContext clientContext) throws AxisFault {
@@ -87,10 +86,8 @@ public class LocalDispatchHandler extends BasicHandler {
     // something that can be relied on.  Oh, well...
     if (server == null) init();
     
-    // reset the request
-    serverContext.clearProperties();
-    serverContext.setServiceDescription(null);
-    serverContext.setTargetService(null);
+    // Define a new messageContext per request
+    MessageContext serverContext = new MessageContext(server);
 
     // copy the request, and force its format to String in order to
     // exercise the serializers.
