@@ -79,7 +79,7 @@ public class SimpleChain implements Chain {
    * then call 'undo' for each completed handler in reverse order, then 
    * rethrow the exception.
    */
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     int i = 0 ;
     try {
       for ( i = 0 ; i < handlers.size() ; i++ )
@@ -87,9 +87,11 @@ public class SimpleChain implements Chain {
     }
     catch( Exception e ) {
       // undo in reverse order - rethrow
+      if( !(e instanceof AxisFault ) )
+        e = new AxisFault( e );
       while( --i >= 0 )
         ((Handler) handlers.elementAt( i )).undo( msgContext );
-      throw e ;
+      throw (AxisFault) e ;
     }
   }
 

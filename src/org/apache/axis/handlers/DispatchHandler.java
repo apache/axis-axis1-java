@@ -68,7 +68,7 @@ public class DispatchHandler implements Handler {
   public void cleanup() {
   }
 
-  public void invoke(MessageContext msgContext) throws Exception {
+  public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In DispatchHandler");
 
     Document  doc = msgContext.getIncomingMessage().getAsDOMDocument();

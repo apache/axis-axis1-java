@@ -83,7 +83,7 @@ public interface Handler extends Serializable {
    * the work that 'invoke' did.
    * Invoke should rethrow any exceptions it catches.
    */
-  public void invoke(MessageContext msgContext) throws Exception ;
+  public void invoke(MessageContext msgContext) throws AxisFault ;
 
   /**
    * Called when a fault occurs to 'undo' whatever 'invoke' did.
