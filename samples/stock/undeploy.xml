@@ -1,0 +1,18 @@
+<!-- Use this file to undeploy some handlers/chains and services  -->
+<!-- Two ways to do this:                                         -->
+<!--   java org.apache.axis.utils.Admin undeploy.xml              -->
+<!--      from the same dir that the Axis engine runs             -->
+<!-- or                                                           -->
+<!--   java org.apache.axis.client.AdminClient undeploy.xml       -->
+<!--      after the axis server is running                        -->
+<!-- This file will be replaced by WSDD once it's ready           -->
+
+<undeploy>
+  <handler name="debug" />
+  <handler name="authen"  />
+  <handler name="author"  />
+  <chain   name="checks"  />
+  <chain   name="rpc"  />
+  <service name="urn:xmltoday-delayed-quotes" handler="rpc" />
+  <service name="urn:cominfo" handler="rpc" />
+</undeploy>
