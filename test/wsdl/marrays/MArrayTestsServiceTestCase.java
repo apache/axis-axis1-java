@@ -131,13 +131,13 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
 
         try {
             // Test 3F: Some of the Foo elements are multi-referenced.   
-            HashMap map = new HashMap();
+            Map map = new HashMap();
             Foo[] array = new Foo[1];
             array[0] = new Foo();
             array[0].setValue(123);
             map.put("hello", array);
             
-            HashMap rc;
+            Map rc;
 
             rc = binding.testMapFooArray(map);
             assertTrue("Test Map Failed (a)", rc != null);

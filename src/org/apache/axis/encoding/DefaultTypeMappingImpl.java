@@ -271,25 +271,19 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                                Constants.XSD_DATE),
                    true);
 
-        // Use the Map Serialization for Hashtables, Map and HashMap
-        // The SOAP_MAP will be deserialized into a HashMap
-        myRegister(Constants.SOAP_MAP,       java.util.Hashtable.class,    
-                   new MapSerializerFactory(java.util.Hashtable.class,
+        // Serialize all extensions of Map to SOAP_MAP
+        // The SOAP_MAP will be deserialized into a HashMap by default.
+        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,    
+                   new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),
-                   new MapDeserializerFactory(java.util.Hashtable.class,
-                                              Constants.SOAP_MAP), 
+                   new MapDeserializerFactory(java.util.HashMap.class,
+                                              Constants.SOAP_MAP),
                    false);
         myRegister(Constants.SOAP_MAP,       java.util.Map.class,    
                    new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),
-                   new MapDeserializerFactory(java.util.Map.class,
-                                              Constants.SOAP_MAP), 
-                   false);
-        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,    
-                   new MapSerializerFactory(java.util.HashMap.class,
-                                            Constants.SOAP_MAP),
                    new MapDeserializerFactory(java.util.HashMap.class,
-                                              Constants.SOAP_MAP), 
+                                              Constants.SOAP_MAP),
                    false);
 
         // Use the Element Serializeration for elements
