@@ -76,15 +76,16 @@ public class NCName extends Name {
 
     /**
      * ctor for NCName
-     * @exception Exception will be thrown if validation fails
+     * @exception IllegalArgumentException will be thrown if validation fails
      */
-    public NCName(String stValue) throws Exception {
+    public NCName(String stValue) throws IllegalArgumentException {
         try {
             setValue(stValue);
         }
-        catch (Exception e) {
+        catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
-            throw new Exception(Messages.getMessage("badNCNameType00") + "data=[" +
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badNCNameType00") + "data=[" +
                     stValue + "]");
         }
     }

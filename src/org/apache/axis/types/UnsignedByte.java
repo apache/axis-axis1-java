@@ -75,11 +75,11 @@ public class UnsignedByte extends UnsignedShort {
      * ctor for UnsignedByte
      * @exception Exception will be thrown if validation fails
      */
-    public UnsignedByte(long sValue) throws Exception {
+    public UnsignedByte(long sValue) throws NumberFormatException {
       setValue(sValue);
     }
 
-    public UnsignedByte(String sValue) throws Exception {
+    public UnsignedByte(String sValue) throws NumberFormatException {
       setValue(Long.parseLong(sValue));
     }
 
@@ -89,9 +89,10 @@ public class UnsignedByte extends UnsignedShort {
      *
      * @param sValue the number to set
      */
-    public void setValue(long sValue) throws Exception {
+    public void setValue(long sValue) throws NumberFormatException {
         if (isValid(sValue) == false)
-            throw new Exception(Messages.getMessage("badUnsignedByte00") +
+            throw new NumberFormatException(
+                    Messages.getMessage("badUnsignedByte00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }

@@ -76,7 +76,7 @@ public class Day {
      * Constructs a Day with the given values
      * No timezone is specified
      */ 
-    public Day(int day) throws Exception {
+    public Day(int day) throws NumberFormatException {
         setValue(day);
     }
 
@@ -84,7 +84,8 @@ public class Day {
      * Constructs a Day with the given values, including a timezone string
      * The timezone is validated but not used.
      */ 
-    public Day(int day, String timezone) throws Exception {
+    public Day(int day, String timezone) 
+        throws NumberFormatException {
         setValue(day, timezone);
     }
     
@@ -151,7 +152,8 @@ public class Day {
         }
     }
 
-    public void setValue(int day, String timezone) throws NumberFormatException {
+    public void setValue(int day, String timezone) 
+        throws NumberFormatException {
         setDay(day);
         setTimezone(timezone);
     }

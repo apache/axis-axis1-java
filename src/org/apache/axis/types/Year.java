@@ -76,7 +76,7 @@ public class Year {
      * Constructs a Year with the given values
      * No timezone is specified
      */ 
-    public Year(int year) throws Exception {
+    public Year(int year) throws NumberFormatException {
         setValue(year);
     }
 
@@ -84,7 +84,7 @@ public class Year {
      * Constructs a Year with the given values, including a timezone string
      * The timezone is validated but not used.
      */ 
-    public Year(int year, String timezone) throws Exception {
+    public Year(int year, String timezone) throws NumberFormatException {
         setValue(year, timezone);
     }
     
@@ -153,7 +153,8 @@ public class Year {
         }
     }
 
-    public void setValue(int year, String timezone) throws NumberFormatException {
+    public void setValue(int year, String timezone) 
+        throws NumberFormatException {
         setYear(year);
         setTimezone(timezone);
     }

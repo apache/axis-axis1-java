@@ -75,15 +75,16 @@ public class Token extends NormalizedString {
 
     /**
      * ctor for Token
-     * @exception Exception will be thrown if validation fails
+     * @exception IllegalArgumentException will be thrown if validation fails
      */
-    public Token(String stValue) throws Exception {
+    public Token(String stValue) throws IllegalArgumentException {
         try {
             setValue(stValue);
         }
-        catch (Exception e) {
+        catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
-            throw new Exception(Messages.getMessage("badToken00") + "data=[" +
+            throw new IllegalArgumentException(
+                    Messages.getMessage("badToken00") + "data=[" +
                     stValue + "]");
         }
     }
