@@ -56,6 +56,7 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -87,8 +88,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.IOException;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.ProtocolException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -283,37 +287,60 @@ public class XMLUtils {
             tryReset= false;
         }
     }
-
-    public static Document newDocument() {
-        try {
-            synchronized (dbf) {
-                return dbf.newDocumentBuilder().newDocument();
-            }
-        } catch (Exception e) {
-            return null;
+    /**
+     * Get an empty new Document
+     * @return Document
+     * @throws ParserConfigurationException if construction problems occur
+     */
+    public static Document newDocument() 
+         throws ParserConfigurationException
+    {
+        synchronized (dbf) {
+            return dbf.newDocumentBuilder().newDocument();
         }
     }
 
-    public static Document newDocument(InputSource inp) {
-        try {
-            DocumentBuilder db;
-            synchronized (dbf) {
-                db = dbf.newDocumentBuilder();
-            }
-            db.setErrorHandler( new ParserErrorHandler() );
-            return( db.parse( inp ) );
+    /**
+     * Get a new Document read from the input source
+     * @return Document
+     * @throws ParserConfigurationException if construction problems occur
+     * @throws SAXException if the document has xml sax problems
+     * @throws IOException if i/o exceptions occur
+     */
+    public static Document newDocument(InputSource inp)
+        throws ParserConfigurationException, SAXException, IOException
+    {
+        DocumentBuilder db;
+        synchronized (dbf) {
+            db = dbf.newDocumentBuilder();
         }
-        catch( Exception e ) {
-            log.error(Messages.getMessage("exception00"), e);
-        }
-        return( null );
+        db.setErrorHandler( new ParserErrorHandler() );
+        return( db.parse( inp ) );
     }
 
-    public static Document newDocument(InputStream inp) {
+    /**
+     * Get a new Document read from the input stream
+     * @return Document
+     * @throws ParserConfigurationException if construction problems occur
+     * @throws SAXException if the document has xml sax problems
+     * @throws IOException if i/o exceptions occur
+     */
+    public static Document newDocument(InputStream inp) 
+        throws ParserConfigurationException, SAXException, IOException 
+    {
         return XMLUtils.newDocument(new InputSource(inp));
-    }
+    } 
 
-    public static Document newDocument(String uri) {
+    /**
+     * Get a new Document read from the indicated uri
+     * @return Document
+     * @throws ParserConfigurationException if construction problems occur
+     * @throws SAXException if the document has xml sax problems
+     * @throws IOException if i/o exceptions occur
+     */
+    public static Document newDocument(String uri) 
+        throws ParserConfigurationException, SAXException, IOException 
+    {
         // call the authenticated version as there might be 
         // username/password info embeded in the uri.
         return XMLUtils.newDocument(uri, null, null);
@@ -322,23 +349,26 @@ public class XMLUtils {
     /**
      * Create a new document from the given URI, use the username and password
      * if the URI requires authentication.
+     * @param uri the resource to get
+     * @param username basic auth username
+     * @param password basic auth password
+     * @throws ParserConfigurationException if construction problems occur
+     * @throws SAXException if the document has xml sax problems
+     * @throws IOException if i/o exceptions occur
      */ 
-    public static Document newDocument(String uri, String username, String password) {
-        try {
-            InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
-            Document doc = XMLUtils.newDocument(ins);
-            // Close the Stream
-            if (ins.getByteStream() != null) {
-                ins.getByteStream().close();
-            } else if (ins.getCharacterStream() != null) {
-                ins.getCharacterStream().close();
-            }
-            return doc;
-        } catch (Exception e) {
-            log.error(Messages.getMessage("exception00"), e);
-        }
-        return null;
-    }
+    public static Document newDocument(String uri, String username, String password)
+        throws ParserConfigurationException, SAXException, IOException
+     {
+         InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
+         Document doc = XMLUtils.newDocument(ins);
+         // Close the Stream
+         if (ins.getByteStream() != null) {
+             ins.getByteStream().close();
+         } else if (ins.getCharacterStream() != null) {
+             ins.getCharacterStream().close();
+         }
+         return doc;
+     }
 
     private static String privateElementToString(Element element,
                                                  boolean omitXMLDecl)
@@ -401,14 +431,20 @@ public class XMLUtils {
      * @param namespace - element namespace
      * @param name - element name
      * @param string - value of the text node
-     * @return element - an XML Element
+     * @return element - an XML Element, null if no element was created
      */ 
     public static Element StringToElement(String namespace, String name, String string) {
-        Document doc = XMLUtils.newDocument();
-        Element element = doc.createElementNS(namespace, name);
-        Text text = doc.createTextNode(string);
-        element.appendChild(text);
-        return element;
+        try {
+            Document doc = XMLUtils.newDocument();
+            Element element = doc.createElementNS(namespace, name);
+            Text text = doc.createTextNode(string);
+            element.appendChild(text);
+            return element;
+        } 
+        catch (ParserConfigurationException e) {
+            // This should not occur
+            throw new InternalException(e);
+        }
     }
     
     public static String getInnerXMLString(Element element) {
@@ -614,8 +650,8 @@ public class XMLUtils {
     private static InputSource getInputSourceFromURI(String uri,
                                                      String username,
                                                      String password)
-            throws Exception {
-
+        throws IOException, ProtocolException, UnsupportedEncodingException
+    {
         URL wsdlurl = null;
         try {
             wsdlurl = new URL(uri);

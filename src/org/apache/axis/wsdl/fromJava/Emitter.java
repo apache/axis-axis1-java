@@ -76,6 +76,8 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 
+import org.xml.sax.SAXException;
+
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
 import javax.wsdl.BindingInput;
@@ -105,6 +107,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -182,8 +185,13 @@ public class Emitter {
      * @param filename2  implementation WSDL
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public void emit(String filename1, String filename2) throws IOException, WSDLException {
+    public void emit(String filename1, String filename2) 
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         // Get interface and implementation defs
         Definition intf = getIntfWSDL();
         Definition impl = getImplWSDL();
@@ -213,8 +221,13 @@ public class Emitter {
      * @param filename  WSDL
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public void emit(String filename) throws IOException, WSDLException {
+    public void emit(String filename) 
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         emit(filename, MODE_ALL);
     }
 
@@ -229,8 +242,13 @@ public class Emitter {
      * @return Document
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public Document emit(int mode) throws IOException, WSDLException {
+    public Document emit(int mode)
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         Document doc = null;
         Definition def = null;
         switch (mode) {
@@ -268,8 +286,13 @@ public class Emitter {
      * @return String
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public String emitToString(int mode) throws IOException, WSDLException {
+    public String emitToString(int mode)
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         Document doc = emit(mode);
         StringWriter sw = new StringWriter();
         XMLUtils.PrettyDocumentToWriter(doc, sw);
@@ -287,8 +310,13 @@ public class Emitter {
      * @param mode generation mode - all, interface, implementation
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public void emit(String filename, int mode) throws IOException, WSDLException {
+    public void emit(String filename, int mode) 
+        throws IOException, WSDLException,
+               SAXException, ParserConfigurationException
+    {
         Document doc = emit(mode);
 
         // Supply a reasonable file name if not supplied
@@ -317,8 +345,13 @@ public class Emitter {
      * @return WSDL <code>Definition</code>
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public Definition getWSDL() throws IOException, WSDLException {
+    public Definition getWSDL() 
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         // Invoke the init() method to ensure configuration is setup
         init(MODE_ALL);
 
@@ -345,8 +378,13 @@ public class Emitter {
      * @return WSDL <code>Definition</code>
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public Definition getIntfWSDL() throws IOException, WSDLException {
+    public Definition getIntfWSDL() 
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException 
+    {
         // Invoke the init() method to ensure configuration is setup
         init(MODE_INTERFACE);
 
@@ -372,8 +410,12 @@ public class Emitter {
      * @return WSDL <code>Definition</code>
      * @throws IOException
      * @throws WSDLException
+     * @throws SAXException
+     * @throws ParserConfigurationException
      */
-    public Definition getImplWSDL() throws IOException, WSDLException {
+    public Definition getImplWSDL()
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException {
         // Invoke the init() method to ensure configuration is setup
         init(MODE_IMPLEMENTATION);
 
@@ -523,7 +565,8 @@ public class Emitter {
      * @return WSDL Definition
      */
     private Definition createDefinition()
-        throws WSDLException {
+        throws WSDLException, SAXException, IOException, 
+               ParserConfigurationException {
         Definition def;
         if (inputWSDL == null) {
             def = WSDLFactory.newInstance().newDefinition();
@@ -545,7 +588,8 @@ public class Emitter {
      * @return Types object
      */
     private Types createTypes(Definition def)
-        throws IOException, WSDLException {
+        throws IOException, WSDLException, SAXException,
+               ParserConfigurationException {
         types = new Types(def, tm, defaultTM, namespaces,
                           intfNS, stopClasses);
         if (inputWSDL != null) {
@@ -1159,7 +1203,8 @@ public class Emitter {
                     msg.addPart(part);
                 }
             }
-        } else if (use == Use.ENCODED) {
+        } else if (use == Use.ENCODED || 
+                   style == Style.RPC) {
             // Add the type representing the param
             // For convenience, add an element for the param
             // Write <part name=param_name type=param_type>

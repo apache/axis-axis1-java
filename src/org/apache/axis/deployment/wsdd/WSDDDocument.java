@@ -145,7 +145,7 @@ public class WSDDDocument extends WSDDConstants
         try {
             writer.close();
             return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }

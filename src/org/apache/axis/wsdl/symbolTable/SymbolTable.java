@@ -97,6 +97,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 
 import javax.wsdl.xml.WSDLReader;
+import javax.xml.parsers.ParserConfigurationException;
 
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -120,6 +121,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
 * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and
@@ -341,18 +343,19 @@ public class SymbolTable {
      * @param uri wsdlURI the location of the WSDL file.
      */
 
-    public void populate(String uri) throws IOException, WSDLException {
+    public void populate(String uri)
+        throws IOException, WSDLException,
+               SAXException, ParserConfigurationException {
         populate(uri, null, null);
     } // populate
 
-    public void populate(String uri, String username, String password) throws IOException, WSDLException {
+    public void populate(String uri, String username, String password)
+        throws IOException, WSDLException, 
+               SAXException, ParserConfigurationException  {
         if (verbose)
             System.out.println(Messages.getMessage("parsing00", uri));
 
         Document doc = XMLUtils.newDocument(uri, username, password);
-        if (doc == null) {
-            throw new IOException(Messages.getMessage("cantGetDoc00", uri));
-        }
         this.wsdlURI = uri;
         try {
             File f = new File(uri);
@@ -369,7 +372,9 @@ public class SymbolTable {
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
-    public void populate(String context, Document doc) throws IOException, WSDLException {
+    public void populate(String context, Document doc)
+        throws IOException, SAXException, WSDLException, 
+               ParserConfigurationException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.verbose", verbose);
         this.def = reader.readWSDL(context, doc);
@@ -384,7 +389,8 @@ public class SymbolTable {
      * appropriately for each entry.
      */
     private void add(String context, Definition def, Document doc)
-            throws IOException {
+            throws IOException, SAXException, WSDLException, 
+                   ParserConfigurationException {
         URL contextURL = context == null ? null : getURL(null, context);
         populate(contextURL, def, doc, null);
         checkForUndefined();
@@ -509,7 +515,9 @@ public class SymbolTable {
      */
     private URLHashSet importedFiles = new URLHashSet();
     private void populate(URL context, Definition def, Document doc,
-            String filename) throws IOException {
+            String filename) 
+        throws IOException, ParserConfigurationException, 
+               SAXException, WSDLException {
         if (doc != null) {
             populateTypes(context, doc);
 
@@ -598,7 +606,9 @@ public class SymbolTable {
     /**
      * Recursively find all xsd:import'ed objects and call populate for each one.
      */
-    private void lookForImports(URL context, Node node) throws IOException {
+    private void lookForImports(URL context, Node node) 
+        throws IOException, ParserConfigurationException,
+               SAXException, WSDLException {
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
@@ -629,7 +639,9 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the Types from the Document.
      */
-    private void populateTypes(URL context, Document doc) throws IOException {
+    private void populateTypes(URL context, Document doc)
+        throws IOException, SAXException, WSDLException, 
+               ParserConfigurationException {
         addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
     } // populateTypes
 
@@ -637,14 +649,19 @@ public class SymbolTable {
      * Utility method which walks the Document and creates Type objects for
      * each complexType, simpleType, or element referenced or defined.
      *
-     * What goes into the symbol table?  In general, only the top-level types (ie., those just below
-     * the schema tag).  But base types and references can appear below the top level.  So anything
-     * at the top level is added to the symbol table, plus non-Element types (ie, base and refd)
+     * What goes into the symbol table?  In general, only the top-level types 
+     * (ie., those just below
+     * the schema tag).  But base types and references can 
+     * appear below the top level.  So anything
+     * at the top level is added to the symbol table, 
+     * plus non-Element types (ie, base and refd)
      * that appear deep within other types.
      */
     private static final int ABOVE_SCHEMA_LEVEL = -1;
     private static final int SCHEMA_LEVEL = 0;
-    private void addTypes(URL context, Node node, int level) throws IOException {
+    private void addTypes(URL context, Node node, int level) 
+        throws IOException, ParserConfigurationException, 
+               WSDLException, SAXException {
         if (node == null) {
             return;
         }

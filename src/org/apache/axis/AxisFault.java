@@ -62,6 +62,7 @@ import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -73,6 +74,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -282,21 +284,31 @@ public class AxisFault extends java.rmi.RemoteException {
 
     public void setFaultDetailString(String details) {
         faultDetails = new Vector();
-        Document doc = XMLUtils.newDocument();
-        Element element = doc.createElement("string");
-        Text text = doc.createTextNode(details);
-        element.appendChild(text);
-        faultDetails.add(element);
+        try {
+            Document doc = XMLUtils.newDocument();
+            Element element = doc.createElement("string");
+            Text text = doc.createTextNode(details);
+            element.appendChild(text);
+            faultDetails.add(element);
+        } catch (ParserConfigurationException e) {
+            // This should not occur
+            throw new InternalException(e);
+        }
     }
 
     public void addFaultDetailString(String detail) {
         if(faultDetails == null)
-            faultDetails = new Vector();
-        Document doc = XMLUtils.newDocument();
-        Element element = doc.createElement("string");
-        Text text = doc.createTextNode(detail);
-        element.appendChild(text);
-        faultDetails.add(element);
+            faultDetails = new Vector(); 
+        try {
+            Document doc = XMLUtils.newDocument();
+            Element element = doc.createElement("string");
+            Text text = doc.createTextNode(detail);
+            element.appendChild(text);
+            faultDetails.add(element);
+        } catch (ParserConfigurationException e) {
+            // This should not occur
+            throw new InternalException(e);
+        }
     }
 
     public Element[] getFaultDetails() {

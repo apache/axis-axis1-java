@@ -154,8 +154,8 @@ public class InheritanceTestCase extends junit.framework.TestCase {
             //reader.setFeature("javax.wsdl.verbose", true);
             def = reader.readWSDL(path, doc);
             assertNotNull("unable to generate WSDL definition from document: " + path, def);
-        } catch (WSDLException e) {
-            throw new junit.framework.AssertionFailedError("WSDL Exception caught: " + e);
+        } catch (Exception e) {
+            throw new junit.framework.AssertionFailedError("Exception caught: " + e);
         }
         
         // Now check parts of the definition

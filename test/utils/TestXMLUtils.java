@@ -32,13 +32,13 @@ public class TestXMLUtils extends TestCase
     public void setup() {
     }
 
-    public void testNewDocumentNoArgConstructor()
+    public void testNewDocumentNoArgConstructor() throws Exception
     {
         Document doc = XMLUtils.newDocument();
         assertNotNull("Did not get a new Document", doc);
     }
 
-    public void testNewDocumentInputSource()
+    public void testNewDocumentInputSource() throws Exception
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
@@ -46,7 +46,7 @@ public class TestXMLUtils extends TestCase
         assertNotNull("Did not get a new Document", doc);
     }
 
-    public void testNewDocumentInputStream()
+    public void testNewDocumentInputStream() throws Exception
     {
         InputStream iostream = (InputStream)this.getTestXml("inputstream");
         InputSource inputsrc = new InputSource(iostream);
@@ -67,7 +67,7 @@ public class TestXMLUtils extends TestCase
     }
     */
 
-    public void testDocumentToString()
+    public void testDocumentToString() throws Exception
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
@@ -84,7 +84,7 @@ public class TestXMLUtils extends TestCase
     * type but writes its output to a writer.  So half the reason for
     * creating and using it here is as a reference point.
     */
-    public void testElementToWriter() throws IOException
+    public void testElementToWriter() throws Exception
     {
         /* Get the Document and one of its elements. */
         Reader xmlReader = (Reader)this.getTestXml("reader");
@@ -126,7 +126,7 @@ public class TestXMLUtils extends TestCase
     * For explanation of the methodology used to test this method, see notes in
     * previous test method.
     */
-    public void testDocumentToStream() throws IOException
+    public void testDocumentToStream() throws Exception
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
@@ -144,7 +144,7 @@ public class TestXMLUtils extends TestCase
         assertEquals("Did not get the expected result", expected, result);
     }
 
-    public void testElementToString()
+    public void testElementToString() throws Exception
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
@@ -159,7 +159,7 @@ public class TestXMLUtils extends TestCase
         assertEquals("Did not get the expected result", expected, result);
     }
 
-    public void testGetInnerXMLString()
+    public void testGetInnerXMLString() throws Exception
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
@@ -172,7 +172,7 @@ public class TestXMLUtils extends TestCase
         assertEquals(expected, result);
     }
 
-    public void testGetPrefix()
+    public void testGetPrefix() throws Exception
     {
         Document doc = XMLUtils.newDocument();
 
@@ -192,7 +192,7 @@ public class TestXMLUtils extends TestCase
         assertEquals("Did not get the expected result", expected, result);
     }
 
-    public void testGetNamespace()
+    public void testGetNamespace() throws Exception
     {
         String testDoc = "<svg xmlns:svg=\"http://www.w3.org/2000/svg\"/>";
         InputSource inputsrc = new InputSource(new StringReader(testDoc));
@@ -259,7 +259,7 @@ public class TestXMLUtils extends TestCase
         else return null;
     }
 
-    public void testDOM2Writer()
+    public void testDOM2Writer() throws Exception
     {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -282,7 +282,7 @@ public class TestXMLUtils extends TestCase
         assertTrue(output.indexOf("http://www.w3.org/XML/1998/namespace")==-1);
     }
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         TestXMLUtils test = new TestXMLUtils("TestXMLUtils");
         test.testDOM2Writer();

@@ -81,6 +81,8 @@ import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -388,7 +390,9 @@ public class Emitter extends Parser {
      * If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
-    public void run(String context, Document doc) throws IOException, WSDLException {
+    public void run(String context, Document doc) throws 
+        IOException, SAXException, WSDLException, 
+        ParserConfigurationException {
         setup();
         super.run(context, doc);
     } // run
@@ -509,7 +513,9 @@ public class Emitter extends Parser {
      * @param doc doc This is the XML Document containing the WSDL.
      * @deprecated Call run(context, doc) instead.
      */
-    public void emit(String context, Document doc) throws IOException, WSDLException {
+    public void emit(String context, Document doc)
+        throws IOException, SAXException, WSDLException, 
+               ParserConfigurationException {
         run(context, doc);
     } // emit
 

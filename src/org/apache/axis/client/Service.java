@@ -192,8 +192,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
           initService( def, serviceName );
         }
         else {
-          Document doc = XMLUtils.newDocument(wsdlDoc.toString());
-          initService(doc, serviceName);
+            Document doc = null;
+            try {
+                doc = XMLUtils.newDocument(wsdlDoc.toString());
+            } catch (Exception exp ) {
+                throw new ServiceException(
+                   Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+            }
+            initService(doc, serviceName);
         }
     }
 
@@ -224,7 +230,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
           initService( def, serviceName );
         }
         else {
-          Document doc = XMLUtils.newDocument(this.wsdlLocation.toString());
+            Document doc = null;
+            try {
+                doc = XMLUtils.newDocument(this.wsdlLocation.toString());
+            } catch (Exception exp ) {
+                throw new ServiceException(
+                   Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+            }
           initService(doc, serviceName);
         }
     }
@@ -242,7 +254,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(InputStream wsdlInputStream, QName serviceName)
                            throws ServiceException {
         engine = getAxisClient();
-        Document doc = XMLUtils.newDocument(wsdlInputStream);
+        Document doc = null;
+        try {
+            doc = XMLUtils.newDocument(wsdlInputStream);
+        } catch (Exception exp ) {
+            throw new ServiceException(
+               Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+        }
         initService(doc, serviceName);
     }
 
