@@ -195,12 +195,12 @@ public class MessageContext implements SOAPMessageContext {
     private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
     private OperationDesc currentOperation = null;
-    
+
     public  OperationDesc getOperation()
     {
         return currentOperation;
     }
-    
+
     public void setOperation(OperationDesc operation)
     {
         currentOperation = operation;
@@ -232,7 +232,7 @@ public class MessageContext implements SOAPMessageContext {
 
         if (serviceHandler != null) {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
-    
+
             if (desc != null) {
                 possibleOperations = desc.getOperationsByQName(qname);
                 setOperationStyle(desc.getStyle());
@@ -261,7 +261,7 @@ public class MessageContext implements SOAPMessageContext {
     public static MessageContext getCurrentContext() {
        return AxisEngine.getCurrentMessageContext();
     }
-    
+
     protected static String systemTempDir= null;
     static {
         try {
@@ -296,6 +296,13 @@ public class MessageContext implements SOAPMessageContext {
             if(attachmentsdir != null){
                 setProperty(ATTACHMENTS_DIR, attachmentsdir);
             }
+
+            // If SOAP 1.2 has been specified as the default for the engine,
+            // switch the constants over.
+            String defaultSOAPVersion = (String)engine.getOption(
+                                                 AxisEngine.PROP_SOAP_VERSION);
+            if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion))
+                soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         }
     }
 
@@ -444,12 +451,12 @@ public class MessageContext implements SOAPMessageContext {
 
           //if we have received attachments of a particular type
           // than that should be the default type to send.
-          Message reqMsg= getRequestMessage(); 
+          Message reqMsg= getRequestMessage();
           if( null != reqMsg){
             Attachments reqAttch= reqMsg.getAttachmentsImpl();
             Attachments respAttch= respMsg.getAttachmentsImpl();
             if(null != reqAttch  && null != respAttch){
-              if(respAttch.getSendType() == Attachments.SEND_TYPE_NOTSET)  
+              if(respAttch.getSendType() == Attachments.SEND_TYPE_NOTSET)
                 respAttch.setSendType(reqAttch.getSendType());//only if not explicity set.
             }
           }
@@ -658,9 +665,9 @@ public class MessageContext implements SOAPMessageContext {
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      *  Set this property to request a certain level of HTTP.
-     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_10   
+     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_10
      *    for HTTP 1.0
-     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_11   
+     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_11
      *    for HTTP 1.1
      */
     public static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
@@ -713,7 +720,7 @@ public class MessageContext implements SOAPMessageContext {
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
             return;
-            // Is this right?  Shouldn't we throw an exception like: 
+            // Is this right?  Shouldn't we throw an exception like:
             // throw new IllegalArgumentException(msg);
         }
         else if (name.equals(Call.USERNAME_PROPERTY)) {

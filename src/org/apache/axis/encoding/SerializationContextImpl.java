@@ -211,6 +211,8 @@ public class SerializationContextImpl implements SerializationContext
 
         Handler optionSource = null ;
         if ( msgContext != null ) {
+            soapConstants = msgContext.getSOAPConstants();
+
             // optionSource = msgContext.getService();
             if (optionSource == null)
                 optionSource = msgContext.getAxisEngine();
@@ -1128,7 +1130,7 @@ public class SerializationContextImpl implements SerializationContext
                 info = getSerializer(javaType, value);
                 // Must send type if it does not match preferred type
                 if (xmlType != null) {
-                    sendType = true;  
+                    sendType = true;
                 }
                 xmlType = null;
             }
