@@ -252,6 +252,7 @@ public class BeanSerializer implements Serializer, Serializable {
         // See if there is a super class, stop if we hit a stop class
         Element e = null;
         Class superClass = javaType.getSuperclass();
+        BeanPropertyDescriptor[] superPd = null;
         List stopClasses = types.getStopClasses();
         if (superClass != null &&
                 superClass != java.lang.Object.class &&
@@ -267,6 +268,10 @@ public class BeanSerializer implements Serializer, Serializable {
             complexContent.appendChild(extension);
             extension.setAttribute("base", base);
             e = extension;
+            // Get the property descriptors for the super class
+            superPd =
+                BeanUtils.getPd(superClass,
+                                TypeDesc.getTypeDescForClass(superClass));
         } else {
             e = complexType;
         }
@@ -287,8 +292,25 @@ public class BeanSerializer implements Serializer, Serializable {
         // Serialize each property
         for (int i=0; i<propertyDescriptor.length; i++) {
             String propName = propertyDescriptor[i].getName();
-            if (propName.equals("class"))
+
+            // Don't serializer properties named class
+            boolean writeProperty = true;
+            if (propName.equals("class")) {
+                writeProperty = false;
+            }
+
+            // Don't serialize the property if it is present
+            // in the super class property list
+            if (superPd != null && writeProperty) {
+                for (int j=0; j<superPd.length && writeProperty; j++) {
+                    if (propName.equals(superPd[j].getName())) {
+                        writeProperty = false;
+                    }
+                }
+            }            
+            if (!writeProperty) {
                 continue;
+            }                
 
             // If we have type metadata, check to see what we're doing
             // with this field.  If it's an attribute, skip it.  If it's
