@@ -92,7 +92,7 @@ public class HTTPSender extends BasicHandler {
     /**
      * Utility Class BooleanHolder
      */
-    class BooleanHolder {
+    static class BooleanHolder {
         public boolean value;
         public BooleanHolder(boolean value) {
             this.value = value;
