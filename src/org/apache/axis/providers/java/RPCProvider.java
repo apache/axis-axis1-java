@@ -229,7 +229,8 @@ public class RPCProvider extends JavaProvider {
                 
                 {
                     // Hm - maybe we can help this with a conversion or two...
-                    for (int i = 0; i < params.length; i++) {
+                    for (int i = 0; argValues != null && i < argValues.length &&
+                                    i < params.length; i++) {
                         Object thisArg = argValues[i];
                         if (!params[i].isAssignableFrom(thisArg.getClass())) {
                             // Attempt conversion for each non-assignable argument
@@ -249,7 +250,8 @@ public class RPCProvider extends JavaProvider {
                         msg.append( "method name \"" + method.getName() + "\"");
                         msg.append(" tried argument types: "); 
                         String sep= "";
-                        for(int i=0; i< argValues.length; ++i){
+                        for(int i=0; argValues != null &&
+                                     i< argValues.length; ++i){
                             msg.append( sep);
                             sep=", ";
                             msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
