@@ -55,8 +55,6 @@
 
 package org.apache.axis.encoding.ser.castor;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -67,12 +65,14 @@ import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.ValidationException;
 import org.xml.sax.SAXException;
 
+import javax.xml.namespace.QName;
+
 /**
  * Castor deserializer
+ * 
  * @author Olivier Brand (olivier.brand@vodafone.com)
  * @author Steve Loughran
  * @version 1.0
- *
  */
 public class CastorDeserializer
         extends DeserializerImpl
@@ -94,11 +94,9 @@ public class CastorDeserializer
             String localName,
             DeserializationContext context)
             throws SAXException {
-
         try {
             MessageElement msgElem = context.getCurElement();
-            if (msgElem != null)
-            {
+            if (msgElem != null) {
                 // Unmarshall the nested XML element into a castor object of type 'javaType'
                 value = Unmarshaller.unmarshal(javaType, msgElem.getAsDOM());
             }

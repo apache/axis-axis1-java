@@ -61,7 +61,7 @@ import javax.xml.namespace.QName;
 
 /**
  * SerializerFactory for Castor objects
- *
+ * 
  * @author Olivier Brand (olivier.brand@vodafone.com)
  */
 public class CastorSerializerFactory extends BaseSerializerFactory {
