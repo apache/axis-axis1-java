@@ -101,6 +101,11 @@ public class HTTPActionHandler extends BasicHandler
                 throw new AxisFault( "Server.NoHTTPAction",
                                      "No HTTPAction property in context",
                                      null, null );
+            action = action.trim();
+            if (action.charAt(0) == '\"') {
+                // assert(action.endsWith("\"")
+                action = action.substring(1, action.length() - 1);
+            }
         }
 
         msgContext.setTargetService( action );
