@@ -353,7 +353,7 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println(
                     "                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
             pw.println(
-                    "                        Object x = cachedSerFactories.get(i);");
+                    "                        java.lang.Object x = cachedSerFactories.get(i);");
             pw.println(
                     "                        if (x instanceof Class) {");
             pw.println(
