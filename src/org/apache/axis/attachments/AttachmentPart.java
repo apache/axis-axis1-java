@@ -73,7 +73,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
 
     javax.activation.DataHandler datahandler= null;
 
-    private Hashtable headers = new Hashtable();
+    //private Hashtable headers = new Hashtable();
+    private javax.xml.soap.MimeHeaders mimeHeaders = new javax.xml.soap.MimeHeaders();
     private String contentId;
     private String contentLocation;
 
@@ -96,24 +97,10 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
 
     /**
      * TODO: everything!
-    public int getContentLength() {
-        return 0;
-    }
-    */
-
-    /**
-     * TODO: everything!
      */
     public String getContentType() {
         return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE);
     }
-
-    /**
-     * TODO: everything!
-    public int getSize() {
-        return 0;
-    }
-     */
 
     /**
      * Add the specified MIME header, as per JAXM.
@@ -135,14 +122,17 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
             throw new IllegalArgumentException(
                     JavaUtils.getMessage("headerValueNotNull"));
         }
-        headers.put(header.toLowerCase(), value);
+        mimeHeaders.setHeader(header.toLowerCase(), value);
     }
 
     /**
      * Get the specified MIME header.
      */
     public String getFirstMimeHeader (String header) {
-        return (String) headers.get(header.toLowerCase());
+        String[] values = mimeHeaders.getHeader(header.toLowerCase());
+        if(values != null && values.length  > 0)
+            return values[0];
+        return null;
     }
 
     /**
@@ -200,35 +190,14 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * Get all headers that match
      */
     public java.util.Iterator getMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList();
-        if(null != match && 0 != match.length ){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                      String key= match[i].toLowerCase();
-                      if(headers.containsKey(key))
-                         retList.add(match[i]);
-                }
-            }
-        }
-        return retList.iterator();
+        return mimeHeaders.getMatchingHeaders(match);
     }
 
     /**
      * Get all headers that do not match
      */
     public java.util.Iterator getNonMatchingMimeHeaders( final String[] match){
-        java.util.LinkedList retList= new java.util.LinkedList(headers.keySet());
-        if(null != match && 0 != match.length && !headers.isEmpty()){
-            for(int i= match.length-1 ; i > -1 ; --i){
-                    if(match[i] != null){
-                        String remItem= match[i].toLowerCase();
-                        if(headers.containsKey(remItem)){
-                            retList.remove(remItem);
-                    }
-                }
-            }
-        }
-        return retList.iterator();
+        return mimeHeaders.getNonMatchingHeaders(match);
     }
 
     /**
@@ -239,8 +208,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     headers for this <CODE>AttachmentPart</CODE> object
      */
     public Iterator getAllMimeHeaders() {
-        //TODO: Implement this.
-        return null;
+        return mimeHeaders.getAllHeaders();
     }
 
     /**
@@ -261,12 +229,12 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     or value
      */
     public void setMimeHeader(String name, String value){
-        //TODO: Implement this.
+        mimeHeaders.setHeader(name,value);
     }
 
     /** Removes all the MIME header entries. */
     public void removeAllMimeHeaders() {
-        //TODO: Implement this.
+        mimeHeaders.removeAllHeaders();
     }
 
     /**
@@ -275,7 +243,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     header/s to be removed
      */
     public void removeMimeHeader(String header) {
-        //TODO: Implement this.
+        mimeHeaders.removeHeader(header);
     }
 
     /**
@@ -287,8 +255,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     no data in this <CODE>AttachmentPart</CODE> object
      */
     public DataHandler getDataHandler() throws SOAPException {
-        //TODO: Implement this.
-        return null;
+        return datahandler;
     }
 
     /**
@@ -306,7 +273,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      *     DataHandler</CODE> object
      */
     public void setDataHandler(DataHandler datahandler) {
-        //TODO: Implement this.
+        this.datahandler = datahandler;
     }
 
     /**
@@ -402,10 +369,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart implements Par
      * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
      */
     public String[] getMimeHeader(String name) {
-        //TODO: Flesh this out.
-        String[] strings = new String[1];
-        strings[0] = getFirstMimeHeader(name);
-        return strings;
+        return mimeHeaders.getHeader(name);
     }
 }
 
