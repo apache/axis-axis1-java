@@ -160,6 +160,7 @@ public class SerializationContextImpl implements SerializationContext
      */
     private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
+    private boolean noNamespaceMappings = true;
 
     class MultiRefItem {
         String id;
@@ -425,6 +426,10 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if ((uri != null) && (prefix != null)) {
+            if (noNamespaceMappings) {
+                nsStack.push();
+                noNamespaceMappings = false;
+            }
             nsStack.add(uri, prefix);
         }
     }
@@ -810,7 +815,7 @@ public class SerializationContextImpl implements SerializationContext
                            "CDATA",
                            encodingStyle);
 
-        // Make a copy of the keySet because it could be updated 
+        // Make a copy of the keySet because it could be updated
         // during processing
         HashSet keys = new HashSet();
         keys.addAll(multiRefValues.keySet());
@@ -926,25 +931,30 @@ public class SerializationContextImpl implements SerializationContext
             }
         }
 
-        for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
-            StringBuffer sb = new StringBuffer("xmlns");
-            if (map.getPrefix().length() > 0) {
-                sb.append(':');
-                sb.append(map.getPrefix());
+        if (noNamespaceMappings) {
+            nsStack.push();
+        } else {
+            for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
+                StringBuffer sb = new StringBuffer("xmlns");
+                if (map.getPrefix().length() > 0) {
+                    sb.append(':');
+                    sb.append(map.getPrefix());
+                }
+                if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
+                    writer.write(' ');
+                    sb.append("=\"");
+                    sb.append(map.getNamespaceURI());
+                    sb.append('"');
+                    writer.write(sb.toString());
+                }
             }
-            if ((vecQNames==null) || (vecQNames.indexOf(sb.toString())==-1)) {
-                writer.write(' ');
-                sb.append("=\"");
-                sb.append(map.getNamespaceURI());
-                sb.append('"');
-                writer.write(sb.toString());
-            }
+
+            noNamespaceMappings = true;
         }
 
         writingStartTag = true;
 
         elementStack.push(elementQName);
-        nsStack.push();
 
         onlyXML=true;
     }
@@ -1167,7 +1177,7 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             // Set currentXMLType to the one desired one.
-            // Note for maxOccurs usage this xmlType is the 
+            // Note for maxOccurs usage this xmlType is the
             // type of the component not the type of the array.
             currentXMLType = xmlType;
 
@@ -1179,17 +1189,17 @@ public class SerializationContextImpl implements SerializationContext
 
             // Try getting a serializer for the prefered xmlType
             QNameHolder actualXMLType = new QNameHolder();
-            Serializer ser = getSerializer(javaType, xmlType, 
+            Serializer ser = getSerializer(javaType, xmlType,
                                            actualXMLType);
 
             if ( ser != null ) {
                 // Send the xmlType if indicated or if
-                // the actual xmlType is different than the 
+                // the actual xmlType is different than the
                 // prefered xmlType
-                if (shouldSendType || 
-                    (xmlType != null && 
+                if (shouldSendType ||
+                    (xmlType != null &&
                      (!xmlType.equals(actualXMLType.value)))) {
-                    attributes = setTypeAttribute(attributes, 
+                    attributes = setTypeAttribute(attributes,
                                                   actualXMLType.value);
                 }
 
@@ -1209,9 +1219,9 @@ public class SerializationContextImpl implements SerializationContext
                 return;
             }
 
-            // if no serializer was configured try to find one dynamically using WSDLJava 
+            // if no serializer was configured try to find one dynamically using WSDLJava
             // generated metadata
-            try { 
+            try {
                 Method method = value.getClass().getMethod(
                         "getSerializer", getSerializerClasses);
                 if (method != null) {
@@ -1221,10 +1231,10 @@ public class SerializationContextImpl implements SerializationContext
                     if (typedesc != null) {
                         QName qname = typedesc.getXmlType();
                         if (qname != null) {
-                            attributes = setTypeAttribute(attributes, 
+                            attributes = setTypeAttribute(attributes,
                                                           qname);
                         }
-                    } 
+                    }
                     serializer.serialize(elemQName, attributes, value, this);
                     return;
                 }
@@ -1248,10 +1258,10 @@ public class SerializationContextImpl implements SerializationContext
     /**
      * Walk the interfaces of a class looking for a serializer for that
      * interface.  Include any parent interfaces in the search also.
-     * 
-     */ 
-    private SerializerFactory getSerializerFactoryFromInterface(Class javaType, 
-                                                                QName xmlType, 
+     *
+     */
+    private SerializerFactory getSerializerFactoryFromInterface(Class javaType,
+                                                                QName xmlType,
                                                                 TypeMapping tm)
     {
         SerializerFactory  serFactory  = null ;
@@ -1265,22 +1275,22 @@ public class SerializationContextImpl implements SerializationContext
                     serFactory = getSerializerFactoryFromInterface(iface, xmlType, tm);
                 if (serFactory != null)
                     break;
-                   
+
             }
         }
         return serFactory;
     }
-    
+
     /**
      * getSerializer
      * Attempts to get a serializer for the indicated javaType and xmlType.
      * @param javaType is the type of the object
      * @param xmlType is the preferred qname type.
-     * @param actualXMLType is set to a QNameHolder or null.  
+     * @param actualXMLType is set to a QNameHolder or null.
      *                     If a QNameHolder, the actual xmlType is returned.
      * @return found class/serializer or null
      **/
-    private Serializer getSerializer(Class javaType, QName xmlType, 
+    private Serializer getSerializer(Class javaType, QName xmlType,
                                      QNameHolder actualXMLType) {
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
@@ -1295,7 +1305,7 @@ public class SerializationContextImpl implements SerializationContext
 
             // Walk my interfaces...
             serFactory = getSerializerFactoryFromInterface(javaType, xmlType, tm);
-            
+
             // Finally, head to my superclass
             if (serFactory != null)
                 break;
@@ -1307,18 +1317,18 @@ public class SerializationContextImpl implements SerializationContext
         Serializer ser = null;
         if ( serFactory != null ) {
             ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
-            
+
             if (actualXMLType != null) {
                 // Get the actual qname xmlType from the factory.
                 // If not found via the factory, fall back to a less
                 // performant solution.
                 if (serFactory instanceof BaseSerializerFactory) {
-                    actualXMLType.value = 
+                    actualXMLType.value =
                         ((BaseSerializerFactory) serFactory).getXMLType();
                 }
                 if (actualXMLType.value == null) {
-                    actualXMLType.value = 
-                        ((TypeMappingImpl) tm).getXMLType(javaType, 
+                    actualXMLType.value =
+                        ((TypeMappingImpl) tm).getXMLType(javaType,
                                                           xmlType);
                 }
             }
