@@ -431,7 +431,7 @@ public class AdminClient
             }
 
             call.setUseSOAPAction( true);
-            call.setSOAPActionURI( "AdminService");
+            call.setSOAPActionURI( "urn:AdminService");
 
             Vector result = null ;
             Object[]  params = new Object[] { new SOAPBodyElement(input) };
