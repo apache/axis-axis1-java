@@ -209,35 +209,38 @@ public class ArraySerializer implements Serializer {
             }
         }
         
-        Attributes attrs = attributes;
-
+        AttributesImpl attrs;
         if (attributes != null) {
-            AttributesImpl attrImpl = null;
-        
-            if (attributes.getIndex(Constants.URI_CURRENT_SOAP_ENC,
-                                    Constants.ATTR_ARRAY_TYPE) == -1) {
-                String encprefix = context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
-                attrImpl = new AttributesImpl(attributes);
-                attrImpl.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
-                                      Constants.ATTR_ARRAY_TYPE,
-                                      encprefix + ":arrayType",
-                                      "CDATA",
-                                      arrayType);
-                attrs = attrImpl;
+            if (attributes instanceof AttributesImpl) {
+                attrs = (AttributesImpl)attributes;
+            } else {
+                attrs = new AttributesImpl(attributes);
             }
+        } else {
+            attrs = new AttributesImpl();
+        }
 
-            // Force type to be SOAP_ARRAY for all array serialization.
-            int typeI = attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
-                                            "type");
-            if (typeI != -1) {
-                if (attrImpl == null)
-                    attrImpl = new AttributesImpl(attributes);
-                attrImpl.removeAttribute(typeI);
-                attrs = context.setTypeAttribute(attrImpl, Constants.SOAP_ARRAY);
-            }
+        if (attrs.getIndex(Constants.URI_CURRENT_SOAP_ENC,
+                           Constants.ATTR_ARRAY_TYPE) == -1) {
+            String encprefix = context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
+            attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
+                                  Constants.ATTR_ARRAY_TYPE,
+                                  encprefix + ":arrayType",
+                                  "CDATA",
+                                  arrayType);
         }
         
-        context.startElement(name, attrs);
+        // Force type to be SOAP_ARRAY for all array serialization.
+        int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                   "type");
+        if (typeI != -1) {
+            attrs.removeAttribute(typeI);
+            attributes = context.setTypeAttribute(attrs, Constants.SOAP_ARRAY);
+        } else {
+            attributes = attrs;
+        }
+        
+        context.startElement(name, attributes);
 
         if (dim2Len < 0) {
             // Normal case, serialize each array element
