@@ -46,6 +46,8 @@ them.
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.4.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
 <property name="jimi.jar" location="${lib.dir}/JimiProClasses.zip"/>
+<property name="activation.jar" location="${lib.dir}/activation.jar"/>
+<property name="mailapi.jar" location="${lib.dir}/mailapi.jar"/>
 <property name="httpunit.jar" location="${lib.dir}/commons-httpunit.jar"/>
 
 <!-- this jar is only in the test lib dir -->

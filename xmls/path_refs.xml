@@ -1,11 +1,13 @@
   <path id="classpath">
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${regexp.jar}"/>
-    <pathelement location="${junit.jar}"/>
-    <pathelement location="${j2ee.jar}"/>
     <pathelement location="${jsse.jar}"/>
     <pathelement location="${jimi.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${mailapi.jar}"/>
     <pathelement location="${tools.jar}"/>
+    <pathelement location="${j2ee.jar}"/>
+    <pathelement location="${junit.jar}"/>
     <fileset dir="${lib.dir}">
         <include name="**/*.jar"/>
     </fileset>
