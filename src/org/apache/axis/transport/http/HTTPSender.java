@@ -191,6 +191,7 @@ public class HTTPSender extends BasicHandler {
         // Get https.proxyXXX settings
         String tunnelHost = AxisEngine.getGlobalProperty("https.proxyHost");
         String tunnelPortStr = AxisEngine.getGlobalProperty("https.proxyPort");
+        String nonProxyHosts = AxisEngine.getGlobalProperty("https.nonProxyHosts");
 
         // Use http.proxyXXX settings if https.proxyXXX is not set
         if (tunnelHost == null) {
@@ -199,6 +200,12 @@ public class HTTPSender extends BasicHandler {
         if (tunnelPortStr == null) {
             tunnelPortStr = AxisEngine.getGlobalProperty("http.proxyPort");
         }
+        if (nonProxyHosts == null) {
+            nonProxyHosts = AxisEngine.getGlobalProperty("http.nonProxyHosts");
+        }
+
+        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
+
         try {
 
             // Use java reflection to create a secure socket.
@@ -234,7 +241,7 @@ public class HTTPSender extends BasicHandler {
                 factory = getDefaultMethod.invoke(null, new Object[]{});
             Object sslSocket = null;
 
-            if ((tunnelHost == null) || tunnelHost.equals("")) {
+            if ((tunnelHost == null) || tunnelHost.equals("") || hostInNonProxyList) {
                 // direct SSL connection
                 sslSocket = createSocketMethod.invoke(factory,
                         new Object[]{host,new Integer(port)});
