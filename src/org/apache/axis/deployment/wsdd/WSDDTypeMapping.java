@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,43 +54,183 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.utils.QName;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-public class WSDDTypeMapping extends WSDDElement { 
-    
-    public WSDDTypeMapping(Element e) throws WSDDException {super(e, "typeMapping");}
-    
-    public String getName() {
-        return getElement().getAttribute("name");
+import org.apache.axis.utils.QName;
+
+
+/**
+ *
+ */
+public class WSDDTypeMapping
+    extends WSDDElement
+{
+
+    /**
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDTypeMapping(Element e)
+        throws WSDDException
+    {
+        super(e, "typeMapping");
     }
-    
-    public String getRef() {
-        return getElement().getAttribute("ref");
+
+    /**
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDTypeMapping(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n, "typeMapping");
     }
-    
-    public String getEncodingStyle() {
-        return getElement().getAttribute("encodingStyle");
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getName()
+    {
+        return getAttribute("name");
     }
-    
-    public QName getQName() {
-        return new QName(getElement().getAttribute("qName"), getElement());
+
+    /**
+     *
+     * @param name XXX
+     */
+    public void setName(String name)
+    {
+        setAttribute("name", name);
     }
-        
-    public Class getLanguageSpecificType() throws ClassNotFoundException {
-        String type = getElement().getAttribute("languageSpecificType");
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getRef()
+    {
+        return getAttribute("ref");
+    }
+
+    /**
+     *
+     * @param ref XXX
+     */
+    public void setRef(String ref)
+    {
+        setAttribute("ref", ref);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getEncodingStyle()
+    {
+        return getAttribute("encodingStyle");
+    }
+
+    /**
+     *
+     * @param es XXX
+     */
+    public void setEncodingStyle(String es)
+    {
+        setAttribute("encodingStyle", es);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public QName getQName()
+    {
+        return new QName(getAttribute("qName"), getElement());
+    }
+
+    /**
+     *
+     * @param name XXX
+     */
+    public void setQName(QName name)
+    {
+        setAttribute("qName", name.toString());
+    }
+
+    /**
+     *
+     * @return XXX
+     * @throws ClassNotFoundException XXX
+     */
+    public Class getLanguageSpecificType()
+        throws ClassNotFoundException
+    {
+
+        String type = getAttribute("languageSpecificType");
+
         return Class.forName(type);
     }
-    
-    public Class getSerializer() throws ClassNotFoundException {
-        String type = getElement().getAttribute("serializer");
+
+    /**
+     *
+     * @param lsType XXX
+     */
+    public void setLanguageSpecificType(Class lsType)
+    {
+        setAttribute("languageSpecificType", lsType.getName());
+    }
+
+    /**
+     *
+     * @return XXX
+     * @throws ClassNotFoundException XXX
+     */
+    public Class getSerializer()
+        throws ClassNotFoundException
+    {
+
+        String type = getAttribute("serializer");
+
         return Class.forName(type);
     }
-    
-    public Class getDeserializer() throws ClassNotFoundException {
-        String type = getElement().getAttribute("deserializer");
+
+    /**
+     *
+     * @param ser XXX
+     */
+    public void setSerializer(Class ser)
+    {
+        setAttribute("serializer", ser.getName());
+    }
+
+    /**
+     *
+     * @return XXX
+     * @throws ClassNotFoundException XXX
+     */
+    public Class getDeserializer()
+        throws ClassNotFoundException
+    {
+
+        String type = getAttribute("deserializer");
+
         return Class.forName(type);
-    }    
+    }
+
+    /**
+     *
+     * @param deser XXX
+     */
+    public void setDeserializer(Class deser)
+    {
+        setAttribute("deserializer", deser.getName());
+    }
 }
 
 

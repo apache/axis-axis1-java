@@ -1,8 +1,23 @@
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,25 +69,48 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
-import org.apache.axis.deployment.v2dd.V2DDConstants;
-import org.apache.axis.deployment.v2dd.V2DDProvider;
-import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.utils.XMLUtils;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class V2DDScriptProvider extends V2DDProvider {
 
-    public V2DDScriptProvider(Element e) {
+/**
+ *
+ *@author Carl Woolf (woolf@macromedia.com)
+ */
+public class V2DDScriptProvider
+    extends V2DDProvider
+{
+
+    /**
+     *
+     * @param e (Element) ??????????????????
+     */
+    public V2DDScriptProvider(Element e)
+    {
         super(e);
     }
-  
-    public void newInstance(BasicProvider provider) {
-        NodeList nl = getElement().getElementsByTagNameNS(V2DDConstants.V2DD_NS, "script");
-        Element script = (Element)nl.item(0);
-        provider.addOption(BSFProvider.OPTION_LANGUAGE, script.getAttribute("language"));
-        provider.addOption(BSFProvider.OPTION_SCRIPT, XMLUtils.getInnerXMLString(script));
+
+    /**
+     *
+     * @param provider ??????????????????
+     */
+    public void newInstance(BasicProvider provider)
+    {
+
+        NodeList nl     =
+            getElement().getElementsByTagNameNS(V2DDConstants.V2DD_NS,
+                                                "script");
+        Element  script = (Element) nl.item(0);
+
+        provider.addOption(BSFProvider.OPTION_LANGUAGE,
+                           script.getAttribute("language"));
+        provider.addOption(BSFProvider.OPTION_SCRIPT,
+                           XMLUtils.getInnerXMLString(script));
     }
-    
 }

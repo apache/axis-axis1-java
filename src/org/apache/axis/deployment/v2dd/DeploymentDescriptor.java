@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,11 +54,11 @@
  */
 package org.apache.axis.deployment.v2dd;
 
-import org.apache.axis.deployment.DeploymentDocument;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 
 /**
  * Apache SOAP v2.x Deployment Descriptor Support classes
@@ -74,7 +74,7 @@ import org.w3c.dom.Element;
  * deployment files.  
  * 
  */
-public class DeploymentDescriptor extends DeploymentDocument { 
+public class DeploymentDescriptor implements DeploymentDocument { 
 
     protected Document d;
     protected V2DDService service;

@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,99 +54,325 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element; 
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
 
+
 /**
  * Represents the global configuration of the Axis engine.
- * 
+ *
  * @author James Snell
  */
-public class WSDDGlobalConfiguration extends WSDDDeployableItem { 
-    
-    public WSDDGlobalConfiguration(Element e) throws WSDDException {super(e, "globalConfiguration");}
+public class WSDDGlobalConfiguration
+    extends WSDDDeployableItem
+{
 
-    public WSDDTransport[] getTransports() {
-        WSDDElement[] e = createArray("transport", WSDDTransport.class);
+    /**
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDGlobalConfiguration(Element e)
+        throws WSDDException
+    {
+        super(e, "globalConfiguration");
+    }
+
+    /**
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDGlobalConfiguration(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n, "globalConfiguration");
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDTransport[] getTransports()
+    {
+
+        WSDDElement[]   e = createArray("transport", WSDDTransport.class);
         WSDDTransport[] t = new WSDDTransport[e.length];
-        System.arraycopy(e,0,t,0,e.length);
+
+        System.arraycopy(e, 0, t, 0, e.length);
+
         return t;
     }
-    
-    public WSDDTransport getTransport(String name) {
+
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDTransport getTransport(String name)
+    {
+
         WSDDTransport[] t = getTransports();
+
         for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name))
+            if (t[n].getName().equals(name)) {
                 return t[n];
-        } 
-        return null;
-    }
-    
-    public WSDDRequestFlow getRequestFlow() {
-        WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
-        if (e.length != 0) {
-            return (WSDDRequestFlow)e[0];
+            }
         }
+
         return null;
     }
-    
-    public WSDDProvider getProvider() throws Exception {
-        NodeList nl = element.getElementsByTagNameNS(WSDDConstants.WSDD_NS, "provider");
-        Element e = (Element)nl.item(0);
-        Node ex = null;
+
+    /**
+     *
+     * @param name XXX
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDTransport createTransport()
+    {
+        return (WSDDTransport) createChild(WSDDTransport.class);
+    }
+
+    /**
+     *
+     */
+    public void removeTransport(WSDDTransport victim)
+    {
+        removeChild(victim);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDRequestFlow getRequestFlow()
+    {
+
+        WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
+
+        if (e.length != 0) {
+            return (WSDDRequestFlow) e[0];
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDRequestFlow createRequestFlow()
+    {
+        removeRequestFlow();
+
+        return (WSDDRequestFlow) createChild(WSDDRequestFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeRequestFlow()
+    {
+        removeChild(getRequestFlow());
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDProvider getProvider()
+    {
+
+        NodeList nl =
+            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
+                                                "provider");
+        Element  e  = (Element) nl.item(0);
+        Node     ex = null;
+
         ex = e.getFirstChild();
+
         while (ex != null) {
-            if (ex.getNodeType() == Element.ELEMENT_NODE)
-                if (ex.getLocalName().equals("provider")) break;
+            if (ex.getNodeType() == Element.ELEMENT_NODE) {
+                if (ex.getLocalName().equals("provider")) {
+                    break;
+                }
+            }
+
             ex = ex.getNextSibling();
         }
+
         if (ex == null) {
             return null;
-        } else {
+        }
+        else {
             if (hasChild(e)) {
-                return (WSDDProvider)getChild(e);
-            } else {
-                String exuri = ex.getNamespaceURI();
-                Class c = WSDDProvider.getProviderClass(exuri);
-                Class[] cs = {Element.class};
-                Object[] p = {e};
-                WSDDElement w = (WSDDElement)c.getConstructor(cs).newInstance(p);
-                addChild(e,w);
-                return (WSDDProvider)w;
+                return (WSDDProvider) getChild(e);
+            }
+            else {
+				try
+				{
+	                String      exuri = ex.getNamespaceURI();
+	                Class       c     = WSDDProvider.getProviderClass(exuri);
+	                Class[]     cs    = { Element.class };
+	                Object[]    p     = { e };
+	                WSDDElement w     =
+	                    (WSDDElement) c.getConstructor(cs).newInstance(p);
+
+	                addChild(w);
+
+	                return (WSDDProvider) w;
+				}
+				catch (Exception exception)
+				{
+					return null;
+				}
             }
         }
     }
-    
-    public WSDDResponseFlow getResponseFlow() {
+
+    /**
+     *
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDProvider createProvider(Class providerSubclass)
+    {
+        removeProvider();
+
+        return (WSDDProvider) createChild(providerSubclass);
+    }
+
+    /**
+     *
+     */
+    public void removeProvider()
+    {
+        removeChild(getProvider());
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDResponseFlow getResponseFlow()
+    {
+
         WSDDElement[] e = createArray("responseFlow", WSDDResponseFlow.class);
+
         if (e.length != 0) {
-            return (WSDDResponseFlow)e[0];
+            return (WSDDResponseFlow) e[0];
         }
+
         return null;
     }
-    
-    public WSDDFaultFlow[] getFaultFlows() {
-        WSDDElement[] e = createArray("faultFlow", WSDDFaultFlow.class);
+
+    /**
+     *
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDResponseFlow createResponseFlow()
+    {
+        removeResponseFlow();
+
+        return (WSDDResponseFlow) createChild(WSDDResponseFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeResponseFlow()
+    {
+        removeChild(getResponseFlow());
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDFaultFlow[] getFaultFlows()
+    {
+
+        WSDDElement[]   e = createArray("faultFlow", WSDDFaultFlow.class);
         WSDDFaultFlow[] t = new WSDDFaultFlow[e.length];
-        System.arraycopy(e,0,t,0,e.length);
+
+        System.arraycopy(e, 0, t, 0, e.length);
+
         return t;
     }
-    
-    public WSDDFaultFlow getFaultFlow(String name) {
-        WSDDFaultFlow[] t = getFaultFlows();
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name))
-                return t[n];
-        } 
-        return null;
-    }    
 
-    Handler newInstance(DeploymentRegistry registry) {
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDFaultFlow getFaultFlow(String name)
+    {
+
+        WSDDFaultFlow[] t = getFaultFlows();
+
+        for (int n = 0; n < t.length; n++) {
+            if (t[n].getName().equals(name)) {
+                return t[n];
+            }
+        }
+
         return null;
     }
-    
+
+    /**
+     *
+     * @param name XXX
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDFaultFlow createFaultFlow()
+    {
+        return (WSDDFaultFlow) createChild(WSDDFaultFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeFaultFlow(WSDDFaultFlow victim)
+    {
+        removeChild(victim);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getType()
+    {
+        return null;
+    }
+
+    /**
+     *
+     * @param type XXX
+     */
+    public void setType(String type) throws WSDDException
+    {
+        throw new WSDDException("GlobalConfiguration disallows setting of Type");
+    }
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     */
+    public Handler newInstance(DeploymentRegistry registry)
+    {
+        return null;
+    }
 }
 

@@ -54,116 +54,272 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.utils.LockableHashtable;
-import org.apache.axis.utils.QName;
+import java.util.Enumeration;
+
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import org.apache.axis.Handler;
+import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.utils.QName;
+
 
 /**
  * WSDD DeployableItem complexType
  *
- * @author James Snell
  */
-public abstract class WSDDDeployableItem extends WSDDElement {
-
+public abstract class WSDDDeployableItem
+    extends WSDDElement
+    implements DeployableItem
+{
+    /** XXX */
     LockableHashtable parms;
+
+    /** XXX */
     QName qname;
 
-    public WSDDDeployableItem(Element e, String n) throws WSDDException {
-        super(e,n);
+    /**
+     *
+     * @param e (Element) XXX
+     * @param n (String) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDDeployableItem(Element e, String n)
+        throws WSDDException
+    {
+        super(e, n);
     }
 
-    public String getName() {
-        return getElement().getAttribute("name");
+    /**
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @param s (String) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDDeployableItem(Document d, Node n, String s)
+        throws WSDDException
+    {
+        super(d, n, s);
     }
 
-    public QName getQName() {
+    /**
+     *
+     * @return XXX
+     */
+    public String getName()
+    {
+        return getAttribute("name");
+    }
+
+    /**
+     *
+     * @param name XXX
+     */
+    public void setName(String name)
+    {
+        setAttribute("name", name);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public QName getQName()
+    {
         if (qname == null) {
-            String nsURI = element.getOwnerDocument().getDocumentElement().getAttributeNS(org.apache.axis.Constants.URI_2000_SCHEMA_XSI, "targetNamespace");
+            String nsURI =
+                getElement().getOwnerDocument().getDocumentElement()
+                    .getAttributeNS(org.apache.axis.Constants
+                        .URI_2000_SCHEMA_XSI, "targetNamespace");
+
             if (nsURI.equals("")) {
                 qname = new QName(null, getName());
-            } else {
+            }
+            else {
                 qname = new QName(nsURI, getName());
             }
         }
+
         return qname;
     }
 
-    protected String getType() {
-        return getElement().getAttribute("type");
+    /**
+     *
+     * @return XXX
+     */
+    public String getType()
+    {
+        return getAttribute("type");
     }
 
+    /**
+     *
+     * @param type XXX
+     */
+    public void setType(String type) throws WSDDException
+    {
+        setAttribute("type", type);
+    }
 
     /**
      * Returns the config parameters as a hashtable (lockable)
+     * @return XXX
      */
-    public LockableHashtable getParametersTable() {
+    public LockableHashtable getParametersTable()
+    {
         if (parms == null) {
             parms = new LockableHashtable();
+
             WSDDParameter[] ps = getParameters();
+
             for (int n = 0; n < ps.length; n++) {
-                WSDDParameter p = (WSDDParameter)ps[n];
-                //parms.put(p.getName(), p.getValue(), p.getLocked());
+                WSDDParameter p = (WSDDParameter) ps[n];
+
+                // parms.put(p.getName(), p.getValue(), p.getLocked());
                 parms.put(p.getName(), "", p.getLocked());
             }
         }
+
         return parms;
     }
 
-    public WSDDParameter[] getParameters() {
-        WSDDElement[] e = createArray("parameter", WSDDParameter.class);
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDParameter[] getParameters()
+    {
+
+        WSDDElement[]   e = createArray("parameter", WSDDParameter.class);
         WSDDParameter[] p = new WSDDParameter[e.length];
-        System.arraycopy(e,0,p,0,e.length);
+
+        System.arraycopy(e, 0, p, 0, e.length);
+
         return p;
     }
 
-    public WSDDParameter getParameter(String name) {
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDParameter createParameter(String name)
+    {
+        WSDDParameter p = (WSDDParameter) createChild(WSDDParameter.class);
+
+        p.setName(name);
+
+        return p;
+    }
+
+    /**
+     *
+     * @param name XXX
+     */
+    public void removeParameter(String name)
+    {
+        WSDDParameter p = getParameter(name);
+
+        removeChild(p);
+    }
+
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDParameter getParameter(String name)
+    {
         WSDDParameter[] e = getParameters();
+
         for (int n = 0; n < e.length; n++) {
-            if (e[n].getName().equals(name))
+            if (e[n].getName().equals(name)) {
                 return e[n];
+            }
         }
+
         return null;
     }
 
-    abstract Handler newInstance(DeploymentRegistry registry) throws Exception;
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    abstract public Handler newInstance(DeploymentRegistry registry)
+        throws Exception;
 
     /**
      * Creates a new instance of this deployable.  if the
      * java class is not found, the registry is queried to
      * find a suitable item
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
      */
-    Handler makeNewInstance(DeploymentRegistry registry) throws Exception {
+    Handler makeNewInstance(DeploymentRegistry registry)
+        throws Exception
+    {
         try {
-            Class c = getTypeClass(getType());
-            Handler h = (Handler)createInstance(c);
+            Class   c = getTypeClass(getType());
+            Handler h = (Handler) createInstance(c);
+
             h.setOptions(getParametersTable());
+
             return h;
-        } catch (ClassNotFoundException e) {
-            String type = getType();
-            Handler h = registry.getDeployedItem(type);
+        }
+        catch (ClassNotFoundException e) {
+            String  type = getType();
+            Handler h    = registry.getDeployedItem(type);
+
             if (h != null) {
                 WSDDParameter[] parms = getParameters();
+
                 for (int n = 0; n < parms.length; n++) {
                     WSDDParameter parm = parms[n];
+
                     h.addOption(parm.getName(), parm.getValue());
                 }
+
                 return h;
             }
+
             throw e;
-        } catch (Exception e) {
-              throw e;
+        }
+        catch (Exception e) {
+            throw e;
         }
     }
 
-    Object createInstance(Class _class) throws Exception {
+    /**
+     *
+     * @param _class XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    Object createInstance(Class _class)
+        throws Exception
+    {
         return _class.newInstance();
     }
 
-    Class getTypeClass(String type) throws ClassNotFoundException {
+    /**
+     *
+     * @param type XXX
+     * @return XXX
+     * @throws ClassNotFoundException XXX
+     */
+    Class getTypeClass(String type)
+        throws ClassNotFoundException
+    {
+
         type = type.substring(type.indexOf(":") + 1);
+
         return Class.forName(type);
     }
-
 }

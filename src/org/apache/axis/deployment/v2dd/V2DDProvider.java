@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,16 +54,13 @@
  */
 package org.apache.axis.deployment.v2dd;
 
-import org.apache.axis.deployment.v2dd.providers.V2DDComProvider;
-import org.apache.axis.deployment.v2dd.providers.V2DDJavaProvider;
-import org.apache.axis.deployment.v2dd.providers.V2DDScriptProvider;
-import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.utils.LockableHashtable;
+import java.util.StringTokenizer;
+import java.util.Hashtable;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.deployment.v2dd.providers.*;
 
 public class V2DDProvider extends V2DDElement {
 

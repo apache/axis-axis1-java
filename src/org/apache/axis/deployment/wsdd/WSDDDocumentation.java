@@ -64,7 +64,7 @@ import org.apache.axis.utils.XMLUtils;
 /**
  *
  */
-public class WSDDParameter
+public class WSDDDocumentation
     extends WSDDElement
 {
 
@@ -73,10 +73,10 @@ public class WSDDParameter
      * @param e (Element) XXX
      * @throws WSDDException XXX
      */
-    public WSDDParameter(Element e)
+    public WSDDDocumentation(Element e)
         throws WSDDException
     {
-        super(e, "parameter");
+        super(e, "documentation");
     }
 
     /**
@@ -85,28 +85,10 @@ public class WSDDParameter
      * @param n (Node) XXX
      * @throws WSDDException XXX
      */
-    public WSDDParameter(Document d, Node n)
+    public WSDDDocumentation(Document d, Node n)
         throws WSDDException
     {
-        super(d, n, "parameter");
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
-    {
-        return getAttribute("name");
-    }
-
-    /**
-     *
-     * @param newName XXX
-     */
-    public void setName(String newName)
-    {
-        setAttribute("name", newName);
+        super(d, n, "documentation");
     }
 
     /**
@@ -115,39 +97,29 @@ public class WSDDParameter
      */
     public String getValue()
     {
-        return getAttribute("value");
+		Node node = getElement().getFirstChild();
+		if (null == node) return "";
+		
+        return node.getNodeValue();
     }
 
     /**
      *
-     * @param newValue XXX
+     * @param value XXX
      */
-    public void setValue(String newValue)
+    public void setValue(String value)
     {
-        setAttribute("value", newValue);
-    }
-	
-    /**
-     *
-     * @return XXX
-     */
-    public boolean getLocked()
-    {
-
-        String locked = getAttribute("locked");
-
-        return ((locked != null) && locked.equals("true"));
-    }
-
-    /**
-     *
-     * @param locked XXX
-     */
-    public void setLocked(boolean locked)
-    {
-
-        setAttribute("locked", (locked
-                                ? "true"
-                                : "false"));
+        Node node = getElement().getFirstChild();
+        if (null == node) 
+		{
+			Element element = getElement();
+			Node childTextNode = element.getOwnerDocument().createTextNode(value);
+			element.appendChild(childTextNode);
+			
+		}
+        else 
+        {
+        	getElement().getFirstChild().setNodeValue(value);
+        }
     }
 }

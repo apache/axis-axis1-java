@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,66 +54,236 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element; 
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import org.apache.axis.Handler;
 import org.apache.axis.Chain;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
 
-public class WSDDTransport extends WSDDDeployableItem implements DeployableItem { 
-    
-    public WSDDTransport(Element e) throws WSDDException { super(e, "transport"); }
-    
-    public WSDDRequestFlow getRequestFlow() {
+
+/**
+ *
+ */
+public class WSDDTransport
+    extends WSDDDeployableItem
+{
+
+    /**
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDTransport(Element e)
+        throws WSDDException
+    {
+        super(e, "transport");
+    }
+
+    /**
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDTransport(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n, "transport");
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDRequestFlow getRequestFlow()
+    {
         WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
+
         if (e.length != 0) {
-            return (WSDDRequestFlow)e[0];
-        } 
+            return (WSDDRequestFlow) e[0];
+        }
+
         return null;
     }
-    
-    public WSDDResponseFlow getResponseFlow() {
+
+    /**
+     *
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDRequestFlow createRequestFlow()
+    {
+        removeRequestFlow();
+
+        return (WSDDRequestFlow) createChild(WSDDRequestFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeRequestFlow()
+    {
+        removeChild(getRequestFlow());
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDResponseFlow getResponseFlow()
+    {
+
         WSDDElement[] e = createArray("responseFlow", WSDDResponseFlow.class);
+
         if (e.length != 0) {
-            return (WSDDResponseFlow)e[0];
-        } 
+            return (WSDDResponseFlow) e[0];
+        }
+
         return null;
     }
-    
-    public WSDDFaultFlow[] getFaultFlows() {
-        WSDDElement[] e = createArray("faultFlow", WSDDFaultFlow.class);
+
+    /**
+     *
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDResponseFlow createResponseFlow()
+    {
+        removeResponseFlow();
+
+        return (WSDDResponseFlow) createChild(WSDDResponseFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeResponseFlow()
+    {
+        removeChild(getResponseFlow());
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDFaultFlow[] getFaultFlows()
+    {
+
+        WSDDElement[]   e = createArray("faultFlow", WSDDFaultFlow.class);
         WSDDFaultFlow[] t = new WSDDFaultFlow[e.length];
-        System.arraycopy(e,0,t,0,e.length);
+
+        System.arraycopy(e, 0, t, 0, e.length);
+
         return t;
     }
-    
-    public WSDDFaultFlow getFaultFlow(String name) {
+
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDFaultFlow getFaultFlow(String name)
+    {
+
         WSDDFaultFlow[] t = getFaultFlows();
+
         for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name))
+            if (t[n].getName().equals(name)) {
                 return t[n];
-        } 
+            }
+        }
+
         return null;
     }
-   
-    public String getType() {
+
+    /**
+     *
+     * @param name XXX
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDFaultFlow createFaultFlow()
+    {
+        return (WSDDFaultFlow) createChild(WSDDFaultFlow.class);
+    }
+
+    /**
+     *
+     */
+    public void removeFaultFlow(WSDDFaultFlow victim)
+    {
+        removeChild(victim);
+    }
+
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getType()
+    {
+        return null;
+    }
+
+    /**
+     *
+     * @param type XXX
+     */
+    public void setType(String type) throws WSDDException
+    {
+        throw new WSDDException("Transport disallows setting of Type");
+    }
+
+    /*********************************************************
+     * Oops, the schema disallows the use Type attribute in Transport
+    public String getType()
+    {
+
         String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleTargedChain";
+
+        if (type.equals("")) {
+            type = "java:org.apache.axis.SimpleTargetedChain";
+        }
+
         return type;
     }
-    
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
+     **************************************************************
+     */
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newInstance(DeploymentRegistry registry)
+        throws Exception
+    {
         return newInstance(null, registry);
     }
-    
-    public Handler newInstance(Handler pivot, DeploymentRegistry registry) throws Exception {
-        Handler h = super.makeNewInstance(registry);
-        TargetedChain c = (TargetedChain)h;
+
+    /**
+     *
+     * @param pivot XXX
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newInstance(Handler pivot, DeploymentRegistry registry)
+        throws Exception
+    {
+
+        Handler       h = super.makeNewInstance(registry);
+        TargetedChain c = (TargetedChain) h;
+
         c.setRequestHandler(getRequestFlow().newInstance(registry));
         c.setPivotHandler(pivot);
         c.setResponseHandler(getResponseFlow().newInstance(registry));
+
         return c;
     }
 }
