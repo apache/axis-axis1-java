@@ -64,9 +64,39 @@ public class TestDeser extends TestCase {
        assertEquals(expected, result);
     }
 
+    public void testString() {
+        deserialize("<result xsi:type=\"xsd:string\">abc</result>",
+                    "abc");
+    }
+
+    public void testBoolean() {
+        deserialize("<result xsi:type=\"xsd:boolean\">true</result>",
+                    new Boolean(true));
+    }
+
+    public void testDouble() {
+        deserialize("<result xsi:type=\"xsd:double\">3.14</result>",
+                    new Double(3.14));
+    }
+
+    public void testFloat() {
+        deserialize("<result xsi:type=\"xsd:float\">3.14</result>",
+                    new Float(3.14F));
+    }
+
     public void testInt() {
         deserialize("<result xsi:type=\"xsd:int\">10</result>",
                     new Integer(10));
+    }
+
+    public void testLong() {
+        deserialize("<result xsi:type=\"xsd:long\">17</result>",
+                    new Long(17));
+    }
+
+    public void testShort() {
+        deserialize("<result xsi:type=\"xsd:short\">3</result>",
+                    new Short((short)3));
     }
 
     public void testUntyped() {

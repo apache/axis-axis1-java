@@ -88,11 +88,6 @@ public class TypeMappingRegistry implements Serializer {
         this.context = context;
     }
     
-    private String generateKey(QName qName)
-    {
-        return qName.getNamespaceURI() + " + " + qName.getLocalPart();
-    }
-    
     public void addSerializer(Class _class, QName qName, Serializer serializer) {
         if (s == null) s = new Hashtable();
         s.put(_class, new SerializerDescriptor(qName, serializer));
@@ -101,7 +96,7 @@ public class TypeMappingRegistry implements Serializer {
     public void addDeserializerFactory(QName qname,
                                        DeserializerFactory deserializerFactory) {
         if (d == null) d= new Hashtable();
-        d.put(generateKey(qname), deserializerFactory);
+        d.put(qname, deserializerFactory);
     }
 
     public Serializer getSerializer(Class _class) {
@@ -124,7 +119,7 @@ public class TypeMappingRegistry implements Serializer {
         if (d == null)
             return null;
         
-        DeserializerFactory factory = (DeserializerFactory)d.get(generateKey(qname));
+        DeserializerFactory factory = (DeserializerFactory)d.get(qname);
         if (factory == null)
             return null;
         

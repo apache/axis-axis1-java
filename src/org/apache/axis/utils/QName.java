@@ -92,7 +92,11 @@ public class QName {
     
     public boolean equals(Object p1) {
         if (!(p1 instanceof QName)) return false;
-        return ((QName)p1).toString().equals(toString());
+        if (!namespaceURI.equals(((QName)p1).namespaceURI)) return false;
+        return localPart.equals(((QName)p1).localPart);
     };
     
+    public int hashCode() {
+        return namespaceURI.hashCode() ^ localPart.hashCode();
+    }
 };
