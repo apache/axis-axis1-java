@@ -93,6 +93,7 @@ public class Java2WsdlAntTask extends Task
     private String location = "";
     private String locationImport = null;
     private String output = "." ;
+    private String importSchema = null ;
     private String input = null ;
     private String outputImpl = null;
     private String className = "." ;
@@ -122,6 +123,7 @@ public class Java2WsdlAntTask extends Task
         log("\tPkgtoNS:" + namespaceMap, logLevel);
         log("\tlocation:" + location, logLevel);
         log("\toutput:" + output, logLevel);
+        log("\timportSchema:" + importSchema, logLevel);
         log("\tinput:" + input, logLevel);
         log("\tclassName:" + className, logLevel);
         log("\tservicePortName:" + servicePortName, logLevel);
@@ -208,6 +210,9 @@ public class Java2WsdlAntTask extends Task
                 emitter.setUse(use);
             }
 
+            if (importSchema != null) {
+                emitter.setInputSchema(importSchema);
+            }
             if (input != null) {
                 emitter.setInputWSDL(input);
             }
@@ -251,6 +256,15 @@ public class Java2WsdlAntTask extends Task
      */
     public void setOutput(File parameter) {
         this.output = parameter.getPath();
+    }
+
+    /**
+     * Option attribute that indicates the name of an XML Schema file that
+     * should be physically imported into the generated WSDL.
+     * @param parameter
+     */
+    public void setImportSchema(File parameter) throws java.io.IOException {
+        this.importSchema = parameter.toURL().toString();
     }
 
     /**

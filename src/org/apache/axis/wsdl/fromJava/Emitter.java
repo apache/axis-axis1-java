@@ -144,6 +144,7 @@ public class Emitter {
     private boolean useInheritedMethods = false;
     private String intfNS;
     private String implNS;
+    private String inputSchema;
     private String inputWSDL;
     private String locationUrl;
     private String importUrl;
@@ -612,6 +613,9 @@ public class Emitter {
         if (inputWSDL != null) {
             types.loadInputTypes(inputWSDL);
         }
+        if (inputSchema != null) {
+            types.loadInputSchema(inputSchema);
+        }
         return types;
     }
 
@@ -1062,7 +1066,7 @@ public class Emitter {
         Message msg = def.createMessage();
 
         QName qName = createMessageName(def, oper.getName(), "Request");
-
+        
         msg.setQName(qName);
         msg.setUndefined(false);
 
@@ -1598,6 +1602,21 @@ public class Emitter {
      */
     public void setInputWSDL(String inputWSDL) {
         this.inputWSDL = inputWSDL;
+    }
+
+    /**
+     * @return the name of the input schema, or null
+     */
+    public String getInputSchema() {
+        return inputSchema;
+    }
+
+    /**
+     * Set the name of the input schema
+     * @param inputSchema the name of the input schema
+     */
+    public void setInputSchema(String inputSchema) {
+        this.inputSchema = inputSchema;
     }
 
     /**
