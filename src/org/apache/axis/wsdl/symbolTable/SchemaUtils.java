@@ -56,6 +56,7 @@ package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -65,6 +66,7 @@ import javax.xml.rpc.holders.IntHolder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -390,6 +392,64 @@ public class SchemaUtils {
     }
 
     /**
+     * Returns named child node.
+     * 
+     * @param parentNode Parent node.
+     * @param name Element name of child node to return.
+     */
+    private static Node getChildByName(Node parentNode, String name) throws DOMException {
+        if (parentNode == null) return null;
+        NodeList children = parentNode.getChildNodes();
+        if (children != null) {
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child != null) {
+                    if (child.getNodeName() != null && name.equals(child.getNodeName())) {
+                        return child;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns all textual nodes of a subnode defined by a parent node
+     * and a path of element names to that subnode.
+     * 
+     * @param root Parent node.
+     * @param path Path of element names to text of interest, delimited by "/". 
+     */
+    public static String getTextByPath(Node root, String path) throws DOMException {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        Node node = root;
+        while (st.hasMoreTokens()) {
+            String elementName = st.nextToken();
+            Node child = getChildByName(node, elementName);
+            if (child == null)
+                throw new DOMException(DOMException.NOT_FOUND_ERR, "could not find " + elementName);
+            node = child;
+        }
+    
+        // should have found the node
+        String text = "";
+        NodeList children = node.getChildNodes();
+        if (children != null) {
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child != null) {
+                    if (child.getNodeName() != null
+                            && (child.getNodeName().equals("#text")
+                            || child.getNodeName().equals("#cdata-section"))) {
+                        text += child.getNodeValue();
+                    }
+                }
+            }
+        }
+        return text;
+    }
+
+    /**
      * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Sequence Node
      * 
@@ -522,7 +582,13 @@ public class SchemaUtils {
         // Get the name qnames.
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
-
+        String comments = null;
+        try {
+            comments = getTextByPath(elementNode, "annotation/documentation");
+        } catch (DOMException e) {
+            // no comments
+        }
+        
         // The type qname is used to locate the TypeEntry, which is then
         // used to retrieve the proper java name of the type.
         QName nodeType = Utils.getTypeQName(elementNode, forElement, false);
@@ -559,6 +625,7 @@ public class SchemaUtils {
 
         if (type != null) {
             ElementDecl elem = new ElementDecl(type, nodeName);
+            elem.setDocumentation(comments);
             String minOccurs = Utils.getAttribute(elementNode,
                     "minOccurs");
 

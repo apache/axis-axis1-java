@@ -71,6 +71,9 @@ public class ElementDecl {
 
     /** Field type */
     private TypeEntry type;
+    
+    /** Field documentation */
+    private String documentation;
 
     // The following property is set if minOccurs=0.
     // An item that is not set and has minOccurs=0
@@ -195,5 +198,22 @@ public class ElementDecl {
      */
     public void setAnyElement(boolean anyElement) {
         this.anyElement = anyElement;
+    }
+
+    /**
+     * Method getDocumentation
+     * 
+     * @return string
+     */
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    /**
+     * Method setDocumentation
+     * @param documentation
+     */
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
     }
 }

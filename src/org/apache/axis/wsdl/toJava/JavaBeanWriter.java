@@ -60,6 +60,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
@@ -69,6 +70,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -180,6 +182,35 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
         }
     }    // ctor
+
+    /**
+     * Write a common header, including the package name, the class
+     * declaration, and the opening curly brace.  
+     * Prints javadoc from WSDL documentation.  (Cannot pull up, type DOM not avail)
+     */
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
+        writeHeaderComments(pw);
+        writePackage(pw);
+    
+        try
+        {
+            String comments = SchemaUtils.getTextByPath(type.getNode(), "annotation/documentation");
+            comments = getJavadocDescriptionPart(comments, false);
+            if (comments != null && comments.trim().length() > 0)
+            {
+                pw.println();
+                pw.println("/**");
+                pw.println(" * " + comments);
+                pw.println(" */");
+            }
+        }
+        catch (DOMException e)
+        {
+            // no comment
+        }        
+        // print class declaration
+        pw.println(getClassModifiers() + getClassText() + getClassName() + ' ' + getExtendsText() + getImplementsText() + "{");
+    } // writeFileHeader
 
     /**
      * Generate the binding for the given complex type.
@@ -405,10 +436,26 @@ public class JavaBeanWriter extends JavaClassWriter {
         }
 
         for (int i = 0; i < names.size(); i += 2) {
+            // get comments for this field
+            String comments = "";
+            if (elements != null)
+            {
+                if (elements != null && i < (elements.size()*2))
+                {
+                    ElementDecl elem = (ElementDecl)elements.get((int)i/2);
+                    comments = elem.getDocumentation();
+                }
+            } 
+            
             String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
 
             // Declare the bean element
+            if (comments != null && comments.trim().length() > 0)
+            {
+                String flatComments = getJavadocDescriptionPart(comments, true);
+                pw.println("    /** " + flatComments.trim() + " */");
+            }
             pw.print("    private " + typeName + " " + variable + ";");
 
             // label the attribute fields.
@@ -422,6 +469,31 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println();
     }
 
+    
+    /**
+     * Takes out new lines and wraps at Javadoc tags
+     * @param documentation the raw comments from schema
+     * @param addTab if true adds a tab character when wrapping (methods)
+     */
+    private String getJavadocDescriptionPart(String documentation, boolean addTab) {
+        String doc = "";
+        if (documentation == null) return doc;
+        if (documentation.trim().length() == 0) return doc;
+
+        StringTokenizer st2 = new StringTokenizer(documentation.trim(), "\n");
+
+        while (st2.hasMoreTokens()) {
+            String line = st2.nextToken().trim();
+            doc += line + " ";
+        }
+        StringTokenizer st = new StringTokenizer(doc.trim(), "@");
+        String newComments = st.nextToken();
+        while (st.hasMoreTokens()) {
+            newComments += "\n" + (addTab ? "\t" : "") + " * @" + st.nextToken().trim();
+        }
+        return newComments;
+    }
+    
     /**
      * Writes the default constructor.
      */
@@ -752,6 +824,17 @@ public class JavaBeanWriter extends JavaClassWriter {
             String typeName = (String) names.get(i);
             String name = (String) names.get(i + 1);
             String capName = Utils.capitalizeFirstChar(name);
+
+            String documentation = "";
+            if (elements != null)
+            {
+                if (elements != null && i < (elements.size()*2))
+                {
+                    ElementDecl elem = (ElementDecl)elements.get((int)i/2);
+                    documentation = elem.getDocumentation();
+                }
+            } 
+            
             String get = "get";
 
             if (typeName.equals("boolean")) {
@@ -759,6 +842,17 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
 
             if (enableGetters) {
+                try {
+                    String comments = "Gets the " + name + " value for this " + getClassName() + ".";
+                    pw.println();
+                    pw.println("    /**");
+                    pw.println("     * " + comments);
+                    pw.println("     * ");
+                    pw.println("     * @return " + name + " " + getJavadocDescriptionPart(documentation, true));
+                    pw.println("     */");
+                } catch (DOMException e) {
+                    // no comment
+                }                    
                 pw.println("    public " + typeName + " " + get + capName
                         + "() {");
 
@@ -773,6 +867,20 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
 
             if (enableSetters) {
+                try
+                {
+                    String comments = "Sets the " + name + " value for this " + getClassName() + ".";
+                    pw.println();
+                    pw.println("    /**");
+                    pw.println("     * " + comments);
+                    pw.println("     * ");
+                    pw.println("     * @param " + name + " " + getJavadocDescriptionPart(documentation, true));
+                    pw.println("     */");
+                }
+                catch (DOMException e)
+                {
+                    // no comment
+                }                    
                 if (isUnion()) {
                     pw.println("    public void set" + capName + "(" + typeName
                             + " value) {");
