@@ -53,13 +53,12 @@
  * <http://www.apache.org/>.
  */
 
-package test.addrNoImplSEI;
+package test.wsdl.addrNoImplSEI;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import samples.addr.*;
 
 /** Test the address book sample code.
  */
