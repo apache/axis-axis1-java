@@ -56,7 +56,6 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -70,6 +69,14 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
 * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
@@ -174,7 +181,7 @@ public class JavaTestCaseWriter extends JavaWriter {
 
             // If there is not literal use, the interface name is the portType name.
             // Otherwise it is the binding name.
-            String bindingType = (bEntry.hasLiteral()) ?
+            String bindingType = bEntry.hasLiteral() ?
                     bEntry.getName() : ptEntry.getName();
             writeBindingAssignment(bindingType, portName);
 
@@ -220,7 +227,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 String suffix = "";
 
                 if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.getType(), symbolTable)
+                    pw.print("new " + Utils.holder(param.getType(), emitter)
                             + "(");
                     suffix = ")";
                 }
@@ -268,7 +275,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                     } else {
 
                         // We have some constructed type.
-                        Vector v = SchemaUtils.getEnumerationBaseAndValues(
+                        Vector v = Utils.getEnumerationBaseAndValues(
                                 param.getType().getNode(), symbolTable);
 
                         if (v != null) {
@@ -301,7 +308,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                     Fault f = (Fault) i.next();
                     pw.print("        catch (");
                     pw.print(Utils.getFullExceptionName(
-                            f, symbolTable));
+                            f, emitter));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");

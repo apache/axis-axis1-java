@@ -67,6 +67,9 @@ import javax.wsdl.Service;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
 */
@@ -77,7 +80,7 @@ public class JavaUndeployWriter extends JavaWriter {
     /**
      * Constructor.
      */
-    protected JavaUndeployWriter(Emitter emitter, Definition definition, SymbolTable symbolTable) {
+    public JavaUndeployWriter(Emitter emitter, Definition definition, SymbolTable symbolTable) {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "undeploy"),
                 "",
@@ -86,6 +89,12 @@ public class JavaUndeployWriter extends JavaWriter {
         this.definition = definition;
         this.symbolTable = symbolTable;
     } // ctor
+
+    public void generate() throws IOException {
+        if (emitter.generateServerSide()) {
+            super.generate();
+        }
+    } // generate
 
     /**
      * Replace the default file header with the deployment doc file header.

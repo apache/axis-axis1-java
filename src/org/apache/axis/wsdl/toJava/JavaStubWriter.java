@@ -54,8 +54,14 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Node;
+import java.io.IOException;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -67,15 +73,24 @@ import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
+
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import org.w3c.dom.Node;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -110,7 +125,7 @@ public class JavaStubWriter extends JavaWriter {
 
         // If there is not literal use, the interface name is the portType name.
         // Otherwise it is the binding name.
-        String portTypeName = (bEntry.hasLiteral()) ?
+        String portTypeName = bEntry.hasLiteral() ?
                 bEntry.getName() : ptEntry.getName();
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
@@ -262,7 +277,8 @@ public class JavaStubWriter extends JavaWriter {
                     if (obj instanceof SOAPBody) {
                         namespace = ((SOAPBody) obj).getNamespaceURI();
                         if (namespace == null) {
-                            namespace = emitter.def.getTargetNamespace();
+                            namespace = symbolTable.getDefinition().
+                                    getTargetNamespace();
                         }
                         if (namespace == null)
                             namespace = "";
@@ -436,8 +452,8 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            cachedSerFactories.add(arraysf);");
             pw.println("            cachedDeserFactories.add(arraydf);");
         } else if (type.getNode() != null && 
-                   SchemaUtils.getEnumerationBaseAndValues(
-                     type.getNode(), emitter.getSymbolTable()) != null) {
+                   Utils.getEnumerationBaseAndValues(
+                     type.getNode(), symbolTable) != null) {
             pw.println("            cachedSerFactories.add(enumsf);");
             pw.println("            cachedDeserFactories.add(enumdf);");
         } else if (type.isSimpleType()) {

@@ -63,15 +63,21 @@ import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.gen.Generator;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
 /**
 * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
 * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
 */
-public class JavaBindingWriter implements Writer {
-    Writer stubWriter = null;
-    Writer skelWriter = null;
-    Writer implWriter = null;
-    Writer interfaceWriter = null;
+public class JavaBindingWriter implements Generator {
+    Generator stubWriter = null;
+    Generator skelWriter = null;
+    Generator implWriter = null;
+    Generator interfaceWriter = null;
 
     /**
      * Constructor.
@@ -96,8 +102,8 @@ public class JavaBindingWriter implements Writer {
             stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
 
             // Skeleton and Impl writers
-            if (emitter.bEmitServer) {
-                if (emitter.bDeploySkeleton) {
+            if (emitter.generateServerSide()) {
+                if (emitter.deploySkeleton()) {
                     skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
                 }
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
@@ -121,19 +127,19 @@ public class JavaBindingWriter implements Writer {
     /**
      * Write all the binding bindnigs:  stub, skeleton, and impl.
      */
-    public void write() throws IOException {
+    public void generate() throws IOException {
         if (interfaceWriter != null) {
-            interfaceWriter.write();
+            interfaceWriter.generate();
         }
         if (stubWriter != null) {
-            stubWriter.write();
+            stubWriter.generate();
         }
         if (skelWriter != null) {
-            skelWriter.write();
+            skelWriter.generate();
         }
         if (implWriter != null) {
-            implWriter.write();
+            implWriter.generate();
         }
-    } // write
+    } // generate
 
 } // class JavaBindingWriter

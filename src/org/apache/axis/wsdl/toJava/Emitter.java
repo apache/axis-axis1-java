@@ -54,28 +54,36 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.CLArgsParser;
-import org.apache.axis.utils.CLOption;
-import org.apache.axis.utils.CLOptionDescriptor;
-import org.apache.axis.utils.CLUtil;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Document;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Definition;
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
+
+import javax.wsdl.Definition;
+import javax.wsdl.QName;
+import javax.wsdl.WSDLException;
+
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.gen.GeneratorFactory;
+import org.apache.axis.wsdl.gen.Parser;
+
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+
+import org.w3c.dom.Document;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -86,90 +94,343 @@ import java.util.Vector;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  * @author Steve Graham (sggraham@us.ibm.com)
  */
-public class Emitter {
+public class Emitter extends Parser {
+
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
     public static final byte APPLICATION_SCOPE = 0x01;
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
-    protected Document doc = null;
-    protected Definition def = null;
-    protected boolean bDebug = false;
-    protected boolean bEmitServer = false;
-    protected boolean bDeploySkeleton = false;
-    protected boolean bEmitTestCase = false;
-    protected boolean bVerbose = false;
-    protected boolean bGenerateImports = true;
-    protected boolean bGenerateAll = false;
-    protected boolean bHelperGeneration = false;
-    protected String outputDir = null;
-    protected String packageName = null;
-    protected byte scope = NO_EXPLICIT_SCOPE;
-    protected GeneratedFileInfo fileInfo = new GeneratedFileInfo(); 
+    protected HashMap namespaceMap = new HashMap();
+    protected String typeMappingVersion = "1.2";
+    protected BaseTypeMapping baseTypeMapping = null;
     protected Namespaces namespaces = null;
-    protected HashMap delaySetMap = null;
-    protected WriterFactory writerFactory = null;
-    protected SymbolTable symbolTable = null;
-    protected String currentWSDLURI = null;
     protected String NStoPkgFilename = "NStoPkg.properties";
     protected File NStoPkgFile = null;
-    protected String username = null;
-    protected String password = null;
 
+    private boolean bEmitServer = false;
+    private boolean bDeploySkeleton = false;
+    private boolean bEmitTestCase = false;
+    private boolean bGenerateAll = false;
+    private boolean bHelperGeneration = false;
+    private String packageName = null;
+    private byte scope = NO_EXPLICIT_SCOPE;
+    private GeneratedFileInfo fileInfo = new GeneratedFileInfo();
+    private HashMap delayedNamespacesMap = new HashMap();
+    private String outputDir = null;
+
+    // Timeout, in milliseconds, to let the Emitter do its work
+    private long timeoutms = 45000; // 45 sec default
 
     /**
      * Default constructor.
      */
-    public Emitter(WriterFactory writerFactory) {
-        this.writerFactory = writerFactory;
+    public Emitter () {
+        setFactory(new JavaGeneratorFactory(this));
     } // ctor
 
+    ///////////////////////////////////////////////////
+    //
+    // Command line switches
+    //
+
     /**
-     * Sets the <code>WriterFactory Class</code> to use
-     * @param className the name of the factory <code>Class</code> 
+     * Turn on/off server skeleton creation
+     * @param value
      */
-    public void setFactory(String className) {
+    public void setGenerateServerSide(boolean value) {
+        this.bEmitServer = value;
+    } // setGenerateServerSide
+
+    /**
+     * Indicate if we should be emitting server side code and deploy/undeploy
+     */ 
+    public boolean generateServerSide() {
+        return bEmitServer;
+    } // generateServerSide
+
+    /**
+     * Turn on/off server skeleton deploy
+     * @param value
+     */
+    public void setDeploySkeleton(boolean value) {
+        bDeploySkeleton = value;
+    }
+
+    /**
+     * Indicate if we should be deploying skeleton or implementation
+     */ 
+    public boolean deploySkeleton() {
+        return bDeploySkeleton;
+    }
+
+    /**
+     * Turn on/off Helper class generation
+     * @param value
+     */
+    public void setGenerateHelper(boolean value) {
+        bHelperGeneration = value;
+    }
+
+    /**
+     * Indicate if we should be generating Helper classes           
+     */ 
+    public boolean generateHelper() {
+        return bHelperGeneration;
+    }
+
+    /**
+     * Turn on/off test case creation
+     * @param value
+     */
+    public void setGenerateTestCase(boolean value) {
+        this.bEmitTestCase = value;
+    } // setGenerateTestCase
+
+    public boolean generateTestCase() {
+        return bEmitTestCase;
+    } // geneateTestCase
+
+    /**
+     * By default, code is generated only for referenced elements.
+     * Call bGenerateAll(true) and WSDL2Java will generate code for all
+     * elements in the scope regardless of whether they are
+     * referenced.  Scope means:  by default, all WSDL files; if
+     * generateImports(false), then only the immediate WSDL file.
+     */
+    public void setGenerateAll(boolean all) {
+        bGenerateAll = all;
+    } // setbGenerateAll
+
+    public boolean generateAll() {
+        return bGenerateAll;
+    } // bGenerateAll
+
+    public Namespaces getNamespaces() {
+        return namespaces;
+    } // getNamespaces
+
+    /**
+      * Set the output directory to use in emitted source files
+      */
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    /**
+     * Get the output directory to use for emitted source files
+     */
+    public String getOutputDir() {
+        return outputDir;
+    }
+
+    /**
+     * Get global package name to use instead of mapping namespaces
+     */
+    public String getPackageName() {
+        return packageName;
+    }
+
+    /**
+     * Set a global package name to use instead of mapping namespaces
+     */
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    /**
+     * Set the scope for the deploy.xml file.
+     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
+     */
+    public void setScope(byte scope) {
+        this.scope = scope;
+    } // setScope
+
+    /**
+     * Get the scope for the deploy.xml file.
+     */
+    public byte getScope() {
+        return scope;
+    } // getScope
+
+    /**
+     * Set the NStoPkg mappings filename.
+     */
+    public void setNStoPkg(String NStoPkgFilename) {
+        if (NStoPkgFilename != null) {
+            this.NStoPkgFilename = NStoPkgFilename;
+        }
+    } // setNStoPkg
+
+    /**
+     * Set the NStoPkg mappings file.
+     */
+    public void setNStoPkg(File NStoPkgFile) {
+        this.NStoPkgFile = NStoPkgFile;
+    } // setNStoPkg
+
+    /**
+     * Set a map of namespace -> Java package names
+     */ 
+    public void setNamespaceMap(HashMap map) {
+        delayedNamespacesMap = map;
+    }
+
+    /**
+     * Get the map of namespace -> Java package names
+     */ 
+    public HashMap getNamespaceMap() {
+        return delayedNamespacesMap;
+    }
+
+    /**
+     * Return the current timeout setting
+     */
+    public long getTimeout() {
+        return timeoutms;
+    }
+
+    /**
+     * Set the timeout, in milliseconds
+     */
+    public void setTimeout(long timeout) {
+        this.timeoutms = timeout;
+    }
+
+   /**
+    * Sets the <code>WriterFactory Class</code> to use
+    * @param className the name of the factory <code>Class</code> 
+    */
+    public void setFactory(String factory) {
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            writerFactory = (WriterFactory) 
-                Class.forName(className, true,cl).newInstance();
-            writerFactory.setEmitter(this);
+            setFactory((GeneratorFactory)
+                       Class.forName(factory, true, cl).newInstance());
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    } // setFactory
+
+    //
+    // Command line switches
+    //
+    ///////////////////////////////////////////////////
+
+    /**
+     * Returns an object which contains of information on all generated files
+     * including the class name, filename and a type string.
+     *
+     * @return Anorg.apache.axis.wsdl.toJava.GeneratedFileInfo object
+     * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
+     */
+    public GeneratedFileInfo getGeneratedFileInfo()
+    {
+        return fileInfo;
     }
 
-    public SymbolTable getSymbolTable() { return symbolTable;}
-    public WriterFactory getWriterFactory() { return writerFactory;}
     /**
-     * Call this method if you have a uri for the WSDL document
-     * @param uri wsdlURI the location of the WSDL file.
+     * This method returns a list of all generated class names.
      */
-    public void emit(String uri) throws IOException, WSDLException {
-        if (bVerbose)
-            System.out.println(JavaUtils.getMessage("parsing00", uri));
+    public List getGeneratedClassNames() {
+        return fileInfo.getClassNames();
+    }
 
-        Document doc = XMLUtils.newDocument(uri, username, password);
+    /**
+     * This method returns a list of all generated file names.
+     */
+    public List getGeneratedFileNames() {
+        return fileInfo.getFileNames();
+    }
 
-        if (doc == null) {
-            throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
+    /**
+     * Get the Package name for the specified namespace
+     */
+    public String getPackage(String namespace) {
+        return (String) namespaces.getCreate(namespace);
+    }
+
+    /**
+     * Get the Package name for the specified QName
+     */
+    public String getPackage(QName qName) {
+        return getPackage(qName.getNamespaceURI());
+    }
+
+    /**
+     * Convert the specified QName into a full Java Name.
+     */
+    public String getJavaName(QName qName) {
+
+        // If this is one of our special 'collection' qnames.
+        // get the element type and append []
+        if (qName.getLocalPart().indexOf("[") > 0) {
+            String localPart = qName.getLocalPart().substring(0,qName.getLocalPart().indexOf("["));
+            QName eQName = new QName(qName.getNamespaceURI(), localPart);
+            return getJavaName(eQName) + "[]";
         }
-        emit(uri, doc);
-    } // emit
+
+        // Handle the special "java" namespace for types
+        if (qName.getNamespaceURI().equalsIgnoreCase("java")) {
+            return qName.getLocalPart();
+        }
+
+        // The QName may represent a base java name, so check this first
+        String fullJavaName = getFactory().getBaseTypeMapping().getBaseName(qName);
+        if (fullJavaName != null) 
+            return fullJavaName;
+        
+        // Use the namespace uri to get the appropriate package
+        String pkg = getPackage(qName.getNamespaceURI());
+        if (pkg != null) {
+            fullJavaName = pkg + "." + Utils.xmlNameToJavaClass(qName.getLocalPart());
+        } else {
+            fullJavaName = Utils.xmlNameToJavaClass(qName.getLocalPart());
+        }
+        return fullJavaName;
+    } // getJavaName
+
+
+    /**
+     * Emit appropriate Java files for a WSDL at a given URL.
+     *
+     * This method will time out after the number of milliseconds specified
+     * by our timeoutms member.
+     *
+     */
+    public void run(String wsdlURL) throws IOException, WSDLException {
+        setup();
+
+        // Set username and password if provided in URL
+        checkForAuthInfo(wsdlURL);
+        Authenticator.setDefault(new DefaultAuthenticator(getUsername(), getPassword()));
+
+        Timer timer = startTimer();
+        super.run(wsdlURL);
+        timer.stop();
+    } // run
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
-    public void emit(String context, Document doc) throws IOException, WSDLException {
-        currentWSDLURI = context;
-        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        reader.setFeature("javax.wsdl.verbose", bVerbose);
-        def = reader.readWSDL(context, doc);
-        this.doc = doc;
+    public void run(String context, Document doc) throws IOException, WSDLException {
+        setup();
+        Timer timer = startTimer();
+        super.run(context, doc);
+        timer.stop();
+    } // run
+
+    private void setup() {
+        addGenerators();
+
+        if (baseTypeMapping == null) {
+            setTypeMappingVersion(typeMappingVersion);
+        }
+        getFactory().setBaseTypeMapping(baseTypeMapping);
+
         namespaces = new Namespaces(outputDir);
 
         if (packageName != null) {
@@ -180,76 +441,27 @@ public class Emitter {
             // with its data.
             getNStoPkgFromPropsFile(namespaces);
             
-            if (delaySetMap != null) {
-                namespaces.putAll(delaySetMap);
+            if (delayedNamespacesMap != null) {
+                namespaces.putAll(delayedNamespacesMap);
             }
         }
+    } // setup
 
-        symbolTable = new SymbolTable(namespaces,
-                                      writerFactory.getBaseTypeMapping(),
-                                      bGenerateImports,
-                                      bDebug);
-        symbolTable.add(context, def, doc);
-        writerFactory.writerPass(def, symbolTable);
-        if (bDebug) {
-            symbolTable.dump(System.out);
-        }
-        emit(def, doc);
+    private void addGenerators() {
+        JavaGeneratorFactory factory = (JavaGeneratorFactory) getFactory();
+        factory.addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
+        factory.addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
+        factory.addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
+    } // addGenerators
 
-        // Output extra stuff (deployment files and faults) 
-        // outside of the recursive emit method.
-        Writer writer = writerFactory.getWriter(def, symbolTable);
-        writer.write();
-        currentWSDLURI = null;
-    } // emit
-
-    private void emit(Definition def, Document doc) throws IOException, WSDLException {
-        // Output Java classes for types
-        writeTypes();
-
-        Iterator it = symbolTable.getHashMap().values().iterator();
-        while (it.hasNext()) {
-            Vector v = (Vector) it.next();
-            for (int i = 0; i < v.size(); ++i) {
-                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                Writer writer = null;
-                if (entry instanceof MessageEntry) {
-                    writer = writerFactory.getWriter(
-                            ((MessageEntry) entry).getMessage(), symbolTable);
-                }
-                else if (entry instanceof PortTypeEntry) {
-                    PortTypeEntry pEntry = (PortTypeEntry) entry;
-                    // If the portType is undefined, then we're parsing a Definition
-                    // that didn't contain a portType, merely a binding that referred
-                    // to a non-existent port type.  Don't bother writing it.
-                    if (pEntry.getPortType().isUndefined()) {
-                        continue;
-                    }
-                    writer = writerFactory.getWriter(pEntry.getPortType(),
-                            symbolTable);
-                }
-                else if (entry instanceof BindingEntry) {
-                    BindingEntry bEntry = (BindingEntry)entry;
-                    Binding binding = bEntry.getBinding();
-
-                    // If the binding is undefined, then we're parsing a Definition
-                    // that didn't contain a binding, merely a service that referred
-                    // to a non-existent binding.  Don't bother writing it.
-                    if (binding.isUndefined()) {
-                        continue;
-                    }
-                    writer = writerFactory.getWriter(binding, symbolTable);
-                }
-                else if (entry instanceof ServiceEntry) {
-                    writer = writerFactory.getWriter(
-                            ((ServiceEntry) entry).getService(), symbolTable);
-                }
-                if (writer != null) {
-                    writer.write();
-                }
-            }
-        }
-    } // emit
+    private Timer startTimer() {
+        // We run a timout thread that can kill this one if it goes too long.
+        Timer timer = new Timer(Thread.currentThread(), timeoutms);
+        Thread timerThread = new Thread(timer);
+        timerThread.setDaemon(true);
+        timerThread.start();
+        return timer;
+    } // startTimer
 
     /**
      * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
@@ -279,395 +491,258 @@ public class Emitter {
         }
     } // getNStoPkgFromPropsFile
 
-    ///////////////////////////////////////////////////
-    //
-    // Command line switches
-    //
+    private class Timer implements Runnable {
+        private Thread wsdl2JavaThread;
+        private long timeout;
+        private boolean stop = false;
+
+        public Timer(Thread wsdl2JavaThread, long timeout) {
+            this.wsdl2JavaThread = wsdl2JavaThread;
+            this.timeout = timeout;
+        }
+
+        public void run() {
+            try {
+                if (timeout > 0)
+                    wsdl2JavaThread.join(timeoutms);
+                else
+                    wsdl2JavaThread.join();
+            }
+            catch (InterruptedException e) {
+            }
+
+            if (!stop && wsdl2JavaThread.isAlive()) {
+                // Calling this:  wsdl2JavaThread.interrupt();
+                // doesn't accomplish anything, so just exit.
+                System.out.println(JavaUtils.getMessage("timedOut"));
+                System.exit(1);
+            }
+        } // run
+
+        public void stop() {
+            stop = true;
+        } // stop
+        
+    } // class Timer
+
+    public void setTypeMappingVersion(String typeMappingVersion) {
+        if (typeMappingVersion.equals("1.1")) {
+            baseTypeMapping =
+                    new BaseTypeMapping() {
+                        final TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
+                        public String getBaseName(QName qNameIn) {
+                            javax.xml.rpc.namespace.QName qName =
+                                new javax.xml.rpc.namespace.QName(
+                                  qNameIn.getNamespaceURI(),
+                                  qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    };
+        } else {
+            baseTypeMapping =
+                    new BaseTypeMapping() {
+                        final TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                        public String getBaseName(QName qNameIn) {
+                            javax.xml.rpc.namespace.QName qName =
+                                new javax.xml.rpc.namespace.QName(
+                                  qNameIn.getNamespaceURI(),
+                                  qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    };
+        }
+    }
+
+    private void checkForAuthInfo(String uri) {
+        URL url = null;
+        try {
+            url = new URL(uri);
+        } catch (MalformedURLException e) {
+            // not going to have userInfo
+            return;
+        }
+        String userInfo = url.getUserInfo();
+        if (userInfo != null) {
+            int i = userInfo.indexOf(':');
+            if (i >= 0) {
+                this.username = userInfo.substring(0,i);
+                this.password = userInfo.substring(i+1);
+            } else {
+                this.username = userInfo;
+            }
+        } 
+    }
+
+    /**
+     * This class is used by WSDL2Java main() only
+     * Supports the http.proxyUser and http.proxyPassword properties.
+     */
+    public static class DefaultAuthenticator extends Authenticator {
+        private String user;
+        private String password;
+        
+        DefaultAuthenticator(String user, String pass) {
+            this.user = user;
+            this.password = pass;
+        }
+        protected PasswordAuthentication getPasswordAuthentication() {
+            // if user and password weren't provided, check the system properties
+            if (user == null) {
+                user = System.getProperty("http.proxyUser","");
+            }
+            if (password == null) {
+                password = System.getProperty("http.proxyPassword","");
+            }
+            
+            return new PasswordAuthentication (user, password.toCharArray());
+        }
+    }
+
+    // The remainder are deprecated methods.
+
+    /**
+     * Get the GeneratorFactory.
+     * @deprecated Call getFactory instead.  This doesn't return
+     * a WriterFactory, it returns a GeneratorFactory.
+     */
+    public GeneratorFactory getWriterFactory() {
+        return getFactory();
+    } // getWriterFactory
+
+    /**
+     * Call this method if you have a uri for the WSDL document
+     * @param uri wsdlURI the location of the WSDL file.
+     * @deprecated Call run(uri) instead.
+     */
+    public void emit(String uri) throws IOException, WSDLException {
+        run(uri);
+    } // emit
+
+    /**
+     * Call this method if your WSDL document has already been parsed as an XML DOM document.
+     * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
+     * @param doc doc This is the XML Document containing the WSDL.
+     * @deprecated Call run(context, doc) instead.
+     */
+    public void emit(String context, Document doc) throws IOException, WSDLException {
+        run(context, doc);
+    } // emit
 
     /**
      * Turn on/off server skeleton creation
      * @param value
+     * @deprecated Use setGenerateServerSide(value)
      */
     public void generateServerSide(boolean value) {
-        this.bEmitServer = value;
+        setGenerateServerSide(value);
     }
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
+     * @deprecated Use generateServerSide()
      */ 
     public boolean getGenerateServerSide() {
-        return bEmitServer;
+        return generateServerSide();
     }
 
     /**
      * Turn on/off server skeleton deploy
      * @param value
+     * @deprecated Use setbDeploySkeleton(value)
      */
     public void deploySkeleton(boolean value) {
-        bDeploySkeleton = value;
+        setDeploySkeleton(value);
     }
 
     /**
      * Indicate if we should be deploying skeleton or implementation
+     * @deprecated Use bDeploySkeleton()
      */ 
     public boolean getDeploySkeleton() {
-        return bDeploySkeleton;
+        return deploySkeleton();
     }
 
     /**
      * Turn on/off Helper class generation
      * @param value
+     * @deprecated Use setbHelperGeneration(value)
      */
     public void setHelperGeneration(boolean value) {
-        bHelperGeneration = value;
+        setGenerateHelper(value);
     }
 
     /**
-     * Indicate if we should be generating Helper classes           
+     * Indicate if we should be generating Helper classes
+     * @deprecated Use bHelperGeneration()
      */ 
     public boolean getHelperGeneration() {
-        return bHelperGeneration;
+        return generateHelper();
     }
 
-    /**
-     * Turn on/off test case creation
-     * @param value
-     */
-    public void generateTestCase(boolean value) {
-        this.bEmitTestCase = value;
-    }
-
-    /**
-     * Return the current definition
-     */ 
-    public Definition getCurrentDefinition() {
-        return this.def;
-    }
-    
     /**
      * Turn on/off generation of elements from imported files.
      * @param generateImports
+     * @deprecated Use setImports(generateImports)
      */
     public void generateImports(boolean generateImports) {
-        this.bGenerateImports = generateImports;
+        setImports(generateImports);
     } // generateImports
-
-    /**
-     * By default, code is generated only for referenced elements.
-     * Call generateAll(true) and WSDL2Java will generate code for all
-     * elements in the scope regardless of whether they are
-     * referenced.  Scope means:  by default, all WSDL files; if
-     * generateImports(false), then only the immediate WSDL file.
-     */
-     public void generateAll(boolean all) {
-         bGenerateAll = all;
-     } // generateAll
 
     /**
      * Turn on/off debug messages.
      * @param value
+     * @deprecated Use setDebug(value)
      */
     public void debug(boolean value) {
-        bDebug = value;
+        setDebug(value);
     } // debug
 
     /**
      * Return the status of the debug switch.
+     * @deprecated Use debug()
      */
     public boolean getDebug() {
-        return bDebug;
+        return debug();
     } // getDebug
 
     /**
      * Turn on/off verbose messages
      * @param value
+     * @deprecated Use setVerbose(value)
      */
     public void verbose(boolean value) {
-        this.bVerbose = value;
+        setVerbose(value);
     }
 
     /**
      * Return the status of the verbose switch
+     * @deprecated Use verbose()
      */ 
     public boolean getVerbose() {
-        return this.bVerbose;
+        return verbose();
     }
 
     /**
-     * Set a map of namespace -> Java package names
-     */ 
-    public void setNamespaceMap(HashMap map) {
-        delaySetMap = map;
-    }
-    /**
-     * Get the map of namespace -> Java package names
-     */ 
-    public HashMap getNamespaceMap() {
-        return delaySetMap;
-    }
-
-    /**
-     * Set the output directory to use in emitted source files
+     * Turn on/off test case creation
+     * @param value
+     * @deprecated Use setGenerateTestCase()
      */
-    public void setOutputDir(String outputDir) {
-        this.outputDir = outputDir;
+    public void generateTestCase(boolean value) {
+        setGenerateTestCase(value);
     }
 
     /**
-     * Get global package name to use instead of mapping namespaces
-     */ 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    /**
-     * Set a global package name to use instead of mapping namespaces
-     */ 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-    
-    /**
-     * Get the output directory to use for emitted source files
+     * @deprecated Use setbGenerateAll(all)
      */
-    public String getOutputDir() {
-        return this.outputDir;
-    }
-    
-    /**
-     * Set the scope for the deploy.xml file.
-     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
-     */
-    public void setScope(byte scope) {
-        this.scope = scope;
-    } // setScope
-
-    /**
-     * Get the scope for the deploy.xml file.
-     */
-    public byte getScope() {
-        return scope;
-    } // getScope
-
-    /**
-     * set the package to namespace mappings filename
-     */
-    public void setNStoPkg(String NStoPkgFilename) {
-        if (NStoPkgFilename != null) {
-            this.NStoPkgFilename = NStoPkgFilename;
-        }
-    } // setNStoPkg
-
-    /**
-     * set the package to namespace mappings file
-     */
-    public void setNStoPkg(File NStoPkgFile) {
-        this.NStoPkgFile = NStoPkgFile;
-    } // setNStoPkg
-
-    /**
-     * Get the username needed to access the WSDL
-     */ 
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Set the username needed to access the WSDL
-     */ 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * Get the password needed to access the WSDL
-     */ 
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Set the username needed to access the WSDL
-     */ 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    ///////////////////////////////////////////////////
-    //
-    // Implementation
-    //
-
-    /**
-     * This method returns a list of all generated class names.
-     */
-    public List getGeneratedClassNames() {
-        return this.fileInfo.getClassNames();
-    }
-
-    /**
-     * This method returns a list of all generated file names.
-     */
-    public List getGeneratedFileNames() {
-        return this.fileInfo.getFileNames();
-    }
-
-    /**
-     * This method returns an object which contains of all generated files
-     * including the class name, filename and a type string.
-     */ 
-    public GeneratedFileInfo getGeneratedFileInfo() {
-        return this.fileInfo;
-    }
-    
-    //////////////////////////////
-    //
-    // Methods using types (non WSDL)
-    //
-
-    /**
-     * Generate bindings (classes and class holders) for the complex types.
-     * If generating serverside (skeleton) spit out beanmappings
-     */
-    protected void writeTypes() throws IOException {
-        Vector types = symbolTable.getTypes();
-        for (int i = 0; i < types.size(); ++i) {
-            TypeEntry type = (TypeEntry) types.elementAt(i);
-
-            // Write out the type if and only if:
-            //  - we found its definition (getNode())
-            //  - it is referenced 
-            //  - it is not a base java type
-            //  - it is a Type (not an Element)
-            // (Note that types that are arrays are passed to getWriter
-            //  because they may require a Holder)
-            if (type.getNode() != null && 
-                type instanceof Type &&
-                type.isReferenced() && 
-                type.getBaseType() == null) {
-                Writer writer = writerFactory.getWriter(type, symbolTable);
-                writer.write();
-            }
-        }
-    } // writeTypes
-
-    //
-    // Methods using types (non WSDL)
-    //
-    //////////////////////////////
-
-    ///////////////////////////////////////////////////
-    //
-    // Utility methods
-    //
-    public Namespaces getNamespaces() {
-        return namespaces;
-    } // getNamespaces
-
-    public String getWSDLURI() {
-        return currentWSDLURI;
-    }
-
-
-
-    //
-    // Utility methods
-    //
-    ///////////////////////////////////////////////////
-
-    /**
-     * Note:  this main and its assocated stuff is only intended as a test mechanism.  I frequently
-     * want to test whether the symbol table is constructed properly without having any code
-     * generated.  Invoking this main method does that.
-     */
-    private static final int HELP_OPT = 'h';
-    private static final int VERBOSE_OPT = 'v';
-    private static final int DEBUG_OPT = 'D';
-
-    private static final CLOptionDescriptor[] options = new CLOptionDescriptor[]{
-        new CLOptionDescriptor("help",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                HELP_OPT,
-                JavaUtils.getMessage("optionHelp00")),
-        new CLOptionDescriptor("verbose",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                VERBOSE_OPT,
-                JavaUtils.getMessage("optionVerbose00")),
-        new CLOptionDescriptor("Debug",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                DEBUG_OPT,
-                JavaUtils.getMessage("optionDebug00"))
-    };
-
-    private static void printUsage() {
-        String lSep = System.getProperty("line.separator");
-        StringBuffer msg = new StringBuffer();
-        msg.append(
-                "java " + Emitter.class.getName() + " [options] WSDL-URI")
-                .append(lSep);
-        msg.append(lSep);
-        msg.append(CLUtil.describeOptions(options).toString());
-        System.out.println(msg.toString());
-        System.exit(1);
-    } // printUsage
-
-    public static void main(String[] args) {
-        String wsdlURI = null;
-        Emitter emitter = new Emitter(new NoopWriterFactory());
-
-        // Parse the arguments
-        CLArgsParser parser = new CLArgsParser(args, options);
-
-        // Print parser errors, if any
-        if (null != parser.getErrorString()) {
-            printUsage();
-        }
-
-        // Get a list of parsed options
-        List clOptions = parser.getArguments();
-        int size = clOptions.size();
-
-        try {
-            // Parse the options and configure the emitter as appropriate.
-            for (int i = 0; i < size; i++) {
-                CLOption option = (CLOption)clOptions.get(i);
-
-                switch (option.getId()) {
-                    case CLOption.TEXT_ARGUMENT:
-                        if (wsdlURI != null) {
-                            printUsage();
-                        }
-                        wsdlURI = option.getArgument();
-                        break;
-
-                    case HELP_OPT:
-                        printUsage();
-                        break;
-
-                    case VERBOSE_OPT:
-                        emitter.verbose(true);
-                        break;
-
-                    case DEBUG_OPT:
-                        emitter.debug(true);
-                        break;
-                }
-            }
-
-            // validate argument combinations
-            //
-            if (wsdlURI == null) {
-                printUsage();
-            }
-            emitter.emit(wsdlURI);
-            
-            // everything is good
-            System.exit(0);
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-    } // main
-
-
+     public void generateAll(boolean all) {
+         setGenerateAll(all);
+     } // generateAll
 }

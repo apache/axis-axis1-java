@@ -54,11 +54,16 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Node;
-
 import java.io.IOException;
+
 import java.util.Vector;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.ElementDecl;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import org.w3c.dom.Node;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
@@ -269,10 +274,10 @@ public class JavaBeanWriter extends JavaWriter {
 
         // Write the meta data into a Helper class or
         // embed it in the bean class
-        if (emitter.getHelperGeneration()) {
-            helper.write(); // separate Helper Class
+        if (emitter.generateHelper()) {
+            helper.generate(); // separate Helper Class
         } else {
-            helper.write(pw); // embed in Bean Class
+            helper.generate(pw); // embed in Bean Class
         }
         pw.println("}");
         pw.close();

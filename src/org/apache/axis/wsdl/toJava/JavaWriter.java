@@ -66,6 +66,11 @@ import javax.wsdl.QName;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 
+import org.apache.axis.wsdl.gen.Generator;
+
+import org.apache.axis.wsdl.symbolTable.SymTabEntry;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -91,7 +96,7 @@ import org.w3c.dom.Node;
 * task of writing to extensions of JavaWriter.
 */
 
-public abstract class JavaWriter implements Writer {
+public abstract class JavaWriter implements Generator {
     protected Emitter     emitter;
     protected QName       qname;
     protected Namespaces  namespaces;
@@ -149,21 +154,21 @@ public abstract class JavaWriter implements Writer {
     /**
      * Generate into an existing class with PrinterWriter pw
      */
-    public void write(PrintWriter pw) throws IOException {
+    public void generate(PrintWriter pw) throws IOException {
         embeddedCode = true;  // Indicated embedded
         String packageDirName = namespaces.toDir(packageName);
         String path = packageDirName + fileName;
         String fqClass = packageName + "." + className;
         
         // Check for duplicates, probably the result of namespace mapping
-        if (emitter.fileInfo.getClassNames().contains(fqClass)) {
+        if (emitter.getGeneratedClassNames().contains(fqClass)) {
             throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
         }
-        if (emitter.fileInfo.getFileNames().contains(path)) {
+        if (emitter.getGeneratedFileNames().contains(path)) {
             throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
         }
         
-        emitter.fileInfo.add(path, fqClass, type);
+        emitter.getGeneratedFileInfo().add(path, fqClass, type);
         this.pw = pw;
         writeFileBody();
     }
@@ -171,29 +176,29 @@ public abstract class JavaWriter implements Writer {
     /**
      * Create the file, write the header, write the body.
      */
-    public void write() throws IOException {
+    public void generate() throws IOException {
         String packageDirName = namespaces.toDir(packageName);
         String path = packageDirName + fileName;
         String fqClass = packageName + "." + className;
-        
+
         // Check for duplicates, probably the result of namespace mapping
-        if (emitter.fileInfo.getClassNames().contains(fqClass)) {
+        if (emitter.getGeneratedClassNames().contains(fqClass)) {
             throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
         }
-        if (emitter.fileInfo.getFileNames().contains(path)) {
+        if (emitter.getGeneratedFileNames().contains(path)) {
             throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
         }
         
-        emitter.fileInfo.add(path, fqClass, type);
+        emitter.getGeneratedFileInfo().add(path, fqClass, type);
         namespaces.mkdir(packageName);
         File file = new File(packageDirName, fileName);
-        if (emitter.bVerbose) {
+        if (emitter.verbose()) {
             System.out.println(message + ":  " + file.getPath());
         }
         pw = new PrintWriter(new FileWriter(file));
         writeFileHeader();
         writeFileBody();
-    } // write
+    } // generate
 
     /**
      * Write a common header, including the package name.

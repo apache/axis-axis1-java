@@ -52,76 +52,83 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
-
-import java.util.HashMap;
+package org.apache.axis.wsdl.gen;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
+import javax.wsdl.QName;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
+
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
-* Writer and WriterFactory are part of the Writer framework.  Folks who want
-* to use the emitter to generate stuff from WSDL should do 3 things:
-* 1.  Write implementations of the Writer interface, one each for PortType,
-*     Binding, Service, and Type.  These implementations generate the stuff
-*     for each of these WSDL types.
-* 2.  Write an implementation of the WriterFactory interface that returns
-*     instantiations of these Writer implementations as appropriate.
-* 3.  Implement a class with a main method (like Wsdl2java) that instantiates
-*     an Emitter and passes it the WriterFactory implementation
+* This factory returns a bunch of NoopGenerators
 */
 
-public interface WriterFactory {
-    /**
-     * Allow the Writer extension to make a pass through the symbol table doing any pre-writing
-     * logic, like creating the Java names for each object and constructing signature strings.
-     */
-    public void writerPass(Definition def, SymbolTable symbolTable);
+public class NoopFactory implements GeneratorFactory {
+    public void generatorPass(Definition def, SymbolTable symbolTable) {
+    } // generatorPass
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given Message.
-     */
-    public Writer getWriter(Message message, SymbolTable symbolTable);
+    public Generator getGenerator(Message message, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
+    
+    public Generator getGenerator(PortType portType, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
+    
+    public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
+    
+    public Generator getGenerator(Service service, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
+    
+    public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given PortType.
-     */
-    public Writer getWriter(PortType portType, SymbolTable symbolTable);
+    public Generator getGenerator(Definition definition, SymbolTable symbolTable) {
+        return new NoopGenerator();
+    } // getGenerator
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given Binding.
-     */
-    public Writer getWriter(Binding binding, SymbolTable symbolTable);
+    private BaseTypeMapping btm = null;
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given Service.
-     */
-    public Writer getWriter(Service service, SymbolTable symbolTable);
+    public void setBaseTypeMapping(BaseTypeMapping btm) {
+        this.btm = btm;
+    } // setBaseTypeMapping
 
-    /**
-     * Get a Writer implementation that will generate bindings for the given Type.
-     */
-    public Writer getWriter(TypeEntry type, SymbolTable symbolTable);
-
-    /**
-     * Get a Writer implementation that will generate anything that doesn't
-     * fit into the scope of any of the other writers.
-     */
-    public Writer getWriter(Definition definition, SymbolTable symbolTable);
-
-    /**
-     * Provide the Emitter to the factory.
-     */
-    public void setEmitter(Emitter emitter);
-
-    /**
-     * Get TypeMapping to use for translating
-     * QNames to java base types
-     */
-    public void setBaseTypeMapping(BaseTypeMapping btm);
-    public BaseTypeMapping getBaseTypeMapping();
-   
-}
+    public BaseTypeMapping getBaseTypeMapping() {
+        if (btm == null) {
+            btm = new BaseTypeMapping() {
+                    TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                    public String getBaseName(QName qNameIn) {
+                        javax.xml.rpc.namespace.QName qName = 
+                            new javax.xml.rpc.namespace.QName(
+                              qNameIn.getNamespaceURI(),
+                              qNameIn.getLocalPart());
+                        Class cls = defaultTM.getClassForQName(qName);
+                        if (cls == null) {
+                            return null;
+                        }
+                        else {
+                            // RJB NOTE:  Javaism - bad bad bad
+                            return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    }
+            };
+        }
+        return btm;
+    } // getBaseTypeMapping
+} // class NoopFactory

@@ -72,7 +72,18 @@ import javax.wsdl.Part;
 import javax.wsdl.Input;
 
 import org.apache.axis.Constants;
+
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
@@ -84,7 +95,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Constructor.
      */
-    protected JavaDeployWriter(Emitter emitter,
+    public JavaDeployWriter(Emitter emitter,
                                Definition definition,
                                SymbolTable symbolTable) {
         super(emitter,
@@ -95,6 +106,12 @@ public class JavaDeployWriter extends JavaWriter {
         this.definition = definition;
         this.symbolTable = symbolTable;
     } // ctor
+
+    public void generate() throws IOException {
+        if (emitter.generateServerSide()) {
+            super.generate();
+        }
+    } // generate
 
     /**
      * Replace the default file header with the deployment doc file header.
@@ -187,8 +204,8 @@ public class JavaDeployWriter extends JavaWriter {
                     serializerFactory = "org.apache.axis.encoding.ser.ArraySerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
                 } else if (type.getNode() != null &&
-                   SchemaUtils.getEnumerationBaseAndValues(
-                     type.getNode(), emitter.getSymbolTable()) != null) {
+                   Utils.getEnumerationBaseAndValues(
+                     type.getNode(), symbolTable) != null) {
                     serializerFactory = "org.apache.axis.encoding.ser.EnumSerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.EnumDeserializerFactory";
                 } else if (type.isSimpleType()) {
@@ -261,7 +278,7 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeDeployBinding(Binding binding) throws IOException {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String className = bEntry.getName();
-        if (emitter.getDeploySkeleton())
+        if (emitter.deploySkeleton())
             className += "Skeleton";
         else
             className += "Impl";
@@ -270,7 +287,7 @@ public class JavaDeployWriter extends JavaWriter {
                          + className + "\"/>");
 
         String methodList = "";
-        if (!emitter.getDeploySkeleton()) {
+        if (!emitter.deploySkeleton()) {
             Iterator operationsIterator = binding.getBindingOperations().iterator();
             for (; operationsIterator.hasNext();) {
                 BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
@@ -316,6 +333,7 @@ public class JavaDeployWriter extends JavaWriter {
                     // Get the operation's return QName
                     if (params.returnName != null)
                         returnQName = Utils.getWSDLQName(params.returnName);
+
 
                     // Write the operation metadata
                     writeOperation(javaOperName, elementQName, returnQName,

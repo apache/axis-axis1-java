@@ -52,45 +52,32 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-
-import java.io.IOException;
-import javax.wsdl.QName;
 
 import org.w3c.dom.Node;
 
+import javax.wsdl.QName;
 
 /**
- * This represents a QName found in a reference but is not defined.
- * If the type is later defined, the UndefinedType is replaced with a new Type
+ * This class represents a TypeEntry that is a type (complexType, simpleType, etc.
+ *
+ * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class UndefinedElement extends Element implements Undefined {
-
-    private UndefinedDelegate delegate = null;
+public abstract class Element extends TypeEntry {
 
     /**
-     * Construct a referenced (but as of yet undefined) element
-     */
-    public UndefinedElement(QName pqName) {
-        super(pqName, null);
-        undefined = true;
-        delegate = new UndefinedDelegate(this);
+     * Create an Element object for an xml construct that references a type that has 
+     * not been defined yet.  Defer processing until refType is known.
+     */ 
+    protected Element(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
     }
-
+       
     /**
-     *  Register referrant TypeEntry so that 
-     *  the code can update the TypeEntry when the Undefined Element or Type is defined
-     */
-    public void register(TypeEntry referrant) {
-        delegate.register(referrant);
-    }
-
-    /**
-     *  Call update with the actual TypeEntry.  This updates all of the
-     *  referrant TypeEntry's that were registered.
-     */
-    public void update(TypeEntry def) throws IOException {
-        delegate.update(def);
+     * Create a Element object for an xml construct that is not a base java type
+     */  
+    protected Element(QName pqName, Node pNode) {
+        super(pqName, pNode);
     }
 };

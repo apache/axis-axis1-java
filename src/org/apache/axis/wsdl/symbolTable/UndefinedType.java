@@ -52,18 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-
-import org.w3c.dom.Node;
+import java.io.IOException;
 
 import javax.wsdl.QName;
 
 /**
- * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String) 
+ * This represents a QName found in a reference but is not defined.
+ * If the type is later defined, the UndefinedType is replaced with a new Type
  */
-public class BaseType extends Type {
-    public BaseType(QName pqName) {
-        super(pqName);
+public class UndefinedType extends Type implements Undefined {
+
+   private UndefinedDelegate delegate = null;
+
+    /**
+     * Construct a referenced (but as of yet undefined) type 
+     */
+    public UndefinedType(QName pqName) {
+        super(pqName, null);
+        undefined = true;
+        delegate = new UndefinedDelegate(this);
+    }
+
+    /**
+     *  Register referrant TypeEntry so that 
+     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     */
+    public void register(TypeEntry referrant) {
+        delegate.register(referrant);
+    }
+
+    /**
+     *  Call update with the actual TypeEntry.  This updates all of the
+     *  referrant TypeEntry's that were registered.
+     */
+    public void update(TypeEntry def) throws IOException {
+        delegate.update(def);
     }
 };

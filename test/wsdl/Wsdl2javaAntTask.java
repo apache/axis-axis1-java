@@ -55,7 +55,7 @@ package test.wsdl;
 
 import org.apache.axis.utils.XMLUtils;
 
-import org.apache.axis.wsdl.WSDL2Java;
+import org.apache.axis.wsdl.toJava.Emitter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -110,7 +110,7 @@ public class Wsdl2javaAntTask extends Task
             log("\ttimeout:" + timeout, Project.MSG_VERBOSE);
 
             // Instantiate the emitter
-            WSDL2Java emitter = new WSDL2Java();
+            Emitter emitter = new Emitter();
 
             if ("application".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(emitter.APPLICATION_SCOPE);
@@ -130,24 +130,24 @@ public class Wsdl2javaAntTask extends Task
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
-            emitter.generateTestCase(testCase);
-            emitter.helperGen(helperGen);    
+            emitter.setGenerateTestCase(testCase);
+            emitter.setGenerateHelper(helperGen);    
             if (factory != null) {
-                emitter.factory(factory);
+                emitter.setFactory(factory);
             }   
-            emitter.generateImports(!noImports);
-            emitter.generateAll(all);
+            emitter.setImports(!noImports);
+            emitter.setGenerateAll(all);
             emitter.setOutputDir(output);
-            emitter.generateServerSide(server);
-            emitter.deploySkeleton(skeletonDeploy);
-            emitter.verbose(verbose);
+            emitter.setGenerateServerSide(server);
+            emitter.setDeploySkeleton(skeletonDeploy);
+            emitter.setVerbose(verbose);
             emitter.setTypeMappingVersion(tm);
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
             emitter.setTimeout(timeout);
 
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
-                emitter.emit(url);
+                emitter.run(url);
             } catch (Throwable e) {
                 if (url.startsWith("http://")) {
                     // What we have is either a network error or invalid XML -

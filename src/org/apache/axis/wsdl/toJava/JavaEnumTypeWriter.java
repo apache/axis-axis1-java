@@ -60,6 +60,8 @@ import java.util.Vector;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import org.w3c.dom.Node;
 
 /**

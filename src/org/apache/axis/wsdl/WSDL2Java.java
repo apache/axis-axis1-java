@@ -54,41 +54,23 @@
  */
 package org.apache.axis.wsdl;
 
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.CLArgsParser;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.toJava.BaseTypeMapping;
-import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.axis.wsdl.toJava.GeneratedFileInfo;
-import org.apache.axis.wsdl.toJava.JavaWriterFactory;
-import org.w3c.dom.Document;
 
-import javax.wsdl.Definition;
-import javax.wsdl.QName;
-import javax.wsdl.WSDLException;
-import java.io.File;
-import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
+import org.apache.axis.wsdl.gen.Parser;
+import org.apache.axis.wsdl.gen.WSDL2;
+
+import org.apache.axis.wsdl.toJava.Emitter;
 
 /**
- * Command line interface to the wsdl2java utility
+ * Command line interface to the WSDL2Java utility
  *
- * @author Tom Jordahl (tjordahl@macromedia.com)
  */
-public class WSDL2Java {
+public class WSDL2Java extends WSDL2 {
     // Define our short one-letter option identifiers.
-    protected static final int HELP_OPT = 'h';
-    protected static final int VERBOSE_OPT = 'v';
     protected static final int SERVER_OPT = 's';
     protected static final int SKELETON_DEPLOY_OPT = 'S';
     protected static final int NAMESPACE_OPT = 'N';
@@ -96,9 +78,7 @@ public class WSDL2Java {
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
     protected static final int TEST_OPT = 't';
-    protected static final int NOIMPORTS_OPT = 'n';
     protected static final int PACKAGE_OPT = 'p';
-    protected static final int DEBUG_OPT = 'D';
     protected static final int ALL_OPT = 'a';
     protected static final int TYPEMAPPING_OPT = 'T';
     protected static final int NETWORK_TIMEOUT_OPT = 'O';
@@ -107,19 +87,8 @@ public class WSDL2Java {
     protected static final int USERNAME_OPT = 'U';
     protected static final int PASSWORD_OPT = 'P';
 
-
-    // Scope constants
-    public static final byte NO_EXPLICIT_SCOPE = 0x00;
-    public static final byte APPLICATION_SCOPE = 0x01;
-    public static final byte REQUEST_SCOPE     = 0x10;
-    public static final byte SESSION_SCOPE     = 0x11;
-
-    // The emitter framework Emitter class.
-    protected Emitter emitter;
-    // Timeout, in milliseconds, to let the Emitter do its work
-    private long timeoutms = 45000; // 45 sec default
-
-    protected JavaWriterFactory writerFactory = null;
+    protected boolean bPackageOpt = false;
+    private   Emitter emitter;
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -131,14 +100,6 @@ public class WSDL2Java {
      * - A description of the option for the usage message
      */
     protected static final CLOptionDescriptor[] options = new CLOptionDescriptor[]{
-        new CLOptionDescriptor("help",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                HELP_OPT,
-                JavaUtils.getMessage("optionHelp00")),
-        new CLOptionDescriptor("verbose",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                VERBOSE_OPT,
-                JavaUtils.getMessage("optionVerbose00")),
         new CLOptionDescriptor("server-side",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 SERVER_OPT,
@@ -171,18 +132,10 @@ public class WSDL2Java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 TEST_OPT,
                 JavaUtils.getMessage("optionTest00")),
-        new CLOptionDescriptor("noImports",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                NOIMPORTS_OPT,
-                JavaUtils.getMessage("optionImport00")),
         new CLOptionDescriptor("all",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 ALL_OPT,
                 JavaUtils.getMessage("optionAll00")),
-        new CLOptionDescriptor("Debug",
-                CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                DEBUG_OPT,
-                JavaUtils.getMessage("optionDebug00")),
         new CLOptionDescriptor("typeMappingVersion",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
@@ -213,573 +166,140 @@ public class WSDL2Java {
      * Instantiate a WSDL2Java emitter.
      */
     public WSDL2Java() {
-        // Instantiate the emitter
-        writerFactory = new JavaWriterFactory();
-        emitter = new Emitter(writerFactory);
-        writerFactory.setEmitter(emitter);
+        // emitter is the same as the parent's parser variable.  Just cast it
+        // here once so we don't have to cast it every time we use it.
+        emitter = (Emitter) parser;
+        addOptions(options);
     } // ctor
 
-    ///////////////////////////////////////////////////
-    //
-    // Command line switches
-    //
+    protected Parser createParser() {
+        return new Emitter();
+    } // createParser
 
-    /**
-     * Turn on/off server skeleton creation
-     * @param boolean value
-     */
-    public void generateServerSide(boolean value) {
-        emitter.generateServerSide(value);
-    }
+    protected void parseOption(CLOption option) {
+        switch (option.getId()) {
+            case FACTORY_CLASS_OPT:
+                emitter.setFactory(option.getArgument());
+                break;
 
-    /**
-     * Indicate if we should be emitting server side code and deploy/undeploy
-     */
-    public boolean getGenerateServerSide() {
-        return emitter.getGenerateServerSide();
-    }
+            case HELPER_CLASS_OPT:
+                emitter.setHelperGeneration(true);
+                break;
 
-    /**
-     * Turn on/off server skeleton deploy
-     * @param boolean value
-     */
-    public void deploySkeleton(boolean value) {
-        emitter.deploySkeleton(value);
-    }
+            case SKELETON_DEPLOY_OPT:
+                String skeletonDeploy = option.getArgument(0);
+                if (skeletonDeploy.equalsIgnoreCase("true"))
+                    emitter.setDeploySkeleton(true);
+                else
+                    emitter.setDeploySkeleton(false);
 
-    /**
-     * Indicate if we should be deploying skeleton or implementation
-     */
-    public boolean getDeploySkeleton() {
-        return emitter.getDeploySkeleton();
-    }
+            case SERVER_OPT:
+                emitter.setGenerateServerSide(true);
+                break;
 
-    /**
-     * Turn on/off test case creation
-     * @param boolean value
-     */
-    public void generateTestCase(boolean value) {
-        emitter.generateTestCase(value);
-    }
+            case NAMESPACE_OPT:
+                String namespace = option.getArgument(0);
+                String packageName = option.getArgument(1);
+                emitter.getNamespaceMap().put(namespace, packageName);
+                break;
 
-    /**
-     * Return the current definition
-     */
-    public Definition getCurrentDefinition() {
-        return emitter.getCurrentDefinition();
-    }
+            case NAMESPACE_FILE_OPT:
+                emitter.setNStoPkg(option.getArgument());
+                break;
 
-    /**
-     * Turn on/off generation of elements from imported files.
-     * @param boolean generateImports
-     */
-    public void generateImports(boolean generateImports) {
-        emitter.generateImports(generateImports);
-    } // generateImports
+            case PACKAGE_OPT:
+                bPackageOpt = true;
+                emitter.setPackageName(option.getArgument());
+                break;
 
-    /**
-     * By default, code is generated only for referenced elements.
-     * Call generateAll(true) and WSDL2Java will generate code for all
-     * elements in the scope regardless of whether they are
-     * referenced.  Scope means:  by default, all WSDL files; if
-     * generateImports(false), then only the immediate WSDL file.
-     */
-     public void generateAll(boolean all) {
-         emitter.generateAll(all);
-     } // generateAll
+            case OUTPUT_OPT:
+                emitter.setOutputDir(option.getArgument());
+                break;
 
-    /**
-     * Turn on/off debug messages.
-     * @param boolean value
-     */
-    public void debug(boolean value) {
-        emitter.debug(value);
-    } // debug
+            case SCOPE_OPT:
+                String scope = option.getArgument();
+                if ("Application".equals(scope)) {
+                    emitter.setScope(emitter.APPLICATION_SCOPE);
+                }
+                else if ("Request".equals(scope)) {
+                    emitter.setScope(emitter.REQUEST_SCOPE);
+                }
+                else if ("Session".equals(scope)) {
+                    emitter.setScope(emitter.SESSION_SCOPE);
+                }
+                else {
+                    System.err.println(
+                            JavaUtils.getMessage("badScope00", scope));
+                }
+                break;
 
-    /**
-     * Return the status of the debug switch.
-     */
-    public boolean getDebug() {
-        return emitter.getDebug();
-    } // getDebug
+            case TEST_OPT:
+                emitter.setGenerateTestCase(true);
+                break;
 
+            case ALL_OPT:
+                emitter.setGenerateAll(true);
+                break;
 
-    /**
-     * Indicate writer factory
-     * @param String class name
-     */
-    public void factory(String value) {
-        emitter.setFactory(value);
-    }
+            case TYPEMAPPING_OPT:
+                String tmValue = option.getArgument();
+                if (tmValue.equals("1.1")) {
+                    emitter.setTypeMappingVersion("1.1");
+                } else if (tmValue.equals("1.2")) {
+                    emitter.setTypeMappingVersion("1.2");
+                } else {
+                    System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
+                }
+                break;
 
-    /**
-     * Indicate helper Generation s
-     * @param boolean value
-     */
-    public void helperGen(boolean value) {
-        emitter.setHelperGeneration(value);
-    }
+            case NETWORK_TIMEOUT_OPT:
+                String timeoutValue = option.getArgument();
+                long timeout = Long.parseLong(timeoutValue);
+                        // Convert seconds to milliseconds.
+                if(timeout > 0)
+                    timeout = timeout * 1000;
+                emitter.setTimeout(timeout);
+                break;
 
-    /**
-     * Indicate helper Generation s
-     * @param boolean value
-     */
-    public boolean getHelperGen() {
-        return emitter.getHelperGeneration();
-    }
+            case USERNAME_OPT:
+                emitter.setUsername(option.getArgument());
+                break;
 
-    /**
-     * Turn on/off verbose messages
-     * @param boolean value
-     */
-    public void verbose(boolean value) {
-        emitter.verbose(value);
-    }
+            case PASSWORD_OPT:
+                emitter.setPassword(option.getArgument());
+                break;
 
-    /**
-     * Return the status of the verbose switch
-     */
-    public boolean getVerbose() {
-        return emitter.getVerbose();
-    }
-
-    /**
-     * Set a map of namespace -> Java package names
-     */
-    public void setNamespaceMap(HashMap map) {
-        emitter.setNamespaceMap(map);
-    }
-
-
-    /**
-     * Set the output directory to use in emitted source files
-     */
-    public void setOutputDir(String outputDir) {
-        emitter.setOutputDir(outputDir);
-    }
-
-    /**
-     * Get global package name to use instead of mapping namespaces
-     */
-    public String getPackageName() {
-        return emitter.getPackageName();
-    }
-
-    /**
-     * Set a global package name to use instead of mapping namespaces
-     */
-    public void setPackageName(String packageName) {
-        emitter.setPackageName(packageName);
-    }
-
-    /**
-     * Get the output directory to use for emitted source files
-     */
-    public String getOutputDir() {
-        return emitter.getOutputDir();
-    }
-
-    /**
-     * Set the scope for the deploy.xml file.
-     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
-     */
-    public void setScope(byte scope) {
-        emitter.setScope(scope);
-    } // setScope
-
-    /**
-     * Get the scope for the deploy.xml file.
-     */
-    public byte getScope() {
-        return emitter.getScope();
-    } // getScope
-
-    /**
-     * Set the NStoPkg mappings filename.
-     */
-    public void setNStoPkg(String NStoPkgFilename) {
-        emitter.setNStoPkg(NStoPkgFilename);
-    } // setNStoPkg
-
-    /**
-     * Set the NStoPkg mappings file.
-     */
-    public void setNStoPkg(File NStoPkgFile) {
-        emitter.setNStoPkg(NStoPkgFile);
-    } // setNStoPkg
-
-    /**
-     * Return the current timeout setting
-     */
-    public long getTimeout() {
-        return timeoutms;
-    }
-
-    /**
-     * Set the timeout, in milliseconds
-     */
-    public void setTimeout(long timeout) {
-        this.timeoutms = timeout;
-    }
-
-    public String getUsername() {
-        return emitter.getUsername();
-    }
-
-    public void setUsername(String username) {
-        emitter.setUsername(username);
-    }
-
-    public String getPassword() {
-        return emitter.getPassword();
-    }
-
-    public void setPassword(String password) {
-        emitter.setPassword(password);
-    }
-
-    //
-    // Command line switches
-    //
-    ///////////////////////////////////////////////////
-
-    /**
-     * Returns an object which contains of information on all generated files
-     * including the class name, filename and a type string.
-     *
-     * @return An org.apache.axis.wsdl.toJava.GeneratedFileInfo object
-     * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
-     */
-    public GeneratedFileInfo getGeneratedFileInfo()
-    {
-        return emitter.getGeneratedFileInfo();
-    }
-
-    /**
-     * Return a list of all generated class names.
-     *
-     * @return list of class names (strings)
-     */
-    public List getGeneratedClassNames() {
-        return emitter.getGeneratedClassNames();
-    }
-
-    /**
-     * Return a list of all generated file names.
-     *
-     * @return list of relative path names (strings)
-     */
-    public List getGeneratedFileNames() {
-        return emitter.getGeneratedFileNames();
-    }
-
-
-    /**
-     * Emit appropriate Java files for a WSDL at a given URL.
-     *
-     * This method will time out after the number of milliseconds specified
-     * by our timeoutms member.
-     *
-     * @param String wsdlURI the location of the WSDL file.
-     */
-    public void emit(String wsdlURL)
-            throws Exception {
-
-        // We run the actual Emitter in a thread that we can kill
-        WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
-        Thread wsdlThread = new Thread(runnable);
-
-        wsdlThread.start();
-
-        try {
-            if (timeoutms > 0)
-                wsdlThread.join(timeoutms);
-            else
-                wsdlThread.join();
-        } catch (InterruptedException e) {
+            default:
+                super.parseOption(option);
         }
+    } // parseOption
 
-        if (wsdlThread.isAlive()) {
-            wsdlThread.interrupt();
-            throw new Exception(JavaUtils.getMessage("timedOut"));
+    protected void validateOptions() {
+        super.validateOptions();
+
+        // validate argument combinations
+        if (emitter.deploySkeleton() && !emitter.generateServerSide()) {
+            System.out.println(JavaUtils.getMessage("badSkeleton00"));
+            printUsage();
         }
-
-        if (runnable.getFailure() != null) {
-            throw runnable.getFailure();
+        if (!emitter.getNamespaceMap().isEmpty() && bPackageOpt) {
+            System.out.println(JavaUtils.getMessage("badpackage00"));
+            printUsage();
         }
-    } // emit
-
-    /**
-     * Call this method if your WSDL document has already been parsed as an XML DOM document.
-     * @param String context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
-     * @param Document doc This is the XML Document containing the WSDL.
-     */
-    public void emit(String context, Document doc)
-            throws IOException, WSDLException {
-        emitter.emit(context, doc);
-    } // emit
+    } // validateOptions
 
     /**
      * Main
      */
     public static void main(String args[]) {
         WSDL2Java wsdl2java = new WSDL2Java();
-        boolean bServer = false;
-        String skeletonDeploy = null;
-        boolean bTestClass = false;
-        String wsdlURI = null;
-        HashMap namespaceMap = new HashMap();
-        boolean bPackageOpt = false;
-        String typeMappingVersion = "1.2";
-
-        // Parse the arguments
-        CLArgsParser parser = new CLArgsParser(args, options);
-
-        // Print parser errors, if any
-        if (null != parser.getErrorString()) {
-            System.err.println(
-                    JavaUtils.getMessage("error01", parser.getErrorString()));
-            printUsage();
-        }
-
-        // Get a list of parsed options
-        List clOptions = parser.getArguments();
-        int size = clOptions.size();
-
-        try {
-            // Parse the options and configure the emitter as appropriate.
-            for (int i = 0; i < size; i++) {
-                CLOption option = (CLOption)clOptions.get(i);
-
-                switch (option.getId()) {
-                    case CLOption.TEXT_ARGUMENT:
-                        if (wsdlURI != null) {
-                            printUsage();
-                        }
-                        wsdlURI = option.getArgument();
-                        break;
-
-                    case HELP_OPT:
-                        printUsage();
-                        break;
-
-                    case VERBOSE_OPT:
-                        wsdl2java.verbose(true);
-                        break;
-
-                    case FACTORY_CLASS_OPT:
-                        wsdl2java.factory(option.getArgument());
-                        break;
-
-                    case HELPER_CLASS_OPT:
-                        wsdl2java.helperGen(true);
-                        break;
-
-                    case SKELETON_DEPLOY_OPT:
-                        skeletonDeploy = option.getArgument(0);
-                        if (skeletonDeploy.equalsIgnoreCase("true"))
-                            wsdl2java.deploySkeleton(true);
-                        else
-                            wsdl2java.deploySkeleton(false);
-
-                    case SERVER_OPT:
-                        bServer = true;
-                        wsdl2java.generateServerSide(true);
-                        break;
-
-                    case NAMESPACE_OPT:
-                        String namespace = option.getArgument(0);
-                        String packageName = option.getArgument(1);
-                        namespaceMap.put(namespace, packageName);
-                        break;
-
-                    case NAMESPACE_FILE_OPT:
-                        wsdl2java.setNStoPkg(option.getArgument());
-                        break;
-
-                    case PACKAGE_OPT:
-                        bPackageOpt = true;
-                        wsdl2java.setPackageName(option.getArgument());
-                        break;
-
-                    case OUTPUT_OPT:
-                        wsdl2java.setOutputDir(option.getArgument());
-                        break;
-
-                    case SCOPE_OPT:
-                        String scope = option.getArgument();
-                        if ("Application".equals(scope)) {
-                            wsdl2java.setScope(Emitter.APPLICATION_SCOPE);
-                        }
-                        else if ("Request".equals(scope)) {
-                            wsdl2java.setScope(Emitter.REQUEST_SCOPE);
-                        }
-                        else if ("Session".equals(scope)) {
-                            wsdl2java.setScope(Emitter.SESSION_SCOPE);
-                        }
-                        else {
-                            System.err.println(
-                                    JavaUtils.getMessage("badScope00", scope));
-                        }
-                        break;
-
-                    case TEST_OPT:
-                        bTestClass = true;
-                        wsdl2java.generateTestCase(true);
-                        break;
-
-                    case NOIMPORTS_OPT:
-                        wsdl2java.generateImports(false);
-                        break;
-
-                    case ALL_OPT:
-                        wsdl2java.generateAll(true);
-                        break;
-
-                    case DEBUG_OPT:
-                        wsdl2java.debug(true);
-                        break;
-
-                    case TYPEMAPPING_OPT:
-                        String tmValue = option.getArgument();
-                        if (tmValue.equals("1.1")) {
-                            typeMappingVersion = "1.1";
-                        } else if (tmValue.equals("1.2")) {
-                            typeMappingVersion = "1.2";
-                        } else {
-                            System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
-                        }
-                        break;
-
-                    case NETWORK_TIMEOUT_OPT:
-                        String timeoutValue = option.getArgument();
-                        long timeout = Long.parseLong(timeoutValue);
-                        // Convert seconds to milliseconds.
-                        if(timeout > 0)
-                            timeout = timeout * 1000;
-                        wsdl2java.setTimeout(timeout);
-                        break;
-                        
-                    case USERNAME_OPT:
-                        wsdl2java.setUsername(option.getArgument());
-                        break;
-
-                    case PASSWORD_OPT:
-                        wsdl2java.setPassword(option.getArgument());
-                        break;
-                }
-            }
-
-            // validate argument combinations
-            //
-            if (wsdlURI == null) {
-                printUsage();
-            }
-            if (skeletonDeploy != null && !bServer) {
-                System.out.println(JavaUtils.getMessage("badSkeleton00"));
-                printUsage();
-            }
-            if (!namespaceMap.isEmpty() && bPackageOpt) {
-                System.out.println(JavaUtils.getMessage("badpackage00"));
-                printUsage();
-            }
-
-            // set the namespace map if provided
-            if (!namespaceMap.isEmpty()) {
-                wsdl2java.setNamespaceMap(namespaceMap);
-            }
-
-            // Set type mapping version
-            wsdl2java.setTypeMappingVersion(typeMappingVersion);
-
-            // Set username and password if provided in URL
-            wsdl2java.checkForAuthInfo(wsdlURI);
-
-            // register a default authenticator to handle proxys
-            Authenticator.setDefault(
-                    new DefaultAuthenticator(wsdl2java.getUsername(), 
-                                             wsdl2java.getPassword()));
-
-            // Do the work
-            wsdl2java.emit(wsdlURI);
-
-            // everything is good
-            System.exit(0);
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
+        wsdl2java.run(args);
     }
 
-    private class WSDLRunnable implements Runnable {
-        private Emitter emitter;
-        private String uri;
-        private boolean done = false;
-        private Exception failure = null;
-
-        public WSDLRunnable(Emitter emitter, String uri) {
-            this.emitter = emitter;
-            this.uri = uri;
-        }
-
-        public void run() {
-            try {
-                emitter.emit(uri);
-            } catch (Exception e) {
-                failure = e;
-            }
-            done = true;
-        }
-
-        public boolean isDone() {
-            return done;
-        }
-
-        public Exception getFailure() {
-            return failure;
-        }
-    }
-
-    public void setTypeMappingVersion(String typeMappingVersion) {
-        if (typeMappingVersion.equals("1.1")) {
-            writerFactory.setBaseTypeMapping(
-                    new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultTypeMappingImpl.getSingleton();
-                        public String getBaseName(QName qNameIn) {
-                            javax.xml.rpc.namespace.QName qName =
-                                new javax.xml.rpc.namespace.QName(
-                                  qNameIn.getNamespaceURI(),
-                                  qNameIn.getLocalPart());
-                            Class cls = defaultTM.getClassForQName(qName);
-                            if (cls == null)
-                                return null;
-                            else
-                                return JavaUtils.getTextClassName(cls.getName());
-                        }
-                    });
-        } else {
-            writerFactory.setBaseTypeMapping(
-                    new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
-                        public String getBaseName(QName qNameIn) {
-                            javax.xml.rpc.namespace.QName qName =
-                                new javax.xml.rpc.namespace.QName(
-                                  qNameIn.getNamespaceURI(),
-                                  qNameIn.getLocalPart());
-                            Class cls = defaultTM.getClassForQName(qName);
-                            if (cls == null)
-                                return null;
-                            else
-                                return JavaUtils.getTextClassName(cls.getName());
-                        }
-                    });
-        }
-    }
     /**
      * Print usage message and exit
      */
-    private static void printUsage() {
+    protected void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         msg.append("WSDL2Java " +
@@ -794,52 +314,4 @@ public class WSDL2Java {
         System.exit(1);
     }
 
-    /**
-     * Extract the username and password info (if any) from a URL
-     * 
-     */ 
-    private void checkForAuthInfo(String uri) {
-        URL url = null;
-        try {
-            url = new URL(uri);
-        } catch (MalformedURLException e) {
-            // not going to have userInfo
-            return;
-        }
-        String userInfo = url.getUserInfo();
-        if (userInfo != null) {
-            int i = userInfo.indexOf(':');
-            if (i >= 0) {
-                setUsername(userInfo.substring(0,i));
-                setPassword(userInfo.substring(i+1));
-            } else {
-                setUsername(userInfo);
-            }
-        } 
-    }
-
-    /**
-     * This class is used by WSDL2Java main() only
-     * Supports the http.proxyUser and http.proxyPassword properties.
-     */ 
-    public static class DefaultAuthenticator extends Authenticator {
-        private String user;
-        private String password;
-        
-        DefaultAuthenticator(String user, String pass) {
-            this.user = user;
-            this.password = pass;
-        }
-        protected PasswordAuthentication getPasswordAuthentication() {
-            // if user and password weren't provided, check the system properties
-            if (user == null) {
-                user = System.getProperty("http.proxyUser","");
-            }
-            if (password == null) {
-                password = System.getProperty("http.proxyPassword","");
-            }
-            
-            return new PasswordAuthentication (user, password.toCharArray());
-        }
-    }
 }

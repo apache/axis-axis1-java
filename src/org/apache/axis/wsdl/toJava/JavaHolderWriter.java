@@ -60,6 +60,8 @@ import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 /**
 * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
 */
@@ -74,8 +76,8 @@ public class JavaHolderWriter extends JavaWriter {
                 emitter,
                 new QName(
                         type.getQName().getNamespaceURI(),
-                        Utils.holder(type,emitter.getSymbolTable()).substring(
-                        Utils.holder(type,emitter.getSymbolTable()).lastIndexOf('.')+1)),
+                        Utils.holder(type, emitter).substring(
+                        Utils.holder(type, emitter).lastIndexOf('.') + 1)),
                 null,
                 "java",
                 JavaUtils.getMessage("genHolder00"), "holder");

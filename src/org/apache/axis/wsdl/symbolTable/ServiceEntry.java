@@ -52,65 +52,30 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
 
+package org.apache.axis.wsdl.symbolTable;
 
-
-import java.io.IOException;
-import java.util.Vector;
-import javax.wsdl.QName;
-import org.w3c.dom.Node;
+import javax.wsdl.Service;
 
 /**
- * This UndefinedDelegate class implements the common functions of UndefinedType and UndefinedElement.
- */
-public class UndefinedDelegate implements Undefined {
-
-    private Vector list;
-    private TypeEntry undefinedType;
-
-    /**
-     * Constructor
-     */
-    UndefinedDelegate(TypeEntry te) {
-        list = new Vector();
-        undefinedType = te;
-    }
-   /**
-     *  Register referrant TypeEntry so that 
-     *  the code can update the TypeEntry when the Undefined Element or Type is defined
-     */
-    public void register(TypeEntry referrant) {
-        list.add(referrant);
-    }
+* This class represents a WSDL service.  It simply encompasses the WSDL4J Service object so it can
+* reside in the SymbolTable.
+*/
+public class ServiceEntry extends SymTabEntry {
+    private Service service;
 
     /**
-     *  Call update with the actual TypeEntry.  This updates all of the
-     *  referrant TypeEntry's that were registered.
+     * Construct a ServiceEntry from a WSDL4J Service object.
      */
-    public void update(TypeEntry def) throws IOException {
-        boolean done = false;
-        while (!done) {
-            done = true;  // Assume this is the last pass
+    public ServiceEntry(Service service) {
+        super(service.getQName());
+        this.service = service;
+    } // ctor
 
-            // Call updatedUndefined for all items on the list
-            // updateUndefined returns true if the state of the te TypeEntry
-            // is changed.  The outer loop is traversed until there are no more
-            // state changes.
-            for (int i=0; i < list.size() ; i++) {
-                TypeEntry te = (TypeEntry) list.elementAt(i);
-                if (te.updateUndefined(undefinedType, def))
-                    done = false;  // Items still undefined, need another pass
-            }
-        }
-        // It is possible that the def TypeEntry depends on an Undefined type.
-        // If so, register all of the entries with the undefined type.
-        TypeEntry uType = def.getUndefinedTypeRef();
-        if (uType != null) {
-            for (int i=0; i < list.size() ; i++) {
-                TypeEntry te = (TypeEntry) list.elementAt(i);
-                ((Undefined)uType).register(te);
-            }
-        }
-    }
-};
+    /**
+     * Get this entry's Service object.
+     */
+    public Service getService() {
+        return service;
+    } // getService
+} // class ServiceEntry

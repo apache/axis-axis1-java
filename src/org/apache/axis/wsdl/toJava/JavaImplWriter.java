@@ -75,12 +75,19 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
-import org.apache.axis.utils.JavaUtils;
-
-import org.w3c.dom.Node;
-
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import org.w3c.dom.Node;
 
 /**
 * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java
@@ -199,7 +206,7 @@ public class JavaImplWriter extends JavaWriter {
                              + JavaUtils.replace(paramType, "[]", "[0]"));
                 } else {
                     // We have some constructed type.
-                    Vector v = SchemaUtils.getEnumerationBaseAndValues(
+                    Vector v = Utils.getEnumerationBaseAndValues(
                             param.getType().getNode(), symbolTable);
 
                     if (v != null) {

@@ -52,22 +52,32 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
 
+package org.apache.axis.wsdl.symbolTable;
 
-import org.w3c.dom.Node;
+import javax.wsdl.PortType;
 
-import javax.wsdl.QName;
 /**
- * This Type is for a QName that is a complex or simple type, these types are 
- * always emitted.
- */
-public class DefinedType extends Type {
-    public DefinedType(QName pqName, Node pNode) {
-        super(pqName, pNode);
-    }
-    public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
-        super(pqName, refType, pNode, dims);
-    }
-};
+* This class represents a WSDL portType.  It encompasses the WSDL4J PortType object so it can
+* reside in the SymbolTable.  It also adds the parameter information, which is missing from the
+* WSDL4J PortType object.
+*/
+public class PortTypeEntry extends SymTabEntry {
+    private PortType portType;
 
+    /**
+     * Construct a PortTypeEntry from a WSDL4J PortType object and a HashMap of Parameters objects,
+     * keyed off of the operation name.
+     */
+    public PortTypeEntry(PortType portType) {
+        super(portType.getQName());
+        this.portType = portType;
+    } // ctor
+
+    /**
+     * Get this entry's PortType object.
+     */
+    public PortType getPortType() {
+        return portType;
+    } // getPortType
+} // class PortTypeEntry

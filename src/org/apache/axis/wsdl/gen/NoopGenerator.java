@@ -52,30 +52,19 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.gen;
 
-
-import org.w3c.dom.Node;
-
-import javax.wsdl.QName;
+import java.io.IOException;
 
 /**
- * This Type is for a QName that is an element, these types are only emitted if 
- * referenced by a ref= or an element=.
- * An element type can be defined inline or it can be defined via
- * a ref/type attribute.
- */
-public class DefinedElement extends Element {
+* This generator doesn't do anything.
+*/
+public class NoopGenerator implements Generator {
+
     /**
-     * Create an element type defined by a ref/type attribute
+     * Do a whole lot of nothing.
      */
-    public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
-        super(pqName, refType, pNode, dims);
-    };
-    /**
-     * Create an element type defined directly.               
-     */
-    public DefinedElement(QName pqName, Node pNode) {
-        super(pqName, pNode);
-    }
-};
+    public void generate() throws IOException {
+    } // generate
+
+} // class NoopGenerator

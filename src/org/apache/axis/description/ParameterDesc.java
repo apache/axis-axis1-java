@@ -54,10 +54,11 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.wsdl.toJava.TypeEntry;
+import javax.xml.rpc.namespace.QName;
+
 import org.apache.axis.utils.JavaUtils;
 
-import javax.xml.rpc.namespace.QName;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
  * A Parameter descriptor, collecting the interesting info about an

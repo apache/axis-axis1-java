@@ -52,43 +52,21 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-import javax.xml.rpc.namespace.QName;
-import java.util.Vector;
+import org.w3c.dom.Node;
 
+import javax.wsdl.QName;
 /**
- * This class simply collects all the parameter or message data for an operation into one place.
+ * This Type is for a QName that is a complex or simple type, these types are 
+ * always emitted.
  */
-public class Parameters {
+public class DefinedType extends Type {
+    public DefinedType(QName pqName, Node pNode) {
+        super(pqName, pNode);
+    }
+    public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
+    }
+};
 
-    // This vector contains instances of the Parameter class
-    public Vector list = new Vector();
-
-    // The type of the first output part, used as the method's return value
-    public TypeEntry returnType = null;
-
-    // The name of the return type (from the part name of the output message.
-    // Used to create the RPCParam for the return value.
-    public QName returnName = null;
-
-    // A comma-separated list of all of the faults
-    public String faultString = null;
-
-    // The signature that the interface and the stub will use
-    public String signature = null;
-
-    // The numbers of the respective parameters
-    public int inputs = 0;
-    public int inouts = 0;
-    public int outputs = 0;
-
-    public String toString() {
-        return "\nreturnType = " + returnType
-                + "\nreturnName = " + returnName
-                + "\nfaultString = " + faultString
-                + "\nsignature = " + signature
-                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
-                + "\nlist = " + list;
-    } // toString
-} // class Parameters

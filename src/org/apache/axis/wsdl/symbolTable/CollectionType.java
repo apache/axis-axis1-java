@@ -52,35 +52,23 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.wsdl.symbolTable;
 
-package org.apache.axis.wsdl.toJava;
 
-import java.util.HashMap;
+import org.w3c.dom.Node;
 
-import javax.wsdl.PortType;
 import javax.wsdl.QName;
-
 /**
-* This class represents a WSDL portType.  It encompasses the WSDL4J PortType object so it can
-* reside in the SymbolTable.  It also adds the parameter information, which is missing from the
-* WSDL4J PortType object.
-*/
-public class PortTypeEntry extends SymTabEntry {
-    private PortType portType;
+ * This Type is for a QName that is a 'collection'.
+ * For example,
+ *   <element name="foo" type="bar" maxOccurs="unbounded" />
+ * We need a way to indicate in the symbol table that a foo is
+ * 'collection of bars',  In such cases a collection type is 
+ * added with the special QName  <name>[<minOccurs>, <maxOccurs>]
+ */
+public class CollectionType extends DefinedType {
+    public CollectionType(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
+    }
+};
 
-    /**
-     * Construct a PortTypeEntry from a WSDL4J PortType object and a HashMap of Parameters objects,
-     * keyed off of the operation name.
-     */
-    public PortTypeEntry(PortType portType) {
-        super(portType.getQName());
-        this.portType = portType;
-    } // ctor
-
-    /**
-     * Get this entry's PortType object.
-     */
-    public PortType getPortType() {
-        return portType;
-    } // getPortType
-} // class PortTypeEntry

@@ -52,19 +52,21 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.wsdl.symbolTable;
 
-import org.apache.axis.utils.JavaUtils;
-import org.w3c.dom.Node;
+import java.io.IOException;
 
 import javax.wsdl.QName;
-import java.io.IOException;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.w3c.dom.Node;
 
 /**
  * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.
- * A TypeEntry has a QName representing its XML name and a Java Name, which
- * is its full java name.  The TypeEntry may also have a Node, which locates
- * the definition of the emit type in the xml.
+ * A TypeEntry has a QName representing its XML name and a name, which in the
+ * WSDL2Java back end is its full java name.  The TypeEntry may also have a Node,
+ * which locates the definition of the emit type in the xml.
  * A TypeEntry object extends SymTabEntry and is built by the SymbolTable class for
  * each supported root complexType, simpleType, and elements that are
  * defined or encountered.
@@ -75,7 +77,7 @@ import java.io.IOException;
  *                  /           \
  *            Type                Element
  *             |                     |
- * (BaseJavaType,                (DefinedElement,
+ * (BaseType,                    (DefinedElement,
  *  CollectionType                UndefinedElement)
  *  DefinedType,
  *  UndefinedType)
@@ -84,7 +86,7 @@ import java.io.IOException;
  *  is not encountered yet.  Both of these implement the Undefined interface.
  *  
  *  A TypeEntry whose java (or other language) name depends on an Undefined type, will
- *  have its java name initialization deferred until the Undefined type is replaced with
+ *  have its name initialization deferred until the Undefined type is replaced with
  *  a defined type.  The updateUndefined() method is invoked by the UndefinedDelegate to
  *  update the information.
  *
@@ -121,10 +123,10 @@ public abstract class TypeEntry extends SymTabEntry {
     protected boolean undefined; // If refType is an Undefined type 
                                  // (or has a refType that is Undefined) 
                                  // then the undefined flag is set.
-                                 //  The java name cannot be determined
+                                 //  The name cannot be determined
                                  // until the Undefined type is found.
     protected boolean isBaseType;// Indicates if represented by a 
-                                 // java primitive or util class
+                                 // primitive or util class
     protected boolean isSimpleType = false; // Indicates if this type is a simple type
     protected boolean onlyLiteralReference = false; // Indicates
                                  // whether this type is only referenced
@@ -159,7 +161,7 @@ public abstract class TypeEntry extends SymTabEntry {
     }
        
     /**
-     * Create a TypeEntry object for an xml construct that is not a base java type
+     * Create a TypeEntry object for an xml construct that is not a base type
      */  
     protected TypeEntry(QName pqName, Node pNode) {
         super(pqName);
@@ -172,7 +174,7 @@ public abstract class TypeEntry extends SymTabEntry {
     }
 
     /**
-     * Create a TypeEntry object for an xml construct name that represents a base java type
+     * Create a TypeEntry object for an xml construct name that represents a base type
      */
     protected TypeEntry(QName pqName) {
         super(pqName);
@@ -191,7 +193,7 @@ public abstract class TypeEntry extends SymTabEntry {
     }
 
     /**
-     * Returns the Java Base Type Name.
+     * Returns the Base Type Name.
      * For example if the Type represents a schema integer, "int" is returned.
      * If this is a user defined type, null is returned.
      */
