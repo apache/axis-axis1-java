@@ -403,7 +403,7 @@
             "xerces.jar",
             "JAXP implementation",
             "おそらくAxisは動きません。",
-            "http://ws.apache.org/xerces-j/");
+            "http://xml.apache.org/xerces-j/");
 
     needed+=needClass(out,"javax.activation.DataHandler",
             "activation.jar",
@@ -426,7 +426,7 @@
             "xmlsec.jar",
             "XML Security API",
             "XML Securityはサポートされません。",
-            "http://ws.apache.org/security/");
+            "http://xml.apache.org/security/");
 
     wanted += wantClass(out, "javax.net.ssl.SSLSocketFactory",
             "jsse.jar or java1.4+ runtime",
@@ -493,7 +493,7 @@
 <% if(xmlParser.indexOf("crimson")>=0) { %>
     <p>
     <b> Axisで使用するXMLパーサーには Crimson ではなく、 
-        <a href="http://ws.apache.org/xerces2-j/">Xerces 2</a> を推奨しています。
+        <a href="http://xml.apache.org/xerces2-j/">Xerces 2</a> を推奨しています。
     </p>
 <%    } %>
 
