@@ -26,6 +26,9 @@
     <copy file="WSDLInteropTestDocLitPortBindingImpl.java" overwrite="true"
           todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
 
+    <copy file="DocLitTestCase.java"
+          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
