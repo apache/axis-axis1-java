@@ -112,26 +112,28 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
             throws SAXException {
         super.endElement(namespace, localName, context);
         
+        AxisFault f = null;
         if (faultClassName != null) {
             try {
                 Class exClass = Class.forName(faultClassName);
-                // XXX-tomj: Is this dangerous?  
-                // What if the client exception class isn't derived from AxisFault?
-                // Should we just use Exception and declare Call.invoke() to
-                // throw AxisFault and Exception?
-                AxisFault faultException = (AxisFault) exClass.newInstance();
-                element.setFault(faultException);
+                if (AxisFault.class.isAssignableFrom(exClass)) {
+                    f = (AxisFault) exClass.newInstance();
+                }
             }
             catch (Exception e) {
-                // just throw an AxisFault
-                AxisFault f  = new AxisFault(faultCode, faultString, faultActor, faultDetails);
-                element.setFault(f);
+                // Don't do anything here, since a problem above means
+                // we'll just fall through and use a plain AxisFault.
             }
-
-        } else {
-            AxisFault f  = new AxisFault(faultCode, faultString, faultActor, faultDetails);
-            element.setFault(f);
         }
+
+        if (f == null) {
+            f  = new AxisFault(faultCode, 
+                               faultString, 
+                               faultActor, 
+                               faultDetails);
+        }
+        
+        element.setFault(f);
     }
 
     public SOAPHandler onStartChild(String namespace,

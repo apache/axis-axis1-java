@@ -244,8 +244,7 @@ public abstract class JavaProvider extends BasicProvider {
         }
         catch( Exception exp ) {
             category.error( exp );
-            if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
-            throw (AxisFault) exp ;
+            throw AxisFault.makeFault(exp);
         }
         if (category.isDebugEnabled())
             category.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
@@ -270,8 +269,7 @@ public abstract class JavaProvider extends BasicProvider {
                                    clsName);
         } catch( Exception exp ) {
             category.error( exp );
-            if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
-            throw (AxisFault) exp ;
+            throw AxisFault.makeFault(exp);
         }
 
         JavaClass jc	  = JavaClass.find(obj.getClass());
@@ -309,7 +307,7 @@ public abstract class JavaProvider extends BasicProvider {
 
             msgContext.setProperty("WSDL", doc);
         } catch (Exception e) {
-            throw new AxisFault(e);
+            throw AxisFault.makeFault(e);
         }
 
     }

@@ -79,10 +79,33 @@ import java.util.Vector;
 
 public class AxisFault extends java.rmi.RemoteException {
     protected QFault    faultCode ;
-    protected String    faultString ;
+    protected String    faultString = "";
     protected String    faultActor ;
     protected Vector    faultDetails ;  // vector of Element's
 
+    /**
+     * Make an AxisFault based on a passed Exception.  If the Exception is
+     * already an AxisFault, simply use that.  Otherwise, wrap it in an
+     * AxisFault.  If the Exception is an InvocationTargetException (which
+     * already wraps another Exception), get the wrapped Exception out from
+     * there and use that instead of the passed one.
+     */ 
+    public static AxisFault makeFault(Exception e)
+    {
+        if (e instanceof InvocationTargetException) {
+            Throwable t = ((InvocationTargetException)e).getTargetException();
+            if (t instanceof Exception) {
+                e = (Exception)t;
+            }
+        }
+        
+        if (e instanceof AxisFault) {
+            return (AxisFault)e;
+        }
+        
+        return new AxisFault(e);
+    }
+    
     public AxisFault(String code, String str,
                      String actor, Element[] details) {
         super (str);
@@ -90,6 +113,8 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString( str );
         setFaultActor( actor );
         setFaultDetail( details );
+        if (details == null)
+            initFromException(this);
     }
 
     public AxisFault(QFault code, String str,
@@ -99,58 +124,21 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString( str );
         setFaultActor( actor );
         setFaultDetail( details );
+        if (details == null)
+            initFromException(this);
     }
 
-    public AxisFault(Exception e) {
-        super ("", e);
+    /**
+     * Wrap an AxisFault around an existing Exception - this is private
+     * to force everyone to use makeFault() above, which sanity-checks us.
+     */ 
+    protected AxisFault(Exception target) {
+        super ("", target);
         String  str ;
 
-        // If this is a exception thrown by the web service, we need to pass
-        // that back to the client in the fault detail
-        if (e instanceof InvocationTargetException) {
-            setFaultCode( Constants.FAULT_SERVER_USER );
-
-            // This is a wrapped exception, get the original.
-            InvocationTargetException ite = (InvocationTargetException) e;
-            Throwable target = ite.getTargetException();
-
-            // Set the exception message (if any) as the fault string 
-            setFaultString( target.getMessage() );
-
-            // get the stack trace of the target exception
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream( stream );
-            target.printStackTrace(ps);
-            ps.close();
+        setFaultCode( Constants.FAULT_SERVER_USER );
         
-            // Set the exception name and stack trace in the details
-            // TODO: we should serialize any exception data into detail also
-            Element[] detailsArray = new Element[2];
-            detailsArray[0] = 
-                    org.apache.axis.utils.XMLUtils.StringToElement(
-                            Constants.AXIS_NS, "exceptionName", target.getClass().getName());
-            detailsArray[1] = 
-                    org.apache.axis.utils.XMLUtils.StringToElement(
-                            Constants.AXIS_NS, "stackTrace", stream.toString());
-            setFaultDetail(detailsArray);
-
-        } else {
-            setFaultCode( Constants.FAULT_SERVER_GENERAL );
-
-            // put the exception message in the FaultString
-            setFaultString(e.getMessage());
-            
-            // put the stack trace in the FaultDetail
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream( stream );
-            e.printStackTrace(ps);
-            ps.close();
-            Element[] detailsArray = new Element[1];
-            detailsArray[0] = 
-                    org.apache.axis.utils.XMLUtils.StringToElement(
-                            Constants.AXIS_NS, "stackTrace", stream.toString());
-            setFaultDetail(detailsArray);
-        }
+        initFromException(target);
     }
 
     public AxisFault(String message)
@@ -158,6 +146,7 @@ public class AxisFault extends java.rmi.RemoteException {
         super (message);
         setFaultCode(Constants.FAULT_SERVER_GENERAL);
         setFaultString(message);
+        initFromException(this);
     }
 
     /**
@@ -165,7 +154,9 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public AxisFault()
     {
-        super ();
+        super();
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);     
+        initFromException(this);
     }
 
     public AxisFault (String message, Throwable t)
@@ -175,8 +166,58 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString(message);
     }
 
+    private void initFromException(Exception target)
+    {
+        for (int i = 0; faultDetails != null && i < faultDetails.size(); i++) {
+            Element element = (Element) faultDetails.elementAt(i);
+            if ("stackTrace".equals(element.getLocalName()) &&
+                Constants.AXIS_NS.equals(element.getNamespaceURI())) {
+                // ??? Should we replace it or just let it be?
+                return;
+            }
+        }
+
+        // Set the exception message (if any) as the fault string 
+        setFaultString( target.toString() );
+        
+        // Set the exception name and stack trace in the details
+        // TODO: we should serialize any exception data into detail also
+        Element el = XMLUtils.StringToElement(Constants.AXIS_NS, 
+                                              "exceptionName", 
+                                              target.getClass().getName());
+
+        if (faultDetails == null) faultDetails = new Vector();
+        faultDetails.add(el);        
+        
+        // get the stack trace of the target exception
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream( stream );
+        target.printStackTrace(ps);
+        ps.close();
+        
+        el =  XMLUtils.StringToElement(Constants.AXIS_NS, 
+                                       "stackTrace", 
+                                       stream.toString());
+        
+        
+        faultDetails.add(el);
+    }
+    
     public void dump() {
-        System.out.println( toString() );
+        String details = new String();
+        if (faultDetails != null) {
+            for (int i=0; i < faultDetails.size(); i++) {
+                Element e = (Element) faultDetails.get(i);
+                Text text = (Text)e.getFirstChild();
+                details += "\n\t" +  e.getLocalName() + ": " + text.getData();
+            }
+        }
+        
+        System.out.println( "AxisFault\n" +
+                "  faultCode: " + faultCode + "\n" +
+                "  faultString: " + faultString + "\n" +
+                "  faultActor: " + faultActor + "\n" +
+                "  faultDetail: " + details + "\n"  );
     }
 
     public void setFaultCode(QFault code) {
@@ -192,7 +233,11 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     public void setFaultString(String str) {
-        faultString = str ;
+        if (str != null) {
+            faultString = str ;
+        } else {
+            faultString = "";
+        }
     }
 
     public String getFaultString() {
@@ -243,19 +288,6 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     public String toString() {
-        String details = new String();
-        if (faultDetails != null) {
-            for (int i=0; i < faultDetails.size(); i++) {
-                Element e = (Element) faultDetails.get(i);
-                Text text = (Text)e.getFirstChild();
-                details += "\n\t" +  e.getLocalName() + ": " + text.getData();
-            }
-        }
-        
-        return( "AxisFault\n" +
-                "  faultCode: " + faultCode + "\n" +
-                "  faultString: " + faultString + "\n" +
-                "  faultActor: " + faultActor + "\n" +
-                "  faultDetail: " + details + "\n"  );
+        return faultString;
     }
 };

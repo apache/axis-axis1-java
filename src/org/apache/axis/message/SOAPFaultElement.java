@@ -134,7 +134,6 @@ public class SOAPFaultElement extends SOAPBodyElement
     
     public AxisFault getFault()
     {
-        if (fault == null) fault = new AxisFault();
         return fault;
     }
     

@@ -57,6 +57,7 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
@@ -65,6 +66,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
@@ -173,9 +175,8 @@ public class MsgProvider extends JavaProvider {
         // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL.  Some people will
         //     want DOM, but our examples should mostly lean towards the
         //     SAX side of things....
-        
-        Document retDoc = (Document) method.invoke( obj, argObjects );
-        
+
+        Document retDoc = (Document) method.invoke( obj, argObjects );        
         if ( retDoc != null ) {
             SOAPBodyElement el = new SOAPBodyElement(retDoc.getDocumentElement());
             resEnv.addBodyElement(el);

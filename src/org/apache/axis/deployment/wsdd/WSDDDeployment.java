@@ -236,7 +236,7 @@ public class WSDDDeployment
             }
         }
         catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
+            throw new DeploymentException(e);
         }
     }
 

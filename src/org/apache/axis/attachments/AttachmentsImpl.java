@@ -60,6 +60,7 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.Message;
 import org.apache.axis.Part;
+import org.apache.axis.AxisFault;
 
 
 /**
@@ -228,7 +229,7 @@ public class AttachmentsImpl implements Attachments {
         (multipart= org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments  )));
       }  
       catch(Exception e){
-          throw new org.apache.axis.AxisFault();
+          throw AxisFault.makeFault(e);
       }
     }
 

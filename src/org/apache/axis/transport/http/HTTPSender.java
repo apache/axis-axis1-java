@@ -193,14 +193,14 @@ public class HTTPSender extends BasicHandler {
                         category.debug( JavaUtils.getMessage("noJSSE00"));
                     }
 
-                    throw new AxisFault(cnfe);
+                    throw AxisFault.makeFault(cnfe);
                 } catch (NumberFormatException nfe) {
                       if (category.isDebugEnabled()) {
                           category.debug( JavaUtils.getMessage("badProxy00", 
                               tunnelPortStr));
                       }
 
-                      throw new AxisFault(nfe);
+                      throw AxisFault.makeFault(nfe);
                 }
 
                 if (category.isDebugEnabled()) {
@@ -469,8 +469,7 @@ public class HTTPSender extends BasicHandler {
         }
         catch( Exception e ) {
             category.debug( e );
-            if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled()) {

@@ -67,6 +67,7 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.log4j.Category;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -206,56 +207,56 @@ public class RPCProvider extends JavaProvider {
 
             Object objRes;
             try {
-              objRes = method.invoke( obj, argValues );
+                objRes = method.invoke( obj, argValues );
             } catch (IllegalArgumentException e) {
-              
-              if (argValues == null || argValues.length != params.length) {
-                // Sorry, you are on your own...
-                   StringBuffer msg= new StringBuffer( e.getMessage());
-                   msg.append( "On object \"" + (obj == null? 
-                      "null" : obj.getClass().getName()) + "\" ");
-                   msg.append( "method name \"" + method.getName() + "\"");
-                   msg.append(" tried argument types: "); 
-                   String sep= "";
-                   for(int i=0; i< argValues.length; ++i){
-                     msg.append( sep);
-                     sep=", ";
-                     msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
-                   }
-                   msg.append("\n");
-                   throw new IllegalArgumentException(msg.toString());
                 
-              } else {
-                // Hm - maybe we can help this with a conversion or two...
-                for (int i = 0; i < params.length; i++) {
-                  Object thisArg = argValues[i];
-                  if (!params[i].isAssignableFrom(thisArg.getClass())) {
-                    // Attempt conversion for each non-assignable argument
-                    Object newArg = JavaUtils.convert(thisArg, params[i]);
-                    if (newArg != thisArg)
-                      argValues[i] = newArg;
-                  }
+                if (argValues == null || argValues.length != params.length) {
+                    // Sorry, you are on your own...
+                    StringBuffer msg= new StringBuffer( e.getMessage());
+                    msg.append( "On object \"" + (obj == null? 
+                                                  "null" : obj.getClass().getName()) + "\" ");
+                    msg.append( "method name \"" + method.getName() + "\"");
+                    msg.append(" tried argument types: "); 
+                    String sep= "";
+                    for(int i=0; i< argValues.length; ++i){
+                        msg.append( sep);
+                        sep=", ";
+                        msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
+                    }
+                    msg.append("\n");
+                    throw new IllegalArgumentException(msg.toString());
+                    
+                } else {
+                    // Hm - maybe we can help this with a conversion or two...
+                    for (int i = 0; i < params.length; i++) {
+                        Object thisArg = argValues[i];
+                        if (!params[i].isAssignableFrom(thisArg.getClass())) {
+                            // Attempt conversion for each non-assignable argument
+                            Object newArg = JavaUtils.convert(thisArg, params[i]);
+                            if (newArg != thisArg)
+                                argValues[i] = newArg;
+                        }
+                    }
+                    
+                    // OK, now try again...
+                    try {
+                        objRes = method.invoke( obj, argValues );
+                    } catch (IllegalArgumentException exp) {
+                        StringBuffer msg= new StringBuffer( exp.getMessage());
+                        msg.append( "On object \"" + (obj == null? 
+                                                      "null" : obj.getClass().getName()) + "\" ");
+                        msg.append( "method name \"" + method.getName() + "\"");
+                        msg.append(" tried argument types: "); 
+                        String sep= "";
+                        for(int i=0; i< argValues.length; ++i){
+                            msg.append( sep);
+                            sep=", ";
+                            msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
+                        }
+                        msg.append("\n");
+                        throw new IllegalArgumentException(msg.toString());
+                    }
                 }
-                
-                // OK, now try again...
-                try {
-                    objRes = method.invoke( obj, argValues );
-                } catch (IllegalArgumentException exp) {
-                   StringBuffer msg= new StringBuffer( exp.getMessage());
-                   msg.append( "On object \"" + (obj == null? 
-                      "null" : obj.getClass().getName()) + "\" ");
-                   msg.append( "method name \"" + method.getName() + "\"");
-                   msg.append(" tried argument types: "); 
-                   String sep= "";
-                   for(int i=0; i< argValues.length; ++i){
-                     msg.append( sep);
-                     sep=", ";
-                     msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
-                   }
-                   msg.append("\n");
-                   throw new IllegalArgumentException(msg.toString());
-                }
-              }
             }
 
             if (category.isDebugEnabled())

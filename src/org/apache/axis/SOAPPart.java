@@ -380,7 +380,7 @@ public class SOAPPart extends Part {
             Exception real = e.getException();
             if (real == null)
                 real = e;
-            throw new AxisFault(real);
+            throw AxisFault.makeFault(real);
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);

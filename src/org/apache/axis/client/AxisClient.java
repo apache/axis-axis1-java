@@ -191,8 +191,7 @@ public class AxisClient extends AxisEngine
         catch( Exception e ) {
             // Should we even bother catching it ?
             category.error( e );
-            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled()) {

@@ -203,7 +203,7 @@ public class SimpleSessionHandler extends BasicHandler
                 AxisEngine engine = context.getAxisEngine();
                 engine.setOption(SESSION_ID, id);
             } catch (Exception e) {
-                throw new AxisFault(e);
+                throw AxisFault.makeFault(e);
             }
         } else {
             AxisEngine engine = context.getAxisEngine();
@@ -261,7 +261,7 @@ public class SimpleSessionHandler extends BasicHandler
                     id = (Long)header.
                             getValueAsType(SOAPTypeMappingRegistry.XSD_LONG);
                 } catch (Exception e) {
-                    throw new AxisFault(e);
+                    throw AxisFault.makeFault(e);
                 }
             } else {
                 id = getNewSession();

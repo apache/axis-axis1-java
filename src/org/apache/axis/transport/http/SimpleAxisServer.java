@@ -389,7 +389,7 @@ public class SimpleAxisServer implements Runnable {
                         }
                     } else {
                         status = ISE; // SC_INTERNAL_SERVER_ERROR
-                        af = new AxisFault(e);
+                        af = AxisFault.makeFault(e);
                     }
 
                     // There may be headers we want to preserve in the

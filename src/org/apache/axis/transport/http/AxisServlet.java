@@ -495,8 +495,7 @@ public class AxisServlet extends HttpServlet {
             else
                 res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
             if ( !(e instanceof AxisFault) )
-                e = new AxisFault( e );
-            msg = msgContext.getResponseMessage();
+                e = AxisFault.makeFault(e);
             if (msg == null) {
                 msg = new Message((AxisFault)e);
                 msgContext.setResponseMessage(msg);

@@ -244,8 +244,7 @@ public class JWSProcessor extends BasicHandler
         }
         catch( Exception e ) {
             category.error( "JWSProcessor Exception", e );
-            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled())

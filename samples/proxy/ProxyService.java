@@ -117,8 +117,7 @@ public class ProxyService {
             return null;
         }
         catch( Exception exp ) {
-            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-            throw new AxisFault( exp );
+            throw AxisFault.makeFault( exp );
         }
     }
 }

@@ -130,11 +130,9 @@ public class SimpleChain extends BasicHandler implements Chain {
         catch( Exception e ) {
             // undo in reverse order - rethrow
             category.error( e );
-            if( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).undo( msgContext );
-            throw (AxisFault) e ;
+            throw AxisFault.makeFault(e);
         }
 
         if (category.isDebugEnabled()) {

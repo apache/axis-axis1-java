@@ -17,6 +17,11 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
 
+    public static void main(String[] args) throws Exception {
+        FaultServiceTestCase tester = new FaultServiceTestCase("tester");
+        tester.testFaultService();
+    }
+    
     public void testFaultService() {
         test.faults.wsdl.FaultServicePortType binding = new FaultService().getFaultService();
         assertTrue("binding is null", binding != null);
@@ -30,9 +35,14 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
             // We don't support fault data yet!
             //assertEquals("Ticker Symbol in Fault doesn't match original argument", 
             //        symbol, tickerFault.getTickerSymbol());
-        } 
+        }
+        catch (org.apache.axis.AxisFault e) {
+            throw new junit.framework.
+                    AssertionFailedError("AxisFault caught: " + e);            
+        }
         catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+            throw new junit.framework.
+                    AssertionFailedError("Remote Exception caught: " + re );
         }
     }
 }

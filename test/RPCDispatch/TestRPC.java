@@ -177,7 +177,7 @@ public class TestRPC extends TestCase {
            result instanceof AxisFault);
         AxisFault fault = (AxisFault) result;
         assertEquals("faultString was not set correctly.", 
-            "foobar", fault.getFaultString());
+            "test.RPCDispatch.Service$TestFault: foobar", fault.getFaultString());
     }
 
     public static void main(String args[])

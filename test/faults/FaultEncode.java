@@ -83,10 +83,7 @@ public class FaultEncode extends TestCase {
     } // ctor
     
     public void testFault() throws Exception {
-        AxisFault fault = new AxisFault();
-        fault.setFaultCode("<code>");
-        fault.setFaultString("<string>");
-        fault.setFaultActor("<actor>");
+        AxisFault fault = new AxisFault("<code>", "<string>", "<actor>", null);
         fault.setFaultDetailString("<detail>");
 
         AxisServer server = new AxisServer();

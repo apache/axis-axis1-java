@@ -250,9 +250,8 @@ public class TCPListener implements Runnable {
                 engine.invoke( msgContext );
             }
             catch( Exception e ) {
-                if ( !(e instanceof AxisFault) )
-                    e = new AxisFault( e );
-                msgContext.setResponseMessage( new Message((AxisFault)e) );
+                AxisFault fault = AxisFault.makeFault(e);
+                msgContext.setResponseMessage( new Message(fault) );
             }
 
             /* Send it back along the wire...  */
