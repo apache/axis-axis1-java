@@ -222,18 +222,20 @@
      *
      * @return the classname of the parser
      */
-    public String getParserName() throws JspException {
-        try {
-            // Create a JAXP SAXParser
-            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-            SAXParser saxParser = saxParserFactory.newSAXParser();
-
-            // check to what is in the classname
-            String saxParserName = saxParser.getClass().getName();
-            return saxParserName;
-        } catch (Exception e) {
-            throw new JspException(e);
+    public String getParserName() throws Exception {
+        // Create a JAXP SAXParser
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        if(saxParserFactory==null) {
+            return "no XML parser factory found";
         }
+        SAXParser saxParser = saxParserFactory.newSAXParser();
+        if(saxParser==null) {
+            return "Could not create an XML Parser";
+        }
+
+        // check to what is in the classname
+        String saxParserName = saxParser.getClass().getName();
+        return saxParserName;
     }
 
     %>
