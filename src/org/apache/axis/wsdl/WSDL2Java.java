@@ -584,7 +584,11 @@ public class WSDL2Java {
 
                     case NETWORK_TIMEOUT_OPT:
                         String timeoutValue = option.getArgument();
-                        wsdl2java.setTimeout(Long.parseLong(timeoutValue)*1000);
+                        long timeout = Long.parseLong(timeoutValue);
+                        // Convert seconds to milliseconds.
+                        if(timeout > 0)
+                            timeout = timeout * 1000;
+                        wsdl2java.setTimeout(timeout);
                         break;
                 }
             }
