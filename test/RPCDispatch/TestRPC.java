@@ -80,15 +80,15 @@ public class TestRPC extends TestCase {
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
         envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
-        assertNotNull("envelope", envelope);
+        assertNotNull("SOAP envelope was null", envelope);
 
         // Extract the body from the envelope
         body = (RPCElement)envelope.getFirstBody();
-        assertNotNull("body", body);
+        assertNotNull("SOAP body was null", body);
 
         // Extract the list of parameters from the body
         Vector arglist = body.getParams();
-        assertNotNull("arglist", arglist);
+        assertNotNull("SOAP argument list was null", arglist);
         if (arglist.size()==0) return null;
 
         // Return the first parameter
@@ -107,7 +107,7 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}));
+        assertEquals("Did not reverse the string correctly.", "cba", rpc("reverseString", new Object[] {"abc"}));
     }
 
     /**
@@ -123,7 +123,7 @@ public class TestRPC extends TestCase {
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
         Data expected = new Data(3, "cba", 5);
-        assertEquals(expected, rpc("reverseData", new Object[] {input}));
+        assertEquals("Did not reverse the data as expected.", expected, rpc("reverseData", new Object[] {input}));
     }
 
     /**
@@ -137,7 +137,7 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
-        assertEquals(SOAPAction, rpc("targetService", new Object[] {}));
+        assertEquals("SOAP Action did not equal the targetService.", SOAPAction, rpc("targetService", new Object[] {}));
     }
 
     /**
@@ -151,7 +151,7 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, echoInt);
 
         // invoke the service and verify the result
-        assertNull(rpc("echoInt", new Object[] {null}));
+        assertNull("The result was not null as expected.", rpc("echoInt", new Object[] {null}));
     }
     
     public static void main(String args[])
