@@ -29,5 +29,9 @@ SOAP SPEC COMPLIANCE
 --------------------
 ! <> Implement support for the actor attribute
 
+SAMPLES
+-------
+! <> Clean up addr sample, including writing a how-to guide
+
 GENERAL / UNCATEGORIZED
 -----------------------
