@@ -393,6 +393,34 @@ Copyright:
   <target name="all" depends="dist, functional-tests"/>
 
   <!-- =================================================================== -->
+  <!-- Creates a war file for testing                                      -->
+  <!-- =================================================================== -->
+  <target name="war" depends="compile, samples" >
+    <mkdir dir="${build.webapp}"/>
+    <copy todir="${build.webapp}">
+      <fileset dir="${webapp}"/>
+    </copy>
+    <copy todir="${build.webapp}/WEB-INF/lib">
+      <fileset dir="${build.lib}"/>
+    </copy>
+    <copy todir="${build.webapp}/samples">
+      <fileset dir="./samples"/>
+    </copy>
+    <copy todir="${build.webapp}/WEB-INF/classes/samples">
+      <fileset dir="${build.samples}"/>
+    </copy>
+    <copy todir="${build.webapp}/WEB-INF">
+      <fileset dir="${samples.dir}/stock">
+        <include name="*.lst"/>
+      </fileset>
+    </copy>
+    <delete>
+      <fileset dir="${build.webapp}" includes="**/CVS"/>
+    </delete>
+    <jar jarfile="${build.dir}/${name}.war" basedir="${build.webapp}"/>
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
   <target name="dist" depends="compile, javadocs, samples, junit" >
