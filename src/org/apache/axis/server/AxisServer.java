@@ -148,7 +148,13 @@ public class AxisServer extends AxisEngine
         String  hName = null ;
         Handler h     = null ;
 
+        // save previous context
+        MessageContext previousContext = getCurrentMessageContext();
+
         try {
+            // set active context
+            setCurrentMessageContext(msgContext);
+
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if ( hName != null ) {
                 if ( (h = getHandler(hName)) == null ) {
@@ -271,6 +277,10 @@ public class AxisServer extends AxisEngine
         } catch (Exception e) {
             // Should we even bother catching it ?
             throw AxisFault.makeFault(e);
+
+        } finally {
+            // restore previous state
+            setCurrentMessageContext(previousContext);
         }
         
         if (category.isDebugEnabled()) {

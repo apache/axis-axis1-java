@@ -110,7 +110,13 @@ public class AxisClient extends AxisEngine
         String  hName = null ;
         Handler h     = null ;
 
+        // save previous context
+        MessageContext previousContext = getCurrentMessageContext();
+
         try {
+            // set active context
+            setCurrentMessageContext(msgContext);
+
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             if (category.isDebugEnabled()) {
                 category.debug( "EngineHandler: " + hName );
@@ -187,11 +193,15 @@ public class AxisClient extends AxisEngine
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
             }
-        }
-        catch( Exception e ) {
+
+        } catch( Exception e ) {
             // Should we even bother catching it ?
             category.error( e );
             throw AxisFault.makeFault(e);
+
+        } finally {
+            // restore previous state
+            setCurrentMessageContext(previousContext);
         }
 
         if (category.isDebugEnabled()) {

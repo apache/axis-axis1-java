@@ -137,15 +137,31 @@ public class TestRPC extends TestCase {
     /**
      * Test a simple method that returns a field from the message context
      */
-    public void testMessageContext() throws Exception {
+    public void testMessageContextImplicit() throws Exception {
         // Register the targetService service
         SOAPService tgtSvc = new SOAPService(RPCDispatcher);
         tgtSvc.setOption("className", "test.RPCDispatch.Service");
-        tgtSvc.setOption("methodName", "targetService");
+        tgtSvc.setOption("methodName", "targetServiceImplicit");
         engine.deployService(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
-        assertEquals("SOAP Action did not equal the targetService.", SOAPAction, rpc("targetService", new Object[] {}));
+        assertEquals("SOAP Action did not equal the targetService.", 
+            SOAPAction, rpc("targetServiceImplicit", new Object[] {}));
+    }
+
+    /**
+     * Test a simple method that returns a field from the message context
+     */
+    public void testMessageContextExplicit() throws Exception {
+        // Register the targetService service
+        SOAPService tgtSvc = new SOAPService(RPCDispatcher);
+        tgtSvc.setOption("className", "test.RPCDispatch.Service");
+        tgtSvc.setOption("methodName", "targetServiceExplicit");
+        engine.deployService(SOAPAction, tgtSvc);
+
+        // invoke the service and verify the result
+        assertEquals("SOAP Action did not equal the targetService.", 
+            SOAPAction, rpc("targetServiceExplicit", new Object[] {}));
     }
 
     /**

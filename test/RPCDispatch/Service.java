@@ -35,8 +35,15 @@ public class Service {
     /**
      * Return the target service (should be this!)
      */
-    public String targetService(MessageContext mc) throws Exception {
+    public String targetServiceExplicit(MessageContext mc) throws Exception {
        return mc.getTargetService();
+    }
+
+    /**
+     * Return the target service (should be this!)
+     */
+    public String targetServiceImplicit() throws Exception {
+       return MessageContext.getCurrentContext().getTargetService();
     }
 
     /**

@@ -119,6 +119,30 @@ public abstract class AxisEngine extends BasicHandler
     protected WSDDGlobalConfiguration myGlobalConfig = null;
 
     /**
+     * Thread local storage used for locating the active message context.
+     * This information is only valid for the lifetime of this request.
+     */
+    private static ThreadLocal currentMessageContext = new ThreadLocal();
+
+    /**
+     * Set the active message context. 
+     *
+     * @param mc - the new active message context.
+     */
+    protected static void setCurrentMessageContext(MessageContext mc) {
+        currentMessageContext.set(mc);
+    }
+
+    /**
+     * Get the active message context. 
+     *
+     * @return the current active message context
+     */
+    public static MessageContext getCurrentMessageContext() {
+        return (MessageContext) currentMessageContext.get();
+    }
+
+    /**
      * No-arg constructor.
      *
      */
