@@ -58,6 +58,7 @@ import org.apache.axis.*;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.log4j.Category;
 
 import javax.servlet.* ;
 import javax.servlet.http.* ;
@@ -75,16 +76,19 @@ import javax.servlet.http.* ;
  */
 public class HTTPActionHandler extends BasicHandler
 {
+    static Category category =
+            Category.getInstance(HTTPActionHandler.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
+        category.debug("Enter: HTTPActionHandler::invoke" );
 
         /** If there's already a targetService then just return.
         */
         if ( msgContext.getServiceHandler() == null ) {
             String action = (String) msgContext.getProperty(
                                                             HTTPConstants.MC_HTTP_SOAPACTION);
-            Debug.Print( 2, "  HTTP SOAPAction: " + action );
+            category.debug( "  HTTP SOAPAction: " + action );
             
             /** The idea is that this handler only goes in the chain IF this
             * service does a mapping between SOAPAction and target.  Therefore
@@ -114,12 +118,12 @@ public class HTTPActionHandler extends BasicHandler
             }
         }
 
-        Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
+        category.debug("Exit : HTTPActionHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext)
     {
-        Debug.Print( 1, "Enter: HTTPActionHandler::undo" );
-        Debug.Print( 1, "Exit: HTTPActionHandler::undo" );
+        category.debug("Enter: HTTPActionHandler::undo" );
+        category.debug("Exit: HTTPActionHandler::undo" );
     }
 }

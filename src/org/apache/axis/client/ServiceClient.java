@@ -75,6 +75,7 @@ import org.w3c.dom.* ;
 
 import java.io.*;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.log4j.Category;
 
 /**
  * Allows an Axis service to be invoked from the client side.
@@ -92,6 +93,8 @@ import org.apache.axis.encoding.SerializationContext;
 
 public class ServiceClient {
     private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(ServiceClient.class.getName());
 
     /***************************************************************
      * Static stuff
@@ -255,7 +258,8 @@ public class ServiceClient {
      */
     public void setTransport(Transport transport) {
         this.transport = transport;
-        Debug.Print(1, "Transport is " + transport);
+        if (category.isInfoEnabled())
+            category.info("Transport is " + transport);
     }
 
     /**
@@ -472,10 +476,10 @@ public class ServiceClient {
      * @exception AxisFault
      */
     public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
-        Debug.Print( 1, "Enter: ServiceClient::invoke(ns, meth, args)" );
+        category.debug("Enter: ServiceClient::invoke(ns, meth, args)" );
         RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
         Object ret = invoke( body );
-        Debug.Print( 1, "Exit: ServiceClient::invoke(ns, meth, args)" );
+        category.debug("Exit: ServiceClient::invoke(ns, meth, args)" );
         return ret;
     }
 
@@ -504,7 +508,7 @@ public class ServiceClient {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        Debug.Print( 1, "Enter: ServiceClient::invoke(RPCElement)" );
+        category.debug("Enter: ServiceClient::invoke(RPCElement)" );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
@@ -594,7 +598,7 @@ public class ServiceClient {
             }
         }
 
-        Debug.Print( 1, "Exit: ServiceClient::invoke(RPCElement)" );
+        category.debug("Exit: ServiceClient::invoke(RPCElement)" );
         return( result );
     }
 
@@ -612,7 +616,7 @@ public class ServiceClient {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        Debug.Print( 1, "Enter: Service::invoke()" );
+        category.debug("Enter: Service::invoke()" );
 
         msgContext.setServiceDescription(serviceDesc);
 
@@ -631,7 +635,7 @@ public class ServiceClient {
             throw fault ;
         }
 
-        Debug.Print( 1, "Exit: Service::invoke()" );
+        category.debug("Exit: Service::invoke()" );
     }
 
 }

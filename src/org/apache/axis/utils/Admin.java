@@ -69,6 +69,7 @@ import org.apache.axis.encoding.*;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.Transport;
 import org.apache.axis.server.AxisServer;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -80,6 +81,9 @@ import org.w3c.dom.* ;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class Admin {
+
+    static Category category =
+            Category.getInstance(Admin.class.getName());
 
     /**
      * Fill in options for a given handler.
@@ -152,9 +156,9 @@ public class Admin {
     public Document AdminService(MessageContext msgContext, Document xml)
         throws AxisFault
     {
-        Debug.Print( 1, "Enter: Admin:AdminService" );
+        category.debug("Enter: Admin:AdminService" );
         Document doc = process( msgContext, xml.getDocumentElement() );
-        Debug.Print( 1, "Exit: Admin:AdminService" );
+        category.debug("Exit: Admin:AdminService" );
         return( doc );
     }
 
@@ -377,11 +381,11 @@ public class Admin {
                 
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
-                        Debug.Print( 2, "Undeploying " + type + ": " + name );
+                        category.info( "Undeploying " + type + ": " + name );
                         engine.undeployService( name );
                     }
                     else if ( type.equals("handler") || type.equals("chain") ) {
-                        Debug.Print( 2, "Undeploying " + type + ": " + name );
+                        category.info( "Undeploying " + type + ": " + name );
                         engine.undeployHandler( name );
                     }
                     else
@@ -533,7 +537,7 @@ public class Admin {
         if ("".equals(name)) name = null;
 
         if (flow != null) {
-            Debug.Print( 2, "Deploying chain: " + name );
+            category.info( "Deploying chain: " + name );
             Vector names = new Vector();
             
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
@@ -550,7 +554,7 @@ public class Admin {
             hr.add(name, supp);
         }
         else {
-            Debug.Print( 2, "Deploying chain: " + name );
+            category.info( "Deploying chain: " + name );
             
             if ((request == null) &&
                 (response == null) &&
@@ -609,7 +613,7 @@ public class Admin {
         if ( pivot  != null && pivot.equals("") )  pivot = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        Debug.Print( 2, "Deploying service: " + name );
+        category.info( "Deploying service: " + name );
         String            hName = null ;
         Handler            tmpH = null ;
         StringTokenizer      st = null ;
@@ -703,7 +707,7 @@ public class Admin {
 
             String   cls   = elem.getAttribute( "class" );
             if ( cls != null && cls.equals("") ) cls = null ;
-            Debug.Print( 2, "Deploying handler: " + name );
+            category.info( "Deploying handler: " + name );
             
             h = hr.find( name );
             if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
@@ -738,7 +742,7 @@ public class Admin {
         if ( sender  != null && sender.equals("") )  sender = null ;
         if ( name != null && name.equals("") ) name = null ;
 
-        Debug.Print( 2, "Deploying Transport: " + name );
+        category.info( "Deploying Transport: " + name );
         StringTokenizer      st = null ;
         Vector reqNames = new Vector();
         Vector respNames = new Vector();

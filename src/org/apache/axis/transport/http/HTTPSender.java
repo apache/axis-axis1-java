@@ -68,6 +68,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.NonBlockingBufferedInputStream;
 import org.apache.axis.encoding.Base64 ;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -77,8 +78,11 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class HTTPSender extends BasicHandler {
+    static Category category =
+            Category.getInstance(HTTPSender.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: HTTPSender::invoke" );
+        category.debug( "Enter: HTTPSender::invoke" );
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         String   targetURL = null ;
@@ -145,32 +149,32 @@ public class HTTPSender extends BasicHandler {
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
                         //DataInputStream in = new DataInputStream(tunnelInputStream);
-                        Debug.Print(1, "Is tunnelInputStream null? " + String.valueOf(tunnelInputStream == null));
+                        category.debug("Is tunnelInputStream null? " + String.valueOf(tunnelInputStream == null));
                         String replyStr = ""; int i;
-                        while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); Debug.Print(1, "got a character in reply, so far: " + replyStr); }
+                        while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
                             throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
                         }
                         // End of condensed reflective tunnel handshake method
                         sslSocket = createSocketMethod2.invoke(factory,
                                                                new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-                        Debug.Print( 1, "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
+                        category.debug( "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
                     }
                     // must shake out hidden errors!
                     startHandshakeMethod.invoke(sslSocket, new Object[] {});
                     sock = (Socket)sslSocket;
                 } catch (ClassNotFoundException cnfe) {
-                    Debug.Print( 1, "SSL feature disallowed: JSSE files not installed or present in classpath");
+                    category.debug( "SSL feature disallowed: JSSE files not installed or present in classpath");
                     throw new AxisFault(cnfe);
                 } catch (NumberFormatException nfe) {
-                      Debug.Print( 1, "Proxy port number, \"" + tunnelPortString + "\", incorrectly formatted");
+                      category.debug( "Proxy port number, \"" + tunnelPortString + "\", incorrectly formatted");
                       throw new AxisFault(nfe);
                 }
-                Debug.Print( 1, "Created an SSL connection");
+                category.debug( "Created an SSL connection");
             } else {
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
                 sock    = new Socket( host, port );
-                Debug.Print( 1, "Created an insecure HTTP connection");
+                category.debug( "Created an insecure HTTP connection");
             }
 
             // optionally set a timeout for the request
@@ -252,9 +256,9 @@ public class HTTPSender extends BasicHandler {
             out.write( header.toString().getBytes() );
             out.write( request );
 
-            Debug.Print( 1, "XML sent:" );
-            Debug.Print( 1, "---------------------------------------------------");
-            Debug.Print( 1, header + reqEnv );
+            category.debug( "XML sent:" );
+            category.debug( "---------------------------------------------------");
+            category.debug( header + reqEnv );
 
             byte       lastB=0, b ;
             int        len = 0 ;
@@ -284,7 +288,7 @@ public class HTTPSender extends BasicHandler {
                         name = new String( buf, 0, len );
                         value = "" ;
                     }
-                    Debug.Print( 1, name + value );
+                    category.debug( name + value );
                     if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
                         // Reader status code
                         int start = name.indexOf( ' ' ) + 1 ;
@@ -324,16 +328,16 @@ public class HTTPSender extends BasicHandler {
                         
                         outMsg = new Message( data );
                         
-                        Debug.Print( 1, "\nXML received:" );
-                        Debug.Print( 1, "-----------------------------------------------");
-                        Debug.Print( 1, xml );
+                        category.debug( "\nXML received:" );
+                        category.debug( "-----------------------------------------------");
+                        category.debug( xml );
                     }
                     else {
                         outMsg = new Message( inp );
-                        Debug.Print( 1, "\nNo Content-Length" );
-                        Debug.Print( 1, "\nXML received:" );
-                        Debug.Print( 1, "-----------------------------------------------");
-                        Debug.Print( 1, (String) outMsg.getAsString() );
+                        category.debug( "\nNo Content-Length" );
+                        category.debug( "\nXML received:" );
+                        category.debug( "-----------------------------------------------");
+                        category.debug( (String) outMsg.getAsString() );
                     }
                 } else {
                     outMsg = new Message( inp );
@@ -358,12 +362,12 @@ public class HTTPSender extends BasicHandler {
             }
         }
         catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.debug( e );
             e.printStackTrace();
             if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
             throw (AxisFault) e ;
         }
-        Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
+        category.debug( "Exit: HTTPDispatchHandler::invoke" );
     }
     
     // little helper function for cookies
@@ -386,8 +390,8 @@ public class HTTPSender extends BasicHandler {
     
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: HTTPDispatchHandler::undo" );
-        Debug.Print( 1, "Exit: HTTPDispatchHandler::undo" );
+        category.debug( "Enter: HTTPDispatchHandler::undo" );
+        category.debug( "Exit: HTTPDispatchHandler::undo" );
     }
 };
 

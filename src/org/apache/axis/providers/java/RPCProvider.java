@@ -61,6 +61,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.utils.cache.* ;
 import org.apache.axis.message.* ;
+import org.apache.log4j.Category;
 
 /**
  * Implement message processing by walking over RPCElements of the
@@ -69,6 +70,9 @@ import org.apache.axis.message.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class RPCProvider extends JavaProvider {
+    static Category category =
+            Category.getInstance(RPCProvider.class.getName());
+
     private static final boolean DEBUG_LOG = false;
     
     public void processMessage (MessageContext msgContext,
@@ -141,9 +145,9 @@ public class RPCProvider extends JavaProvider {
                                         "Service nameList=" + allowedMethods,
                                     null, null );  // should they??
             
-            Debug.Print( 2, "mName: ", mName );
-            Debug.Print( 2, "MethodNameMatch: ", methodNameMatch );
-            Debug.Print( 2, "MethodName List: ", allowedMethods );
+            category.debug( "mName: " + mName );
+            category.debug( "MethodNameMatch: " + methodNameMatch );
+            category.debug( "MethodName List: " + allowedMethods );
 
 			///////////////////////////////////////////////////////////////
 			// If allowedMethods (i.e. methodNameMatch) is null, 

@@ -58,15 +58,18 @@ package org.apache.axis.handlers ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.log4j.Category;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class EchoHandler extends BasicHandler {
+    static Category category =
+            Category.getInstance(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: EchoHandler::invoke" );
+        category.debug("Enter: EchoHandler::invoke" );
         try {
             Message  msg = msgContext.getRequestMessage();
             SOAPEnvelope env = (SOAPEnvelope) msg.getAsSOAPEnvelope();
@@ -76,12 +79,12 @@ public class EchoHandler extends BasicHandler {
             Debug.Print( 1, e );
             throw new AxisFault( e );
         }
-        Debug.Print( 1, "Exit: EchoHandler::invoke" );
+        category.debug("Exit: EchoHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: EchoHandler::undo" );
-        Debug.Print( 1, "Exit: EchoHandler::undo" );
+        category.debug("Enter: EchoHandler::undo" );
+        category.debug("Exit: EchoHandler::undo" );
     }
 
 };

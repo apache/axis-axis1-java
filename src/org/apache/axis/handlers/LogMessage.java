@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.log4j.Category;
 
 /** This handler simply prints a custom message to the debug log.
  *
@@ -64,6 +65,9 @@ import org.apache.axis.utils.* ;
  */
 public class LogMessage extends BasicHandler
 {
+    static Category category =
+            Category.getInstance(LogMessage.class.getName());
+
     public void invoke(MessageContext context)
     {
         String msg = (String)getOption("message");
@@ -72,7 +76,7 @@ public class LogMessage extends BasicHandler
     }
     
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: URLMapper::undo" );
-        Debug.Print( 1, "Exit: URLMapper::undo" );
+        category.debug("Enter: LogMessage::undo" );
+        category.debug("Exit: LogMessage::undo" );
     }
 }

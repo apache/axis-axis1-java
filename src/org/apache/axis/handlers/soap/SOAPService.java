@@ -63,6 +63,7 @@ import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
+import org.apache.log4j.Category;
 import org.w3c.dom.*;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
@@ -74,6 +75,9 @@ import org.w3c.dom.*;
  */
 public class SOAPService extends SimpleTargetedChain
 {
+    static Category category =
+            Category.getInstance(SOAPService.class.getName());
+
     /** Valid transports for this service
      * (server side only!)
      * 
@@ -153,7 +157,7 @@ public class SOAPService extends SimpleTargetedChain
     
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: SOAPService::invoke" );
+        category.debug("Enter: SOAPService::invoke" );
         
         if (!availableFromTransport(msgContext.getTransportName()))
             throw new AxisFault("Server.NotAvailable",
@@ -165,14 +169,14 @@ public class SOAPService extends SimpleTargetedChain
 
         Handler h = getRequestHandler() ;
         if ( h != null ) {
-            Debug.Print( 2, "Invoking request chain" );
+            category.debug( "Invoking request chain" );
             h.invoke(msgContext);
         } else {
             Debug.Print( 3, "No request chain" );
         }
 
         // Do SOAP semantics here
-        Debug.Print( 2, "Doing SOAP semantic checks...");
+        category.debug( "Doing SOAP semantic checks...");
         
         // 1. Check mustUnderstands
         SOAPEnvelope env = msgContext.getRequestMessage().getAsSOAPEnvelope();
@@ -224,7 +228,7 @@ public class SOAPService extends SimpleTargetedChain
 
         h = getPivotHandler();
         if ( h != null ) {
-            Debug.Print( 2, "Invoking service/pivot" );
+            category.debug( "Invoking service/pivot" );
             h.invoke(msgContext);
         } else {
             Debug.Print( 3, "No service/pivot" );
@@ -235,23 +239,23 @@ public class SOAPService extends SimpleTargetedChain
         
         h = getResponseHandler();
         if ( h != null ) {
-            Debug.Print( 2, "Invoking response chain" );
+            category.debug( "Invoking response chain" );
             h.invoke(msgContext);
         } else {
             Debug.Print( 3, "No response chain" );
         }
 
-        Debug.Print( 1, "Exit : SOAPService::invoke" );
+        category.debug("Exit : SOAPService::invoke" );
     }
 
     public void undo(MessageContext msgContext) 
     {
-        Debug.Print( 1, "Enter: SOAPService::undo" );
-        Debug.Print( 1, "Exit: SOAPService::undo" );
+        category.debug("Enter: SOAPService::undo" );
+        category.debug("Exit: SOAPService::undo" );
     }
 
     public Element getDeploymentData(Document doc) {
-      Debug.Print( 1, "Enter: SOAPService::getDeploymentData" );
+      category.debug("Enter: SOAPService::getDeploymentData" );
 
       Element  root = doc.createElement( "service" );
 
@@ -263,7 +267,7 @@ public class SOAPService extends SimpleTargetedChain
         root.appendChild(elem);
       }
       
-      Debug.Print( 1, "Exit: SOAPService::getDeploymentData" );
+      category.debug("Exit: SOAPService::getDeploymentData" );
       return( root );
     }
 

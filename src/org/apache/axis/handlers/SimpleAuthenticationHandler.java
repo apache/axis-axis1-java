@@ -60,6 +60,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
+import org.apache.log4j.Category;
 
 /**
  * Just a simple Authentication Handler to see if the user
@@ -73,7 +74,9 @@ import org.apache.axis.message.* ;
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
-    
+    static Category category =
+            Category.getInstance(SimpleAuthenticationHandler.class.getName());
+
     // Simple hashtable of user and password.  Null means everybody
     // will authenticate (replace with new Hashtable() if you want 
     // the default to be that nobody will be authenticated.
@@ -98,7 +101,8 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                         String userID = st.nextToken();
                         String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-                        Debug.Print( 2, "From file: '", userID, "':'", passwd, "'" );
+                        category.debug( "From file: '" + userID +
+                                        "':'" + passwd + "'" );
                         entries.put(userID, passwd);
                     }
                 }
@@ -115,7 +119,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
      * Authenticate the user and password from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
+        category.debug("Enter: SimpleAuthenticationHandler::invoke" );
 
         if (entries != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
@@ -129,7 +133,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
             String valid = (String) entries.get(userID);
-            Debug.Print( 2, "Pass: ", passwd );
+            category.debug( "Pass: " + passwd );
             
             // if a password is defined, then it must match
             if ( valid.length()>0 && !valid.equals(passwd) ) 
@@ -140,14 +144,14 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             Debug.Print( 1, "User '", userID, "' authenticated to server" );
         }
 
-        Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
+        category.debug("Exit: SimpleAuthenticationHandler::invoke" );
     }
 
     /**
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
-        Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
+        category.debug("Enter: SimpleAuthenticationHandler::undo" );
+        category.debug("Exit: SimpleAuthenticationHandler::undo" );
     }
 };

@@ -66,6 +66,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
+import org.apache.log4j.Category;
 
 /**
  *
@@ -73,6 +74,9 @@ import org.apache.axis.utils.XMLUtils ;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class Message {
+    static Category category =
+            Category.getInstance(Message.class.getName());
+
     /**
      * Just a placeholder until we figure out what the actual Message
      * object is.
@@ -99,25 +103,25 @@ public class Message {
      * Just something to us working...
      */
     public Message(String stringForm) {
-        Debug.Print( 2, "Enter Message ctor (String)" );
+        category.debug( "Enter Message ctor (String)" );
         originalMessage = stringForm;
         setCurrentMessage(stringForm, FORM_STRING);
     }
     
     public Message(SOAPEnvelope env) {
-        Debug.Print( 2, "Enter Message ctor (SOAPEnvelope)" );
+        category.debug( "Enter Message ctor (SOAPEnvelope)" );
         originalMessage = env;
         setCurrentMessage(env, FORM_SOAPENVELOPE);
     }
     
     public Message(InputStream inputStream) {
-        Debug.Print( 2, "Enter Message ctor (InputStream)" );
+        category.debug( "Enter Message ctor (InputStream)" );
         originalMessage = inputStream;
         setCurrentMessage(inputStream, FORM_INPUTSTREAM);
     }
     
     public Message(InputStream inputStream, boolean isBody) {
-        Debug.Print( 2, "Enter Message ctor (BodyInputStream)" );
+        category.debug( "Enter Message ctor (BodyInputStream)" );
         originalMessage = inputStream;
         setCurrentMessage(inputStream, isBody ? FORM_BODYINSTREAM :
                                                 FORM_INPUTSTREAM);
@@ -167,7 +171,7 @@ public class Message {
     }
 
     private void setCurrentMessage(Object currMsg, int form) {
-        Debug.Print( 2, "Setting current message form to: " +
+        category.debug( "Setting current message form to: " +
                         formNames[form] +" (currentMessage is now " +
                         currMsg + ")" );
         currentMessage = currMsg ;
@@ -175,9 +179,9 @@ public class Message {
     }
 
     public byte[] getAsBytes() {
-        Debug.Print( 2, "Enter: Message::getAsBytes" );
+        category.debug( "Enter: Message::getAsBytes" );
         if ( currentForm == FORM_BYTES ) {
-            Debug.Print( 2, "Exit: Message::getAsBytes" );
+            category.debug( "Exit: Message::getAsBytes" );
             return( (byte[]) currentMessage );
         }
         
@@ -203,13 +207,13 @@ public class Message {
                 // byte[]  buf = new byte[ len ];
                 // inp.read( buf );
                 setCurrentMessage( buf, FORM_BYTES );
-                Debug.Print( 2, "Exit: Message::getAsByes" );
+                category.debug( "Exit: Message::getAsByes" );
                 return( (byte[]) currentMessage );
             }
             catch( Exception e ) {
                 e.printStackTrace( System.err );
             }
-            Debug.Print( 2, "Exit: Message::getAsByes" );
+            category.debug( "Exit: Message::getAsByes" );
             return( null );
         }
 
@@ -220,19 +224,19 @@ public class Message {
         if ( currentForm == FORM_STRING ) {
             setCurrentMessage( ((String)currentMessage).getBytes(), 
                                FORM_BYTES );
-            Debug.Print( 2, "Exit: Message::getAsBytes" );
+            category.debug( "Exit: Message::getAsBytes" );
             return( (byte[]) currentMessage );
         }
 
         System.err.println("Can't convert " + currentForm + " to Bytes" );
-        Debug.Print( 2, "Exit: Message::getAsBytes" );
+        category.debug( "Exit: Message::getAsBytes" );
         return( null );
     }
 
     public String getAsString() {
-        Debug.Print( 2, "Enter: Message::getAsString" );
+        category.debug( "Enter: Message::getAsString" );
         if ( currentForm == FORM_STRING ) {
-            Debug.Print( 2, "Exit: Message::getAsString, currentMessage is "+
+            category.debug( "Exit: Message::getAsString, currentMessage is "+
                             currentMessage );
             return( (String) currentMessage );
         }
@@ -246,7 +250,7 @@ public class Message {
         if ( currentForm == FORM_BYTES ) {
             setCurrentMessage( new String((byte[]) currentMessage), 
                                FORM_STRING );
-            Debug.Print( 2, "Exit: Message::getAsString, currentMessage is "+
+            category.debug( "Exit: Message::getAsString, currentMessage is "+
                             currentMessage );
             return( (String) currentMessage );
         }
@@ -279,14 +283,14 @@ public class Message {
 
         System.err.println("Can't convert form " + currentForm +
                            " to String" );
-        Debug.Print( 2, "Exit: Message::getAsString" );
+        category.debug( "Exit: Message::getAsString" );
         return( null );
     }
 
     public SOAPEnvelope getAsSOAPEnvelope()
         throws AxisFault
     {
-        Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope; currentForm is "+
+        category.debug( "Enter: Message::getAsSOAPEnvelope; currentForm is "+
                         formNames[currentForm] );
         if ( currentForm == FORM_SOAPENVELOPE )
             return( (SOAPEnvelope) currentMessage );
@@ -321,7 +325,7 @@ public class Message {
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
-        Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
+        category.debug( "Exit: Message::getAsSOAPEnvelope" );
         return( (SOAPEnvelope) currentMessage );
     }
 

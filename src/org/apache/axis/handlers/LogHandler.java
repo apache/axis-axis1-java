@@ -61,17 +61,20 @@ import java.sql.Time ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.log4j.Category;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class LogHandler extends BasicHandler {
+    static Category category =
+            Category.getInstance(LogHandler.class.getName());
 
     long start = 0;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: LogHandler::invoke" );
+        category.debug("Enter: LogHandler::invoke" );
         if (msgContext.getPastPivot() == false) {
            start = System.currentTimeMillis();
         } else {
@@ -94,11 +97,11 @@ public class LogHandler extends BasicHandler {
                 throw new AxisFault( e );
             }
         }
-        Debug.Print( 1, "Exit: LogHandler::invoke" );
+        category.debug("Exit: LogHandler::invoke" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Exit: LogHandler::undo" );
+        category.debug("Exit: LogHandler::undo" );
         try {
             FileWriter  fw   = new FileWriter( "axis.log", true );
             PrintWriter pw   = new PrintWriter( fw );
@@ -109,6 +112,6 @@ public class LogHandler extends BasicHandler {
         } catch( Exception e ) {
             Debug.Print( 1, e );
         }
-        Debug.Print( 1, "Exit: LogHandler::undo" );
+        category.debug("Exit: LogHandler::undo" );
     }
 };

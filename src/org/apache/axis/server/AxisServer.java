@@ -72,6 +72,7 @@ import org.apache.axis.client.AxisClient;
 
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.providers.java.*;
+import org.apache.log4j.Category;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -79,6 +80,9 @@ import org.apache.axis.providers.java.*;
  */
 public class AxisServer extends AxisEngine
 {
+    static Category category =
+            Category.getInstance(AxisServer.class.getName());
+
     /**
      * the AxisClient to be used by outcalling Services
      */
@@ -133,7 +137,7 @@ public class AxisServer extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: AxisServer::invoke" );
+        category.debug("Enter: AxisServer::invoke" );
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
@@ -156,7 +160,7 @@ public class AxisServer extends AxisEngine
                 if ( hr == null || (h = hr.find(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
-                        Debug.Print( 2, "Trying to load class: " + hName );
+                        category.debug( "Trying to load class: " + hName );
                         Class cls = cl.loadClass( hName );
                         h = (Handler) cls.newInstance();
                     }
@@ -187,7 +191,7 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                Debug.Print(1, "Calling default logic in AxisServer" );
+                category.debug("Calling default logic in AxisServer" );
 
                 /*  This is what the entirety of this logic might evolve to:
 
@@ -212,7 +216,11 @@ public class AxisServer extends AxisEngine
                 HandlerRegistry tr = getTransportRegistry();
                 SimpleTargetedChain transportChain = null;
 
-                Debug.Print(3, "AxisServer.invoke: Transport = '" + hName +"'");
+                if (category.isInfoEnabled())
+                    category.info("AxisServer.invoke: Transport = '" +
+                                  hName +
+                                  "'");
+
                 if ( hName != null && (h = tr.find( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
@@ -273,14 +281,14 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault(e);
         }
-        Debug.Print( 1, "Exit: AxisServer::invoke" );
+        category.debug("Exit: AxisServer::invoke" );
     }
 
     /**
      *
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: AxisServer::editWSDL" );
+        category.debug("Enter: AxisServer::editWSDL" );
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
@@ -303,7 +311,7 @@ public class AxisServer extends AxisEngine
                 if ( hr == null || (h = hr.find(hName)) == null ) {
                     AxisClassLoader cl = msgContext.getClassLoader();
                     try {
-                        Debug.Print( 2, "Trying to load class: " + hName );
+                        category.debug( "Trying to load class: " + hName );
                         Class cls = cl.loadClass( hName );
                         h = (Handler) cls.newInstance();
                     }
@@ -356,7 +364,10 @@ public class AxisServer extends AxisEngine
                 HandlerRegistry tr = getTransportRegistry();
                 SimpleTargetedChain transportChain = null;
 
-                Debug.Print(3, "AxisServer.editWSDL: Transport = '" + hName +"'");
+                if (category.isInfoEnabled())
+                    category.info("AxisServer.editWSDL: Transport = '" +
+                                  hName +
+                                  "'");
                 if ( hName != null && (h = tr.find( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
@@ -419,11 +430,11 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault( e );
         }
-        Debug.Print( 1, "Exit: AxisServer::editWSDL" );
+        category.debug("Exit: AxisServer::editWSDL" );
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: AxisServer::undo" );
-        Debug.Print( 1, "Exit: AxisServer::undo" );
+        category.debug("Enter: AxisServer::undo" );
+        category.debug("Exit: AxisServer::undo" );
     };
 };

@@ -61,6 +61,7 @@ import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.*;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -69,6 +70,9 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SimpleChain extends BasicHandler implements Chain {
+    static Category category =
+            Category.getInstance(SimpleChain.class.getName());
+
     protected Vector     handlers ;
     protected Hashtable  options ;
 
@@ -104,7 +108,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     private void doVisiting(MessageContext msgContext,
                             HandlerIterationStrategy visitor) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleChain::invoke" );
+        category.debug("Enter: SimpleChain::invoke" );
         int i = 0 ;
         try {
             Vector localHandlers;
@@ -117,14 +121,14 @@ public class SimpleChain extends BasicHandler implements Chain {
         }
         catch( Exception e ) {
             // undo in reverse order - rethrow
-            Debug.Print( 1, e );
+            category.error( e );
             if( !(e instanceof AxisFault ) )
                 e = new AxisFault( e );
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).undo( msgContext );
             throw (AxisFault) e ;
         }
-        Debug.Print( 1, "Exit: SimpleChain::invoke" );
+        category.debug("Exit: SimpleChain::invoke" );
     }
 
     /**
@@ -132,10 +136,10 @@ public class SimpleChain extends BasicHandler implements Chain {
      * later on has faulted - in reverse order.
      */
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: SimpleChain::undo" );
+        category.debug("Enter: SimpleChain::undo" );
         for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
             ((Handler) handlers.elementAt( i )).undo( msgContext );
-        Debug.Print( 1, "Exit: SimpleChain::undo" );
+        category.debug("Exit: SimpleChain::undo" );
     }
 
     public boolean canHandleBlock(QName qname) {
@@ -176,7 +180,7 @@ public class SimpleChain extends BasicHandler implements Chain {
     }
 
     public Element getDeploymentData(Document doc) {
-        Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
+        category.debug("Enter: SimpleChain::getDeploymentData" );
 
         Element  root = doc.createElement( "chain" );
 
@@ -204,7 +208,7 @@ public class SimpleChain extends BasicHandler implements Chain {
             }
         }
 
-        Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
+        category.debug("Exit: SimpleChain::getDeploymentData" );
         return( root );
     }
 };

@@ -61,6 +61,7 @@ import org.apache.axis.Supplier;
 import org.apache.axis.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.registries.HandlerRegistry;
+import org.apache.log4j.Category;
 
 /** A <code>SimpleChainSupplier</code>
  * 
@@ -68,6 +69,9 @@ import org.apache.axis.registries.HandlerRegistry;
  */
 public class SimpleChainSupplier implements Supplier
 {
+    static Category category =
+            Category.getInstance(SimpleChainSupplier.class.getName());
+
     String _myName;
     Hashtable _options;
     Vector _handlerNames;
@@ -88,15 +92,17 @@ public class SimpleChainSupplier implements Supplier
     public Handler getHandler()
     {
         if (_chain == null) {
-            Debug.Print(2, "SimpleChainSupplier: Building chain '" + _myName + 
-                           "'");
+            if (category.isDebugEnabled())
+                category.debug( "SimpleChainSupplier: Building chain '" +
+                                _myName +
+                                "'");
             Chain c = new SimpleChain();
             c.setOptions(_options);
             c.setName(_myName);
             try {
                 for (int i = 0; i < _handlerNames.size(); i++) {
                     Handler handler = _registry.find(
-                                                     (String)_handlerNames.elementAt(i));
+                                          (String)_handlerNames.elementAt(i));
                     c.addHandler(handler);
                 }
             } catch (Exception e) {
@@ -106,9 +112,10 @@ public class SimpleChainSupplier implements Supplier
             
             _chain = c;
         }
-        
-        Debug.Print(2, "SimpleChainSupplier: returning chain '" + _myName +
-                       "'");
+
+        if (category.isDebugEnabled())
+            category.debug("SimpleChainSupplier: returning chain '" + _myName +
+                           "'");
         
         return _chain;
     }

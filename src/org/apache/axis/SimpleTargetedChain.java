@@ -59,6 +59,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -68,6 +69,9 @@ import org.w3c.dom.* ;
  */
 public class SimpleTargetedChain extends BasicHandler implements TargetedChain
 {
+    static Category category =
+            Category.getInstance(SimpleTargetedChain.class.getName());
+
     protected Handler    requestHandler ;
     protected Handler    pivotHandler ;
     protected Handler    responseHandler ;
@@ -90,7 +94,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
      * that has been successfully invoked and then rethrow the fault.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleTargetedChain::invoke" );
+        category.debug("Enter: SimpleTargetedChain::invoke" );
         if ( requestHandler != null ) requestHandler.invoke( msgContext );
         try {
             if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
@@ -117,11 +121,11 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
                 requestHandler.undo( msgContext );
             throw (AxisFault) e ;
         }
-        Debug.Print( 1, "Exit: SimpleTargetedChain::invoke" );
+        category.debug("Exit: SimpleTargetedChain::invoke" );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleTargetedChain::editWSDL" );
+        category.debug("Enter: SimpleTargetedChain::editWSDL" );
         if ( requestHandler != null ) requestHandler.generateWSDL( msgContext );
         try {
             if ( pivotHandler != null ) pivotHandler.generateWSDL( msgContext );
@@ -145,18 +149,18 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
                 e = new AxisFault( e );
             throw (AxisFault) e ;
         }
-        Debug.Print( 1, "Exit: SimpleTargetedChain::editWSDL" );
+        category.debug("Exit: SimpleTargetedChain::editWSDL" );
     }
 
     /**
      * Undo all of the work - in reverse order.
      */
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: SimpleTargetedChain::undo" );
+        category.debug("Enter: SimpleTargetedChain::undo" );
         if ( responseHandler   != null )   responseHandler.undo( msgContext );
         if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
         if ( requestHandler    != null )    requestHandler.undo( msgContext );
-        Debug.Print( 1, "Exit: SimpleTargetedChain::undo" );
+        category.debug("Exit: SimpleTargetedChain::undo" );
     }
 
     public boolean canHandleBlock(QName qname) {
@@ -194,12 +198,12 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
     }
 
     public Element getDeploymentData(Document doc) {
-        Debug.Print( 1, "Enter: SimpleTargetedChain::getDeploymentData" );
+        category.debug("Enter: SimpleTargetedChain::getDeploymentData" );
 
         Element   root = doc.createElement( "chain" );
         fillInDeploymentData(root);
 
-        Debug.Print( 1, "Exit: SimpleTargetedChain::getDeploymentData" );
+        category.debug("Exit: SimpleTargetedChain::getDeploymentData" );
         return( root );
     }
     

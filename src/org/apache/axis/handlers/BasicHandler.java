@@ -60,6 +60,7 @@ import org.apache.axis.*;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.XMLUtils ;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.* ;
 
@@ -72,6 +73,9 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com
  */
 public abstract class BasicHandler implements Handler {
+    static Category category =
+            Category.getInstance(BasicHandler.class.getName());
+
     protected Hashtable  options ;
     protected String name;
 
@@ -144,7 +148,7 @@ public abstract class BasicHandler implements Handler {
     }
 
     public Element getDeploymentData(Document doc) {
-        Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
+        category.debug("Enter: BasicHandler::getDeploymentData" );
 
         Element  root = doc.createElement( "handler" );
 
@@ -161,7 +165,7 @@ public abstract class BasicHandler implements Handler {
                 root.appendChild( e1 );
             }
         }
-        Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );
+        category.debug("Exit: BasicHandler::getDeploymentData" );
         return( root );
     }
 

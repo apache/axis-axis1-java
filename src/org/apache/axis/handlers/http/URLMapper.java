@@ -58,6 +58,7 @@ import org.apache.axis.*;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.log4j.Category;
 
 import javax.servlet.http.* ;
 
@@ -68,9 +69,12 @@ import javax.servlet.http.* ;
  */
 public class URLMapper extends BasicHandler
 {
+    static Category category =
+            Category.getInstance(URLMapper.class.getName());
+
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        Debug.Print( 1, "Enter: URLMapper::invoke" );
+        category.debug("Enter: URLMapper::invoke" );
 
         /** If there's already a targetService then just return.
          */
@@ -87,7 +91,7 @@ public class URLMapper extends BasicHandler
             }
         }
 
-        Debug.Print( 1, "Exit : URLMapper::invoke" );
+        category.debug("Exit : URLMapper::invoke" );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -96,7 +100,7 @@ public class URLMapper extends BasicHandler
 
     public void undo(MessageContext msgContext)
     {
-        Debug.Print( 1, "Enter: URLMapper::undo" );
-        Debug.Print( 1, "Exit: URLMapper::undo" );
+        category.debug("Enter: URLMapper::undo" );
+        category.debug("Exit: URLMapper::undo" );
     }
 }

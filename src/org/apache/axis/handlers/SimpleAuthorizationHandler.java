@@ -61,6 +61,7 @@ import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.log4j.Category;
 
 /**
  * Just a simple Authorization Handler to see if the user
@@ -75,7 +76,9 @@ import org.apache.axis.transport.http.HTTPConstants;
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthorizationHandler extends BasicHandler {
-    
+    static Category category =
+            Category.getInstance(SimpleAuthorizationHandler.class.getName());
+
     // Simple hashtable of users.  Null means everybody
     // will authorize (replace with new Hashtable() if you want 
     // the default to be that nobody is authorized
@@ -125,7 +128,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      * Authorize the user and targetService from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleAuthorizationHandler::invoke" );
+        category.debug("Enter: SimpleAuthorizationHandler::invoke" );
 
         String userID = (String) msgContext.getProperty( MessageContext.USERID );
         String action = msgContext.getTargetService();
@@ -145,14 +148,14 @@ public class SimpleAuthorizationHandler extends BasicHandler {
 
         Debug.Print( 1, "User '", userID, "' authorized to: ", action );
 
-        Debug.Print( 1, "Exit: SimpleAuthorizationHandler::invoke" );
+        category.debug("Exit: SimpleAuthorizationHandler::invoke" );
     }
 
     /**
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: SimpleAuthorizationHandler::undo" );
-        Debug.Print( 1, "Exit: SimpleAuthorizationHandler::undo" );
+        category.debug("Enter: SimpleAuthorizationHandler::undo" );
+        category.debug("Exit: SimpleAuthorizationHandler::undo" );
     }
 };

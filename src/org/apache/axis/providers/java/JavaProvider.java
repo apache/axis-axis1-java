@@ -62,6 +62,7 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.utils.cache.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.providers.BasicProvider;
+import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
 /**
@@ -73,6 +74,9 @@ import org.w3c.dom.Document;
  * @author Carl Woolf (cwoolf@macromedia.com)
  */
 public abstract class JavaProvider extends BasicProvider {
+    static Category category =
+            Category.getInstance(JavaProvider.class.getName());
+
 
     // from the original stubbed-out JavaProvider...
     // not quite sure what these are for but it is to do with WSDD... -- RobJ
@@ -245,11 +249,11 @@ public abstract class JavaProvider extends BasicProvider {
             if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
             throw (AxisFault) exp ;
         }
-        Debug.Print( 1, "Exit: JavaProvider::invoke (for provider "+this+")");
+        category.debug("Exit: JavaProvider::invoke (for provider "+this+")");
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: JavaProvider::editWSDL (for provider "+this+")" );
+        category.debug("Enter: JavaProvider::editWSDL (for provider "+this+")" );
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -305,8 +309,8 @@ public abstract class JavaProvider extends BasicProvider {
     }
 
     public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: RPCDispatchHandler::undo" );
-        Debug.Print( 1, "Exit: RPCDispatchHandler::undo" );
+        category.debug("Enter: RPCDispatchHandler::undo" );
+        category.debug("Exit: RPCDispatchHandler::undo" );
     }
 
     ///////////////////////////////////////////////////////////////
