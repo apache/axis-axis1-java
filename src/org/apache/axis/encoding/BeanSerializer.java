@@ -156,6 +156,12 @@ public class BeanSerializer extends DeserializerBase
 
             return bs;
         }
+
+        /**
+         * Override serialization - all that is needed is the class
+         */
+        private static final ObjectStreamField[] serialPersistentFields = 
+            {new ObjectStreamField("cls", Class.class)};
     }
 
     /**
@@ -262,18 +268,9 @@ public class BeanSerializer extends DeserializerBase
     }
 
     /**
-     * Write the serializer out to disk.  Actually, all we need is enough
-     * to reconsitute the object from scratch, namely 
+     * Override serialization - all that is needed is the class
      */
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(cls.getName());
-    }
-          
-    private void readObject(ObjectInputStream stream) 
-        throws IOException, ClassNotFoundException
-    {
-        String clsName = (String) stream.readObject();
-        setCls(Class.forName(clsName));
-    }
-          
+    private static final ObjectStreamField[] serialPersistentFields = 
+        {new ObjectStreamField("cls", Class.class)};
+ 
 }

@@ -44,34 +44,6 @@ public class BidService {
     }
 
     /**
-     * Register the serializers and deserializers required to implement
-     * a Buy service
-     * @param map the TypeMappingRegistry to update
-     */
-    public void BuyTypeMap(TypeMappingRegistry map) throws Exception {
-
-        // register the PurchaseOrder class
-        QName poqn = new QName("http://www.soapinterop.org/Bid", 
-                               "PurchaseOrder");
-        Class cls = PurchaseOrder.class;
-        map.addSerializer(cls, poqn, new BeanSerializer(cls));
-        map.addDeserializerFactory(poqn, cls, BeanSerializer.getFactory(cls));
-
-        // register the Address class
-        QName aqn = new QName("http://www.soapinterop.org/Bid", "Address");
-        cls = Address.class;
-        map.addSerializer(cls, aqn, new BeanSerializer(cls));
-        map.addDeserializerFactory(aqn, cls, BeanSerializer.getFactory(cls));
-
-        // register the LineItem class
-        QName liqn = new QName("http://www.soapinterop.org/Bid", "LineItem");
-        cls = LineItem.class;
-        map.addSerializer(cls, liqn, new BeanSerializer(cls));
-        map.addDeserializerFactory(liqn, cls, BeanSerializer.getFactory(cls));
-
-    }
-
-    /**
      * Process a purchase order.
      * @return Receipt
      */

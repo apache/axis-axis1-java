@@ -70,12 +70,7 @@ public class TestRPC extends TestCase {
         MessageContext msgContext = new MessageContext();
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
         msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
-        try {
-                msgContext.setTargetService(SOAPAction);
-        } catch (AxisFault f) {
-            System.err.println("Faulted when setting target service to SOAPAction");
-            throw f;
-        }
+        msgContext.setTargetService(SOAPAction);
 
         // Invoke the Axis engine
         try {

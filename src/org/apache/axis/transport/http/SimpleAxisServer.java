@@ -139,7 +139,7 @@ public class SimpleAxisServer implements Runnable {
         Message faultMsg = new Message(null, "AxisFault");
 
         // Accept and process requests from the socket
-    while (!stopped) {
+        while (!stopped) {
             Socket socket = null;
 
             // prepare request (do as much as possible while waiting for the
@@ -149,14 +149,15 @@ public class SimpleAxisServer implements Runnable {
             //   msgContext = new MessageContext();
             //   requestMsg = new Message("", "String");
             msgContext.setServiceDescription(null);
+            msgContext.setTargetService(null);
             msgContext.setRequestMessage(requestMsg);
             msgContext.setResponseMessage(null);
             msgContext.clearProperties();
             msgContext.setProperty(MessageContext.TRANS_INPUT, transportInName);
             msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
-        try {
+            try {
                 try {
-                socket = serverSocket.accept();
+                    socket = serverSocket.accept();
                 } catch (IOException ioe) {
                     break;
                 }
@@ -217,31 +218,31 @@ public class SimpleAxisServer implements Runnable {
                 byte[] response = (byte[]) responseMsg.getAs("Bytes");
 
                 // Send it on its way...
-        OutputStream out = socket.getOutputStream();
-        out.write(HTTP);
-        out.write(status);
-        out.write(MIME_STUFF);
-            putInt(out, response.length);
-        out.write(SEPARATOR);
+                OutputStream out = socket.getOutputStream();
+                out.write(HTTP);
+                out.write(status);
+                out.write(MIME_STUFF);
+                putInt(out, response.length);
+                out.write(SEPARATOR);
                 out.write(response);
                 out.flush();
             
-            if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
-                // why then, quit!
-                this.stop();
-            }
+                if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+                    // why then, quit!
+                    this.stop();
+                }
 
-        } catch (InterruptedIOException iie) {
-        break;
-        } catch (Exception e) {
-        e.printStackTrace();
-        } finally {
-        try {
-            if (socket!=null) socket.close();
-        } catch (Exception e) {
+            } catch (InterruptedIOException iie) {
+                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (socket!=null) socket.close();
+                } catch (Exception e) {
+                }
+            }
         }
-        }
-    }
         System.out.println("SimpleAxisServer quitting.");
     }
 

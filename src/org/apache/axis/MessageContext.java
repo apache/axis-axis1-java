@@ -211,22 +211,18 @@ public class MessageContext {
      * @param tServ the name of the target service.
      * @exception AxisFault
      */
-    public void setTargetService(String tServ) throws AxisFault {
-      targetService = tServ ;
-      HandlerRegistry sr = (HandlerRegistry)
-                            getProperty(Constants.SERVICE_REGISTRY);
-      if (sr == null)
-        return;
-      
-      Handler service = sr.find(tServ);
-        /* Do NOT throw an exception if the service handler is not found,
-           since we may be on the client!  -- yow... this is messy. -- RobJ
-         */
-      if (service == null) {
-        // throw new AxisFault("No service named '" + tServ + "' in registry!");
-      } else {
-        setServiceHandler(service);
-      }
+    public void setTargetService(String tServ) {
+        targetService = tServ ;
+
+        HandlerRegistry sr = (HandlerRegistry)
+                              getProperty(Constants.SERVICE_REGISTRY);
+
+        if (sr == null || targetService == null)
+            setServiceHandler(null);
+        else
+            // Do NOT throw an exception if the service handler is not found,
+            // since we may be on the client!  -- yow... this is messy. -- RobJ
+            setServiceHandler(sr.find(tServ));
     }
 
     /** ServiceHandler is the handler that is the "service".  This handler
@@ -242,41 +238,38 @@ public class MessageContext {
 
     public Handler getServiceHandler() {
         if (serviceHandler == null) {
-            try {
-                if (targetService != null) {
-                    /** This is a bit kludgey for now - what might have
-                    *  happened is that someone set the target service name
-                    *  before the registry was set, or before the service
-                    *  was registered.  So just to make sure, we set it
-                    *  again here and see if that causes the serviceHandler
-                    *  to be set correctly.
-                    */
-                    setTargetService(targetService);
-                } else if (!parsing) {
-                    // No target service was set.  So here's where we want to
-                    // potentially try to dispatch off the QName of the first
-                    // appropriate <Body> element.  Might also hook this to
-                    // another configurable piece of code to avoid SOAP
-                    // specifics in this class.
-                    SOAPEnvelope env = (SOAPEnvelope)
-                                        inMessage.getAs("SOAPEnvelope");
-                    Vector bodies = env.getBodyElements();
-                    Enumeration e = bodies.elements();
-                    while (e.hasMoreElements()) {
-                        SOAPBodyElement body = (SOAPBodyElement)
-                                                e.nextElement();
-                        /** The algorithm we use here is to find the first
-                         * element without an ID attribute (assuming that
-                         * ID'ed attributes are multi-ref encodings).
-                         */
-                        if (body.getID() == null) {
-                            //Debug.Print(2, "Dispatching to body namespace '"
-                            //            + body.getNamespaceURI() + "'");
-                            setTargetService(body.getNamespaceURI());
-                        }
+            if (targetService != null) {
+                /** This is a bit kludgey for now - what might have
+                *  happened is that someone set the target service name
+                *  before the registry was set, or before the service
+                *  was registered.  So just to make sure, we set it
+                *  again here and see if that causes the serviceHandler
+                *  to be set correctly.
+                */
+                setTargetService(targetService);
+            } else if (!parsing) {
+                // No target service was set.  So here's where we want to
+                // potentially try to dispatch off the QName of the first
+                // appropriate <Body> element.  Might also hook this to
+                // another configurable piece of code to avoid SOAP
+                // specifics in this class.
+                SOAPEnvelope env = (SOAPEnvelope)
+                                    inMessage.getAs("SOAPEnvelope");
+                Vector bodies = env.getBodyElements();
+                Enumeration e = bodies.elements();
+                while (e.hasMoreElements()) {
+                    SOAPBodyElement body = (SOAPBodyElement)
+                                            e.nextElement();
+                    /** The algorithm we use here is to find the first
+                     * element without an ID attribute (assuming that
+                     * ID'ed attributes are multi-ref encodings).
+                     */
+                    if (body.getID() == null) {
+                        //Debug.Print(2, "Dispatching to body namespace '"
+                        //            + body.getNamespaceURI() + "'");
+                        setTargetService(body.getNamespaceURI());
                     }
                 }
-            } catch (AxisFault f) {
             }
       }
       return( serviceHandler );
@@ -285,9 +278,11 @@ public class MessageContext {
     public void setServiceHandler(Handler sh)
     {
       serviceHandler = sh;
-      if (sh instanceof SOAPService) {
+      if (sh != null && sh instanceof SOAPService) {
         TypeMappingRegistry tmr = ((SOAPService)sh).getTypeMappingRegistry();
-        setTypeMappingRegistry(tmr);
+        getTypeMappingRegistry().setParent(tmr);
+      } else {
+        getTypeMappingRegistry().setParent(soapTMR);
       }
     }
 

@@ -136,12 +136,7 @@ public class HTTPTransport extends Transport
     {
         if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
-        try {
-            mc.setTargetService( (String)mc.getProperty(ACTION) );
-        } catch (AxisFault f) {
-            System.err.println("HTTPTransport.setupMessageContext: Could not set target service to "+serviceClient.get(ACTION));
-            throw f;
-        }
+        mc.setTargetService( (String)mc.getProperty(ACTION) );
         
         if ( doLocal && ((String)mc.getProperty(URL)).endsWith( ".jws") ) {
             mc.setProperty( "JWSFileName", serviceClient.get(URL).substring(11) );

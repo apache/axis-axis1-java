@@ -59,6 +59,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.soap.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -113,6 +114,9 @@ public class AxisServer extends BasicHandler
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());
         addOption( Constants.TYPEMAP_REGISTRY, tmr );
+        Handler admin = sr.find("AdminService");
+        if (admin != null && admin instanceof SOAPService)
+          ((SOAPService)admin).setTypeMappingRegistry(tmr);
 
         Debug.Print( 1, "Exit: AxisServer::init" );
     }

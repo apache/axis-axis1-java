@@ -10,7 +10,7 @@ import java.util.Hashtable;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class SOAPEncoding implements Serializer { 
+public class SOAPEncoding implements Serializer, java.io.Serializable { 
     private Hashtable typemap = new Hashtable();
     private Hashtable namemap = new Hashtable();
     
