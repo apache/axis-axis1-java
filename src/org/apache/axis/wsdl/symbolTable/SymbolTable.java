@@ -770,6 +770,15 @@ public class SymbolTable {
             QName refQName = Utils.getTypeQName(node, forElement, false);
 
             if (refQName != null) {
+                // Error check - bug 12362
+                if (qName.getLocalPart().length() == 0) {
+                    String name = Utils.getAttribute(node, "name");
+                    if (name == null) {
+                        name = "unknown";
+                    }
+                    throw new IOException(JavaUtils.getMessage("emptyref00", name));
+                }
+                
                 // Now get the TypeEntry
                 TypeEntry refType = getTypeEntry(refQName, forElement.value);
 
@@ -872,7 +881,15 @@ public class SymbolTable {
         BooleanHolder forElement = new BooleanHolder();
         QName qName = Utils.getTypeQName(node, forElement, false);
         if (qName != null) {
-            
+            // Error check - bug 12362
+            if (qName.getLocalPart().length() == 0) {
+                String name = Utils.getAttribute(node, "name");
+                if (name == null) {
+                    name = "unknown";
+                }
+                throw new IOException(JavaUtils.getMessage("emptyref00", name));
+            }
+        
             // Get Type or Element depending on whether type attr was used.
             TypeEntry type = getTypeEntry(qName, forElement.value);
             
