@@ -789,7 +789,7 @@ public class SerializationContextImpl implements SerializationContext
         // Make sure we put the encodingStyle on each multiref element we
         // output.
         String encodingStyle;
-        if (msgContext == null) {
+        if (msgContext != null) {
             encodingStyle = msgContext.getEncodingStyle();
         } else {
             encodingStyle = soapConstants.getEncodingURI();

@@ -250,8 +250,9 @@ public class MessageElement implements SOAPElement, Serializable
 
             // Set the encoding style to the attribute value.  If null,
             // we just automatically use our parent's (see getEncodingStyle)
+            SOAPConstants sc = context.getMessageContext().getSOAPConstants();
             encodingStyle =
-                    attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC,
+                    attributes.getValue(sc.getEncodingURI(),
                                         Constants.ATTR_ENCODING_STYLE);
         }
     }

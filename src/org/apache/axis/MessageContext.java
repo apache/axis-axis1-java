@@ -366,8 +366,8 @@ public class MessageContext implements SOAPMessageContext {
     public void setSOAPConstants(SOAPConstants soapConstants) {
         // when changing SOAP versions, remember to keep the encodingURI
         // in synch.
-        if (soapConstants.getEncodingURI().equals(encodingStyle)) {
-            encodingStyle = this.soapConstants.getEncodingURI();
+        if (this.soapConstants.getEncodingURI().equals(encodingStyle)) {
+            encodingStyle = soapConstants.getEncodingURI();
         }
 
         this.soapConstants = soapConstants;
@@ -617,10 +617,7 @@ public class MessageContext implements SOAPMessageContext {
             setOperationStyle(service.getStyle());
 
             // styles are not "soap version aware" so compensate...
-            String encodingStyle = service.getStyle().getEncoding();
-            if (encodingStyle.equals(Constants.URI_DEFAULT_SOAP_ENC))
-               encodingStyle = soapConstants.getEncodingURI();
-            setEncodingStyle(encodingStyle);
+            setEncodingStyle(service.getStyle().getEncoding());
 
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
@@ -962,7 +959,9 @@ public class MessageContext implements SOAPMessageContext {
      */
     public void setEncodingStyle(String namespaceURI) {
         if (namespaceURI == null)
-            namespaceURI = "";
+            namespaceURI = Constants.URI_LITERAL_ENC;
+        else if (Constants.isSOAP_ENC(namespaceURI))
+            namespaceURI = soapConstants.getEncodingURI();
 
         encodingStyle = namespaceURI;
     } // setEncodingStype

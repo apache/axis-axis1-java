@@ -90,8 +90,6 @@ public class RPCElement extends SOAPBodyElement
     {
         super(namespace, localName, prefix, attributes, context);
 
-        encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
-
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
 
@@ -131,8 +129,6 @@ public class RPCElement extends SOAPBodyElement
         this.setNamespaceURI(namespace);
         this.name = methodName;
 
-        encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
-
         for (int i = 0; args != null && i < args.length; i++) {
             if (args[i] instanceof RPCParam) {
                 addParam((RPCParam)args[i]);
@@ -146,8 +142,6 @@ public class RPCElement extends SOAPBodyElement
 
     public RPCElement(String methodName)
     {
-        encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
-
         this.name = methodName;
     }
 
@@ -300,7 +294,7 @@ public class RPCElement extends SOAPBodyElement
         if (isRPC || noParams) {
             // Set default namespace if appropriate (to avoid prefix mappings
             // in literal style).  Do this only if there is no encodingStyle.
-            if (encodingStyle.equals("")) {
+            if (encodingStyle != null && encodingStyle.equals("")) {
                 context.registerPrefixForURI("", getNamespaceURI());
             }
             context.startElement(new QName(namespaceURI,name), attributes);

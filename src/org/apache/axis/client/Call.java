@@ -169,7 +169,6 @@ public class Call implements javax.xml.rpc.Call {
     private String             password        = null;
     private boolean            maintainSession = false;
     private Style              operationStyle  = Style.DEFAULT;
-    private String             encodingStyle   = operationStyle.getEncoding();
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
@@ -581,9 +580,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
-        encodingStyle = (namespaceURI == null)
-                        ? Constants.URI_LITERAL_ENC
-                        : namespaceURI;
+        msgContext.setEncodingStyle(namespaceURI);
     }
 
     /**
@@ -593,7 +590,7 @@ public class Call implements javax.xml.rpc.Call {
      * @return String URI of the encoding style to use
      */
     public String getEncodingStyle() {
-        return encodingStyle;
+        return msgContext.getEncodingStyle();
     }
 
     /**
@@ -1663,12 +1660,12 @@ public class Call implements javax.xml.rpc.Call {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
 
         // If a TypeMapping is not available, add one.
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(getEncodingStyle());
         TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
         if (tm == null || tm == defaultTM ) {
             tm = (TypeMapping) tmr.createTypeMapping();
-            tm.setSupportedEncodings(new String[] {encodingStyle});
-            tmr.register(encodingStyle, tm);
+            tm.setSupportedEncodings(new String[] {getEncodingStyle()});
+            tmr.register(getEncodingStyle(), tm);
         }
         return tm;
     }
@@ -1831,7 +1828,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // Set both the envelope and the RPCElement encoding styles
         try {
-            body.setEncodingStyle(encodingStyle);
+            body.setEncodingStyle(getEncodingStyle());
 
             setRequestMessage(reqMsg);
 
@@ -1999,7 +1996,6 @@ public class Call implements javax.xml.rpc.Call {
         if (timeout != null) {
             msgContext.setTimeout(timeout.intValue());
         }
-        msgContext.setEncodingStyle(encodingStyle);
 
         // Determine client target service
         if (myService != null) {
