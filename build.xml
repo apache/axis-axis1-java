@@ -276,7 +276,7 @@ Copyright:
       <classpath refid="test-classpath" />
       <formatter type="xml" />
       <batchtest todir="test-reports">
-        <fileset dir="${build.dir}">
+        <fileset dir="${build.dir}/classes">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/PackageTests.class" />
