@@ -543,7 +543,7 @@ public class SOAPService extends SimpleTargetedChain
             Message message = new Message(env);
             message.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(message);
-            throw new AxisFault(e.getMessage());
+            throw AxisFault.makeFault(e);
         }
     }
 }

@@ -125,7 +125,7 @@ public class SOAPBodyElement extends MessageElement
         }
         try {
             // cast to force exception if wrong type
-            super.setParentElement((SOAPBody)parent);
+            super.setParentElement(parent);
         } catch (Throwable t) {
             throw new SOAPException(t);
         }
