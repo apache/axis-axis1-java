@@ -644,7 +644,7 @@
     </wsdl2java>
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/import1/step6/definitions/*.java" />
+      <include name="test/wsdl/interop3/import1/step6/**/*.java" />
     </javac>
 
     <!-- Step 7:  see test/wsdl/interop3/Import1TestCase.java -->
