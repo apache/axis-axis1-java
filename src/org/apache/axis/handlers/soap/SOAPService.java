@@ -82,7 +82,7 @@ public class SOAPService extends SimpleTargetedChain
      * Does this service require a high-fidelity SAX recording of messages?
      * (default is true)
      */
-    private boolean highFidelityRecording = false;
+    private boolean highFidelityRecording = true;
 
     /**
      * How does this service wish data which would normally be sent as

@@ -143,7 +143,7 @@ public class MessageContext implements SOAPMessageContext {
      * deserialized messages for this interaction.  Defaults to true for
      * now, and can be set to false, usually at service-dispatch time.
      */
-    private boolean      highFidelity = false;
+    private boolean      highFidelity = true;
 
     /**
      * Storage for an arbitrary bag of properties associated with this

@@ -93,7 +93,7 @@ public class WSDDService
      * Is streaming (i.e. NO high-fidelity recording, deserialize on the fly)
      * on for this service?
      */
-    private boolean streaming = true;
+    private boolean streaming = false;
 
     /**
      * What attachment format should be used?
