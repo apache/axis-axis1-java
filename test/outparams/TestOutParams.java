@@ -77,13 +77,13 @@ public class TestOutParams extends TestCase {
                                 new Object [] { "test" });
 
         Vector outParams = client.getOutputParams();
-        assertNotNull("Null outParams!", outParams);
+        assertNotNull("No output Params returned!", outParams);
 
         RPCParam param = (RPCParam)outParams.get(0);
-        assertEquals(param.getValue(), ServiceHandler.OUTPARAM1);
+        assertEquals("Param 0 does not equal expected value", param.getValue(), ServiceHandler.OUTPARAM1);
 
         param = (RPCParam)outParams.get(1);
-        assertEquals(param.getValue(), ServiceHandler.OUTPARAM2);
+        assertEquals("Param 1 does not equal expected value", param.getValue(), ServiceHandler.OUTPARAM2);
     }
 
     public static void main(String args[])
