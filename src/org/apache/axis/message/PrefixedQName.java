@@ -58,27 +58,44 @@ package org.apache.axis.message;
 import javax.xml.soap.Name;
 import javax.xml.rpc.namespace.QName;
 
-public class PrefixedQName extends QName implements Name {
+public class PrefixedQName implements Name {
     private String prefix;
+    private QName qName;
     
     public PrefixedQName(String uri, String localName, String pre) {
-        super(uri, localName);
+        qName = new QName(uri, localName);
         prefix = pre;
     }
     
     public String getLocalName() {
-        return super.getLocalPart();
+        return qName.getLocalPart();
     }
     
     public String getQualifiedName() {
-        return super.toString();
+        return qName.toString();
     }
     
     public String getURI() {
-        return super.getNamespaceURI();
+        return qName.getNamespaceURI();
     }
     
     public String getPrefix() {
         return prefix;
+    }
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof PrefixedQName)) {
+            return false;
+        }
+        if (!qName.equals(((PrefixedQName)obj).qName)) {
+            return false;
+        }
+        if ((prefix == null && ((PrefixedQName) obj).prefix == null) ||
+            prefix.equals(((PrefixedQName)obj).prefix)) {
+            return true;
+        }
+        return false;
     }
 }
