@@ -374,6 +374,29 @@
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
     -->
+
+    <!--
+    <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="yes"
+               noimports="no">
+    </wsdl2java>
+
+    <wsdl2java url="http://services.xmltoday.com/vx_engine/wsdl_publish.vep/realtime.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="yes"
+               noimports="no">
+    </wsdl2java>
+    -->    
+
   </target>
 </project>
 
