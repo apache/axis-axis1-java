@@ -116,10 +116,12 @@ public class MsgProvider extends JavaProvider {
             /* from the root of the Body element                            */
             /* Hmmm, should we do this????                                  */
             /****************************************************************/
+System.err.println( "Class:" +  jc.getJavaClass().getName() + ", Methodname:"+ methodName);           
             if ( methodName == null || methodName.equals("") ) {
                 Element root = doc.getDocumentElement();
                 if ( root != null ) methodName = root.getLocalName();
             }
+System.err.println( "Class:" +  jc.getJavaClass().getName() + ", Methodname:"+ methodName);           
 
             // Try the the simplest case first - just Document as the param 
             /////////////////////////////////////////////////////////////////
@@ -141,7 +143,15 @@ public class MsgProvider extends JavaProvider {
               argClasses[1] = msgContext.getClassLoader().loadClass("org.w3c.dom.Document");
               argObjects[0] = msgContext ;
               argObjects[1] = doc ;
-              method = jc.getJavaClass().getMethod( methodName, argClasses );
+              try {
+                  method = jc.getJavaClass().getMethod( methodName, argClasses );
+              }
+              catch( NoSuchMethodException exp2 ) {
+                String oldmsg= exp2.getMessage(); 
+                oldmsg= oldmsg == null ? "" : oldmsg;
+                throw new NoSuchMethodException( oldmsg + "Tried class:" +  jc.getJavaClass().getName()
+                  + " , Methodname:"+ methodName );
+              }
             }
 
         } else {
@@ -150,7 +160,15 @@ public class MsgProvider extends JavaProvider {
             argObjects = new Object[1];
             argClasses[0] = msgContext.getClassLoader().loadClass("org.apache.axis.MessageContext");
             argObjects[0] = msgContext ;
-            method = jc.getJavaClass().getMethod( methodName, argClasses );
+            try {
+                method = jc.getJavaClass().getMethod( methodName, argClasses );
+            }    
+              catch( NoSuchMethodException exp2 ) {
+                String oldmsg= exp2.getMessage(); 
+                oldmsg= oldmsg == null ? "" : oldmsg;
+                throw new NoSuchMethodException( oldmsg + "Tried class:" +  jc.getJavaClass().getName()
+                  + " , Methodname:"+ methodName );
+              }
         }
         
         
