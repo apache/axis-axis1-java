@@ -2,8 +2,7 @@ package test;
 
 import java.io.*;
 import org.apache.axis.*;
-import org.apache.axis.client.AxisClient;
-import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.client.ServiceClient;
 import org.apache.axis.utils.*;
 
 /**
@@ -19,16 +18,16 @@ class put {
         Options opts = new Options(args);
         Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
         args = opts.getRemainingArgs();
+
+        ServiceClient sc = new ServiceClient(opts.getURL());
   
         for (int i=0; i<args.length; i++) {
-            AxisClient client = new AxisClient();
-            MessageContext mc = new MessageContext(client);
             FileInputStream stream = new FileInputStream(new File(args[i]));
-            mc.setRequestMessage(new Message(stream));
-            mc.setProperty(MessageContext.TRANS_URL, opts.getURL());
+            sc.setRequestMessage(new Message(stream));
     
-            new HTTPSender().invoke(mc);
+            sc.invoke();
         
+            MessageContext mc = sc.getMessageContext();
             System.out.println(mc.getResponseMessage().getAsString());
         }
     }
