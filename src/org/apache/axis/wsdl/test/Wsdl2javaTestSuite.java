@@ -76,6 +76,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.net.ServerSocket;
 
 /**
@@ -86,82 +87,155 @@ import java.net.ServerSocket;
 public class Wsdl2javaTestSuite extends TestSuite {
     private static final String COMPILE_TASK="compile";
     private static final String CLEAN_TASK="clean";
-    private Project testSuiteProject;
-    private List classNames = null;
-    private List fileNames = null;
+    private static final String WORK_DIR="./build/work/";
+    private static Project testSuiteProject = null;
+    private static List classNames = null;
+    private static List fileNames = null;
 
-    public Wsdl2javaTestSuite(String Name) {
-        super(Name);
+    public Wsdl2javaTestSuite() {
+        this.setupTasks();
+        this.prepareTests();
+    }
 
-        testSuiteProject = new Project();
-        testSuiteProject.init();
-        testSuiteProject.setName("Wsdl2javaTestSuite");
-        testSuiteProject.addReference("Wsdl2javaTestSuite", testSuiteProject);
-        testSuiteProject.setBasedir("/temp/");
-        testSuiteProject.setDefaultTarget("default");
+    public Wsdl2javaTestSuite(String name) {
+        super(name);
 
-        Target defaultTarget = new Target();
-        defaultTarget.setName(Wsdl2javaTestSuite.COMPILE_TASK);
-        testSuiteProject.addTarget(Wsdl2javaTestSuite.COMPILE_TASK, defaultTarget);
-
-        Javac compile = (Javac) testSuiteProject.createTask("javac");
-        compile.setLocation(new Location("Wsdl2javaTestSuite"));
-        compile.setOwningTarget(defaultTarget);
-        defaultTarget.addTask(compile);
-        compile.init();
-
-        compile.setDebug(true);
-        Path root = new Path(testSuiteProject);
-        root.setPath("/temp/");
-        compile.setSrcdir(root);
-        compile.setDestdir(new File("/temp/"));
-        compile.setVerbose(true);
-
-        Target cleanup = new Target();
-        cleanup.setName(Wsdl2javaTestSuite.CLEAN_TASK);
-        testSuiteProject.addTarget(Wsdl2javaTestSuite.CLEAN_TASK, cleanup);
-        Delete delete = (Delete) testSuiteProject.createTask("delete");
-        delete.setLocation(new Location("Wsdl2javaTestSuite"));
-        delete.setOwningTarget(cleanup);
-        cleanup.addTask(delete);
-        delete.init();
-
-        delete.setDir(new File("/temp/"));
-        delete.setVerbose(true);
+        this.setupTasks();
+        this.prepareTests();
     } //public Wsdl2javaTestSuite(String Name_)
 
-    protected void prepareTest(String fileName) throws Exception {
+    private void prepareTests() {
+        if (Wsdl2javaTestSuite.classNames == null) {
+            Wsdl2javaTestSuite.classNames = new ArrayList();
+            Wsdl2javaTestSuite.fileNames = new ArrayList();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
+                    .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
+
+            try {
+                String curLine = reader.readLine();
+                int testNum = 0;
+                while (curLine != null) {
+                    this.prepareTest(curLine, testNum);
+
+                    //setup tests
+                    Iterator names = ((List) Wsdl2javaTestSuite.classNames.get(testNum)).iterator();
+                    while (names.hasNext()) {
+                        String className = (String) names.next();
+                        if (className.endsWith("TestCase")) {
+                            try {
+                                Class clazz = this.getClass().getClassLoader().loadClass(className);
+
+                                Method[] methods = clazz.getMethods();
+                                for (int i = 0; i < methods.length; i++) {
+                                    String testName = methods[i].getName();
+                                    if (Modifier.isPublic(methods[i].getModifiers())
+                                            && !Modifier.isStatic(methods[i].getModifiers())) {
+                                        if (testName.startsWith("test")) {
+                                            this.addTest((Test) clazz.getConstructor(new Class[] {String.class})
+                                                    .newInstance(new Object[] {testName}));
+                                        }
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                                System.err.println("Could not set up test '" + className + "' due to an error");
+                                e.printStackTrace(System.err);
+                            }
+                        }
+                    }
+                    curLine = reader.readLine();
+                    testNum++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+                throw new AssertionFailedError(e.getMessage());
+            }
+        }
+    }
+
+    private void setupTasks() {
+        if (Wsdl2javaTestSuite.testSuiteProject == null) {
+            File workDir = new File(Wsdl2javaTestSuite.WORK_DIR);
+            workDir.mkdirs();
+
+            testSuiteProject = new Project();
+            testSuiteProject.init();
+            testSuiteProject.setName("Wsdl2javaTestSuite");
+            testSuiteProject.addReference("Wsdl2javaTestSuite", testSuiteProject);
+            testSuiteProject.setBasedir("./");
+            testSuiteProject.setDefaultTarget("default");
+
+            Target defaultTarget = new Target();
+            defaultTarget.setName(Wsdl2javaTestSuite.COMPILE_TASK);
+            testSuiteProject.addTarget(Wsdl2javaTestSuite.COMPILE_TASK, defaultTarget);
+
+            Javac compile = (Javac) testSuiteProject.createTask("javac");
+            compile.setLocation(new Location("Wsdl2javaTestSuite"));
+            compile.setOwningTarget(defaultTarget);
+            defaultTarget.addTask(compile);
+            compile.init();
+
+            compile.setDebug(true);
+            Path root = new Path(testSuiteProject);
+            root.setPath(Wsdl2javaTestSuite.WORK_DIR);
+            compile.setSrcdir(root);
+            compile.setDestdir(workDir);
+            compile.setVerbose(true);
+
+            Target cleanup = new Target();
+            cleanup.setName(Wsdl2javaTestSuite.CLEAN_TASK);
+            testSuiteProject.addTarget(Wsdl2javaTestSuite.CLEAN_TASK, cleanup);
+            Delete delete = (Delete) testSuiteProject.createTask("delete");
+            delete.setLocation(new Location("Wsdl2javaTestSuite"));
+            delete.setOwningTarget(cleanup);
+            cleanup.addTask(delete);
+            delete.init();
+
+            delete.setDir(workDir);
+            delete.setVerbose(true);
+        }
+    }
+
+    protected void prepareTest(String fileName, int testNum) throws Exception {
         Emitter wsdl2java = new Emitter();
-        wsdl2java.setPackageName("org.apache.axisttest");
+        wsdl2java.setPackageName("org.apache.axisttest" + testNum);
         wsdl2java.generatePackageName(true);
-        wsdl2java.setOutputDir("/temp");
+        wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
         wsdl2java.verbose(true);
         wsdl2java.generateTestCase(true);
 
         wsdl2java.emit(fileName);
 
-        this.classNames = wsdl2java.getGeneratedClassNames();
-        this.fileNames = wsdl2java.getGeneratedFileNames();
+        Wsdl2javaTestSuite.classNames.add(testNum, wsdl2java.getGeneratedClassNames());
+        Wsdl2javaTestSuite.fileNames.add(testNum, wsdl2java.getGeneratedFileNames());
 
         this.testSuiteProject.executeTarget(Wsdl2javaTestSuite.COMPILE_TASK);
     } //protected void prepareTest()
 
     private void cleanTest() {
-        this.classNames = null;
-        this.fileNames = null;
+        Iterator i = Wsdl2javaTestSuite.classNames.iterator();
+        while (i.hasNext()) {
+            ((List) i.next()).clear();
+        }
+        Wsdl2javaTestSuite.classNames.clear();
+        Wsdl2javaTestSuite.classNames = null;
+
+        i = Wsdl2javaTestSuite.fileNames.iterator();
+        while (i.hasNext()) {
+            ((List) i.next()).clear();
+        }
+        Wsdl2javaTestSuite.fileNames.clear();
+        Wsdl2javaTestSuite.fileNames = null;
         testSuiteProject.executeTarget(Wsdl2javaTestSuite.CLEAN_TASK);
     }
 
     public static void main(String[] args) {
-        String[] testSuiteName = {Wsdl2javaTestSuite.class.getName()};
+        String[] testSuiteName = {"-noloading", Wsdl2javaTestSuite.class.getName()};
         junit.swingui.TestRunner.main(testSuiteName);
     } //public static void main(String[] args)
 
     public void run(TestResult result) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
-                .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
-
         System.out.println("Starting test http server.");
         SimpleAxisServer server = new SimpleAxisServer();
 
@@ -172,65 +246,51 @@ public class Wsdl2javaTestSuite extends TestSuite {
             server.setServerSocket(ss);
             server.run();
 
-            String curLine = reader.readLine();
-            while (curLine != null) {
-                this.prepareTest(curLine);
+            Iterator testIterator = Wsdl2javaTestSuite.fileNames.iterator();
+            while (testIterator.hasNext()) {
                 String deploy = null;
-                String undeploy = null;
 
-                Iterator files = this.fileNames.iterator();
+                Iterator files = ((List) testIterator.next()).iterator();
                 while (files.hasNext()) {
                     String fileName = (String) files.next();
                     if (fileName.endsWith("deploy.xml")) {
                         deploy = fileName;
-                    } else if (fileName.endsWith("undeploy.xml")) {
-                        undeploy = fileName;
                     }
                 }
                 //deploy
                 String[] args = new String[] { deploy };
                 AdminClient.main(args);
+            }
 
-                //run tests
-                Iterator names = this.classNames.iterator();
-                while (names.hasNext()) {
-                    String className = (String) names.next();
-                    if (className.endsWith("TestCase")) {
-                        try {
-                            Class clazz = this.getClass().getClassLoader().loadClass(className);
+            //run tests
+            super.run(result);
 
-                            Method[] methods = clazz.getMethods();
-                            for (int i = 0; i < methods.length; i++) {
-                                String testName = methods[i].getName();
-                                if (Modifier.isPublic(methods[i].getModifiers())
-                                        && !Modifier.isStatic(methods[i].getModifiers())) {
-                                    if (testName.startsWith("test")) {
-                                        Test test = (Test) clazz.getConstructor(new Class[] {String.class})
-                                                .newInstance(new Object[] {testName});
-                                        test.run(result);
-                                    }
-                                }
-                            }
+            testIterator = Wsdl2javaTestSuite.fileNames.iterator();
+            while (testIterator.hasNext()) {
+                String undeploy = null;
 
-                        } catch (Exception e) {
-                            System.err.println("Could not run test '" + className + "' due to an error");
-                            e.printStackTrace(System.err);
-                        }
+                Iterator files = ((List) testIterator.next()).iterator();
+                while (files.hasNext()) {
+                    String fileName = (String) files.next();
+                    if (fileName.endsWith("undeploy.xml")) {
+                        undeploy = fileName;
                     }
                 }
                 //undeploy
-                args = new String[] {undeploy};
+                String[] args = new String[] { undeploy };
                 AdminClient.main(args);
-                this.cleanTest();
             }
+
+            this.cleanTest();
 
             System.out.println("Stopping test http server.");
             server.stop();
-
-            reader.close();
         } catch (Exception e) {
             throw new AssertionFailedError("The test suite failed with the following exception: " + e.getMessage());
         }
+    }
 
+    public void testTest() {
+        // STUPID HACK!!  I HATE THIS ABOUT JUNIT!!
     }
 } //public class Wsdl2javaTestSuite extends TestCase
