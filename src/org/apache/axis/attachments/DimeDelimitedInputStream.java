@@ -456,8 +456,9 @@ public class DimeDelimitedInputStream extends java.io.FilterInputStream {
         byte[] b = new byte[1];
         int read = read(b, 0, 1);
 
-        if (read < 0) return -1; // fixme: should we also check for read != 1?
-        else return b[0];
+        if (read < 0)
+            return -1; // fixme: should we also check for read != 1?
+        return (b[0] & 0xff); // convert byte value to a positive int
     }
 
     /**
