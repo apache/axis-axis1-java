@@ -984,6 +984,7 @@ public class tcpmon extends JFrame {
 
                 String targetHost = listener.hostField.getText();
                 int    targetPort = Integer.parseInt(listener.tPortField.getText());
+                int    listenPort = Integer.parseInt(listener.portField.getText());
 
                 InputStream  tmpIn1  = inputStream ;
                 OutputStream tmpOut1 = null ;
@@ -1105,7 +1106,7 @@ public class tcpmon extends JFrame {
                         // check to see if we have found Host: header
                         if (line.startsWith("Host: ")) {
                             // we need to update the hostname to target host
-                            String newHost = "Host: " + targetHost + "\r\n";
+                            String newHost = "Host: " + targetHost + ":" + listenPort + "\r\n";
 
                             bufferedData = bufferedData.concat(newHost);
                             break ;
