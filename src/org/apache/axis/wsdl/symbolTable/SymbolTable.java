@@ -93,6 +93,7 @@ import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.extensions.soap.SOAPHeaderFault;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -1675,9 +1676,60 @@ public class SymbolTable {
                 bEntry.setBodyType(operation,
                         addMIMETypes(bEntry, (MIMEMultipartRelated) obj,
                         operation), input);
+            } else if (obj instanceof UnknownExtensibilityElement) {
+                UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+                QName name = unkElement.getElementType();
+                if(name.getNamespaceURI().equals(Constants.URI_DIME_WSDL) && 
+                   name.getLocalPart().equals("message")) {
+                    fillInDIMEInformation(unkElement, input, operation, bEntry);
+                }
             }
         }
     } // fillInBindingInfo
+
+    /**
+     * Fill in DIME information
+     * 
+     * @param unkElement
+     * @param input
+     * @param operation
+     * @param bEntry
+     */ 
+    private void fillInDIMEInformation(UnknownExtensibilityElement unkElement, boolean input, Operation operation, BindingEntry bEntry) {
+        String layout = unkElement.getElement().getAttribute("layout");
+        // TODO: what to do with layout info?              
+        if(layout.equals(Constants.URI_DIME_CLOSED_LAYOUT)) {
+        } else if(layout.equals(Constants.URI_DIME_OPEN_LAYOUT)){
+        }
+        Map parts = null;
+        if(input){
+             parts = operation.getInput().getMessage().getParts();                       
+        } else {
+             parts = operation.getOutput().getMessage().getParts();                       
+        }
+        if(parts != null) {
+             Iterator iterator = parts.values().iterator();
+             while(iterator.hasNext()){
+                 Part part = (Part) iterator.next();
+                 if(part != null){
+                     org.w3c.dom.Element element = null;
+                     if(part.getTypeName() != null) {
+                         Type partType = getType(part.getTypeName());
+                         element = (org.w3c.dom.Element) partType.getNode();
+                     } else if(part.getElementName() != null) {
+                         Element partElement = getElement(part.getElementName());
+                         element = (org.w3c.dom.Element) partElement.getNode();
+                     }
+                     org.w3c.dom.Element e = (org.w3c.dom.Element)XMLUtils.findNode(element, new QName(Constants.URI_DIME_CONTENT, "mediaType"));
+                     if(e != null){
+                         String value = e.getAttribute("value");
+                         bEntry.setOperationDIME(operation.getName());
+                         bEntry.setMIMEType(operation.getName(), part.getName(), value);
+                     }
+                 }
+             }
+        }
+    }
 
     /**
      * Get the faults from the soap:fault clause.

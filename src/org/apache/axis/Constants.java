@@ -377,6 +377,25 @@ public class Constants {
     }
 
     //
+    // WSDL extensions for SOAP in DIME
+    // (http://gotdotnet.com/team/xml_wsspecs/dime/WSDL-Extension-for-DIME.htm)
+    //
+    public static final String URI_DIME_WSDL = 
+                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/";
+
+    public static final String URI_DIME_CONTENT = 
+                                 "http://schemas.xmlsoap.org/ws/2002/04/content-type/";
+
+    public static final String URI_DIME_REFERENCE=
+                                 "http://schemas.xmlsoap.org/ws/2002/04/reference/";
+    
+    public static final String URI_DIME_CLOSED_LAYOUT=
+                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/closed-layout";
+
+    public static final String URI_DIME_OPEN_LAYOUT=
+                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/open-layout";
+
+    //
     // WSDL SOAP Namespace
     //
     public static final String URI_WSDL11_SOAP =
