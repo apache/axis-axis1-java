@@ -280,7 +280,9 @@ public class AxisServletBase extends HttpServlet {
             EngineConfigurationFactoryFactory.newServletFactory(context)
                     .getServerEngineConfig();
 
-        environment.put(EngineConfiguration.PROPERTY_NAME, config);
+        if (config != null) {
+            environment.put(EngineConfiguration.PROPERTY_NAME, config);
+        }
 
         return environment;
     }

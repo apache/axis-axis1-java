@@ -89,7 +89,8 @@ import java.util.Map;
  */ 
 
 public class ServiceFactory extends javax.xml.rpc.ServiceFactory
-        implements ObjectFactory {
+        implements ObjectFactory
+{
     // Constants for RefAddrs in the Reference.
     public static final String SERVICE_CLASSNAME  = "service classname";
     public static final String WSDL_LOCATION      = "WSDL location";
@@ -97,14 +98,21 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     public static final String SERVICE_NAMESPACE  = "service namespace";
     public static final String SERVICE_LOCAL_PART = "service local part";
 
-    private static EngineConfiguration defaultEngineConfig =
-        EngineConfigurationFactoryFactory.newFactory().getClientEngineConfig();
+    private static EngineConfiguration _defaultEngineConfig = null;
 
     private static ThreadLocal threadDefaultConfig = new ThreadLocal();
 
     public static void setThreadDefaultConfig(EngineConfiguration config)
     {
         threadDefaultConfig.set(config);
+    }
+    
+    private static EngineConfiguration getDefaultEngineConfig() {
+        if (_defaultEngineConfig == null) {
+            _defaultEngineConfig =
+                EngineConfigurationFactoryFactory.newFactory().getClientEngineConfig();
+        }
+        return _defaultEngineConfig;
     }
 
     /**
@@ -120,13 +128,14 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
         Service service = null;
         InitialContext context = null;
 
-        EngineConfiguration configProvider = (EngineConfiguration)environment.
-            get(EngineConfiguration.PROPERTY_NAME);
+        EngineConfiguration configProvider =
+            (EngineConfiguration)environment.get(EngineConfiguration.PROPERTY_NAME);
+
         if (configProvider == null)
             configProvider = (EngineConfiguration)threadDefaultConfig.get();
 
         if (configProvider == null)
-            configProvider = defaultEngineConfig;
+            configProvider = getDefaultEngineConfig();
 
         // First check to see if JNDI works
         // !!! Might we need to set up context parameters here?
