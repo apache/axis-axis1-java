@@ -157,11 +157,15 @@ public class DeserializationContext extends DefaultHandler
         if (inputSource != null) {
             SAXParser parser = XMLUtils.getSAXParser();
             try {
-                parser.parse(inputSource, this);
-            } catch (IOException e) {
-                throw new SAXException(e);
+                try {
+                    parser.parse(inputSource, this);
+                } catch (IOException e) {
+                    throw new SAXException(e);
+                }
+                inputSource = null;
+            } finally {
+                XMLUtils.releaseSAXParser(parser);
             }
-            inputSource = null;
         }
     }
     

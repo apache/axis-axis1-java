@@ -56,6 +56,7 @@
 package org.apache.axis.utils ;
 
 import java.io.* ;
+import java.util.Stack;
 import java.util.Properties;
 import org.w3c.dom.* ;
 import javax.xml.parsers.* ;
@@ -65,6 +66,7 @@ import org.apache.axis.Constants;
 public class XMLUtils {
     private static DocumentBuilderFactory dbf = init();
     private static SAXParserFactory       saxFactory;
+    private static Stack                  saxParsers = new Stack();
     
     static {
         // Initialize SAX Parser factory defaults
@@ -149,11 +151,13 @@ public class XMLUtils {
      * 
      * @return a SAXParser instance.
      */
-    public static SAXParser getSAXParser() {
-        // Might want to cache the parser (on a per-thread basis, as I don't think
-        // SAX parsers are thread-safe)...
+    public static synchronized SAXParser getSAXParser() {
         try {
-            return saxFactory.newSAXParser();
+            if (saxParsers.empty()) {
+                return saxFactory.newSAXParser();
+            } else {
+                return (SAXParser)saxParsers.pop();
+            }
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
             return null;
@@ -161,6 +165,13 @@ public class XMLUtils {
               se.printStackTrace();
               return null;
         }
+    }
+
+    /** Return a SAX parser for reuse.
+     * @param SAXParser A SAX parser that is available for reuse
+     */
+    public static synchronized SAXParser releaseSAXParser(SAXParser parser) {
+        return (SAXParser)saxParsers.push(parser);
     }
 
     public static Document newDocument() {
