@@ -86,7 +86,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile" depends="printEnv" unless="compile.built">
+  <target name="compile" depends="printEnv" unless="compile.built"
+    description="compile the source and create the jar files">
     <depend srcdir="${src.dir}" destdir="${build.dest}"
             cache="${build.dir}/dependencycache" closure="no">
     </depend>  
