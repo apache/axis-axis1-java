@@ -63,7 +63,11 @@ public class Import3TestCase extends junit.framework.TestCase {
     public void testStep3EchoStructArray() {
         SoapInteropImport3PortType binding;
         try {
-            binding = new Import3Locator().getSoapInteropImport3Port();
+            if (url == null) {
+                binding = new Import3Locator().getSoapInteropImport3Port();
+            } else {
+                binding = new Import3Locator().getSoapInteropImport3Port(url);
+            }
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
