@@ -81,7 +81,7 @@ Copyright:
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
   <property name="commons-logging.jar" value="lib/commons-logging.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
-  <property name="clutil.jar" value="lib/clutil.jar"/>
+  <property name="excalibur-cli.jar" value="lib/excalibur-cli.jar"/>
   <property name="tt-bytecode.jar" value="lib/tt-bytecode.jar"/>
 
   <property name="regexp.jar" value="test/lib/jakarta-oro-2.0.5.jar"/>
@@ -109,7 +109,7 @@ Copyright:
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->
   <path id="classpath">
-    <pathelement location="${clutil.jar}"/>
+    <pathelement location="${excalibur-cli.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${junit.jar}"/>
@@ -149,7 +149,7 @@ Copyright:
       classname="org.apache.log4j.Category"
       classpathref="classpath"/>
 
-    <available property="clutil.present"
+    <available property="excalibur-cli.present"
       classname="org.apache.avalon.excalibur.cli.CLUtil"
       classpathref="classpath"/>
       
@@ -194,7 +194,7 @@ Copyright:
     <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message="commons-logging.present=${commons-logging.present}" />
     <echo message="log4j.present=${log4j.present}" />
-    <echo message="clutil.present=${clutil.present}" />
+    <echo message="excalibur-cli.present=${excalibur-cli.present}" />
     <echo message="tt-bytecode.present=${tt-bytecode.present}" />
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
@@ -275,7 +275,7 @@ Copyright:
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
-    <copy file="${clutil.jar}" toDir="${build.lib}"/>
+    <copy file="${excalibur-cli.jar}" toDir="${build.lib}"/>
     <copy file="${tt-bytecode.jar}" toDir="${build.lib}"/>
     <antcall target="post-compile"/>
   </target>
