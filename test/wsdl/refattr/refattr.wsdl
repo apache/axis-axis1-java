@@ -65,7 +65,7 @@
       <xsd:element name="noMangle" type="typens:example" />
 
       <!-- The following two have same qname and same java names (for different java types). -->
-      <!--  angling should occur -->
+      <!--  mangling should occur -->
       <!-- Note the use of the 'mangle collection' in info..which should be properly mangled -->
       <xsd:complexType name="mangle">
         <xsd:all>
