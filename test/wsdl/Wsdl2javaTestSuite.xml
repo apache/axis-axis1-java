@@ -261,18 +261,16 @@
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopb"/>
     </wsdl2java>
 
-    <!-- we don't handle xsd:anyType yet
     <wsdl2java url="http://mssoapinterop.org/stk/InteropBtyped.wsdl"
                output="build/work"
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               verbose="yes"
+               verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopbtyped"/>
         <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopbtyped"/>
     </wsdl2java>
-    -->
 
     <wsdl2java url="http://mssoapinterop.org/stk/InteropC.wsdl"
                output="build/work"
@@ -375,6 +373,17 @@
                output="build/work"
                skeleton="yes"
                testcase="yes">
+    </wsdl2java>
+
+    <!-- This tests .NET document/literal WSDL.  -->
+    <!-- <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl" -->
+    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+               output="build/work"
+               verbose="no"
+               skeleton="no"
+               testcase="no">
+        <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
+               
     </wsdl2java>
 
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
