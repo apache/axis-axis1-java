@@ -203,7 +203,9 @@ public class SOAPEnvelope extends MessageElement
     public SOAPHeader getHeaderByName(String namespace, String localPart)
         throws AxisFault
     {
-        SOAPHeader header = (SOAPHeader)findElement(headers, namespace, localPart);
+        SOAPHeader header = (SOAPHeader)findElement(headers,
+                                                    namespace,
+                                                    localPart);
         
         return header;
     }
@@ -211,7 +213,9 @@ public class SOAPEnvelope extends MessageElement
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
-        return (SOAPBodyElement)findElement(bodyElements, namespace, localPart);
+        return (SOAPBodyElement)findElement(bodyElements,
+                                            namespace,
+                                            localPart);
     }
     
     protected MessageElement findElement(Vector vec, String namespace,
@@ -258,10 +262,12 @@ public class SOAPEnvelope extends MessageElement
         throws Exception
     {
         // Register namespace prefixes.
-        for (Iterator i = namespaces.iterator(); i.hasNext(); ) {
-            Mapping mapping = (Mapping)i.next();
-            context.registerPrefixForURI(mapping.getPrefix(),
-                                         mapping.getNamespaceURI());
+        if (namespaces != null) {
+            for (Iterator i = namespaces.iterator(); i.hasNext(); ) {
+                Mapping mapping = (Mapping)i.next();
+                context.registerPrefixForURI(mapping.getPrefix(),
+                                             mapping.getNamespaceURI());
+            }
         }
         
         Enumeration enum;
@@ -270,7 +276,8 @@ public class SOAPEnvelope extends MessageElement
             attrs = new AttributesImpl();
             attrs.addAttribute(Constants.URI_SOAP_ENV,
                                Constants.ATTR_ENCODING_STYLE,
-                               "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE, "CDATA", encodingStyleURI);
+                               "SOAP-ENV:" + Constants.ATTR_ENCODING_STYLE,
+                               "CDATA", encodingStyleURI);
         }
         
         context.startElement(new QName(Constants.URI_SOAP_ENV,
