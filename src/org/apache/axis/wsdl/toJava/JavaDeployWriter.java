@@ -340,6 +340,7 @@ public class JavaDeployWriter extends JavaWriter {
                         symbolTable.getOperationParameters(operation, "", bEntry);
                 if (params != null) {
                     QName returnQName = null;
+                    QName returnType = null;
                     
                     // Get the operation QName
                     QName elementQName = Utils.getOperationQName(bindingOper);
@@ -348,8 +349,24 @@ public class JavaDeployWriter extends JavaWriter {
                     if (params.returnName != null)
                         returnQName = params.returnName;
 
+                    TypeEntry returnTE = params.returnType;
+                    if (returnTE != null &&
+                        returnTE instanceof DefinedElement &&
+                        returnTE.getRefType() != null) {
+                        returnTE = returnTE.getRefType();
+                    } 
+                    if (returnTE != null &&
+                        returnTE instanceof CollectionType &&
+                        returnTE.getRefType() != null) {
+                        returnTE = returnTE.getRefType();
+                    }
+                    if (returnTE != null) {
+                        returnType = returnTE.getQName();
+                    }
+
                     // Write the operation metadata
-                    writeOperation(pw, javaOperName, elementQName, returnQName,
+                    writeOperation(pw, javaOperName, elementQName, 
+                                   returnQName, returnType,
                                    params);
                 }
             }
@@ -375,6 +392,7 @@ public class JavaDeployWriter extends JavaWriter {
                                   String javaOperName,
                                   QName elementQName,
                                   QName returnQName,
+                                  QName returnType,
                                   Parameters params) {
         pw.print("      <operation name=\"" + javaOperName + "\"");
         if (elementQName != null) {
@@ -385,6 +403,11 @@ public class JavaDeployWriter extends JavaWriter {
         if (returnQName != null) {
             pw.print(" returnQName=\"" +
                      Utils.genQNameAttributeString(returnQName, "retNS") +
+                     "\"");
+        }
+        if (returnType != null) {
+            pw.print(" returnType=\"" +
+                     Utils.genQNameAttributeString(returnType, "rtns") +
                      "\"");
         }
         pw.println(" >");
