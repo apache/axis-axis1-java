@@ -320,7 +320,14 @@ public class AxisServer extends AxisEngine
                     msgContext.setSOAPConstants(soapConstants);
                 }
                     
-                h.invoke(msgContext);
+                try {
+                    h.invoke(msgContext);
+                } catch (AxisFault ae) {
+                    if ((h = getGlobalRequest()) != null ) {
+                        h.onFault(msgContext);
+                    }
+                    throw ae;
+                }
 
                 if( tlog.isDebugEnabled() ) {
                     t4=System.currentTimeMillis();
