@@ -573,6 +573,7 @@ public class Emitter {
             serviceDesc.setAllowedMethods(allowedMethods);
             javaServiceDesc.setDisallowedMethods(disallowedMethods);
             serviceDesc.setStyle(style);
+            serviceDesc.setUse(use);
 
             // If the class passed in is a portType,
             // there may be an implClass that is used to

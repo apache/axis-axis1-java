@@ -109,7 +109,7 @@ public class Types {
     List beanCompatErrs = new ArrayList();
 
     /** Field serviceDesc */
-    ServiceDesc serviceDesc = null;
+    private ServiceDesc serviceDesc = null;
 
     /** Keep track of the element QNames we've written to avoid dups */
     private Set writtenElementQNames = new HashSet();
@@ -1776,5 +1776,13 @@ public class Types {
         }
 
         return true;
+    }
+
+    /**
+     * return the service description
+     * @return
+     */ 
+    public ServiceDesc getServiceDesc() {
+        return serviceDesc;
     }
 }
