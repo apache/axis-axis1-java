@@ -71,8 +71,6 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.Type;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -93,9 +91,8 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -196,22 +193,32 @@ public class Types {
                                                       true, false, false);
             symbolTable.populateTypes(new URL(inputSchema), doc);
 
-            // Walk the type/element entries in the symbol table and
-            // add each one to the list of processed types.  This prevents
-            // the types from being duplicated.
-            Vector v = symbolTable.getTypes();
-            for (int i=0; i < v.size(); i++) {
-                TypeEntry te = (TypeEntry) v.elementAt(i);
-                if (te instanceof org.apache.axis.wsdl.symbolTable.Element) {
-                    addToElementsList(te.getQName());
-                } else if (te instanceof Type) {
-                    addToTypesList(te.getQName());
-                }
-            }
+            processSymTabEntries(symbolTable);
         } else {
             // If not, we'll just bail out... perhaps we should log a warning
             // or throw an exception?
             ;
+        }
+    }
+    
+    /**
+     * Walk the type/element entries in the symbol table and
+     * add each one to the list of processed types. This prevents
+     * the types from being duplicated.
+     *      
+     * @param symbolTable
+     */ 
+    private void processSymTabEntries(SymbolTable symbolTable)
+    {
+        Iterator iterator = symbolTable.getElementIndex().keySet().iterator();
+        while(iterator.hasNext()) {
+            QName name = (QName) iterator.next();
+            addToElementsList(name);
+        }
+        iterator = symbolTable.getTypeIndex().keySet().iterator();
+        while(iterator.hasNext()) {
+            QName name = (QName) iterator.next();
+            addToTypesList(name);
         }
     }
 
@@ -271,18 +278,7 @@ public class Types {
                                                   true, false, false);
         symbolTable.populate(null, doc);
 
-        // Walk the type/element entries in the symbol table and
-        // add each one to the list of processed types.  This prevents
-        // the types from being duplicated.
-        Vector v = symbolTable.getTypes();
-        for (int i=0; i < v.size(); i++) {
-            TypeEntry te = (TypeEntry) v.elementAt(i);
-            if (te instanceof org.apache.axis.wsdl.symbolTable.Element) {
-                addToElementsList(te.getQName());
-            } else if (te instanceof Type) {
-                addToTypesList(te.getQName());
-            }
-        }
+        processSymTabEntries(symbolTable);
     }
 
     /**
