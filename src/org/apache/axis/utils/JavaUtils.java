@@ -211,6 +211,11 @@ public class JavaUtils
         if (arg instanceof Calendar && destClass == Date.class) {
             return ((Calendar) arg).getTime();
         }
+        if (arg instanceof Date && destClass == Calendar.class) {
+        	Calendar calendar = Calendar.getInstance();
+        	calendar.setTime((Date) arg);
+            return calendar;
+        }
 
         // Convert between Calendar and java.sql.Date
         if (arg instanceof Calendar && destClass == java.sql.Date.class) {
@@ -515,6 +520,10 @@ public class JavaUtils
             
             // Allow mapping of Calendar to Date
             if (Calendar.class.isAssignableFrom(src) && dest == Date.class)
+                return true;
+
+            // Allow mapping of Date to Calendar
+            if (Date.class.isAssignableFrom(src) && dest == Calendar.class)
                 return true;
 
             // Allow mapping of Calendar to java.sql.Date
