@@ -55,6 +55,8 @@
 
 package javax.xml.namespace;
 
+import java.io.Serializable;
+
 /**
  * QName class represents a qualified name based on "Namespaces in XML"
  * specification.  A QName is represented as: 
@@ -74,7 +76,7 @@ package javax.xml.namespace;
  *
  * @version 0.1
  */
-public final class QName {
+public class QName implements Serializable {
     /** comment/shared empty string     */
     private static final String emptyString = "".intern();
 
@@ -144,7 +146,7 @@ public final class QName {
      *
      * @return true if this object is the same as the obj argument; false otherwise.
      */
-    public boolean equals(Object p1) {
+    public final boolean equals(Object p1) {
         if (p1 == this) {
             return true;
         }
@@ -202,7 +204,7 @@ public final class QName {
      *
      * @return a hash code value for this Qname object
      */
-    public int hashCode() {
+    public final int hashCode() {
         return namespaceURI.hashCode() ^ localPart.hashCode();
     }
 }
