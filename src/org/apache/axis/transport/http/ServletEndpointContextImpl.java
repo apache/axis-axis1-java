@@ -62,13 +62,13 @@ import java.security.Principal;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     
-    private HttpSession httpSession;
+    private AxisHttpSession httpSession;
     private MessageContext msgContext ;
     private ServletContext servletContext;
     private Principal principal;
     
     public HttpSession getHttpSession() {
-        return httpSession;
+        return httpSession.getRep();
     }
 
     public MessageContext getMessageContext() {
@@ -86,7 +86,7 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
     /**
      * Full constructor
      */ 
-    public ServletEndpointContextImpl(HttpSession httpSession, MessageContext msgContext, Principal principal, ServletContext servletContext) {
+    public ServletEndpointContextImpl(AxisHttpSession httpSession, MessageContext msgContext, Principal principal, ServletContext servletContext) {
         this.httpSession = httpSession;
         this.msgContext = msgContext;
         this.principal = principal;
