@@ -5,6 +5,7 @@ import org.apache.axis.encoding.Hex;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 /** 
@@ -72,9 +73,29 @@ public class TestDeser2001 extends TestDeser {
         date.set(1999,04,31,12,01,30);
         date.set(Calendar.MILLISECOND,150);
         deserialize("<result xsi:type=\"xsd:dateTime\">" + 
-                       "1999-05-31T12:01:30.150-05:00" + 
+                       "1999-05-31T12:01:30.150" + calcGMTOffset(date) + 
                      "</result>",
                      date);
+    }
+
+    private final int msecsInMinute = 60000;
+    private final int msecsInHour = 60 * msecsInMinute;
+
+    private String calcGMTOffset(Calendar cal) {
+        int msecOffset = cal.get(Calendar.ZONE_OFFSET) +
+                cal.get(Calendar.DST_OFFSET);
+        int hourOffset = Math.abs(msecOffset / msecsInHour);
+        String offsetString = msecOffset > 0 ? "+" : "-";
+        offsetString += hourOffset >= 10 ? "" + hourOffset : "0" + hourOffset;
+        offsetString += ":";
+        int minOffset = Math.abs(msecOffset % msecsInHour);
+        if (minOffset == 0) {
+            offsetString += "00";
+        }
+        else {
+            offsetString += minOffset >= 10 ? "" + minOffset : "0" + minOffset;
+        }
+        return offsetString;
     }
 
     public void testBase64() throws Exception {
