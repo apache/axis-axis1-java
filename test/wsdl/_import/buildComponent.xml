@@ -20,11 +20,22 @@
         &taskdefs_post_compile;
         &targets;
 
-<target name="clean"/>
+<target name="clean">
+<!-- This is to get around a "issue" with wsdl2java -->
+  <delete dir="${axis.home}/build/work/${componentName}/binding1"/>
+  <delete dir="${axis.home}/build/work/${componentName}/binding2"/>
+</target>
 
-<target name="copy" depends="setenv"/>
+<target name="copy" depends="setenv,clean">
+    <copy todir="${build.dir}/classes" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/_import">
+        <include name="NStoPkg.properties"/>
+      </fileset>
+    </copy>
+</target>
 
 <target name="compile" depends="copy">
+
   <echo message="Compilig test.wsdl._import"/>
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
@@ -33,6 +44,7 @@
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -46,6 +58,7 @@
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -57,11 +70,22 @@
         <mapping namespace="urn:messages.import.test" package="test.import2.messages"/>
     </wsdl2java>
 
+    <!-- Import Test 3:  all namespace->package mappings from the -->
+    <!--                 command line.  Make sure an xsd:import   -->
+    <!--                 statement inside a schema inside a type  -->
+    <!--                 works properly.                          -->
+    <wsdl2java url="${axis.home}/test/wsdl/_import/ImportMessagesXSDImport.wsdl"
+               output="${axis.home}/build/work"
+               noimports="no">
+        <mapping namespace="urn:types.import.test" package="test.import.test3"/>
+    </wsdl2java>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/_import/*.java" />
+      <include name="test/wsdl/_import/**/*.java" />
     </javac>
+
 
 </target>
 
