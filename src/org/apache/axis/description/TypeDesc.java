@@ -57,10 +57,13 @@ package org.apache.axis.description;
 
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.BeanPropertyDescriptor;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -128,6 +131,11 @@ public class TypeDesc {
     
     /** Are there any fields which are serialized as attributes? */
     private boolean _hasAttributes = false;
+
+    /** Introspected property descriptors */
+    private BeanPropertyDescriptor[] propertyDescriptor = null; 
+    /** Map with key = property descriptor name, value = descriptor */
+    private Map propertyMap = null;
 
     /**
      * Obtain the current array of FieldDescs
@@ -359,5 +367,44 @@ public class TypeDesc {
 
     public void setXmlType(QName xmlType) {
         this.xmlType = xmlType;
+    }
+
+    /**
+     * Get/Cache the property descriptors
+     * @return PropertyDescriptor
+     */
+    public BeanPropertyDescriptor[] getPropertyDescriptors() {
+        // Return the propertyDescriptor if already set.
+        // If not set, use BeanUtils.getPd to get the property descriptions.
+        //
+        // Since javaClass is a generated class, there
+        // may be a faster way to set the property descriptions than
+        // using BeanUtils.getPd.  But for now calling getPd is sufficient.
+        if (propertyDescriptor == null) {
+            propertyDescriptor = BeanUtils.getPd(javaClass, this);
+        }
+        return propertyDescriptor;
+    }
+    /**
+     * Get/Cache the property descriptor map
+     * @return Map with key=propertyName, value=descriptor
+     */
+    public Map getPropertyDescriptorMap() {
+        // Return map if already set.
+        if (propertyMap != null) {
+            return propertyMap;
+        }
+
+        // Make sure properties exist
+        if (propertyDescriptor == null) {
+            getPropertyDescriptors();  
+        }
+        // Build the map
+        propertyMap = new HashMap();
+        for (int i = 0; i < propertyDescriptor.length; i++) {
+            BeanPropertyDescriptor descriptor = propertyDescriptor[i];
+            propertyMap.put(descriptor.getName(), descriptor);
+        }
+        return propertyMap;
     }
 }

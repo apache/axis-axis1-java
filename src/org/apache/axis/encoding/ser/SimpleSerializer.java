@@ -90,23 +90,36 @@ public class SimpleSerializer implements Serializer {
     public SimpleSerializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
-        
-        if (SimpleType.class.isAssignableFrom(javaType)) {
-            // get the bean properties and the list of attributes from the bean
-            typeDesc = TypeDesc.getTypeDescForClass(javaType);
-            propertyDescriptor = BeanUtils.getPd(javaType, typeDesc);
-        }
+        init();
     }
     public SimpleSerializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
-        
+        init();
+    }
+
+   /**
+    * Initialize the typeDesc and propertyDescriptor array.
+    */
+    private void init() {
+        // The typeDesc and propertyDescriptor array are only necessary
+        // if this class extends SimpleType.
         if (SimpleType.class.isAssignableFrom(javaType)) {
-            // get the bean properties and the list of attributes from the bean
-            propertyDescriptor = BeanUtils.getPd(javaType,typeDesc);
+            // Set the typeDesc if not already set
+            if (typeDesc == null) {
+                typeDesc = TypeDesc.getTypeDescForClass(javaType);
+            }
+            // Get the cached propertyDescriptor from the type or 
+            // generate a fresh one.
+            if (typeDesc != null) {
+                propertyDescriptor = typeDesc.getPropertyDescriptors();
+            } else {   
+                propertyDescriptor = BeanUtils.getPd(javaType, null);
+            }
         }
     }
+
     /**
      * Serialize a primitive or simple value.
      * If the object to serialize is a primitive, the Object value below

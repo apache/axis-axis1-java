@@ -90,8 +90,7 @@ public class SimpleDeserializer extends DeserializerImpl {
 
     StringBuffer val = new StringBuffer();
     private Constructor constructor = null;
-    private BeanPropertyDescriptor[] pd = null;
-    private HashMap propertyMap = new HashMap();
+    private Map propertyMap = null;
     private HashMap attributeMap = null;
 
     public QName xmlType;
@@ -106,33 +105,42 @@ public class SimpleDeserializer extends DeserializerImpl {
     public SimpleDeserializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
-        
-        // if this type is a SimpleType bean, get bean properties
-        if (SimpleType.class.isAssignableFrom(javaType)) {
-            typeDesc = TypeDesc.getTypeDescForClass(javaType);
-            this.pd = BeanUtils.getPd(javaType,typeDesc);
-            // loop through properties and grab the names for later
-            for (int i = 0; i < pd.length; i++) {
-                BeanPropertyDescriptor descriptor = pd[i];
-                propertyMap.put(descriptor.getName(), descriptor);
-            }
-        }        
+
+        init();
     }
     public SimpleDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
         
-        // if this type is a SimpleType bean, get bean properties
-        if (SimpleType.class.isAssignableFrom(javaType)) {
-            this.pd = BeanUtils.getPd(javaType, typeDesc);
-            // loop through properties and grab the names for later
-            for (int i = 0; i < pd.length; i++) {
-                BeanPropertyDescriptor descriptor = pd[i];
-                propertyMap.put(descriptor.getName(), descriptor);
-            }
-        }        
+        init();
     }    
+
+   /**
+    * Initialize the typeDesc, property descriptors and propertyMap.
+    */
+    private void init() {
+        // The typeDesc and map array are only necessary
+        // if this class extends SimpleType.
+        if (SimpleType.class.isAssignableFrom(javaType)) {
+            // Set the typeDesc if not already set
+            if (typeDesc == null) {
+                typeDesc = TypeDesc.getTypeDescForClass(javaType);
+            }
+            // Get the cached propertyDescriptor from the type or 
+            // generate a fresh one.
+            if (typeDesc != null) {
+                propertyMap = typeDesc.getPropertyDescriptorMap();
+            } else {   
+                BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, null);
+                propertyMap = new HashMap();
+                for (int i = 0; i < pd.length; i++) {
+                    BeanPropertyDescriptor descriptor = pd[i];
+                    propertyMap.put(descriptor.getName(), descriptor);
+                }
+            }
+        }
+    }
       
     /** 
      * The Factory calls setConstructor.
