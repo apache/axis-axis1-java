@@ -122,6 +122,11 @@ public class ServiceDescription
         outputParams.addElement(new Param(name, type));
     }
     
+    public void setOutputParam(QName type)
+    {
+        outputParams.addElement(new Param(null, type));
+    }
+    
     public void setSendTypeAttr(boolean sendType)
     {
         sendXsiType = sendType;
@@ -137,7 +142,7 @@ public class ServiceDescription
         Enumeration e = list.elements();
         while (e.hasMoreElements()) {
             Param p = (Param)e.nextElement();
-            if (p.name.equals(name))
+            if ((p.name==null) || (p.name.equals(name)))
                 return p;
         }
         
@@ -154,9 +159,23 @@ public class ServiceDescription
     
     public QName getInputParamTypeByPos(int position)
     {
+        if (inputParams.size() <= position)
+            return null;
+
         Param param = (Param)inputParams.elementAt(position);
         if (param != null)
             return param.type;
+        return null;
+    }
+    
+    public String getInputParamNameByPos(int position)
+    {
+        if (inputParams.size() <= position)
+            return null;
+
+        Param param = (Param)inputParams.elementAt(position);
+        if (param != null)
+            return param.name;
         return null;
     }
     
@@ -186,6 +205,9 @@ public class ServiceDescription
     
     public QName getOutputParamTypeByPos(int position)
     {
+        if (inputParams.size() <= position)
+            return null;
+
         Param param = (Param)outputParams.elementAt(position);
         if (param != null)
             return param.type;

@@ -102,21 +102,15 @@ public class RPCElement extends SOAPBodyElement
         this.methodName = localName;
     }
 
-    public RPCElement(String methodName, Object [] args)
+    public RPCElement(String namespace, String methodName, Object [] args)
     {
-        this.methodName = methodName;
-        this.name = methodName;
-        
-        for (int i = 0; args != null && i < args.length; i++) {
-            if (args[i] instanceof RPCParam) {
-                addParam((RPCParam)args[i]);
-            } else {
-                addParam(new RPCParam("arg" + i, args[i]));
-            }
-        }
+        this(namespace, methodName, args, null);
     }
-    
-    public RPCElement(String namespace, String methodName, Object[] args ) {
+
+    public RPCElement(String namespace, String methodName, Object [] args,
+                      ServiceDescription service)
+    {
+        this.setNamespaceURI(namespace);
         this.methodName = methodName;
         this.name = methodName;
         
@@ -124,10 +118,12 @@ public class RPCElement extends SOAPBodyElement
             if (args[i] instanceof RPCParam) {
                 addParam((RPCParam)args[i]);
             } else {
-                addParam(new RPCParam("arg" + i, args[i]));
+                String name = null;
+                if (service != null) name = service.getInputParamNameByPos(i);
+                if (name == null) name = "arg" + i;
+                addParam(new RPCParam(name, args[i]));
             }
         }
-        this.setNamespaceURI( namespace );
     }
     
     public RPCElement(String methodName)
@@ -172,6 +168,7 @@ public class RPCElement extends SOAPBodyElement
     {
         // Start of an arg...
         RPCParam param = new RPCParam(namespace, name, attributes, context);
+        param.setRPCElement(this);
         
         // See if we can default xsi:type...
         if (params.size()==0) determineDefaultParams();

@@ -235,8 +235,7 @@ public class ServiceClient {
     
     public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
         Debug.Print( 1, "Enter: ServiceClient::invoke(ns, meth, args)" );
-        RPCElement  body  = new RPCElement( method, args );
-        body.setNamespaceURI(namespace);
+        RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
         Object ret = invoke( body );
         Debug.Print( 1, "Exit: ServiceClient::invoke(ns, meth, args)" );
         return ret;
