@@ -619,6 +619,7 @@ public class AxisServlet extends AxisServletBase {
         }
 
         Message responseMsg = null;
+        String  contentType = null;
 
         try {
             AxisEngine engine = getEngine();
@@ -694,6 +695,7 @@ public class AxisServlet extends AxisServletBase {
                 }
 
                 responseMsg = msgContext.getResponseMessage();
+                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             } catch (AxisFault e) {
                 log.error(Messages.getMessage("exception00"), e);
                 // It's been suggested that a lack of SOAPAction
@@ -704,14 +706,17 @@ public class AxisServlet extends AxisServletBase {
                   // TODO: less generic realm choice?
                 res.setStatus(status);
                 responseMsg = new Message(e);
+                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             } catch (Exception e) {
                 log.error(Messages.getMessage("exception00"), e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = new Message(AxisFault.makeFault(e));
+                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             }
         } catch (AxisFault fault) {
             log.error(Messages.getMessage("axisFault00"), fault);
             responseMsg = new Message(fault);
+            contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
         }
         if( tlog.isDebugEnabled() ) {
             t3=System.currentTimeMillis();
@@ -720,7 +725,7 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null)
-            sendResponse(getProtocolVersion(req), msgContext.getSOAPConstants(),
+            sendResponse(getProtocolVersion(req), contentType,
                          res, responseMsg);
 
         if (isDebug) {
@@ -767,7 +772,7 @@ public class AxisServlet extends AxisServletBase {
      * @throws IOException if the response stream can not be written to
      */
     private void sendResponse(final String clientVersion, 
-            SOAPConstants soapConstants,
+            String contentType,
             HttpServletResponse res, Message responseMsg)
         throws AxisFault, IOException
     {
@@ -780,13 +785,13 @@ public class AxisServlet extends AxisServletBase {
         } else {
             if(isDebug) {
                 log.debug("Returned Content-Type:" +
-                    responseMsg.getContentType(soapConstants));
+                    contentType);
                 // log.debug("Returned Content-Length:" +
                 //          responseMsg.getContentLength());
             }
 
             try {
-                res.setContentType(responseMsg.getContentType(soapConstants));
+                res.setContentType(contentType);
 
                 /* My understand of Content-Length
                  * HTTP 1.0
