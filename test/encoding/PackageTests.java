@@ -39,6 +39,10 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestMultiRefIdentity.class);
         suite.addTestSuite(TestNormalizedString.class);
         suite.addTestSuite(TestToken.class);
+        suite.addTestSuite(TestUnsignedLong.class);
+        suite.addTestSuite(TestUnsignedInt.class);
+        suite.addTestSuite(TestUnsignedShort.class);
+        suite.addTestSuite(TestUnsignedByte.class);
         return suite;
     }
 }

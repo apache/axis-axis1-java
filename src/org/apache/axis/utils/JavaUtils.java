@@ -57,7 +57,7 @@ package org.apache.axis.utils;
 
 import org.apache.axis.AxisProperties;
 import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.encoding.Hex;
+import org.apache.axis.types.HexBinary;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -220,13 +220,13 @@ public class JavaUtils
             argHeldType = getHolderValueType(arg.getClass());
         }
 
-        // Convert between Axis special purpose Hex and byte[]
-        if (arg instanceof Hex &&
+        // Convert between Axis special purpose HexBinary and byte[]
+        if (arg instanceof HexBinary &&
             destClass == byte[].class) {
-            return ((Hex) arg).getBytes();
+            return ((HexBinary) arg).getBytes();
         } else if (arg instanceof byte[] &&
-                   destClass == Hex.class) {
-            return new Hex((byte[]) arg);
+                   destClass == HexBinary.class) {
+            return new HexBinary((byte[]) arg);
         }
 
         // Convert between Calendar and Date
@@ -446,8 +446,8 @@ public class JavaUtils
                 dest.getComponentType().isAssignableFrom(src)) 
                 return true;
 
-            if ((src == Hex.class && dest == byte[].class) ||
-                (src == byte[].class && dest == Hex.class))
+            if ((src == HexBinary.class && dest == byte[].class) ||
+                (src == byte[].class && dest == HexBinary.class))
                 return true;
             
             // Allow mapping of HashMaps to Hashtables

@@ -3,8 +3,8 @@
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis Wsdl2java emitter.
- * 
- * And then it was hand modified to echo 
+ *
+ * And then it was hand modified to echo
  * the arguments back to the caller.
  */
 
@@ -109,7 +109,7 @@ public class InteropTestSoapBindingImpl implements samples.echo.InteropTestPortT
     /**
      * This method accepts a Token (xsd:token) and echoes it back to the client.
      */
-    public org.apache.axis.encoding.Token echoToken(org.apache.axis.encoding.Token input) throws java.rmi.RemoteException {
+    public org.apache.axis.types.Token echoToken(org.apache.axis.types.Token input) throws java.rmi.RemoteException {
         return input;
     }
 
@@ -117,7 +117,40 @@ public class InteropTestSoapBindingImpl implements samples.echo.InteropTestPortT
      * This method accepts a NormalizedString (xsd:normalizedString) and echoes
      * it back to the client.
      */
-    public org.apache.axis.encoding.NormalizedString echoNormalizedString(org.apache.axis.encoding.NormalizedString input) throws java.rmi.RemoteException {
+    public org.apache.axis.types.NormalizedString echoNormalizedString(org.apache.axis.types.NormalizedString input) throws java.rmi.RemoteException {
         return input;
     }
+
+        /**
+         * This method accepts a UnsignedLong (xsd:unsignedLong) and echoes
+         * it back to the client.
+         */
+    public org.apache.axis.types.UnsignedLong echoUnsignedLong(org.apache.axis.types.UnsignedLong input) throws java.rmi.RemoteException {
+            return input;
+        }
+
+        /**
+         * This method accepts a UnsignedInt (xsd:unsignedInt) and echoes
+         * it back to the client.
+         */
+    public org.apache.axis.types.UnsignedInt echoUnsignedInt(org.apache.axis.types.UnsignedInt input) throws java.rmi.RemoteException {
+            return input;
+        }
+
+        /**
+         * This method accepts a UnsignedShort (xsd:unsignedShort) and echoes
+         * it back to the client.
+         */
+    public org.apache.axis.types.UnsignedShort echoUnsignedShort(org.apache.axis.types.UnsignedShort input) throws java.rmi.RemoteException {
+            return input;
+        }
+
+        /**
+         * This method accepts a UnsignedByte (xsd:unsignedByte) and echoes
+         * it back to the client.
+         */
+    public org.apache.axis.types.UnsignedByte echoUnsignedByte(org.apache.axis.types.UnsignedByte input) throws java.rmi.RemoteException {
+            return input;
+        }
+
 }

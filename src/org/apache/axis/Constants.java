@@ -445,11 +445,17 @@ public class Constants {
     public static final QName XSD_QNAME = new QName(URI_DEFAULT_SCHEMA_XSD, "QName");
     public static final QName XSD_DATETIME = new QName(URI_DEFAULT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DATE = new QName(URI_DEFAULT_SCHEMA_XSD, "date");
+    public static final QName XSD_TIME = new QName(URI_DEFAULT_SCHEMA_XSD, "time");
     public static final QName XSD_TIMEINSTANT1999 = new QName(URI_1999_SCHEMA_XSD, "timeInstant");
     public static final QName XSD_TIMEINSTANT2000 = new QName(URI_2000_SCHEMA_XSD, "timeInstant");
 
     public static final QName XSD_NORMALIZEDSTRING = new QName(URI_2001_SCHEMA_XSD, "normalizedString");
     public static final QName XSD_TOKEN = new QName(URI_2001_SCHEMA_XSD, "token");
+
+    public static final QName XSD_UNSIGNEDLONG = new QName(URI_2001_SCHEMA_XSD, "unsignedLong");
+    public static final QName XSD_UNSIGNEDINT = new QName(URI_2001_SCHEMA_XSD, "unsignedInt");
+    public static final QName XSD_UNSIGNEDSHORT = new QName(URI_2001_SCHEMA_XSD, "unsignedShort");
+    public static final QName XSD_UNSIGNEDBYTE = new QName(URI_2001_SCHEMA_XSD, "unsignedByte");
 
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");
@@ -489,8 +495,8 @@ public class Constants {
     public static final String MC_CONFIGPATH = "configPath";
     // MessageContext param for the IP of the calling client
     public static final String MC_REMOTE_ADDR = "remoteaddr";
-    // When invoked from a servlet, per JAX-RPC, we need  a 
+    // When invoked from a servlet, per JAX-RPC, we need  a
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
-    
+
 }

@@ -60,6 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Handler;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -520,7 +521,7 @@ public class SerializationContextImpl implements SerializationContext
         if (javaType == String.class) return true;
         if (Calendar.class.isAssignableFrom(javaType)) return true;
         if (Date.class.isAssignableFrom(javaType)) return true;
-        if (Hex.class.isAssignableFrom(javaType)) return true;
+        if (HexBinary.class.isAssignableFrom(javaType)) return true;
         if (Element.class.isAssignableFrom(javaType)) return true;
         if (javaType == byte[].class) return true;
 

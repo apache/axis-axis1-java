@@ -55,22 +55,38 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.types.Time;
+
 import javax.xml.namespace.QName;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 /**
- * Deserializer for xsd:token elements
+ * Deserializer for the xsd:time XML schema type
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#time">XML Schema 3.2.8</a>
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class TimeDeserializer extends SimpleDeserializer {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
+    /**
+     * The Deserializer is constructed with the xmlType and 
+     * javaType
+     */
+    public TimeDeserializer(Class javaType, QName xmlType) {
         super(javaType, xmlType);
+    }
+
+    /**
+     * The simple deserializer provides most of the stuff.
+     * We just need to override makeValue().
+     */
+    public Object makeValue(String source) {
+        // The Time object knows how to parse itself.   
+        return new Time(source);
     }
 }

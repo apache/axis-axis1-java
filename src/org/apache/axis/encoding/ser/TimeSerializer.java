@@ -55,22 +55,61 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.xml.sax.Attributes;
+
 import javax.xml.namespace.QName;
 
-/**
- * Deserializer for xsd:token elements
- *
- * @author Chris Haddad (chaddad@cobia.net)
- */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+import java.io.IOException;
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+import org.apache.axis.Constants;
+import org.apache.axis.types.Time;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializationContext;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+/**
+ * Serializer for the xsd:time XML schema type
+ *
+ * @author Tom Jordahl (tomj@macromedia.com)
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#time">XML Schema 3.2.8</a>
+ */
+public class TimeSerializer implements Serializer {
+
+    /**
+     * Serialize a Time.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        context.startElement(name, attributes);
+        String fdate;
+
+        // Time objects know how to format themselves
+        fdate = ((Time) value).toString();
+
+        context.writeString(fdate);
+        context.endElement();
+    }
+
+    public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
     }
 }

@@ -55,22 +55,23 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
 import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.apache.axis.types.UnsignedLong;
 import javax.xml.namespace.QName;
 
 /**
- * Deserializer for xsd:token elements
+ * Deserializer for xsd:unsignedLong elements
  *
  * @author Chris Haddad (chaddad@cobia.net)
  */
-public class TokenDeserializer extends SimpleDeserializer
+public class UnsignedLongDeserializer extends SimpleDeserializer
 {
     public Object makeValue(String source) throws Exception {
-        return new Token(source);
+      // do we have to add .0
+        return new UnsignedLong(Double.parseDouble(source));
     } // makeValue
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
+    public UnsignedLongDeserializer(Class javaType, QName xmlType) {
         super(javaType, xmlType);
     }
 }

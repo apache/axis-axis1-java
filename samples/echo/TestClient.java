@@ -57,9 +57,13 @@ package samples.echo ;
 
 import org.apache.axis.AxisFault;
 
-import org.apache.axis.encoding.Hex;
-import org.apache.axis.encoding.NormalizedString;
-import org.apache.axis.encoding.Token;
+import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.Token;
+import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedInt;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.types.UnsignedByte;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
@@ -121,12 +125,12 @@ public abstract class TestClient {
        if (obj1.equals(obj2)) return true;
 
        // For comparison purposes, get the array of bytes representing
-       // the Hex object.
-       if (obj1 instanceof Hex) {
-           obj1 = ((Hex) obj1).getBytes();
+        // the HexBinary object.
+       if (obj1 instanceof HexBinary) {
+           obj1 = ((HexBinary) obj1).getBytes();
        }
-       if (obj2 instanceof Hex) {
-           obj2 = ((Hex) obj2).getBytes();
+       if (obj2 instanceof HexBinary) {
+           obj2 = ((HexBinary) obj2).getBytes();
        }
 
        if (obj1 instanceof Calendar && obj2 instanceof Calendar) {
@@ -231,6 +235,59 @@ public abstract class TestClient {
                 throw e;
             }
         }
+
+        // Test xsd:unsignedLong
+        UnsignedLong ulInput = new UnsignedLong(100);
+        try {
+            output = binding.echoUnsignedLong(ulInput);
+            verify("echoUnsignedLong", ulInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoUnsignedLong", ulInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:unsignedInt
+        UnsignedInt uiInput = new UnsignedInt(101);
+        try {
+            output = binding.echoUnsignedInt(uiInput);
+            verify("echoUnsignedInt", uiInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoUnsignedInt", uiInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:unsignedShort
+        UnsignedShort usInput = new UnsignedShort(102);
+        try {
+            output = binding.echoUnsignedShort(usInput);
+            verify("echoUnsignedShort", usInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoUnsignedShort", usInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:unsignedByte
+        UnsignedByte ubInput = new UnsignedByte(103);
+        try {
+            output = binding.echoUnsignedByte(ubInput);
+            verify("echoUnsignedByte", ubInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoUnsignedByte", ubInput, e);
+            } else {
+                throw e;
+            }
+        }
+
     }
 
     /**
@@ -396,7 +453,7 @@ public abstract class TestClient {
         }
 
         {
-            Hex input = new Hex("3344");
+            HexBinary input = new HexBinary("3344");
             try {
                 output = binding.echoHexBinary(input.getBytes());
                 verify("echoHexBinary", input, output);
@@ -502,7 +559,7 @@ public abstract class TestClient {
                 StringHolder outputString = new StringHolder();
                 IntHolder outputInteger = new IntHolder();
                 FloatHolder outputFloat = new FloatHolder();
-                binding.echoStructAsSimpleTypes(input, outputString, 
+                binding.echoStructAsSimpleTypes(input, outputString,
                                                  outputInteger, outputFloat);
                 output = new SOAPStruct();
                 ((SOAPStruct)output).setVarInt(outputInteger.value);
