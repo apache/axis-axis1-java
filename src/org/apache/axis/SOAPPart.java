@@ -48,6 +48,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
@@ -399,8 +400,19 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsString
             currentMessageAsString = (String) currentMessage;
             try{
-                setCurrentForm( ((String)currentMessage).getBytes("UTF-8"),
-               FORM_BYTES );
+                // set encoding of string from message context.
+                String encoding = null;
+                if (msgObject != null) {
+                    try {
+                        encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                    } catch (SOAPException e) {
+                    }
+                }
+                if (encoding == null) {
+                    encoding = "UTF-8";
+                }
+                setCurrentForm( ((String)currentMessage).getBytes(encoding),
+                    FORM_BYTES );
             }catch(UnsupportedEncodingException ue){
                setCurrentForm( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
@@ -533,6 +545,14 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
+            // set encoding of input source from message context.
+            if (getMessage().getMessageContext() != null) {
+                String encoding = 
+                    (String) getMessage().getMessageContext().getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                if (encoding != null) {
+                    is.setEncoding(encoding);
+                }
+            }
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
