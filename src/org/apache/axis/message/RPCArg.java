@@ -58,9 +58,7 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
-import org.apache.axis.message.* ;
+import org.jdom.* ;
 
 /**
  *
@@ -75,10 +73,10 @@ public class RPCArg {
   public RPCArg() {} 
 
   public RPCArg(Element elem) {
-    prefix = elem.getPrefix();
+    prefix = elem.getNamespacePrefix();
     namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    value = elem.getFirstChild().getNodeValue();
+    name = elem.getName();
+    value = elem.getText();
   }
 
   public RPCArg(String name) {
@@ -103,17 +101,14 @@ public class RPCArg {
   public String getValue() { return( value ); }
   public void   setValue(String val) { value = val ; }
 
-  public Element getAsXML(Document doc) {
+  public Element getAsXML() {
     Element   root ;
 
-    if ( prefix != null ) {
-      root = doc.createElementNS(prefix, prefix + ":" + name );
-      root.setAttribute( "xmlns:" + prefix, namespaceURI );
-    }
-    else {
-      root = doc.createElement( name );
-    }
-    root.appendChild( doc.createTextNode( value ) );
+    if ( prefix != null )
+      root = new Element( name, prefix, namespaceURI );
+    else 
+      root = new Element( name );
+    root.addContent( value );
     return( root );
   }
 };

@@ -58,9 +58,7 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
-import org.xml.sax.InputSource ;
+import org.jdom.* ;
 import org.apache.axis.message.* ;
 
 /**
@@ -84,10 +82,10 @@ public class RPCBody {
   }
 
   public void setBody( Element root ) {
-    setMethodName( root.getLocalName() );
-    setPrefix( root.getPrefix() );
+    setMethodName( root.getName() );
+    setPrefix( root.getNamespacePrefix() );
     setNamespaceURI( root.getNamespaceURI() );
-    parseArgs( root.getChildNodes() );
+    parseArgs( root.getChildren() );
   }
 
   public RPCBody(String methodName, Object[] args) {
@@ -122,34 +120,30 @@ public class RPCBody {
     args.add( arg ); 
   }
   
-  public void      parseArgs(NodeList list) {
-    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-      Node  n = list.item(i);
-      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+  public void      parseArgs(List list) {
+    for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+      Object  n = list.get(i);
       if ( args == null ) args = new ArrayList();
       args.add( new RPCArg( (Element) n ) );
     }
   }
 
-  public Element getAsXML(Document doc) {
+  public Element getAsXML() {
     Element   root ;
    
-    if ( prefix != null ) {
-      root = doc.createElementNS(prefix, prefix + ":" + methodName );
-      root.setAttribute( "xmlns:" + prefix, namespaceURI );
-    }
+    if ( prefix != null ) 
+      root = new Element( methodName, prefix, namespaceURI );
     else 
-      root = doc.createElement( methodName );
+      root = new Element( methodName );
     for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
       RPCArg  arg = (RPCArg) args.get(i) ;
-      root.appendChild( arg.getAsXML(doc) );
+      root.addContent( arg.getAsXML() );
     }
     return( root );
   }
 
   public SOAPBody getAsSOAPBody() {
-    Document doc = new DocumentImpl();
-    return( new SOAPBody( getAsXML(doc) ) );
+    return( new SOAPBody( getAsXML() ) );
   }
 
 };

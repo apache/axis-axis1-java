@@ -54,12 +54,11 @@
  */
 
 import java.io.*;
+import java.util.* ;
 import java.net.URL;
 
-import org.w3c.dom.*;
-import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.* ;
-import org.apache.xerces.framework.* ;
+import org.jdom.* ;
+import org.jdom.input.SAXBuilder ;
 
 /**
  * See \samples\stock\readme for info.
@@ -78,17 +77,15 @@ public class StockQuoteService {
     URL          url = new URL( "http://www.xmltoday.com/examples/" +
                                 "stockquote/getxmlquote.vep?s="+symbol );
 
-    DOMParser    parser = new DOMParser();
-    InputSource  inp    = new InputSource( url.openStream() );
+    SAXBuilder   parser = new SAXBuilder();
 
-    parser.parse( inp );
+    Document doc = parser.build( url );
 
-    Document     doc  = parser.getDocument();
-    Element      elem = doc.getDocumentElement ();
-    NodeList     list = elem.getElementsByTagName( "price" );
+    Element      elem = doc.getRootElement ();
+    List         list = elem.getChildren( "price" );
 
-    elem = (Element) list.item( 0 );
-    String quoteStr = elem.getAttribute ("value");
+    elem = (Element) list.get( 0 );
+    String quoteStr = elem.getAttributeValue("value");
     try {
       return Float.valueOf(quoteStr).floatValue();
     } catch (NumberFormatException e1) {

@@ -58,8 +58,7 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
+import org.jdom.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.* ;
 
@@ -82,15 +81,14 @@ public class SOAPHeader {
 
   public SOAPHeader(Element elem) {
     String  value ;
-    prefix = elem.getPrefix();
+    prefix = elem.getNamespacePrefix();
     namespaceURI = elem.getNamespaceURI();
-    name = elem.getLocalName();
-    value = elem.getAttributeNS( Constants.URI_SOAP_ENV,
-                                     Constants.ATTR_MUST_UNDERSTAND );
+    name = elem.getName();
+    value = elem.getAttributeValue( Constants.ATTR_MUST_UNDERSTAND,
+                                    elem.getNamespace() );
     if ( "1".equals(value) ) mustUnderstand = true ;
-    actor = elem.getAttributeNS( Constants.URI_SOAP_ENV,
-                                Constants.ATTR_ACTOR );
-    setData( elem.getChildNodes() );
+    actor = elem.getAttributeValue( Constants.ATTR_ACTOR, elem.getNamespace() );
+    setData( elem.getMixedContent() );
     processed = false ;
   }
 
@@ -111,36 +109,40 @@ public class SOAPHeader {
 
   public Vector getData() { return( data ); }
 
-  public Node getDataAtIndex(int i) {
+  public Object getDataAtIndex(int i) {
     if ( data == null || i >= data.size() ) return( null );
-    return( (Node) data.get(i) );
+    return( (Object) data.get(i) );
   }
 
-  public void addDataNode(Node n) { 
+  public void addDataNode(Object n) { 
     if ( data == null ) data = new Vector();
     data.add(n); 
   };
 
-  public void setData(NodeList nl) { 
+  public void setData(List nl) { 
     data = null ;
-    if ( nl != null && nl.getLength() != 0 ) data = new Vector();
-    for ( int i = 0 ; i < nl.getLength() ; i++ )
-      data.add( nl.item(i) );
+    if ( nl != null && nl.size() != 0 ) data = new Vector();
+    for ( int i = 0 ; i < nl.size() ; i++ )
+      data.add( nl.get(i) );
   }
 
-  public Element getAsXML(Document doc) {
-    Element   root = doc.createElementNS(prefix, prefix + ":" + name );
-    root.setAttribute( "xmlns:" + prefix, namespaceURI );
+  public Element getAsXML() {
+    Element  root = new Element( name, prefix, namespaceURI );
     if ( mustUnderstand )
-      root.setAttributeNS( Constants.URI_SOAP_ENV,
-                           Constants.ATTR_MUST_UNDERSTAND,
-                           "1" );
+      root.addAttribute( Constants.ATTR_MUST_UNDERSTAND, "1" );
     if ( actor != null )
-      root.setAttributeNS( Constants.URI_SOAP_ENV,
-                           Constants.ATTR_ACTOR,
-                           actor );
-    for ( int i = 0 ; data != null && i < data.size() ; i++ )
-      root.appendChild(doc.importNode( (Node) data.get(i), true ));
+      root.addAttribute( Constants.ATTR_ACTOR, actor );
+    for ( int i = 0 ; data != null && i < data.size() ; i++ ) {
+      Object o = data.get(i);
+      if ( o instanceof String )
+        root.addContent( (String) o );
+      else if ( o instanceof CDATA )
+        root.addContent( (CDATA) o );
+      else if ( o instanceof Element )
+        root.addContent( (Element) o );
+      else
+        System.err.println( "Unknown type: " + o.getClass() );
+    }
     return( root );
   }
 

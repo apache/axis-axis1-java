@@ -58,8 +58,7 @@ package org.apache.axis.handlers ;
 import java.io.* ;
 import java.util.* ;
 import java.lang.reflect.* ;
-import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
+import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
@@ -102,7 +101,7 @@ public class MsgDispatchHandler extends BasicHandler {
       SOAPBody      reqBody = reqEnv.getFirstBody();
   
       argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
-      argClasses[1] = cl.loadClass("org.w3c.dom.Document");
+      argClasses[1] = cl.loadClass("org.jdom.Document");
       argObjects[0] = (Object) msgContext ;
       argObjects[1] = (Object) reqBody.getAsDocument();
 

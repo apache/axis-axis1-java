@@ -57,9 +57,9 @@ package org.apache.axis ;
 
 import java.io.* ;
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
-import org.apache.xerces.dom.DocumentImpl ;
+
+import org.jdom.* ;
+
 import org.apache.axis.utils.* ;
 
 /** 
@@ -132,36 +132,28 @@ public class AxisFault extends Exception {
     return( (Element[]) faultDetails.toArray() );
   }
 
-  public Element getAsDOM() {
-    Document doc = null ;
+  public Element getAsXML() {
     Element  elem, root ;
     int      i ;
 
-    doc = new DocumentImpl();
+    root = new Element( Constants.ELEM_FAULT, Constants.NSPREFIX_SOAP_ENV,
+                        Constants.URI_SOAP_ENV );
+    root.addContent( elem = new Element( Constants.ELEM_FAULT_CODE ) );
+    elem.addContent( faultCode );
 
-    root = doc.createElementNS(Constants.URI_SOAP_ENV,
-                               Constants.NSPREFIX_SOAP_ENV + ":" +
-                               Constants.ELEM_FAULT);
-    doc.appendChild( root );
-
-    root.appendChild( elem = doc.createElement(Constants.ELEM_FAULT_CODE) );
-    elem.appendChild( doc.createTextNode( faultCode ) );
-
-    root.appendChild( elem = doc.createElement(Constants.ELEM_FAULT_STRING) );
-    elem.appendChild( doc.createTextNode( faultString ) );
+    root.addContent( elem = new Element(Constants.ELEM_FAULT_STRING) );
+    elem.addContent( faultString );
 
     if ( faultActor != null && !faultActor.equals("") ) {
-      root.appendChild( elem = doc.createElement(Constants.ELEM_FAULT_ACTOR) );
-      elem.appendChild( doc.createTextNode( faultActor ) );
+      root.addContent( elem = new Element(Constants.ELEM_FAULT_ACTOR) );
+      elem.addContent( faultActor );
     }
 
     if ( faultDetails != null && faultDetails.size() > 0 ) {
-      root.appendChild( elem = doc.createElement(Constants.ELEM_FAULT_DETAIL) );
+      root.addContent( elem = new Element(Constants.ELEM_FAULT_DETAIL) );
       for ( i = 0 ;i < faultDetails.size() ; i++ )
-        elem.appendChild( (Element) faultDetails.get(i) );
+        elem.addContent( (Element) faultDetails.get(i) );
     }
-
-    root.appendChild( elem );
 
     return( root );
   }

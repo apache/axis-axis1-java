@@ -56,8 +56,7 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
+import org.jdom.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
@@ -163,9 +162,7 @@ public class HTTPMessage {
       header.setName("Debug");
       header.setNamespaceURI( Constants.URI_DEBUG );
       header.setActor( Constants.URI_NEXT_ACTOR );
-      Document doc = new DocumentImpl();
-      Node node = doc.createTextNode( "" + Debug.getDebugLevel() );
-      header.addDataNode( node );
+      header.addDataNode( "" + Debug.getDebugLevel() );
 
       reqEnv.addHeader( header );
     }

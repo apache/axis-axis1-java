@@ -58,12 +58,13 @@ package org.apache.axis ;
 import java.io.* ;
 import javax.servlet.* ;
 import javax.servlet.http.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.DOMParser ;
-import org.apache.xml.serialize.OutputFormat ;
-import org.apache.xml.serialize.XMLSerializer ;
+
+import org.jdom.* ;
+import org.jdom.input.SAXBuilder ;
+import org.jdom.output.XMLOutputter ;
+
 import org.apache.axis.message.* ;
+import org.apache.axis.utils.Debug ;
 
 /**
  *
@@ -83,6 +84,7 @@ public class Message {
    * Just something to us working...
    */
   public Message(Object origMsg, String form) {
+    Debug.Print( 1, "Enter Message ctor, form: " + form );
     originalMessage = origMsg ;
     currentMessage = origMsg ;
     currentForm = form ;
@@ -101,6 +103,7 @@ public class Message {
   }
 
   public void setCurrentMessage(Object currMsg, String form) {
+    Debug.Print( 1, "Setting current message form to: " + form );
     currentMessage = currMsg ;
     currentForm = form ;
   }
@@ -109,6 +112,8 @@ public class Message {
   // now I need something quick...
 
   public Object getAs( String desiredType ) {
+    Debug.Print( 1, "Enter: Message::getAs(" +desiredType+ ")" );
+    Debug.Print( 1, " current form: " + currentForm );
     if ( currentForm.equals( desiredType ) ) return( currentMessage );
 
     if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
@@ -121,7 +126,11 @@ public class Message {
   }
 
   private byte[] getAsBytes() {
-    if ( currentForm.equals("Bytes") ) return( (byte[]) currentMessage );
+    Debug.Print( 1, "Enter: Message::getAsByes" );
+    if ( currentForm.equals("Bytes") ) {
+      Debug.Print( 1, "Exit: Message::getAsByes" );
+      return( (byte[]) currentMessage );
+    }
 
     if ( currentForm.equals("InputStream") ) {
       // Assumes we don't need a content length
@@ -130,11 +139,13 @@ public class Message {
         byte[]  buf = new byte[ inp.available() ];
         inp.read( buf );
         setCurrentMessage( buf, "Bytes" );
+        Debug.Print( 1, "Exit: Message::getAsByes" );
         return( (byte[]) currentMessage );
       }
       catch( Exception e ) {
         e.printStackTrace( System.err );
       }
+      Debug.Print( 1, "Exit: Message::getAsByes" );
       return( null );
     }
 
@@ -144,6 +155,7 @@ public class Message {
         byte[] buf = new byte[req.getContentLength()];
         req.getInputStream().read( buf );
         setCurrentMessage( buf, "Bytes" );
+        Debug.Print( 1, "Exit: Message::getAsBytes" );
         return( (byte[]) currentMessage );
       }
       catch( Exception e ) {
@@ -158,16 +170,21 @@ public class Message {
 
     if ( currentForm.equals("String") ) {
       setCurrentMessage( ((String)currentMessage).getBytes(), "Bytes" );
+      Debug.Print( 1, "Exit: Message::getAsBytes" );
       return( (byte[]) currentMessage );
     }
 
-
     System.err.println("Can't convert " + currentForm + " to Bytes" );
+    Debug.Print( 1, "Exit: Message::getAsBytes" );
     return( null );
   }
 
   private String getAsString() {
-    if ( currentForm.equals("String") ) return( (String) currentMessage );
+    Debug.Print( 1, "Enter: Message::getAsString" );
+    if ( currentForm.equals("String") ) {
+      Debug.Print( 1, "Exit: Message::getAsString" );
+      return( (String) currentMessage );
+    }
 
     if ( currentForm.equals("InputStream") || 
          currentForm.equals("ServletRequest")) {
@@ -177,6 +194,7 @@ public class Message {
 
     if ( currentForm.equals("Bytes") ) {
       setCurrentMessage( new String((byte[]) currentMessage), "String" );
+      Debug.Print( 1, "Exit: Message::getAsString" );
       return( (String) currentMessage );
     }
 
@@ -187,11 +205,9 @@ public class Message {
     if ( currentForm.equals("Document") ) { 
       try {
         ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-        XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
-        xs.serialize( (Document) currentMessage );
-        baos.close();
+        XMLOutputter   xo = new XMLOutputter();
         currentForm = "String" ;
-        currentMessage = baos.toString();
+        currentMessage = xo.outputString( (Document) currentMessage );
         return( (String) currentMessage );
       }
       catch( Exception e ) {
@@ -200,13 +216,15 @@ public class Message {
     }
 
     System.err.println("Can't convert " + currentForm + " to String" );
+    Debug.Print( 1, "Exit: Message::getAsString" );
     return( null );
   }
 
   private Document getAsDocument() {
+    Debug.Print( 1, "Enter: Message::getAsDocument" );
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
-    DOMParser  parser = new DOMParser();
+    SAXBuilder parser = new SAXBuilder();
     Reader     reader = null ;
 
     try {
@@ -236,39 +254,45 @@ public class Message {
       else if ( currentForm.equals("AxisFault") ) {
         AxisFault     fault = (AxisFault) currentMessage ;
         SOAPEnvelope  env   = new SOAPEnvelope();
-        SOAPBody      body  = new SOAPBody( fault.getAsDOM() );
+        SOAPBody      body  = new SOAPBody( fault.getAsXML() );
 
         env.addBody( body );
 
-        setCurrentMessage( env.getAsDOM(), "Document" );
+        setCurrentMessage( env.getAsXML(), "Document" );
+        Debug.Print( 1, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else if ( currentForm.equals("SOAPEnvelope") ) {
         SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
-        setCurrentMessage( env.getAsDOM(), "Document" );
+        setCurrentMessage( env.getAsXML(), "Document" );
+        Debug.Print( 1, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else {
         System.err.println("Can't convert " + currentForm + " to Document" );
+        Debug.Print( 1, "Exit: Message::getAsDocument" );
         return( null );
       }
   
-      parser.parse( new InputSource( reader ) );
-      setCurrentMessage( parser.getDocument(), "Document" );
+      setCurrentMessage( parser.build( reader ), "Document" );
+      Debug.Print( 1, "Exit: Message::getAsDocument" );
       return( (Document) currentMessage );
     }
     catch( Exception e ) {
       e.printStackTrace( System.err );
     }
+    Debug.Print( 1, "Exit: Message::getAsDocument" );
     return( null );
   }
 
   private SOAPEnvelope getAsSOAPEnvelope() {
+    Debug.Print( 1, "Enter: Message::getAsSOAPEnvelope" );
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
     getAsDocument();
     setCurrentMessage( new SOAPEnvelope( (Document) currentMessage ),
                        "SOAPEnvelope" );
+    Debug.Print( 1, "Exit: Message::getAsSOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );
   }
 
