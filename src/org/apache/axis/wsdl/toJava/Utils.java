@@ -466,9 +466,20 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         if( ! firstWord )
             sb.append('.');
 
-        // convert digits to underscores
+        // prefix digits with underscores
         if( Character.isDigit(word.charAt(0)) )
             sb.append('_');
+
+        // replace periods with underscores
+        if (word.indexOf('.') != -1) {
+            char[] buf = word.toCharArray();
+            for (int i=0; i < word.length(); i++) {
+                if (buf[i] == '.') {
+                    buf[i] = '_';
+                }
+            }
+            word = new String(buf);
+        }
         sb.append( word );
     }
 
