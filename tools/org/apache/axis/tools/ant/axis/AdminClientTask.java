@@ -231,7 +231,7 @@ public class AdminClientTask extends Task {
      *   <li><code>-f<i>fileName</i></code> specifies that a simple file
      *              protocol should be used</li>
      *   <li><code>-u<i>username</i></code> sets the username</li>
-     *   <li><code>-p<i>password</i></code> sets the password</li>
+     *   <li><code>-w<i>password</i></code> sets the password</li>
      *   <li><code>-d</code> sets the debug flag (for instance, -ddd would
      *      set it to 3)</li>
      *   <li><code>-t<i>name</i></code> sets the transport chain touse</li>
@@ -261,7 +261,7 @@ public class AdminClientTask extends Task {
         addArgs("-s", servletPath, servletPath != null);
         addArgs("-f", fileProtocol, fileProtocol != null);
         addArgs("-u", username, username != null);
-        addArgs("-p", password, password != null);
+        addArgs("-w", password, password != null);
         addArgs("-t", transportChain, transportChain != null);
         addArg("-d", debug);
         //action
