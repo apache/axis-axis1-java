@@ -49,9 +49,8 @@ public class EngineConfigurationFactoryDefault
     protected static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
     protected static final String SERVER_CONFIG_FILE = "server-config.wsdd";
 
-    private String clientConfigFile;
-
-    private String serverConfigFile;
+    protected String clientConfigFile;
+    protected String serverConfigFile;
 
     /**
      * Creates and returns a new EngineConfigurationFactory.
