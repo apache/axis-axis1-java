@@ -111,7 +111,21 @@ public class RPCDispatchHandler implements Handler {
       Method method = cls.getMethod( mName, argClasses );
       Object objRes = method.invoke( obj, argValues );
 
-      Message outMsg = new Message( objRes.toString(), "String" );
+      // Now put the result in a result SOAPEnvelope
+      env = new SOAPEnvelope();
+      RPCBody resBody = new RPCBody();
+      resBody.setMethodName( mName + "Response" );
+      resBody.setNamespace( body.getNamespace() );
+      resBody.setNamespaceURI( body.getNamespaceURI() );
+      RPCArg  arg = new RPCArg();
+      arg.setName( "return" );
+      arg.setValue( objRes.toString() );
+      resBody.addArg( arg );
+      env.setBody( resBody );
+
+
+      // Message outMsg = new Message( objRes.toString(), "String" );
+      Message outMsg = new Message( env, "SOAPEnvelope" );
       msgContext.setOutgoingMessage( outMsg );
     }
     catch( Exception e ) {

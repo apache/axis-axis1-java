@@ -2,4 +2,4 @@ Deploy:
   java org.apache.axis.client.AdminClient deploy.xml
 
 Usage:
-  java samples.stockquote.GetQuoteClient <symbol>
+  java samples.stock.GetQuoteClient <symbol>

@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package samples.stockquote ;
+package samples.stock ;
 
 import java.io.*;
 import java.net.URL;
@@ -66,7 +66,7 @@ import org.apache.xerces.parsers.* ;
 import org.apache.xerces.framework.* ;
 
 /**
- * See \samples\stockquote\readme for info.
+ * See \samples\stock\readme for info.
  *
  * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
  */

@@ -110,7 +110,7 @@ public class RPCBody extends SOAPBody {
     return( v );
   }
 
-  public void      addArg(RPCArg arg) { 
+  public void addArg(RPCArg arg) { 
     if ( args == null ) args = new ArrayList();
     args.add( arg ); 
   }
