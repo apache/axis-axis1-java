@@ -14,10 +14,40 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Change Log</h2>
+<h1>Axis Change Log</h1>
+
+<h3>Forthcoming changes in Axis 1.2</h3>
+
+Here are some things that are expected to happen in the next release of Axis, so
+you can start preparing for them today.
+
+<ul>
+  <li>log4j.properties will no longer be in axis.jar. This is to avoid conflicts
+   with the configuration files in other bits of the application. You can prepare
+   for this change by removing the file from axis.jar and including your own log4j
+   configuration files in your application.
+ </li>
+
+</ul>
+
+<h2>Axis 1.1</h2>
+
+<h3>Changes from 1.0 to 1.1 that may break your code</h3>
+<ul>
+  <li>
+  We have changed how we map http URLs to packages, such that any directories in the
+  URL are used as well as the hostname. The previous behavior was a defect, as it
+  would import WSDL from the same site into the same place. If you do not explicitly
+  state the mappings of URIs to packages, things may now end up in different places
+  </li>
+  <li> The default socket timeout for clients is now 60 seconds, not infinity.
+    You can use the setTimeout() option on any binding (cast it to an
+    <tt>org.apache.axis.client.Stub</tt> first) to change this.</li>
+</ul>
 
 <h3>Changes from 1.0 to 1.1</h3>
 <ul>
+
   <li>Axis supports JMS for reliable messaging between client and server. Note 
     that the actual wire format of JMS messages is vendor-specific at present, 
     so you may not be able to use this to connect arbitrary JMS clients and servers 
@@ -25,8 +55,11 @@ h1 {  margin-left: -30px}
     details. (rule-of-thumb is &quot;if you can get a JMS connection working, 
     we can talk SOAP over it.&quot; :))
     
-  <li>We include a more recent version of wsdl4j.jar (28/feb/2003).
-  
+  <li>We include a more recent version of wsdl4j.jar (23/mar/2003).
+
+  <li>Log4J 1.2.8 is the version of log4J we use, though Axis still works with
+   older versions (i.e. we dont use the XML configuration mechanism.).
+
   <li>Many more WSDL and interop issues reported (thank you!) and fixed.
   
   <li>One late breaking interop fix was a workaround for a bug in
@@ -94,6 +127,8 @@ h1 {  margin-left: -30px}
      and we need to do a lot more interop testing across platforms and languages. We
      also need a willing volunter to provide a guide to exceptions in
      SOAP and Axis.
+
+<h2>Axis 1.0</h2>
 
 <h3>Changes from 1.0beta-3 to 1.0</h3>
 <ul>
