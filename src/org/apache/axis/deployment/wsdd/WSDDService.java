@@ -209,13 +209,15 @@ public class WSDDService
         }
         
         //service.setPivotHandler(getProvider().getInstance(registry));
-        Handler providerHandler = WSDDProvider.getInstance(providerQName,
-                                                           this,
-                                                           registry);
-        if (providerHandler == null)
-            throw new WSDDException("Couldn't construct provider.");
-        
-        service.setPivotHandler(providerHandler);
+        if (providerQName != null) {
+            Handler providerHandler = WSDDProvider.getInstance(providerQName,
+                                                               this,
+                                                               registry);
+            if (providerHandler == null)
+                throw new WSDDException("Couldn't construct provider.");
+            
+            service.setPivotHandler(providerHandler);
+        }
         
         if (response != null) {
             service.setResponseHandler(response.getInstance(registry));
