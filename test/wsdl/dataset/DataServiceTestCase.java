@@ -12,9 +12,10 @@ public class DataServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1DataServiceSoapGetTitleAuthors() throws Exception {
-        test.wsdl.dataset.DataServiceSoap binding;
+        test.wsdl.dataset.DataServiceSoapStub binding;
         try {
-            binding = new test.wsdl.dataset.DataServiceLocator().getDataServiceSoap();
+            binding = (test.wsdl.dataset.DataServiceSoapStub)
+                    new test.wsdl.dataset.DataServiceLocator().getDataServiceSoap();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -23,6 +24,7 @@ public class DataServiceTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
+        binding.setTimeout(60000);
         // Test operation
         test.wsdl.dataset.GetTitleAuthorsResult value = null;
         value = binding.getTitleAuthors();
