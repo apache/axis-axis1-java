@@ -117,8 +117,8 @@ public class TestMultiRefIdentity extends TestCase {
         // Cheap but fragile.
         int first = s.indexOf("#id0");
         int last = s.lastIndexOf("#id0");
-        assertTrue(first >= 0);
-        assertTrue(last >= 0 && last != first);
+        assertTrue(s, first >= 0);
+        assertTrue(s, last >= 0 && last != first);
     }
     
     /**
@@ -140,8 +140,8 @@ public class TestMultiRefIdentity extends TestCase {
         // Cheap but fragile.
         int first = s.indexOf("#id0");
         int last = s.lastIndexOf("#id0");
-        assertTrue(first >= 0);
-        assertTrue(last >= 0 && last != first);
+        assertTrue(s,first >= 0);
+        assertTrue(s,last >= 0 && last != first);
     }
     
     /**
@@ -164,8 +164,8 @@ public class TestMultiRefIdentity extends TestCase {
         // Cheap but fragile.
         int first = s.indexOf("#id0");
         int last = s.lastIndexOf("#id1");
-        assertTrue(first >= 0);
-        assertTrue(last >= 0);
+        assertTrue(s,first >= 0);
+        assertTrue(s,last >= 0);
     }
     
     /**
@@ -188,8 +188,8 @@ public class TestMultiRefIdentity extends TestCase {
         // Cheap but fragile.
         int first = s.indexOf("#id0");
         int last = s.lastIndexOf("#id1");
-        assertTrue(first >= 0);
-        assertTrue(last >= 0);
+        assertTrue(s,first >= 0);
+        assertTrue(s,last >= 0);
     }
     
     /**
@@ -212,8 +212,8 @@ public class TestMultiRefIdentity extends TestCase {
         // Cheap but fragile.
         int first = s.indexOf("#id0");
         int last = s.lastIndexOf("#id1");
-        assertTrue(first >= 0);
-        assertTrue(last >= 0 && last != first);
+        assertTrue(s,first >= 0);
+        assertTrue(s,last >= 0 && last != first);
     }
     
     class TestBeanA {
