@@ -143,6 +143,27 @@ public class SOAPEnvelope extends MessageElement
         bodyElements.addElement(element);
     }
     
+    public void removeHeader(SOAPHeader header)
+    {
+        if (DEBUG_LOG)
+            System.out.println("Removing header from message...");
+        headers.removeElement(header);
+    }
+    
+    public void removeBodyElement(SOAPBodyElement element)
+    {
+        if (DEBUG_LOG)
+            System.out.println("Removing body element from message...");
+        bodyElements.removeElement(element);
+    }
+    
+    public void removeTrailer(MessageElement element)
+    {
+        if (DEBUG_LOG)
+            System.out.println("Removing trailer from message...");
+        trailers.removeElement(element);
+    }
+    
     public void clearBody()
     {
         if (!bodyElements.isEmpty())

@@ -59,6 +59,7 @@ import org.xml.sax.Attributes;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Debug;
+import org.w3c.dom.Element;
 
 /** A Body element.
  * 
@@ -72,6 +73,11 @@ public class SOAPBodyElement extends MessageElement
                            DeserializationContext context)
     {
         super(namespace, localPart, prefix, attributes, context);
+    }
+    
+    public SOAPBodyElement(Element elem)
+    {
+        super(elem);
     }
     
     public SOAPBodyElement()
