@@ -146,7 +146,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public boolean isRPC()
     {
-        return ((pivotHandler != null) &&
+        return ((pivotHandler == null) ||
                 (pivotHandler.getClass() != MsgProvider.class));
     }
 
