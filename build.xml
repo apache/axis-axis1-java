@@ -92,9 +92,7 @@ Copyright:
     <pathelement location="${clutil.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${junit.jar}"/>
-    <pathelement location="${wsdl4j.jar}"/>
     <pathelement location="${excalibur.jar}"/>
-    <pathelement location="${log4j-core.jar}"/>
     <fileset dir="lib">
      <include name="*.jar"/>
     </fileset>
@@ -247,10 +245,7 @@ Copyright:
   <!-- =================================================================== -->
 
   <path id="test-classpath">
-    <!-- build.dir for test classes and build.dest for classes to test -->
-    <pathelement location="${build.dir}" />
     <pathelement location="${build.dest}" />
-    <pathelement path="${java.class.path}" />
     <path refid="classpath"/>
   </path>
 
@@ -259,7 +254,7 @@ Copyright:
 
     <!-- Tests are packaged as test.*, so source dir is main dir -->
     <javac srcdir="${basedir}"
-      destdir="${build.dir}/classes"
+      destdir="${build.dest}"
       debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
       <include name="test/**/*.java" />
       <classpath refid="test-classpath" />

@@ -24,11 +24,8 @@ Copyright:
   <property name="test.functional.usefile" value="true"/>
 
   <path id="test-classpath">
-    <!-- build.dir for test classes and build.dest for classes to test -->
-    <pathelement location="${build.dir}" />
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
-    <pathelement location="${log4j-core.jar}"/>
     <fileset dir="../java/lib">
      <include name="*.jar"/>
     </fileset>
@@ -36,7 +33,7 @@ Copyright:
 
   <taskdef name="runaxisfunctionaltests"
     classname="test.functional.ant.RunAxisFunctionalTestsTask"
-    classpath="${build.dir}" />
+    classpath="${build.dest}" />
 
   <!-- =================================================================== -->
   <!-- Launches the functional test TCP server -->
@@ -77,7 +74,7 @@ Copyright:
       <classpath refid="test-classpath" />
       <formatter type="plain" usefile="${test.functional.usefile}"/>
       <batchtest>
-        <fileset dir="${build.dir}/classes">
+        <fileset dir="${build.dest}">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/FunctionalTests.class" />
@@ -124,7 +121,7 @@ Copyright:
       <classpath refid="test-classpath" />
       <formatter type="plain" />
       <batchtest>
-        <fileset dir="${build.dir}/classes">
+        <fileset dir="${build.dest}">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/FunctionalTests.class" />
