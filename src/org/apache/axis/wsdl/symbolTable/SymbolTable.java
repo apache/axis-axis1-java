@@ -1950,7 +1950,7 @@ public class SymbolTable {
      * This method returns a vector containing Parameters which represent
      * each Part (shouldn't we call these "Parts" or something?)
      *
-     * This routine does the wraped doc/lit processing.
+     * This routine does the wrapped doc/lit processing.
      * It is also used for generating Faults, and this really confuses things
      * but we need to do the same processing for the fault messages.
      *
