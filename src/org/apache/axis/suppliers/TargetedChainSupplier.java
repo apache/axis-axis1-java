@@ -158,7 +158,6 @@ public class TargetedChainSupplier implements Supplier
         if (category.isDebugEnabled())
             category.debug( "TargetedChainSupplier: Returning chain '" + _myName +
                             "'");
-        category.log(
         return _chain;
     }
 }
