@@ -78,6 +78,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -652,6 +653,25 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                     SOAPBody body = (SOAPBody) elem;
                     ns = body.getNamespaceURI();
                     break;
+                } else if (elem instanceof MIMEMultipartRelated) {
+                    Object part = null;
+                    javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
+                    (javax.wsdl.extensions.mime.MIMEMultipartRelated) elem;
+                    List l =  mpr.getMIMEParts();
+                    for(int j=0; l!= null && j< l.size() && part == null; j++){
+                        javax.wsdl.extensions.mime.MIMEPart mp = (javax.wsdl.extensions.mime.MIMEPart)l.get(j);
+                        List ll= mp.getExtensibilityElements();
+                        for(int k=0; ll != null && k < ll.size() && part == null; k++){
+                            part = ll.get(k);
+                            if (part instanceof SOAPBody) {
+                                SOAPBody body = (SOAPBody) part;
+                                ns = body.getNamespaceURI();
+                                break;
+                            } else {
+                                part = null;
+                            }
+                       }
+                    }
                 } else if (elem instanceof UnknownExtensibilityElement) {
                     //TODO: After WSDL4J supports soap12, change this code
                     UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) elem;
