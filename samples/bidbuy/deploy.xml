@@ -8,25 +8,25 @@
 <!-- This file will be replaced by WSDD once it's ready         -->
 
 <deploy>
-  <chain   name="rpc"     flow="RPCDispatcher" />
+  <chain   name="bid"     flow="RPCDispatcher" />
 
-  <service name="http://www.soapinterop.org/RequestForQuote" pivot="rpc" >
+  <service name="http://www.soapinterop.org/RequestForQuote" pivot="bid" >
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="RequestForQuote" />
   </service>
 
-  <service name="http://www.soapinterop.org/SimpleBuy" pivot="rpc" >
+  <service name="http://www.soapinterop.org/SimpleBuy" pivot="bid" >
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="SimpleBuy" />
   </service>
 
-  <service name="http://www.soapinterop.org/Buy" pivot="rpc" >
+  <service name="http://www.soapinterop.org/Buy" pivot="bid" >
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="Buy" />
     <option name="typemap" value="BuyTypeMap" />
   </service>
 
-  <service name="http://www.soapinterop.org/Ping" pivot="rpc" >
+  <service name="http://www.soapinterop.org/Ping" pivot="bid" >
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="Ping" />
   </service>
