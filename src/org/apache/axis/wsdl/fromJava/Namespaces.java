@@ -82,7 +82,7 @@ public class Namespaces extends HashMap {
     public String getCreate(String key) {
         Object value = super.get(key);
         if (value == null) {
-            value = makeNamespaceFromPackageName((String) key);
+            value = makeNamespaceFromPackageName(key);
             put(key, value, null);
         }
         return (String) value;
@@ -98,7 +98,7 @@ public class Namespaces extends HashMap {
     public String getCreate(String key, String prefix) {
         Object value = super.get(key);
         if (value == null) {
-            value = makeNamespaceFromPackageName((String) key);
+            value = makeNamespaceFromPackageName(key);
             put(key, value, prefix);
         }
         return (String) value;
@@ -140,7 +140,7 @@ public class Namespaces extends HashMap {
      * @param namespace namespace
      * @return prefix String
      */
-    public String  getCreatePrefix(String namespace) {
+    public String getCreatePrefix(String namespace) {
         if (namespacePrefixMap.get(namespace) == null) {
             namespacePrefixMap.put(namespace, "tns" + prefixCount++);
         }

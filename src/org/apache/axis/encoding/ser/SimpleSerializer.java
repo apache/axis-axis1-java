@@ -65,7 +65,6 @@ import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -237,17 +236,19 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
+    public Element writeSchema(Class javaType, Types types) throws Exception {
         // Let the caller generate WSDL if this is not a SimpleType
         if (!SimpleType.class.isAssignableFrom(javaType))
-            return false;
+            return null;
 
         // ComplexType representation of SimpleType bean class
         Element complexType = types.createElement("complexType");
@@ -274,7 +275,6 @@ public class SimpleSerializer implements SimpleValueSerializer {
                         QName qname = field.getXmlName();
                         if (qname == null) {
                             // Use the default...
-                            propName = propName;
                             qname = new QName("", propName);
                         }
 
@@ -290,9 +290,9 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
                         // write attribute element
                         // TODO the attribute name needs to be preserved from the XML
-                        String elementType = types.writeType(fieldType);
                         Element elem = types.createAttributeElement(propName,
-                                elementType,
+                                fieldType,
+                                field.getXmlType(),
                                 false,
                                 extension.getOwnerDocument());
                         extension.appendChild(elem);
@@ -313,7 +313,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
         }
 
         // done
-        return true;
+        return complexType;
 
     }
 }

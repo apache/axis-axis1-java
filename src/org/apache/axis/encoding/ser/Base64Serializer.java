@@ -56,7 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 
@@ -64,17 +63,10 @@ import java.io.IOException;
 
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.encoding.SimpleValueSerializer;
 import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 
 /**
  * Serializer for Base64
@@ -124,14 +116,16 @@ public class Base64Serializer implements SimpleValueSerializer {
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public Element writeSchema(Class javaType, Types types) throws Exception {
+        return null;
     }
 }

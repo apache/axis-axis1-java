@@ -70,6 +70,7 @@ import org.apache.axis.schema.SchemaVersion;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
@@ -144,7 +145,7 @@ public class ArraySerializer implements Serializer
             dims += "[]";
         }
 
-        // Get the QName of the componentType.  
+        // Get the QName of the componentType.
         // If not found, look at the super classes
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null) {
@@ -183,7 +184,7 @@ public class ArraySerializer implements Serializer
         //     way to determine whether the arrays are multi-referenced.
         //     Thus the code is currently disabled (see enable2Dim below).
         //
-        // Currently the support is ENABLED because it is necessary for 
+        // Currently the support is ENABLED because it is necessary for
         // interoperability (echo2DStringArray).  It is 'safe' for now
         // because Axis treats arrays as non multi-ref (see the note
         // in SerializationContextImpl.isPrimitive(...) )
@@ -251,10 +252,10 @@ public class ArraySerializer implements Serializer
             //
             // There are two choices here:
             // Force the type to type=SOAP_ARRAY
-            //   Pros:  More interop test successes.                  
-            //   Cons:  Since we have specific type information it 
+            //   Pros:  More interop test successes.
+            //   Cons:  Since we have specific type information it
             //          is more correct to use it.  Plus the specific
-            //          type information may be important on the 
+            //          type information may be important on the
             //          server side to disambiguate overloaded operations.
             // Use the specific type information:
             //   Pros:  The specific type information is more correct
@@ -264,10 +265,10 @@ public class ArraySerializer implements Serializer
             int typeI = attrs.getIndex(schema.getXsiURI(),
                                        "type");
             if (typeI != -1) {
-                String qname = 
+                String qname =
                       context.getPrefixForURI(schema.getXsiURI(),
                                               "xsi") + ":type";
-                attrs.setAttribute(typeI, 
+                attrs.setAttribute(typeI,
                                    schema.getXsiURI(),
                                    "type",
                                    qname,
@@ -302,7 +303,7 @@ public class ArraySerializer implements Serializer
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-                    Object aValue = (Object)iterator.next();
+                    Object aValue = iterator.next();
 
                     // Serialize the element.
                     context.serialize(elementName, serializeAttr, aValue,
@@ -330,14 +331,34 @@ public class ArraySerializer implements Serializer
 
     /**
      * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
+     * the &lt;types&gt; element of a WSDL document, or underneath an
+     * &lt;element&gt; or &lt;attribute&gt; declaration.
      *
+     * @param javaType the Java Class we're writing out schema for
      * @param types the Java2WSDL Types object which holds the context
      *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
+     * @return a type element containing a schema simpleType/complexType
      * @see org.apache.axis.wsdl.fromJava.Types
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public Element writeSchema(Class javaType, Types types) throws Exception {
+        // If an array the component type should be processed first
+        String componentTypeName = null;
+        Class componentType = null;
+        if (javaType.isArray()) {
+            String dimString = "[]";
+            componentType = javaType.getComponentType();
+            if (componentType.isArray()) {
+                while (componentType.isArray()) {
+                    dimString += "[]";
+                    componentType = componentType.getComponentType();
+                }
+            }
+            componentTypeName =
+                    types.getQNameString(types.getTypeQName(componentType)) +
+                    dimString;
+        }
+
+        // Use Types helper method to actually create the complexType
+        return types.createArrayElement(componentTypeName);
     }
 }
