@@ -21,7 +21,7 @@ distribution/ - distribution files
 docs/ - documentation
 result/ - test results
                      
-At last, please read docs/plan.txt and help us making this sample better.
+At last, please read status.txt and help us making this sample better.
 
 Thanks.
 
