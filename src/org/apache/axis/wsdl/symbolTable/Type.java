@@ -59,7 +59,7 @@ public abstract class Type extends TypeEntry {
         super(pqName, pNode);
     }
     public void setGenerated(boolean b) {
-        generated = true;        
+        generated = b;        
     }
     
     public boolean isGenerated() {
