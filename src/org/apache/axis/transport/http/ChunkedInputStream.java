@@ -82,7 +82,7 @@ public class ChunkedInputStream extends java.io.FilterInputStream {
         byte[] d = new byte[1];
         int rc = read(d, 0, 1);
 
-        return rc > 0 ? d[0] : rc;
+        return rc > 0 ? (d[0] & 0xFF) : rc;
     }
 
     public int read(byte[] b)
