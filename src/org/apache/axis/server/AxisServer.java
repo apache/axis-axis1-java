@@ -57,7 +57,7 @@ package org.apache.axis.server ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -116,9 +116,9 @@ public class AxisServer extends AxisEngine
         this(new FileProvider(Constants.SERVER_CONFIG_FILE));
     }
 
-    public AxisServer(ConfigurationProvider provider)
+    public AxisServer(EngineConfiguration config)
     {
-        super(provider);
+        super(config);
         // Server defaults to persisting configuration
         shouldSaveConfig = true;
     }

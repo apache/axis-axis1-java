@@ -2,6 +2,8 @@ package samples.transport ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.configuration.XMLStringProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Transport;
@@ -19,6 +21,16 @@ import javax.xml.rpc.namespace.QName;
  */
 
 public class FileTest {
+    static final String wsdd =
+            "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
+                  "xmlns:java=\"" + WSDDConstants.WSDD_JAVA + "\">\n" +
+            " <transport name=\"FileTransport\" pivot=\"java:samples.transport.FileSender\"/>\n" +
+            " <service name=\"" + WSDDConstants.WSDD_NS + "\" provider=\"java:MSG\">\n" +
+            "  <parameter name=\"allowedMethods\" value=\"AdminService\"/>\n" +
+            "  <parameter name=\"className\" value=\"org.apache.axis.utils.Admin\"/>\n" +
+            " </service>\n" +
+            "</deployment>";
+
     public static void main(String args[]) throws Exception {
         FileReader  reader = new FileReader();
         reader.setDaemon(true);
@@ -34,14 +46,8 @@ public class FileTest {
         }
 
         String   symbol = args[0] ;
-        Service  service = new Service();
+        Service  service = new Service(new XMLStringProvider(wsdd));
         Call     call    = (Call) service.createCall();
-
-        AxisEngine engine = service.getEngine();
-
-        // Manually deploy file sender and file transport for this example
-        SimpleTargetedChain c = new SimpleTargetedChain(new FileSender());
-        engine.deployTransport("FileTransport", c);
 
         call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
         call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );

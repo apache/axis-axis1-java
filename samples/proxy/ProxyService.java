@@ -95,7 +95,8 @@ public class ProxyService {
             Call    call = (Call) service.createCall();
 
             SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-	    service.getEngine().deployTransport("tcp", c);
+            // !!! FIXME
+            //service.getEngine().deployTransport("tcp", c);
     
             // add TCP for proxy testing
             call.addTransportPackage("samples.transport");

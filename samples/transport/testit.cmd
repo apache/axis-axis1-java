@@ -1,2 +1,2 @@
-java org.apache.axis.utils.Admin server deploy.xml
+java org.apache.axis.utils.Admin server deploy.wsdd
 java samples.transport.FileTest XXX

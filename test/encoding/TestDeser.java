@@ -274,6 +274,6 @@ public class TestDeser extends TestCase {
     public static void main(String [] args) throws Exception
     {
         TestDeser tester = new TestDeser("test");
-        tester.testUntyped();
+        tester.testString();
     }
 }

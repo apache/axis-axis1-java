@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
@@ -70,7 +71,7 @@ public class WSDDComProvider
     extends WSDDProvider
 {
     public Handler newProviderInstance(WSDDService service,
-                                       DeploymentRegistry registry)
+                                       EngineConfiguration registry)
         throws Exception
     {
         Class _class = Class.forName("org.apache.axis.handlers.providers.ComProvider");

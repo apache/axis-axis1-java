@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,22 +52,47 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.SimpleDeploymentManager;
+package org.apache.axis;
 
-import javax.xml.rpc.namespace.QName;
-
+import org.apache.log4j.Category;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 /**
+ * ConfigurationException is thrown when an error occurs trying to
+ * use an EngineConfiguration.
  *
+ * @author Glyn Normington (glyn@apache.org)
  */
-public class SimpleWsddDeploymentManager
-    extends SimpleDeploymentManager
-{
-    public WSDDDeployment getDeployment()
-    {
-        return null;
+public class ConfigurationException extends IOException {
+
+    private static Category category =
+                Category.getInstance(ConfigurationException.class.getName());
+
+    /**
+     * Construct a ConfigurationException from a String.  The string is wrapped
+     * in an exception, enabling a stack traceback to be obtained.
+     * @param message String form of the error
+     */
+    public ConfigurationException(String message) {
+        this(new Exception(message));
+    }
+
+    /**
+     * Construct a ConfigurationException from an Exception.
+     * @param exception original exception which was unexpected
+     */
+    public ConfigurationException(Exception e) {
+        super(e.toString());
+
+        // Log the exception the first time it appears.
+        if (!(e instanceof ConfigurationException)) {
+            category.debug(e);
+            StringWriter writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            category.debug(writer.getBuffer().toString());
+        }
     }
 }

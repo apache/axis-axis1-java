@@ -57,6 +57,9 @@ package samples.transport.tcp ;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.Constants;
+import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.configuration.FileProvider;
 
 /**
  * An admin client object, which will work with the TCP transport.
@@ -67,18 +70,22 @@ import org.apache.axis.SimpleTargetedChain;
  */
 
 public class AdminClient extends org.apache.axis.client.AdminClient {
-
     public static void main(String args[]) {
 
         Call.addTransportPackage("samples.transport");
         Call.setTransportForProtocol("tcp", TCPTransport.class);
 
+        SimpleProvider provider =
+                new SimpleProvider(
+                        new FileProvider(Constants.CLIENT_CONFIG_FILE));
+        SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
+        provider.deployTransport("tcp", c);
+
+        AdminClient.setDefaultConfiguration(provider);
+
         try {
             org.apache.axis.client.AdminClient client =
                 new org.apache.axis.client.AdminClient(System.err);
-
-            SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-            client.getCall().getService().getEngine().deployTransport("tcp", c);
 
             System.out.println(client.process(args));
         }

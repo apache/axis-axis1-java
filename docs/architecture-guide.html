@@ -236,17 +236,45 @@ drives the client side handler chains and AxisServer drives the server
 side handler chains. The relationships between these classes is fairly
 simple:
 <br><img SRC="engineclasses.jpg" height=242 width=169>
+<h4>Engine Configuration</h3>
+The EngineConfiguration interface is the means of configuring the Handler
+factories and global options of an engine instance. An instance of a
+concrete implementation of EngineConfiguration must be passed to the engine
+when it is created and the engine must be notified if the EngineConfiguration
+contents are modified. The engine keeps a reference to the EngineConfiguration
+and then uses it to obtain Handler factories and global options.
+<p>
+The EngineConfiguration interface belongs to the Message Flow subsystem
+which means that the Message Flow subsystem does not depend on the
+Administration subsystem.
 <h2>
 <a NAME="Administration Subsystem"></a>Administration Subsystem</h2>
-The administration subsystem provides a set of factories for runtime artefacts
-such as Chains and SOAPServices.
+The Administration subsystem provides a way of configuring Axis engines.
+The configuration information an engine needs is a collection of factories for
+runtime artefacts such as Chains and SOAPServices and a set of global
+configuration options for the engine.
+<p>
+The Message Flow subsystem's EngineConfiguration interface
+is implemented by the Administration subsystem. FileProvider enables
+an engine to be configured statically from a file containing a
+deployment descriptor which is understood by the WSDDDeployment class.
+SimpleProvider, on the other hand, enables an engine to be configured
+dynamically.
+<br><img SRC="engineconfig.jpg">
 <h3>
 WSDD-Based Administration</h3>
-WSDD is an XML grammer for statically configuring an administration subsystem.
-Its structure is mirrored by a class hierarchy of factories for runtime
-artefacts. The following diagram shows the classes and the types of runtime
+WSDD is an XML grammer for deployment descriptors which are used to
+statically configuring Axis engines.
+Each Handler needs configuration in terms of the concrete class name
+of a factory for the Handler, a set of options for the handler, and
+a lifecycle scope value which determines the scope of sharing of
+instances of the Handler.
+<p>
+The structure of the WSDD grammar is mirrored by a class hierarchy of factories
+for runtime artefacts.
+The following diagram shows the classes and the types of runtime
 artefacts they produce (a dotted arrow means "instantiates").
-<br><img SRC="wsddclasses.jpg" height=381 width=655>
+<br><img SRC="wsddclasses.jpg">
 <h2>
 <a NAME="Sequence Diagrams"></a>Interaction Diagrams</h2>
 
@@ -272,8 +300,8 @@ in the following interaction diagram.
 <li>
 &nbsp;The relationship between the Axis subsystems needs to be documented
 and somewhat cleaned up as there is leakage of responsibilities between
-some of the subsystems. For example, WSDD has leaked into the basic engine
-architecture. Also, there is some SOAP and HTTP bias in the basic MessageContext
+some of the subsystems. For example,
+there is some SOAP and HTTP bias in the basic MessageContext
 type and associated classes.</li>
 
 <li>
@@ -323,10 +351,6 @@ Handler sequence invoking a server-side Handler sequence. We need to consider
 how the semantics of this combined sequence compares with the sequence
 formed by omitting the transport-related Handlers.
 <br><img SRC="pivots2.jpg" height=413 width=658>
-<li>
-The administration subsystem is currently hardcoded to use WSDD. A generic
-set of factory interfaces needs factoring out to enable non WSDD based
-administration subsystems to be used with Axis.</li>
 </ol>
 
 </body>

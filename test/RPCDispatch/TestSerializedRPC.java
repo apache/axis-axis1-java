@@ -6,6 +6,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -41,21 +43,20 @@ public class TestSerializedRPC extends TestCase {
              "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    private AxisServer engine = new AxisServer();
-    private Handler RPCDispatcher;
+    private SimpleProvider provider = new SimpleProvider();
+    private AxisServer engine = new AxisServer(provider);
 
     private String SOAPAction = "urn:reverse";
 
     public TestSerializedRPC(String name) throws Exception {
         super(name);
         engine.init();
-        RPCDispatcher = engine.getHandler("RPCDispatcher");
-        
+
         // Register the reverseString service
-        SOAPService reverse = new SOAPService(RPCDispatcher);
+        SOAPService reverse = new SOAPService(new RPCProvider());
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
-        engine.deployService(SOAPAction, reverse);
+        provider.deployService(SOAPAction, reverse);
     }
 
     /**

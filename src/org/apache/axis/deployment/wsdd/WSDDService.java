@@ -54,16 +54,13 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Handler;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.FaultableHandler;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
-import org.apache.axis.Constants;
+import org.apache.axis.*;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
@@ -118,13 +115,13 @@ public class WSDDService
         Element [] typeMappings = getChildElements(e, "typeMapping");
         for (int i = 0; i < typeMappings.length; i++) {
             WSDDTypeMapping typeMapping = new WSDDTypeMapping(typeMappings[i]);
-            addTypeMapping(typeMapping);
+            deployTypeMapping(typeMapping);
         }
 
         Element [] beanMappings = getChildElements(e, "beanMapping");
         for (int i = 0; i < beanMappings.length; i++) {
             WSDDBeanMapping beanMapping = new WSDDBeanMapping(beanMappings[i]);
-            addTypeMapping(beanMapping);
+            deployTypeMapping(beanMapping);
         }
 
         String typeStr = e.getAttribute("provider");
@@ -201,8 +198,8 @@ public class WSDDService
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler makeNewInstance(DeploymentRegistry registry)
-        throws Exception
+    public Handler makeNewInstance(EngineConfiguration registry)
+        throws ConfigurationException
     {
         if (cachedService != null) {
             return cachedService;
@@ -218,9 +215,13 @@ public class WSDDService
         Handler providerHandler = null;
 
         if (providerQName != null) {
-            providerHandler = WSDDProvider.getInstance(providerQName,
-                                                       this,
-                                                       registry);
+            try {
+                providerHandler = WSDDProvider.getInstance(providerQName,
+                                                           this,
+                                                           registry);
+            } catch (Exception e) {
+                throw new ConfigurationException(e);
+            }
             if (providerHandler == null)
                 throw new WSDDException(
                           JavaUtils.getMessage("couldntConstructProvider00"));
@@ -240,7 +241,6 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
-        registry.getTypeMappingRegistry();
         service.setTypeMappingRegistry(tmr);
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
@@ -258,14 +258,13 @@ public class WSDDService
         return service;
     }
     
-    public void addTypeMapping(WSDDTypeMapping mapping)
+    public void deployTypeMapping(WSDDTypeMapping mapping)
         throws WSDDException
     {
         if (tmr == null) {
             tmr = new TypeMappingRegistryImpl();
         }
         try {
-
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
             if (tm == null || tm == df) {
@@ -344,8 +343,8 @@ public class WSDDService
         cachedService = service;
     }
 
-    public void deployToRegistry(DeploymentRegistry registry)
-            throws DeploymentException {
+    public void deployToRegistry(WSDDDeployment registry)
+            throws WSDDException {
         registry.deployService(this);
         
         super.deployToRegistry(registry);

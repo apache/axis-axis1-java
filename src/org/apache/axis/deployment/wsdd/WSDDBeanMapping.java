@@ -103,6 +103,19 @@ public class WSDDBeanMapping
         return WSDDConstants.BEANMAPPING_QNAME;
     }
 
+    public void writeToContext(SerializationContext context) throws IOException {
+        AttributesImpl attrs = new AttributesImpl();
+
+        String typeStr = context.qName2String(typeQName);
+        attrs.addAttribute("", "languageSpecificType",
+                           "languageSpecificType", "CDATA", typeStr);
+
+        String qnameStr = context.qName2String(qname);
+        attrs.addAttribute("", "qname", "qname", "CDATA", qnameStr);
+
+        context.startElement(WSDDConstants.BEANMAPPING_QNAME, attrs);
+        context.endElement();
+    }
 }
 
 

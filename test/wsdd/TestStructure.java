@@ -40,7 +40,8 @@ public class TestStructure extends TestCase
     public static void main(String[] args) throws Exception 
     {
         TestStructure tester = new TestStructure("TestStructure");
-        tester.run();
+        tester.setUp();
+        tester.testServiceBackReference();
     }
     
     public void testChainAnonymousHandler() throws Exception

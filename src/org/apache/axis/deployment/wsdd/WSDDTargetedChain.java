@@ -56,6 +56,8 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.transport.http.HTTPSender;
@@ -182,8 +184,8 @@ public abstract class WSDDTargetedChain
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler makeNewInstance(DeploymentRegistry registry)
-        throws Exception
+    public Handler makeNewInstance(EngineConfiguration registry)
+        throws ConfigurationException
     {
         Handler reqHandler = null;
 
@@ -194,7 +196,15 @@ public abstract class WSDDTargetedChain
         Handler pivot = null;
         if (pivotQName != null) {
             if (WSDDConstants.WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
-                pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
+                try {
+                    pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
+                } catch (InstantiationException e) {
+                    throw new ConfigurationException(e);
+                } catch (IllegalAccessException e) {
+                    throw new ConfigurationException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException(e);
+                }
             } else {
                 pivot = registry.getHandler(pivotQName);
             }
@@ -223,8 +233,8 @@ public abstract class WSDDTargetedChain
         
     }
     
-    public void deployToRegistry(DeploymentRegistry registry)
-        throws DeploymentException
+    public void deployToRegistry(WSDDDeployment registry)
+        throws WSDDException
     {
         // deploy any named subparts
         if (requestFlow != null) {

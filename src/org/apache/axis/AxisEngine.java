@@ -55,9 +55,7 @@
 
 package org.apache.axis;
 
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.wsdd.*;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
@@ -84,6 +82,7 @@ import java.beans.IntrospectionException;
  * handler/service registries and loading properties.
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glyn Normington (glyn@apache.org)
  */
 public abstract class AxisEngine extends BasicHandler
 {
@@ -99,11 +98,11 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
     public static final String PROP_SEND_XSI = "sendXsiTypes";
 
-    /** Our go-to guy for configuration... */
-    protected transient ConfigurationProvider configProvider;
+    // Default admin. password
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
-    protected DeploymentRegistry myRegistry =
-            new SimpleWsddDeploymentManager();
+    /** Our go-to guy for configuration... */
+    protected EngineConfiguration config;
 
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
@@ -119,12 +118,10 @@ public abstract class AxisEngine extends BasicHandler
      * scope", have it store things in this Session.
      */
     private Session session = new SimpleSession();
-    
-    protected WSDDGlobalConfiguration myGlobalConfig = null;
-    
+
     /**
      * What actor URIs hold for the entire engine?
-     */ 
+     */
     private ArrayList actorURIs = new ArrayList();
 
     /**
@@ -134,7 +131,7 @@ public abstract class AxisEngine extends BasicHandler
     private static ThreadLocal currentMessageContext = new ThreadLocal();
 
     /**
-     * Set the active message context. 
+     * Set the active message context.
      *
      * @param mc - the new active message context.
      */
@@ -143,7 +140,7 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * Get the active message context. 
+     * Get the active message context.
      *
      * @return the current active message context
      */
@@ -152,22 +149,19 @@ public abstract class AxisEngine extends BasicHandler
     }
 
     /**
-     * No-arg constructor.
+     * No-arg constructor. Not used.
      *
      */
-    public AxisEngine()
-    {
-        // !!! Set up default configuration?
-        init();
+    private AxisEngine() {}
 
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit01", "AxisEngine"));
-        }
-    }
-
-    public AxisEngine(ConfigurationProvider configProvider)
+    /**
+     * Construct an AxisEngine using the specified engine configuration.
+     *
+     * @param config the EngineConfiguration for this engine
+     */
+    public AxisEngine(EngineConfiguration config)
     {
-        this.configProvider = configProvider;
+        this.config = config;
         init();
     }
 
@@ -183,11 +177,11 @@ public abstract class AxisEngine extends BasicHandler
         //getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
-            configProvider.configureEngine(this);
+            config.configureEngine(this);
         } catch (Exception e) {
             throw new InternalException(e);
         }
-        
+
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
         }
@@ -201,11 +195,15 @@ public abstract class AxisEngine extends BasicHandler
             return;
 
         try {
-            configProvider.writeEngineConfig(this);
+            config.writeEngineConfig(this);
         } catch (Exception e) {
             System.err.println(JavaUtils.getMessage("saveConfigFail00"));
             e.printStackTrace();
         }
+    }
+
+    public EngineConfiguration getConfig() {
+        return config;
     }
 
     public boolean hasSafePassword()
@@ -224,75 +222,68 @@ public abstract class AxisEngine extends BasicHandler
     {
         this.shouldSaveConfig = shouldSaveConfig;
     }
-    
-    /**
-     * (should throw more specific exceptions)
-     */ 
+
     public Handler getHandler(String name) throws AxisFault
     {
-        return myRegistry.getHandler(new QName(null, name));
-    }
-    
-    /**
-     * (should throw more specific exceptions)
-     */ 
-    public Handler getService(String name) throws AxisFault
-    {
-        return myRegistry.getService(new QName(null, name));
-    }
-    
-    public Handler getTransport(String name) throws AxisFault
-    {
-        return myRegistry.getTransport(new QName(null, name));
+        try {
+            return config.getHandler(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
     }
 
-    public DeploymentRegistry getDeploymentRegistry()
+    public Handler getService(String name) throws AxisFault
     {
-        return myRegistry;
+        try {
+            return config.getService(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
     }
-    
+
+    public Handler getTransport(String name) throws AxisFault
+    {
+        try {
+            return config.getTransport(new QName(null, name));
+        } catch (ConfigurationException e) {
+            throw new AxisFault(e);
+        }
+    }
+
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
-        tmr = myRegistry.getTypeMappingRegistry();
-        
+        try {
+            tmr = config.getTypeMappingRegistry();
+        } catch (ConfigurationException e) {
+            category.error(e);
+        }
+
         return tmr;
     }
-    
+
     public Handler getGlobalRequest()
-        throws Exception
+        throws ConfigurationException
     {
-        Handler h = null;
-        if (myGlobalConfig != null) {
-            WSDDRequestFlow reqFlow = myGlobalConfig.getRequestFlow();
-            if (reqFlow != null)
-                h = reqFlow.getInstance(myRegistry);
-        }
-        return h;
+        return config.getGlobalRequest();
     }
-    
+
     public Handler getGlobalResponse()
-        throws Exception
+        throws ConfigurationException
     {
-        Handler h = null;
-        if (myGlobalConfig != null) {
-            WSDDResponseFlow respFlow = myGlobalConfig.getResponseFlow();
-            if (respFlow != null)
-                h = respFlow.getInstance(myRegistry);
-        }
-        return h;
+        return config.getGlobalResponse();
     }
-    
+
     public ArrayList getActorURIs()
     {
         return actorURIs;
     }
-    
+
     public void addActorURI(String uri)
     {
         actorURIs.add(uri);
     }
-    
+
     public void removeActorURI(String uri)
     {
         actorURIs.remove(uri);
@@ -304,7 +295,7 @@ public abstract class AxisEngine extends BasicHandler
      * An AxisEngine may define another specific AxisEngine to be used
      * by newly created Clients.  For instance, a server may
      * create an AxisClient and allow deployment to it.  Then
-     * the server's services may access the AxisClient's deployed 
+     * the server's services may access the AxisClient's deployed
      * handlers and transports.
      *********************************************************************
      */
@@ -322,143 +313,56 @@ public abstract class AxisEngine extends BasicHandler
 
     /**
      * List of options which should be converted from Strings to Booleans
-     * automatically.
-     */ 
-    static String [] booleanOptions = new String [] {
+     * automatically. Note that these options are common to all XML
+     * web services.
+     */
+    private static final String [] BOOLEAN_OPTIONS = new String [] {
         PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
     };
 
     /**
-     * Deploy a WSDD document to this engine.  This will either add or
-     * remove Handlers/Services/Transports/etc. depending on whether the
-     * WSDD is a <deployment> or an <undeployment>
-     *
-     * @param doc the WSDD document to deploy.
-     * @throws DeploymentException if there is a problem.
+     * Normalise the engine's options.
+     * <p>
+     * Convert boolean options from String to Boolean and default
+     * any ommitted boolean options to TRUE. Default the admin.
+     * password.
      */
-    public void deployWSDD(WSDDDocument doc) throws DeploymentException
-    {
-        myRegistry.deploy(doc);
-        myGlobalConfig = myRegistry.getGlobalConfiguration();
-        if (myGlobalConfig != null)
-            setOptions(myGlobalConfig.getParametersTable());
-        
+    private void normaliseOptions() {
         // Convert boolean options to Booleans so we don't need to use
         // string comparisons.  Default is "true".
-        
-        for (int i = 0; i < booleanOptions.length; i++) {
-            Object val = getOption(booleanOptions[i]);
+
+        for (int i = 0; i < BOOLEAN_OPTIONS.length; i++) {
+            Object val = getOption(BOOLEAN_OPTIONS[i]);
             if (val != null) {
                 if (val instanceof Boolean)
                     continue;
                 if (val instanceof String &&
                     "false".equalsIgnoreCase((String)val)) {
-                    setOption(booleanOptions[i], Boolean.FALSE);
+                    setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
                     continue;
                 }
             }
             // If it was null or not "false"...
-            setOption(booleanOptions[i], Boolean.TRUE);
+            setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
         }
-        
+
         // Deal with admin password's default value.
         if (getOption(PROP_PASSWORD) == null) {
-            setOption(PROP_PASSWORD, "admin");
+            setOption(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD);
         } else {
             setAdminPassword((String)getOption(PROP_PASSWORD));
         }
     }
-    
-   /**
-     * Deploy a Handler into our handler registry
-     */
-    public void deployHandler(String key, Handler handler)
-        throws DeploymentException
-    {
-        handler.setName(key);
-        WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
-        WSDDHandler newHandler = new WSDDHandler();
-        newHandler.setName(key);
-        newHandler.setType(new QName(WSDDConstants.WSDD_JAVA,
-                                     handler.getClass().getName()));
-        newHandler.setOptionsHashtable(handler.getOptions());
-        myRegistry.deployHandler(newHandler);
-    }
 
     /**
-     * Undeploy (remove) a Handler from the handler registry
+     * (Re-)load the global options from the registry.
      */
-    public void undeployHandler(String key)
-        throws DeploymentException
-    {
-        myRegistry.removeDeployedItem(new QName("", key));
-    }
+    public void refreshGlobalOptions() throws ConfigurationException {
+        Hashtable globalOptions = config.getGlobalOptions();
+        if (globalOptions != null)
+            setOptions(globalOptions);
 
-    /**
-     * Deploy a Service into our service registry
-     */
-    public void deployService(String key, SOAPService service)
-        throws DeploymentException
-    {
-        category.info(JavaUtils.getMessage("deployService00", key, this.toString()));
-        service.setName(key);
-        service.setEngine(this);
-        
-        WSDDService newService = new WSDDService();
-        newService.setName(key);
-        newService.setOptionsHashtable(service.getOptions());
-        newService.setCachedService(service);
-        
-        Handler pivot = service.getPivotHandler();
-        if (pivot == null) {
-            throw new DeploymentException(JavaUtils.getMessage("noPivot01"));
-        }
-        
-        if (pivot instanceof RPCProvider) {
-            newService.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
-        } else if (pivot instanceof MsgProvider) {
-            newService.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
-        } else {
-            newService.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
-            newService.setParameter("handlerClass", pivot.getClass().getName());
-        }
-        myRegistry.deployService(newService);
-    }
-
-    /**
-     * Undeploy (remove) a Service from the handler registry
-     */
-    public void undeployService(String key)
-        throws DeploymentException
-    {
-        myRegistry.undeployService(new QName("", key));
-    }
-
-    /**
-     * Deploy a Transport
-     */
-    public void deployTransport(String key, SimpleTargetedChain transport)
-        throws DeploymentException
-    {
-        transport.setName(key);
-        WSDDTransport wt = new WSDDTransport();
-        wt.setName(key);
-        wt.setOptionsHashtable(transport.getOptions());
-        // !!! Request flow?
-        // !!! Response flow?
-        wt.setPivotQName(new QName(WSDDConstants.WSDD_JAVA,
-                                   transport.getPivotHandler().getClass().getName()));
-        
-        myRegistry.deployTransport(wt);
-    }
-
-    /**
-     * Undeploy (remove) a client Transport
-     */
-    public void undeployTransport(String key)
-        throws DeploymentException
-    {
-        myRegistry.undeployTransport(new QName("", key));
+        normaliseOptions();
     }
 
     /**
@@ -469,5 +373,4 @@ public abstract class AxisEngine extends BasicHandler
     public Session getApplicationSession () {
         return session;
     }
-
 };

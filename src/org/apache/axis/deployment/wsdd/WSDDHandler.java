@@ -77,11 +77,11 @@ public class WSDDHandler
 {
     /**
      * Default constructor
-     */ 
+     */
     public WSDDHandler()
     {
     }
-    
+
     /**
      *
      * @param e (Element) XXX
@@ -110,7 +110,7 @@ public class WSDDHandler
             attrs.addAttribute("", "name", "name",
                                "CDATA", context.qName2String(name));
         }
-        
+
         attrs.addAttribute("", "type", "type",
                            "CDATA", context.qName2String(getType()));
         context.startElement(new QName(WSDDConstants.WSDD_NS, "handler"),
@@ -119,8 +119,8 @@ public class WSDDHandler
         context.endElement();
     }
 
-    public void deployToRegistry(DeploymentRegistry registry)
-            throws DeploymentException {
-        registry.deployHandler(this);
+    public void deployToRegistry(WSDDDeployment deployment)
+            throws WSDDException {
+        deployment.deployHandler(this);
     }
 }

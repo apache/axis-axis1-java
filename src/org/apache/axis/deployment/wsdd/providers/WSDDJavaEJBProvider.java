@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
@@ -72,7 +73,7 @@ public class WSDDJavaEJBProvider
      *
      */
     public Handler newProviderInstance(WSDDService service,
-                                       DeploymentRegistry registry)
+                                       EngineConfiguration registry)
         throws Exception
     {
         return new org.apache.axis.providers.java.EJBProvider();

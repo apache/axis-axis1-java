@@ -21,6 +21,11 @@
   <parameter name="enableRemoteAdmin" value="false"/>
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
  </service>
+ <service name="http://xml.apache.org/axis/wsdd/" provider="java:MSG">
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ </service>
  <service name="JWSProcessor" provider="Handler">
   <parameter name="handlerClass" value="org.apache.axis.handlers.JWSProcessor"/>
  </service>
