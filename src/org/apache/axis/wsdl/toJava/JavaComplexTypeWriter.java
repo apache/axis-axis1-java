@@ -166,6 +166,10 @@ public class JavaComplexTypeWriter extends JavaWriter {
             if (((TypeEntry)elements.elementAt(i)).getQName().getLocalPart().indexOf("[")>0) {
 
                 String compName = typeName.substring(0, typeName.lastIndexOf("["));
+
+                int bracketIndex = typeName.indexOf("[");
+                String newingName = typeName.substring(0, bracketIndex + 1);
+                String newingSuffix = typeName.substring(bracketIndex + 1);
                                            
                 pw.println("    public " + compName + " " + get + capName + "(int i) {");
                 pw.println("        return " + name + "[i];");
@@ -174,7 +178,8 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 pw.println("    public void set"+capName+"(int i, "+compName+" value) {");
                 pw.println("        if (" + name + " == null ||");
                 pw.println("            " + name + ".length <= i) {");
-                pw.println("            " + typeName + " a = new " + compName + "[i+1];");
+                pw.println("            " + typeName + " a = new " +
+                        newingName + "i + 1" + newingSuffix + ";");
                 pw.println("            if (" + name + " != null) {");
                 pw.println("                for(int j=0; j<"+name+".length; j++)");
                 pw.println("                    a[j] = "+name+"[j];");
