@@ -1,0 +1,331 @@
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.axis.utils;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Class ByteArray
+ */
+public class ByteArray extends OutputStream {
+
+    protected byte cache[] = null;
+    protected int cache_fp = 0;
+    protected double cache_increment = 1.3;
+    protected int max_size = 0;
+    protected File bs_handle = null;
+    protected OutputStream bs_stream = null;
+    protected long count = 0;
+
+    /**
+     * Constructor ByteArray
+     */
+    public ByteArray() {
+        this(16 * 512);
+    }
+
+    /**
+     * Constructor ByteArray
+     * 
+     * @param max_resident_size 
+     */
+    public ByteArray(int max_resident_size) {
+        this(0, max_resident_size);
+    }
+
+    /**
+     * Constructor ByteArray
+     * 
+     * @param probable_size     
+     * @param max_resident_size 
+     */
+    public ByteArray(int probable_size, int max_resident_size) {
+        if (probable_size > max_resident_size) {
+            probable_size = 0;
+        }
+        if (probable_size < 1024) {
+            probable_size = 1024;
+        }
+        cache = new byte[probable_size];
+        max_size = max_resident_size;
+    }
+
+    /**
+     * Method write
+     * 
+     * @param bytes 
+     * @throws IOException 
+     */
+    public void write(byte bytes[]) throws IOException {
+        count += bytes.length;
+        write(bytes, 0, bytes.length);
+    }
+
+    /**
+     * Method write
+     * 
+     * @param bytes  
+     * @param start  
+     * @param length 
+     * @throws IOException 
+     */
+    public void write(byte bytes[], int start, int length) throws IOException {
+        count += length;
+        if (cache != null) {
+            increaseCapacity(length);
+        }
+        if (cache != null) {
+            System.arraycopy(bytes, start, cache, cache_fp, length);
+            cache_fp += length;
+        } else {
+            bs_stream.write(bytes, start, length);
+        }
+    }
+
+    /**
+     * Method write
+     * 
+     * @param b 
+     * @throws IOException 
+     */
+    public void write(int b) throws IOException {
+        count += 1;
+        if (cache != null) {
+            increaseCapacity(1);
+        }
+        if (cache != null) {
+            cache[cache_fp++] = (byte) b;
+        } else {
+            bs_stream.write(b);
+        }
+    }
+
+    /**
+     * Method close
+     * 
+     * @throws IOException 
+     */
+    public void close() throws IOException {
+        if (bs_stream != null) {
+            bs_stream.close();
+            bs_stream = null;
+        }
+    }
+
+    /**
+     * Method size
+     * 
+     * @return 
+     */
+    public long size() {
+        return count;
+    }
+
+    /**
+     * Method flush
+     * 
+     * @throws IOException 
+     */
+    public void flush() throws IOException {
+        if (bs_stream != null) {
+            bs_stream.flush();
+        }
+    }
+
+    /**
+     * Method increaseCapacity
+     * 
+     * @param count 
+     * @throws IOException 
+     */
+    protected void increaseCapacity(int count) throws IOException {
+        if (cache == null) {
+            return;
+        }
+        int new_fp = cache_fp + count;
+        if (new_fp < cache.length) {
+            return;
+        }
+        if (new_fp < max_size) {
+            grow(count);
+        } else {
+            switchToBackingStore();
+        }
+    }
+
+    /**
+     * Method growMemCache
+     * 
+     * @param count 
+     * @throws IOException 
+     */
+    protected void grow(int count) throws IOException {
+        int new_fp = cache_fp + count;
+        int new_size = (int) (cache.length * cache_increment);
+        if (new_size < cache_fp + 1024) {
+            new_size = cache_fp + 1024;
+        }
+        if (new_size < new_fp) {
+            new_size = new_fp;
+        }
+        try {
+            byte new_mem_cache[] = new byte[new_size];
+            System.arraycopy(cache, 0, new_mem_cache, 0, cache_fp);
+            cache = new_mem_cache;
+        } catch (OutOfMemoryError e) {
+            // Couldn't allocate a new, bigger vector!
+            // That's fine, we'll just switch to backing-store mode.
+            switchToBackingStore();
+        }
+    }
+
+    /**
+     * Method discardBuffer
+     */
+    public synchronized void discardBuffer() {
+        cache = null;
+        cache_fp = 0;
+        if (bs_stream != null) {
+            try {
+                bs_stream.close();
+            } catch (IOException e) {
+                // just ignore it...
+            }
+            bs_stream = null;
+        }
+        discardBackingStore();
+    }
+
+    /**
+     * Method makeInputStream
+     * 
+     * @return 
+     * @throws IOException           
+     * @throws FileNotFoundException 
+     */
+    protected InputStream makeInputStream()
+            throws IOException, FileNotFoundException {
+        close();
+        if (cache != null) {
+            byte[] v = cache;
+            int fp = cache_fp;
+            cache = null;
+            cache_fp = 0;
+            return new ByteArrayInputStream(v, 0, fp);
+        } else if (bs_handle != null) {
+            return createBackingStoreInputStream();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Method finalize
+     */
+    protected void finalize() {
+        discardBuffer();
+    }
+
+    /**
+     * Method switchToBackingStore
+     * 
+     * @throws IOException 
+     */
+    protected void switchToBackingStore() throws IOException {
+        bs_handle = File.createTempFile("Axis", ".msg");
+        bs_handle.createNewFile();
+        bs_handle.deleteOnExit();
+        bs_stream = new FileOutputStream(bs_handle);
+        if (cache_fp > 0) {
+            bs_stream.write(cache, 0, cache_fp);
+        }
+        cache = null;
+        cache_fp = 0;
+    }
+
+    /**
+     * Method discardBackingStore
+     */
+    protected void discardBackingStore() {
+        if (bs_handle != null) {
+            bs_handle.delete();
+            bs_handle = null;
+        }
+    }
+
+    /**
+     * Method createBackingStoreInputStream
+     * 
+     * @return 
+     * @throws FileNotFoundException 
+     */
+    protected InputStream createBackingStoreInputStream()
+            throws FileNotFoundException {
+        try {
+            return new BufferedInputStream(
+                    new FileInputStream(bs_handle.getCanonicalPath()));
+        } catch (IOException e) {
+            throw new FileNotFoundException(bs_handle.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Method toByteArray
+     * 
+     * @return 
+     * @throws IOException 
+     */
+    public byte[] toByteArray() throws IOException {
+        InputStream inp = this.makeInputStream();
+        byte[] buf = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        buf = new byte[4096];
+        int len;
+        while ((len = inp.read(buf, 0, 4096)) != -1) {
+            baos.write(buf, 0, len);
+        }
+        inp.close();
+        discardBackingStore();
+        return baos.toByteArray();
+    }
+
+    /**
+     * Method writeTo
+     * 
+     * @param os 
+     * @throws IOException 
+     */
+    public void writeTo(OutputStream os) throws IOException {
+        InputStream inp = this.makeInputStream();
+        byte[] buf = null;
+        buf = new byte[4096];
+        int len;
+        while ((len = inp.read(buf, 0, 4096)) != -1) {
+            os.write(buf, 0, len);
+        }
+        inp.close();
+        discardBackingStore();
+    }
+}

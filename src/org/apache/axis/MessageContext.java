@@ -316,7 +316,7 @@ public class MessageContext implements SOAPMessageContext {
             try {
                 //or create and delete a file in the temp dir to make
                 //sure we have write access to it.
-                File tf= File.createTempFile("Axis", "Axis");
+                File tf= File.createTempFile("Axis", ".tmp");
                 File dir= tf.getParentFile();
                 if (tf.exists()) {
                     tf.delete();

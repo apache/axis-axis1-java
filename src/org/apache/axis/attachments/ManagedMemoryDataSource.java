@@ -385,7 +385,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                             : mc.getStrProp(
                                     MessageContext.ATTACHMENTS_DIR);
 
-                    diskCacheFile = java.io.File.createTempFile("Axis", "axis",
+                    diskCacheFile = java.io.File.createTempFile("Axis", ".att",
                             (attdir == null)
                             ? null
                             : new File(

@@ -163,10 +163,11 @@ public class NSStack {
      */
     public void add(String namespaceURI, String prefix) {
         int idx = top;
+        prefix = prefix.intern();
         try {
             // Replace duplicate prefixes (last wins - this could also fault)
             for (int cursor=top; stack[cursor]!=null; cursor--) {
-                if (stack[cursor].getPrefix().equals(prefix)) {
+                if (stack[cursor].getPrefix() == prefix) {
                     stack[cursor].setNamespaceURI(namespaceURI);
                     idx = cursor;
                     return;
@@ -201,36 +202,37 @@ public class NSStack {
      * find one because "pre" is actually mapped to "otherNamespace"
      */ 
     public String getPrefix(String namespaceURI, boolean noDefault) {
-        if ((namespaceURI == null) || (namespaceURI.equals("")))
+        if ((namespaceURI == null) || (namespaceURI.length()==0))
             return null;
         
-        int hash = namespaceURI.hashCode();
-
         // If defaults are OK, and the given NS is the current default,
         // return "" as the prefix to favor defaults where possible.
         if (!noDefault && currentDefaultNS > 0 && stack[currentDefaultNS] != null &&
-                namespaceURI.equals(
-                        stack[currentDefaultNS].getNamespaceURI()))
+                namespaceURI == stack[currentDefaultNS].getNamespaceURI())
             return "";
             
+        namespaceURI = namespaceURI.intern();
+
         for (int cursor=top; cursor>0; cursor--) {
             Mapping map = stack[cursor];
-            if (map == null) continue;
+            if (map == null) 
+                continue;
 
-            if (map.getNamespaceHash() == hash &&
-                map.getNamespaceURI().equals(namespaceURI)) {
+            if (map.getNamespaceURI() == namespaceURI) {
                 String possiblePrefix = map.getPrefix();
-                if (noDefault && possiblePrefix.length() == 0) continue;
-
+                if (noDefault && possiblePrefix.length() == 0)
+                    continue;
+    
                 // now make sure that this is the first occurance of this 
                 // particular prefix
-                int ppHash = possiblePrefix.hashCode();
-                for (int cursor2=top; true; cursor2--) {
-                   if (cursor2 == cursor) return possiblePrefix;
-                   map = stack[cursor2];
-                   if (map == null) continue;
-                   if (ppHash == map.getPrefixHash() &&
-                       possiblePrefix.equals(map.getPrefix())) break;
+                for (int cursor2 = top; true; cursor2--) {
+                    if (cursor2 == cursor)
+                        return possiblePrefix;
+                    map = stack[cursor2];
+                    if (map == null)
+                        continue;
+                    if (possiblePrefix == map.getPrefix())
+                        break;
                 }
             }
         }
@@ -253,13 +255,13 @@ public class NSStack {
         if (prefix == null)
             prefix = "";
 
-        int hash = prefix.hashCode();
+        prefix = prefix.intern();
 
         for (int cursor=top; cursor>0; cursor--) {
             Mapping map = stack[cursor];
             if (map == null) continue;
         
-            if (map.getPrefixHash() == hash && map.getPrefix().equals(prefix))
+            if (map.getPrefix() == prefix)
                 return map.getNamespaceURI();
         }
         

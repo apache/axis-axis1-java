@@ -39,6 +39,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.encoding.XMLEncoder;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
@@ -131,7 +132,8 @@ public class SerializationContextImpl implements SerializationContext
     private int multiRefIndex = -1;
     private boolean noNamespaceMappings = true;
     private QName writeXMLType;
-
+    private XMLEncoder encoder = null;
+    
     class MultiRefItem {
         String id;
         QName xmlType;
@@ -194,6 +196,8 @@ public class SerializationContextImpl implements SerializationContext
                               Constants.NS_PREFIX_SCHEMA_XSD);
         preferredPrefixes.put(schemaVersion.getXsiURI(),
                               Constants.NS_PREFIX_SCHEMA_XSI);
+        preferredPrefixes.put(soapConstants.getEnvelopeURI(),
+                              Constants.NS_PREFIX_SOAP_ENV);
     }
 
 
@@ -462,10 +466,7 @@ public class SerializationContextImpl implements SerializationContext
         if ((prefix == null) || (prefix.length() == 0))
            return qName.getLocalPart();
 
-        StringBuffer sb = new StringBuffer(prefix);
-        sb.append(':');
-        sb.append(qName.getLocalPart());
-        return sb.toString();
+        return prefix + ':' + qName.getLocalPart();
     }
 
     public String qName2String(QName qName)
@@ -484,18 +485,15 @@ public class SerializationContextImpl implements SerializationContext
      */
     public String attributeQName2String(QName qName) {
         String prefix = null;
-
-        if (qName.getNamespaceURI().length() > 0) {
-            prefix = getPrefixForURI(qName.getNamespaceURI(), null, true);
+        String uri = qName.getNamespaceURI(); 
+        if (uri.length() > 0) {
+            prefix = getPrefixForURI(uri, null, true);
         }
 
         if ((prefix == null) || (prefix.length() == 0))
            return qName.getLocalPart();
-
-        StringBuffer sb = new StringBuffer(prefix);
-        sb.append(':');
-        sb.append(qName.getLocalPart());
-        return sb.toString();
+        
+        return prefix + ':' + qName.getLocalPart();
     }
 
     /**
@@ -862,13 +860,7 @@ public class SerializationContextImpl implements SerializationContext
             // The origional logic is very simple
             // writer.write(XMLUtils.getEncoding());
             // The following logic is devised to utilize CHARACTER_SET_ENCODING property from SAAJ 1.2.
-            String encoding = null;
-            if (msgContext != null) {
-                encoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-            }
-            if (encoding == null) {
-                encoding = XMLUtils.getEncoding();
-            }
+            String encoding = XMLUtils.getEncoding(msgContext);
             writer.write(encoding);
             writer.write("\"?>\n");
             startOfDocument = false;
@@ -928,7 +920,9 @@ public class SerializationContextImpl implements SerializationContext
                 }
                 writer.write(qname);
                 writer.write("=\"");
-                writer.write(XMLUtils.xmlEncodeString(attributes.getValue(i)));
+                
+                getEncoder().writeEncoded(writer, attributes.getValue(i));
+                
                 writer.write('"');
             }
         }
@@ -1038,7 +1032,13 @@ public class SerializationContextImpl implements SerializationContext
     public void writeSafeString(String string)
         throws IOException
     {
-        writeString(XMLUtils.xmlEncodeString(string));
+        if (writingStartTag) {
+            writer.write('>');
+            writingStartTag = false;
+        }
+        
+        getEncoder().writeEncoded(writer, string);
+        onlyXML=false;
     }
 
     /**
@@ -1374,5 +1374,12 @@ public class SerializationContextImpl implements SerializationContext
 
     public void setWriteXMLType(QName type) {
         writeXMLType = type;
+    }
+
+    public XMLEncoder getEncoder() {
+        if(encoder == null) {
+            encoder = XMLUtils.getXMLEncoder(msgContext);
+        }
+        return encoder;
     }
 }

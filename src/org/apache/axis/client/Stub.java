@@ -289,8 +289,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      */ 
     public void extractAttachments(Call call) {
         attachments.clear();
-        if(call.getResponseMessage() != null &&
-           call.getResponseMessage().countAttachments()>0) {
+        if(call.getResponseMessage() != null) {
             Iterator iterator = call.getResponseMessage().getAttachments();
             while(iterator.hasNext()){
                 attachments.add(iterator.next());

@@ -21,51 +21,53 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
+import org.apache.axis.message.MimeHeaders;
 import org.apache.axis.message.SOAPDocumentImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis.message.MimeHeaders;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.ByteArray;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
 import org.w3c.dom.EntityReference;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.PrintWriter;
-import java.io.OutputStreamWriter;
-import java.io.BufferedWriter;
-import java.io.BufferedOutputStream;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -96,6 +98,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     public static final int FORM_BYTES        = 4;
     public static final int FORM_BODYINSTREAM = 5;
     public static final int FORM_FAULT        = 6;
+    public static final int FORM_OPTIMIZED    = 7;
     private int currentForm;
 
     //private Hashtable headers = new Hashtable();
@@ -210,14 +213,17 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      *
      * @return the content length in bytes
      */
-    public int getContentLength() {
-        try {
-            byte[] bytes = this.getAsBytes();
-            return bytes.length;
-        } catch (AxisFault fault) {
-            return 0;  // ?
+    public long getContentLength() throws AxisFault {
+        saveChanges();
+        if (currentForm == FORM_OPTIMIZED) {
+            return ((ByteArray) currentMessage).size();
+        } else if (currentForm == FORM_BYTES) {
+            return ((byte[]) currentMessage).length;
         }
+        byte[] bytes = this.getAsBytes();
+        return bytes.length;
     }
+
     /**
      * This set the SOAP Envelope for this part.
      * <p>
@@ -236,19 +242,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
 
     /**
-     * Get the total size in bytes, including headers, of this Part.
-     * TODO: For now, since we aren't actually doing MIME yet,
-     * this is the same as getContentLength().  Soon it will be
-     * different.
-     *
-     * @return the total size
-     */
-    public int getSize() {
-        // for now, we don't ever do headers!  ha ha
-        return this.getContentLength();
-    }
-
-    /**
      * Write the contents to the specified stream.
      *
      * @param os  the <code>java.io.OutputStream</code> to write to
@@ -263,10 +256,16 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                         "\"?>").getBytes());
             }
             os.write((byte[])currentMessage);
+        } else if ( currentForm == FORM_OPTIMIZED ) {
+            if (incXMLDecl.equalsIgnoreCase("true")) {
+                os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding +
+                        "\"?>").getBytes());
+            }
+            ((ByteArray) currentMessage).writeTo(os);
+            ((ByteArray) currentMessage).discardBuffer();
         } else {
             Writer writer = new OutputStreamWriter(os,charEncoding);
-            writer = new BufferedWriter(writer);
-            writer = new PrintWriter(new BufferedWriter(writer));
+            writer = new BufferedWriter(new PrintWriter(writer));
     
             if(incXMLDecl.equalsIgnoreCase("true")){
                 writer.write("<?xml version=\"1.0\" encoding=\"" + charEncoding +"\"?>");
@@ -367,6 +366,14 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     public byte[] getAsBytes() throws AxisFault {
         log.debug("Enter: SOAPPart::getAsBytes");
+        if ( currentForm == FORM_OPTIMIZED ) {
+            log.debug("Exit: SOAPPart::getAsBytes");
+            try {
+                return ((ByteArray) currentMessage).toByteArray();
+            } catch (IOException e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
         if ( currentForm == FORM_BYTES ) {
             log.debug("Exit: SOAPPart::getAsBytes");
             return (byte[])currentMessage;
@@ -413,29 +420,20 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT ){
-            String encoding = null;
-            if (msgObject != null) {
-                try {
-                    encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-                } catch (SOAPException e) {
-                }
-            }
-            if (encoding == null) {
-                encoding = "UTF-8";
-            }
+            String encoding = XMLUtils.getEncoding(msgObject, null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BufferedOutputStream os = new BufferedOutputStream(baos);
             try {
-                this.writeTo(os,encoding,"false");
+                this.writeTo(os, encoding, "false");
                 os.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }
-            setCurrentForm( baos.toByteArray(), FORM_BYTES );
+            setCurrentForm(baos.toByteArray(), FORM_BYTES);
             if (log.isDebugEnabled()) {
                 log.debug("Exit: SOAPPart::getAsBytes(): " + currentMessage);
             }
-            return (byte[])currentMessage;
+            return (byte[]) currentMessage;
         }
 
         if ( currentForm == FORM_STRING ) {
@@ -452,17 +450,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsString
             currentMessageAsString = (String) currentMessage;
             try{
-                // set encoding of string from parent.
-                String encoding = null;
-                if (msgObject != null) {
-                    try {
-                        encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-                    } catch (SOAPException e) {
-                    }
-                }
-                if (encoding == null) {
-                    encoding = "UTF-8";
-                }
+                String encoding = XMLUtils.getEncoding(msgObject, null);
                 setCurrentForm( ((String)currentMessage).getBytes(encoding),
                     FORM_BYTES );
             }catch(UnsupportedEncodingException ue){
@@ -481,6 +469,24 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         return null;
     }
 
+    public void saveChanges() throws AxisFault {
+        log.debug("Enter: SOAPPart::saveChanges");
+        if ( currentForm == FORM_SOAPENVELOPE ||
+             currentForm == FORM_FAULT ){
+            String encoding = XMLUtils.getEncoding(msgObject, null);
+            ByteArray array = new ByteArray();
+            try {
+                this.writeTo(array,encoding,"false");
+                array.flush();
+            } catch (Exception e) {
+                throw AxisFault.makeFault(e);
+            }
+            setCurrentForm( array, FORM_OPTIMIZED );
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::saveChanges(): " + currentMessage);
+            }
+        }
+    }
     /**
      * Get the contents of this Part (not the headers!), as a String.
      * This will force buffering of the message.
@@ -503,6 +509,27 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Fall thru to "Bytes"
         }
 
+        if ( currentForm == FORM_OPTIMIZED) {
+            try {
+                currentMessageAsBytes =
+                        ((ByteArray) currentMessage).toByteArray();
+            } catch (IOException e) {
+                throw AxisFault.makeFault(e);
+            }
+
+            try{
+                setCurrentForm( new String((byte[]) currentMessageAsBytes,"UTF-8"),
+                                   FORM_STRING );
+            }catch(UnsupportedEncodingException ue){
+                setCurrentForm( new String((byte[]) currentMessageAsBytes),
+                                   FORM_STRING );
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            }
+            return (String)currentMessage;
+        }
+
         if ( currentForm == FORM_BYTES ) {
             // If the current message was already converted from
             // a String to byte[], return the String representation
@@ -514,6 +541,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 }
                 return currentMessageAsString;
             }
+            
             // Save this message in case it is requested later in getAsBytes
             currentMessageAsBytes = (byte[]) currentMessage;
             try{
@@ -597,14 +625,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_INPUTSTREAM ) {
             is = new InputSource( (InputStream) currentMessage );
-            // set encoding of input source from parent.
-            String encoding = null;
-            if (msgObject != null) {
-                try {
-                    encoding = (String) msgObject.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-                } catch (SOAPException e) {
-                }
-            }
+            String encoding = XMLUtils.getEncoding(msgObject, null);
             if (encoding != null) {
                 is.setEncoding(encoding);
             }
@@ -795,28 +816,41 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     public Source getContent() throws SOAPException {
         if(contentSource == null) {
             switch(currentForm) {
-            case FORM_STRING:
-                String s = (String)currentMessage;
-                contentSource = new StreamSource(new StringReader(s));
-                break;
-            case FORM_INPUTSTREAM:
-                contentSource = new StreamSource((InputStream)currentMessage);
-                break;
-            case FORM_SOAPENVELOPE:
-                SOAPEnvelope se = (SOAPEnvelope)currentMessage;
-                try {
-                    contentSource = new DOMSource(se.getAsDocument());
-                } catch (Exception e) {
-                    throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"), e);
-                }
-                break;
-            case FORM_BYTES:
-                byte[] bytes = (byte[])currentMessage;
-                contentSource = new StreamSource(new ByteArrayInputStream(bytes));
-                break;
+                case FORM_STRING:
+                    String s = (String) currentMessage;
+                    contentSource = new StreamSource(new StringReader(s));
+                    break;
+                case FORM_INPUTSTREAM:
+                    contentSource =
+                            new StreamSource((InputStream) currentMessage);
+                    break;
+                case FORM_SOAPENVELOPE:
+                    SOAPEnvelope se = (SOAPEnvelope) currentMessage;
+                    try {
+                        contentSource = new DOMSource(se.getAsDocument());
+                    } catch (Exception e) {
+                        throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"),
+                                e);
+                    }
+                    break;
+                case FORM_OPTIMIZED:
+                    try {
+                        ByteArrayInputStream baos = new ByteArrayInputStream(((ByteArray) currentMessage).toByteArray());
+                        contentSource = new StreamSource(baos);
+                    } catch (IOException e) {
+                        throw new SOAPException(Messages.getMessage("errorGetDocFromSOAPEnvelope"),
+                                e);
+                    }
+                    break;
+                case FORM_BYTES:
+                    byte[] bytes = (byte[]) currentMessage;
+                    contentSource =
+                            new StreamSource(new ByteArrayInputStream(bytes));
+                    break;
                 case FORM_BODYINSTREAM:
-                contentSource = new StreamSource((InputStream)currentMessage);
-                break;
+                    contentSource =
+                            new StreamSource((InputStream) currentMessage);
+                    break;
             }
         }
         return contentSource;

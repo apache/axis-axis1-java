@@ -516,7 +516,7 @@ public class AttachmentsImpl implements Attachments {
 
             // force a serialization of the message so that
             // any attachments will be added
-            soapPart.getAsBytes();
+            soapPart.saveChanges();
             
             return orderedAttachments.size();
         } catch (AxisFault e) {
