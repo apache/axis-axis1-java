@@ -29,6 +29,10 @@ public class Time implements java.io.Serializable {
     private Calendar _value;
 
 
+    /**
+     * a shared java.text.SimpleDateFormat instance used for parsing the basic
+     * component of the timestamp
+     */
     private static SimpleDateFormat zulu =
        new SimpleDateFormat("HH:mm:ss.SSS'Z'");
 
@@ -53,15 +57,27 @@ public class Time implements java.io.Serializable {
         _value = makeValue(value);
     }
 
+    /**
+     * return the time as a calendar: ignore the year, month and date fields
+     * @return calendar value; may be null
+     */
     public Calendar getAsCalendar() {
         return _value;
     }
 
+    /**
+     * set the time; ignore year, month, date
+     * @param date
+     */
     public void setTime(Calendar date) {
         this._value = date;
         _value.set(0,0,0);      // ignore year, month, date
     }
 
+    /**
+     * set the time from a date instance
+     * @param date
+     */
     public void setTime(Date date) {
         _value.setTime(date);
         _value.set(0,0,0);      // ignore year, month, date
@@ -74,26 +90,10 @@ public class Time implements java.io.Serializable {
         Calendar calendar = Calendar.getInstance();
         Date date;
 
-        // validate fixed portion of format
-        if ( source != null ) {
-            if (source.charAt(2) != ':' || source.charAt(5) != ':')
-                throw new NumberFormatException(
-                        Messages.getMessage("badTime00"));
-            if (source.length() < 8) {
-                throw new NumberFormatException(
-                        Messages.getMessage("badTime00"));
-            }
-        }
+        validateSource(source);
 
         // convert what we have validated so far
-        try {
-            synchronized (zulu) {
-                date = zulu.parse(source == null ? null :
-                                    (source.substring(0,8)+".000Z") );
-            }
-        } catch (Exception e) {
-            throw new NumberFormatException(e.toString());
-        }
+        date = ParseHoursMinutesSeconds(source);
 
         int pos = 8;    // The "." in hh:mm:ss.sss
 
@@ -103,8 +103,10 @@ public class Time implements java.io.Serializable {
                 int milliseconds = 0;
                 int start = ++pos;
                 while (pos<source.length() &&
-                       Character.isDigit(source.charAt(pos)))
+                       Character.isDigit(source.charAt(pos))) {
                     pos++;
+                }
+
 
                 String decimal=source.substring(start,pos);
                 if (decimal.length()==3) {
@@ -114,7 +116,9 @@ public class Time implements java.io.Serializable {
                                                   .substring(0,3));
                 } else {
                     milliseconds=Integer.parseInt(decimal.substring(0,3));
-                    if (decimal.charAt(3)>='5') ++milliseconds;
+                    if (decimal.charAt(3)>='5') {
+                        ++milliseconds;
+                    }
                 }
 
                 // add milliseconds to the current date
@@ -129,8 +133,10 @@ public class Time implements java.io.Serializable {
                         source.charAt(pos+3) != ':'              ||
                         !Character.isDigit(source.charAt(pos+4)) ||
                         !Character.isDigit(source.charAt(pos+5)))
+                    {
                         throw new NumberFormatException(
                                 Messages.getMessage("badTimezone00"));
+                    }
 
                     int hours = (source.charAt(pos+1)-'0')*10
                         +source.charAt(pos+2)-'0';
@@ -139,7 +145,9 @@ public class Time implements java.io.Serializable {
                     int milliseconds = (hours*60+mins)*60*1000;
 
                     // subtract milliseconds from current date to obtain GMT
-                    if (source.charAt(pos)=='+') milliseconds=-milliseconds;
+                    if (source.charAt(pos)=='+') {
+                        milliseconds=-milliseconds;
+                    }
                     date.setTime(date.getTime()+milliseconds);
                     pos+=6;
             }
@@ -149,9 +157,10 @@ public class Time implements java.io.Serializable {
                 calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
             }
 
-            if (pos < source.length())
+            if (pos < source.length()) {
                 throw new NumberFormatException(
                         Messages.getMessage("badChars00"));
+            }
         }
 
         calendar.setTime(date);
@@ -160,6 +169,61 @@ public class Time implements java.io.Serializable {
         return calendar;
     }
 
+    private int getTimezoneNumberValue(char c) {
+        int n=c-'0';
+        if(n<0 || n>9) {
+            //oops, out of range
+            throw new NumberFormatException(
+                    Messages.getMessage("badTimezone00"));
+        }
+        return n;
+    }
+
+    /**
+     * parse the hours, minutes and seconds of a string, by handing it off to
+     * the java runtime.
+     * The relevant code will return null if a null string is passed in, so this
+     * code may return a null date in response
+     * @param source
+     * @return
+     * @throws NumberFormatException in the event of trouble
+     */
+    private static Date ParseHoursMinutesSeconds(String source) {
+        Date date;
+        try {
+            synchronized (zulu) {
+                date = zulu.parse(source == null ? null :
+                                    (source.substring(0,8)+".000Z") );
+            }
+        } catch (Exception e) {
+            throw new NumberFormatException(e.toString());
+        }
+        return date;
+    }
+
+    /**
+     * validate the source
+     * @param source
+     */
+    private void validateSource(String source) {
+        // validate fixed portion of format
+        if ( source != null ) {
+            if (source.charAt(2) != ':' || source.charAt(5) != ':') {
+                throw new NumberFormatException(
+                        Messages.getMessage("badTime00"));
+            }
+            if (source.length() < 8) {
+                throw new NumberFormatException(
+                        Messages.getMessage("badTime00"));
+            }
+        }
+    }
+
+    /**
+     * stringify method returns the time as it would be in GMT, only accurate to the
+     * second...millis probably get lost.
+     * @return
+     */
     public String toString() {
         synchronized (zulu) {
             return zulu.format(_value.getTime());
