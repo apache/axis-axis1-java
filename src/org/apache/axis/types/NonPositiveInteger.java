@@ -58,6 +58,7 @@ import org.apache.axis.utils.Messages;
 
 import java.math.BigInteger;
 import java.util.Random;
+import java.io.ObjectStreamException;
 
 /**
  * Custom class for supporting primitive XSD data type nonPositiveInteger
@@ -114,4 +115,22 @@ public class NonPositiveInteger extends BigInteger {
         }
     } // checkValidity
 
+    /**
+     * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     * @return BigIntegerRep
+     * @throws java.io.ObjectStreamException
+     */ 
+    public Object writeReplace() throws ObjectStreamException {
+        return new BigIntegerRep(toByteArray());
+    }
+    
+    protected static class BigIntegerRep implements java.io.Serializable {
+        private byte[] array;
+        protected BigIntegerRep(byte[] array) {
+            this.array = array;
+        }
+        protected Object readResolve() throws java.io.ObjectStreamException {
+            return new NonPositiveInteger(array);
+        }
+    }
 } // class NonPositiveInteger
