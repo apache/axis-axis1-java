@@ -119,7 +119,7 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                 }
             }
 
-            if (faultDesc == null) {
+            if (faultDesc == null && op.getFaults() != null) {
                 Iterator i = op.getFaults().iterator();
                 while(i.hasNext()) {
                     FaultDesc fdesc = (FaultDesc) i.next();
@@ -191,3 +191,5 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         
     }
 }
+
+
