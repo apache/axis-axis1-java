@@ -93,6 +93,8 @@ public class WSDDConstants
                                                     "documentation");
     public static final QName DEPLOY_QNAME = new QName(WSDD_NS,
                                                        "deployment");
+    public static final QName UNDEPLOY_QNAME = new QName(WSDD_NS,
+                                                         "undeployment");
     public static final QName REQFLOW_QNAME = new QName(WSDD_NS,
                                                         "requestFlow");
     public static final QName RESPFLOW_QNAME = new QName(WSDD_NS,
