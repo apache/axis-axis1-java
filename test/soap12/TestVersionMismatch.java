@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,30 +52,69 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.soap12;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
+ * @author Andras Avar (andras.avar@nokia.com)
  */
-public class PackageTests 
-{
-    public static void main (String[] args) {
-            junit.textui.TestRunner.run (suite());
+
+package test.soap12;
+
+import java.lang.reflect.*;
+import java.util.*;
+import javax.xml.namespace.*;
+import junit.framework.*;
+import org.apache.axis.*;
+import org.apache.axis.encoding.*;
+import org.apache.axis.message.*;
+import org.apache.axis.server.*;
+import org.apache.axis.soap.*;
+import org.apache.axis.utils.*;
+
+/**
+ * Test VersionMismatch fault generation
+ */
+public class TestVersionMismatch extends TestCase {
+    private AxisServer server = null;
+
+
+    public TestVersionMismatch(String name) {
+        super(name);
+        server = new AxisServer();
     }
 
-    public static Test suite()
-    {
-        TestSuite suite = new TestSuite("All axis.soap12 tests");
+    private final String SOAP_MESSAGE =
+        "<?xml version=\"1.0\"?>\n" +
+        "<soap:Envelope " +
+          "xmlns:soap=\"http://www.w3.org/2002/wrong-envelope-version\" " +
+          "xmlns:soapenc=\"http://www.w3.org/2002/06/soap-encoding\" " +
+          "xmlns:this=\"http://encoding.test\" " +
+          "xmlns:xsi=\"" + Constants.URI_DEFAULT_SCHEMA_XSI + "\" " +
+          "xmlns:xsd=\"" + Constants.URI_DEFAULT_SCHEMA_XSD + "\">\n" +
+          "<item xsi:type=\"xsd:string\">abc</item>\n" +
+          "<soap:Body>\n" +
+            "<methodResult xmlns=\"http://tempuri.org/\">\n" +
+            "<hello/>" +
+            "</methodResult>\n" +
+          "</soap:Body>\n" +
+        "</soap:Envelope>\n";
 
-        suite.addTestSuite(TestDeser.class);
-        suite.addTestSuite(TestHeaderAttrs.class);
-        suite.addTestSuite(TestSer.class);
-        suite.addTestSuite(TestFault.class);
-        suite.addTestSuite(TestHrefs.class);
-        suite.addTestSuite(TestRPC.class);
-        suite.addTestSuite(TestVersionMismatch.class);
-        return suite;
+
+    public void testVersionMismatch() throws Exception {
+        Message message = new Message(SOAP_MESSAGE);
+        MessageContext context = new MessageContext(server);
+        context.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+
+        message.setMessageContext(context);
+
+        boolean expectedExceptionThrown = false;
+        try {
+            SOAPEnvelope envelope = message.getSOAPEnvelope();
+        } catch (AxisFault af) {
+            if (Constants.FAULT_VERSIONMISMATCH.equals(af.getFaultCode()))
+                expectedExceptionThrown = true;
+        }
+
+        assertTrue(expectedExceptionThrown);
+
     }
 }
