@@ -76,14 +76,13 @@ public class RPCElement extends SOAPBodyElement
     protected Vector params = new Vector();
     protected boolean needDeser = false;
     
-    // encoding style to put in soap body element
-    protected String encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
-    
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
         super(namespace, localName, prefix, attributes, context);
 
+        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
     }
@@ -93,6 +92,8 @@ public class RPCElement extends SOAPBodyElement
         this.setNamespaceURI(namespace);
         this.name = methodName;
         
+        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+
         for (int i = 0; args != null && i < args.length; i++) {
             if (args[i] instanceof RPCParam) {
                 addParam((RPCParam)args[i]);
@@ -106,6 +107,8 @@ public class RPCElement extends SOAPBodyElement
     
     public RPCElement(String methodName)
     {
+        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+
         this.name = methodName;
     }
     
@@ -209,45 +212,11 @@ public class RPCElement extends SOAPBodyElement
         params.addElement(param);
     }
 
-    public void setEncodingStyle(String encodingStyle) {
-        this.encodingStyle = encodingStyle;
-    }
-
-    public String getEncodingStyle() {
-        if (encodingStyle == null) {
-            return getEnvelope().getEncodingStyleURI();
-        }
-
-        return encodingStyle;
-    }
-
     protected void outputImpl(SerializationContext context) throws Exception
     {
-/*
-        if (encodingStyle != null) {
-            QName qn = new QName(Constants.URI_CURRENT_SOAP_ENC, 
-                                 Constants.ATTR_ENCODING_STYLE);
-
-            if (attributes == null)
-                attributes = new AttributesImpl();
-            attributes.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
-                                    Constants.ATTR_ENCODING_STYLE,
-                                    context.qName2String(qn),
-                                    "CDATA",
-                                    encodingStyle);
-        }
-*/
-        if (encodingStyle != null) {
-            setAttribute(Constants.URI_CURRENT_SOAP_ENC,
-                         Constants.ATTR_ENCODING_STYLE,
-                         encodingStyle);
-        }
-
         // Set default namespace if appropriate (to avoid prefix mappings
-        // in literal style).  Do this only if there is no encodingStyle
-        // on EITHER the RPCElement or its parent envelope.
-        String realEncStyle = getEncodingStyle();
-        if (realEncStyle == null || realEncStyle.equals("")) {
+        // in literal style).  Do this only if there is no encodingStyle.
+        if (encodingStyle.equals("")) {
             context.registerPrefixForURI("", getNamespaceURI());
         }
         
