@@ -99,7 +99,8 @@ public class TestXsiType extends TestCase {
                                     "serviceMethod", 
                                     new Object [] {});
         
-        assertTrue("Return value was not the expected type (Double)!",
+        assertTrue("Return value (" + result.getClass().getName() +
+                   ") was not the expected type (Double)!",
                     (result instanceof Double));
     }
     
