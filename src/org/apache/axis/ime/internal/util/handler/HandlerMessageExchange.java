@@ -56,6 +56,7 @@
 package org.apache.axis.ime.internal.util.handler;
 
 import org.apache.axis.Handler;
+import org.apache.axis.TargetedChain;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageContextListener;
@@ -96,6 +97,22 @@ public class HandlerMessageExchange
         return new FirstComeFirstServeDispatchPolicy(RECEIVE, RECEIVE_REQUESTS);
     }
 
+    protected Handler getSendHandler() {
+      Handler h = null;
+      if (handler instanceof TargetedChain) {
+        h = ((TargetedChain)handler).getRequestHandler();
+      }
+      return h;
+    }
+    
+    protected Handler getReceiveHandler() {
+      Handler h = null;
+      if (handler instanceof TargetedChain) {
+        h = ((TargetedChain)handler).getResponseHandler();
+      }
+      return h;
+    }
+
     public class Listener
             implements MessageExchangeSendListener {
 
@@ -121,8 +138,11 @@ public class HandlerMessageExchange
                 MessageExchangeCorrelator correlator =
                         context.getMessageExchangeCorrelator();
             
-                // should I do init's and cleanup's in here?  
-                handler.invoke(msgContext);
+                if (handler instanceof TargetedChain) {
+                  ((TargetedChain)handler).getPivotHandler().invoke(msgContext);
+                } else {
+                  handler.invoke(msgContext);
+                }
 
 
                 RECEIVE.put(correlator, context);
