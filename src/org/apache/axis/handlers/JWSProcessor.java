@@ -104,6 +104,7 @@ public class JWSProcessor extends BasicHandler
         /* java file then recompile the java file.                 */
         /* Start by copying the *.jws file to *.java               */
         /***********************************************************/
+        Debug.Print(1, "Compiling: " + jwsFile );
         Debug.Print(3, "copy " + jwsFile + " " + jFile );
         FileReader fr = new FileReader( jwsFile );
         FileWriter fw = new FileWriter( jFile );
