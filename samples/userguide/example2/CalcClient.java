@@ -60,6 +60,8 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 public class CalcClient
 {
    public static void main(String [] args) throws Exception {
@@ -89,8 +91,8 @@ public class CalcClient
 
        call.setTargetEndpointAddress( new java.net.URL(endpoint) );
        call.setOperationName( method );
-       call.addParameter( "op1", XMLType.XSD_INT, Call.PARAM_MODE_IN );
-       call.addParameter( "op2", XMLType.XSD_INT, Call.PARAM_MODE_IN );
+       call.addParameter( "op1", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
+       call.addParameter( "op2", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
 
        Integer ret = (Integer) call.invoke( new Object [] { i1, i2 });
        

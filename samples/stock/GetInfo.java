@@ -63,6 +63,8 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
+
 /**
  *
  * @author Doug Davis (dug@us.ibm.com.com)
@@ -86,8 +88,8 @@ public class GetInfo {
 
       call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
       call.setOperationName( "getInfo" );
-      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
-      call.addParameter( "info", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
       call.setProperty( Call.NAMESPACE, "urn:cominfo" );
       call.setProperty( Transport.USER, opts.getUser() );
       call.setProperty( Transport.PASSWORD, opts.getPassword() );

@@ -67,6 +67,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
 
 import java.net.URL;
@@ -128,10 +129,10 @@ public class EchoAttachment {
         call.addDeserializerFactory(qnameAttachment, dhSource.getClass(),
             JAFDataHandlerDeserializer.getFactory());
 
-        call.addParameter( "source", new XMLType(qnameAttachment),
-            Call.PARAM_MODE_IN ); //Add the file.
+        call.addParameter( "source", qnameAttachment,
+                ParameterMode.PARAM_MODE_IN ); //Add the file.
 
-        call.setReturnType( new XMLType(qnameAttachment));
+        call.setReturnType( qnameAttachment);
 
         call.setProperty( Transport.USER, opts.getUser());
 
@@ -221,7 +222,7 @@ public class EchoAttachment {
             JAFDataHandlerDeserializer.getFactory());
 
         call.addParameter( "source",   XMLType.SOAP_ARRAY , // new XMLType(qnameAttachment),
-            Call.PARAM_MODE_IN ); //Add the file.
+            ParameterMode.PARAM_MODE_IN ); //Add the file.
 
         call.setReturnType(XMLType.SOAP_ARRAY); // new XMLType(qnameAttachment));
 

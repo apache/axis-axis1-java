@@ -71,7 +71,7 @@ import javax.xml.rpc.namespace.QName;
 import java.beans.IntrospectionException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Vector;
+import java.util.Map;
 
 /**
  * Allows an Axis service to be invoked from the client side.
@@ -365,9 +365,9 @@ public class ServiceClient {
      * name and value - if you want the value, you'll need to call
      * param.getValue().
      *
-     * @return a Vector of RPCParams
+     * @return a Map of RPCParams
      */
-    public Vector getOutputParams()
+    public Map getOutputParams()
     {
         return call.getOutputParams();
     }

@@ -6,6 +6,7 @@ import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPConstants;
 
+import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -23,10 +24,10 @@ public class v3 implements vInterface {
       call.setTargetEndpointAddress( new URL(registryURL) );
       call.setProperty( Call.NAMESPACE, "http://www.soapinterop.org/Register");
       call.setOperationName( "Register" );
-      call.addParameter("ServiceName", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
-      call.addParameter("ServiceUrl", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
-      call.addParameter("ServiceType", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
-      call.addParameter("ServiceWSDL", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
+      call.addParameter("ServiceName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter("ServiceUrl", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter("ServiceType", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter("ServiceWSDL", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
       
       call.invoke( new Object[] { s.getServiceName(), s.getServiceUrl(),
                                   s.getServiceType(), s.getServiceWsdl() } );
@@ -45,7 +46,7 @@ public class v3 implements vInterface {
       call.setTargetEndpointAddress( new URL(registryURL) );
       call.setProperty(Call.NAMESPACE, "http://www.soapinterop.org/Unregister");
       call.setOperationName( "Unregister" );
-      call.addParameter( "ServiceName", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
+      call.addParameter( "ServiceName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
       call.invoke( new Object[] { name } );
     }
     catch( Exception e ) {
@@ -84,7 +85,7 @@ public class v3 implements vInterface {
       call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
                         "http://www.soapinterop.org/LookupAsString" );
       call.setOperationName( "LookupAsString" );
-      call.addParameter( "ServiceType", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
+      call.addParameter( "ServiceType", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
       call.setReturnType( XMLType.XSD_DOUBLE );
 
       String res= (String) call.invoke( new Object[] { "Bid" } );
@@ -133,8 +134,8 @@ public class v3 implements vInterface {
       call.setReturnType( XMLType.XSD_DOUBLE );
       call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
                         "http://www.soapinterop.org/RequestForQuote" );
-      call.addParameter( "ProductName", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
-      call.addParameter( "Quantity", XMLType.XSD_INT, Call.PARAM_MODE_IN);
+      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN);
       Object r = call.invoke( new Object[] { "widget", new Integer(10) } );
 
 /*
@@ -168,9 +169,9 @@ public class v3 implements vInterface {
                         "http://www.soapinterop.org/SimpleBuy" );
       call.setOperationName( "SimpleBuy" );
       call.setReturnType( XMLType.XSD_STRING );
-      call.addParameter( "Address", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
-      call.addParameter( "ProductName", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
-      call.addParameter( "Quantity", XMLType.XSD_INT, Call.PARAM_MODE_IN );
+      call.addParameter( "Address", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
       
       String res = (String) call.invoke(new Object[] { "123 Main St.",
                                                        "Widget",
@@ -252,7 +253,7 @@ public class v3 implements vInterface {
                                                          "06883"),
                                              lineItems );
 
-      call.addParameter( "PO", new XMLType(poqn), Call.PARAM_MODE_IN );
+      call.addParameter( "PO", poqn, ParameterMode.PARAM_MODE_IN );
       call.setOperationName( "Buy" );
 
       String res = (String) call.invoke( new Object[] { po } );

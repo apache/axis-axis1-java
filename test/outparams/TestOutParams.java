@@ -14,7 +14,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
-import java.util.Vector;
+import java.util.Map;
 
 /**
  * Test org.apache.axis.handlers.RPCDispatcher
@@ -76,14 +76,14 @@ public class TestOutParams extends TestCase {
         Object ret = client.invoke(serviceURN, "method",
                                 new Object [] { "test" });
 
-        Vector outParams = client.getOutputParams();
+        Map outParams = client.getOutputParams();
         assertNotNull("No output Params returned!", outParams);
 
-        RPCParam param = (RPCParam)outParams.get(0);
-        assertEquals("Param 0 does not equal expected value", param.getValue(), ServiceHandler.OUTPARAM1);
+        Object param = outParams.get("out1");
+        assertEquals("Param 0 does not equal expected value", param, ServiceHandler.OUTPARAM1);
 
-        param = (RPCParam)outParams.get(1);
-        assertEquals("Param 1 does not equal expected value", param.getValue(), ServiceHandler.OUTPARAM2);
+        param = outParams.get("out2");
+        assertEquals("Param 1 does not equal expected value", param, ServiceHandler.OUTPARAM2);
 
         assertEquals("Return value does not equal expected value", ((Integer)ret).intValue(), ServiceHandler.RESPONSE.intValue());
     }

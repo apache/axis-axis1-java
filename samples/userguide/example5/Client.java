@@ -58,9 +58,9 @@ package samples.userguide.example5;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
                                            
 public class Client
@@ -91,7 +91,7 @@ public class Client
             call.setTargetEndpointAddress( new java.net.URL(options.getURL()) );
             call.setProperty( Call.NAMESPACE, "OrderProcessor" );
             call.setOperationName( "processOrder" );
-            call.addParameter( "arg1", new XMLType(qn), Call.PARAM_MODE_IN );
+            call.addParameter( "arg1", qn, ParameterMode.PARAM_MODE_IN );
 
             result = (String) call.invoke( new Object[] { order } );
         } catch (AxisFault fault) {

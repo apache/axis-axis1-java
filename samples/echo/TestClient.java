@@ -60,11 +60,11 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -157,10 +157,9 @@ public abstract class TestClient {
 
                 // Default return type based on what we expect
                 QName qn = map.getTypeQName(toSend.getClass());
-                XMLType  xt = new XMLType( qn );
 
-                call.addParameter( arg, xt, Call.PARAM_MODE_IN);
-                call.setReturnType( xt );
+                call.addParameter( arg, qn, ParameterMode.PARAM_MODE_IN);
+                call.setReturnType( qn );
                 args = new Object[] { toSend } ;
             }
 
