@@ -55,13 +55,18 @@
 
 package org.apache.axis.handlers ;
 
-import java.io.* ;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
-import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.Handler;
+import org.apache.axis.security.AuthenticatedUser;
+import org.apache.axis.security.SecurityProvider;
 import org.apache.log4j.Category;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.LineNumberReader;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 /**
  * Just a simple Authorization Handler to see if the user
@@ -79,76 +84,62 @@ public class SimpleAuthorizationHandler extends BasicHandler {
     static Category category =
             Category.getInstance(SimpleAuthorizationHandler.class.getName());
 
-    // Simple hashtable of users.  Null means everybody
-    // will authorize (replace with new Hashtable() if you want
-    // the default to be that nobody is authorized
-    //
-    // Values will be hashtables of valid actions for the user
-    static private Hashtable entries = null;
-
-    // load the perms list
-    static {
-        File permFile = new File("perms.lst");
-        if (permFile.exists()) {
-            entries = new Hashtable();
-
-            try {
-                FileReader        fr   = new FileReader( permFile );
-                LineNumberReader  lnr  = new LineNumberReader( fr );
-                String            line = null ;
-
-                // parse lines into user and passwd tokens and add result to hash table
-                while ( (line = lnr.readLine()) != null ) {
-                    StringTokenizer  st = new StringTokenizer( line );
-                    if ( st.hasMoreTokens() ) {
-                        String userID = st.nextToken();
-                        String action = (st.hasMoreTokens()) ? st.nextToken() : "";
-
-                        category.info( "User '" + userID + "' authorized to: " + action );
-
-                        // if we haven't seen this user before, create an entry
-                        if (!entries.containsKey(userID))
-                            entries.put(userID, new Hashtable());
-
-                        // add this action to the list of actions permitted to this user
-                        Hashtable authlist = (Hashtable) entries.get(userID);
-                        authlist.put(action, action);
-                    }
-                }
-
-                lnr.close();
-
-            } catch( Exception e ) {
-                category.error( e );
-            }
-        }
-    }
-
     /**
      * Authorize the user and targetService from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug("Enter: SimpleAuthorizationHandler::invoke" );
 
-        String userID = (String) msgContext.getProperty( MessageContext.USERID );
-        String action = msgContext.getTargetService();
+        boolean allowByDefault = false;
+        String optVal = (String)getOption("allowByDefault");
+        if ((optVal != null) && (optVal.equalsIgnoreCase("true")))
+            allowByDefault = true;
 
-        category.debug( "User: '" + userID + "'" );
-        category.debug( "Action: '" + action + "'" );
+        AuthenticatedUser user = (AuthenticatedUser)msgContext.
+                                         getProperty(MessageContext.AUTHUSER);
 
-        if (entries != null) { // perm.list exists
+        if (user == null)
+            throw new AxisFault("Server.NoUser",
+                    "Need to specify a user for authorization!", null, null);
 
-            Hashtable authlist = (Hashtable) entries.get(userID);
-            if ( authlist == null || !authlist.containsKey(action) ) {
+        String userID = user.getName();
+        Handler serviceHandler = msgContext.getServiceHandler();
+
+        if (serviceHandler == null)
+            throw new AxisFault("No target service to authorize for!");
+
+        String serviceName = serviceHandler.getName();
+
+        String allowedRoles = (String)serviceHandler.getOption("allowedRoles");
+        if (allowedRoles == null) {
+            String action = allowByDefault ? "allowing." : "disallowing.";
+            category.info("No roles specified for target service, " + action);
+            if (!allowByDefault) {
                 throw new AxisFault( "Server.Unauthorized",
-                    "User '" + userID + "' not authorized to '" + action + "'",
+                    "User '" + userID + "' not authorized to '" +
+                    serviceName + "'",
                     null, null );
+            }
+            category.debug("Exit: SimpleAuthorizationHandler::invoke" );
+            return;
+        }
+
+        SecurityProvider provider = SimpleAuthenticationHandler.provider;
+        StringTokenizer st = new StringTokenizer(allowedRoles, ",");
+        while (st.hasMoreTokens()) {
+            String thisRole = st.nextToken();
+            if (provider.userMatches(user, thisRole)) {
+                category.info("User '" + userID + "' authorized to: "
+                              + serviceName);
+                category.debug("Exit: SimpleAuthorizationHandler::invoke" );
+                return;
             }
         }
 
-        category.debug( "User '" + userID + "' authorized to: " + action );
-
-        category.debug("Exit: SimpleAuthorizationHandler::invoke" );
+        throw new AxisFault( "Server.Unauthorized",
+            "User '" + userID + "' not authorized to '" +
+            serviceName + "'",
+            null, null );
     }
 
     /**

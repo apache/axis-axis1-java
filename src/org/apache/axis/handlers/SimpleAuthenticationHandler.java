@@ -58,6 +58,8 @@ package org.apache.axis.handlers ;
 import java.io.* ;
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.security.simple.SimpleSecurityProvider;
+import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 import org.apache.log4j.Category;
@@ -77,43 +79,10 @@ public class SimpleAuthenticationHandler extends BasicHandler {
     static Category category =
             Category.getInstance(SimpleAuthenticationHandler.class.getName());
 
-    // Simple hashtable of user and password.  Null means everybody
-    // will authenticate (replace with new Hashtable() if you want
-    // the default to be that nobody will be authenticated.
-    static private Hashtable entries = null;
-
-    // load the users list
-    static {
-        File userFile = new File("users.lst");
-        if (userFile.exists()) {
-            entries = new Hashtable();
-
-            try {
-
-                FileReader        fr   = new FileReader( userFile );
-                LineNumberReader  lnr  = new LineNumberReader( fr );
-                String            line = null ;
-
-                // parse lines into user and passwd tokens and add result to hash table
-                while ( (line = lnr.readLine()) != null ) {
-                    StringTokenizer  st = new StringTokenizer( line );
-                    if ( st.hasMoreTokens() ) {
-                        String userID = st.nextToken();
-                        String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
-
-                        category.debug( "From file: '" + userID +
-                                        "':'" + passwd + "'" );
-                        entries.put(userID, passwd);
-                    }
-                }
-
-                lnr.close();
-
-            } catch( Exception e ) {
-                category.error( e );
-            }
-        }
-    }
+    /** !!! Needs to be replaced with a configurable way of getting a
+     * security provider...
+     */
+    static SimpleSecurityProvider provider = new SimpleSecurityProvider();
 
     /**
      * Authenticate the user and password from the msgContext
@@ -121,27 +90,30 @@ public class SimpleAuthenticationHandler extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug("Enter: SimpleAuthenticationHandler::invoke" );
 
-        if (entries != null) {
+        if (provider != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
             category.debug( "User: " + userID );
 
             // in order to authenticate, the user must exist
-            if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
+            if ( userID == null || userID.equals(""))
                 throw new AxisFault( "Server.Unauthenticated",
                     "User '" + userID + "' not authenticated (unknown user)",
                     null, null );
 
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-            String valid = (String) entries.get(userID);
             category.debug( "Pass: " + passwd );
 
+            AuthenticatedUser authUser = provider.authenticate(userID, passwd);
+
             // if a password is defined, then it must match
-            if ( valid.length()>0 && !valid.equals(passwd) )
+            if ( authUser == null)
                 throw new AxisFault( "Server.Unauthenticated",
-                    "User '" + userID + "' not authenticated (bad password)",
+                    "User '" + userID + "' not authenticated",
                     null, null );
 
             category.debug( "User '" + userID + "' authenticated to server" );
+
+            msgContext.setProperty(MessageContext.AUTHUSER, authUser);
         }
 
         category.debug("Exit: SimpleAuthenticationHandler::invoke" );
