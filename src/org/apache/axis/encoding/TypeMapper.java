@@ -87,9 +87,18 @@ public class TypeMapper
     
     public QName getTypeQName(Class cls)
     {
-        if (cls.equals(String.class)) {
+
+        if (cls.equals(String.class))
             return new QName(Constants.URI_SCHEMA_XSD, "string");
-        }
+
+        if (cls.equals(Integer.class))
+            return new QName(Constants.URI_SCHEMA_XSD, "int");
+
+        if (cls.equals(Long.class))
+            return new QName(Constants.URI_SCHEMA_XSD, "long");
+
+        if (cls.equals(Float.class))
+            return new QName(Constants.URI_SCHEMA_XSD, "float");
         
         return null;
     }
