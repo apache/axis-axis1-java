@@ -354,9 +354,9 @@ public class Constants {
         return false;
     }
 
-    //
-    // WSDL Namespace
-    //
+    /**
+     * WSDL Namespace
+     */
     public static final String NS_URI_WSDL11 =
                                  "http://schemas.xmlsoap.org/wsdl/";
 
@@ -595,6 +595,16 @@ public class Constants {
 
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
+
+    /**
+     * QName of stack trace element in an axis fault detail
+     */
+    public static final QName QNAME_FAULTDETAIL_STACKTRACE = new QName(NS_URI_AXIS,"stackTrace");
+
+    /**
+     * QName of exception Name element in an axis fault detail
+     */
+    public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
 
     //QNames of well known faults
     /**
