@@ -92,6 +92,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected boolean enableGetters = true;
     protected boolean enableEquals = true;
     protected boolean enableHashCode = true;
+    protected boolean enableMemberFields = true;
 
     protected boolean isAny = false;
 
@@ -120,6 +121,20 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (type.isSimpleType()) {
             enableSimpleConstructors = true;
             enableToString = true;
+        } else {
+            // is this a complex type that is derived from other types
+            // by restriction?  if so, do not emit instance variables
+            // or accessor/mutator pairs as those are inherited from
+            // the super type, which must be non-null.
+            if (null != extendType
+                && null != SchemaUtils.getComplexElementRestrictionBase(type.getNode(),
+                                                                        emitter.getSymbolTable())) {
+                enableMemberFields = false;
+                enableGetters = false;
+                enableSetters = false;
+                enableEquals = false;
+                enableHashCode = false;
+            }
         }
     } // ctor
 
@@ -137,7 +152,9 @@ public class JavaBeanWriter extends JavaClassWriter {
         // preprocess();
 
         // Write Member Fields
-        writeMemberFields();
+        if (enableMemberFields) {
+            writeMemberFields();
+        }
 
         // Write the default constructor
         if (enableDefaultConstructor) {
