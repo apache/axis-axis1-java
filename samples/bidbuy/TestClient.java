@@ -60,7 +60,6 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
@@ -104,7 +103,8 @@ public class TestClient {
         service = new Service();
         call = (Call) service.createCall();
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
-        call.setProperty(HTTPTransport.ACTION,"http://www.soapinterop.org/Bid");
+        call.setUseSOAPAction(true);
+        call.setSOAPActionURI("http://www.soapinterop.org/Bid");
 
         // register the PurchaseOrder class
         QName poqn = new QName("http://www.soapinterop.org/Bid",

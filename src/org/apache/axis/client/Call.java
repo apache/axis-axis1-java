@@ -77,7 +77,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart; 
 import org.apache.axis.InternalException;
@@ -782,15 +781,20 @@ public class Call implements javax.xml.rpc.Call {
         if ( bop == null )
             throw new JAXRPCException( JavaUtils.getMessage("noOperation02",
                                                             opName ));
-        this.removeProperty(HTTPConstants.MC_HTTP_SOAPACTION);
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
             if ( obj instanceof SOAPOperation ) { 
                 SOAPOperation sop    = (SOAPOperation) obj ;
                 String        action = sop.getSoapActionURI();
-                if ( action != null )
-                    this.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
+                if ( action != null ) {
+                    setUseSOAPAction(true);
+                    setSOAPActionURI(action);
+                }
+                else {
+                    setUseSOAPAction(false);
+                    setSOAPActionURI(null);
+                }
                 break ;
             }
         }

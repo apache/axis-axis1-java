@@ -62,9 +62,7 @@ import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
@@ -116,11 +114,10 @@ public class GetQuote {
         // TESTING HACK BY ROBJ
         if (symbol.equals("XXX_noaction")) {
             symbol = "XXX";
-            call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
         }
         
-        call.setProperty( Transport.USER, opts.getUser() );
-        call.setProperty( Transport.PASSWORD, opts.getPassword() );
+        call.setUsername( opts.getUser() );
+        call.setPassword( opts.getPassword() );
         
         // useful option for profiling - perhaps we should remove before
         // shipping?

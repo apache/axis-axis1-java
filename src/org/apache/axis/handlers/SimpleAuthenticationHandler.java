@@ -94,7 +94,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
         }
 
         if (provider != null) {
-            String  userID = (String) msgContext.getProperty( MessageContext.USERID );
+            String  userID = msgContext.getUsername();
             if (category.isDebugEnabled()) {
                 category.debug( JavaUtils.getMessage("user00", userID) );
             }
@@ -105,7 +105,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                     JavaUtils.getMessage("cantAuth00", userID),
                     null, null );
 
-            String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
+            String passwd = msgContext.getPassword();
             if (category.isDebugEnabled()) {
                 category.debug( JavaUtils.getMessage("password00", passwd) );
             }

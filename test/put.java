@@ -3,7 +3,6 @@ package test;
 import org.apache.axis.Message;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
 
 import java.io.File;
@@ -26,8 +25,10 @@ class put {
         Call     call    = (Call) service.createCall();
 
         call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
-        if (action != null )
-            call.setProperty( HTTPTransport.ACTION, action );
+        if (action != null ) {
+            call.setUseSOAPAction( true );
+            call.setSOAPActionURI( action );
+        }
   
         args = opts.getRemainingArgs();
         for (int i=0; i<args.length; i++) {

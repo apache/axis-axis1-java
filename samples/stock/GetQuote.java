@@ -58,9 +58,7 @@ package samples.stock ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
@@ -115,11 +113,10 @@ public class GetQuote {
           // TESTING HACK BY ROBJ
           if (symbol.equals("XXX_noaction")) {
               symbol = "XXX";
-              call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
           }
 
-          call.setProperty( Transport.USER, user );
-          call.setProperty( Transport.PASSWORD, passwd );
+          call.setUsername( user );
+          call.setPassword( passwd );
 
           Object ret = call.invoke( new Object[] {symbol} );
           if (ret instanceof String) {

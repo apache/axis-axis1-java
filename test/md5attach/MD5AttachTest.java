@@ -2,8 +2,8 @@ package test.md5attach;
 
 import java.io.*;
 import org.apache.axis.*;
+import org.apache.axis.client.Call;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.utils.*;
 
 /**
@@ -20,8 +20,10 @@ public class MD5AttachTest {
         String action = opts.isValueSet('a');
 
         ServiceClient sc = new ServiceClient(opts.getURL());
-        //if (action != null) sc.set(HTTPTransport.ACTION, action);
-        sc.set(HTTPTransport.ACTION, "");
+        if (action != null) {
+            sc.set(Call.SOAPACTION_USE_PROPERTY, new Boolean(true));
+            sc.set(Call.SOAPACTION_URI_PROPERTY, action);
+        }
   
             args = opts.getRemainingArgs();
 

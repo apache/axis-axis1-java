@@ -110,7 +110,8 @@ public class HTTPSender extends BasicHandler {
             boolean  useFullURL = false;
 
             //  Get SOAPAction, default to ""
-            String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
+            String   action = msgContext.useSOAPAction() ?
+                    msgContext.getSOAPActionURI() : "";
             if (action == null)
                 action = "";
 
@@ -283,8 +284,8 @@ public class HTTPSender extends BasicHandler {
             String        userID = null ;
             String        passwd = null ;
 
-            userID = msgContext.getStrProp( MessageContext.USERID );
-            passwd = msgContext.getStrProp( MessageContext.PASSWORD );
+            userID = msgContext.getUsername();
+            passwd = msgContext.getPassword();
 
             // if UserID is not part of the context, but is in the URL, use
             // the one in the URL.

@@ -59,11 +59,9 @@ package samples.attachments;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory;
 import org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -130,9 +128,9 @@ public class EchoAttachment {
 
         call.setReturnType( qnameAttachment);
 
-        call.setProperty( Transport.USER, opts.getUser());
+        call.setUsername( opts.getUser());
 
-        call.setProperty( Transport.PASSWORD, opts.getPassword() );
+        call.setPassword( opts.getPassword() );
 
 
         Object ret = call.invoke( new Object[] {
@@ -218,9 +216,9 @@ public class EchoAttachment {
 
         call.setReturnType(XMLType.SOAP_ARRAY); // new XMLType(qnameAttachment));
 
-        call.setProperty( Transport.USER, opts.getUser());
+        call.setUsername( opts.getUser());
 
-        call.setProperty( Transport.PASSWORD, opts.getPassword() );
+        call.setPassword( opts.getPassword() );
 
         Object ret = call.invoke( new Object[] {
                     attachments

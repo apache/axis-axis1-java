@@ -58,7 +58,6 @@ package samples.misc ;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import java.io.ByteArrayInputStream;
@@ -104,7 +103,10 @@ public class TestClient {
       SOAPEnvelope  env     = new SOAPEnvelope(input);
 
       call.setTargetEndpointAddress( new URL(url) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
+      if (action != null) {
+          call.setUseSOAPAction( true );
+          call.setSOAPActionURI( action );
+      }
 
       System.out.println( "Request:\n" + msg );
 

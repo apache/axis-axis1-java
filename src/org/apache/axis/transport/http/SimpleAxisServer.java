@@ -290,10 +290,8 @@ public class SimpleAxisServer implements Runnable {
                         }
                         category.info(JavaUtils.getMessage("user00", userBuf.toString()));
                         category.info(JavaUtils.getMessage("password00", pwBuf.toString()));
-                        msgContext.setProperty(MessageContext.USERID,
-                                               userBuf.toString());
-                        msgContext.setProperty(MessageContext.PASSWORD,
-                                               pwBuf.toString());
+                        msgContext.setUsername(userBuf.toString());
+                        msgContext.setPassword(pwBuf.toString());
                     }
 
                     // if get, then return simpleton document as response
@@ -331,8 +329,10 @@ public class SimpleAxisServer implements Runnable {
                     // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
                     // for now, do not complain if no SOAPAction at all
                     String soapActionString = soapAction.toString();
-                    msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION,
-                                           soapActionString);
+                    if (soapActionString != null) {
+                        msgContext.setUseSOAPAction(true);
+                        msgContext.setSOAPActionURI(soapActionString);
+                    }
                     requestMsg = new Message(is);
                     msgContext.setRequestMessage(requestMsg);
 

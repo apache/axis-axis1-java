@@ -106,7 +106,7 @@ public class EJBProvider extends RPCProvider
             String username = (String)getStrOption(jndiUsername,
                                                    serviceHandler);
             if (username == null)
-               username = msgContext.getStrProp( MessageContext.USERID );
+               username = msgContext.getUsername();
             if (username != null) {
                if (properties == null) properties = new Properties();
                properties.setProperty(Context.SECURITY_PRINCIPAL,
@@ -116,7 +116,7 @@ public class EJBProvider extends RPCProvider
             String password = (String)getStrOption(jndiPassword,
                                                   serviceHandler);
             if (password == null)
-                password = msgContext.getStrProp( MessageContext.PASSWORD );
+                password = msgContext.getPassword();
             if (password != null) {
                 if (properties == null) properties = new Properties();
                 properties.setProperty(Context.SECURITY_CREDENTIALS,

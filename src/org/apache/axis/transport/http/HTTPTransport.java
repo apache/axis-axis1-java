@@ -77,7 +77,6 @@ public class HTTPTransport extends Transport
      * HTTP properties
      */
     static public String URL = MessageContext.TRANS_URL;
-    static public String ACTION = HTTPConstants.MC_HTTP_SOAPACTION;
 
     private String cookie;
     private String cookie2;
@@ -109,7 +108,10 @@ public class HTTPTransport extends Transport
                                         AxisEngine engine)
         throws AxisFault
     {
-        if (action != null) mc.setProperty(ACTION, action);
+        if (action != null) {
+            mc.setUseSOAPAction(true);
+            mc.setSOAPActionURI(action);
+        }
 
         // Set up any cookies we know about
         if (cookie != null)
@@ -121,7 +123,7 @@ public class HTTPTransport extends Transport
         // (a) has not already been determined, and (b) if a service matching
         // the soap action has been deployed.
         if (mc.getServiceHandler() == null) {
-            mc.setTargetService( (String)mc.getProperty(ACTION) );
+            mc.setTargetService( (String)mc.getSOAPActionURI() );
         }
     }
 

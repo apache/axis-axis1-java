@@ -58,9 +58,7 @@ package samples.stock ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
@@ -116,8 +114,8 @@ public class GetQuote1 {
 
       /* Define some service specific properties */
       /*******************************************/
-      call.setProperty( Transport.USER, opts.getUser() );
-      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+      call.setUsername( opts.getUser() );
+      call.setPassword( opts.getPassword() );
 
       /* Get symbol and invoke the service */
       /*************************************/
@@ -154,7 +152,8 @@ public class GetQuote1 {
       /* Set all of the stuff that would normally come from WSDL */
       /***********************************************************/
       call.setTargetEndpointAddress( new URL(opts.getURL()) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "getQuote" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "getQuote" );
       call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
       call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
       call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
@@ -162,8 +161,8 @@ public class GetQuote1 {
 
       /* Define some service specific properties */
       /*******************************************/
-      call.setProperty( Transport.USER, opts.getUser() );
-      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+      call.setUsername( opts.getUser() );
+      call.setPassword( opts.getPassword() );
 
       /* Get symbol and invoke the service */
       /*************************************/
@@ -205,8 +204,8 @@ public class GetQuote1 {
 
       /* Define some service specific properties */
       /*******************************************/
-      call.setProperty( Transport.USER, opts.getUser() );
-      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+      call.setUsername( opts.getUser() );
+      call.setPassword( opts.getPassword() );
 
       /* Get symbol and invoke the service */
       /*************************************/

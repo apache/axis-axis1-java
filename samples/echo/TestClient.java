@@ -65,7 +65,6 @@ import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
-import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 
@@ -171,7 +170,8 @@ public abstract class TestClient {
             // set the SOAPAction, optionally appending the method name
             String action = soapAction;
             if (addMethodToAction) action += method;
-            call.setProperty( HTTPTransport.ACTION, action );
+            call.setUseSOAPAction( true );
+            call.setSOAPActionURI( action );
 
             // safety first
             call.setProperty(Call.TIMEOUT, "60000");

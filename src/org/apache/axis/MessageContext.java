@@ -477,14 +477,6 @@ public class MessageContext {
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
     
-    /** A String with the user's ID (if available)
-     */
-    public static String USERID              = Call.USERNAME_PROPERTY;
-
-    /** A String with the user's password (if available)
-     */
-    public static String PASSWORD            = Call.PASSWORD_PROPERTY;
-
     /** Place to store an AuthenticatedUser */
     public static String AUTHUSER            = "authenticatedUser";
 
