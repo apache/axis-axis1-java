@@ -1,0 +1,40 @@
+<deployment name="defaultClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
+ <documentation>
+  This is a test WSDD document for verifying simple structural correctness
+  and referential integrity.
+ </documentation>
+
+ <chain name="chain.one">
+  <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+ </chain>
+
+ <service name="service.one" provider="java:MSG">
+  <responseFlow>
+    <handler type="java:org.apache.axis.providers.java.RPCProvider"
+             name="BackReference"/>
+  </responseFlow>
+ </service>
+
+ <service name="service.two" provider="java:MSG">
+  <requestFlow>
+    <handler type="BackReference"/>
+  </requestFlow>
+ </service>
+
+ <transport name="transport.one">
+  <responseFlow>
+   <handler type="ForwardReference"/>
+  </responseFlow>
+ </transport>
+
+ <transport name="transport.two">
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.http.URLMapper"
+            name="ForwardReference"/>
+  </requestFlow>
+ </transport>
+
+</deployment>
