@@ -74,6 +74,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Rick Rineholt 
  */
 public class Message {
     static Category category =
@@ -81,6 +82,10 @@ public class Message {
 
     public static final String REQUEST  = "request" ;
     public static final String RESPONSE = "response" ;
+    //MIME parts defined for messages.
+    public static final String MIME_MULTIPART_RELATED="multipart/related";
+    public static final String MIME_APPLICATION_DIME="application/dime"; //NOT SUPPORTED NOW
+    public static final String MIME_UNKNOWN="  "; // look at the input stream to find the headers to decide.
 
     /**
      * The messageType indicates whether this is request or response.
@@ -96,7 +101,7 @@ public class Message {
      * This Message's Attachments object, which manages the attachments
      * contained in this Message.
      */
-    private Attachments mAttachments;
+    private Attachments mAttachments= null;
     
     /**
      * The MessageContext we are associated with.
@@ -123,12 +128,20 @@ public class Message {
     }
     
     /**
-     * Get this message's Content-Length in bytes (which will include any
-     * MIME part dividers, but will not include any transport headers).
+     * Construct a Message, using the provided initialContents as the
+     * contents of the Message's SOAPPart.
+     * <p>
+     * Eventually, genericize this to
+     * return the RootPart instead, which will have some kind of
+     * EnvelopeFactory to enable support for things other than SOAP.
+     * But that all will come later, with lots of additional refactoring.
+     *
+     * @param initialContents may be String, byte[], InputStream, SOAPEnvelope, or AxisFault.
+     * @param bodyInStream is true if initialContents is an InputStream containing just
+     * the SOAP body (no SOAP-ENV).
      */
-    public int getContentLength () {
-        // TODO: something real!
-		return mSOAPPart.getContentLength();
+    public Message(Object initialContents, boolean bodyInStream) {
+      this(initialContents, bodyInStream, (String)null );
     }
     
     /**
@@ -142,10 +155,11 @@ public class Message {
 	 *
 	 * @param initialContents may be String, byte[], InputStream, SOAPEnvelope, or AxisFault.
      * @param bodyInStream is true if initialContents is an InputStream containing just
+     * @param contentType this if the contentType has been already determined.  (as in the case of servlets); 
      * the SOAP body (no SOAP-ENV).
      */
-    public Message (Object initialContents, boolean bodyInStream) {
-		setup(initialContents, bodyInStream);
+    public Message(Object initialContents, boolean bodyInStream, String contentType) {
+		setup(initialContents, bodyInStream, contentType);
     }
 	
 	/**
@@ -153,38 +167,42 @@ public class Message {
 	 * defaulting bodyInStream to false.
 	 */
 	public Message (Object initialContents) {
-		setup(initialContents, false);
+		setup(initialContents, false, null);
 	}
     
 	/**
 	 * Do the work of construction.
 	 */
-	private void setup (Object initialContents, boolean bodyInStream) {
-        mSOAPPart = new SOAPPart(this, initialContents, bodyInStream);
+	private void setup (Object initialContents, boolean bodyInStream, String contentType) {
         
-        // Try to construct an AttachmentsImpl object for attachment functionality.
-        // If there is no org.apache.axis.attachments.AttachmentsImpl class,
-        // it must mean activation.jar is not present and attachments are not
-        // supported.
-        try {
-            Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
-            // Construct one, and cast to Attachments.
-            // There must be exactly one constructor of AttachmentsImpl, which must
-            // take an org.apache.axis.Message!
-            Constructor attachImplConstr = attachImpl.getConstructors()[0];
-            Object[] args = new Object[1];
-            args[0] = this;
-            mAttachments = (Attachments)attachImplConstr.newInstance(args);
-        } catch (ClassNotFoundException ex) {
-            // no support for it, leave mAttachments null.
-        } catch (InvocationTargetException ex) {
-            // no support for it, leave mAttachments null.
-        } catch (InstantiationException ex) {
-            // no support for it, leave mAttachments null.
-        } catch (IllegalAccessException ex) {
-            // no support for it, leave mAttachments null.
+          // Try to construct an AttachmentsImpl object for attachment functionality.
+          // If there is no org.apache.axis.attachments.AttachmentsImpl class,
+          // it must mean activation.jar is not present and attachments are not
+          // supported.
+          try {
+              Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
+              // Construct one, and cast to Attachments.
+              // There must be exactly one constructor of AttachmentsImpl, which must
+              // take an org.apache.axis.Message!
+              Constructor attachImplConstr = attachImpl.getConstructors()[0];
+              mAttachments = (Attachments)attachImplConstr.newInstance(new Object[]{this,initialContents, contentType});
+
+              mSOAPPart = (SOAPPart) mAttachments.getRootPart(); //If it can't support it, it wont have a root part.
+              
+          } catch (ClassNotFoundException ex) {
+              // no support for it, leave mAttachments null.
+          } catch (InvocationTargetException ex) {
+              // no support for it, leave mAttachments null.
+          } catch (InstantiationException ex) {
+              // no support for it, leave mAttachments null.
+          } catch (IllegalAccessException ex) {
+              // no support for it, leave mAttachments null.
+          }
+
+        if(null == mSOAPPart ){ //The stream was not determined by a more complex type so default to text/xml 
+          mSOAPPart = new SOAPPart(this, initialContents, bodyInStream);
         }
-	}
+     }
 	
     /**
      * Get this message's SOAPPart.
@@ -207,4 +225,42 @@ public class Message {
     public Attachments getAttachments () {
         return mAttachments;
     }
+
+  public String getContentType() throws org.apache.axis.AxisFault {
+    String ret= "text/xml; charset=utf-8";
+    if(mAttachments != null && 0 != mAttachments.getAttachmentCount()){
+        ret= mAttachments.getContentType();
+    }
+    return ret;
+  }
+  public int getContentLength() throws org.apache.axis.AxisFault{ //This will have to give way someday to HTTP Chunking but for now kludge.
+    int ret= 0; 
+    if(mAttachments == null ||   0== mAttachments.getAttachmentCount()){
+      ret= mSOAPPart.getAsBytes().length; 
+    }else{
+        ret= mAttachments.getContentLength();
+    }
+    return ret;
+  }
+
+
+  public void writeContentToStream(java.io.OutputStream os){
+
+    if(mAttachments == null || 0== mAttachments.getAttachmentCount()){ //Do it the old fashion way.
+      try{
+          os.write(mSOAPPart.getAsBytes());
+      }catch( java.io.IOException e){
+        System.err.println(e);
+        e.printStackTrace();
+      }
+    }else{
+      try{
+          mAttachments.writeContentToStream(os);
+      }catch(java.lang.Exception e){
+        System.err.println(e);
+        e.printStackTrace();
+      }
+    }
+  }
+  
 }

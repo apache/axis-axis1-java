@@ -59,7 +59,6 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.InputStreamBody;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -133,14 +132,16 @@ public class SOAPPart extends Part {
             form = FORM_FAULT;
         }
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "SOAPPart ctor (" + formNames[form] + ")"));
+            category.debug( "Enter SOAPPart ctor ("+formNames[form]+")" );
         }
         setCurrentMessage(initialContents, form);
     }
+    /* This could be rather costly with attachments.  
 
     public Object getOriginalMessage() {
         return( originalMessage );
     }
+    */
 
     /**
      * Content type is always "text/xml" for SOAPParts.
@@ -157,6 +158,21 @@ public class SOAPPart extends Part {
     public int getContentLength() {
         byte[] bytes = this.getAsBytes();
         return bytes.length;
+    }
+    /**
+     * This set the SOAP Envelope for this part. 
+     * 
+     * Note: It breaks the chicken/egg created.
+     *  I need a message to create an attachment...
+     *  From the attachment I should be able to get a reference...
+     *  I now want to edit elements in the envelope in order to
+     *    place the  attachment reference to it.
+     *  How do I now update the SOAP envelope with what I've changed?
+     *  
+     */
+
+    public void setSOAPEnvelope(org.apache.axis.message.SOAPEnvelope env){
+       setCurrentMessage(env, FORM_SOAPENVELOPE) ;
     }
 
     /**
@@ -199,7 +215,9 @@ public class SOAPPart extends Part {
      */
     private void setCurrentMessage(Object currMsg, int form) {
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("setCurrMsg00", formNames[form], currMsg.toString()));
+            category.debug( "Setting current message form to: " +
+                        formNames[form] +" (currentMessage is now " +
+                        currMsg + ")" );
         }
         currentMessage = currMsg ;
         currentForm = form ;
@@ -210,9 +228,9 @@ public class SOAPPart extends Part {
      * array.  This will force buffering of the message.
      */
     public byte[] getAsBytes() {
-        category.debug(JavaUtils.getMessage("enter00", "SOAPPart::getAsBytes"));
+        category.debug( "Enter: SOAPPart::getAsBytes" );
         if ( currentForm == FORM_BYTES ) {
-            category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsBytes"));
+            category.debug( "Exit: SOAPPart::getAsBytes" );
             return( (byte[]) currentMessage );
         }
 
@@ -220,7 +238,7 @@ public class SOAPPart extends Part {
             try {
                 getAsSOAPEnvelope();
             } catch (Exception e) {
-                category.fatal(JavaUtils.getMessage("makeEnvFail00"), e);
+                category.fatal("Couldn't make envelope", e);
                 return null;
             }
         }
@@ -239,13 +257,13 @@ public class SOAPPart extends Part {
                 // byte[]  buf = new byte[ len ];
                 // inp.read( buf );
                 setCurrentMessage( buf, FORM_BYTES );
-                category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsByes"));
+                category.debug( "Exit: SOAPPart::getAsByes" );
                 return( (byte[]) currentMessage );
             }
             catch( Exception e ) {
                 e.printStackTrace( System.err );
             }
-            category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsByes"));
+            category.debug( "Exit: SOAPPart::getAsByes" );
             return( null );
         }
 
@@ -256,12 +274,12 @@ public class SOAPPart extends Part {
         if ( currentForm == FORM_STRING ) {
             setCurrentMessage( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
-            category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsByes"));
+            category.debug( "Exit: SOAPPart::getAsBytes" );
             return( (byte[]) currentMessage );
         }
 
-        System.err.println(JavaUtils.getMessage("cantConvert00", "" + currentForm));
-        category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsByes"));
+        System.err.println("Can't convert " + currentForm + " to Bytes" );
+        category.debug( "Exit: SOAPPart::getAsBytes" );
         return( null );
     }
 
@@ -270,10 +288,10 @@ public class SOAPPart extends Part {
      * This will force buffering of the message.
      */
     public String getAsString() {
-        category.debug(JavaUtils.getMessage("enter00", "SOAPPart::getAsString") );
+        category.debug( "Enter: SOAPPart::getAsString" );
         if ( currentForm == FORM_STRING ) {
-            category.debug( JavaUtils.getMessage("exit00", "SOAPPart::getAsString, currentMessage = " +
-                            currentMessage) );
+            category.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
+                            currentMessage );
             return( (String) currentMessage );
         }
 
@@ -286,8 +304,8 @@ public class SOAPPart extends Part {
         if ( currentForm == FORM_BYTES ) {
             setCurrentMessage( new String((byte[]) currentMessage),
                                FORM_STRING );
-            category.debug( JavaUtils.getMessage("exit00", "SOAPPart::getAsString, currentMessage = " +
-                            currentMessage) );
+            category.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
+                            currentMessage );
             return( (String) currentMessage );
         }
 
@@ -317,8 +335,9 @@ public class SOAPPart extends Part {
             return (String)currentMessage;
         }
 
-        System.err.println(JavaUtils.getMessage("cantConvert01", "" + currentForm));
-        category.debug(JavaUtils.getMessage("exit00", "SOAPPart::getAsString"));
+        System.err.println("Can't convert form " + currentForm +
+                           " to String" );
+        category.debug( "Exit: SOAPPart::getAsString" );
         return( null );
     }
 
@@ -330,8 +349,8 @@ public class SOAPPart extends Part {
     public SOAPEnvelope getAsSOAPEnvelope()
         throws AxisFault
     {
-        category.debug( JavaUtils.getMessage("enter00", "SOAPPart::getAsSOAPEnvelope, currentForm = " +
-                        formNames[currentForm]) );
+        category.debug( "Enter: SOAPPart::getAsSOAPEnvelope; currentForm is "+
+                        formNames[currentForm] );
         if ( currentForm == FORM_SOAPENVELOPE )
             return( (SOAPEnvelope) currentMessage );
 
@@ -365,7 +384,7 @@ public class SOAPPart extends Part {
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
-        category.debug( JavaUtils.getMessage("exit00", "SOAPPart::getAsSOAPEnvelope") );
+        category.debug( "Exit: SOAPPart::getAsSOAPEnvelope" );
         return( (SOAPEnvelope) currentMessage );
     }
 

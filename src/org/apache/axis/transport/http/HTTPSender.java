@@ -205,10 +205,6 @@ public class HTTPSender extends BasicHandler {
                 sock.setSoTimeout(msgContext.getTimeout());
             }
 
-            // ROBJDO must be stream-oriented here
-            reqEnv  = (String) msgContext.getRequestMessage().getSOAPPart().getAsString();
-
-            //System.out.println("Msg: " + reqEnv);
 
             BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
             OutputStream  out  = sock.getOutputStream();
@@ -252,8 +248,7 @@ public class HTTPSender extends BasicHandler {
             }
 
             StringBuffer header = new StringBuffer();
-            // ROBJDO envelope API needs to change???  to avoid getting all the bytes
-            byte[] request = reqEnv.getBytes();
+            // byte[] request = reqEnv.getBytes();
 
             header.append( HTTPConstants.HEADER_POST )
              .append(" " );
@@ -263,17 +258,22 @@ public class HTTPSender extends BasicHandler {
                 header.append( ((tmpURL.getFile() == null ||
                         tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) );
             }
+
+            Message reqMessage= msgContext.getRequestMessage();
+
             header.append( " HTTP/1.0\r\n" )
              .append( HTTPConstants.HEADER_CONTENT_LENGTH )
              .append( ": " )
-             .append( request.length )
+             .append( reqMessage.getContentLength() )
              .append( "\r\n" )
              .append( HTTPConstants.HEADER_HOST )
              .append( ": " )
              .append( host )
              .append( "\r\n" )
              .append( HTTPConstants.HEADER_CONTENT_TYPE )
-             .append( ": text/xml; charset=utf-8\r\n" )
+             .append( ": " )
+             .append( reqMessage.getContentType())
+             .append( "\r\n" )
              .append( (otherHeaders == null ? "" : otherHeaders.toString()))
              .append( HTTPConstants.HEADER_SOAP_ACTION )
              .append( ": \"" )
@@ -283,7 +283,7 @@ public class HTTPSender extends BasicHandler {
             header.append("\r\n");
 
             out.write( header.toString().getBytes() );
-            out.write( request );
+            reqMessage.writeContentToStream(out);
 
             category.debug( "XML sent:" );
             category.debug( "---------------------------------------------------");

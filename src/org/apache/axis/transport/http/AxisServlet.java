@@ -315,8 +315,8 @@ public class AxisServlet extends HttpServlet {
         /* even need to be parsed.                                         */
         /*******************************************************************/
         MessageContext    msgContext = new MessageContext(engine);
-        InputStream       inp        = req.getInputStream();
-        Message           msg        = new Message( inp );
+        String contentType= req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE);
+        Message           msg        = new Message( req.getInputStream(), false, contentType );
 
         /* Set the request(incoming) message field in the context */
         /**********************************************************/
@@ -417,16 +417,15 @@ public class AxisServlet extends HttpServlet {
 
         /* Send it back along the wire...  */
         /***********************************/
-        // ROBJDO this must change for MIME outgoing content
-        msg = msgContext.getResponseMessage();
-        res.setContentType( "text/xml; charset=utf-8" );
-        String response;
-        if (msg == null) {
-            response="No data";
-        } else {
-            response = (String)msg.getSOAPPart().getAsString();
+
+        if(null== (msg = msgContext.getResponseMessage())) {
+          String resp= "No data";
+          res.setContentLength( resp.getBytes().length );
+          res.getWriter().print(resp);
+        }else{
+          res.setContentType( msg.getContentType() );
+          res.setContentLength( msg.getContentLength() );
+          msg.writeContentToStream(res.getOutputStream());
         }
-        res.setContentLength( response.getBytes().length );
-        res.getWriter().print( response );
     }
 }
