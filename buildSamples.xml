@@ -52,59 +52,59 @@ Copyright:
 	&targets;
 
   <target name="bidbuy" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/bidbuy/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/bidbuy" antfile="build.xml"/>
   </target>
 
   <target name="echo" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/echo/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/echo" antfile="build.xml"/>
   </target>
 
   <target name="encoding" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/encoding/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/encoding" antfile="build.xml"/>
   </target>
 
   <target name="message" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/message/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/message" antfile="build.xml"/>
   </target>
 
   <target name="misc" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/misc/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/misc" antfile="build.xml"/>
   </target>
 
   <target name="stock" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/stock/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/stock" antfile="build.xml"/>
   </target>
 
   <target name="transport" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/transport/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/transport" antfile="build.xml"/>
   </target>
 
   <target name="userguide" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/userguide/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/userguide" antfile="build.xml"/>
   </target>
 
   <target name="addr" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/addr/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/addr" antfile="build.xml"/>
   </target>
 
   <target name="attachments" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/attachments/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/attachments" antfile="build.xml"/>
   </target>
 
   <target name="proxy" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/proxy/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/proxy" antfile="build.xml"/>
   </target>
 
   <target name="security" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/security/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/security" antfile="build.xml"/>
   </target>
 
   <target name="jaxrpc" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/jaxrpc/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/jaxrpc" antfile="build.xml"/>
   </target>
 
   <target name="jms" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/jms/build.xml"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/jms" antfile="build.xml"/>
   </target>
 
 <!-- =========================================================================== -->
@@ -114,7 +114,7 @@ Copyright:
 
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the sample code -->
-    <foreach target="component-compile" fork="${foreach.fork}">
+    <foreach target="component-compile" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" includes="samples/**/build.xml"/>
         </param>
@@ -130,7 +130,7 @@ Copyright:
   <!--   This simply echos the component files, for sanity checks -->
   <!-- =================================================================== -->
   <target name="echoTest" >
-    <foreach target="echo-file" fork="${foreach.fork}">
+    <foreach target="echo-file" fork="${foreach.fork}" inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}">
         <param name="file">
              <fileset dir="${axis.home}" includes="samples/**/build.xml"/>
         </param>

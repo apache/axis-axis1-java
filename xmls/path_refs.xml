@@ -11,14 +11,11 @@
     <fileset dir="${lib.dir}">
         <include name="**/*.jar"/>
     </fileset>
-    <fileset dir="${build.dir}/lib">
-        <include name="**/*.jar"/>
-    </fileset>
     <pathelement path="${java.class.path}"/>
     <pathelement location="${build.dest}" />
     <pathelement location="${build.dir}/tools" />
-<!--
     <pathelement location="${build.lib}/axis-ant.jar" />
+<!--
     <pathelement location="${build.dir}/work" />
 -->
   </path>

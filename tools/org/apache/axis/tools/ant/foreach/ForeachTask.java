@@ -208,7 +208,6 @@ public class ForeachTask extends Task {
             callee = (Ant) getProject().createTask("ant");
             callee.setOwningTarget(getOwningTarget());
             callee.setTaskName(getTaskName());
-            callee.setLocation(getLocation());
             callee.init();
         }
 

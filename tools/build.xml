@@ -103,7 +103,7 @@ Copyright:
 </target>
 
 <target name="test" unless="axis-ant.present" description="tests">
-   <ant antfile="${tools.dir}/test.xml" /> 
+   <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${tools.dir}" antfile="test.xml" /> 
 </target>
 
 <property name="xdocs.dir" location="${env.ANT_HOME}/proposal/xdocs" />
@@ -126,7 +126,7 @@ Copyright:
   <echo>
     running xdocs with classpath=${xdoclet.extra.classpath.asprop}
   </echo>  
-  <ant dir="${xdocs.dir}">
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${xdocs.dir}">
     <property name="src.dir" location="org/apache/axis/tools/ant"/>
     <property name="src.root" location="."/>
     <property name="xdoclet.extra.classpath" 

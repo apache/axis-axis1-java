@@ -151,11 +151,11 @@ Copyright:
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
 
 <!-- stub in my task generations -->
-    <ant antfile="buildPreTestTaskdefs.xml" />
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildPreTestTaskdefs.xml" />
 
      <!--  Build the new org.apache.axis.tools.ant stuff -->
-     <ant antfile="tools/build.xml" />
-     <ant antfile="tools/build.xml" target="test"/>
+     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" />
+     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" target="test"/>
 
      <antcall target="post-compile"/>
      <property name="compile.built" value="yes"/>
@@ -166,7 +166,7 @@ Copyright:
   <!-- Custom post-compilation step                                        -->
   <!-- =================================================================== -->
   <target name="post-compile" if="post-compile.present">
-   <ant antfile="post-compile.xml"/>
+   <ant dir="${axis.home}" antfile="post-compile.xml"/>
   </target>
 
   <!-- =================================================================== -->
@@ -175,7 +175,7 @@ Copyright:
   <target name="samples" depends="compile" unless="samples.built"
     description="build the samples">
     <!--
-      <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
+      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildSamples.xml" target="compile"/>
     -->
      <antcall target="my-forking-ant">
        <param name="dir" value="${axis.home}"/>
@@ -239,7 +239,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="junit" depends="buildJunit" if="junit.present" >
     <mkdir dir="${test.functional.reportdir}" />
-    <ant antfile="${axis.home}/buildTest.xml" target="junit"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="junit"/>
   </target>
 
   <!-- =================================================================== -->
@@ -250,7 +250,7 @@ Copyright:
     >
 
     <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
-    <ant antfile="test/build_functional_tests.xml" target="functional-tests-only"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="functional-tests-only"/>
 
     <!--
     ...and then the functional tests can be run.  If this step yields a
@@ -263,7 +263,7 @@ Copyright:
   <target name="functional-tests-secure-only" depends="printEnv"
     description="functional secure tests without a rebuild;"
     >
-    <ant antfile="test/build_functional_tests.xml" target="functional-tests-secure-only"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="functional-tests-secure-only"/>
   </target>
 
 
@@ -272,21 +272,21 @@ Copyright:
   <!-- =================================================================== -->
   <target name="functional-tests-noserver" depends="compile, buildFunctional"
     description="functional tests, no server">
-    <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
 
   </target>
 
   <target name="componentTest" depends="compile, buildTest">
-     <ant antfile="${axis.home}/buildTest.xml" target="componentTest"/>
+     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="componentTest"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
   <target name="functional-tests" depends="buildFunctional" description="functional tests">
-    <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="functional-tests"/>
   </target>
 
   <!-- Security only tests, with full dependencies -->
@@ -442,21 +442,6 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Interop 3                                                           -->
-  <!-- =================================================================== -->
-  <target name="interop3" depends="buildTest"
-      description="run the round3 interop tests">
-    <ant dir="test/wsdl/interop3/import1"/>
-    <ant dir="test/wsdl/interop3/import2"/>
-    <ant dir="test/wsdl/interop3/import3"/>
-    <ant dir="test/wsdl/interop3/compound1"/>
-    <ant dir="test/wsdl/interop3/compound2"/>
-    <ant dir="test/wsdl/interop3/docLit"/>
-    <ant dir="test/wsdl/interop3/docLitParam"/>
-    <ant dir="test/wsdl/interop3/rpcEnc"/>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Cleans everything                                                   -->
   <!-- =================================================================== -->
   <target name="clean"
@@ -479,10 +464,8 @@ Copyright:
   <!-- =================================================================== -->
   <target name="checkstyle" 
     description="Check the style of the Axis source" >
-    <ant dir="." target="checkstyle"
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" target="checkstyle"
       antfile="xmls/checkstyle.xml"
-      inheritall="true" 
-      inheritrefs="true"
       >
       <property name="checkstyle.project"
         value="axis" />

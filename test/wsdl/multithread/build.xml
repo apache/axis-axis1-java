@@ -51,7 +51,7 @@ Copyright:
 </target>
 
 <target name="copy" depends="setenv">
-  <ant antfile="${axis.home}/samples/addr/build.xml"/>
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/addr" antfile="build.xml"/>
 </target>
 
 <target name="compile" depends="copy">

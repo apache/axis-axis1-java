@@ -52,7 +52,7 @@ Copyright:
 <target name="compile" depends="copy">
   <echo message="Compiling test.dynamic"/>
 
-  <ant antfile="${axis.home}/samples/addr/build.xml" target="compile"/>
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/addr/" antfile="build.xml" target="compile"/>
 
   <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
     <classpath>
