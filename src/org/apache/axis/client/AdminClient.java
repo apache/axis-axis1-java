@@ -23,8 +23,8 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
@@ -477,7 +477,7 @@ public class AdminClient
             }
         }
 
-        return StringEscapeUtils.unescapeJava(buf.toString());
+        return StringUtils.unescapeJava(buf.toString());
     }
 
     /**
