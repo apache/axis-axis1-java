@@ -73,6 +73,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.encoding.XMLType;
@@ -296,7 +297,7 @@ public class Call implements javax.xml.rpc.Call {
             Transport transport = getTransportForProtocol(protocol);
             if (transport == null)
                 throw new AxisFault("Call.setTargetEndpointAddress",
-                        "No transport mapping for protocol: " + protocol,
+                        JavaUtils.getMessage("noTransport01", protocol),
                         null, null);
             transport.setUrl(address.toString());
             setTransport(transport);
@@ -410,7 +411,7 @@ public class Call implements javax.xml.rpc.Call {
 
             msg = msgContext.getResponseMessage();
             if (msg == null)
-                throw new AxisFault(new Exception("Null response message!"));
+                throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
 
             env = msg.getSOAPPart().getAsSOAPEnvelope();
             return( env.getBodyElements() );
@@ -418,7 +419,7 @@ public class Call implements javax.xml.rpc.Call {
 
 
         if ( operationName == null )
-            throw new AxisFault( "No operation name specified" );
+            throw new AxisFault( JavaUtils.getMessage("noOperation00") );
         try {
             String ns = (String) getProperty( Call.NAMESPACE );
             if ( ns == null )
@@ -429,7 +430,7 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
-            throw new AxisFault( "Error invoking operation:\n" + exp );
+            throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -479,14 +480,13 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
             msg = msgContext.getResponseMessage();
             if (msg == null)
-                throw new AxisFault(new Exception("Null response message!"));
+                throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
             return( msg.getSOAPPart().getAsSOAPEnvelope() );
         }
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
-            throw new AxisFault( "Error invoking operation",
-                                                exp );
+            throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -610,11 +610,8 @@ public class Call implements javax.xml.rpc.Call {
 
         if ( numParams != params.length )
             throw new javax.xml.rpc.JAXRPCException(
-                                       "Number of parameters passed in (" +
-                                       params.length + ") doesn't match the " +
-                                       "number of IN/INOUT parameters (" +
-                                       numParams + ") from the addParameter" +
-                                       "() calls" );
+                    JavaUtils.getMessage("parmMismatch00",
+                    "" + params.length, "" + numParams) );
 
         // All ok - so now produce an array of RPCParams
         //////////////////////////////////////////////////
@@ -642,7 +639,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setTransport(Transport trans) {
         transport = trans;
         if (category.isInfoEnabled())
-            category.info("Transport is " + transport);
+            category.info(JavaUtils.getMessage("transport00", "" + transport));
     }
 
     /** Get the Transport registered for the given protocol.
@@ -797,10 +794,10 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Object invoke(String namespace, String method, Object[] args)
                     throws AxisFault {
-        category.debug("Enter: Call::invoke(ns, meth, args)" );
+        category.debug(JavaUtils.getMessage("enter00", "Call::invoke(ns, meth, args)") );
         RPCElement  body = new RPCElement(namespace, method, args);
         Object ret = invoke( body );
-        category.debug("Exit: Call::invoke(ns, meth, args)" );
+        category.debug(JavaUtils.getMessage("exit00", "Call::invoke(ns, meth, args)") );
         return ret;
     }
 
@@ -833,7 +830,7 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        category.debug("Enter: Call::invoke(RPCElement)" );
+        category.debug(JavaUtils.getMessage("enter00", "Call::invoke(RPCElement)") );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
@@ -862,8 +859,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("Call.invoke", "Cannot invoke Call with " +
-                    "null namespace URI for method "+body.getMethodName(),
+            throw new AxisFault("Call.invoke", JavaUtils.getMessage("cantInvoke00", body.getMethodName()),
                     null, null);
         } else if (msgContext.getServiceHandler() == null) {
             msgContext.setTargetService(body.getNamespaceURI());
@@ -896,7 +892,7 @@ public class Call implements javax.xml.rpc.Call {
         resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null)
-            throw new AxisFault("Null response message!");
+            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
 
         /** This must happen before deserialization...
          */
@@ -927,7 +923,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        category.debug("Exit: Call::invoke(RPCElement)" );
+        category.debug(JavaUtils.getMessage("exit00", "Call::invoke(RPCElement)") );
         return( result );
     }
 
@@ -949,7 +945,7 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        category.debug("Enter: Call::invoke()" );
+        category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
 
         msgContext.reset();
 
@@ -994,7 +990,7 @@ public class Call implements javax.xml.rpc.Call {
             throw fault ;
         }
 
-        category.debug("Exit: Call::invoke()" );
+        category.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
     }
 
     /**

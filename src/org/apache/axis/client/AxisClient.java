@@ -62,6 +62,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -95,7 +96,7 @@ public class AxisClient extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: AxisClient::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisClient::invoke") );
 
         String  hName = null ;
         Handler h     = null ;
@@ -110,7 +111,7 @@ public class AxisClient extends AxisEngine
                     h.invoke(msgContext);
                 else
                     throw new AxisFault( "Client.error",
-                                        "Can't locate handler: " + hName,
+                                        JavaUtils.getMessage("noHandler00", hName),
                                         null, null );
             }
             else {
@@ -160,7 +161,7 @@ public class AxisClient extends AxisEngine
                 if ( hName != null && (h = getTransport( hName )) != null )
                     h.invoke(msgContext);
                 else
-                    throw new AxisFault("No client transport named '" + hName + "' found!");
+                    throw new AxisFault(JavaUtils.getMessage("noTransport00", hName));
 
                 /* Process the Global Response Chain */
                 /***********************************/
@@ -184,12 +185,12 @@ public class AxisClient extends AxisEngine
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
-        category.debug("Exit: AxisClient::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "AxisClient::invoke") );
     };
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: AxisClient::undo" );
-        category.debug("Exit: AxisClient::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "AxisClient::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "AxisClient::undo") );
     }
 }
 

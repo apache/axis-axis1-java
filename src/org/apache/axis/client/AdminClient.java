@@ -58,6 +58,7 @@ package org.apache.axis.client ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
 
@@ -100,7 +101,7 @@ public class AdminClient
             Service service = new Service();
             call = (Call) service.createCall();
         } catch (JAXRPCException e) {
-            category.fatal("Couldn't get a call", e);
+            category.fatal(JavaUtils.getMessage("couldn'tCall00"), e);
             call = null;
         }
     }
@@ -188,7 +189,7 @@ public class AdminClient
         args = opts.getRemainingArgs();
 
         if ( args == null ) {
-            log( "Usage: AdminClient xml-files | list" );
+            log( JavaUtils.getMessage("usage00", "AdminClient xml-files | list") );
             return null;
         }
 
@@ -197,19 +198,19 @@ public class AdminClient
             InputStream input = null;
 
             if ( args[i].equals("list") ) {
-                log( "Doing a list" );
+                log( JavaUtils.getMessage("doList00") );
                 String str = "<m:list xmlns:m=\"AdminService\"/>" ;
                 input = new ByteArrayInputStream( str.getBytes() );
                 sb.append( process(opts, input) );
             } else if (args[i].equals("quit")) {
-                log("Doing a quit");
+                log(JavaUtils.getMessage("doQuit00"));
                 String str = "<m:quit xmlns:m=\"AdminService\"/>";
                 input = new ByteArrayInputStream(str.getBytes());
                 sb.append( process(opts, input) );
             } else if (args[i].equals("passwd")) {
-                log("Changing admin password");
+                log(JavaUtils.getMessage("changePwd00"));
                 if (args[i + 1] == null) {
-                    log("Must specify a password!");
+                    log(JavaUtils.getMessage("needPwd00"));
                     return null;
                 }
                 String str = "<m:passwd xmlns:m=\"AdminService\">";
@@ -221,14 +222,14 @@ public class AdminClient
             }
             else {
                 if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
-                    log( "Processing file: " + args[i] );
+                    log( JavaUtils.getMessage("processFile00", args[i]) );
                     input = new FileInputStream( args[i] );
                     sb.append( process(opts, input) );
                 } else {
                     java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(args[i],java.io.File.pathSeparator);
                     while(tokenizer.hasMoreTokens()) {
                         String file = tokenizer.nextToken();
-                        log( "Processing file: " + file );
+                        log( JavaUtils.getMessage("processFile00", file) );
                         input = new FileInputStream( file );
                         sb.append( process(opts, input) );
                         if(tokenizer.hasMoreTokens())
@@ -244,7 +245,7 @@ public class AdminClient
     public String process(Options opts, InputStream input)  throws Exception
     {
         if (call == null) {
-            throw new Exception("AdminClient did not initialize correctly: 'call' is null!");
+            throw new Exception(JavaUtils.getMessage("nullCall00"));
         }
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
@@ -263,7 +264,7 @@ public class AdminClient
         input.close();
 
         if (result == null || result.isEmpty()) {
-            throw new AxisFault("Null response message!");
+            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
         }
 
         SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
