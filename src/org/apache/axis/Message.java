@@ -169,6 +169,8 @@ public class Message {
 	public Message (Object initialContents) {
 		setup(initialContents, false, null);
 	}
+
+        private static boolean checkForAttchmentSupport= true;//aviod testing and possibly failing everytime.
     
 	/**
 	 * Do the work of construction.
@@ -179,26 +181,34 @@ public class Message {
           // If there is no org.apache.axis.attachments.AttachmentsImpl class,
           // it must mean activation.jar is not present and attachments are not
           // supported.
-          try {
-              Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
-              // Construct one, and cast to Attachments.
-              // There must be exactly one constructor of AttachmentsImpl, which must
-              // take an org.apache.axis.Message!
-              Constructor attachImplConstr = attachImpl.getConstructors()[0];
-              mAttachments = (Attachments)attachImplConstr.newInstance(new Object[]{this,initialContents, contentType});
+          if(checkForAttchmentSupport){
+              try {
+                  Class attachImpl = Class.forName("org.apache.axis.attachments.AttachmentsImpl");
+                  // Construct one, and cast to Attachments.
+                  // There must be exactly one constructor of AttachmentsImpl, which must
+                  // take an org.apache.axis.Message!
+                  Constructor attachImplConstr = attachImpl.getConstructors()[0];
+                  mAttachments = (Attachments)attachImplConstr.newInstance(
+                      new Object[]{this,initialContents, contentType});
 
-              mSOAPPart = (SOAPPart) mAttachments.getRootPart(); //If it can't support it, it wont have a root part.
-              
-          } catch (ClassNotFoundException ex) {
-              // no support for it, leave mAttachments null.
-          } catch (InvocationTargetException ex) {
-              // no support for it, leave mAttachments null.
-          } catch (InstantiationException ex) {
-              // no support for it, leave mAttachments null.
-          } catch (IllegalAccessException ex) {
-              // no support for it, leave mAttachments null.
-          } catch(java.lang.NoClassDefFoundError ex) {
-              // no support for it, leave mAttachments null.
+                  mSOAPPart = (SOAPPart) mAttachments.getRootPart(); //If it can't support it, it wont have a root part.
+                  
+              } catch (ClassNotFoundException ex) {
+                  checkForAttchmentSupport= false;
+                  // no support for it, leave mAttachments null.
+              } catch (InvocationTargetException ex) {
+                  checkForAttchmentSupport= false;
+                  // no support for it, leave mAttachments null.
+              } catch (InstantiationException ex) {
+                  checkForAttchmentSupport= false;
+                  // no support for it, leave mAttachments null.
+              } catch (IllegalAccessException ex) {
+                  checkForAttchmentSupport= false;
+                  // no support for it, leave mAttachments null.
+              } catch(java.lang.NoClassDefFoundError ex) {
+                  checkForAttchmentSupport= false;
+                  // no support for it, leave mAttachments null.
+              }
           }
 
         if(null == mSOAPPart ){ //The stream was not determined by a more complex type so default to text/xml 
