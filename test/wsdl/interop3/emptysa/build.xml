@@ -75,7 +75,7 @@ Copyright:
     <copy file="EmptySATestCase.java" overwrite="true"
           todir="${build.dir}/work/test/wsdl/interop3/emptysa"/>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" nowarn="${nowarn}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on" source="${source}" nowarn="${nowarn}">
       <classpath refid="test-classpath" />
       <include name="test/wsdl/interop3/emptysa/*.java" />
     </javac>

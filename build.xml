@@ -92,7 +92,8 @@ Copyright:
             cache="${build.dir}/dependencycache" closure="no">
     </depend>  
     <javac srcdir="${src.dir}" destdir="${build.dest}"  nowarn="${nowarn}" debug="${debug}"
-      deprecation="${deprecation}"
+      deprecation="${deprecation}" 
+      source="${source}"
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
@@ -306,6 +307,7 @@ Copyright:
       destdir="${build.webapp}/WEB-INF/classes/"
       nowarn="${nowarn}"
       debug="${debug}"
+      source="${source}"
       deprecation="${deprecation}"
       classpathref="classpath">
       <include name="*.java"/>

@@ -67,7 +67,7 @@ Copyright:
       </fileset>
     </copy>
 
-  <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
+  <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

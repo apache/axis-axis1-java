@@ -67,7 +67,7 @@ Copyright:
         
         <!-- compile the code -->
         <javac srcdir="${build.dir}/work"
-            destdir="${build.dest}" debug="on" nowarn="${nowarn}">
+            destdir="${build.dest}" debug="on" source="${source}" nowarn="${nowarn}">
             <classpath refid="classpath" />
             <include name="test/wsdl/interop4/groupH/simpleRPCenc/*.java" />
         </javac>

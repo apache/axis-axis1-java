@@ -58,6 +58,7 @@ Copyright:
            destdir="${build.dest}" 
            fork="${javac.fork}"
            nowarn="${nowarn}" 
+		   source="${source}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="AnyService.java" />
@@ -94,7 +95,7 @@ Copyright:
     <delete dir="${build.dir}/classes/test/wsdl/anytype" />
     
     <!-- Compile the test case -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/anytype/*.java" />

@@ -70,7 +70,7 @@ Copyright (c) 2002-2003 Apache Software Foundation.
 
         <!-- compile the code -->
         <javac srcdir="${build.dir}/work"
-            destdir="${build.dest}" debug="on"  nowarn="${nowarn}">
+            destdir="${build.dest}" debug="on" source="${source}" nowarn="${nowarn}">
             <classpath refid="classpath" />
             <include name="test/wsdl/soap12/additional/**/*.java" />
         </javac>
