@@ -58,6 +58,7 @@ import org.apache.axis.Part;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.IOUtils;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
@@ -174,7 +175,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                 // after this we use the more efficient boundarydelimeted stream.  There should never be any data here anyway.
                 byte[][] boundaryMarker = new byte[2][boundaryStr.length() + 2];
 
-                stream.read(boundaryMarker[0]);
+                IOUtils.readFully(stream, boundaryMarker[0]);
 
                 boundary = (boundaryStr + "\r\n").getBytes("US-ASCII");
 
