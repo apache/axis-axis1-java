@@ -95,6 +95,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -387,6 +388,12 @@ public class XMLUtils {
      */
     public static String DocumentToString(Document doc) {
         return privateElementToString(doc.getDocumentElement(), false);
+    }
+
+    public static String PrettyDocumentToString(Document doc) {
+        StringWriter sw = new StringWriter();
+        PrettyElementToWriter(doc.getDocumentElement(), sw);
+        return sw.toString();
     }
 
     public static void privateElementToWriter(Element element, Writer writer,
@@ -782,5 +789,52 @@ public class XMLUtils {
                 return ret;
         }
         return null;
+    }
+
+    /**
+     * Trim all new lines from text nodes.
+     * 
+     * @param node 
+     */
+    public static void normalize(Node node) {
+        if (node.getNodeType() == Node.TEXT_NODE) {
+            String data = ((Text) node).getData();
+            if (data.length() > 0) {
+                char ch = data.charAt(data.length()-1);
+                 if(ch == '\n' || ch == '\r' || ch == ' ') {
+                    String data2 = trim(data);
+                    ((Text) node).setData(data2);
+                 } 
+            }
+        }
+        for (Node currentChild = node.getFirstChild(); currentChild != null; currentChild = currentChild.getNextSibling()) {
+            normalize(currentChild);
+        }
+    }
+
+    public static String trim(String str) {
+        if (str.length() == 0) {
+            return str;
+        }
+
+        if (str.length() == 1) {
+            if ("\r".equals(str) || "\n".equals(str)) {
+                return "";
+            } else {
+                return str;
+            }
+        }
+
+        int lastIdx = str.length() - 1;
+        char last = str.charAt(lastIdx);
+        while(lastIdx > 0) {
+            if(last != '\n' && last != '\r' && last != ' ')
+                break;
+            lastIdx--; 
+            last = str.charAt(lastIdx);
+        }
+        if(lastIdx == 0)
+            return "";
+        return str.substring(0, lastIdx);
     }
 }

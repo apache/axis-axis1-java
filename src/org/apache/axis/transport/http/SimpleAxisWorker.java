@@ -350,7 +350,8 @@ public class SimpleAxisWorker implements Runnable {
 
                         Document doc = (Document) msgContext.getProperty("WSDL");
                         if (doc != null) {
-                            String response = XMLUtils.DocumentToString(doc);
+                            XMLUtils.normalize(doc.getDocumentElement());
+                            String response = XMLUtils.PrettyDocumentToString(doc);
                             byte[] respBytes = response.getBytes();
 
                             out.write(XML_MIME_STUFF);
@@ -364,12 +365,12 @@ public class SimpleAxisWorker implements Runnable {
                         StringBuffer sb = new StringBuffer();
                         sb.append("<h2>And now... Some Services</h2>\n");
                         Iterator i = engine.getConfig().getDeployedServices();
-                        out.write("<ul>\n".getBytes());
+                        sb.append("<ul>\n");
                         while (i.hasNext()) {
                             ServiceDesc sd = (ServiceDesc)i.next();
                             sb.append("<li>\n");
                             sb.append(sd.getName());
-                            sb.append(" <a href=\"../services/");
+                            sb.append(" <a href=\"services/");
                             sb.append(sd.getName());
                             sb.append("?wsdl\"><i>(wsdl)</i></a></li>\n");
                             ArrayList operations = sd.getOperations();
