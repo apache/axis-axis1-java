@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
+import javax.xml.rpc.namespace.QName;
+
 /** 
  * Test deserialization of SOAP responses
  */
@@ -116,6 +118,10 @@ public class TestDeser2001 extends TestDeser {
     public void testHexNull() throws Exception {
         deserialize("<result xsi:type=\"xsd:hexBinary\"></result>",
                     new Hex(""),true);
+    }
+
+    public void testQName() throws Exception {
+        deserialize("<result xsi:type=\"xsd:QName\" xmlns:qns=\"namespace\">qns:localPart</result>", new QName("namespace", "localPart"), true);
     }
 
     public void testMapWithNils() throws Exception {

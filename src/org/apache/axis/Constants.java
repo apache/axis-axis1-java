@@ -55,7 +55,6 @@
 
 package org.apache.axis;
 
-import org.apache.axis.utils.QFault;
 import org.xml.sax.Attributes;
 import javax.xml.rpc.namespace.QName;
 
@@ -383,8 +382,8 @@ public class Constants {
     
     public static final String FAULT_SERVER_USER =
                                                    "Server.userException";
-    public static final QFault FAULT_MUSTUNDERSTAND =
-                                  new QFault(URI_SOAP_ENV, "MustUnderstand");
+    public static final QName FAULT_MUSTUNDERSTAND =
+                                  new QName(URI_SOAP_ENV, "MustUnderstand");
 
 
     // QNames

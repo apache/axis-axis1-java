@@ -58,7 +58,6 @@ package org.apache.axis ;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.utils.QFault;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.commons.logging.Log;
@@ -72,6 +71,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
+
+import javax.xml.rpc.namespace.QName;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -87,7 +88,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     private static final String LS = System.getProperty("line.separator");
 
-    protected QFault    faultCode ;
+    protected QName     faultCode ;
     protected String    faultString = "";
     protected String    faultActor ;
     protected Vector    faultDetails ;  // vector of Element's
@@ -118,7 +119,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault(String code, String str,
                      String actor, Element[] details) {
         super (str);
-        setFaultCode( new QFault(Constants.AXIS_NS, code));
+        setFaultCode( new QName(Constants.AXIS_NS, code));
         setFaultString( str );
         setFaultActor( actor );
         setFaultDetail( details );
@@ -126,7 +127,7 @@ public class AxisFault extends java.rmi.RemoteException {
             initFromException(this);
     }
 
-    public AxisFault(QFault code, String str,
+    public AxisFault(QName code, String str,
                      String actor, Element[] details) {
         super (str);
         setFaultCode( code );
@@ -244,15 +245,15 @@ public class AxisFault extends java.rmi.RemoteException {
             ;
     }
 
-    public void setFaultCode(QFault code) {
+    public void setFaultCode(QName code) {
         faultCode = code ;
     }
 
     public void setFaultCode(String code) {
-        faultCode = new QFault(Constants.AXIS_NS, code);
+        faultCode = new QName(Constants.AXIS_NS, code);
     }
 
-    public QFault getFaultCode() {
+    public QName getFaultCode() {
         return( faultCode );
     }
 
