@@ -55,6 +55,7 @@
 
 package org.apache.axis.client ;
 
+import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
@@ -65,11 +66,11 @@ import org.w3c.dom.Document;
 import javax.naming.Reference;
 import javax.naming.Referenceable;
 import javax.naming.StringRefAddr;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.rpc.ServiceException;
@@ -79,14 +80,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.reflect.Proxy;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -114,6 +116,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Thread local storage used for storing the last call object
      */
     private static ThreadLocal previousCall = new ThreadLocal();
+    static private HashMap      cachedWSDL  = new HashMap();
+    static private boolean      cachingWSDL = true ;
+
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -158,8 +163,16 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(URL wsdlDoc, QName serviceName) throws ServiceException {
         engine = getAxisClient();
         this.wsdlLocation = wsdlDoc;
-        Document doc = XMLUtils.newDocument(wsdlDoc.toString());
-        initService(doc, serviceName);
+        Definition def = null ;
+
+        if ( cachingWSDL &&
+             (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ){
+          initService( def, serviceName );
+        }
+        else {
+          Document doc = XMLUtils.newDocument(wsdlDoc.toString());
+          initService(doc, serviceName);
+        }
     }
 
     /**
@@ -183,9 +196,16 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
         try {
             // Start by reading in the WSDL using WSDL4J
-            FileInputStream      fis = new FileInputStream(wsdlLocation);
-            Document doc = XMLUtils.newDocument(fis);
-            initService(doc, serviceName);
+            Definition def = null ;
+            if ( cachingWSDL && 
+                 (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
+              initService( def, serviceName );
+            }
+            else {
+              FileInputStream  fis = new FileInputStream(wsdlLocation);
+              Document         doc = XMLUtils.newDocument(fis);
+              initService(doc, serviceName);
+            }
         }
         catch( FileNotFoundException exp ) {
             throw new ServiceException(
@@ -226,6 +246,20 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             reader.setFeature("javax.wsdl.verbose", false);
             Definition           def    = reader.readWSDL( null, doc );
 
+            if ( cachingWSDL && this.wsdlLocation != null )
+              cachedWSDL.put( this.wsdlLocation.toString(), def );
+
+            initService( def, serviceName );
+        }
+        catch( Exception exp ) {
+            throw new ServiceException(
+                    JavaUtils.getMessage("wsdlError00", "" + "", "\n" + exp) );
+        }
+    }
+
+    private void initService(Definition def, QName serviceName)
+            throws ServiceException {
+        try {
             this.wsdlDefinition = def ;
 
             // grrr!  Too many flavors of QName
@@ -576,5 +610,20 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Call getCall() throws ServiceException {
         Call call = (Call) previousCall.get();
         return call;
+    }
+
+    /**
+     * Tells whether or not we're caching WSDL
+     */
+    public boolean getCacheWSDL() {
+      return cachingWSDL ;
+    }
+
+    /**
+     * Allows users to turn caching of WSDL documents on or off.
+     * Default is 'true' (on).
+     */
+    public void setCacheWSDL(boolean flag) {
+      cachingWSDL = flag ;
     }
 }
