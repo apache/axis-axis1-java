@@ -53,6 +53,7 @@
  */
 package test.wsdl;
 
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.tools.ant.BuildException;
@@ -109,16 +110,16 @@ public class Wsdl2javaAntTask extends Task
             Emitter emitter = new Emitter();
 
             if ("application".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(emitter.APPLICATION_SCOPE);
+                emitter.setScope(JavaProvider.BYTE_SCOPE_APPLICATION);
             }
             else if ("request".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(emitter.REQUEST_SCOPE);
+                emitter.setScope(JavaProvider.BYTE_SCOPE_REQUEST);
             }
             else if ("session".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(emitter.SESSION_SCOPE);
+                emitter.setScope(JavaProvider.BYTE_SCOPE_SESSION);
             }
             else if ("none".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(emitter.NO_EXPLICIT_SCOPE);
+                emitter.setScope(JavaProvider.BYTE_SCOPE_NOT_EXPLICIT);
             }
             else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
