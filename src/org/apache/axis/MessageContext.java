@@ -64,7 +64,6 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
-import org.apache.axis.soap.SOAP11Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
@@ -79,7 +78,6 @@ import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import java.io.File;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * Some more general docs will go here.
@@ -629,19 +627,7 @@ public class MessageContext implements SOAPMessageContext {
             // new service.
             highFidelity = service.needsHighFidelityRecording();
 
-            ServiceDesc sd = service.getInitializedServiceDesc(this);
-
-            if (service.getStyle() == Style.MESSAGE) {
-                // There should be only one operation
-                List ops = sd.getOperations();
-                if (ops.size() != 1) {
-                    throw new AxisFault(
-                            Messages.getMessage("onlyOneMessageOp",
-                                                 targetService,
-                                                 ""+ops.size()));
-                }
-                this.currentOperation = (OperationDesc)ops.get(0);
-            }
+            service.getInitializedServiceDesc(this);
         }
     }
 

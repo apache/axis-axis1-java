@@ -61,7 +61,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Vector;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
@@ -72,7 +71,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.WSDDEngineConfiguration;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDDeployment;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
@@ -83,6 +81,13 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Handy static utility functions for turning XML into
@@ -99,12 +104,12 @@ public class Admin
     /**
      * Process a given XML document - needs cleanup.
      */
-    public Element[] AdminService(Vector xml)
+    public Element[] AdminService(Element [] xml)
         throws Exception
     {
         log.debug("Enter: Admin::AdminService");
         MessageContext msgContext = MessageContext.getCurrentContext();
-        Document doc = process( msgContext, (Element) xml.get(0) );
+        Document doc = process( msgContext, xml[0] );
         Element[] result = new Element[1];
         result[0] = doc.getDocumentElement();
         log.debug("Exit: Admin::AdminService");
@@ -160,11 +165,11 @@ public class Admin
         engine.refreshGlobalOptions();
 
         engine.saveConfiguration();
-        
+
         doc = XMLUtils.newDocument();
         doc.appendChild( root = doc.createElementNS("", "Admin" ) );
         root.appendChild( doc.createTextNode( Messages.getMessage("done00") ) );
-        
+
         return doc;
     }
 
@@ -180,7 +185,7 @@ public class Admin
         throws Exception
     {
         // Check security FIRST.
-        
+
         /** Might do something like this once security is a little more
          * integrated.
         if (!engine.hasSafePassword() &&
@@ -196,16 +201,16 @@ public class Admin
         Handler serviceHandler = msgContext.getService();
         if (serviceHandler != null  &&
             !JavaUtils.isTrueExplicitly(serviceHandler.getOption("enableRemoteAdmin"))) {
-                
+
             String remoteIP = msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
             if (remoteIP != null  &&
                 !remoteIP.equals("127.0.0.1")) {
-                    
+
                 try {
                     InetAddress myAddr = InetAddress.getLocalHost();
                     InetAddress remoteAddr =
                             InetAddress.getByName(remoteIP);
-                    
+
                     if (!myAddr.equals(remoteAddr))
                         throw new AxisFault("Server.Unauthorized",
                            Messages.getMessage("noAdminAccess00"),
@@ -217,10 +222,10 @@ public class Admin
                 }
             }
         }
-        
+
         String rootNS = root.getNamespaceURI();
         AxisEngine engine = msgContext.getAxisEngine();
-        
+
         // If this is WSDD, process it correctly.
         if (rootNS != null && rootNS.equals(WSDDConstants.URI_WSDD)) {
             return processWSDD(msgContext, engine, root);
@@ -247,7 +252,7 @@ public class Admin
         context.setPretty(true);
         try {
             EngineConfiguration config = engine.getConfig();
-            
+
             if (config instanceof WSDDEngineConfiguration) {
                 WSDDDeployment deployment =
                     ((WSDDEngineConfiguration)config).getDeployment();
@@ -298,7 +303,7 @@ public class Admin
             // throw an Exception which will go uncaught!  this way, a test
             // suite can invoke main() and detect the exception
             throw new IllegalArgumentException(
-                    Messages.getMessage("usage00", 
+                    Messages.getMessage("usage00",
                                          "Admin client|server <xml-file>"));
             // System.exit( 1 );
         }

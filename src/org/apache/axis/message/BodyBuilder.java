@@ -62,7 +62,6 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
@@ -147,8 +146,12 @@ public class BodyBuilder extends SOAPHandler
         MessageContext msgContext = context.getMessageContext();
         OperationDesc [] operations = null;
         try {
-             if(msgContext != null)
+            if(msgContext != null)
                 operations = msgContext.getPossibleOperationsByQName(qname);
+
+            // If there's only one match, set it in the MC now
+            if ((operations != null) && (operations.length == 1))
+                msgContext.setOperation(operations[0]);
         } catch (org.apache.axis.AxisFault e) {
             // SAXException is already known to this method, so I
             // don't have an exception-handling propogation explosion.
