@@ -283,7 +283,7 @@ public class AxisServletBase extends HttpServlet {
                             webInfPath + File.separator + "attachments");
 
         EngineConfiguration config =
-            EngineConfigurationFactoryFinder.newFactory(context)
+            EngineConfigurationFactoryFinder.newFactory(servlet)
                     .getServerEngineConfig();
 
         if (config != null) {

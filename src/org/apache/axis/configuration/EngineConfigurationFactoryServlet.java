@@ -55,16 +55,17 @@
 
 package org.apache.axis.configuration;
 
+import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.InputStream;
@@ -114,8 +115,8 @@ public class EngineConfigurationFactoryServlet
          * FileProvider/EngineConfiguration pretend to be independent,
          * but they are tightly bound to an engine instance...
          */
-        return (param instanceof ServletContext)
-               ? new EngineConfigurationFactoryServlet((ServletContext)param)
+        return (param instanceof ServletConfig)
+               ? new EngineConfigurationFactoryServlet((ServletConfig)param)
                : null;
     }
 
@@ -123,9 +124,9 @@ public class EngineConfigurationFactoryServlet
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    protected EngineConfigurationFactoryServlet(ServletContext ctx) {
+    protected EngineConfigurationFactoryServlet(ServletConfig conf) {
         super();
-        this.ctx = ctx;
+        this.ctx = conf.getServletContext();
     }
 
     /**
