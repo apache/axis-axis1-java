@@ -153,6 +153,8 @@ public class MessageContext {
      */
     public static String SVC_HANDLER         = "service.handler";
 
+    public static String ENGINE_HANDLER      = "engine.handler";
+
     /** This String is the URL that the message came to
      */
     public static String TRANS_URL           = "transport.url";
