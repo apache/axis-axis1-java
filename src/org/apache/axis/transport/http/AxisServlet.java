@@ -365,8 +365,7 @@ public class AxisServlet extends AxisServletBase {
         if(exception instanceof AxisFault) {
             AxisFault fault=(AxisFault)exception;
             processAxisFault(fault);
-            writer.println("<pre>Fault - " + fault.toString() + " </pre>");
-            writer.println("<pre>" + fault.dumpToString() + " </pre>");
+            writeFault(writer, fault);
         } else {
             logException(exception);
             writer.println("<pre>Exception - " + exception + "<br>");
@@ -403,6 +402,20 @@ public class AxisServlet extends AxisServletBase {
     protected void logException(Exception e) {
         exceptionLog.info(Messages.getMessage("exception00"), e);
     }
+
+    /**
+     * this method writes a fault out to an HTML stream. This includes
+     * escaping the strings to defend against cross-site scripting attacks
+     * @param writer
+     * @param axisFault
+     */
+    private void writeFault(PrintWriter writer, AxisFault axisFault) {
+        String localizedMessage = XMLUtils.xmlEncodeString(axisFault.getLocalizedMessage());
+        writer.println("<pre>Fault - " + localizedMessage + "<br>");
+        writer.println(axisFault.dumpToString(true));
+        writer.println("</pre>");
+    }
+    
     /**
      * scan through the request for parameters, invoking the endpoint
      * if we get a method param. If there was no method param then the
@@ -634,11 +647,10 @@ public class AxisServlet extends AxisServletBase {
 
         if(axisFault!=null && isDevelopment()) {
             //dev systems only give fault dumps
-            writer.println("<pre>Exception - " + axisFault.getLocalizedMessage()+ "<br>");
-            writer.println(axisFault.dumpToString());
-            writer.println("</pre>");
+            writeFault(writer, axisFault);
         }
     }
+
 
     /**
      * This method lists the available services; it is called when there is
