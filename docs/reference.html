@@ -410,9 +410,11 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
   <dt><b><font face="Courier New, Courier, mono">&lt;service name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
     provider=&quot;</font></b><font face="Courier New, Courier, mono"><i>provider</i></font><b><font face="Courier New, Courier, mono">&quot; 
     &gt;</font></b></dt>
-  <dd>Deploys/undeploys an Axis Service. Common options for this element (i.e. 
-    subelements of the form <code><b>&lt;parameter name=&quot;</b>name<b>&quot; 
-    value=&quot;</b>value<b>&quot;/&gt;</b>)</code> include: <br>
+  <dd>Deploys/undeploys an Axis Service. This is the most complex WSDD tag, so 
+    we're going to spend a little time on it.<br>
+    <br>
+    <b>Options</b> may be specified as follows : <code><b>&lt;parameter name=&quot;</b>name<b>&quot; 
+    value=&quot;</b>value<b>&quot;/&gt;</b></code>, and common ones include:<br>
     <br>
     <b>className</b> : the backend implementation class<br>
     <b>allowedMethods</b> : the allowed methods (use &quot;*&quot; to allow all 
@@ -433,11 +435,22 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
   &lt;parameter name=&quot;className&quot; value=&quot;test.Implementation&quot;/&gt;
   &lt;parameter name=&quot;allowedMethods&quot; value=&quot;*&quot;/&gt;
   &lt;namespace&gt;http://testservice/&lt;/namespace&gt;
-
+  &lt;requestFlow&gt; &lt;!-- Run these before processing the request --&gt;
+    &lt;handler type=&quot;java:MyHandlerClass&quot;/&gt;
+    &lt;handler type=&quot;somethingIDefinedPreviously&quot;/&gt;
+  &lt;/requestFlow&gt;
 &lt;/service&gt;</pre>
+    <b>Metadata</b> may be specified about particular operations in your service 
+    by using the &lt;operation&gt; tag inside a service. This enables you to map 
+    the java parameter names of a method to particular XML names, to specify the 
+    parameter modes for your parameters, and to map particular XML names to particular 
+    operations.<br>
+    <br>
+    &lt;operation name=&quot;method&quot;&gt;<br>
+    &lt;/operation&gt; <br>
   </dd>
-  <dt><b><br>
-    <font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;</font></b><b><font face="Courier New, Courier, mono">&gt;<br>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;</font></b><b><font face="Courier New, Courier, mono">&gt;<br>
     &lt;<i>subelement</i>/&gt;...<br>
     &lt;/chain&gt; </font></b></dt>
   <dd>Defines a chain. Each <i>handler</i> (i.e. deployed handler name) in the 
@@ -451,7 +464,8 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
     or may refer to previously defined &lt;handlers&gt;, with the &quot;type&quot; 
     of the handler referring to the name of the other handler definition:<br>
     <pre>&lt;handler name=&quot;logger&quot; type=&quot;java:org.apache.axis.handlers.LogHandler&quot;/&gt;<br>&lt;chain name=&quot;myChain&quot;/&gt;<br>   &lt;handler type=&quot;logger&quot;/&gt;<br>&lt;/chain&gt;</pre>
-  </dd>  <dt>&nbsp;</dt>
+  </dd>
+  <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;transport name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
   <dd>Defines a transport on the server side. Server transports are invoked when 
     an incoming request arrives. A server transport may define <b>&lt;requestFlow&gt;</b> 
