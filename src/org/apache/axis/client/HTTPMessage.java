@@ -56,7 +56,6 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
-import org.jdom.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.message.RPCArg;
@@ -66,10 +65,12 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
-import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPDispatchHandler;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  * This class is meant to be the interface that client/requestor code
@@ -166,6 +167,21 @@ public class HTTPMessage {
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    } 
+    catch( Exception e ) {
+      Debug.Print( 1, e );
+      throw new AxisFault( e );
+    }
+
     // For testing - skip HTTP layer
     if ( doLocal ) {
       client = new org.apache.axis.server.AxisServer();
@@ -201,8 +217,8 @@ public class HTTPMessage {
     }
 
     if ( Debug.getDebugLevel() > 0  ) {
-      Element  elem = new Element( "Debug", "d", Constants.URI_DEBUG );
-      elem.addContent( "" + Debug.getDebugLevel() );
+      Element  elem = doc.createElementNS( Constants.URI_DEBUG, "d:Debug" );
+      elem.appendChild( doc.createTextNode( ""+Debug.getDebugLevel() ) );
       SOAPHeader  header = new SOAPHeader(elem);
       header.setActor( Constants.URI_NEXT_ACTOR );
 
@@ -229,7 +245,9 @@ public class HTTPMessage {
     Message       resMsg = msgContext.getResponseMessage();
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     SOAPBody      resBody = resEnv.getFirstBody();
-    Document      doc = new Document( resBody.getRoot() );
+
+    doc = db.newDocument();
+    doc.appendChild( doc.importNode( resBody.getRoot(), true ) );
 
     mc.setResponseMessage( new Message(doc, "Document") );
 

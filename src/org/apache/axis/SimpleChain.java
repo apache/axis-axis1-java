@@ -59,7 +59,9 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.*;
-import org.jdom.Element ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -145,7 +147,22 @@ public class SimpleChain extends BasicHandler implements Chain {
 
   public Element getDeploymentData() {
     Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
-    Element root = new Element( "chain");
+
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
+
+    Element root = doc.createElement( "chain" );
 
     if (handlers != null ) {
       StringBuffer str = new StringBuffer();
@@ -155,7 +172,7 @@ public class SimpleChain extends BasicHandler implements Chain {
         h = (Handler) handlers.elementAt(i);
         str.append( h.getClass().getName() );
       }
-      root.addAttribute( "flow", str.toString() );
+      root.setAttribute( "flow", str.toString() );
     }
 
     options = this.getOptions();
@@ -164,10 +181,10 @@ public class SimpleChain extends BasicHandler implements Chain {
       while ( e.hasMoreElements() ) {
         String k = (String) e.nextElement();
         Object v = options.get(k);
-        Element e1 = new Element( "option" );
-        e1.addAttribute( "name", k );
-        e1.addAttribute( "value", v.toString() );
-        root.addContent( e1 );
+        Element e1 = doc.createElement( "option" );
+        e1.setAttribute( "name", k );
+        e1.setAttribute( "value", v.toString() );
+        root.appendChild( e1 );
       }
     }
 

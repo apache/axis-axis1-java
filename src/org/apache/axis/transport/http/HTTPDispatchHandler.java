@@ -59,9 +59,7 @@ import java.io.* ;
 import java.net.* ;
 import java.util.* ;
 import java.lang.reflect.*;
-import org.jdom.* ;
-import org.jdom.input.SAXBuilder ;
-import org.jdom.output.XMLOutputter ;
+
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.RPCArg;
@@ -71,6 +69,11 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.encoding.Base64 ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
+import org.apache.xml.serialize.XMLSerializer ;
+import org.apache.xml.serialize.OutputFormat ;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
@@ -86,14 +89,14 @@ public class HTTPDispatchHandler extends BasicHandler {
     Message  outMsg    = null ;
     String   reqEnv    = null ;
 
-    targetURL = (String) msgContext.getProperty( MessageContext.TRANS_URL);
+    targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
     try {
       String   host ;
-      int      port = 80 ;
-      String   action = (String) msgContext.getProperty( HTTPConstants.MC_HTTP_SOAPACTION );
-      URL      tmpURL        = new URL( targetURL );
-      byte[]   buf           = new byte[4097];
-      int      rc            = 0 ;
+      int      port   = 80 ;
+      String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
+      URL      tmpURL = new URL( targetURL );
+      byte[]   buf    = new byte[4097];
+      int      rc     = 0 ;
 
       host = tmpURL.getHost();
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
@@ -141,8 +144,8 @@ public class HTTPDispatchHandler extends BasicHandler {
       String        userID = null ;
       String        passwd = null ;
       
-      userID = (String) msgContext.getProperty( MessageContext.USERID );
-      passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
+      userID = msgContext.getStrProp( MessageContext.USERID );
+      passwd = msgContext.getStrProp( MessageContext.PASSWORD );
 
       if ( userID != null )
         otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " + 
@@ -156,7 +159,7 @@ public class HTTPDispatchHandler extends BasicHandler {
                                           + reqEnv.length() + "\n" +
                        HTTPConstants.HEADER_CONTENT_TYPE + ": text/xml\n" +
                        (otherHeaders == null ? "" : otherHeaders) + 
-                       HTTPConstants.HEADER_SOAP_ACTION + ": \"" + action + "\"\n\n" ;
+                       HTTPConstants.HEADER_SOAP_ACTION+": \""+action+"\"\n\n";
 
       out.write( header.getBytes() );
       out.write( reqEnv.getBytes() );
@@ -214,20 +217,36 @@ public class HTTPDispatchHandler extends BasicHandler {
         // really bad must be going on - so just dump the input stream
         // to stdout.
         while ( (b = (byte) inp.read()) != -1 )
-          System.err.print(b);
+          System.err.print((char)b);
         System.err.println("");
       }
 
       if ( b != -1 ) {
-        SAXBuilder parser = new SAXBuilder();
-        Document doc = parser.build(inp);
+        DocumentBuilderFactory dbf = null ;
+        DocumentBuilder        db  = null ;
+        Document               doc = null ;
+
+        try {
+          dbf = DocumentBuilderFactory.newInstance();
+          dbf.setNamespaceAware(true);
+          db  = dbf.newDocumentBuilder();
+          doc = db.parse( inp );
+        }
+        catch( Exception e ) {
+          e.printStackTrace();
+        }
+
         outMsg = new Message( doc, "Document" );
         msgContext.setResponseMessage( outMsg );
+
         Debug.Print( 1, "\nXML received:" );
         Debug.Print( 1, "---------------------------------------------------");
-        Debug.Print( 1, (new XMLOutputter()).outputString(doc) );
+        ByteArrayOutputStream  baos = new ByteArrayOutputStream();
+        XMLSerializer  xs = new XMLSerializer( baos, new OutputFormat() );
+        xs.serialize( (Document) doc );
+        baos.close();
+        Debug.Print( 1, baos.toString() );
       }
-
       inp.close();
       out.close();
       sock.close();

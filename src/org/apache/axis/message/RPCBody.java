@@ -58,8 +58,10 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.jdom.* ;
 import org.apache.axis.message.* ;
+
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -82,10 +84,10 @@ public class RPCBody {
   }
 
   public void setBody( Element root ) {
-    setMethodName( root.getName() );
-    setPrefix( root.getNamespacePrefix() );
+    setMethodName( root.getLocalName() );
+    setPrefix( root.getPrefix() );
     setNamespaceURI( root.getNamespaceURI() );
-    parseArgs( root.getChildren() );
+    parseArgs( root.getChildNodes() );
   }
 
   public RPCBody(String methodName, Object[] args) {
@@ -126,9 +128,10 @@ public class RPCBody {
     args.add( arg ); 
   }
   
-  public void      parseArgs(List list) {
-    for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-      Object  n = list.get(i);
+  public void parseArgs(NodeList list) {
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Node    n = list.item(i);
+      if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
       if ( args == null ) args = new ArrayList();
       args.add( new RPCArg( (Element) n ) );
     }
@@ -136,14 +139,30 @@ public class RPCBody {
 
   public Element getElement() {
     Element   root ;
+
+    DocumentBuilderFactory dbf = null ;
+    DocumentBuilder        db  = null ;
+    Document               doc = null ;
+
+    try {
+      dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      db  = dbf.newDocumentBuilder();
+      doc = db.newDocument();
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }
    
-    if ( prefix != null ) 
-      root = new Element( methodName, prefix, namespaceURI );
+    if ( prefix != null )  {
+      root = doc.createElementNS( namespaceURI, prefix + ":" + methodName );
+      root.setAttribute( "xmlns:" + prefix, namespaceURI );
+    }
     else 
-      root = new Element( methodName );
+      root = doc.createElement( methodName );
     for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
       RPCArg  arg = (RPCArg) args.get(i) ;
-      root.addContent( arg.getElement() );
+      root.appendChild( doc.importNode(arg.getElement(),true) );
     }
     return( root );
   }

@@ -59,9 +59,8 @@ import java.io.*;
 import java.util.* ;
 import java.net.URL;
 
-import org.jdom.* ;
-import org.jdom.input.SAXBuilder ;
-import org.jdom.output.XMLOutputter ;
+import javax.xml.parsers.* ;
+import org.w3c.dom.* ;
 
 /**
  * See \samples\stock\readme for info.
@@ -80,25 +79,29 @@ public class StockQuoteService {
     URL          url = new URL( "http://www.xmltoday.com/examples/" +
                                 "stockquote/getxmlquote.vep?s="+symbol );
 
-    SAXBuilder   parser = new SAXBuilder();
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    DocumentBuilder        db  = dbf.newDocumentBuilder();
 
-    Document doc  = parser.build( url );
-    Element  elem = doc.getRootElement();
-    elem = elem.getChild( "stock_quote" );
+    Document doc  = db.parse( url.toExternalForm() );
+    Element  elem = doc.getDocumentElement();
+    NodeList list = elem.getElementsByTagName( "stock_quote" );
 
-    List         list = elem.getChildren( "price" );
-
-    elem = (Element) list.get( 0 );
-    String quoteStr = elem.getAttributeValue("value");
-    try {
-      return Float.valueOf(quoteStr).floatValue();
-    } catch (NumberFormatException e1) {
-      // maybe its an int?
+    if ( list != null && list.getLength() != 0 ) {
+      elem = (Element) list.item(0);
+      list = elem.getElementsByTagName( "price" );
+      elem = (Element) list.item(0);
+      String quoteStr = elem.getAttribute("value");
       try {
-        return Integer.valueOf(quoteStr).intValue() * 1.0F;
-      } catch (NumberFormatException e2) {
-        return -1.0F;
+        return Float.valueOf(quoteStr).floatValue();
+      } catch (NumberFormatException e1) {
+        // maybe its an int?
+        try {
+          return Integer.valueOf(quoteStr).intValue() * 1.0F;
+        } catch (NumberFormatException e2) {
+          return -1.0F;
+        }
       }
     }
+    return( 0 );
   }
 }

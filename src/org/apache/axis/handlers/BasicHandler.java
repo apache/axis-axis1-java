@@ -60,7 +60,8 @@ import org.apache.axis.*;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.Debug;
 
-import org.jdom.Element ;
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler
@@ -127,19 +128,34 @@ public abstract class BasicHandler implements Handler {
 
     public Element getDeploymentData() {
       Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
-      Element  root = new Element( "handler" );
 
-      root.addAttribute( "class", this.getClass().getName() );
+      DocumentBuilderFactory dbf = null ;
+      DocumentBuilder        db  = null ;
+      Document               doc = null ;
+
+      try {
+        dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        db  = dbf.newDocumentBuilder();
+        doc = db.newDocument();
+      }
+      catch( Exception e ) {
+        e.printStackTrace();
+      }
+
+      Element  root = doc.createElement( "handler" );
+
+      root.setAttribute( "class", this.getClass().getName() );
       options = this.getOptions();
       if ( options != null ) {
         Enumeration e = options.keys();
         while ( e.hasMoreElements() ) {
           String k = (String) e.nextElement();
           Object v = options.get(k);
-          Element e1 = new Element( "option" );
-          e1.addAttribute( "name", k );
-          e1.addAttribute( "value", v.toString() );
-          root.addContent( e1 );
+          Element e1 = doc.createElement( "option" );
+          e1.setAttribute( "name", k );
+          e1.setAttribute( "value", v.toString() );
+          root.appendChild( e1 );
         }
       }
       Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );

@@ -55,7 +55,7 @@ Copyright:
     <property name="year" value="2001"/>
 
     <property name="build.compiler" value="classic"/>
-    <property name="debug" value="off"/>
+    <property name="debug" value="on"/>
 
     <property name="src.dir" value="./src"/>
     <property name="docs.dir" value="./docs"/>

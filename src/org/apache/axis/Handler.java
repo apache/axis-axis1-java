@@ -59,7 +59,8 @@ import java.util.* ;
 import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
-import org.jdom.Element ;
+
+import org.w3c.dom.* ;
 
 /**
  *

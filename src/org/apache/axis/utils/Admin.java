@@ -57,14 +57,14 @@ package org.apache.axis.utils ;
 
 import java.io.* ;
 import java.util.* ;
-import org.jdom.* ;
-import org.jdom.input.SAXBuilder ;
+import org.apache.axis.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
 
-import org.apache.axis.* ;
+import org.w3c.dom.* ;
+import javax.xml.parsers.* ;
 
 /**
  *
@@ -88,12 +88,14 @@ public class Admin {
   }
 
   private void getOptions(Element root, Handler handler) {
-    List  list = root.getChildren( "option" );
-
-    for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-      Element elem  = (Element) list.get(i);
-      String  name  = elem.getAttributeValue( "name" );
-      String  value = elem.getAttributeValue( "value" );
+    NodeList  list = root.getChildNodes();
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Node    node  = list.item(i);
+      if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      Element elem  = (Element) node ;
+      if ( !"option".equals(elem.getLocalName()) ) continue ;
+      String  name  = elem.getAttribute( "name" );
+      String  value = elem.getAttribute( "value" );
 
       if ( name != null && value != null )
         handler.addOption( name, value );
@@ -112,7 +114,7 @@ public class Admin {
   }
 
   public Document process(Document doc) throws AxisFault {
-    return( process( doc.getRootElement() ) );
+    return( process( doc.getDocumentElement() ) );
   }
 
   public Document process(Element root) throws AxisFault {
@@ -120,7 +122,7 @@ public class Admin {
     try {
       init();
       ClassLoader   cl     = new AxisClassLoader();
-      String        action = root.getName();
+      String        action = root.getLocalName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") &&
            !action.equals("list") )
@@ -133,8 +135,16 @@ public class Admin {
         String[]   names ;
         Handler    h ;
         int        i, j ;
-        root = new Element("Admin");
-        doc = new Document(root);
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder        db  = dbf.newDocumentBuilder();
+
+        doc = db.newDocument();
+
+        root = doc.createElement( "Admin" );
+        doc.appendChild( root );
+
         Element    elem = null ;
         Hashtable  opts = null ;
 
@@ -153,33 +163,34 @@ public class Admin {
             if ( elem == null ) continue ;
 
             if ( loop == 1 ) {
-              // Apparently there isn't anyway to change the name
-              // on an Element in JDom.   Strange.
-              Element tmpElem = new Element( "service" );
-              tmpElem.setChildren( elem.getChildren() );
-              tmpElem.setAttributes( elem.getAttributes() );
-              elem.removeChildren();
-              elem = tmpElem ;
+              elem.setNodeValue( "service" );
+              
+              // Element tmpElem = doc.createElement( "service" );
+              // tmpElem.setChildren( elem.getChildren() );
+              // tmpElem.setAttributes( elem.getAttributes() );
+              // elem.removeChildren();
+              // elem = tmpElem ;
             }
 
-            if ( elem.getName().equals("chain") )
+            if ( elem.getTagName().equals("chain") )
               elem.removeAttribute( "class" );
-
-            List l = elem.getAttributes();
-            l.add( 0, new Attribute( "name", names[i] ) );
-            elem.setAttributes( l );
-            root.addContent( elem );
+        
+            elem.setAttribute( "name", names[i] );
+            root.appendChild( doc.importNode(elem,true) );
           }
         }
         return( doc );
       }
   
-      List list = root.getChildren();
-      for ( int loop = 0 ; loop < list.size() ; loop++ ) {
-        Object node = list.get(loop);
+      NodeList list = root.getChildNodes();
+      for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
+        Node     node    = list.item(loop);
+
+        if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
+
         Element  elem    = (Element) node ;
-        String   type    = elem.getName();
-        String   name    = elem.getAttributeValue( "name" );
+        String   type    = elem.getLocalName();
+        String   name    = elem.getAttribute( "name" );
   
         if ( action.equals( "undeploy" ) ) {
           if ( type.equals("service") ) {
@@ -200,18 +211,18 @@ public class Admin {
         Handler  h       = null ;
         String   hName ;
         Handler  tmpH ;
-        String   flow    = elem.getAttributeValue( "flow" );
-        String   input   = elem.getAttributeValue( "input" );
-        String   pivot   = elem.getAttributeValue( "pivot" );
-        String   output  = elem.getAttributeValue( "output" );
+        String   flow    = elem.getAttribute( "flow" );
+        String   input   = elem.getAttribute( "input" );
+        String   pivot   = elem.getAttribute( "pivot" );
+        String   output  = elem.getAttribute( "output" );
  
   
         if ( type.equals( "handler" ) ) {
-          String   cls   = elem.getAttributeValue( "class" );
+          String   cls   = elem.getAttribute( "class" );
           Debug.Print( 2, "Deploying handler: " + name );
           
           if (hr instanceof SupplierRegistry) {
-            String lifeCycle = elem.getAttributeValue("lifecycle");
+            String lifeCycle = elem.getAttribute("lifecycle");
             Supplier supplier;
 
             if ("factory".equals(lifeCycle)) {
@@ -264,9 +275,9 @@ public class Admin {
             else              cc.clear();
   
             st = new StringTokenizer( input, " \t\n\r\f," );
-            c  = new SimpleChain();
-            cc.setInputChain( c );
             while ( st.hasMoreElements() ) {
+              if ( c == null ) 
+                cc.setInputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -279,9 +290,10 @@ public class Admin {
             cc.setPivotHandler( hr.find( pivot ) );
   
             st = new StringTokenizer( output, " \t\n\r\f," );
-            c  = new SimpleChain();
-            cc.setOutputChain( c );
+            c  = null ;
             while ( st.hasMoreElements() ) {
+              if ( c == null ) 
+                cc.setOutputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -310,11 +322,12 @@ public class Admin {
           if ( cc == null ) cc = new SimpleTargetedChain();
           else              cc.clear();
   
-          if ( input != null ) {
+          if ( input != null && !"".equals(input) ) {
             st = new StringTokenizer( input, " \t\n\r\f," );
-            c  = new SimpleChain();
-            cc.setInputChain( c );
+            c  = null ;
             while ( st.hasMoreElements() ) {
+              if ( c == null )
+                cc.setInputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -325,14 +338,15 @@ public class Admin {
             }
           }
           
-          if ( pivot != null )
+          if ( pivot != null && !"".equals(pivot) )
             cc.setPivotHandler( hr.find( pivot ) );
   
-          if ( output != null ) {
+          if ( output != null && !"".equals(output) ) {
             st = new StringTokenizer( output, " \t\n\r\f," );
-            c  = new SimpleChain();
-            cc.setOutputChain( c );
+            c  = null ;
             while ( st.hasMoreElements() ) {
+              if ( c == null )
+                cc.setOutputChain( c = new SimpleChain() );
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
@@ -351,11 +365,18 @@ public class Admin {
                                "Unknown type to " + action + ": " + type,
                                null, null );
       }
-      root = new Element( "Admin" );
-      doc  = new Document(root);
-      root.addContent( "Done processing" );
+
+      DocumentBuilderFactory  dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      DocumentBuilder         db  = dbf.newDocumentBuilder();
+
+      doc = db.newDocument();
+
+      doc.appendChild( root = doc.createElement( "Admin" ) );
+      root.appendChild( doc.createTextNode( "Done processing" ) );
     }
     catch( Exception e ) {
+      e.printStackTrace();
       throw new AxisFault( e );
     }
     return( doc );
@@ -389,12 +410,14 @@ public class Admin {
 
     try {
       for ( i = 0 ; i < args.length ; i++ ) {
-        SAXBuilder       parser  = new SAXBuilder();
         Document         doc     = null ;
 
         System.out.println( "Processing '" + args[i] + "'" );
  
-        doc = parser.build( new FileInputStream(args[i]) );
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder        db  = dbf.newDocumentBuilder();
+        doc = db.parse( new FileInputStream( args[i] ) );
 
         admin.process( doc );
       }
