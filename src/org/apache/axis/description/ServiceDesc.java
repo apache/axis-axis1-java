@@ -66,7 +66,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
@@ -511,7 +510,7 @@ public class ServiceDesc {
                         if (!JavaUtils.isConvertable(paramClass, heldType)) {
                             break;
                         }
-                        
+
                         param.setJavaType(type);
                     }
                 }
@@ -565,6 +564,10 @@ public class ServiceDesc {
     {
         if (introspectionComplete || implClass == null)
             return;
+
+        if (Skeleton.class.equals(implClass)) {
+            return;
+        }
 
         Method [] methods = implClass.getDeclaredMethods();
 
@@ -717,7 +720,6 @@ public class ServiceDesc {
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (Modifier.isPublic(method.getModifiers()) &&
-                    !Modifier.isStatic(method.getModifiers()) &&
                     method.getName().equals(methodName)) {
                 createOperationForMethod(method);
             }
@@ -805,8 +807,8 @@ public class ServiceDesc {
                 paramDesc.setName("in" + k);
             }
 
-            // If it's a Holder, mark it INOUT and set the type to the
-            // held type.  Otherwise it's IN with its own type.
+            // If it's a Holder, mark it INOUT, and set the XML type QName
+            // to the held type.  Otherwise it's IN.
 
             Class heldClass = JavaUtils.getHolderValueType(type);
             if (heldClass != null) {
