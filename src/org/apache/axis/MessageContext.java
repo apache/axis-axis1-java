@@ -96,14 +96,16 @@ public class MessageContext {
             Category.getInstance(MessageContext.class.getName());
 
     /**
-     * Just a placeholder until we figure out how many messages we'll actually
-     * be passing around.
+     * The request message.  If we're on the client, this is the outgoing
+     * message heading to the server.  If we're on the server, this is the
+     * incoming message we've received from the client.
      */
     private Message requestMessage ;
 
     /**
-     * Just a placeholder until we figure out how many messages we'll actually
-     * be passing around.
+     * The response message.  If we're on the server, this is the outgoing
+     * message heading back to the client.  If we're on the client, this is the
+     * incoming message we've received from the server.
      */
     private Message responseMessage ;
 
@@ -153,7 +155,8 @@ public class MessageContext {
     private int              timeout = 0;
 
     /**
-     *
+     * Storage for an arbitrary bag of properties associated with this
+     * MessageContext.
      */
     private Hashtable bag ;
 
@@ -242,14 +245,19 @@ public class MessageContext {
     }
 
     /**
-     * Placeholder.
+     * Get the request message.
+     *
+     * @return the request message (may be null).
      */
     public Message getRequestMessage() {
         return requestMessage ;
     };
 
     /**
-     * Placeholder.
+     * Set the request message, and make sure that message is associated
+     * with this MessageContext.
+     *
+     * @param reqMsg the new request Message.
      */
     public void setRequestMessage(Message reqMsg) {
         requestMessage = reqMsg ;
@@ -257,12 +265,17 @@ public class MessageContext {
     };
 
     /**
-     * Placeholder.
+     * Get the response message.
+     *
+     * @return the response message (may be null).
      */
     public Message getResponseMessage() { return responseMessage ; }
 
     /**
-     * Placeholder.
+     * Set the response message, and make sure that message is associated
+     * with this MessageContext.
+     *
+     * @param reqMsg the new response Message.
      */
     public void setResponseMessage(Message respMsg) {
         responseMessage = respMsg ;
@@ -294,7 +307,7 @@ public class MessageContext {
     }
     
     /**
-     * Determine when we've past the pivot
+     * Determine when we've passed the pivot
      */
     public boolean getPastPivot()
     {
@@ -302,7 +315,7 @@ public class MessageContext {
     }
 
     /**
-     * Indicate when we've past the pivot
+     * Indicate when we've passed the pivot
      */
     public void setPastPivot(boolean pastPivot)
     {
