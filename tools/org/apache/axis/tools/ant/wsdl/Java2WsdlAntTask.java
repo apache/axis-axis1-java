@@ -91,6 +91,7 @@ public class Java2WsdlAntTask extends Task
     private String stopClasses = null;
     private String tm = "1.1";
     private String style = null;
+    private String use = null;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -111,6 +112,7 @@ public class Java2WsdlAntTask extends Task
             log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
             log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
             log("\tstyle:" + style, Project.MSG_VERBOSE);
+            log("\tuse:" + use, Project.MSG_VERBOSE);
             log("\toutputImpl:" + outputImpl, Project.MSG_VERBOSE);
             log("\tnamespaceImpl:" + namespaceImpl, Project.MSG_VERBOSE);
             log("\tlocationImport:" + locationImport, Project.MSG_VERBOSE);
@@ -148,14 +150,13 @@ public class Java2WsdlAntTask extends Task
                 emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
             }
             if (style != null) {
-                if (style.equalsIgnoreCase("DOCUMENT")) {
-                    emitter.setMode(Emitter.MODE_DOCUMENT);
-                } else if (style.equalsIgnoreCase("RPC")) {
-                    emitter.setMode(Emitter.MODE_RPC);
-                } else if (style.equalsIgnoreCase("WRAPPED")) {
-                    emitter.setMode(Emitter.MODE_DOC_WRAPPED);
-                }
+                emitter.setStyle(style);
             }
+
+            if (use != null) {
+                emitter.setUse(use);
+            }
+
             if (input != null) {
                 emitter.setInputWSDL(input);
             }
