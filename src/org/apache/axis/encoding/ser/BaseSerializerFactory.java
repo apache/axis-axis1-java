@@ -127,16 +127,16 @@ public abstract class BaseSerializerFactory
         }
         ser = null;
 
-        try {
-            // Try getting a specialized Serializer
-            ser = getSpecialized(mechanismType);
-            
-            // Try getting a general purpose Serializer via constructor
-            // invocation
-            if (ser == null) {
-                ser = getGeneralPurpose(mechanismType);
-            }
-            
+        // Try getting a specialized Serializer
+        ser = getSpecialized(mechanismType);
+        
+        // Try getting a general purpose Serializer via constructor
+        // invocation
+        if (ser == null) {
+            ser = getGeneralPurpose(mechanismType);
+        }
+
+        try {            
             // If not successfull, try newInstance
             if (ser == null) {
                 ser = (Serializer) serClass.newInstance();

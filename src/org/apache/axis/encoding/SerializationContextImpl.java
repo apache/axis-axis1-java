@@ -1092,10 +1092,7 @@ public class SerializationContextImpl implements SerializationContext
         // Using the serialization factory, create a serializer
         Serializer ser = null;
         if ( serFactory != null ) {
-            try {
-                ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
-            } catch (JAXRPCException e) {
-            }
+            ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
         }
         if (ser != null) {
             info = new SerializerInfo();
@@ -1172,10 +1169,7 @@ public class SerializationContextImpl implements SerializationContext
         // Using the serialization factory, create a serializer
         Serializer ser = null;
         if ( serFactory != null ) {
-            try {
-                ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
-            } catch (JAXRPCException e) {
-            }
+            ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
         }
         if (ser != null) {
             info = new SerializerInfo();
