@@ -65,7 +65,7 @@ public class Parameters {
     public Vector list = new Vector();
 
     // The type of the first output part, used as the method's return value
-    public String returnType = null;
+    public Type returnType = null;
 
     // The name of the return type (from the part name of the output message.
     // Used to create the RPCParam for the return value.
@@ -110,7 +110,7 @@ public class Parameters {
         public static final byte INOUT = 3;
 
         public String name;
-        public String type;
+        public Type type;
         public byte mode = IN;
 
         public String toString() {

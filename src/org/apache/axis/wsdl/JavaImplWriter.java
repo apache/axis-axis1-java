@@ -169,11 +169,11 @@ public class JavaImplWriter extends JavaWriter {
         else {
             pw.println(parms.signature + " {");
         }
-        if (!"void".equals(parms.returnType)) {
+        if (parms.returnType != null) {
             pw.print("        return ");
 
             if (isPrimitiveType(parms.returnType)) {
-                if ("boolean".equals(parms.returnType)) {
+                if ("boolean".equals(parms.returnType.getName())) {
                     pw.println("false;");
                 } else {
                     pw.println("-3;");

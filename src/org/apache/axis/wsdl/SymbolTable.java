@@ -482,6 +482,12 @@ public class SymbolTable {
      * Convert the specified QName into a full Java Name.
      */
     public String getJavaName(QName qName) {
+
+        // Handle the special "java" namespace for types
+        if (qName.getNamespaceURI().equalsIgnoreCase("java")) {
+            return qName.getLocalPart();
+        }
+
         // The QName may represent a base java name, so check this first
         String fullJavaName = Utils.getBaseJavaName(qName);
         if (fullJavaName != null) 
@@ -627,7 +633,7 @@ public class SymbolTable {
         // Now that the remaining in and inout parameters are collected, the first entry in the
         // outputs Vector is the return value.  The rest are out parameters.
         if (outputs.size() > 0) {
-            parameters.returnType = (String) outputs.get(0);
+            parameters.returnType = (Type) outputs.get(0);
             parameters.returnName = (String) outputs.get(1);
             ++parameters.outputs;
             for (int i = 3; i < outputs.size(); i += 2) {
@@ -646,9 +652,6 @@ public class SymbolTable {
             else
                 parameters.faultString = parameters.faultString + ", " + exceptionName;
         }
-
-        if (parameters.returnType == null)
-            parameters.returnType = "void";
         return parameters;
     } // parameters
 
@@ -670,7 +673,7 @@ public class SymbolTable {
     private void addInishParm(Vector inputs, Vector outputs, int index, int outdex, Parameters parameters, boolean trimInput) {
         Parameters.Parameter p = new Parameters.Parameter();
         p.name = (String) inputs.get(index);
-        p.type = (String) inputs.get(index - 1);
+        p.type = (Type) inputs.get(index - 1);
 
         // Should we remove the given parameter type/name entries from the Vector?
         if (trimInput) {
@@ -699,7 +702,7 @@ public class SymbolTable {
     private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
         Parameters.Parameter p = new Parameters.Parameter();
         p.name = (String) outputs.get(outdex);
-        p.type = (String) outputs.get(outdex - 1);
+        p.type = (Type) outputs.get(outdex - 1);
         if (trim) {
             outputs.remove(outdex);
             outputs.remove(outdex - 1);
@@ -730,20 +733,10 @@ public class SymbolTable {
 */
                 // Encoded
                 if (typeName != null) {
-                    // Handle the special "java" namespace for types
-                    if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
-                        v.add(typeName.getLocalPart());
-                    } else {
-                        v.add(((SymTabEntry) getTypeEntry(typeName)).getName());
-                    }
+                    v.add(getTypeEntry(typeName));
                     v.add(part.getName());
                 } else if (elementName != null) {
-                    // Handle the special "java" namespace for types
-                    if (elementName.getNamespaceURI().equalsIgnoreCase("java")) {
-                        v.add(elementName.getLocalPart());
-                    } else {
-                        v.add(((SymTabEntry) getTypeEntry(elementName)).getName());
-                    }
+                    v.add(getTypeEntry(elementName));
                     v.add(part.getName());
                 }
             }

@@ -278,8 +278,9 @@ public class JavaWriterFactory implements WriterFactory {
      */
     private void constructSignatures(Parameters parms, String name) {
         int allOuts = parms.outputs + parms.inouts;
-        String signature = "    public " + parms.returnType + " " + name + "(";
-        String axisSig = "    public " + parms.returnType + " " + name + "(";
+        String ret = parms.returnType == null ? "void" : parms.returnType.getName();
+        String signature = "    public " + ret + " " + name + "(";
+        String axisSig = "    public " + ret + " " + name + "(";
         String skelSig = null;
 
         if (allOuts == 0)
@@ -311,14 +312,14 @@ public class JavaWriterFactory implements WriterFactory {
             else
                 needComma = true;
             if (p.mode == Parameters.Parameter.IN) {
-                signature = signature + p.type + " " + p.name;
-                axisSig = axisSig + p.type + " " + p.name;
-                skelSig = skelSig + p.type + " " + p.name;
+                signature = signature + p.type.getName() + " " + p.name;
+                axisSig = axisSig + p.type.getName() + " " + p.name;
+                skelSig = skelSig + p.type.getName() + " " + p.name;
             }
             else if (p.mode == Parameters.Parameter.INOUT) {
                 signature = signature + Utils.holder(p.type) + " " + p.name;
                 axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
-                skelSig = skelSig + p.type + " " + p.name;
+                skelSig = skelSig + p.type.getName() + " " + p.name;
             }
             else// (p.mode == Parameters.Parameter.OUT)
             {
