@@ -109,23 +109,26 @@ public class MessageElement
       this.name = localPart;
       this.context = context;
       this.attributes = new AttributesImpl();
-      for (int i = 0; i < attributes.getLength(); i++) {
-          this.attributes.addAttribute(attributes.getURI(i),
-                                       attributes.getLocalName(i),
-                                       attributes.getQName(i),
-                                       "string",
-                                       attributes.getValue(i));
-      }
+
+      if (attributes != null) {
+        for (int i = 0; i < attributes.getLength(); i++) {
+            this.attributes.addAttribute(attributes.getURI(i),
+                                         attributes.getLocalName(i),
+                                         attributes.getQName(i),
+                                         "string",
+                                         attributes.getValue(i));
+        }
             
-      String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
-      // !!! This currently defaults to false... should it default to true?
-      if (rootVal != null)
-          isRoot = rootVal.equals("1");
+        String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
+        // !!! This currently defaults to false... should it default to true?
+        if (rootVal != null)
+            isRoot = rootVal.equals("1");
       
-      id = attributes.getValue(Constants.ATTR_ID);
-      // Register this ID with the context.....
-      if (id != null) {
-          context.registerID(id, this);
+        id = attributes.getValue(Constants.ATTR_ID);
+        // Register this ID with the context.....
+        if (id != null) {
+            context.registerID(id, this);
+        }
       }
     }
     

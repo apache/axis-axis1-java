@@ -62,6 +62,8 @@ import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
 
 import org.apache.axis.utils.* ;
+import org.apache.axis.message.* ;
+import org.apache.axis.encoding.SerializationContext;
 
 /** 
  *
@@ -134,6 +136,10 @@ public class AxisFault extends Exception {
     faultActor = actor ;
   }
 
+  public String getFaultActor() {
+    return( faultActor );
+  }
+
   public void setFaultDetails(Element[] details) {
     if ( details == null ) return ;
     faultDetails = new Vector( details.length );
@@ -142,36 +148,19 @@ public class AxisFault extends Exception {
   }
 
   public Element[] getFaultDetails() {
+    if (faultDetails == null) return null;
     return( (Element[]) faultDetails.toArray() );
   }
 
-  public Element getElement(Document doc) {
-    Element  elem, root ;
-    int      i ;
+  public void output(SerializationContext context) throws Exception {
 
-    if ( doc == null ) doc = XMLUtils.newDocument();
-    root = doc.createElementNS( Constants.URI_SOAP_ENV,
-                                Constants.NSPREFIX_SOAP_ENV + ":" +
-                                Constants.ELEM_FAULT );
+    SOAPEnvelope envelope = new SOAPEnvelope();
 
-    root.appendChild( elem = doc.createElement( Constants.ELEM_FAULT_CODE ) );
-    elem.appendChild( doc.createTextNode( faultCode.getLocalPart() ) );
+    SOAPFaultElement fault = 
+      new SOAPFaultElement(Constants.URI_SOAP_ENV, "Fault", null, null);
+    fault.setAxisFault(this);
+    envelope.addBodyElement(fault);
 
-    root.appendChild( elem = doc.createElement( Constants.ELEM_FAULT_STRING ) );
-    elem.appendChild( doc.createTextNode( faultString ) );
-
-    if ( faultActor != null && !faultActor.equals("") ) {
-      root.appendChild(elem = doc.createElement( Constants.ELEM_FAULT_ACTOR ));
-      elem.appendChild( doc.createTextNode( faultActor ) );
-    }
-
-    if ( faultDetails != null && faultDetails.size() > 0 ) {
-      root.appendChild(elem = doc.createElement( Constants.ELEM_FAULT_DETAIL));
-
-      for ( i = 0 ;i < faultDetails.size() ; i++ )
-        elem.appendChild( doc.importNode((Element) faultDetails.get(i),true) );
-    }
-
-    return( root );
+    envelope.output(context);
   }
 };
