@@ -397,7 +397,7 @@ public class Types {
      */ 
     public Element writeWrapperElement(QName qname,
                                        boolean request,
-                                       boolean hasParams) {
+                                       boolean hasParams) throws AxisFault {
         // Make sure a types section is present
         if (wsdlTypesElem == null) {
             writeWsdlTypesElement();
@@ -634,7 +634,8 @@ public class Types {
      * @param qName qName to get the namespace of the schema node
      * @param element the Element to append to the Schema node
      */
-    public void writeSchemaElement(QName qName, Element element) {
+    public void writeSchemaElement(QName qName, Element element) 
+        throws AxisFault {
         if (wsdlTypesElem == null) {
             try {
                 writeWsdlTypesElement();
@@ -643,6 +644,14 @@ public class Types {
                 return;
             }
         }
+        String namespaceURI = qName.getNamespaceURI();
+        if (namespaceURI == null || namespaceURI.equals("")) {
+            throw new AxisFault(Constants.FAULT_SERVER_GENERAL,
+                                Messages.getMessage("noNamespace00",
+                                                    qName.toString()),
+                                null, null);
+        }
+
         Element schemaElem = null;
         NodeList nl = wsdlTypesElem.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++ ) {
@@ -651,7 +660,7 @@ public class Types {
                 for (int n = 0; n < attrs.getLength(); n++) {
                     Attr a = (Attr)attrs.item(n);
                     if (a.getName().equals("targetNamespace") &&
-                        a.getValue().equals(qName.getNamespaceURI()))
+                        a.getValue().equals(namespaceURI))
                         schemaElem = (Element)nl.item(i);
                 }
             }
@@ -660,7 +669,7 @@ public class Types {
             schemaElem = docHolder.createElement("schema");
             wsdlTypesElem.appendChild(schemaElem);
             schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
-            schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
+            schemaElem.setAttribute("targetNamespace", namespaceURI);
 
             // Add SOAP-ENC namespace import
             Element importElem = docHolder.createElement("import");
