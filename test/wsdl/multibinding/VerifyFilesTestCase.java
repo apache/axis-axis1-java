@@ -56,22 +56,18 @@
 /**
  * This tests the file generation of only the items that are referenced in WSDL
  * 
- * @author Tom Jordahl (tomj@macromedia.com)
  */ 
-package test.wsdl.filegen;
-
-import junit.framework.TestCase;
+package test.wsdl.multibinding;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 
+import test.wsdl.filegen.FileGenTestCase;
 
-public class FileGenTestCase extends junit.framework.TestCase {
-    public FileGenTestCase(String name) {
+public class VerifyFilesTestCase extends FileGenTestCase {
+    public VerifyFilesTestCase(String name) {
         super(name);
     }
 
@@ -80,13 +76,25 @@ public class FileGenTestCase extends junit.framework.TestCase {
      */
     protected Set shouldExist() {
         HashSet set = new HashSet();
-        set.add("FileGenTestCase.java");
-        set.add("OpFault.java");
-        set.add("PortTypeSoap.java");
-        set.add("ReferenceService.java");
-        set.add("ReferenceSoapBindingStub.java");
+        set.add("BindingAllLit.java");
+        set.add("BindingAllLitImpl.java");
+        set.add("BindingAllLitSkeleton.java");
+        set.add("BindingAllLitStub.java");
+        set.add("BindingNoLitImpl.java");
+        set.add("BindingNoLitSkeleton.java");
+        set.add("BindingNoLitStub.java");
+        set.add("BindingSomeLit.java");
+        set.add("BindingSomeLitImpl.java");
+        set.add("BindingSomeLitSkeleton.java");
+        set.add("BindingSomeLitStub.java");
+        set.add("MbPT.java");
+        set.add("MbService.java");
+        set.add("MbServiceTestCase.java");
+        set.add("VerifyFilesTestCase.java");
+        set.add("deploy.wsdd");
+        set.add("undeploy.wsdd");
         return set;
-    }
+    } // shouldExist
 
     /**
      * The directory containing the files that should exist.
@@ -94,36 +102,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
     protected String rootDir() {
         return "build" + File.separator + "work" + File.separator + 
                 "test" + File.separator + "wsdl" + File.separator +
-                "filegen";
-    }
-    
-    public void testFileGen() throws IOException {
-        String rootDir = rootDir();
-        Set shouldExist = shouldExist();
+                "multibinding";
+    } // rootDir
 
-        // open up the output directory and check what files exist.
-        File outputDir = new File(rootDir);
-        
-        String[] files = outputDir.list();
-
-        Vector shouldNotExist = new Vector();
-
-        for (int i = 0; i < files.length; ++i) {
-            if (shouldExist.contains(files[i])) {
-                shouldExist.remove(files[i]);
-            }
-            else {
-                shouldNotExist.add(files[i]);
-            }
-        }
-
-        if (shouldExist.size() > 0) {
-            fail("The following files should exist but do not:  " + shouldExist);
-        }
-
-        if (shouldNotExist.size() > 0) {
-            fail("The following files should NOT exist, but do:  " + shouldNotExist);
-        }
-    }
-}
-
+} // class VerifyFilesTestCase
