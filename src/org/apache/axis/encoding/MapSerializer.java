@@ -59,6 +59,7 @@ import java.util.*;
 import java.io.IOException;
 import org.xml.sax.*;
 
+import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.*;
 
@@ -81,6 +82,7 @@ public class MapSerializer extends Deserializer implements Serializer
     // Fixed objects to act as hints to the valueReady() callback
     public static final Object KEYHINT = new Object();
     public static final Object VALHINT = new Object();
+    public static final Object NILHINT = new Object();
     
     // Our static deserializer factory
     public static class Factory implements DeserializerFactory {
@@ -149,7 +151,7 @@ public class MapSerializer extends Deserializer implements Serializer
                 key = val;
             } else if (hint == VALHINT) {
                 myValue = val;
-            } else {
+            } else if (hint != NILHINT) {
                 return;
             }
             numSet++;
@@ -171,8 +173,12 @@ public class MapSerializer extends Deserializer implements Serializer
                                  getDeserializer(typeQName);
             if (dser == null)
                 dser = new Deserializer();
+
+            String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil");
             
-            if (localName.equals("key")) {
+            if (isNil != null && isNil.equals("true")) {
+                dser.registerCallback(this, NILHINT);
+            } else if (localName.equals("key")) {
                 dser.registerCallback(this, KEYHINT);
             } else if (localName.equals("value")) {
                 dser.registerCallback(this, VALHINT);

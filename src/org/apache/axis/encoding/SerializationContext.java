@@ -204,6 +204,8 @@ public class SerializationContext
      */
     public boolean isPrimitive(Object value)
     {
+        if (value == null) return true;
+
         Class type = value.getClass();
         if (type.isArray()) type = type.getComponentType();
 
@@ -218,8 +220,15 @@ public class SerializationContext
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
-        if (value == null)
-            return;
+        if (value == null) {
+            AttributesImpl attrs = new AttributesImpl();
+            if (attributes != null)
+                attrs.setAttributes(attributes);
+            attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                               "CDATA", "true");
+            startElement(qName, attrs);
+            endElement();
+        }
         
         if (doMultiRefs && (value != currentSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
