@@ -56,6 +56,9 @@
 package org.apache.axis.schema;
 
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.ser.CalendarSerializerFactory;
+import org.apache.axis.encoding.ser.CalendarDeserializerFactory;
 
 import javax.xml.namespace.QName;
 
@@ -97,5 +100,18 @@ public class SchemaVersion2000 implements SchemaVersion {
      */
     public String getXsdURI() {
         return Constants.URI_2000_SCHEMA_XSD;
+    }
+    /**
+     * Register the schema specific type mappings
+     */
+    public void registerSchemaSpecificTypes(TypeMapping tm) {
+        
+        // Register the timeInstant type
+        tm.register(java.util.Calendar.class, 
+                    Constants.XSD_TIMEINSTANT2000,
+                    new CalendarSerializerFactory(java.util.Calendar.class,
+                                                  Constants.XSD_TIMEINSTANT2000),
+                    new CalendarDeserializerFactory(java.util.Calendar.class,
+                                                    Constants.XSD_TIMEINSTANT2000));
     }
 }

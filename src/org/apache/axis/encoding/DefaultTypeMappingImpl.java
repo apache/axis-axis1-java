@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.encoding.ser.*;
 import org.apache.axis.utils.JavaUtils;
 
@@ -87,6 +88,7 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private static DefaultTypeMappingImpl tm = null;
+    private boolean doneInit = false;   // have we completed initalization
 
     /**
      * Obtain the singleton default typemapping.
@@ -271,39 +273,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ElementSerializerFactory(),
                    new ElementDeserializerFactory(), false);
 
-        // The xsd primitive for date has changed through the various
-        // namespace versions.
-        // XSD_DATE is the current one, which is why it is
-        // registered after the other two
-        myRegister(Constants.XSD_TIMEINSTANT1999,      java.util.Calendar.class,
-                   new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_TIMEINSTANT1999),
-                   new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_TIMEINSTANT1999),
-                   true);
-        myRegister(Constants.XSD_TIMEINSTANT2000,      java.util.Calendar.class,
-                   new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_TIMEINSTANT2000),
-                   new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_TIMEINSTANT2000),
-                   true);
+        // See the SchemaVersion classes for where the registration of
+        // dateTime (for 2001) and timeInstant (for 1999 & 2000) happen.
         myRegister(Constants.XSD_DATE,       java.util.Date.class,
                    new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE),
                    new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE),
-                   true);
-        myRegister(Constants.XSD_DATETIME,       java.util.Date.class,
-                   new CalendarSerializerFactory(java.util.Date.class,
-                                             Constants.XSD_DATETIME),
-                   new CalendarDeserializerFactory(java.util.Date.class,
-                                               Constants.XSD_DATETIME),
-                   true);
-        myRegister(Constants.XSD_DATETIME,       java.util.Calendar.class,
-                   new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_DATETIME),
-                   new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_DATETIME),
                    true);
 
         // Serialize all extensions of Map to SOAP_MAP
@@ -375,11 +351,23 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(),
                    false);
+        
+        //
+        // Now register the schema specific types
+        //
+        SchemaVersion.SCHEMA_1999.registerSchemaSpecificTypes(this);
+        SchemaVersion.SCHEMA_2000.registerSchemaSpecificTypes(this);
+        SchemaVersion.SCHEMA_2001.registerSchemaSpecificTypes(this);
+        doneInit = true;
     }
 
     /**
      * Construct TypeMapping for all the [xmlType, javaType] for all of the
-     * known xmlType namespaces
+     * known xmlType namespaces.  This is the shotgun approach, which works
+     * in 99% of the cases.  The other cases that are Schema version specific
+     * (i.e. timeInstant vs. dateTime) are handled by the SchemaVersion
+     * Interface registerSchemaSpecificTypes().
+     * 
      * @param xmlType is the QName type
      * @param javaType is the java type
      * @param sf is the ser factory (if null, the simple factory is used)
@@ -394,7 +382,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     /**
      * Construct TypeMapping for all the [xmlType, javaType] for all of the
-     * known xmlType namespaces
+     * known xmlType namespaces.  This is the shotgun approach, which works
+     * in 99% of the cases.  The other cases that are Schema version specific
+     * (i.e. timeInstant vs. dateTime) are handled by the SchemaVersion
+     * Interface registerSchemaSpecificTypes().
+     * 
      * @param xmlType is the QName type
      * @param javaType is the java type
      * @param sf is the ser factory (if null, the simple factory is used)
@@ -456,7 +448,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
 
-        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
+        // Don't allow anyone but init to modify us.
+        if (doneInit) {
+            throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
+        }
+        else {
+            super.register(javaType, xmlType, sf, dsf);
+        }
     }
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {

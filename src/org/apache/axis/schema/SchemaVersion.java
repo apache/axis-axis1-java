@@ -55,6 +55,8 @@
 
 package org.apache.axis.schema;
 
+import org.apache.axis.encoding.TypeMapping;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -86,4 +88,9 @@ public interface SchemaVersion {
      * @return
      */
     public String getXsdURI();
+    
+    /**
+     * Register the schema specific type mappings
+     */ 
+    public void registerSchemaSpecificTypes(TypeMapping tm);
 }
