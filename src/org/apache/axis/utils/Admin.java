@@ -673,19 +673,23 @@ public class Admin {
         getOptions( elem, opts );
         serv.setOptionsHashtable(opts);
         
-        Handler pivotHandler = engine.getHandler(pivot);
-        if (pivotHandler == null)
-            throw new AxisFault(JavaUtils.getMessage("noPivot00", pivot));
-        Class pivotClass = pivotHandler.getClass();
-        if (pivotClass == RPCProvider.class) {
-            serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
-        } else if (pivotClass != MsgProvider.class) {
-            serv.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
-        } else {
-            serv.setParameter("handlerClass", pivotClass.getName());
-            serv.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
+        /**
+         * Pivots only make sense on the server.
+         */ 
+        if (engine instanceof AxisServer) {
+            Handler pivotHandler = engine.getHandler(pivot);
+            if (pivotHandler == null)
+                throw new AxisFault(JavaUtils.getMessage("noPivot00", pivot));
+            Class pivotClass = pivotHandler.getClass();
+            if (pivotClass == RPCProvider.class) {
+                serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
+            } else if (pivotClass != MsgProvider.class) {
+                serv.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
+            } else {
+                serv.setParameter("handlerClass", pivotClass.getName());
+                serv.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
+            }
         }
-        
 
         if ( response != null && !"".equals(response) ) {
             st = new StringTokenizer( response, " \t\n\r\f," );
