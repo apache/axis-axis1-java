@@ -66,9 +66,9 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Runs the JUnit functional test -->
+  <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
-  <target name="junit-functional" if="junit.present">
+  <target name="junit-functional-prepare" if="junit.present">
   <mkdir dir="${basedir}/${test.functional.reportdir}" />
 
     <!-- first, put the JWS where the functional test can see it -->
@@ -78,21 +78,12 @@ Copyright:
 
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
+  </target>
 
-    <!-- Uncomment following section to enable transparent Signing
-         of SOAP Messages sent from the client -->
-    <!--
-    <java classname="org.apache.axis.client.AdminClient" fork="yes">
-      <classpath refid="test-classpath" />
-      <arg line="samples/security/serversecuritydeploy.wsdd"/>
-    </java>
-    <java classname="org.apache.axis.utils.Admin" fork="yes">
-      <classpath refid="test-classpath" />
-      <arg value="client"/>
-      <arg value="samples/security/clientsecuritydeploy.wsdd"/>
-    </java>
-    -->
-
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -116,10 +107,33 @@ Copyright:
       <classpath refid="test-classpath" />
       <arg line="${undeploy.xml.property}"/>
     </java>
+  </target>
 
-    <!-- Uncomment following section to enable transparent Signing
-         of SOAP Messages sent from the client -->
-    <!--
+  <!-- =================================================================== -->
+  <!-- Start Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="start-signature-signing-and-verification" if="security.present">
+    <!-- Enable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="samples/security/serversecuritydeploy.wsdd"/>
+    </java>
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecuritydeploy.wsdd"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stop Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="stop-signature-signing-and-verification" if="security.present">
+    <!-- Disable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="samples/security/serversecurityundeploy.wsdd"/>
@@ -129,14 +143,12 @@ Copyright:
       <arg value="client"/>
       <arg value="samples/security/clientsecurityundeploy.wsdd"/>
     </java>
-    -->
-
   </target>
 
   <!-- =================================================================== -->
   <!-- Stops the functional test HTTP server -->
   <!-- =================================================================== -->
-  <target name="stop-functional-test-http-server" if="junit.present">
+  <target name="stop-functional-test-http-server" if="junit.present" depends="stop-signature-signing-and-verification">
     <echo message="Stopping test http server."/>
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
