@@ -148,6 +148,7 @@ public class Call implements javax.xml.rpc.Call {
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
+    private boolean            useStreaming    = false;
 
     /** Metadata for the operation associated with this Call */
     private OperationDesc      operation       = null;
@@ -242,6 +243,14 @@ public class Call implements javax.xml.rpc.Call {
     public static final String CONNECTION_TIMEOUT_PROPERTY =
             "axis.connection.timeout";
 
+    /**
+     * Streaming property: should be accompanied by an boolean
+     * (i.e. NO high-fidelity recording, deserialize on the fly)
+     * @see #setProperty
+     */
+    public static final String STREAMING_PROPERTY =
+            "axis.streaming";
+    
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
@@ -413,6 +422,10 @@ public class Call implements javax.xml.rpc.Call {
         else if (name.equals(CONNECTION_TIMEOUT_PROPERTY)) {
             verifyIntegerProperty(name,value);
             setTimeout((Integer)value);
+        }
+        else if (name.equals(STREAMING_PROPERTY)) {
+            verifyBooleanProperty(name, value);
+            setStreaming(((Boolean) value).booleanValue());
         }
         else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new JAXRPCException(
@@ -842,6 +855,14 @@ public class Call implements javax.xml.rpc.Call {
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean getStreaming() {
+        return useStreaming;
+    }
+
+    public void setStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
     }
     //
     // end properties code.
@@ -2587,6 +2608,7 @@ public class Call implements javax.xml.rpc.Call {
         if (timeout != null) {
             msgContext.setTimeout(timeout.intValue());
         }
+        msgContext.setHighFidelity(!useStreaming);
 
         // Determine client target service
         if (myService != null) {
