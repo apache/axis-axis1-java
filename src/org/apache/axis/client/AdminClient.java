@@ -56,6 +56,7 @@
 package org.apache.axis.client ;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPBodyElement;
@@ -216,11 +217,6 @@ public class AdminClient
             Vector result = null ;
             Object[]  params = new Object[] { new SOAPBodyElement(input) };
             result = (Vector) call.invoke( params );
-            
-            if (result == null || result.size() == 0) {
-                log("Null response message!");
-                return null;
-            }
             
             input.close();
             SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);

@@ -392,7 +392,9 @@ public class Call implements org.apache.axis.rpc.Call {
             invoke();
 
             msg = msgContext.getResponseMessage();
-            if ( msg == null ) return( null );
+            if (msg == null)
+                throw new AxisFault(new Exception("Null response message!"));
+
             env = msg.getAsSOAPEnvelope();
             return( env.getBodyElements() );
         }
@@ -458,7 +460,8 @@ public class Call implements org.apache.axis.rpc.Call {
             msgContext.setRequestMessage( msg );
             invoke();
             msg = msgContext.getResponseMessage();
-            if ( msg == null ) return( null );
+            if (msg == null)
+                throw new AxisFault(new Exception("Null response message!"));
             return( msg.getAsSOAPEnvelope() );
         }
         catch( Exception exp ) {
