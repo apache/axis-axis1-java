@@ -254,8 +254,10 @@ public class BeanUtils {
                                     myPd[k].getReadMethod().getName().equals(methods[j].getName()) &&
                                     myPd[k].getWriteMethod().getName().equals(methods[i].getName())) {
                                     myPd[k] = new BeanPropertyDescriptor(myPd[k].getName(),
-                                                                       methods[j],
-                                                                       methods[i]);
+                                                                         myPd[k].getReadMethod(),
+                                                                         myPd[k].getWriteMethod(),
+                                                                         methods[j],
+                                                                         methods[i]);
                                 }
                             }
                         }
