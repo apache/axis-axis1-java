@@ -61,6 +61,9 @@ import org.apache.avalon.excalibur.cli.CLUtil;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.wsdl.toJava.JavaWriterFactory;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +72,7 @@ import java.util.List;
  *
  * @author Tom Jordahl (tjordahl@macromedia.com)
  */
-public class Wsdl2java {
+public class WSDL2Java {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int VERBOSE_OPT = 'v';
@@ -269,14 +272,14 @@ public class Wsdl2java {
     private static void printUsage() {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
-        msg.append("Wsdl2java " +
+        msg.append("WSDL2Java " +
                 JavaUtils.getMessage("emitter00")).append(lSep);
         msg.append(
                 JavaUtils.getMessage("usage00",
-                "java " + Wsdl2java.class.getName() + " [options] WSDL-URI"))
+                "java " + WSDL2Java.class.getName() + " [options] WSDL-URI"))
                 .append(lSep);
         msg.append(JavaUtils.getMessage("options00")).append(lSep);
-        msg.append(CLUtil.describeOptions(Wsdl2java.options).toString());
+        msg.append(CLUtil.describeOptions(WSDL2Java.options).toString());
         System.out.println(msg.toString());
         System.exit(1);
     }

@@ -53,8 +53,8 @@
  */
 package test.wsdl;
 
-import org.apache.axis.wsdl.Emitter;
-import org.apache.axis.wsdl.JavaWriterFactory;
+import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.wsdl.toJava.JavaWriterFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
