@@ -66,8 +66,25 @@ import org.apache.axis.registries.* ;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SimpleAxisEngine extends BasicHandler {
-    /**
+public class SimpleAxisEngine extends BasicHandler 
+{
+	public SimpleAxisEngine() {}
+	
+	/**
+	 * Allows the Listener to specify which handler/service registry
+	 * implementation they want to use.
+	 */
+	public SimpleAxisEngine(HandlerRegistry handlers, HandlerRegistry services) 
+	{
+		Debug.Print( 1, "Enter: SimpleAxisEngine::Constructor");
+		handlers.init();
+		services.init();
+		addOption(Constants.HANDLER_REGISTRY, handlers);
+		addOption(Constants.SERVICE_REGISTRY, services);
+		Debug.Print( 1, "Exit: SimpleAxisEngine::Constructor");
+	}
+	
+	/**
      * Find/load the registries and save them so we don't need to do this
      * each time we're called.
      */
