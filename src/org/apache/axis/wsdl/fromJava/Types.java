@@ -15,18 +15,22 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import org.apache.axis.*;
-import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
+import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.constants.Style;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.EnumSerializerFactory;
-import org.apache.axis.constants.Style;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -715,8 +719,9 @@ public class Types {
             // instead use "MyArrayOf" (gag) 
             String arrayTypePrefix = "ArrayOf";
 
-            if (tm instanceof DefaultJAXRPC11TypeMappingImpl ||
-               defaultTM instanceof DefaultJAXRPC11TypeMappingImpl) {
+            boolean isWSICompliant = JavaUtils.isTrue(
+                    AxisProperties.getProperty(Constants.WSIBP11_COMPAT_PROPERTY));
+            if (isWSICompliant) {
                 arrayTypePrefix = "MyArrayOf";
             }
             
