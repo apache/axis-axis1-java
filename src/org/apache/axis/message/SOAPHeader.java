@@ -131,8 +131,8 @@ public class SOAPHeader extends MessageElement
         addHeader(headerElement);
         return headerElement;
     }
-
-    public Iterator examineHeaderElements(String actor) {
+    
+    private Vector findHeaderElements(String actor) {
         Vector results = new Vector();
         Iterator i = headers.iterator();
 
@@ -146,19 +146,23 @@ public class SOAPHeader extends MessageElement
                 results.add(header);
             }
         }
+        return results;
+    }
 
-        return results.iterator();
+    public Iterator examineHeaderElements(String actor) {
+        return findHeaderElements(actor).iterator();
     }
 
     public Iterator extractHeaderElements(String actor) {
-        Iterator elts = examineHeaderElements(actor);
+        Vector results = findHeaderElements(actor);
 
+        Iterator iterator = results.iterator();
         // Detach the header elements from the header
-        while (elts.hasNext()) {
-            ((SOAPHeaderElement)elts.next()).detachNode();
+        while (iterator.hasNext()) {
+            ((SOAPHeaderElement)iterator.next()).detachNode();
         }
 
-        return elts;
+        return results.iterator();
     }
 
     Vector getHeaders() {

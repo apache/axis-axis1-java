@@ -169,7 +169,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      * @return a <CODE>String</CODE> with the fault code
      */
     public String getFaultCode() {
-        return fault.getFaultCode().toString();
+        return fault.getFaultCode().getLocalPart();
     }
 
     /**
