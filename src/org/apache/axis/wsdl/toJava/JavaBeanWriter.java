@@ -1,57 +1,57 @@
- /*
- * The Apache Software License, Version 1.1
- *
- *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
- * reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
- *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
- *    Alternately, this acknowledgment may appear in the software itself,
- *    if and wherever such third-party acknowledgments normally appear.
- *
- * 4. The names "Axis" and "Apache Software Foundation" must
- *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
- *    permission, please contact apache@apache.org.
- *
- * 5. Products derived from this software may not be called "Apache",
- *    nor may "Apache" appear in their name, without prior written
- *    permission of the Apache Software Foundation.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
- * information on the Apache Software Foundation, please see
- * <http://www.apache.org/>.
- */
+/*
+* The Apache Software License, Version 1.1
+*
+*
+* Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+* reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+*
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in
+*    the documentation and/or other materials provided with the
+*    distribution.
+*
+* 3. The end-user documentation included with the redistribution,
+*    if any, must include the following acknowledgment:
+*       "This product includes software developed by the
+*        Apache Software Foundation (http://www.apache.org/)."
+*    Alternately, this acknowledgment may appear in the software itself,
+*    if and wherever such third-party acknowledgments normally appear.
+*
+* 4. The names "Axis" and "Apache Software Foundation" must
+*    not be used to endorse or promote products derived from this
+*    software without prior written permission. For written
+*    permission, please contact apache@apache.org.
+*
+* 5. Products derived from this software may not be called "Apache",
+*    nor may "Apache" appear in their name, without prior written
+*    permission of the Apache Software Foundation.
+*
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+* DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+* ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+* SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+* LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+* USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+* OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+* SUCH DAMAGE.
+* ====================================================================
+*
+* This software consists of voluntary contributions made by many
+* individuals on behalf of the Apache Software Foundation.  For more
+* information on the Apache Software Foundation, please see
+* <http://www.apache.org/>.
+*/
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
@@ -127,8 +127,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             // or accessor/mutator pairs as those are inherited from
             // the super type, which must be non-null.
             if (null != extendType
-                && null != SchemaUtils.getComplexElementRestrictionBase(type.getNode(),
-                                                                        emitter.getSymbolTable())) {
+                    && null != SchemaUtils.getComplexElementRestrictionBase(type.getNode(),
+                            emitter.getSymbolTable())) {
                 enableMemberFields = false;
                 enableGetters = false;
                 enableSetters = false;
@@ -209,7 +209,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         // Add element names
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
-                ElementDecl elem = (ElementDecl)elements.get(i);
+                ElementDecl elem = (ElementDecl) elements.get(i);
                 String typeName = elem.getType().getName();
                 String variableName;
                 if (elem.getAnyElement()) {
@@ -223,7 +223,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
-                    (variableName.endsWith("Value") || variableName.equals("value"))) {
+                        (variableName.endsWith("Value") || variableName.equals("value"))) {
                     simpleValueTypes.add(typeName);
                 }
             }
@@ -234,17 +234,17 @@ public class JavaBeanWriter extends JavaClassWriter {
                 String typeName = ((TypeEntry) attributes.get(i)).getName();
                 QName xmlName = (QName) attributes.get(i + 1);
                 String variableName =
-                    Utils.xmlNameToJava(xmlName.getLocalPart());
+                        Utils.xmlNameToJava(xmlName.getLocalPart());
                 names.add(typeName);
                 names.add(variableName);
                 if (type.isSimpleType() &&
-                    (variableName.endsWith("Value") || variableName.equals("value"))) {
+                        (variableName.endsWith("Value") || variableName.equals("value"))) {
                     simpleValueTypes.add(typeName);
                 }
             }
         }
-        
-        if(extendType != null && extendType.getDimensions().equals("[]")) {
+
+        if (extendType != null && extendType.getDimensions().equals("[]")) {
             String typeName = extendType.getName();
             String elemName = extendType.getQName().getLocalPart();
             String variableName = Utils.xmlNameToJava(elemName);
@@ -274,7 +274,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected String getExtendsText() {
         // See if this class extends another class
         String extendsText = "";
-        if (extendType != null && !type.isSimpleType() && extendType.getDimensions().length()==0) {
+        if (extendType != null && !type.isSimpleType() && extendType.getDimensions().length() == 0) {
             extendsText = " extends " + extendType.getName() + " ";
         }
         return extendsText;
@@ -293,10 +293,10 @@ public class JavaBeanWriter extends JavaClassWriter {
         
         // need to call this to find out whether the type contains any elements
         preprocess();
-        
+
         if (isAny) {
             implementsText += ", org.apache.axis.encoding.AnyContentType";
-        };
+        }
         implementsText += " ";
         return implementsText;
     }
@@ -306,10 +306,10 @@ public class JavaBeanWriter extends JavaClassWriter {
      */
     protected void writeMemberFields() {
         // Define the member element of the bean
-	if (isUnion()) {
+        if (isUnion()) {
             pw.println("    private java.lang.String value;");
             return;
-	}
+        }
         for (int i = 0; i < names.size(); i += 2) {
             String typeName = (String) names.get(i);
             String variable = (String) names.get(i + 1);
@@ -318,7 +318,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             pw.print("    private " + typeName + " " + variable + ";");
 
             // label the attribute fields.
-            if (elements == null || i >= (elements.size()*2))
+            if (elements == null || i >= (elements.size() * 2))
                 pw.println("  // attribute");
             else
                 pw.println();
@@ -344,25 +344,25 @@ public class JavaBeanWriter extends JavaClassWriter {
      * constructor.
      */
     protected void writeFullConstructor() {
-	if (type.isSimpleType()) {
+        if (type.isSimpleType()) {
             return;
-	}
+        }
         // The constructor needs to consider all extended types
         Vector extendList = new Vector();
         extendList.add(type);
         TypeEntry parent = extendType;
-        while(parent != null) {
+        while (parent != null) {
             extendList.add(parent);
             parent = SchemaUtils.getComplexElementExtensionBase(
-                parent.getNode(),
-                emitter.getSymbolTable());
+                    parent.getNode(),
+                    emitter.getSymbolTable());
         }
 
         // Now generate a list of names and types starting with
         // the oldest parent.  (Attrs are considered before elements).
         Vector paramTypes = new Vector();
         Vector paramNames = new Vector();
-        for (int i=extendList.size()-1; i >= 0; i--) {
+        for (int i = extendList.size() - 1; i >= 0; i--) {
             TypeEntry te = (TypeEntry) extendList.elementAt(i);
 
             // The names of the inherited parms are mangled
@@ -370,42 +370,42 @@ public class JavaBeanWriter extends JavaClassWriter {
             String mangle = "";
             if (i > 0) {
                 mangle = "_" +
-                    Utils.xmlNameToJava(te.getQName().getLocalPart()) +
-                    "_";
+                        Utils.xmlNameToJava(te.getQName().getLocalPart()) +
+                        "_";
             }
             // Process the attributes
             Vector attributes = SchemaUtils.getContainedAttributeTypes(
-                te.getNode(), emitter.getSymbolTable());
+                    te.getNode(), emitter.getSymbolTable());
             if (attributes != null) {
-                for (int j=0; j<attributes.size(); j+=2) {
+                for (int j = 0; j < attributes.size(); j += 2) {
                     paramTypes.add(((TypeEntry) attributes.get(j)).getName());
-                    String name = ((QName)attributes.get(j + 1)).getLocalPart();
+                    String name = ((QName) attributes.get(j + 1)).getLocalPart();
                     paramNames.add(mangle + Utils.xmlNameToJava(name));
                 }
             }
             // Process the elements
             Vector elements = SchemaUtils.getContainedElementDeclarations(
-                te.getNode(), emitter.getSymbolTable());
+                    te.getNode(), emitter.getSymbolTable());
             if (elements != null) {
-                for (int j=0; j<elements.size(); j++) {
-                    ElementDecl elem = (ElementDecl)elements.get(j);
+                for (int j = 0; j < elements.size(); j++) {
+                    ElementDecl elem = (ElementDecl) elements.get(j);
                     paramTypes.add(elem.getType().getName());
                     paramNames.add(mangle +
-                        Utils.xmlNameToJava(elem.getName().getLocalPart()));
+                            Utils.xmlNameToJava(elem.getName().getLocalPart()));
                 }
             }
         }
         // Set the index where the local params start
-        int localParams = paramTypes.size() - names.size()/2;
+        int localParams = paramTypes.size() - names.size() / 2;
 
 
         // Now write the constructor signature
         if (paramTypes.size() > 0) {
             pw.println("    public " + className + "(");
-            for (int i=0; i<paramTypes.size(); i++) {
+            for (int i = 0; i < paramTypes.size(); i++) {
                 pw.print("           " + paramTypes.elementAt(i) +
-                         " " + paramNames.elementAt(i));
-                if ((i+1) < paramTypes.size()) {
+                        " " + paramNames.elementAt(i));
+                if ((i + 1) < paramTypes.size()) {
                     pw.println(",");
                 } else {
                     pw.println(") {");
@@ -415,9 +415,9 @@ public class JavaBeanWriter extends JavaClassWriter {
             // Call the extended constructor to set inherited fields
             if (extendType != null && localParams > 0) {
                 pw.println("        super(");
-                for (int j=0; j<localParams; j++) {
+                for (int j = 0; j < localParams; j++) {
                     pw.print("            " + paramNames.elementAt(j));
-                    if ((j+1) < localParams) {
+                    if ((j + 1) < localParams) {
                         pw.println(",");
                     } else {
                         pw.println(");");
@@ -425,9 +425,9 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
             }
             // Set local fields directly
-            for (int j=localParams; j<paramNames.size(); j++) {
+            for (int j = localParams; j < paramNames.size(); j++) {
                 pw.println("        this." + paramNames.elementAt(j) +
-                           " = " + paramNames.elementAt(j)+ ";");
+                        " = " + paramNames.elementAt(j) + ";");
             }
             pw.println("    }");
             pw.println();
@@ -443,13 +443,13 @@ public class JavaBeanWriter extends JavaClassWriter {
         // If this is a simple type,need to emit a string
         // constructor and a value construtor.
         if (simpleValueTypes.size() == 0) {
-	    return;
-	}
+            return;
+        }
         pw.println("    // " + Messages.getMessage("needStringCtor"));
         if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
             pw.println("    public " + className + "(java.lang.String value) {");
             pw.println("        this.value = value;");
-	    pw.println("    }");
+            pw.println("    }");
             for (Iterator iterator = simpleValueTypes.iterator();
                  iterator.hasNext();) {
                 String typeName = (String) iterator.next();
@@ -458,62 +458,60 @@ public class JavaBeanWriter extends JavaClassWriter {
                 }
                 pw.println("    public " + className + "(" + typeName + " value) {");
                 pw.println("        setValue(value);");
-	        pw.println("    }");
+                pw.println("    }");
                 pw.println();
             }
-	} else if (simpleValueTypes.size() == 1) {
+        } else if (simpleValueTypes.size() == 1) {
             pw.println("    public " + className + "(" + simpleValueTypes.get(0) + " value) {");
             pw.println("        this.value = value;");
-	    pw.println("    }");
+            pw.println("    }");
             pw.println("    public " + className + "(java.lang.String value) {");
-	    writeSimpleTypeGetter((String)simpleValueTypes.get(0), null, "this.value =");
-	    pw.println("    }");
+            writeSimpleTypeGetter((String) simpleValueTypes.get(0), null, "this.value =");
+            pw.println("    }");
             pw.println();
-	}
+        }
     }
-    protected void writeSimpleTypeGetter(String simpleValueType, String name, String returnString) {
-            // Make sure we wrap base types with its Object type
-            String wrapper = JavaUtils.getWrapper(simpleValueType);
 
-            if (wrapper != null) {
-                pw.println("        " + returnString + " new " + wrapper +
-                           "(value)." + simpleValueType + "Value();");
+    protected void writeSimpleTypeGetter(String simpleValueType, String name, String returnString) {
+        // Make sure we wrap base types with its Object type
+        String wrapper = JavaUtils.getWrapper(simpleValueType);
+
+        if (wrapper != null) {
+            pw.println("        " + returnString + " new " + wrapper +
+                    "(value)." + simpleValueType + "Value();");
+        } else {
+            if (simpleValueType.equals("byte[]")) {
+                pw.println("        " + returnString + " org.apache.axis.types.HexBinary.decode(value);");
+            } else if (simpleValueType.equals("org.apache.axis.types.URI")) {
+                pw.println("        try {");
+                pw.println("            " + returnString + " new org.apache.axis.types.URI(value);");
+                pw.println("        }");
+                pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
+                pw.println("            " + returnString + " new org.apache.axis.types.URI();");
+                pw.println("       }");
+            } else if (simpleValueType.equals("java.util.Date")) {
+                pw.println("        try {");
+                pw.println("            " + returnString + " (java.text.DateFormat.getDateTimeInstance()).parse(value);");
+                pw.println("        }");
+                pw.println("        catch (java.text.ParseException e){");
+                pw.println("            throw new java.lang.RuntimeException(e.toString());");
+                pw.println("        }");
+            } else if (simpleValueType.equals("java.util.Calendar")) {
+                pw.println("        java.util.Calendar cal =");
+                pw.println("            (java.util.Calendar) new org.apache.axis.encoding.ser.CalendarDeserializer(");
+                pw.println("                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(value);");
+                pw.println("        " + returnString + " cal;");
             } else {
-                if (simpleValueType.equals("byte[]")) {
-                    pw.println("        " + returnString + " org.apache.axis.types.HexBinary.decode(value);");
-                }
-                else if (simpleValueType.equals("org.apache.axis.types.URI")) {
-                    pw.println("        try {");
-                    pw.println("            " + returnString + " new org.apache.axis.types.URI(value);");
-                    pw.println("        }");
-                    pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
-                    pw.println("            " + returnString + " new org.apache.axis.types.URI();");
-                    pw.println("       }");
-                } 
-                else if (simpleValueType.equals("java.util.Date")) {
-                  pw.println("        try {");
-                  pw.println("            " + returnString + " (java.text.DateFormat.getDateTimeInstance()).parse(value);");
-                  pw.println("        }");
-                  pw.println("        catch (java.text.ParseException e){");
-                  pw.println("            throw new java.lang.RuntimeException(e.toString());");
-                  pw.println("        }");
-                }
-                else if (simpleValueType.equals("java.util.Calendar")) {
-                  pw.println("        java.util.Calendar cal =");
-                  pw.println("            (java.util.Calendar) new org.apache.axis.encoding.ser.CalendarDeserializer(");
-		  pw.println("                java.lang.String.class, org.apache.axis.Constants.XSD_STRING).makeValue(value);");
-                  pw.println("        " + returnString + " cal;");
-                }                
-                else {
-                    pw.println("        " + returnString + " new " +
-                               simpleValueType + "(value);");
-                }
+                pw.println("        " + returnString + " new " +
+                        simpleValueType + "(value);");
             }
+        }
     }
 
     private boolean isUnion() {
         return this.simpleValueTypes.size() > 1;
     }
+
     /**
      * Writes the toString method
      * Currently the toString method is only written for
@@ -522,24 +520,24 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected void writeToStringMethod() {
         // If this is a simple type, emit a toString
         if (simpleValueTypes.size() == 0) {
-	    return;
-	}
+            return;
+        }
         pw.println("    // " + Messages.getMessage("needToString"));
         pw.println("    public java.lang.String toString() {");
         if (isUnion() || simpleValueTypes.get(0).equals("java.lang.String")) {
             pw.println("        return value;");
-	} else {
-            String wrapper = JavaUtils.getWrapper((String)simpleValueTypes.get(0));
+        } else {
+            String wrapper = JavaUtils.getWrapper((String) simpleValueTypes.get(0));
             if (wrapper != null) {
                 pw.println("        return new " + wrapper + "(value).toString();");
             } else {
-                if(simpleValueTypes.get(0).equals("byte[]")) {
-                    pw.println("        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);" );
-                } else {              
+                if (simpleValueTypes.get(0).equals("byte[]")) {
+                    pw.println("        return value == null ? null : org.apache.axis.types.HexBinary.encode(value);");
+                } else {
                     pw.println("        return value == null ? null : value.toString();");
                 }
             }
-	}
+        }
         pw.println("    }");
         pw.println();
     }
@@ -549,11 +547,11 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (wrapper != null) {
             pw.println("        this.value = new " + wrapper + "(value).toString();");
         } else {
-            if(simpleValueType.equals("byte[]")) {
-                pw.println("        this.value = value == null ? null : org.apache.axis.types.HexBinary.encode(value);" );
-	    } else if(simpleValueType.equals("java.util.Calendar")) {
+            if (simpleValueType.equals("byte[]")) {
+                pw.println("        this.value = value == null ? null : org.apache.axis.types.HexBinary.encode(value);");
+            } else if (simpleValueType.equals("java.util.Calendar")) {
                 pw.println("        this.value = value == null ? null : new org.apache.axis.encoding.ser.CalendarSerializer().getValueAsString(value, null);");
-            } else {              
+            } else {
                 pw.println("        this.value = value == null ? null : value.toString();");
             }
         }
@@ -576,25 +574,25 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             if (enableGetters) {
                 pw.println("    public " + typeName + " " +
-                           get + capName + "() {");
+                        get + capName + "() {");
                 if (isUnion()) {
-			writeSimpleTypeGetter(typeName, name, "return");
-		} else {
-		    pw.println("        return " + name + ";");
-		}
+                    writeSimpleTypeGetter(typeName, name, "return");
+                } else {
+                    pw.println("        return " + name + ";");
+                }
                 pw.println("    }");
                 pw.println();
             }
             if (enableSetters) {
                 if (isUnion()) {
                     pw.println("    public void setValue(" +
-                           typeName + " value) {");
-		    writeSimpleTypeSetter(typeName);
-		} else {
+                            typeName + " value) {");
+                    writeSimpleTypeSetter(typeName);
+                } else {
                     pw.println("    public void set" + capName + "(" +
-                           typeName + " " + name + ") {");
+                            typeName + " " + name + ") {");
                     pw.println("        this." + name + " = " + name + ";");
-		}
+                }
                 pw.println("    }");
                 pw.println();
             }
@@ -608,19 +606,19 @@ public class JavaBeanWriter extends JavaClassWriter {
             // (It may be more efficient to handle this with an ArrayList...but
             // for the initial support it was easier to use an actual array.)
             if (elements != null && j < elements.size()) {
-                ElementDecl elem = (ElementDecl)elements.get(j);
+                ElementDecl elem = (ElementDecl) elements.get(j);
                 if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
                     String compName = typeName.substring(0, typeName.lastIndexOf("["));
                     if (enableGetters) {
                         pw.println("    public " + compName + " " + get + capName +
-                                   "(int i) {");
-                        pw.println("        return " + name + "[i];");
+                                "(int i) {");
+                        pw.println("        return this." + name + "[i];");
                         pw.println("    }");
                         pw.println();
                     }
                     if (enableSetters) {
                         pw.println("    public void set" + capName + "(int i, " +
-                                   compName + " value) {");
+                                compName + " value) {");
                         // According to the section 7.2 of the JavaBeans
                         // specification, the indexed setter should not
                         // establish or grow the array.  Thus the following
@@ -663,7 +661,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
         // First do the general comparison checks
         pw.println("        if (!(obj instanceof " + className + ")) return false;");
-        pw.println("        " +  className + " other = (" + className + ") obj;");
+        pw.println("        " + className + " other = (" + className + ") obj;");
         pw.println("        if (obj == null) return false;");
         pw.println("        if (this == obj) return true;");
 
@@ -682,8 +680,8 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (names.size() == 0) {
             pw.println("        _equals = " + truth + ";");
         } else if (isUnion()) {
-            pw.println("        _equals = " + truth + " && " + 
-                       " this.toString().equals(obj.toString());");
+            pw.println("        _equals = " + truth + " && " +
+                    " this.toString().equals(obj.toString());");
         } else {
             pw.println("        _equals = " + truth + " && ");
             for (int i = 0; i < names.size(); i += 2) {
@@ -703,24 +701,24 @@ public class JavaBeanWriter extends JavaClassWriter {
                         variableType.equals("byte")) {
                     pw.print("            this." + variable + " == other." + get +
                             Utils.capitalizeFirstChar(variable) + "()");
-                } else if (variableType.indexOf("[") >=0) {
+                } else if (variableType.indexOf("[") >= 0) {
                     // Use java.util.Arrays.equals to compare arrays.
                     pw.println("            ((this." + variable +
-                               "==null && other." + get +
-                               Utils.capitalizeFirstChar(variable) + "()==null) || ");
+                            "==null && other." + get +
+                            Utils.capitalizeFirstChar(variable) + "()==null) || ");
                     pw.println("             (this." + variable + "!=null &&");
                     pw.print("              java.util.Arrays.equals(this." + variable +
-                             ", other." + get +
-                             Utils.capitalizeFirstChar(variable) + "())))");
+                            ", other." + get +
+                            Utils.capitalizeFirstChar(variable) + "())))");
 
                 } else {
                     pw.println("            ((this." + variable +
-                               "==null && other." + get +
-                               Utils.capitalizeFirstChar(variable) + "()==null) || ");
+                            "==null && other." + get +
+                            Utils.capitalizeFirstChar(variable) + "()==null) || ");
                     pw.println("             (this." + variable + "!=null &&");
                     pw.print("              this." + variable +
-                             ".equals(other." + get +
-                             Utils.capitalizeFirstChar(variable) + "())))");
+                            ".equals(other." + get +
+                            Utils.capitalizeFirstChar(variable) + "())))");
                 }
                 if (i == (names.size() - 2))
                     pw.println(";");
@@ -767,35 +765,35 @@ public class JavaBeanWriter extends JavaClassWriter {
                 get = "is";
 
             if (variableType.equals("int") ||
-                variableType.equals("short") ||
-                variableType.equals("byte")) {
+                    variableType.equals("short") ||
+                    variableType.equals("byte")) {
                 pw.println("        _hashCode += " + get +
-                         Utils.capitalizeFirstChar(variable) + "();");
+                        Utils.capitalizeFirstChar(variable) + "();");
             } else if (variableType.equals("boolean")) {
                 pw.println("        _hashCode += (" + get +
-                           Utils.capitalizeFirstChar(variable) + "() ? Boolean.TRUE : Boolean.FALSE).hashCode();");
+                        Utils.capitalizeFirstChar(variable) + "() ? Boolean.TRUE : Boolean.FALSE).hashCode();");
             } else if (variableType.equals("long")) {
                 pw.println("        _hashCode += new Long(" + get +
-                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+                        Utils.capitalizeFirstChar(variable) + "()).hashCode();");
             } else if (variableType.equals("float")) {
                 pw.println("        _hashCode += new Float(" + get +
-                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+                        Utils.capitalizeFirstChar(variable) + "()).hashCode();");
             } else if (variableType.equals("double")) {
                 pw.println("        _hashCode += new Double(" + get +
-                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
-            } else if (variableType.indexOf("[") >=0) {
+                        Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+            } else if (variableType.indexOf("[") >= 0) {
                 // The hashCode calculation for arrays is complicated.
                 // Wish there was a hashCode method in java.utils.Arrays !
                 // Get the hashCode for each element of the array which is not an array.
                 pw.println("        if (" + get +
-                           Utils.capitalizeFirstChar(variable) + "() != null) {");
+                        Utils.capitalizeFirstChar(variable) + "() != null) {");
                 pw.println("            for (int i=0;");
                 pw.println("                 i<java.lang.reflect.Array.getLength(" + get +
-                           Utils.capitalizeFirstChar(variable) + "());");
+                        Utils.capitalizeFirstChar(variable) + "());");
                 pw.println("                 i++) {");
                 pw.println("                java.lang.Object obj = java.lang.reflect.Array.get(" +
-                           get +
-                           Utils.capitalizeFirstChar(variable) + "(), i);");
+                        get +
+                        Utils.capitalizeFirstChar(variable) + "(), i);");
                 pw.println("                if (obj != null &&");
                 pw.println("                    !obj.getClass().isArray()) {");
                 pw.println("                    _hashCode += obj.hashCode();");
@@ -804,9 +802,9 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("        }");
             } else {
                 pw.println("        if (" + get +
-                           Utils.capitalizeFirstChar(variable) + "() != null) {");
+                        Utils.capitalizeFirstChar(variable) + "() != null) {");
                 pw.println("            _hashCode += " + get +
-                           Utils.capitalizeFirstChar(variable) + "().hashCode();");
+                        Utils.capitalizeFirstChar(variable) + "().hashCode();");
                 pw.println("        }");
             }
         }
