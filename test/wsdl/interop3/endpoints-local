@@ -4,6 +4,10 @@
 # Where <endpointfile> has the syntax
 #   TESTNAME="<endpoint>"
 #
+# You will need to build the 'interop3' target from the top level ant
+# file, then deploy the services from the build/work/test/wsdl/interop3/*
+# directories.
+#
 Import1=http://localhost:8080/axis/services/SoapInteropImport1Port
 Import2=http://localhost:8080/axis/services/SoapInteropImport2Port
 Import3=http://localhost:8080/axis/services/SoapInteropImport3Port
@@ -20,8 +24,9 @@ EmptySA=
 
 #
 # NOTE: this test takes the WSDL URL
-#TestList=http://localhost:8080/axis/services/SoapInteropTestListPort?WSDL
-TestList=
+# Running the functional tests will deploy this service
+TestList=http://localhost:8080/axis/services/InteropTestList?WSDL
 
 # we don't have this one yet
 TestHeaders=
+
