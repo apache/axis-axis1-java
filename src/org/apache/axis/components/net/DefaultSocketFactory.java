@@ -44,6 +44,25 @@ public class DefaultSocketFactory implements SocketFactory {
     /** attributes */
     protected Hashtable attributes = null;
 
+    private static boolean plain;
+    private static Class inetClass;
+    private static Constructor inetConstructor;
+    private static Constructor socketConstructor;
+    private static Method connect;
+
+    static {
+        try {
+            inetClass = Class.forName("java.net.InetSocketAddress");
+            plain = false;
+            inetConstructor = inetClass.getConstructor(new Class[]{String.class, int.class});
+            socketConstructor = Socket.class.getConstructor(new Class[]{});
+            connect = Socket.class.getMethod("connect", new Class[]{inetClass.getSuperclass(),
+                                                                    int.class});
+        } catch (Exception e) {
+            plain = true;
+        }
+    }
+
     /**
      * Constructor is used only by subclasses.
      *
@@ -70,9 +89,11 @@ public class DefaultSocketFactory implements SocketFactory {
             throws Exception {
 
         int timeout = 0;
-        if(attributes != null && attributes.contains(CONNECT_TIMEOUT)) {
-            timeout = Integer.parseInt((String)attributes.get(CONNECT_TIMEOUT));
+        if (attributes != null) {
+            String value = (String)attributes.get(CONNECT_TIMEOUT);
+            timeout = (value != null) ? Integer.parseInt(value) : 0;
         }
+
         TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
 
         Socket sock = null;
@@ -123,22 +144,13 @@ public class DefaultSocketFactory implements SocketFactory {
      * @throws Exception
      */ 
     private static Socket create(String host, int port, int timeout) throws Exception {
-        boolean plain = true;
         Socket sock = null;
-        try {
-            Class clazz = Class.forName("java.net.InetSocketAddress");
-            plain = false;
-            Constructor constructor = clazz.getConstructor(new Class[]{String.class, int.class});
-            Object address = constructor.newInstance(new Object[]{host, new Integer(port)});
-            sock = (Socket) Socket.class.getConstructor(new Class[]{}).newInstance(new Object[]{});
-            Method connect = sock.getClass().getMethod("connect", new Class[]{clazz.getSuperclass(), int.class});
+        if (plain || timeout == 0) {
+            sock = new Socket(host, port);
+        } else {
+            Object address = inetConstructor.newInstance(new Object[]{host, new Integer(port)});
+            sock = (Socket)socketConstructor.newInstance(new Object[]{});
             connect.invoke(sock, new Object[]{address, new Integer(timeout)});
-        } catch (Exception e) {
-            if (plain) {
-                sock = new Socket(host, port);
-            } else {
-                throw e;
-            }
         }
         return sock;
     }
