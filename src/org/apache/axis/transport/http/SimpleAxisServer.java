@@ -136,16 +136,16 @@ public class SimpleAxisServer implements Runnable {
 
     // Standard MIME headers for XML payload
     private static byte XML_MIME_STUFF[] =
-        ( "\nContent-Type: text/xml; charset=utf-8\n" +
+        ( "\r\nContent-Type: text/xml; charset=utf-8\r\n" +
           "Content-Length: ").getBytes();
 
     // Standard MIME headers for HTML payload
     private static byte HTML_MIME_STUFF[] =
-        ( "\nContent-Type: text/html; charset=utf-8\n" +
+        ( "\r\nContent-Type: text/html; charset=utf-8\r\n" +
           "Content-Length: ").getBytes();
 
     // Mime/Content separator
-    private static byte SEPARATOR[] = "\n\n".getBytes();
+    private static byte SEPARATOR[] = "\r\n\r\n".getBytes();
 
     // Tiddly little response
     private static final String responseStr =
@@ -274,8 +274,13 @@ public class SimpleAxisServer implements Runnable {
                     msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                                            "jwsClasses");
 
+                    // FIXME - we need to get our hostname or IP
+                    // This doesn't work (returns 0.0.0.0).
+                    String hostname = socket.getInetAddress().getHostName();
+                    //String hostname = "localhost";
+
                     // !!! Fix string concatenation
-                    String url = "http://localhost:" +
+                    String url = "http://" + hostname + ":" +
                             this.getServerSocket().getLocalPort() + "/" +
                             fileName.toString();
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
@@ -437,8 +442,8 @@ public class SimpleAxisServer implements Runnable {
                 out.write(HTTP);
                 out.write(status);
                 //out.write(XML_MIME_STUFF);
-                out.write(("\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType()).getBytes()); 
-                out.write(("\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes()); 
+                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_TYPE + ": " + responseMsg.getContentType()).getBytes()); 
+                out.write(("\r\n" + HTTPConstants.HEADER_CONTENT_LENGTH + ": " + responseMsg.getContentLength()).getBytes()); 
                 // putInt(out, response.length);
 
                 if (doSessions && null != cooky && 0 != cooky.trim().length()) {
@@ -446,9 +451,9 @@ public class SimpleAxisServer implements Runnable {
                     // don't sweat efficiency *too* badly
                     // optimize at will
                     StringBuffer cookieOut = new StringBuffer();
-                    cookieOut.append("\nSet-Cookie: ")
+                    cookieOut.append("\r\nSet-Cookie: ")
                         .append(cooky)
-                        .append("\nSet-Cookie2: ")
+                        .append("\r\nSet-Cookie2: ")
                         .append(cooky);
                     // OH, THE HUMILITY!  yes this is inefficient.
                     out.write(cookieOut.toString().getBytes());
