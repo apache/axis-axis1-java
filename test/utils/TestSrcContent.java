@@ -154,7 +154,6 @@ public class TestSrcContent extends TestCase {
             // Verify that axis java files do not use System.out.println
             // or System.err.println, except:
             //   - utils/tcpmon.java
-            //   - client/AdminClient.java
             //   - providers/BSFProvider.java
             //   - utils/CLArgsParser.java
             //   - Version.java
@@ -163,7 +162,6 @@ public class TestSrcContent extends TestCase {
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
-                                       + "|client\\1AdminClient\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
                                        + "|Version\\.java"
@@ -175,6 +173,7 @@ public class TestSrcContent extends TestCase {
             // Verify that internationalization is being used properly
             // with logger.  Exceptions:
             //   - all log.debug calls
+            //   - client/AdminClient.java
             //   - utils/tcpmon.java
             //   - utils/Admin.java
             //   - handlers/LogMessage.java
@@ -183,6 +182,7 @@ public class TestSrcContent extends TestCase {
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
+                                       + "|client\\1AdminClient\\.java"
                                        + "|utils\\1Admin\\.java"
                                        + "|handlers\\1LogMessage\\.java"
                                        + "|wsdl\\1)"

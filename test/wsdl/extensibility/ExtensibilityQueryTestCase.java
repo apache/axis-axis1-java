@@ -16,6 +16,9 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializer;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import javax.xml.rpc.encoding.TypeMapping;
 import javax.xml.namespace.QName;
 import java.util.Calendar;
@@ -26,6 +29,9 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
     }
     public void testQuery() {
         ExtensibilityQueryPortType binding;
+        Logger root = Logger.getRootLogger();
+        Level origLevel = root.getEffectiveLevel();
+        root.setLevel(Level.FATAL);
         try {
             ExtensibilityQueryLocator locator = new ExtensibilityQueryLocator();
             binding = locator.getExtensibilityQueryPort();
@@ -37,6 +43,9 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         } 
         catch (Exception e) {
             throw new junit.framework.AssertionFailedError("Binding initialization Exception caught: " + e);
+        }
+        finally {
+            root.setLevel(origLevel);
         }
         assertTrue("binding is null", binding != null);
 
