@@ -111,6 +111,8 @@
                location="http://localhost:8080/axis/services/SequenceTest">
         <mapping namespace="urn:SequenceTest2" package="test.sequence"/>
     </java2wsdl>
+    <!-- Delete the intermediate files so we recreate over a clean slate -->
+    <delete dir="${build.dir}/classes/test/sequence"/>
     <!-- Recreate Java files from the new WSDL -->
     <wsdl2java url="build/work/test/sequence/SequenceTest.wsdl"
                output="build/work"
