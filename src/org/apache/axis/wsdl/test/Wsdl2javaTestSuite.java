@@ -248,12 +248,13 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 Iterator files = ((List) testIterator.next()).iterator();
                 while (files.hasNext()) {
                     String fileName = (String) files.next();
-                    if (fileName.endsWith("/deploy.xml")) {
+                    if (fileName.endsWith(File.separator + "deploy.xml")) {
                         deploy = fileName;
                     }
                 }
                 //deploy
-                String[] args = new String[] { deploy };
+                System.err.println("deploy: " + deploy);
+                String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + deploy };
                 AdminClient.main(args);
             }
 
@@ -267,12 +268,13 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 Iterator files = ((List) testIterator.next()).iterator();
                 while (files.hasNext()) {
                     String fileName = (String) files.next();
-                    if (fileName.endsWith("/undeploy.xml")) {
+                    if (fileName.endsWith(File.separator + "undeploy.xml")) {
                         undeploy = fileName;
                     }
                 }
                 //undeploy
-                String[] args = new String[] { undeploy };
+                System.err.println("undeploy: " + undeploy);
+                String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + undeploy };
                 AdminClient.main(args);
             }
 
