@@ -61,12 +61,15 @@ import java.security.PrivilegedAction;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.discovery.DiscoverOldNamesInManagedProperties;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
+import org.apache.commons.discovery.resource.names.DiscoverNamesInManagedProperties;
 import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
+import org.apache.commons.discovery.resource.names.NameDiscoverers;
 import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 
@@ -146,13 +149,18 @@ public class EngineConfigurationFactoryFinder
                         ClassLoaders loaders =
                             ClassLoaders.getAppLoaders(mySpi, myFactory, true);
                 
-                        ResourceNameIterator it =
-                            new DiscoverServiceNames(loaders).findResourceNames(mySpi.getName());
+                        NameDiscoverers nameDiscoverers = new NameDiscoverers();
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverOldNamesInManagedProperties());
+                            
+                        ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
                 
                         ResourceClassIterator services =
                             new DiscoverClasses(loaders).findResourceClasses(it);
                 
                         EngineConfigurationFactory factory = null;
+
                         while (factory == null  &&  services.hasNext()) {
                             Class service = services.nextResourceClass().loadClass();
                 
