@@ -112,6 +112,7 @@ public class WSDDConstants
     public static final QName QNAME_JAVAMSG_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_MSG);
     public static final QName QNAME_HANDLER_PROVIDER = new QName("", PROVIDER_HANDLER);
     public static final QName QNAME_EJB_PROVIDER     = new QName(URI_WSDD_JAVA, PROVIDER_EJB);
+    public static final QName QNAME_COM_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_COM);
     public static final QName QNAME_BSF_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_BSF);
     public static final QName QNAME_CORBA_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_CORBA);
     public static final QName QNAME_RMI_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_RMI);

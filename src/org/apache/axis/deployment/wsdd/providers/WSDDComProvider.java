@@ -59,7 +59,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.providers.ComProvider;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -71,6 +70,9 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 public class WSDDComProvider
     extends WSDDProvider
 {
+    public static final String OPTION_PROGID = "ProgID";
+    public static final String OPTION_THREADING_MODEL = "threadingModel";
+    
     public String getName() {
         return WSDDConstants.PROVIDER_COM;
     }
@@ -79,26 +81,20 @@ public class WSDDComProvider
                                        EngineConfiguration registry)
         throws Exception
     {
-        Class _class = ClassUtils.forName("org.apache.axis.handlers.providers.ComProvider");
+        Class _class = ClassUtils.forName("org.apache.axis.providers.ComProvider");
 
         BasicProvider provider = (BasicProvider) _class.newInstance();
 
         String option = service.getParameter("ProgID");
 
         if (!option.equals("")) {
-            provider.setOption(ComProvider.OPTION_PROGID, option);
-        }
-
-        option = service.getParameter("CLSID");
-
-        if (!option.equals("")) {
-            provider.setOption(ComProvider.OPTION_CLSID, option);
+            provider.setOption(OPTION_PROGID, option);
         }
 
         option = service.getParameter("threadingModel");
 
-        if (!option.equals("")) {
-            provider.setOption(ComProvider.OPTION_THREADING_MODEL, option);
+        if (option!= null && !option.equals("")) {
+            provider.setOption(OPTION_THREADING_MODEL, option);
         }
 
         return provider;
