@@ -7,20 +7,20 @@
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 
 <types>
-  <import 
-    namespace="http://test.globus.org/types" 
-    schemaLocation="../types3/importStringType.xsd"/> 
-
-  <import 
-    namespace="http://test.globus.org/otherTypes" 
-    schemaLocation="../types3/importOtherType.xsd"/> 
-
-  <schema targetNamespace="http://test.globus.org/bigType"
+  <xsd:schema targetNamespace="http://test.globus.org/bigType"
         xmlns:tns="http://test.globus.org/bigType"
         xmlns:stringType="http://test.globus.org/types"
         xmlns:otherType="http://test.globus.org/otherTypes"
         xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import 
+      namespace="http://test.globus.org/types" 
+      schemaLocation="../types3/importStringType.xsd"/> 
+
+    <xsd:import 
+      namespace="http://test.globus.org/otherTypes"  
+      schemaLocation="../types3/importOtherType.xsd"/> 
+
     <xsd:complexType name="BigType">
       <xsd:sequence>
         <xsd:element name="one" type="xsd:string"/>
@@ -28,7 +28,7 @@
 	<xsd:element name="three" type="otherType:OtherType"/>
       </xsd:sequence>
     </xsd:complexType>
-  </schema>
+  </xsd:schema>
 </types>
 
 </definitions>
