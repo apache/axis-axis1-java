@@ -57,6 +57,7 @@
 
 package org.apache.axis ;
 
+import java.io.* ;
 import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
@@ -85,8 +86,13 @@ public class AxisFault extends Exception {
     String  str ;
 
     setFaultCode( "Server.generalException" );
-    setFaultString( e.toString() );
+    // setFaultString( e.toString() );
     // need to set details if we were in the body at the time!!
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    PrintStream           ps = new PrintStream( stream );
+    e.printStackTrace(ps);
+    ps.close();
+    setFaultString( stream.toString() );
   }
 
   public void setFaultCode(String code) {

@@ -8,12 +8,13 @@
 <!-- This file will be replaced by WSDD once it's ready         -->
 
 <deploy>
+  <handler name="debug" class="org.apache.axis.handlers.DebugHandler" />
   <handler name="log" class="org.apache.axis.handlers.LogHandler" />
   <handler name="echo" class="org.apache.axis.handlers.EchoHandler" />
   <handler name="error" class="org.apache.axis.handlers.ErrorHandler" />
 
   <chain name="pre" flow="log" />
-  <chain name="echoChain" input="log" pivot="echo" output="log" />
+  <chain name="echoChain" input="debug,log" pivot="echo" output="log" />
   <chain name="errorChain" input="log,log" pivot="error" output="log,log" />
 
   <service name="EchoService" handler="echoChain" />

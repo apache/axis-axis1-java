@@ -75,9 +75,11 @@ public class SOAPHeader {
   protected String    namespaceURI ;
   protected boolean   mustUnderstand ;
   protected String    actor ;
-  protected ArrayList data ;
+  protected Vector    data ;
+  protected boolean   processed ;
 
   public SOAPHeader() {
+    processed = false ;
   }
 
   public SOAPHeader(Element elem) {
@@ -91,6 +93,7 @@ public class SOAPHeader {
     actor = elem.getAttributeNS( Constants.URI_SOAP_ENV,
                                 Constants.ATTR_ACTOR );
     setData( elem.getChildNodes() );
+    processed = false ;
   }
 
   public String getName() { return( name ); }
@@ -108,15 +111,21 @@ public class SOAPHeader {
   public String getActor() { return( actor ); }
   public void setActor(String a) { actor = a ; }
 
-  public Node[] getData() { return( (Node[]) data.toArray() ); }
+  public Vector getData() { return( data ); }
+
+  public Node getDataAtIndex(int i) {
+    if ( data == null || i >= data.size() ) return( null );
+    return( (Node) data.get(i) );
+  }
+
   public void addDataNode(Node n) { 
-    if ( data == null ) data = new ArrayList();
+    if ( data == null ) data = new Vector();
     data.add(n); 
   };
 
   public void setData(NodeList nl) { 
     data = null ;
-    if ( nl != null && nl.getLength() != 0 ) data = new ArrayList();
+    if ( nl != null && nl.getLength() != 0 ) data = new Vector();
     for ( int i = 0 ; i < nl.getLength() ; i++ )
       data.add( nl.item(i) );
   }
@@ -135,6 +144,14 @@ public class SOAPHeader {
     for ( int i = 0 ; data != null && i < data.size() ; i++ )
       root.appendChild(doc.importNode( (Node) data.get(i), true ));
     return( root );
+  }
+
+  public void setProcessed(boolean value) {
+    processed = value ;
+  }
+
+  public boolean isProcessed() {
+    return( processed );
   }
 
 };

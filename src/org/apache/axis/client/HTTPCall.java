@@ -126,7 +126,7 @@ public class HTTPCall {
     reqEnv.addBody( body );
 
     // Until we have chains on the client force a debug header if needed
-    if ( Debug.getDebugLevel() > 0  ) {
+    if ( true ) { // Debug.getDebugLevel() > 0  ) {
       SOAPHeader  header = new SOAPHeader();
       header.setPrefix("d");
       header.setName("Debug");

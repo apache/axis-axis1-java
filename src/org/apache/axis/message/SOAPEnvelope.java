@@ -73,7 +73,7 @@ import org.apache.axis.utils.* ;
  */
 public class SOAPEnvelope {
   protected String       prefix ;
-  protected ArrayList    headers ;
+  protected Vector       headers ;
   protected Vector       body ; // Vector of SOAPBody's
 
   public SOAPEnvelope() {
@@ -107,7 +107,7 @@ public class SOAPEnvelope {
         Node n = list.item(i);
         if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
         h = (Element) list.item(i);
-        if ( headers == null ) headers = new ArrayList();
+        if ( headers == null ) headers = new Vector();
         headers.add( new SOAPHeader( h ) );
       }
     }
@@ -128,13 +128,30 @@ public class SOAPEnvelope {
     }
   }
 
-  public SOAPHeader[] getHeaders() {
+  public Vector getHeaders() {
     if ( headers == null ) return( null );
-    return( (SOAPHeader[]) headers.toArray() );
+    return( headers );
+  }
+
+  public Vector getHeadersByURI(String URI) {
+    Vector tmpList = null ;
+    /* If URI is null then they asked for the entire list */
+    /******************************************************/
+    if ( URI == null ) return( headers );
+    if ( headers == null ) return( null );
+
+    for ( int i = 0 ; i < headers.size(); i++ ) {
+      SOAPHeader  header = (SOAPHeader) headers.elementAt(i);
+      if ( URI.equals( header.getNamespaceURI() ) ) {
+        if ( tmpList == null ) tmpList = new Vector();
+        tmpList.add( header );
+      }
+    }
+    return( tmpList );
   }
 
   public void addHeader(SOAPHeader header) {
-    if ( headers == null ) headers = new ArrayList();
+    if ( headers == null ) headers = new Vector();
     headers.add( header );
   }
 
