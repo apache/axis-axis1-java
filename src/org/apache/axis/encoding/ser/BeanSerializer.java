@@ -57,16 +57,13 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.InternalException;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.wsdl.fromJava.ClassRep;
-import org.apache.axis.wsdl.fromJava.FieldRep;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,15 +72,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
@@ -128,9 +121,6 @@ public class BeanSerializer implements Serializer, Serializable {
                           Object value, SerializationContext context)
         throws IOException
     {
-        boolean isSOAP_ENC = Constants.
-                isSOAP_ENC(context.getMessageContext().getEncodingStyle());
-
         // Check for meta-data in the bean that will tell us if any of the
         // properties are actually attributes, add those to the element
         // attribute list
@@ -268,51 +258,53 @@ public class BeanSerializer implements Serializer, Serializable {
         Element all = types.createElement("sequence");
         e.appendChild(all);
 
-        // Build a ClassRep that represents the bean class.  This
-        // allows users to provide their own field mapping.
-        ClassRep clsRep = types.getBeanBuilder().build(javaType);
-
-        // Map abstract classes to abstract attribute on complexType
-        if (Modifier.isAbstract(clsRep.getModifiers())) {
+        if (Modifier.isAbstract(javaType.getModifiers())) {
             complexType.setAttribute("abstract", "true");
         }
+        // Serialize each property
+        for (int i=0; i<propertyDescriptor.length; i++) {
+            String propName = propertyDescriptor[i].getName();
+            if (propName.equals("class"))
+                continue;
 
-        // Write out fields
-        Vector fields = clsRep.getFields();
-        for (int i=0; i < fields.size(); i++) {
-            FieldRep field = (FieldRep) fields.elementAt(i);
-
-            String name = field.getName();
+            // If we have type metadata, check to see what we're doing
+            // with this field.  If it's an attribute, skip it.  If it's
+            // an element, use whatever qname is in there.  If we can't
+            // find any of this info, use the default.
 
             if (typeDesc != null) {
-                FieldDesc fieldDesc = typeDesc.getFieldByName(field.getName());
-                if (fieldDesc != null) {
-                    if (!fieldDesc.isElement()) {
-                        QName attrName = typeDesc.getAttributeNameForField(
-                                                    field.getName());
-                        writeAttribute(types, attrName.getLocalPart(),
-                                       field.getType(),
+                FieldDesc field = typeDesc.getFieldByName(propName);
+                if (field != null) {
+                    QName qname = field.getXmlName();
+                    if (qname != null) {
+                        // FIXME!
+                        // Check to see if this is in the right namespace -
+                        // if it's not, we need to use an <element ref="">
+                        // to represent it!!!
+
+                        // Use the default...
+                        propName = qname.getLocalPart();
+                    }
+                    if (!field.isElement()) {
+                        writeAttribute(types,
+                                       propName,
+                                       propertyDescriptor[i].getType(),
                                        complexType);
-                        continue;
                     } else {
-                        QName xmlName = typeDesc.getElementNameForField(
-                                field.getName());
-                        if (xmlName != null) {
-                            if (xmlName.getNamespaceURI() != "") {
-                                // Throw an exception until we can emit
-                                // schema for this correctly?
-                            }
-                            name = xmlName.getLocalPart();
-                            writeField(types, name, field.getType(),
-                                       field.getIndexed(), all);
-                            continue;
-                        }
+                        writeField(types,
+                                   propName,
+                                   propertyDescriptor[i].getType(),
+                                   propertyDescriptor[i].isIndexed(), all);
                     }
                 }
+            } else {
+                writeField(types,
+                           propName,
+                           propertyDescriptor[i].getType(),
+                           propertyDescriptor[i].isIndexed(), all);
             }
-
-            writeField(types, name, field.getType(), field.getIndexed(), all);
         }
+
         // done
         return true;
     }

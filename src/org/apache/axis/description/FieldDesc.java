@@ -70,6 +70,9 @@ public class FieldDesc {
     private QName xmlName;
     /** The XML Type this field maps to/from */
     private QName xmlType;
+    /** The Java type of this field */
+    private Class javaType;
+
     /** An indication of whether this should be an element or an attribute */
     // Q : should this be a boolean, or just "instanceof ElementDesc", etc.
     private boolean _isElement = true;
@@ -111,6 +114,14 @@ public class FieldDesc {
         this.xmlName = xmlName;
     }
 
+    public Class getJavaType() {
+        return javaType;
+    }
+
+    public void setJavaType(Class javaType) {
+        this.javaType = javaType;
+    }
+
     /**
      * Check if this is an element or an attribute.
      *
@@ -118,5 +129,9 @@ public class FieldDesc {
      */
     public boolean isElement() {
         return _isElement;
+    }
+
+    public boolean isIndexed() {
+        return false;
     }
 }

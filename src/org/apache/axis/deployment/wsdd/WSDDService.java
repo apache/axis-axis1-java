@@ -54,10 +54,20 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.*;
-import org.apache.axis.description.OperationDesc;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.Constants;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.FaultableHandler;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -69,7 +79,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -227,7 +236,7 @@ public class WSDDService
 
     /**
      * Add a WSDDOperation to the Service.
-     * @param mapping.
+     * @param operation the operation to add
      **/
     public void addOperation(WSDDOperation operation) {
         operations.add(operation);

@@ -63,27 +63,25 @@ import javax.xml.rpc.namespace.QName;
 import java.util.List;
 
 /**
- * @author Rich Scheuerle (scheu@us.ibm.com)
- *
  * This is the implementation of the axis Default TypeMapping (which extends
- * the JAX-RPC TypeMapping interface) for SOAP 1.1.  If you want the JAX-RPC
- * SOAP 1.2 Type Mapping the use DefaultJAXRPCTypeMapping.
+ * the JAX-RPC TypeMapping interface) for SOAP 1.1.
  *
- * A TypeMapping is obtained from the singleton TypeMappingRegistry using
- * the namespace of the webservice.  The TypeMapping contains the tuples
+ * A TypeMapping contains tuples as follows:
  * {Java type, SerializerFactory, DeserializerFactory, Type QName)
  *
- * So if you have a Web Service with the namespace "XYZ", you call
- * the TypeMappingRegistry.getTypeMapping("XYZ").
+ * In other words, it serves to map Java types to and from XML types using
+ * particular Serializers/Deserializers.  Each TypeMapping is associated with
+ * one or more encodingStyle URIs.
  *
  * The wsdl in your web service will use a number of types.  The tuple
  * information for each of these will be accessed via the TypeMapping.
  *
- * Because every web service uses the soap, schema, wsdl primitives, we could
- * pre-populate the TypeMapping with these standard tuples.  Instead, if requested
- * namespace/class matches is not found in the TypeMapping but matches one these
- * known primitives, the request is delegated to this Default TypeMapping.
+ * This TypeMapping is the "default" one, which includes all the standard
+ * SOAP and schema XSD types.  Individual TypeMappings (associated with
+ * AxisEngines and SOAPServices) will delegate to this one, so if you haven't
+ * overriden a default mapping we'll end up getting it from here.
  *
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class DefaultTypeMappingImpl extends TypeMappingImpl {
 

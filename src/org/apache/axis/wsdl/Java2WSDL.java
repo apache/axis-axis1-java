@@ -91,7 +91,6 @@ public class Java2WSDL {
     protected static final int LOCATION_IMPORT_OPT = 'L';
     protected static final int METHODS_ALLOWED_OPT = 'm';
     protected static final int INHERITED_CLASS_OPT = 'a';
-    protected static final int FACTORY_CLASS_OPT = 'f';
     protected static final int IMPL_CLASS_OPT = 'i';
     protected static final int METHODS_NOTALLOWED_OPT = 'x';
     protected static final int STOP_CLASSES_OPT = 'c';
@@ -163,10 +162,6 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
                 JavaUtils.getMessage("j2woptoutputImpl00")),
-        new CLOptionDescriptor("factory",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                FACTORY_CLASS_OPT,
-                JavaUtils.getMessage("j2woptfactory00")),
         new CLOptionDescriptor("implClass",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 IMPL_CLASS_OPT,
@@ -192,7 +187,6 @@ public class Java2WSDL {
     public static void main(String args[]) {
 
         String className = null;
-        String classDir = null;
         String wsdlFilename = null;
         String wsdlImplFilename = null;
         HashMap namespaceMap = new HashMap();
@@ -235,10 +229,6 @@ public class Java2WSDL {
 
                     case INHERITED_CLASS_OPT:
                         emitter.setUseInheritedMethods(true);
-                        break;
-
-                    case FACTORY_CLASS_OPT:
-                        emitter.setFactory(option.getArgument());
                         break;
 
                     case IMPL_CLASS_OPT:

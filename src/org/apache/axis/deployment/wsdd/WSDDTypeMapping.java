@@ -59,6 +59,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Attr;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -96,9 +97,12 @@ public class WSDDTypeMapping
     {
         serializer = e.getAttribute("serializer");
         deserializer = e.getAttribute("deserializer");
-        encodingStyle = e.getAttribute("encodingStyle");
-        if (encodingStyle == null) {
+        Attr attrNode = e.getAttributeNode("encodingStyle");
+
+        if (attrNode == null) {
             encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+        } else {
+            encodingStyle = attrNode.getValue();
         }
 
         String qnameStr = e.getAttribute("qname");

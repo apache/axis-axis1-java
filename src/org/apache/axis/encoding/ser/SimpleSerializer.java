@@ -63,11 +63,9 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.wsdl.fromJava.ClassRep;
-import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -75,8 +73,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Vector;
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
  *
@@ -256,9 +252,43 @@ public class SimpleSerializer implements Serializer {
         // Get the base type from the "value" element of the bean
         String base = "string";
         for (int i=0; i<propertyDescriptor.length; i++) {
-            if (! propertyDescriptor[i].getName().equals("value"))
+            String propName = propertyDescriptor[i].getName();
+            if (!propName.equals("value")) {
+                if (typeDesc != null) {
+                    FieldDesc field = typeDesc.getFieldByName(propName);
+                    if (field != null) {
+                        if (field.isElement()) {
+                            // throw?
+                        }
+                        QName qname = field.getXmlName();
+                        if (qname == null) {
+                            // Use the default...
+                            propName = propName;
+                            qname = new QName("", propName);
+                        }
+
+                        //  write attribute element
+                        Class fieldType = propertyDescriptor[i].getType();
+
+                        // Attribute must be a simple type.
+                        if (!types.isSimpleSchemaType(fieldType))
+                            throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00",
+                                    propName,
+                                    fieldType.getName()));
+
+                        // write attribute element
+                        // TODO the attribute name needs to be preserved from the XML
+                        String elementType = types.writeType(fieldType);
+                        Element elem = types.createAttributeElement(propName,
+                                elementType,
+                                false,
+                                extension.getOwnerDocument());
+                        extension.appendChild(elem);
+                    }
+                }
                 continue;
-            
+            }
+
             BeanPropertyDescriptor bpd = propertyDescriptor[i];
             Class type = bpd.getType();
             // Attribute must extend a simple type.
@@ -267,48 +297,9 @@ public class SimpleSerializer implements Serializer {
                         type.getName()));
             
             base = types.writeType(type);
+            extension.setAttribute("base", base);
         }
-        extension.setAttribute("base", base);
 
-        // Build a ClassRep that represents the bean class.  This
-        // allows users to provide their own field mapping.
-        ClassRep clsRep = types.getBeanBuilder().build(javaType);
-
-        // Write out fields (only attributes are allowed)
-        if (typeDesc == null || !typeDesc.hasAttributes())
-            return true;
-
-        Vector fields = clsRep.getFields();
-        for (int i=0; i < fields.size(); i++) {
-            FieldRep field = (FieldRep) fields.elementAt(i);
-
-            String fieldName = field.getName();
-
-            FieldDesc fieldDesc = typeDesc.getFieldByName(field.getName());
-            if (fieldDesc == null || fieldDesc.isElement()) {
-                // Really, it's an error to have element descriptors in there!
-                continue;
-            }
-
-            //  write attribute element
-            Class fieldType = field.getType();
-            
-            // Attribute must be a simple type.
-            if (!types.isSimpleSchemaType(fieldType))
-                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00", 
-                        fieldName,
-                        fieldType.getName()));
-            
-            // write attribute element
-            // TODO the attribute name needs to be preserved from the XML
-            String elementType = types.writeType(fieldType);
-            Element elem = types.createAttributeElement(fieldName,
-                    elementType,
-                    false,
-                    extension.getOwnerDocument());
-            extension.appendChild(elem);
-        }
-            
         // done
         return true;
         
