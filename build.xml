@@ -540,4 +540,17 @@ Copyright:
       <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
     </style>
   </target>
+
+  <target name="happyclient" depends="compile">
+      <java classname="org.apache.axis.client.HappyClient"
+          fork="true"
+          failonerror="true">
+          <classpath>
+            <fileset dir="${build.lib}">
+               <include name="*.jar"/>
+            </fileset>
+          </classpath>
+      </java>
+
+  </target>
 </project>

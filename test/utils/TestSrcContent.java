@@ -144,11 +144,11 @@ public class TestSrcContent extends TestCase {
             //                           "org\\.apache\\.log4j", false),
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1"
-                                       + "(?!src\\1org\\1apache\\1axis\\1client\\1HappyClient\\.java)"
+//                                       + "(?!src\\1org\\1apache\\1axis\\1client\\1HappyClient\\.java)"
                                        + "([a-zA-Z0-9_]+\\1)*"
                                        + "[^\\\\/]+\\.java",
                                        "org\\.apache\\.log4j", false),
-                                       
+
             // Verify that axis java files do not use System.out.println
             // or System.err.println, except:
             //   - utils/tcpmon.java
