@@ -69,7 +69,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.message.DebugHeader;
-import org.apache.axis.client.http.HTTPTransport;
+import org.apache.axis.transport.http.HTTPTransport;
 
 import org.w3c.dom.* ;
 
@@ -92,7 +92,6 @@ import org.apache.axis.encoding.SerializationContext;
 
 public class ServiceClient {
     // Client transports
-    private static Transport defaultTransport = null;
     private static Hashtable transports = new Hashtable();
                                                         
     // keep prop hashtable small
@@ -152,26 +151,76 @@ public class ServiceClient {
         setTransport(transport);
     }
     
+    /**
+     * Force the transport to be set for this ServiceClient.
+     * 
+     * @param transport the Transport object we'll use
+     */
     public void setTransport(Transport transport) {
         this.transport = transport;
         Debug.Print(1, "Transport is " + transport);
     }
     
-    public static void setDefaultTransport(Transport transport)
-    {
-        defaultTransport = transport;
-    }
-    
-    public static void setTransportForProtocol(String protocol, Transport transport)
+    /** Register a Transport that should be used for URLs of the specified
+     * protocol.
+     * 
+     * @param protocol the URL protocol (i.e. "tcp" for "tcp://" urls)
+     * @param transport a Transport object which will be used for matching
+     *        URLs.
+     */
+    public static void setTransportForProtocol(String protocol,
+                                               Transport transport)
     {
         transports.put(protocol, transport);
     }
     
+    public static final String TRANSPORT_PROPERTY =
+                                              "java.protocol.handler.pkgs";
+    private static boolean initialized = false;
+    
+    /**
+     * This is a bit kludgey - call this at some point before parsing
+     * URLs to set up default Axis transports....
+     */
+    public static synchronized void initialize()
+    {
+      if (!initialized) {
+        addTransportPackage("org.apache.axis.transport");
+        
+        setTransportForProtocol("local", new org.apache.axis.transport.local.LocalTransport());
+        setTransportForProtocol("http", new HTTPTransport());
+        
+        initialized = true;
+      }
+    }
+
+    /** Add a package to the system protocol handler search path.  This
+     * enables users to create their own URLStreamHandler classes, and thus
+     * allow custom protocols to be used in Axis (typically on the client
+     * command line).
+     * 
+     * For instance, if you add "samples.transport" to the packages property,
+     * and have a class samples.transport.tcp.Handler, the system will be able
+     * to parse URLs of the form "tcp://host:port..."
+     * 
+     * @param packageName the package in which to search for protocol names.
+     */
+    public static synchronized void addTransportPackage(String packageName)
+    {
+      System.out.println("Adding package " + packageName);
+        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
+        if (currentPackages == null) {
+          currentPackages = "";
+        } else {
+          currentPackages += " ";
+        }
+        currentPackages += packageName;
+        
+        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
+    }
+    
     public Transport getTransportForProtocol(String protocol)
     {
-      if (protocol.equals("http"))
-        return new HTTPTransport();
-      
       return (Transport)transports.get(protocol);
     }
     

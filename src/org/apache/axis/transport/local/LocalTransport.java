@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
+ *    Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -53,57 +53,30 @@
  * <http://www.apache.org/>.
  */
 
-package samples.stock ;
+package org.apache.axis.transport.local;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import org.apache.axis.AxisFault ;
+import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.Transport ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.client.Transport;
+import org.apache.axis.client.ServiceClient;
 
 /**
  *
- * @author Doug Davis (dug@us.ibm.com.com)
+ * @author Rob Jellinghaus (robj@unrealities.com)
+ * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class GetInfo {
-
-  public static void main(String args[]) {
-    try {
-      Options opts = new Options( args );
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-
-      args = opts.getRemainingArgs();
-
-      if ( args == null || args.length % 2 != 0 ) {
-        System.err.println( "Usage: GetInfo <symbol> <datatype>" );
-        System.exit(1);
-      }
-
-      String  symbol = args[0] ;
-      ServiceClient call = new ServiceClient
-            (new HTTPTransport(opts.getURL(), "urn:cominfo"));
-
-      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-
-      call.set( Transport.USER, opts.getUser() );
-      call.set( Transport.PASSWORD, opts.getPassword() );
-      String res = (String) call.invoke(
-        "urn:cominfo", "getInfo",
-        new Object[] { args[0], args[1] } );
-      
-      System.out.println( symbol + ": " + res );
+public class LocalTransport extends Transport
+{
+    /**
+     * Set up any transport-specific derived properties in the message context.
+     * @param context the context to set up
+     * @param message the client service instance
+     * @param engine the engine containing the registries
+     */
+    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
+    {
+        mc.setTransportName("local");
     }
-    catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      else e.printStackTrace();
-    }
-  }
-
 }
 

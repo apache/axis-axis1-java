@@ -1,7 +1,7 @@
 package samples.bidbuy ;
 
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPTransport ;
+import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.message.RPCElement ;
 import org.apache.axis.message.RPCParam ;
 import org.apache.axis.utils.* ;

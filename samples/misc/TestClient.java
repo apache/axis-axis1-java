@@ -63,7 +63,7 @@ import org.apache.axis.*;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPTransport ;
+import org.apache.axis.transport.http.HTTPTransport ;
 
 /**
  *
