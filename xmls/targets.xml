@@ -524,6 +524,7 @@
     <copy file="${axis.home}/samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
     <copy file="${axis.home}/test/functional/AltStockQuoteService.jws" todir="${axis.home}/build/jws" />
     <copy file="${axis.home}/test/functional/GlobalTypeTest.jws" todir="${axis.home}/build/jws"/>
+    <copy file="${axis.home}/webapps/axis/EchoHeaders.jws" todir="${axis.home}/build/jws" />
 
           <path id="deploy.xml.files">
                 <fileset dir="${build.dir}">

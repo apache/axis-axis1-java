@@ -65,6 +65,8 @@ public class FunctionalTests extends TestCase
         // samples.fault test
         suite.addTestSuite(TestFaultsSample.class);
 
+        suite.addTestSuite(TestEncoding.class);
+        
         // Attachments service test.
         try{
           if( null != ClassUtils.forName("javax.activation.DataHandler") &&
