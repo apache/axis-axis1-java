@@ -59,6 +59,7 @@ import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import com.ibm.wsdl.extensions.soap.SOAPHeaderImpl;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
@@ -106,6 +107,7 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPHeader;
 import javax.wsdl.factory.WSDLFactory;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -119,6 +121,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.List;
 
 /**
  * This class emits WSDL from Java classes.  It is used by the ?WSDL
@@ -1089,7 +1092,7 @@ public class Emitter {
             throws WSDLException, AxisFault {
 
         Input input = def.createInput();
-        Message msg = writeRequestMessage(def, desc);
+        Message msg = writeRequestMessage(def, desc, bindingOper);
 
         input.setMessage(msg);
 
@@ -1103,7 +1106,7 @@ public class Emitter {
         oper.setInput(input);
         def.addMessage(msg);
 
-        msg = writeResponseMessage(def, desc);
+        msg = writeResponseMessage(def, desc, bindingOper);
 
         Output output = def.createOutput();
 
@@ -1233,21 +1236,41 @@ public class Emitter {
         // soapOper.setStyle("rpc");
         bindingOper.addExtensibilityElement(soapOper);
 
-        // Input clause
-        ExtensibilityElement input = null;
+        // Add soap:body element to the binding <input> element
+        ExtensibilityElement inputBody = null;
+        inputBody = writeSOAPBody(desc.getElementQName());
+        bindingInput.addExtensibilityElement(inputBody);
 
-        input = writeSOAPBody(desc.getElementQName());
+        // add soap:headers, if any, to binding <input> element
+        ArrayList params = desc.getAllInParams();
+        for (int i = 0; i < params.size(); i++)
+        {
+            ParameterDesc p = (ParameterDesc) params.get(i);
+            if (p.isInHeader())
+            {
+                SOAPHeader hdr = writeSOAPHeader(p);
+                bindingInput.addExtensibilityElement(hdr);
+            }
+        }
 
-        bindingInput.addExtensibilityElement(input);
+        // Add soap:body element to the binding <output> element
+        ExtensibilityElement outputBody = null;
+        outputBody = writeSOAPBody(desc.getReturnQName());
+        bindingOutput.addExtensibilityElement(outputBody);
 
-        // Output clause
-        ExtensibilityElement output = null;
+        // add soap:headers, if any, to binding <output> element
+        params = desc.getAllOutParams();
+        for (int i = 0; i < params.size(); i++)
+        {
+            ParameterDesc p = (ParameterDesc) params.get(i);
+            if (p.isOutHeader())
+            {
+                SOAPHeader hdr = writeSOAPHeader(p);
+                bindingOutput.addExtensibilityElement(hdr);
+            }
+        }
 
-        output = writeSOAPBody(desc.getReturnQName());
-
-        bindingOutput.addExtensibilityElement(output);
-
-        // Ad input and output to operation
+        // Add input and output to operation
         bindingOper.setBindingInput(bindingInput);
         bindingOper.setBindingOutput(bindingOutput);
 
@@ -1273,6 +1296,39 @@ public class Emitter {
         binding.addBindingOperation(bindingOper);
 
         return bindingOper;
+    }
+
+    /**
+     * Create a SOAPHeader element
+     */
+    protected SOAPHeader writeSOAPHeader(ParameterDesc p)
+    {
+        SOAPHeaderImpl soapHeader = new SOAPHeaderImpl();
+
+        // for now, if its document, it is literal use.
+        if (use == Use.ENCODED) {
+            soapHeader.setUse("encoded");
+            soapHeader.setEncodingStyles(encodingList);
+        } else {
+            soapHeader.setUse("literal");
+        }
+
+        // Set namespace
+        if (targetService == null) {
+            soapHeader.setNamespaceURI(intfNS);
+        } else {
+            soapHeader.setNamespaceURI(targetService);
+        }
+        QName headerQName = p.getQName();
+        if ((headerQName != null) && !headerQName.getNamespaceURI().equals("")) {
+            soapHeader.setNamespaceURI(headerQName.getNamespaceURI());
+        }
+
+        // The Message and Part information get set when the Message is generated
+        // soapHeader.setMessage(...);
+        // soapHeader.setPart(...);
+
+        return soapHeader;
     }
 
     /**
@@ -1302,6 +1358,10 @@ public class Emitter {
         if ((operQName != null) && !operQName.getNamespaceURI().equals("")) {
             soapBody.setNamespaceURI(operQName.getNamespaceURI());
         }
+
+        // The parts attribute will get set if we have headers.
+        // This gets done when the Message & parts are generated
+        // soapBody.setParts(...);
 
         return soapBody;
     }    // writeSOAPBody
@@ -1354,16 +1414,24 @@ public class Emitter {
      * @throws WSDLException 
      * @throws AxisFault     
      */
-    protected Message writeRequestMessage(Definition def, OperationDesc oper)
-            throws WSDLException, AxisFault {
+    protected Message writeRequestMessage(Definition def, OperationDesc oper, BindingOperation bindop)
+            throws WSDLException, AxisFault
+    {
+
+        String partName;
+        ArrayList bodyParts = new ArrayList();
+        ArrayList parameters = oper.getAllInParams();
+        List extensibilityElements = bindop.getBindingInput().getExtensibilityElements();
 
         Message msg = def.createMessage();
         QName qName = createMessageName(def,
-                getRequestQName(oper).getLocalPart()
-                + "Request");
+                getRequestQName(oper).getLocalPart() + "Request");
 
         msg.setQName(qName);
         msg.setUndefined(false);
+
+        // output all the parts for headers
+        boolean headers = writeHeaderParts(def, parameters, extensibilityElements, msg, true);
 
         if (oper.getStyle() == Style.MESSAGE) {
 
@@ -1379,25 +1447,97 @@ public class Emitter {
             part.setName("part");
             part.setElementName(qname);
             msg.addPart(part);
+            bodyParts.add(part.getName());
+
         } else if (oper.getStyle() == Style.WRAPPED) {
 
             // If we're WRAPPED, write the wrapper element first, and then
             // fill in any params.  If there aren't any params, we'll see
             // an empty <complexType/> for the wrapper element.
-            writeWrapperPart(def, msg, oper, true);
+            partName = writeWrapperPart(def, msg, oper, true);
+            bodyParts.add(partName);
+
         } else {
 
-            // Otherwise, write parts for the parameters.
-            ArrayList parameters = oper.getParameters();
-
+            // write a part for each non-header parameter
             for (int i = 0; i < parameters.size(); i++) {
                 ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+                if (!parameter.isInHeader() && !parameter.isOutHeader()) {
+                    partName = writePartToMessage(def, msg, true, parameter);
+                    bodyParts.add(partName);
+                }
+            }
+        }
 
-                writePartToMessage(def, msg, true, parameter);
+        // If we have headers, we must fill in the parts attribute of soap:body
+        // if not, we just leave it out (which means all parts)
+        if (headers) {
+            // Find soap:body in binding
+            for (int i = 0; i < extensibilityElements.size(); i++)
+            {
+                Object ele = extensibilityElements.get(i);
+                if (ele instanceof SOAPBodyImpl)
+                {
+                    SOAPBodyImpl soapBody = (SOAPBodyImpl) ele;
+                    soapBody.setParts(bodyParts);
+                }
             }
         }
 
         return msg;
+    }
+
+    /**
+     * Create parts of a Message for header parameters and write then in
+     * to the provided Message element.  Fill in the message and part
+     * attributes on the bindings soap:header elements, now that we
+     * have these values.
+     *
+     * @param parameters the list of parameters for the current operation
+     * @param bindingElements the soap elements in the current bindingOperation
+     * @param msg the message to add the parts to
+     * @param request true if we are do an input message, false if it is output
+     * @return true if we wrote any header parts
+     */
+    private boolean writeHeaderParts(Definition def,
+                                     ArrayList parameters,
+                                     List bindingElements,
+                                     Message msg,
+                                     boolean request) throws WSDLException, AxisFault
+    {
+        boolean wroteHeaderParts = false;
+        String partName;
+
+        // Loop over all the parameters for this operation
+        for (int i = 0; i < parameters.size(); i++) {
+            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+
+            // write the input or output header parts in to the Message
+            if (request && parameter.isInHeader()) {
+                partName = writePartToMessage(def, msg, request, parameter);
+            }
+            else if (!request && parameter.isOutHeader()) {
+                partName = writePartToMessage(def, msg, request, parameter);
+            }
+            else {
+                continue;
+            }
+
+            // Fill in bindings soap:header 'message' and 'part' attributes
+            // since binding is created first, they already exist.
+            for (int j = 0; j < bindingElements.size(); j++)
+            {
+                Object ele = bindingElements.get(j);
+                // find the SOAPHeader object
+                if (ele instanceof SOAPHeaderImpl) {
+                    SOAPHeaderImpl sh = (SOAPHeaderImpl) ele;
+                    sh.setPart(partName);
+                    sh.setMessage(msg.getQName());
+                    wroteHeaderParts = true;
+                }
+            }
+        }
+        return wroteHeaderParts;
     }
 
     /**
@@ -1466,10 +1606,11 @@ public class Emitter {
      * @param def     
      * @param msg     
      * @param oper    
-     * @param request 
+     * @param request
+     * @return the name of the part the was written
      * @throws AxisFault 
      */
-    public void writeWrapperPart(
+    public String writeWrapperPart(
             Definition def, Message msg, OperationDesc oper, boolean request)
             throws AxisFault {
 
@@ -1515,19 +1656,25 @@ public class Emitter {
             for (int i = 0; i < parameters.size(); i++) {
                 ParameterDesc parameter = (ParameterDesc) parameters.get(i);
 
-                types.writeWrappedParameter(sequence,
-                        parameter.getName(), // QName??
-                        parameter.getTypeQName(),
-                        parameter.getJavaType());
+                // avoid headers
+                if (!parameter.isInHeader() && !parameter.isOutHeader())
+                {
+                    types.writeWrappedParameter(sequence,
+                                                parameter.getName(), // QName??
+                                                parameter.getTypeQName(),
+                                                parameter.getJavaType());
+                }
             }
         }
 
         // Finally write the part itself
         Part part = def.createPart();
 
-        part.setName("parameters");    // We always se "parameters"
+        part.setName("parameters");    // We always use "parameters"
         part.setElementName(qname);
         msg.addPart(part);
+
+        return part.getName();
     }
 
     /**
@@ -1539,8 +1686,13 @@ public class Emitter {
      * @throws WSDLException 
      * @throws AxisFault     
      */
-    protected Message writeResponseMessage(Definition def, OperationDesc desc)
-            throws WSDLException, AxisFault {
+    protected Message writeResponseMessage(Definition def, OperationDesc desc, BindingOperation bindop)
+            throws WSDLException, AxisFault
+    {
+        String partName;
+        ArrayList bodyParts = new ArrayList();
+        ArrayList parameters = desc.getAllOutParams();
+        List extensibilityElements = bindop.getBindingOutput().getExtensibilityElements();
 
         Message msg = def.createMessage();
         QName qName =
@@ -1549,11 +1701,15 @@ public class Emitter {
         msg.setQName(qName);
         msg.setUndefined(false);
 
+        // output all the parts for headers
+        boolean headers = writeHeaderParts(def, parameters, extensibilityElements, msg, false);
+
         if (desc.getStyle() == Style.WRAPPED) {
-            writeWrapperPart(def, msg, desc, false);
+            partName = writeWrapperPart(def, msg, desc, false);
+            bodyParts.add(partName);
         } else {
 
-            // Write the part
+            // Write the return value part
             ParameterDesc retParam = new ParameterDesc();
 
             if (desc.getReturnQName() == null) {
@@ -1576,14 +1732,31 @@ public class Emitter {
             retParam.setMode(ParameterDesc.OUT);
             retParam.setIsReturn(true);
             retParam.setJavaType(desc.getReturnClass());
-            writePartToMessage(def, msg, false, retParam);
+            String returnPartName = writePartToMessage(def, msg, false, retParam);
+            bodyParts.add(returnPartName);
 
-            ArrayList parameters = desc.getAllOutParams();
+            // write a part for each non-header parameter
+            for (int i = 0; i < parameters.size(); i++) {
+                ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+                if (!parameter.isInHeader() && !parameter.isOutHeader()) {
+                    partName = writePartToMessage(def, msg, false, parameter);
+                    bodyParts.add(partName);
+                }
+            }
 
-            for (Iterator i = parameters.iterator(); i.hasNext();) {
-                ParameterDesc param = (ParameterDesc) i.next();
-
-                writePartToMessage(def, msg, false, param);
+        }
+        // If we have headers, we must fill in the parts attribute of soap:body
+        // if not, we just leave it out (which means all parts)
+        if (headers) {
+            // Find soap:body in binding
+            for (int i = 0; i < extensibilityElements.size(); i++)
+            {
+                Object ele = extensibilityElements.get(i);
+                if (ele instanceof SOAPBodyImpl)
+                {
+                    SOAPBodyImpl soapBody = (SOAPBodyImpl) ele;
+                    soapBody.setParts(bodyParts);
+                }
             }
         }
 
@@ -1741,6 +1914,7 @@ public class Emitter {
             msg.addPart(part);
         }
 
+        // return the name of the parameter added
         return param.getName();
     }
 
