@@ -64,19 +64,17 @@ import java.util.*;
 import org.apache.axis.*;
 import org.apache.axis.server.SimpleAxisEngine;
 
-/**
+/** This is a quick in-memory client to demonstrate how transport-dependent
+ * routing works.  It pretends to be the AxisServlet with a SOAPAction header
+ * of "EchoService".  This ends up calling the AxisServlet chain, which
+ * sets the new TARGET to be the value of the SOAPAction header, and then
+ * uses the Router handler to dispatch to the service.
  *
- * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class EchoClient {
+public class TransportRoutingClient {
 
     public static void main(String args[]) {
-
-        String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                     "Host: localhost:8080\n" +
-                     "Content-Type: text/xml;charset=utf-8\n" +
-                     "SOAPAction: EchoService\n";
 
         String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
                      "<SOAP-ENV:Header>\n" +
@@ -91,61 +89,28 @@ public class EchoClient {
                      "</SOAP-ENV:Envelope>" ;
 
         try {
-            String  host = "localhost" ;
-            int     port = 8080 ;
-            boolean doLocal = false;
-
-            for ( int i = 0 ; i < args.length ; i++ ) {
-                if ( args[i].charAt(0) == '-' ) {
-                    switch( args[i].toLowerCase().charAt(1) ) {
-                    case 'h': if ( args[i].length() > 2 )
-                                  host = args[i].substring(2);
-                              break ;
-                    case 'p': if ( args[i].length() > 2 )
-                                  port = Integer.parseInt(args[i].substring(2));
-                              break ;
-                    case 'l': doLocal = true;
-                              break;
-                    default: System.err.println( "Unknown option '" + 
-                                                 args[i].charAt(1) + "'" );
-                             System.exit(1);
-                    }
-                }
-            }
+            org.apache.axis.utils.Debug.setDebugLevel(10);
+            SimpleAxisEngine engine = new SimpleAxisEngine();
+            MessageContext msgContext = new MessageContext();
+            Message message = new Message(msg, "String");
+            msgContext.setIncomingMessage(message);
             
-            if (doLocal) {
-                /** Run things in-memory, no servlet or anything.
-                 */
-                org.apache.axis.utils.Debug.setDebugLevel(10);
-                SimpleAxisEngine engine = new SimpleAxisEngine();
-                MessageContext msgContext = new MessageContext();
-                Message message = new Message(msg, "String");
-                msgContext.setIncomingMessage(message);
-                
-                // This is fixed, as this client tightly binds to the echo service.
-                msgContext.setProperty(Constants.MC_TARGET, "EchoService");
-                engine.init();
-                engine.invoke(msgContext);
-                
-                System.out.println(msgContext.getOutgoingMessage().getAs("String"));
-            } else {
-                String         cl = "Content-Length: " + msg.length() + "\n\n" ;
-                Socket         sock = new Socket( host, port );
-                InputStream    inp = sock.getInputStream();
-                OutputStream   out = sock.getOutputStream();
-                byte           b ;
+            /** The TARGET is "AxisServlet"
+             */
+            msgContext.setProperty(Constants.MC_TARGET, "AxisServlet");
+            
+            /** If we were a real servlet, we might have made the SOAPAction
+             * HTTP header available like this...
+             */
+            msgContext.setProperty(Constants.MC_HTTP_SOAPACTION, "EchoService");
 
-                out.write( hdr.getBytes() );
-                out.write( cl.getBytes() );
-                out.write( msg.getBytes() );
-
-                while ( (b = (byte) inp.read()) != -1 ) 
-                    System.out.write( b );
-            }
+            engine.init();
+            engine.invoke(msgContext);
+            
+            System.out.println(msgContext.getOutgoingMessage().getAs("String"));
         }
         catch( Exception e ) {
             e.printStackTrace();
-            System.err.println( e );
         }
     };
 
