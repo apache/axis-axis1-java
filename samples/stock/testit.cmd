@@ -1,5 +1,4 @@
 rem this assumes webserver is running on port 8080
-rem this assumes that the samples/xml/init.xml file has already been deployed
 
 echo First test the StockQuoteService.jws file
 java samples.stock.GetQuote -uuser1 -wpass1 XXX -s/axis/StockQuoteService.jws

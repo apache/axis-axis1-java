@@ -2,40 +2,22 @@ How to use the current version of the code....
 ----------------------------------------------
 (these instructions assume tomcat)
 
-- Deploy the Admin service
-  - From the directory you run tomcat from, run:
-      java org.apache.axis.utils.Admin  samples\xml\init.xml
+- Deploy Axis in Tomcat
+  - Add the following section to your conf/server.xml file:
+    <Context path="/axis" docBase="d:/xml-axis/java/webapps/axis" 
+             debug ="0" reloadable="true" />
+    Replace "d:/" with the path to your version of axis
 
-- Deploy any additional services
+- Deploy services
   - Two ways to deploy new services:
     1 - From the tomcat directory, run:
           java org.apche.axis.utils.Admin <whatever>.xml
     2 - Once tomcat is running, run (from anywhere/any dir):
           java org.apache.axis.client.AdminClient <whatever>.xml
         
-  - Look in the samples\xml dir for deployment xml files (deploy.xml is
-    the one I've been using so far)
-
-
-There are couple of test client's available - right now they're in
-the axis\client directory - should be moved to the samples dir soon.
-
-AdminClient
-  - Used to deploy/undeploy handlers/chains/services
-
-EchoClient:
-  - Just send the server an xml file and get it back
-
-TestClient:
-  - Allows you to run a service - actually it just allows you to
-    specify the SOAPAction header line on the command line.  It sends
-    a static SOAPEnvelope.
-
-
-** Also, look at the samples\stockquote example.  This is a full blown
-** service in action!
-
-
+There is a sample service in java/samples/stock - this will illustrate
+how to deploy a service that consists of a chain of handlers on the
+client and the server.
 
 Format of deployment xml files:
 -------------------------------
