@@ -495,29 +495,21 @@ public class SymbolTable {
         QName nodeKind = Utils.getNodeQName(node);
 
         if (nodeKind != null) {
-            if (nodeKind.getLocalPart().equals("complexType") &&
+            if ((nodeKind.getLocalPart().equals("complexType") ||
+                 nodeKind.getLocalPart().equals("simpleType")) &&
                 Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
+
+                // If an extension or restriction is present,
+                // create a type for the reference
+                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
+                if (re != null  &&
+                    Utils.getAttribute(re, "base") != null) {
+                    createTypeFromRef(re);
+                }
 
                 // This is a definition of a complex type.
                 // Create a Type.
                 createTypeFromDef(node, false, false);
-            }
-            if (nodeKind.getLocalPart().equals("simpleType") &&
-                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
-                // This is a definition of a simple type, which could be an enum
-                // Create a Type.
-                createTypeFromDef(node, false, false);
-            }
-            if (nodeKind.getLocalPart().equals("restriction") ||
-                nodeKind.getLocalPart().equals("extension") &&
-                Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
-                // The restriction or extension could be used for a number of different
-                // constructs (enumeration, inheritance, arrays, etc.)
-                if (Utils.getAttribute(node, "base") != null) {
-                    createTypeFromRef(node);
-                }
             }
             else if (nodeKind.getLocalPart().equals("element") &&
                    Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
@@ -526,6 +518,14 @@ public class SymbolTable {
                 if (Utils.getAttribute(node, "type") != null ||
                     Utils.getAttribute(node, "ref") != null) {
                     createTypeFromRef(node);
+                }
+
+                // If an extension or restriction is present,
+                // create a type for the reference
+                Node re = SchemaUtils.getRestrictionOrExtensionNode(node);
+                if (re != null  &&
+                    Utils.getAttribute(re, "base") != null) {
+                    createTypeFromRef(re);
                 }
 
                 // Create a type representing an element.  (This may
@@ -583,12 +583,11 @@ public class SymbolTable {
             // qname representing the type
             BooleanHolder forElement = new BooleanHolder();
             QName refQName = Utils.getNodeTypeRefQName(node, forElement);
-            if (refQName != null) {
 
+            if (refQName != null) {
                 // Now get the TypeEntry
                 TypeEntry refType = getTypeEntry(refQName, forElement.value);
 
-                // Create a type from the referenced TypeEntry
                 if (!belowSchemaLevel) {
                     symbolTablePut(new DefinedElement(qName, refType, node, ""));
                 }
@@ -596,36 +595,44 @@ public class SymbolTable {
             else {
                 // Flow to here indicates no type= or ref= attribute.
                 
-                // See if this is an array definition.
+                // See if this is an array or simple type definition.
                 QName arrayEQName = SchemaUtils.getArrayElementQName(node);
-                if (arrayEQName != null) {
-                    // Get the TypeEntry for the array element type
-                    TypeEntry arrayEType = getTypeEntry(arrayEQName, false);
-                    if (arrayEType == null) {
-                        // Array Element Type not defined yet, add one
-                        String baseJavaName = Utils.getBaseJavaName(arrayEQName);
+                QName simpleQName = SchemaUtils.getSimpleTypeBase(node, this);
+
+                if (arrayEQName != null || simpleQName != null) {
+                    // Get the TypeEntry for the array element/simple type
+                    refQName = (arrayEQName != null ? arrayEQName : simpleQName);
+                    TypeEntry refType = getTypeEntry(refQName, false);
+                    if (refType == null) {
+                        // Not defined yet, add one
+                        String baseJavaName = Utils.getBaseJavaName(refQName);
                         if (baseJavaName != null)
-                            arrayEType = new BaseJavaType(arrayEQName);
+                            refType = new BaseJavaType(refQName);
                         else
-                            arrayEType = new UndefinedType(arrayEQName);
-                        symbolTablePut(arrayEType);
+                            refType = new UndefinedType(refQName);
+                        symbolTablePut(refType);
                     }
 
-                    // Create a defined type or element array of arrayEType.
-                    TypeEntry arrayType = null;
+                    // Create a defined type or element that references refType
+                    String dims = "";
+                    if (arrayEQName != null) {
+                        dims = "[]";
+                    }
+                    TypeEntry defType = null;
                     if (isElement) {
                         if (!belowSchemaLevel) { 
-                            arrayType = new DefinedElement(qName, arrayEType, node, "[]");
+                            defType = new DefinedElement(qName, refType, node, dims);
                         }
                     } else {
-                        arrayType = new DefinedType(qName, arrayEType, node, "[]");
+                        defType = new DefinedType(qName, refType, node, dims);
                     }
-                    if (arrayType != null) {
-                        symbolTablePut(arrayType);
+                    if (defType != null) {
+                        symbolTablePut(defType);
                     }
                 }
                 else {
-                    // Create a TypeEntry representing this non-array type/element
+
+                    // Create a TypeEntry representing this  type/element
                     String baseJavaName = Utils.getBaseJavaName(qName);
                     if (baseJavaName != null) {
                         symbolTablePut(new BaseJavaType(qName));
