@@ -9,12 +9,11 @@ import org.apache.axis.* ;
 import java.util.* ;
 
 public interface vInterface {
-  public void register(String registryURL, Service s) ;
-  public void unregister(String registryURL, String name);
-  public void register(String registryURL, String myServiceURL );
-  public Boolean ping(String serverURL);
+  public void register(String registryURL, Service s) throws Exception ;
+  public void unregister(String registryURL, String name) throws Exception ;
+  public Boolean ping(String serverURL) throws Exception ;
   public Vector lookupAsString(String registryURL) throws Exception ;
-  public double requestForQuote(String serverURL);
-  public String simpleBuy(String serverURL, int quantity );
-  public String buy(String serverURL, int quantity, int numItems);
+  public double requestForQuote(String serverURL) throws Exception ;
+  public String simpleBuy(String serverURL, int quantity ) throws Exception ;
+  public String buy(String serverURL, int quantity, int numItems) throws Exception;
 }
