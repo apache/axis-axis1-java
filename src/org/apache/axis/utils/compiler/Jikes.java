@@ -144,12 +144,14 @@ public class Jikes extends AbstractCompiler
             }
         }
 
-        String[] args = new String[arguments.size() + 1];
+        String[] args = new String[arguments.size() + fileList.size()];
         for (i = 0; i < arguments.size(); i++) {
             args[i] = (String) arguments.get(i);
         }
 
-        args[i] = file;
+        for (int j=0; j < fileList.size(); i++,j++) {
+            args[i] = (String)fileList.get(j);
+        }
 
         return args;
     }

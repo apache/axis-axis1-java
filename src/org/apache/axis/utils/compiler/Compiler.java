@@ -72,7 +72,7 @@ public interface Compiler {
    *
    * @param file The name of the file containing the source program
    */
-  void setFile(String file);
+  void addFile(String file);
 
   /**
    * Set the name of the directory containing the source program file
