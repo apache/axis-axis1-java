@@ -17,8 +17,11 @@
 package org.apache.axis.types;
 
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
 
 import java.util.Calendar;
+import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 
 /**
  * Implementation of the XML Schema type duration. Duration supports a minimum
@@ -68,7 +71,7 @@ public class Duration implements java.io.Serializable {
      * PnYnMnDTnHnMnS.
      *
      * @param duration String
-     * @throws SchemaException if the string doesn't parse correctly.
+     * @throws IllegalArgumentException if the string doesn't parse correctly.
      */
     public Duration(String duration) throws IllegalArgumentException {
         int position = 1;
@@ -83,12 +86,12 @@ public class Duration implements java.io.Serializable {
         // if does not have time
         if (duration.indexOf("T") == -1) {
             // no time information
-            if (!duration.matches("-?P[0-9]*Y?[0-9]*M?[0-9]*D?")) {
+            if (!matches(duration, "-?P[0-9]*Y?[0-9]*M?[0-9]*D?")) {
                 throw new IllegalArgumentException(
                         Messages.getMessage("badDuration"));
             }
         } else {
-            if (!duration.matches(
+            if (!matches(duration,
                     "-?P[0-9]*Y?[0-9]*M?[0-9]*D?T[0-9]*H?[0-9]*M?[0-9]*\\.?[0-9]*S?")) {
                 throw new IllegalArgumentException(
                         Messages.getMessage("badDuration"));
@@ -156,7 +159,7 @@ public class Duration implements java.io.Serializable {
      */
     public void parseTime(String time) throws IllegalArgumentException {
         if (time.length() == 0 ||
-            !time.matches("[0-9]*H?[0-9]*M?[0-9]*\\.?[0-9]*S?")) {
+            !matches(time,"[0-9]*H?[0-9]*M?[0-9]*\\.?[0-9]*S?")) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badTimeDuration"));
         }
@@ -194,7 +197,7 @@ public class Duration implements java.io.Serializable {
      * {@link #Duration(String) Duration(String)} constructor.
      */
     public void parseDate(String date) throws IllegalArgumentException {
-        if (date.length() == 0 || !date.matches("[0-9]*Y?[0-9]*M?[0-9]*D?")) {
+        if (date.length() == 0 || !matches(date, "[0-9]*Y?[0-9]*M?[0-9]*D?")) {
             throw new IllegalArgumentException(Messages.getMessage(
                     "badDateDuration"));
         }
@@ -379,6 +382,39 @@ public class Duration implements java.io.Serializable {
         return duration.toString();
     }
 
+    /**
+     * Matches the pattern specified in the string
+     * 
+     * @param string
+     * @param regexp
+     * @return boolean
+     */ 
+    private boolean matches(String string, String regexp) {
+        try {
+            Method method = String.class.getMethod("matches", new Class[]{String.class});
+            Boolean b = (Boolean) method.invoke(string, new Object[]{regexp});
+            return b.booleanValue();
+        } catch (Throwable e) {
+        }        
+        try {
+            Class clazz = ClassUtils.forName("org.apache.regexp.RE");
+            Constructor constructor = clazz.getConstructor(new Class[]{String.class});
+            Object obj = constructor.newInstance(new Object[]{regexp});
+            Method method = clazz.getMethod("match", new Class[]{String.class});
+            Boolean b = (Boolean) method.invoke(obj, new Object[]{regexp});
+            return b.booleanValue();
+        } catch (Throwable e){
+        }
+        try {
+            Class clazz = ClassUtils.forName("org.apache.xerces.impl.xpath.regex.REUtil");
+            Method method = clazz.getMethod("matches", new Class[]{String.class,String.class});
+            Boolean b = (Boolean) method.invoke(string, new Object[]{regexp, string});
+            return b.booleanValue();
+        } catch (Throwable e){
+        }
+        throw new RuntimeException(Messages.getMessage("regexpFailure00"));
+    }
+    
     /**
      * The equals method compares the time represented by duration object, not
      * its string representation.
