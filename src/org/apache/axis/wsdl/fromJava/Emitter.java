@@ -68,8 +68,8 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -127,7 +127,7 @@ public class Emitter {
     private String serviceName;
     private String targetService = null;
     private String description;
-    private TypeMappingRegistry reg;
+    private TypeMappingRegistry reg = null;
     private Namespaces namespaces;
 
     private ArrayList encodingList;
@@ -365,10 +365,10 @@ public class Emitter {
             }
             
             encodingList = new ArrayList();
-            encodingList.add(Constants.URI_SOAP_ENC);
+            encodingList.add(Constants.URI_CURRENT_SOAP_ENC);
             
             if (reg == null) {
-                reg = new SOAPTypeMappingRegistry();
+                reg = new TypeMappingRegistryImpl();
             }
 
             if (intfNS == null) 
@@ -405,8 +405,8 @@ public class Emitter {
                              Constants.NSPREFIX_WSDL);
 
         def.addNamespace(Constants.NSPREFIX_SOAP_ENC,
-                         Constants.URI_SOAP_ENC);
-        namespaces.putPrefix(Constants.URI_SOAP_ENC, 
+                         Constants.URI_CURRENT_SOAP_ENC);
+        namespaces.putPrefix(Constants.URI_CURRENT_SOAP_ENC, 
                              Constants.NSPREFIX_SOAP_ENC);
 
         def.addNamespace(Constants.NSPREFIX_SCHEMA_XSD,
