@@ -23,6 +23,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.SocketFactory;
 import org.apache.axis.components.net.SocketFactoryFactory;
+import org.apache.axis.components.net.DefaultSocketFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.soap.SOAP12Constants;
@@ -84,7 +85,7 @@ public class HTTPSender extends BasicHandler {
             
             // Send the SOAP request to the server
             InputStream inp = writeToSocket(socketHolder, msgContext, targetURL,
-                        otherHeaders, host, port, useFullURL);
+                        otherHeaders, host, port, msgContext.getTimeout(), useFullURL);
 
             // Read the response back from the server
             Hashtable headers = new Hashtable();
@@ -114,10 +115,21 @@ public class HTTPSender extends BasicHandler {
     private void getSocket(
             SocketHolder sockHolder,
             String protocol,
-            String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
+            String host, int port, int timeout, 
+            StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
-        SocketFactory factory = SocketFactoryFactory.getFactory(protocol, getOptions());
+        Hashtable options = getOptions();
+        if(timeout > 0) {
+            if(options == null) {
+                options = new Hashtable();
+            }
+            options.put(DefaultSocketFactory.CONNECT_TIMEOUT,Integer.toString(timeout));
+        }
+        SocketFactory factory = SocketFactoryFactory.getFactory(protocol, options);
         Socket sock = factory.create(host, port, otherHeaders, useFullURL);
+        if(timeout > 0) {
+            sock.setSoTimeout(timeout);
+        }
         sockHolder.setSocket(sock);
     }
 
@@ -135,7 +147,7 @@ public class HTTPSender extends BasicHandler {
      */
     private InputStream writeToSocket(SocketHolder sockHolder,
             MessageContext msgContext, URL tmpURL,
-            StringBuffer otherHeaders, String host, int port,
+            StringBuffer otherHeaders, String host, int port, int timeout,
             BooleanHolder useFullURL)
             throws Exception {
 
@@ -374,13 +386,7 @@ public class HTTPSender extends BasicHandler {
 
         header.append("\r\n"); //The empty line to start the BODY.
 
-        getSocket(sockHolder, targetURL.getProtocol(), host, port, otherHeaders, useFullURL);
-
-        // optionally set a timeout for the request
-        if (msgContext.getTimeout() != 0) {
-            sockHolder.getSocket().setSoTimeout(msgContext.getTimeout());
-        }
-
+        getSocket(sockHolder, targetURL.getProtocol(), host, port, timeout, otherHeaders, useFullURL);
         OutputStream out = sockHolder.getSocket().getOutputStream();
 
         if (!posting) {

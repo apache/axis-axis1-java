@@ -24,6 +24,9 @@ import org.apache.commons.logging.Log;
 import java.net.Socket;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * Default socket factory.
@@ -36,6 +39,9 @@ public class DefaultSocketFactory implements SocketFactory {
     protected static Log log =
             LogFactory.getLog(DefaultSocketFactory.class.getName());
 
+    /** Field CONNECT_TIMEOUT */
+    public static String CONNECT_TIMEOUT = "axis.client.connect.timeout";
+    
     /** attributes */
     protected Hashtable attributes = null;
 
@@ -64,6 +70,10 @@ public class DefaultSocketFactory implements SocketFactory {
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
 
+        int timeout = 0;
+        if(attributes.contains(CONNECT_TIMEOUT)) {
+            timeout = Integer.parseInt((String)attributes.get(CONNECT_TIMEOUT));
+        }
         TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
 
         Socket sock = null;
@@ -87,18 +97,49 @@ public class DefaultSocketFactory implements SocketFactory {
             (tcp.getProxyPort().length() == 0) ||
             hostInNonProxyList)
         {
-            sock = new Socket(host, port);
+            sock = create(host, port, timeout);
             if (log.isDebugEnabled()) {
                 log.debug(Messages.getMessage("createdHTTP00"));
             }
         } else {
-            sock = new Socket(tcp.getProxyHost(),
-                              new Integer(tcp.getProxyPort()).intValue());
+            sock = create(tcp.getProxyHost(),
+                    new Integer(tcp.getProxyPort()).intValue(),
+                    timeout);
             if (log.isDebugEnabled()) {
                 log.debug(Messages.getMessage("createdHTTP01", tcp.getProxyHost(),
                           tcp.getProxyPort()));
             }
             useFullURL.value = true;
+        }
+        return sock;
+    }
+
+    /**
+     * Creates a socket with connect timeout using reflection API
+     *  
+     * @param host
+     * @param port
+     * @param timeout
+     * @return
+     * @throws Exception
+     */ 
+    private static Socket create(String host, int port, int timeout) throws Exception {
+        boolean plain = true;
+        Socket sock = null;
+        try {
+            Class clazz = Class.forName("java.net.InetSocketAddress");
+            plain = false;
+            Constructor constructor = clazz.getConstructor(new Class[]{String.class, int.class});
+            Object address = constructor.newInstance(new Object[]{host, new Integer(port)});
+            sock = (Socket) Socket.class.getConstructor(new Class[]{}).newInstance(new Object[]{});
+            Method connect = sock.getClass().getMethod("connect", new Class[]{clazz.getSuperclass(), int.class});
+            connect.invoke(sock, new Object[]{address, new Integer(timeout)});
+        } catch (Exception e) {
+            if (plain) {
+                sock = new Socket(host, port);
+            } else {
+                throw e;
+            }
         }
         return sock;
     }
