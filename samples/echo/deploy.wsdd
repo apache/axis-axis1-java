@@ -16,5 +16,5 @@
 
   <typeMapping xmlns:echo="http://soapinterop.org/xsd"
     qname="echo:SOAPStruct" languageSpecificType="java:samples.echo.SOAPStruct"
-    serializer="org.apache.axis.encoding.BeanSerializer" deserializer="org.apache.axis.encoding.BeanSerializer$BeanSerFactory"/>
+    serializer="org.apache.axis.encoding.BeanSerializer" deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory"/>
 </deployment>

@@ -94,7 +94,7 @@ public class WSDDBeanMapping
         super(e, true);
         
         serializer = "org.apache.axis.encoding.BeanSerializer";
-        deserializer = "org.apache.axis.encoding.BeanSerializer$BeanSerFactory";
+        deserializer = "org.apache.axis.encoding.BeanSerializer$BeanDeserFactory";
     }
 
     protected QName getElementName() {

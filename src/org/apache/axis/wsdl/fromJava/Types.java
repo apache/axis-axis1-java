@@ -190,10 +190,11 @@ public class Types {
         if (type.isArray()) {
             Class componentType = type.getComponentType();
 
-            // Check for byte[] and Object[]
-            if (componentType == java.lang.Byte.class ||
-                componentType == java.lang.Byte.TYPE) {
+            // Check for Byte[], byte[] and Object[]
+            if (componentType == java.lang.Byte.class) {
                 qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "base64");
+            } else if (componentType == java.lang.Byte.TYPE) {
+                qName = new javax.xml.rpc.namespace.QName(Constants.URI_CURRENT_SCHEMA_XSD, "base64Binary");
             } else if (componentType == java.lang.Object.class) {
                 qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "Array");
             } else {

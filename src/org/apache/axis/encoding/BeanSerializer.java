@@ -82,22 +82,71 @@ public class BeanSerializer extends Deserializer
 {
     static Category category =
             Category.getInstance(BeanSerializer.class.getName());
+    private Class cls;
+    private PropertyDescriptor[] pd = null;
+    private EnumSerializer enumSerializer = null;
+    private static final Object[] noArgs = new Object[] {};  // For convenience
+
+    // When serializing, the property element names passed over the wire
+    // are the names of the properties (format=PROPERTY_NAME).
+    // Setting the format to FORCE_UPPER will cause the
+    // serializer to uppercase the first letter of the property element name.
+    // Setting the format to FORCE_LOWER will cause the
+    // serializer to uppercase the first letter of the property element name.
+    private short elementPropertyFormat = PROPERTY_NAME;
+    public static short PROPERTY_NAME = 0;
+    public static short FORCE_UPPER   = 1;
+    public static short FORCE_LOWER   = 2;
+    
+    /**
+     * Default constructor.
+     */
+    public BeanSerializer() {
+        super();
+    }
 
     /**
-     * Class being serialized/deserialized
+     * Constructor that takes a class.  Provided only for convenience.
+     * Equivalent to calling setCls(cls) on a new instance.
      */
-    private Class cls;
-
-    protected void setCls(Class cls) {
+    public BeanSerializer(Class cls) {
+        super();
         this.cls = cls;
     }
 
     /**
+     * Constructor that takes a class and a format (PROPERTY_NAME, FORCE_UPPER, FORCE_LOWER)
+     * Equivalent to calling setCls(cls) on a new instance.
+     */
+    public BeanSerializer(Class cls, short format) {
+        super();
+        this.cls = cls;
+        if (format > FORCE_UPPER ||
+            format < PROPERTY_NAME)
+            format = PROPERTY_NAME;
+        this.elementPropertyFormat = format;
+    }
+
+    /**
+     * Constructor that takes a class and a PropertyDescriptor array
+     */
+    public BeanSerializer(Class cls, PropertyDescriptor[] pd) {
+        super();
+        this.cls = cls;
+        this.pd = pd;
+    }
+
+    /**
+     * Class being serialized/deserialized
+     */
+    protected void setCls(Class cls) {
+        this.cls = cls;
+    }
+
+
+    /**
      * Property Descriptors.  Retrieved once and cached in the serializer.
      */
-    private PropertyDescriptor[] pd = null;
-    private EnumSerializer enumSerializer = null;
-
     protected PropertyDescriptor[] getPd() {
         if (pd==null) {
             try {
@@ -208,37 +257,17 @@ public class BeanSerializer extends Deserializer
         } catch (java.lang.NoSuchMethodException e) {}
         return false;
     }  
-    /**
-     * Default constructor.
-     */
-    public BeanSerializer() {
-        super();
-    }
-
-    /**
-     * Constructor that takes a class.  Provided only for convenience.
-     * Equivalent to calling setCls(cls) on a new instance.
-     */
-    public BeanSerializer(Class cls) {
-        super();
-        this.cls = cls;
-    }
-
-    /**
-     * An array of nothing, defined only once.
-     */
-    private static final Object[] noArgs = new Object[] {};
 
     public static DeserializerFactory getFactory()
     {
-      return new BeanSerFactory();
+      return new BeanDeserFactory();
     }
 
     /**
-     * BeanSerializer Factory that creates instances with the specified
+     * BeanDeSerializer Factory that creates instances with the specified
      * class.  Caches the PropertyDescriptor
      */
-    public static class BeanSerFactory implements DeserializerFactory {
+    public static class BeanDeserFactory implements DeserializerFactory {
         private Hashtable propertyDescriptors = new Hashtable();
       
         public Deserializer getDeserializer(Class cls) {
@@ -336,9 +365,13 @@ public class BeanSerializer extends Deserializer
 
         // look for a field by this name.  Assumes the the number of
         // properties in a bean is (relatively) small, so uses a linear
-        // search.
+        // search.  Accept a property if it differs only by the 
+        // capitalization of the first character.
+        String localNameUp = format(localName, FORCE_UPPER);
+        String localNameLo = format(localName, FORCE_LOWER);
         for (int i=0; i<pd.length; i++) {
-            if (pd[i].getName().equals(localName)) {
+            if (pd[i].getName().equals(localNameUp) ||
+                pd[i].getName().equals(localNameLo)) {
 
                 // determine the QName for this child element
                 TypeMappingRegistry tmr = context.getTypeMappingRegistry();
@@ -381,8 +414,10 @@ public class BeanSerializer extends Deserializer
 
         try {
             for (int i=0; i<pd.length; i++) {
-                String propName = pd[i].getName();
+                String propName = pd[i].getName();                
                 if (propName.equals("class")) continue;
+                propName = format(propName, elementPropertyFormat);
+                    
                 Object propValue = pd[i].getReadMethod().invoke(value,noArgs);
                 context.serialize(new QName("", propName), null, propValue);
             }
@@ -394,6 +429,23 @@ public class BeanSerializer extends Deserializer
         context.endElement();
     }
 
+    /**
+     * Returns the property name string formatted in the specified manner
+     * @param name to format
+     * @param fmt (PROPERTY_NAME, FORCE_LOWER, FORCE_UPPER)
+     * @return formatted name 
+     */
+    private String format(String name, short fmt) {
+        if (fmt == PROPERTY_NAME)
+            return name;
+        String theRest = "";
+        if (name.length() > 1)
+            theRest = name.substring(1);
+        if (fmt == FORCE_UPPER)
+            return Character.toUpperCase(name.charAt(0)) + theRest;
+        else
+            return Character.toLowerCase(name.charAt(0)) + theRest;
+    }
 
 
     /**
