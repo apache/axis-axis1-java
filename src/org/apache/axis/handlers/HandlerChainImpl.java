@@ -81,7 +81,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public void addNewHandler(String className, Map config) {
         try {
             HandlerInfo handlerInfo =
-            new HandlerInfo(ClassUtils.forName(className), config, null);
+                new HandlerInfo(ClassUtils.forName(className), config, null);
             handlerInfos.add(handlerInfo);
             add(newHandler(handlerInfo));
         } catch (Exception ex) {
@@ -113,6 +113,8 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public ArrayList getMessageInfo(SOAPMessage message) {
         ArrayList list = new ArrayList();
         try {
+            if(message == null || message.getSOAPPart() == null)
+                return list;
             SOAPEnvelope env = message.getSOAPPart().getEnvelope();
             SOAPBody body = env.getBody();
             Iterator it = body.getChildElements();
@@ -176,7 +178,8 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         try {
             SOAPMessage message = msgContext.getMessage();
             // Ensure that message is already in the form we want 
-            message.getSOAPPart().getEnvelope();
+            if(message != null && message.getSOAPPart() != null)
+                message.getSOAPPart().getEnvelope();
             msgContext.setProperty(org.apache.axis.SOAPPart.ALLOW_FORM_OPTIMIZATION,
                     Boolean.FALSE);
             msgContext.setProperty(JAXRPC_METHOD_INFO, getMessageInfo(message));
@@ -199,7 +202,9 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
             }
         }
         try {
-            msgContext.getMessage().saveChanges();
+            if (message != null) {
+                message.saveChanges();
+            }
         } catch (SOAPException e) {
             log.debug("Exception in postInvoke : ", e);
             throw new RuntimeException("Exception in postInvoke : ", e);
