@@ -91,7 +91,7 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      * @param int value
      */
     public void setValue(long iValue) throws NumberFormatException {
-      if (isValid(iValue) == false)
+      if (UnsignedInt.isValid(iValue) == false)
             throw new NumberFormatException(
                     Messages.getMessage("badUnsignedInt00") +
                     String.valueOf(iValue) + "]");
@@ -117,7 +117,7 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      * validate the value against the xsd definition
      *
      */
-    public boolean isValid(long iValue) {
+    public static boolean isValid(long iValue) {
       if ( (iValue < 0L)  || (iValue > 4294967295L))
         return false;
       else

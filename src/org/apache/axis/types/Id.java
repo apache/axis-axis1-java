@@ -85,6 +85,19 @@ public class Id extends NCName {
         }
     }
 
+    /**
+     *
+     * validates the data and sets the value for the object.
+     * @param Token String value
+     * @throws IllegalArgumentException if invalid format
+     */
+    public void setValue(String stValue) throws IllegalArgumentException {
+        if (Id.isValid(stValue) == false)
+            throw new IllegalArgumentException(
+               Messages.getMessage("badIdType00") +
+               " data=[" + stValue + "]");
+        m_value = stValue;
+    }
 
     /**
      *
@@ -92,7 +105,7 @@ public class Id extends NCName {
      *
      * Same validation as NCName for the time being
      */
-    public boolean isValid(String stValue) {
-      return super.isValid(stValue);
+    public static boolean isValid(String stValue) {
+      return NCName.isValid(stValue);
     }
 }

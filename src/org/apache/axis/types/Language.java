@@ -99,7 +99,7 @@ public class Language extends Token {
     * Primary-tag = 1*8ALPHA
     * Subtag = 1*8ALPHA
     */
-    public boolean isValid(String stValue) {
+    public static boolean isValid(String stValue) {
         return true;
     }
 }

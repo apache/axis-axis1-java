@@ -96,7 +96,7 @@ public class NMToken extends Token {
      * Nmtoken    ::=    (NameChar)+
      * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
      */
-    public boolean isValid(String stValue) {
+    public static boolean isValid(String stValue) {
         int scan;
 
         for (scan=0; scan < stValue.length(); scan++) {

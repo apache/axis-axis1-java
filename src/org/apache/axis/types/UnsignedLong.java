@@ -92,7 +92,7 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
      * @param long value
      */
     public void setValue(double lValue) throws NumberFormatException {
-        if (isValid(lValue) == false)
+        if (UnsignedLong.isValid(lValue) == false)
             throw new NumberFormatException(
                     Messages.getMessage("badUnsignedLong00") +
                     String.valueOf(lValue) + "]");
@@ -130,7 +130,7 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
      * validate the value against the xsd definition
      *
      */
-    public boolean isValid(double lValue) {
+    public static boolean isValid(double lValue) {
       if ( (lValue < 0L)  || (lValue > 18446744073709551615D) )
         return false;
       else

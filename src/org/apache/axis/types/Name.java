@@ -89,6 +89,19 @@ public class Name extends Token {
         }
     }
 
+    /**
+     *
+     * validates the data and sets the value for the object.
+     * @param Name String value
+     * @throws IllegalArgumentException if invalid format
+     */
+    public void setValue(String stValue) throws IllegalArgumentException {
+        if (Name.isValid(stValue) == false)
+            throw new IllegalArgumentException(
+               Messages.getMessage("badNameType00") +
+               " data=[" + stValue + "]");
+        m_value = stValue;
+    }
 
     /**
      *
@@ -96,7 +109,7 @@ public class Name extends Token {
      *   Name    ::=    (Letter | '_' | ':') ( NameChar)*
      * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
      */
-    public boolean isValid(String stValue) {
+    public static boolean isValid(String stValue) {
         int scan;
         boolean bValid = true;
 

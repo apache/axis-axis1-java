@@ -99,7 +99,7 @@ public class Token extends NormalizedString {
      * trailing spaces (#x20) and that have no internal sequences of two
      * or more spaces.
      */
-    public boolean isValid(String stValue) {
+    public static boolean isValid(String stValue) {
         int scan;
         // check to see if we have a string to review
         if (  (stValue == null) || (stValue.length() == 0)  )
@@ -131,4 +131,19 @@ public class Token extends NormalizedString {
         }
         return true;
     }
+    
+    /**
+     *
+     * validates the data and sets the value for the object.
+     * @param Token String value
+     * @throws IllegalArgumentException if invalid format
+     */
+    public void setValue(String stValue) throws IllegalArgumentException {
+        if (Token.isValid(stValue) == false)
+            throw new IllegalArgumentException(
+               Messages.getMessage("badToken00") +
+               " data=[" + stValue + "]");
+        m_value = stValue;
+    }
+
 }
