@@ -167,9 +167,13 @@ public class HTTPSender extends BasicHandler {
 
                         // The tunnel handshake method (condensed and made reflexive)
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n\r\n\r");
+                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n"
+                                  + "User-Agent: AxisClient"
+                                  + "\r\n\r\n");
                         out.flush();
+                        
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         if (category.isDebugEnabled()) {
                             category.debug(JavaUtils.getMessage("isNull00", 
