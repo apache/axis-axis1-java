@@ -5,6 +5,7 @@ import test.GenericLocalTest;
 import java.util.Vector;
 
 import org.apache.axis.client.Call;
+import org.apache.axis.AxisFault;
 
 public class TestCircularRefs extends GenericLocalTest {
     public TestCircularRefs() {
@@ -16,9 +17,13 @@ public class TestCircularRefs extends GenericLocalTest {
     }
 
 	public void testCircularVectors() throws Exception {
-        Call call = getCall();
-        Object result = call.invoke("getCircle", null);
-
+        try {
+            Call call = getCall();
+            Object result = call.invoke("getCircle", null);
+        } catch (AxisFault af){
+            return;
+        }
+        fail("Expected a fault");
         // This just tests that we don't get exceptions during deserialization
         // for now.  We're still getting nulls for some reason, and once that's
         // fixed we should uncomment this next line

@@ -70,6 +70,7 @@ import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
+import org.apache.axis.utils.IDKey;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
@@ -770,32 +771,6 @@ public class SerializationContextImpl implements SerializationContext
      */
     private IDKey getIdentityKey(Object value) {
         return new IDKey(value);
-    }
-    class IDKey {
-        private Object value = null;
-        private int id = 0;
-        public IDKey(Object _value) {
-            // This is the Object hashcode 
-            id = System.identityHashCode(_value);  
-            // There have been some cases (bug 11706) that return the 
-            // same identity hash code for different objects.  So 
-            // the value is also added to disambiguate these cases.
-            value = _value;  
-        }
-        public int hashCode() {
-            return id;
-        }
-        public boolean equals(Object other) {
-            if (!(other instanceof IDKey)) {
-                return false;
-            }
-            IDKey idKey = (IDKey) other;
-            if (id != idKey.id) {
-                return false;
-            }
-            // Note that identity equals is used.
-            return value == idKey.value;
-        }
     }
 
     /**
