@@ -728,6 +728,21 @@ public class ServiceDesc {
         for (int i=0; i < exceptionTypes.length; i++) {
             // Every remote method declares a java.rmi.RemoteException
             if (exceptionTypes[i] != java.rmi.RemoteException.class) {
+                
+                // For JSR 101 v.1.0, there is a simple fault mapping
+                // and a complexType fault mapping...both mappings
+                // generate a class that extends (directly or indirectly)
+                // Exception.  
+                // When converting java back to wsdl it is not possible 
+                // to determine which way to do the mapping,
+                // so it is always mapped back using the complexType
+                // fault mapping because it is more useful (i.e. it
+                // establishes a hierarchy of exceptions).  Note that this
+                // will not cause any roundtripping problems.
+                // Rich
+                
+
+                /* Old Simple Type Mode                  
                 Field[] f = exceptionTypes[i].getDeclaredFields();
                 ArrayList exceptionParams = new ArrayList();
                 for (int j = 0; j < f.length; j++) {
@@ -746,7 +761,24 @@ public class ServiceDesc {
                 String pkgAndClsName = exceptionTypes[i].getName();
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
-                fault.setParameters(exceptionParams);
+                fault.setParameters(exceptionParams);                
+                operation.addFault(fault);
+                */
+                
+                // Create a single part with the dummy name "fault"
+                // that locates the complexType for this exception.
+                ParameterDesc param = new ParameterDesc(
+                     new QName("", "fault"),
+                     ParameterDesc.IN,
+                     tm.getTypeQName(exceptionTypes[i]));
+                param.setJavaType(exceptionTypes[i]);
+                ArrayList exceptionParams = new ArrayList();
+                exceptionParams.add(param);
+
+                String pkgAndClsName = exceptionTypes[i].getName();
+                FaultDesc fault = new FaultDesc();
+                fault.setName(pkgAndClsName);
+                fault.setParameters(exceptionParams);                
                 operation.addFault(fault);
             }
         }

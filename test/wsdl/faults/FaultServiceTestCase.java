@@ -19,10 +19,11 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
 
     public static void main(String[] args) throws Exception {
         FaultServiceTestCase tester = new FaultServiceTestCase("tester");
-        tester.testFaultService();
+        tester.testFaultServiceGetQuote();
+        tester.testFaultServiceThrowFault();
     }
     
-    public void testFaultService() {
+    public void testFaultServiceGetQuote() {
         test.wsdl.faults.FaultServicePortType binding;
         try {
             binding = new FaultServiceLocator().getFaultService();
@@ -42,6 +43,55 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
             // We don't support fault data yet!
             //assertEquals("Ticker Symbol in Fault doesn't match original argument", 
             //        symbol, tickerFault.getTickerSymbol());
+        }
+        catch (org.apache.axis.AxisFault e) {
+            throw new junit.framework.
+                    AssertionFailedError("AxisFault caught: " + e);            
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.
+                    AssertionFailedError("Remote Exception caught: " + re );
+        }
+    }
+
+    public void testFaultServiceThrowFault() {
+        test.wsdl.faults.FaultServicePortType binding;
+        try {
+            binding = new FaultServiceLocator().getFaultService();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.
+                    AssertionFailedError("JAX-RPC ServiceException caught: " + jre);            
+        }
+        assertTrue("binding is null", binding != null);
+        int a = 7;
+        String b = "test";
+        float c = 3.14F;
+            
+        try {
+            float value = 0;
+            value = binding.throwFault(a,b,c);
+            fail("Should raise a DerivedFault"); 
+        } 
+        // We are expecting DerivedFault2 (the operation indicates
+        // that it throws a DerivedFault, but we know the impl actually
+        // throws DerivedFault2 which extends DerivedFault)
+        catch (DerivedFault2 e) {
+            // We don't support fault data yet!
+            //assertEquals("Param A in DerivedFault2 doesn't match original", 
+            //        a, tickerFault.getA());
+            //assertEquals("Param B in DerivedFault2 doesn't match original", 
+            //        b, tickerFault.getB());
+            //assertEquals("Param C in DerivedFault2 doesn't match original", 
+            //        c, tickerFault.getC());
+        }
+        catch (DerivedFault e) {
+            throw new junit.framework.
+                    AssertionFailedError("DerivedFault caught: " + e);            
+        }
+        catch (BaseFault e) {
+            throw new junit.framework.
+                    AssertionFailedError("BaseFault caught: " + e);            
         }
         catch (org.apache.axis.AxisFault e) {
             throw new junit.framework.

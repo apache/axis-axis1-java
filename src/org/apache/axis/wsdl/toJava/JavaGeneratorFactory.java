@@ -59,6 +59,7 @@ import java.lang.reflect.Constructor;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -103,6 +104,9 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 public class JavaGeneratorFactory implements GeneratorFactory {
     protected Emitter     emitter;
     protected SymbolTable symbolTable;
+    
+    public static String COMPLEX_TYPE_FAULT = "ComplexTypeFault";
+    public static String EXCEPTION_CLASS_NAME = "ExceptionClassName";
 
     /**
      * Default constructor.  Note that this class is unusable until setEmitter
@@ -171,6 +175,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     public void generatorPass(Definition def, SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
+        setFaultContext(symbolTable);
         resolveNameClashes(symbolTable);
         determineSEINames(symbolTable);
         if (emitter.isAllWanted()) {
@@ -390,6 +395,142 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     } // javifyNames
 
+    /**
+     * setFaultContext:
+     * Processes the symbol table and sets the COMPLEX_TYPE_FAULT
+     * on each TypeEntry that is a complexType and is referenced in
+     * a fault message.  TypeEntries that are the base or derived
+     * from such a TypeEntry are also marked with COMPLEX_TYPE_FAULT.
+     * The containing MessageEntry is marked with cOMPLEX_TYPE_FAULT, and
+     * all MessageEntries for faults are tagged with the
+     * EXCEPTION_CLASS_NAME variable, which indicates the java exception
+     * class name.
+     * @param SymbolTable
+     */
+    private void setFaultContext(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                // Inspect each BindingEntry in the Symbol Table
+                if (entry instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) entry;
+                    Binding binding = bEntry.getBinding();
+                    // Get the associated PortType
+                    PortTypeEntry ptEntry = 
+                        symbolTable.getPortTypeEntry(
+                            binding.getPortType().getQName());
+                    PortType portType = ptEntry.getPortType();
+                    Iterator operations = portType.getOperations().iterator();
+                    // Inspect the Operations of the PortType
+                    while(operations.hasNext()) {
+                        Operation operation = (Operation) operations.next();
+                        OperationType type = operation.getStyle();
+                        // Get the associated parameters of the operation.
+                        String name = operation.getName();
+                        Parameters parameters = bEntry.getParameters(operation);
+
+                        // Inspect the faults of the operation
+                        Iterator iFault = parameters.faults.values().iterator();
+                        while(iFault.hasNext()) {
+                            Fault fault = (Fault) iFault.next();
+                            setFaultContext(fault, symbolTable);
+                        }
+                    }
+                }
+            }
+        }
+    } // setFaultContext
+
+    /**
+     * setFaultContext:
+     * Helper routine for the setFaultContext method above.
+     * Examines the indicated fault and sets COMPLEX_TYPE_FAULT
+     * and EXCEPTION_CLASS_NAME as appropriate.
+     * @param Fault to analyze
+     * @param SymbolTable 
+     */
+    private void setFaultContext(Fault fault,
+                                 SymbolTable symbolTable) {
+        Vector parts = new Vector();
+        // Get the parts of the fault's message.
+        // An IOException is thrown if the parts cannot be
+        // processed.  Skip such parts for this analysis
+        try {
+            symbolTable.getParametersFromParts(
+                parts, 
+                fault.getMessage().getOrderedParts(null),
+                false,
+                fault.getName(),
+                "unknown");
+        } catch (IOException e) {}
+        
+        // Inspect each TypeEntry referenced in a Fault Message Part
+        String exceptionClassName = null;
+        for(int j=0; j < parts.size(); j++) {
+            TypeEntry te = ((Parameter)(parts.elementAt(j))).getType();
+            if (te.getBaseType() != null ||
+                te.isSimpleType()) {
+                // Simple Type Exception
+            } else {
+                // Complex Type Exception
+                Boolean isComplexFault = (Boolean) te.getDynamicVar(
+                    JavaGeneratorFactory.COMPLEX_TYPE_FAULT);
+                if (isComplexFault == null ||
+                    !isComplexFault.booleanValue()) {
+                    te.setDynamicVar(
+                        JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+                        new Boolean(true));
+                    // Mark all derived types as Complex Faults
+                    HashSet derivedSet =
+                        org.apache.axis.wsdl.symbolTable.Utils.getDerivedTypes(
+                            te, symbolTable);
+                    Iterator derivedI = derivedSet.iterator();
+                    while(derivedI.hasNext()) {
+                        TypeEntry derivedTE = (TypeEntry)
+                            derivedI.next();
+                        derivedTE.setDynamicVar(
+                            JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+                            new Boolean(true));
+                    }
+                    // Mark all base types as Complex Faults
+                    TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
+                        te.getNode(),
+                        symbolTable);
+                    while (base != null) {
+                        base.setDynamicVar(
+                            JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+                            new Boolean(true));
+                        base = SchemaUtils.getComplexElementExtensionBase(
+                            base.getNode(),
+                            symbolTable);
+                    }
+                }
+                exceptionClassName = emitter.getJavaName(te.getQName());
+            }
+        }
+        // Set the name of the exception and
+        // whether the exception is a complex type
+        MessageEntry me = symbolTable.getMessageEntry(
+            fault.getMessage().getQName());
+        if (me != null) {
+            if (exceptionClassName != null) {
+                me.setDynamicVar(
+                                 JavaGeneratorFactory.COMPLEX_TYPE_FAULT, 
+                                 new Boolean(true));
+                me.setDynamicVar(
+                                 JavaGeneratorFactory.EXCEPTION_CLASS_NAME, 
+                                 exceptionClassName);
+            } else {
+                me.setDynamicVar(
+                                 JavaGeneratorFactory.EXCEPTION_CLASS_NAME, 
+                                 emitter.getJavaName(me.getQName()));
+            }
+            
+        }
+    }
+
     protected void determineSEINames(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
@@ -423,6 +564,17 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
+
+            // Remove MessageEntries since they are not mapped
+            int index = 0;
+            while (index < v.size()) {
+                if (v.elementAt(index) instanceof MessageEntry) {
+                    v.removeElementAt(index);
+                } else {
+                    index++;
+                }
+            }
+
             if (v.size() > 1) {
                 boolean resolve = true;
                 // Common Special Case:

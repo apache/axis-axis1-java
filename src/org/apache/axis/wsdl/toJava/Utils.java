@@ -70,6 +70,7 @@ import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -164,12 +165,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static String getFullExceptionName(
             Fault fault, Emitter emitter) {
 
-        // Upgraded to JSR 101 version 0.8
-
         // Get the Message referenced in the message attribute of the
         // fault.
         Message faultMessage = fault.getMessage();
-        return emitter.getJavaName(faultMessage.getQName());
+        MessageEntry me = emitter.getSymbolTable().getMessageEntry(
+            faultMessage.getQName()); 
+        return (String) me.getDynamicVar(JavaGeneratorFactory.EXCEPTION_CLASS_NAME);
     } // getFullExceptionName
 
     /**
