@@ -55,6 +55,7 @@
 
 package org.apache.axis.message;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -85,7 +86,7 @@ public class RPCElement extends SOAPBodyElement
                       String prefix,
                       Attributes attributes,
                       DeserializationContext context,
-                      OperationDesc [] operations) throws ClassNotFoundException
+                      OperationDesc [] operations) throws AxisFault
     {
         super(namespace, localName, prefix, attributes, context);
 
@@ -106,7 +107,7 @@ public class RPCElement extends SOAPBodyElement
                 
                 String lc = Utils.xmlNameToJava(name);
                 if (serviceDesc == null) {
-                    throw new ClassNotFoundException(JavaUtils.getMessage("noClassForService00", lc));
+                    AxisFault.makeFault(new ClassNotFoundException(JavaUtils.getMessage("noClassForService00", lc)));
                 }
 
                 operations = serviceDesc.getOperationsByName(lc);

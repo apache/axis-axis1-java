@@ -137,7 +137,14 @@ public class BodyBuilder extends SOAPHandler
         if ((root != null) && root.equals("0")) isRoot = false;
 
         MessageContext msgContext = context.getMessageContext();
-        OperationDesc [] operations = msgContext.getPossibleOperationsByQName(qname);
+        OperationDesc [] operations = null;
+        try {
+             operations = msgContext.getPossibleOperationsByQName(qname);
+        } catch (org.apache.axis.AxisFault e) {
+            // SAXException is already known to this method, so I
+            // don't have an exception-handling propogation explosion.
+            throw new SAXException(e);
+        }
 
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
@@ -160,7 +167,7 @@ public class BodyBuilder extends SOAPHandler
                     element = new RPCElement(namespace, localName, prefix,
                             attributes, context, operations);
                     
-                } catch (ClassNotFoundException e) {
+                } catch (org.apache.axis.AxisFault e) {
                     // SAXException is already known to this method, so I
                     // don't have an exception-handling propogation explosion.
                     //

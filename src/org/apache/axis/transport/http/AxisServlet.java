@@ -565,14 +565,11 @@ public class AxisServlet extends HttpServlet
                 // It's been suggested that a lack of SOAPAction
                 // should produce some other error code (in the 400s)...
                 res.setStatus(getHttpServletResponseStatus(e));
-                responseMsg =
-                    generateFaultResponse(msgContext.getRequestMessage(), e);
+                responseMsg = new Message(e);
             } catch (Exception e) {
                 log.error(JavaUtils.getMessage("exception00"), e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                responseMsg =
-                    generateFaultResponse(msgContext.getRequestMessage(),
-                                          AxisFault.makeFault(e));
+                responseMsg = new Message(AxisFault.makeFault(e));
             }
         } catch (AxisFault fault) {
             log.error(JavaUtils.getMessage("axisFault00"), fault);
@@ -604,21 +601,6 @@ public class AxisServlet extends HttpServlet
                 : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
-
-    /**
-     * Should never generate an exception, but if it does
-     * we want to be able to see evidence of it for tracing purpose
-     */
-    private Message generateFaultResponse(Message msg, AxisFault responseFault)
-        throws AxisFault
-    {
-        SOAPEnvelope env = msg.getSOAPEnvelope();
-        env.clearBody();
-        env.addBodyElement(new SOAPFaultElement(responseFault));
-        
-        return msg;
-    }
-    
     private void sendResponse(final String clientVersion,
             HttpServletResponse res, Message responseMsg)
         throws AxisFault, IOException

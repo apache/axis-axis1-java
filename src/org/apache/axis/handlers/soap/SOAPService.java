@@ -272,7 +272,7 @@ public class SOAPService extends SimpleTargetedChain
         return serviceDescription;
     }
 
-    public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) {
+    public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) throws AxisFault {
         if (serviceDescription.getImplClass() == null) {
             String clsName = (String)getOption(JavaProvider.OPTION_CLASSNAME);
 
@@ -291,7 +291,7 @@ public class SOAPService extends SimpleTargetedChain
                         serviceDescription.setImplClass(jc.getJavaClass());
                     } catch (ClassNotFoundException e) {
                         log.error(JavaUtils.getMessage("exception00"), e);
-                        return null;
+                        throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
                     }
                 } else {
                     try {
@@ -299,7 +299,7 @@ public class SOAPService extends SimpleTargetedChain
                         serviceDescription.setImplClass(cls);
                     } catch (ClassNotFoundException e) {
                         log.error(JavaUtils.getMessage("exception00"), e);
-                        return null; // FIXME - throw?
+                        throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
                     }
                 }
                 TypeMapping tm;

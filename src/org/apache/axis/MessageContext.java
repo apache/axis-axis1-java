@@ -201,7 +201,7 @@ public class MessageContext implements SOAPMessageContext {
         currentOperation = operation;
     }
 
-    public OperationDesc [] getPossibleOperationsByQName(QName qname)
+    public OperationDesc [] getPossibleOperationsByQName(QName qname) throws AxisFault
     {
         if (currentOperation != null) {
             return new OperationDesc [] { currentOperation };
@@ -237,7 +237,7 @@ public class MessageContext implements SOAPMessageContext {
         return possibleOperations;
     }
 
-    public OperationDesc getOperationByQName(QName qname)
+    public OperationDesc getOperationByQName(QName qname) throws AxisFault
     {
         if (currentOperation == null) {
             OperationDesc [] possibleOperations = getPossibleOperationsByQName(qname);
