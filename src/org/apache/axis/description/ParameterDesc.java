@@ -67,7 +67,7 @@ import java.util.Vector;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class Parameter {
+public class ParameterDesc {
 
     // constant values for the parameter mode.
     public static final byte IN = 1;
@@ -82,13 +82,42 @@ public class Parameter {
     public byte mode = IN;
     /** The XML type of this parameter */
     private QName typeQName;
-    /** The order of this parameter */
-    private int order = 0;
+    /** The order of this parameter (-1 indicates unordered) */
+    private int order = -1;
 
     public String toString() {
         return "(" + typeEntry + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
     } // toString
+    
+    /**
+     * Get a mode constant from a string.  Defaults to IN, and returns
+     * OUT or INOUT if the string matches (ignoring case).
+     */ 
+    public static byte modeFromString(String modeStr)
+    {
+        byte ret = IN;
+        if (modeStr.equalsIgnoreCase("out")) {
+            ret = OUT;
+        } else if (modeStr.equalsIgnoreCase("inout")) {
+            ret = INOUT;
+        }
+        return ret;
+    }
+    
+    public static String getModeAsString(byte mode)
+    {
+        if (mode == INOUT) {
+            return "inout";
+        } else if (mode == OUT) {
+            return "out";
+        } else if (mode == IN) {
+            return "in";
+        }
+        
+        // FIXME - needs message
+        throw new IllegalArgumentException();
+    }
 
     public QName getQName() {
         return name;
@@ -112,5 +141,21 @@ public class Parameter {
 
     public void setTypeQName(QName typeQName) {
         this.typeQName = typeQName;
+    }
+
+    public byte getMode() {
+        return mode;
+    }
+
+    public void setMode(byte mode) {
+        this.mode = mode;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 } // class Parameter

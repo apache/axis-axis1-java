@@ -85,6 +85,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.ParameterDesc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -148,9 +149,6 @@ public class Call implements javax.xml.rpc.Call {
     private Service            service         = null ;
     private QName              portTypeName    = null ;
     private QName              operationName   = null ;
-    private Vector             paramNames      = null ;
-    private Vector             paramTypes      = null ;
-    private Vector             paramModes      = null ;
     private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
@@ -168,6 +166,7 @@ public class Call implements javax.xml.rpc.Call {
     private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
     private Integer            timeout         = null;
 
+    private OperationDesc      operation       = null;
 
     // Our Transport, if any
     private Transport          transport       = null ;
@@ -652,22 +651,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void addParameter(String paramName, QName paramType,
             ParameterMode parameterMode) {
-        if (parmAndRetReq) {
-
-            if ( paramNames == null ) {
-                paramNames = new Vector();
-                paramTypes = new Vector();
-                paramModes = new Vector();
-            }
-
-            paramNames.add( new QName("", paramName) );
-            paramTypes.add( paramType );
-            paramModes.add( parameterMode );
-
-        }
-        else {
-            throw new JAXRPCException();
-        }
+        addParameter(new QName("", paramName), paramType, parameterMode);
     }
     /**
      * Adds the specified parameter to the list of parameters for the
@@ -682,16 +666,22 @@ public class Call implements javax.xml.rpc.Call {
             ParameterMode parameterMode) {
         if (parmAndRetReq) {
 
-            if ( paramNames == null ) {
-                paramNames = new Vector();
-                paramTypes = new Vector();
-                paramModes = new Vector();
+            if (operation == null) {
+                operation = new OperationDesc();
             }
 
-            paramNames.add( paramName );
-            paramTypes.add( paramType );
-            paramModes.add( parameterMode );
+            ParameterDesc param = new ParameterDesc();
+            param.setQName( paramName );
+            param.setTypeQName( paramType );
+            byte mode = ParameterDesc.IN;
+            if (parameterMode == ParameterMode.PARAM_MODE_INOUT) {
+                mode = ParameterDesc.INOUT;
+            } else if (parameterMode == ParameterMode.PARAM_MODE_OUT) {
+                mode = ParameterDesc.OUT;
+            }
+            param.setMode(mode);
 
+            operation.addParameter(param);
         }
         else {
             throw new JAXRPCException();
@@ -721,12 +711,13 @@ public class Call implements javax.xml.rpc.Call {
      */
     public QName getParameterTypeByQName(QName paramQName) {
         int i;
-        if ( paramNames == null ) return( null );
+        if ( operation == null ) return( null );
 
-        for (i = 0 ; i< paramNames.size() ; i++ )
-            if ( ((QName)paramNames.get(i)).equals(paramQName) ) {
-                return (QName) paramTypes.get(i);
-            }
+        ParameterDesc param = operation.getParamByQName(paramQName);
+        if (param != null) {
+            return param.getTypeQName();
+        }
+
         return( null );
     }
 
@@ -738,6 +729,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setReturnType(QName type) {
         if (parmAndRetReq) {
             returnType = type ;
+            if (operation != null) operation.setReturnType(type);
         }
         else {
             throw new JAXRPCException();
@@ -782,9 +774,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void removeAllParameters() {
         if (parmAndRetReq) {
-            paramNames = null ;
-            paramTypes = null ;
-            paramModes = null ;
+            operation = null; // FIXME -- ???
         }
         else {
             throw new JAXRPCException();
@@ -980,7 +970,8 @@ public class Call implements javax.xml.rpc.Call {
         if ( message != null ) parts   = message.getOrderedParts(null);
 
         this.setReturnType( null ); //Make sure we're restarting from fresh.
-        if(null != paramTypes) // attachments may have no parameters.
+//      if (null != paramTypes) // attachments may have no parameters.
+        if (operation != null && operation.getNumParams() > 0) // attachments may have no parameters.
           this.setReturnType( XMLType.AXIS_VOID );
         if ( parts != null ) {
             for( int i = 0 ;i < parts.size() ; i++ ) {
@@ -1281,16 +1272,12 @@ public class Call implements javax.xml.rpc.Call {
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
-        if ( paramNames == null ) return( params );
+        if ( operation == null ) return( params );
 
         // Count the number of IN and INOUT params, this needs to match the
         // number of params passed in - if not throw an error
         /////////////////////////////////////////////////////////////////////
-        for ( i = 0 ; i < paramNames.size() ; i++ ) {
-            if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
-                continue ;
-            numParams++ ;
-        }
+        numParams = operation.getNumInParams();
 
         if ( numParams != params.length )
             throw new JAXRPCException(
@@ -1301,10 +1288,14 @@ public class Call implements javax.xml.rpc.Call {
         //////////////////////////////////////////////////
         Vector result = new Vector();
         int    j = 0 ;
-        for ( i = 0 ; i < paramNames.size() ; i++ ) {
-            if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
+        ArrayList parameters = operation.getParameters();
+
+        for ( i = 0 ; i < parameters.size() ; i++ ) {
+            ParameterDesc param = (ParameterDesc)parameters.get(i);
+            if (param.getMode() == ParameterDesc.OUT)
                 continue ;
-            QName paramQName = (QName)paramNames.get(i);
+
+            QName paramQName = param.getQName();
             RPCParam p = new RPCParam(paramQName.getNamespaceURI(),
                                       paramQName.getLocalPart(),
                                       params[j++] );
@@ -1530,7 +1521,7 @@ public class Call implements javax.xml.rpc.Call {
          * wasn't called (paramTypes == null), then toss a fault.
          */
         if (returnType != null && args != null && args.length != 0
-                && paramTypes == null) {
+                && operation == null) {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyParms"));
         }
 
@@ -1585,7 +1576,7 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (paramTypes != null && returnType == null) {
+        if (operation != null && returnType == null) {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
@@ -1733,10 +1724,16 @@ public class Call implements javax.xml.rpc.Call {
             msgContext.setPassword(password);
         }
         msgContext.setMaintainSession(maintainSession);
-        OperationDesc operationDesc = new OperationDesc();
-        msgContext.setOperation(operationDesc);
 
-        operationDesc.setStyle(operationStyle);
+        OperationDesc oper = operation;
+
+        // If we haven't set up an OperationDesc for this Call, just make a
+        // temporary one.
+        if (oper == null)
+             oper = new OperationDesc();
+        msgContext.setOperation(oper);
+
+        oper.setStyle(operationStyle);
         msgContext.setOperationStyle(operationStyle);
 
         if (useSOAPAction) {

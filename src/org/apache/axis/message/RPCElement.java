@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -57,9 +57,13 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Handler;
+import org.apache.axis.Message;
+import org.apache.axis.wsdl.toJava.Utils;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -79,6 +83,7 @@ public class RPCElement extends SOAPBodyElement
     protected Vector params = new Vector();
     protected boolean needDeser = false;
     protected boolean elementIsFirstParam = false;
+    protected OperationDesc myOperation = null;
 
     public RPCElement(String namespace,
                       String localName,
@@ -90,12 +95,13 @@ public class RPCElement extends SOAPBodyElement
         super(namespace, localName, prefix, attributes, context);
 
         encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
-        
+
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
 
         if (operation != null) {
             this.name = operation.getName();
+            myOperation = operation;
 
             // IF we're doc/literal... we can't count on the element name
             // being the method name.
@@ -103,12 +109,12 @@ public class RPCElement extends SOAPBodyElement
                                    ServiceDesc.STYLE_DOCUMENT);
         }
     }
-    
+
     public RPCElement(String namespace, String methodName, Object [] args)
     {
         this.setNamespaceURI(namespace);
         this.name = methodName;
-        
+
         encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
 
         for (int i = 0; args != null && i < args.length; i++) {
@@ -121,92 +127,128 @@ public class RPCElement extends SOAPBodyElement
             }
         }
     }
-    
+
     public RPCElement(String methodName)
     {
         encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
 
         this.name = methodName;
     }
-    
+
     public String getMethodName()
     {
         return name;
     }
-    
+
+    public OperationDesc getOperation()
+    {
+        return myOperation;
+    }
+
     protected Class  defaultParamTypes[] = null;
-    
+
     public Class [] getJavaParamTypes()
     {
         return defaultParamTypes;
     }
-    
+
     public void deserialize() throws SAXException
     {
         needDeser = false;
 
         MessageContext msgContext = context.getMessageContext();
-        Handler service    = msgContext.getService();
-        String clsName = null;
+        SOAPService service    = msgContext.getService();
+        OperationDesc [] operations = null;
 
         if (service != null) {
-            clsName = (String)service.getOption("className");
+            ServiceDesc serviceDesc = service.getServiceDescription();
+
+            // If we don't have a service description, create one
+            // via introspection and cache it in the SOAPService.
+            String clsName = (String)service.getOption("className");
+
+            if (clsName != null) {
+                ClassLoader cl       = msgContext.getClassLoader();
+                ClassCache cache     = msgContext.getAxisEngine().
+                        getClassCache();
+                JavaClass       jc   = null;
+                try {
+                    jc = cache.lookup(clsName, cl);
+                } catch (ClassNotFoundException e) {
+                    throw new SAXException(e);
+                }
+                TypeMapping tm = (TypeMapping)msgContext.getTypeMappingRegistry().getTypeMapping(msgContext.getEncodingStyle());
+                serviceDesc.loadServiceDescByIntrospection(jc, tm);
+            }
+
+            if (serviceDesc != null) {
+                // If we've got a service description now, we want to use
+                // the matching operations in there.
+                operations = serviceDesc.getOperationsByName(name);
+
+                if (operations == null) {
+                    String lc = Utils.xmlNameToJava(name);
+                    operations = serviceDesc.getOperationsByName(lc);
+                }
+            }
         }
 
-        if (clsName != null) {
-            ClassLoader cl       = msgContext.getClassLoader();
-            ClassCache cache     = msgContext.getAxisEngine().getClassCache();
-            JavaClass       jc   = null;
-            try {
-                jc = cache.lookup(clsName, cl);
-            } catch (ClassNotFoundException e) {
-                throw new SAXException(e);
-            }
-            
-            if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage(
-                        "lookup00", name, clsName));
-            }
-            
-            Method[] method = jc.getMethod(name);
-            int numChildren = (getChildren() == null) ? 0 : getChildren().size();
-            if (method != null) {
-                for (int i = 0; i < method.length; i++) {
-                    defaultParamTypes = method[i].getParameterTypes();
-                    if (defaultParamTypes.length >= numChildren) {
-                        try {
-                            if (elementIsFirstParam) {
-                                context.pushElementHandler(new RPCHandler(this));
-                                context.setCurElement(null);
-                            } else {
-                                context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
-                                context.setCurElement(this);
-                            }
+        // Figure out if we should be looking for out params or in params
+        // (i.e. is this message a response?)
+        Message msg = msgContext.getCurrentMessage();
+        boolean isResponse = ((msg != null) &&
+                              Message.RESPONSE.equals(msg.getMessageType()));
 
-                            publishToHandler((org.xml.sax.ContentHandler) context);
-                        } catch (SAXException e) {
-                            // If there was a problem, try the next one.
-                            params = new Vector();
-                            continue;
+        // We're going to need this below, so create one.
+        RPCHandler rpcHandler = new RPCHandler(this, isResponse);
+
+        if (operations != null) {
+            int numParams = (getChildren() == null) ? 0 : getChildren().size();
+
+            // We now have an array of all operations by this name.  Try to
+            // find the right one.  For each matching operation which has an
+            // equal number of "in" parameters, try deserializing.  If we
+            // don't succeed for any of the candidates, punt.
+
+            for (int i = 0; i < operations.length; i++) {
+                OperationDesc operation = operations[i];
+                if (operation.getNumInParams() == numParams) {
+                    // Set the operation so the RPCHandler can get at it
+                    myOperation = operation;
+                    try {
+                        if (elementIsFirstParam) {
+                            context.pushElementHandler(rpcHandler);
+                            context.setCurElement(null);
+                        } else {
+                            context.pushElementHandler(
+                                    new EnvelopeHandler(rpcHandler));
+                            context.setCurElement(this);
                         }
-                        // Succeeded in deserializing!
+
+                        publishToHandler((org.xml.sax.ContentHandler) context);
+
+                        // Success!!
                         return;
+                    } catch (SAXException e) {
+                        // If there was a problem, try the next one.
+                        params = new Vector();
+                        continue;
                     }
                 }
             }
         }
 
         if (elementIsFirstParam) {
-            context.pushElementHandler(new RPCHandler(this));
+            context.pushElementHandler(rpcHandler);
             context.setCurElement(null);
         } else {
-            context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+            context.pushElementHandler(new EnvelopeHandler(rpcHandler));
             context.setCurElement(this);
         }
 
         publishToHandler((org.xml.sax.ContentHandler)context);
     }
-    
+
     /** This gets the FIRST param whose name matches.
      * !!! Should it return more in the case of duplicates?
      */
@@ -215,16 +257,16 @@ public class RPCElement extends SOAPBodyElement
         if (needDeser) {
             deserialize();
         }
-        
+
         for (int i = 0; i < params.size(); i++) {
             RPCParam param = (RPCParam)params.elementAt(i);
             if (param.getName().equals(name))
                 return param;
         }
-        
+
         return null;
     }
-    
+
     public Vector getParams() throws SAXException
     {
         if (needDeser) {
@@ -233,7 +275,7 @@ public class RPCElement extends SOAPBodyElement
 
         return params;
     }
-    
+
     public void addParam(RPCParam param)
     {
         param.setRPCCall(this);
@@ -258,7 +300,7 @@ public class RPCElement extends SOAPBodyElement
             }
             context.startElement(new QName(namespaceURI,name), attributes);
         }
-        
+
         for (int i = 0; i < params.size(); i++) {
             RPCParam param = (RPCParam)params.elementAt(i);
             if (!isRPC && encodingStyle.equals("")) {
@@ -266,7 +308,7 @@ public class RPCElement extends SOAPBodyElement
             }
             param.serialize(context);
         }
-        
+
         if (isRPC) {
             context.endElement();
         }

@@ -54,69 +54,55 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-/**
- *
- */
-public class WSDDOperation extends WSDDElement
+public class WSDDParameter extends WSDDElement
 {
-    /** Holds all our actual data */
-    OperationDesc desc = new OperationDesc();
-
-    /**
-     *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDOperation(Element e, ServiceDesc parent)
-        throws WSDDException
-    {
+    OperationDesc parent;
+    ParameterDesc parameter = new ParameterDesc();
+    
+    public WSDDParameter(Element e, OperationDesc parent) 
+            throws WSDDException {
         super(e);
-
-        desc.setName(e.getAttribute("name"));
-
-        String retQNameStr = e.getAttribute("returnQName");
-        if (retQNameStr != null && !retQNameStr.equals(""))
-            desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
+        this.parent = parent;
         
-        Element [] parameters = getChildElements(e, "parameter");
-        for (int i = 0; i < parameters.length; i++) {
-            Element paramEl = parameters[i];
-            WSDDParameter parameter = new WSDDParameter(paramEl, desc);
-            desc.addParameter(parameter.getParameter());
-        }
-
-        if (parent.getStyle() == ServiceDesc.STYLE_DOCUMENT) {
-            Element [] mappingElements = getChildElements(e, "elementMapping");
-            if (mappingElements.length > 1) {
-                // Can only have one for now
-                throw new WSDDException(JavaUtils.getMessage("onlyOneMapping"));
+        // Get the parameter's name.  If a qname is specified, use that,
+        // otherwise also look for a "name" attribute.  (name specifies
+        // an unqualified name)
+        String nameStr = e.getAttribute("qname");
+        if (nameStr != null && !nameStr.equals("")) {
+            parameter.setQName(XMLUtils.getQNameFromString(nameStr, e));
+        } else {
+            nameStr = e.getAttribute("name");
+            if (nameStr != null && !nameStr.equals("")) {
+                parameter.setQName(new QName(null, nameStr));
             }
-
-            // Register a mapping from an Element QName to a particular
-            // method so we can dispatch for doc/lit services.
-            Element el = mappingElements[0];
-            String elString = el.getAttribute("qname");
-            QName elQName = XMLUtils.getQNameFromString(elString, el);
-            desc.setElementQName(elQName);
         }
+        
+        String modeStr = e.getAttribute("mode");
+        if (modeStr != null && !modeStr.equals("")) {
+            parameter.setMode(ParameterDesc.modeFromString(modeStr));
+        }
+        
+        String typeStr = e.getAttribute("type");
+        if (typeStr != null && !typeStr.equals("")) {
+            parameter.setTypeQName(XMLUtils.getQNameFromString(typeStr, e));
+        }
+    }
+
+    public WSDDParameter() {
+    }
+
+    public WSDDParameter(ParameterDesc parameter) {
+        this.parameter = parameter;
     }
 
     /**
@@ -125,43 +111,49 @@ public class WSDDOperation extends WSDDElement
     public void writeToContext(SerializationContext context)
             throws IOException {
         AttributesImpl attrs = new AttributesImpl();
-
-        if (desc.getReturnQName() != null) {
-            attrs.addAttribute("", "returnQName", "returnQName",
+        
+        QName qname = parameter.getQName(); 
+        if (qname != null) {
+            if (qname.getNamespaceURI() != null &&
+                !qname.getNamespaceURI().equals("")) {
+                attrs.addAttribute("", "qname", "qname",
                                "CDATA",
-                               context.qName2String(desc.getReturnQName()));
+                               context.qName2String(parameter.getQName()));
+            } else {
+                attrs.addAttribute("", "name", "name", "CDATA", 
+                                   parameter.getQName().getLocalPart());
+            }
         }
 
-        if (desc.getName() != null) {
-            attrs.addAttribute("", "name", "name", "CDATA", desc.getName());
-        }
-
-        context.startElement(getElementName(), attrs);
-
-        if (desc.getElementQName() != null) {
-            attrs = new AttributesImpl();
-            attrs.addAttribute("", "qname", "qname", "CDATA",
-                               context.qName2String(desc.getElementQName()));
-            context.startElement(WSDDConstants.ELEMENTMAP_QNAME, attrs);
-            context.endElement();
+        // Write the mode attribute, but only if it's not the default (IN)
+        byte mode = parameter.getMode();
+        if (mode != ParameterDesc.IN) {
+            String modeStr = ParameterDesc.getModeAsString(mode);
+            attrs.addAttribute("", "mode", "mode", "CDATA", modeStr);
         }
         
-        ArrayList params = desc.getParameters();
-        for (Iterator i = params.iterator(); i.hasNext();) {
-            ParameterDesc parameterDesc = (ParameterDesc) i.next();
-            WSDDParameter p = new WSDDParameter(parameterDesc);
-            p.writeToContext(context);
+        QName typeQName = parameter.getTypeQName();
+        if (typeQName != null) {
+            attrs.addAttribute("", "type", "type", "CDATA",
+                               context.qName2String(typeQName));            
         }
-
+        
+        context.startElement(getElementName(), attrs);
         context.endElement();
     }
 
-    protected QName getElementName() {
-        return WSDDConstants.OPERATION_QNAME;
+    public ParameterDesc getParameter() {
+        return parameter;
     }
 
-    public OperationDesc getOperationDesc()
-    {
-        return desc;
+    public void setParameter(ParameterDesc parameter) {
+        this.parameter = parameter;
+    }
+
+    /**
+     * Return the element name of a particular subclass.
+     */
+    protected QName getElementName() {
+        return WSDDConstants.PARAM_QNAME;
     }
 }

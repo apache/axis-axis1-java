@@ -18,7 +18,7 @@ import java.util.Vector;
 public class TestArrayListConversions extends TestCase {
     private static final String SERVICE_NAME = "TestArrayConversions";
 
-    private Call call;
+    private AxisServer server;
 
     public TestArrayListConversions() {
         super("service");
@@ -49,18 +49,13 @@ public class TestArrayListConversions extends TestCase {
 
     public void init() {
         try {
-            Service ss = new Service();
-
             SimpleProvider provider = new SimpleProvider();
-            AxisServer server = new AxisServer(provider);
+            server = new AxisServer(provider);
             SOAPService service = new SOAPService(new RPCProvider());
             service.setOption("className", "test.encoding.TestArrayListConversions");
             service.setOption("allowedMethods", "*");
 
             provider.deployService(SERVICE_NAME, service);
-
-            call = (Call) ss.createCall();
-            call.setTransport(new LocalTransport(server));
         } catch (Exception exp) {
             exp.printStackTrace();
         }
@@ -68,6 +63,9 @@ public class TestArrayListConversions extends TestCase {
     }
 
     public void testVectorConversion() throws Exception {
+        Call call = new Call(new Service());
+        call.setTransport(new LocalTransport(server));
+
         Vector v = new Vector();
         v.addElement("Hi there!");
         v.addElement("This'll be a SOAP Array and then a LinkedList!");
@@ -77,6 +75,9 @@ public class TestArrayListConversions extends TestCase {
     }
 
     public void testLinkedListConversion() throws Exception {
+        Call call = new Call(new Service());
+        call.setTransport(new LocalTransport(server));
+
         LinkedList l = new LinkedList();
         l.add("Linked list item #1");
         l.add("Second linked list item");
@@ -88,6 +89,9 @@ public class TestArrayListConversions extends TestCase {
     }
 
     public void testArrayConversion() throws Exception {
+        Call call = new Call(new Service());
+        call.setTransport(new LocalTransport(server));
+
         Vector v = new Vector();
         v.addElement("Hi there!");
         v.addElement("This'll be a SOAP Array");
@@ -103,6 +107,9 @@ public class TestArrayListConversions extends TestCase {
      * back, and that it matches the data we send.
      */
     public void testReturnAsVector() throws Exception {
+        Call call = new Call(new Service());
+        call.setTransport(new LocalTransport(server));
+
         LinkedList l = new LinkedList();
         l.add("Linked list item #1");
         l.add("Second linked list item");

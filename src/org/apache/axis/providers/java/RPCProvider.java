@@ -60,7 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.Parameter;
+import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
@@ -78,6 +78,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Implement message processing by walking over RPCElements of the
@@ -100,7 +101,7 @@ public class RPCProvider extends JavaProvider
         throws Exception
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
+            log.debug(JavaUtils.getMessage("enter00",
                 "RPCProvider.processMessage()"));
         }
 
@@ -122,8 +123,8 @@ public class RPCProvider extends JavaProvider
 
             if (!(bodies.get(bNum) instanceof RPCElement)) {
                 SOAPBodyElement bodyEl = (SOAPBodyElement)bodies.get(bNum);
-                if (operation != null) {
-                    Parameter param = operation.getParameter(bNum);
+                if (bodyEl.isRoot() && operation != null) {
+                    ParameterDesc param = operation.getParameter(bNum);
                     Object val = bodyEl.getValueAsType(param.getTypeQName());
                     body = new RPCElement("",
                                           operation.getName(),
@@ -138,15 +139,21 @@ public class RPCProvider extends JavaProvider
             String       mName      = body.getMethodName();
             Vector       args       = body.getParams();
             Object[]     argValues  =  null ;
-            
-            
+
+
             if ( args != null && args.size() > 0 ) {
                 argValues = new Object[ args.size()];
                 for ( int i = 0 ; i < args.size() ; i++ ) {
-                    argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
-                    
+                    RPCParam rpcParam = (RPCParam)args.get(i);
+                    ParameterDesc paramDesc = rpcParam.getParamDesc();
+                    if (paramDesc == null || paramDesc.getOrder() == -1) {
+                        argValues[i]  = rpcParam.getValue() ;
+                    } else {
+                        argValues[paramDesc.getOrder()] = rpcParam.getValue();
+                    }
+
                     if (log.isDebugEnabled()) {
-                        log.debug("  " + JavaUtils.getMessage("value00", 
+                        log.debug("  " + JavaUtils.getMessage("value00",
                             "" + argValues[i]) );
                     }
                 }
@@ -156,11 +163,6 @@ public class RPCProvider extends JavaProvider
             checkMethodName(msgContext, allowedMethods, mName);
 
             // Get the actual method to invoke.
-            // Since the method signature may contain output parameters
-            // (Holders) there is no easy way to match the number of arguments
-            // to a Method.  Furthermore method overloading does not work in 
-            // wsdl.  Thus the following code only works if there is no 
-            // overloading.  
             int	numberOfBodyArgs = args.size();
             Method[] methods = getMethod(msgContext, jc, mName);
 
@@ -186,14 +188,14 @@ public class RPCProvider extends JavaProvider
                 Method method = methods[index];
                 ex = null;
                 params = method.getParameterTypes();
-                
+
                 // Don't bother with this one if it has FEWER params
                 if (argValues != null) {
                     if (params.length < argValues.length)
                         continue;
                 }
-                
-                // The number of method parameters must match the 
+
+                // The number of method parameters must match the
                 // arguments taking into consideration output parameters.
                 Object[] newArgValues = new Object[params.length];
                 int old = 0;
@@ -286,7 +288,7 @@ public class RPCProvider extends JavaProvider
             resBody.setEncodingStyle(msgContext.getEncodingStyle());
 
             if ( objRes != null ) {
-                // In the old skeleton a param list was returned, which 
+                // In the old skeleton a param list was returned, which
                 // contained the RPC params.  Preserve this for now.
                 if (objRes instanceof ParamList) {
                     ParamList list = (ParamList)objRes;
@@ -316,23 +318,23 @@ public class RPCProvider extends JavaProvider
             for (int i=0; i < argValues.length; i++) {
                 Class heldType = JavaUtils.getHolderValueType(params[i]);
                 if (heldType != null) {
-                    // Create an RPCParam by converting the Holder back into 
+                    // Create an RPCParam by converting the Holder back into
                     // the held type.
                     resBody.addParam (new RPCParam (getParameterName(obj,
                                                                      methods[index],
-                                                                     i, 
+                                                                     i,
                                                                      mName,
                                                                      args),
                                                     JavaUtils.convert(
-                                                            argValues[i], 
+                                                            argValues[i],
                                                             heldType)));
                 }
             }
-            
+
             resEnv.addBodyElement( resBody );
         }
     }
-    
+
     protected Method[] getMethod(MessageContext msgContext, JavaClass jc, String mName)
         throws Exception
     {
@@ -393,8 +395,8 @@ public class RPCProvider extends JavaProvider
     }
 
     /**
-     * Returns or creates the parameter name for the i'th parm of 
-     * of the method specified. 
+     * Returns or creates the parameter name for the i'th parm of
+     * of the method specified.
      * (Use i=-1 to access the return name.)
      */
     protected QName getParameterName(Object obj,
@@ -403,12 +405,12 @@ public class RPCProvider extends JavaProvider
                                       String mName) {
         return getParameterName(obj, method, i, mName, null);
     }
-    
+
     /**
-     * Returns or creates the parameter name for the i'th parm of 
+     * Returns or creates the parameter name for the i'th parm of
      * of the method specified, using the name in the appropriate
      * position of the rpcParams Vector if it is supplied.
-     * 
+     *
      * (Use i=-1 to access the return name.)
      */
     protected QName getParameterName(Object obj,
@@ -418,7 +420,7 @@ public class RPCProvider extends JavaProvider
                                       Vector rpcParams) {
         QName parmName = null;
         // Emitter skeletons keep track of the parameter names
-        if (obj instanceof org.apache.axis.wsdl.Skeleton) 
+        if (obj instanceof org.apache.axis.wsdl.Skeleton)
             parmName = ((org.apache.axis.wsdl.Skeleton)obj).getParameterName(method.getName(), i);
         if (parmName == null) {
             if (i >= 0) {

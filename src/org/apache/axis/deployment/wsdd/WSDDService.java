@@ -86,6 +86,9 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
+    public static final QName WSDL_QNAME = new QName(WSDDConstants.WSDD_NS,
+                                                     "wsdlFile");
+
     public TypeMappingRegistry tmr = null;
 
     private Vector faultFlows = new Vector();
@@ -129,7 +132,8 @@ public class WSDDService
 
         String modeStr = e.getAttribute("style");
         if (modeStr != null && !modeStr.equals("")) {
-            desc.setStyle(MessageContext.getStyleFromString(modeStr));
+            style = MessageContext.getStyleFromString(modeStr);
+            desc.setStyle(style);
         }
 
         Element [] operationElements = getChildElements(e, "operation");
@@ -158,6 +162,12 @@ public class WSDDService
             // Register a namespace for this service
             String ns = XMLUtils.getChildCharacterData(namespaceElements[i]);
             namespaces.add(ns);
+        }
+
+        Element wsdlElem = getChildElement(e, "wsdlFile");
+        if (wsdlElem != null) {
+            String fileName = XMLUtils.getChildCharacterData(wsdlElem);
+            desc.setWSDLFile(fileName);
         }
 
         String typeStr = e.getAttribute("provider");
@@ -423,11 +433,18 @@ public class WSDDService
             attrs.addAttribute("", "provider", "provider",
                                "CDATA", context.qName2String(providerQName));
         }
-        if (style == ServiceDesc.STYLE_DOCUMENT) {
-            attrs.addAttribute("", "style", "style", "CDATA", "document");
+        if (style != ServiceDesc.STYLE_RPC) {
+            attrs.addAttribute("", "style", "style",
+                               "CDATA", MessageContext.getStyleFromInt(style));
         }
 
         context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
+
+        if (desc.getWSDLFile() != null) {
+            context.startElement(WSDL_QNAME, null);
+            context.writeSafeString(desc.getWSDLFile());
+            context.endElement();
+        }
 
         for (int i = 0; i < operations.size(); i++) {
             WSDDOperation operation = (WSDDOperation) operations.elementAt(i);
