@@ -84,6 +84,12 @@ public class HTTPConstants {
     public static final String HEADER_SOAP_ACTION = "SOAPAction";
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_PROXY_AUTHORIZATION = "Proxy-Authorization";
+    public static final String HEADER_EXPECT = "Expect";
+    public static final String HEADER_EXPECT_100_Continue = "100-continue";
+    public static final String HEADER_USER_AGENT = "User-Agent";
+    public static final String HEADER_CACHE_CONTROL = "Cache-Control";
+    public static final String HEADER_CACHE_CONTROL_NOCACHE = "no-cache";
+    public static final String HEADER_PRAGMA = "Pragma";
 
 
 
@@ -98,6 +104,11 @@ public class HTTPConstants {
     public static final String HEADER_CONNECTION = "Connection";
     public static final String HEADER_CONNECTION_CLOSE = "close".intern();
     public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();//The default don't send.
+
+    public static final String HEADER_ACCEPT = "Accept";
+    public static final String HEADER_ACCEPT_TEXT_ALL = "text/*";
+    public static final String HEADER_ACCEPT_MULTIPART_RELATED = "multipart/related";
+    public static final String HEADER_ACCEPT_APPLICATION_DIME = "application/dime";
     
 
     /**
