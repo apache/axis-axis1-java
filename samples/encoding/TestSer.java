@@ -78,6 +78,7 @@ public class TestSer
             
             DeserializationContext dser = new DeserializationContext(
                 new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
+            dser.parse();
             SOAPEnvelope env = dser.getEnvelope();
             
             RPCElement rpcElem = (RPCElement)env.getFirstBody();
