@@ -558,12 +558,20 @@ public class WSDDDeployment
     /**
      * Get an enumeration of the services deployed to this engine
      */
-    public Iterator getDeployedServices() throws ConfigurationException {
+    public Iterator  getDeployedServices() throws ConfigurationException {
         ArrayList serviceDescs = new ArrayList();
         for (Iterator i = services.values().iterator(); i.hasNext();) {
             WSDDService service = (WSDDService) i.next();
-            service.makeNewInstance(this);
-            serviceDescs.add(service.getServiceDesc());
+            try {
+                service.makeNewInstance(this);
+                serviceDescs.add(service.getServiceDesc());
+            } catch (WSDDNonFatalException ex) {
+                // If it's non-fatal, just keep on going
+                ex.printStackTrace();
+            } catch (WSDDException ex) {
+                // otherwise throw it upwards
+                throw ex;
+            }
         }
         return serviceDescs.iterator();
     }
