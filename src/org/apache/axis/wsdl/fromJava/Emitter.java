@@ -774,8 +774,9 @@ public class Emitter {
         else
             soapBodyIn.setNamespaceURI(targetService);
         QName operQName = desc.getElementQName();
-        if (operQName != null) {
-            soapBodyIn.setNamespaceURI(operQName.getLocalPart());
+        if (operQName != null &&
+            !operQName.getNamespaceURI().equals("")) {
+            soapBodyIn.setNamespaceURI(operQName.getNamespaceURI());
         }
         soapBodyIn.setEncodingStyles(encodingList);
         bindingInput.addExtensibilityElement(soapBodyIn);
@@ -794,8 +795,9 @@ public class Emitter {
         else
             soapBodyOut.setNamespaceURI(targetService);
         QName retQName = desc.getReturnQName();
-        if (retQName != null) {
-            soapBodyOut.setNamespaceURI(retQName.getLocalPart());
+        if (retQName != null && 
+            !retQName.getNamespaceURI().equals("")) {
+            soapBodyOut.setNamespaceURI(retQName.getNamespaceURI());
         }
         bindingOutput.addExtensibilityElement(soapBodyOut);
 
