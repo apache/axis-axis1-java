@@ -43,9 +43,9 @@ Copyright:
         &targets;
 
 <target name="clean">
-<!-- This is to get around a "issue" with wsdl2java -->
-  <delete dir="${axis.home}/build/work/${componentName}/binding1"/>
-  <delete dir="${axis.home}/build/work/${componentName}/binding2"/>
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
 <target name="copy" depends="setenv,clean">
