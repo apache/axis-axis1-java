@@ -1144,16 +1144,20 @@ public class Call implements javax.xml.rpc.Call {
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
 
         if ( params != null && params.length > 0 && i == params.length ) {
-            /* ok, we're doing Messaging, so build up the message */
-            /******************************************************/
-            env = new SOAPEnvelope();
+            try {
+                /* ok, we're doing Messaging, so build up the message */
+                /******************************************************/
+                env = new SOAPEnvelope();
 
-            for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                env.addHeader((SOAPHeaderElement)myHeaders.get(i));
+                for ( i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
+                    env.addHeader((SOAPHeaderElement)myHeaders.get(i));
 
-            if ( !(params[0] instanceof SOAPEnvelope) )
-                for ( i = 0 ; i < params.length ; i++ )
-                    env.addBodyElement( (SOAPBodyElement) params[i] );
+                if ( !(params[0] instanceof SOAPEnvelope) )
+                    for ( i = 0 ; i < params.length ; i++ )
+                        env.addBodyElement( (SOAPBodyElement) params[i] );
+            } catch (Exception ex) {
+                throw AxisFault.makeFault(ex);
+            }
 
             Message msg = new Message( env );
             setRequestMessage(msg);
@@ -1654,26 +1658,29 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
-        SOAPEnvelope         reqEnv = new SOAPEnvelope();
+        SOAPEnvelope         reqEnv;
         SOAPEnvelope         resEnv = null ;
-        Message              reqMsg = new Message( reqEnv );
+        Message              reqMsg;
         Message              resMsg = null ;
         Vector               resArgs = null ;
         Object               result = null ;
 
-        // Clear the output params
-        outParams = new HashMap();
-        outParamsList = new ArrayList();
-
-        // If we have headers to insert, do so now.
-        if (myHeaders != null) {
-            for (int i = 0; i < myHeaders.size(); i++) {
-                reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
-            }
-        }
-
-        // Set both the envelope and the RPCElement encoding styles
         try {
+            reqEnv = new SOAPEnvelope();
+            reqMsg = new Message( reqEnv );
+
+            // Clear the output params
+            outParams = new HashMap();
+            outParamsList = new ArrayList();
+
+            // If we have headers to insert, do so now.
+            if (myHeaders != null) {
+                for (int i = 0; i < myHeaders.size(); i++) {
+                    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+                }
+            }
+            
+            // Set both the envelope and the RPCElement encoding styles
             body.setEncodingStyle(encodingStyle);
             reqEnv.setEncodingStyle(encodingStyle);
 

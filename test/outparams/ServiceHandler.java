@@ -69,7 +69,12 @@ public class ServiceHandler extends BasicHandler {
     public static final Integer RESPONSE = new Integer(5);
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        SOAPEnvelope env = new SOAPEnvelope();
+        SOAPEnvelope env;
+        try {
+            env = new SOAPEnvelope();
+        } catch (Exception ex) {
+            throw AxisFault.makeFault(ex);
+        }
 
         RPCParam retVal = new RPCParam("return", RESPONSE);
         RPCParam outParam1 = new RPCParam("out1", OUTPARAM1);

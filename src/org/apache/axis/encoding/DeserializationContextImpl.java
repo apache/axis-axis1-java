@@ -85,6 +85,7 @@ import org.apache.axis.AxisFault;
 import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
+import javax.xml.soap.SOAPException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @param messageType is the MessageType to construct an EnvelopeBuilder
      */
     public DeserializationContextImpl(InputSource is, MessageContext ctx, 
-                                  String messageType)
+                                  String messageType) throws SOAPException
     {
         EnvelopeBuilder builder = new EnvelopeBuilder(messageType,
                                                       ctx.getSOAPConstants());

@@ -163,7 +163,11 @@ public class SOAPService extends SimpleTargetedChain
                 if (doMisunderstoodHeaders) {
                     Message respMsg = msgContext.getResponseMessage();
                     if (respMsg == null) {
-                        respMsg = new Message(new SOAPEnvelope());
+                        try {
+                            respMsg = new Message(new SOAPEnvelope());
+                        } catch (Exception ex) {
+                            throw AxisFault.makeFault(ex);
+                        }
                         msgContext.setResponseMessage(respMsg);
                     }
                     env = respMsg.getSOAPEnvelope();
@@ -179,8 +183,11 @@ public class SOAPService extends SimpleTargetedChain
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,
                                                badQName);
-
-                        env.addHeader(newHeader);
+                        try {
+                            env.addHeader(newHeader);
+                        } catch (Exception ex) {
+                            throw AxisFault.makeFault(ex);
+                        }
                     }
                 }
 
