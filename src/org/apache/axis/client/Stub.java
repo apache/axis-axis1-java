@@ -120,7 +120,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      */
     public void _setProperty(String name, Object value) {
         if (name == null || value == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(name == null ?
+                                         "badProp03" : "badProp04"));
         }
         else if (name.equals(Call.USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {

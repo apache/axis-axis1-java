@@ -303,7 +303,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     gen = (Generator) ctor.newInstance(actualArgs);
                 }
                 catch (Throwable t) {
-                    throw new IOException();
+                    throw new IOException(
+                        JavaUtils.getMessage("exception01", t.getMessage()));
                 }
                 gen.generate();
             }

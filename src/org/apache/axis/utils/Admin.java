@@ -290,9 +290,11 @@ public class Admin
             log.error( "<list/>" );
 
 
-            // throw an Exception which will go uncaught!  this way, a test suite
-            // can invoke main() and detect the exception
-            throw new IllegalArgumentException();
+            // throw an Exception which will go uncaught!  this way, a test
+            // suite can invoke main() and detect the exception
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("usage00", 
+                                         "Admin client|server <xml-file>"));
             // System.exit( 1 );
         }
 

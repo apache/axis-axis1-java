@@ -155,7 +155,7 @@ public class RPCProvider extends JavaProvider
 
         if (body == null) {
             // throw something
-            throw new Exception();
+            throw new Exception(JavaUtils.getMessage("noBody00"));
         }
         String methodName = body.getMethodName();
         Vector args = body.getParams();

@@ -685,7 +685,8 @@ public class MessageContext implements SOAPMessageContext {
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
             return;
-            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
+            // Is this right?  Shouldn't we throw an exception like: 
+            // throw new IllegalArgumentException(msg);
         }
         else if (name.equals(Call.USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {

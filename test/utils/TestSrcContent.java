@@ -37,6 +37,8 @@ import org.apache.axis.utils.JavaUtils;
  * - Verify that log.info(), log.warn(), log.error(), and log.fatal()
  *   use JavaUtils.getMessage() (i18n).
  *
+ * - Verify that exceptions are created with JavaUtils.getMessage() (i18n).
+ *
  * To add new patterns, search for and append to the
  * private attribute 'avoidPatterns'.
  *
@@ -185,6 +187,28 @@ public class TestSrcContent extends TestCase {
                                        "log\\.(info|warn|error|fatal)"
                                        + "[ \\t]*\\("
                                        + "(?![ \\t]*JavaUtils\\.getMessage)",
+                                       false),
+
+            // Verify that exceptions are built with messages.
+
+            new FileNameContentPattern(".+([\\\\/])"
+                                       + "java\\1src\\1org\\1apache\\1axis\\1"
+                                       + "([a-zA-Z0-9_]+\\1)*"
+                                       + "[^\\\\/]+\\.java",
+                                       "new[ \\t]+[a-zA-Z0-9_]*"
+                                       + "Exception\\(\\)",
+                                       false),
+
+            // Verify that we don't explicitly create NPEs.
+            // NPE in TypeDesc needs removing.
+
+            new FileNameContentPattern(".+([\\\\/])"
+                                       + "java\\1src\\1org\\1apache\\1axis\\1"
+                                       + "(?!description\\1TypeDesc\\.java)"
+                                       + "([a-zA-Z0-9_]+\\1)*"
+                                       + "[^\\\\/]+\\.java",
+                                       "new[ \\t]+"
+                                       + "NullPointerException",
                                        false),
 
         };
