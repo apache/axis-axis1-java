@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -61,6 +61,8 @@ import org.apache.axis.utils.AxisClassLoader ;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.handlers.soap.SOAPService;
 
 /**
  * Some more general docs will go here.
@@ -77,7 +79,7 @@ import org.apache.axis.encoding.ServiceDescription;
  *
  *  Actually I think we might just list the keys in the docs and
  *  provide no such constants since they create yet another
- *  namespace, but we'd have no compile-time checks then. 
+ *  namespace, but we'd have no compile-time checks then.
  *
  *  Whaddya think? - todo by Jacek)
  *
@@ -110,7 +112,7 @@ public class MessageContext {
     private AxisClassLoader  classLoader ;
 
     /**
-     * 
+     *
      */
     private Hashtable bag ;
 
@@ -123,7 +125,7 @@ public class MessageContext {
      */
     private TypeMappingRegistry mappingRegistry = null;
 
-    private static final SOAPTypeMappingRegistry soapTMR = 
+    private static final SOAPTypeMappingRegistry soapTMR =
         new SOAPTypeMappingRegistry();
 
     public void setTypeMappingRegistry(TypeMappingRegistry reg) {
@@ -154,15 +156,15 @@ public class MessageContext {
     /**
      * Placeholder.
      */
-    public Message getRequestMessage() { 
-        return inMessage ; 
+    public Message getRequestMessage() {
+        return inMessage ;
     };
 
     /**
      * Placeholder.
      */
-    public void setRequestMessage(Message inMsg) { 
-        inMessage = inMsg ; 
+    public void setRequestMessage(Message inMsg) {
+        inMessage = inMsg ;
         if (inMessage != null) inMessage.setMessageContext(this);
     };
 
@@ -174,13 +176,13 @@ public class MessageContext {
     /**
      * Placeholder.
      */
-    public void setResponseMessage(Message outMsg) { 
+    public void setResponseMessage(Message outMsg) {
         outMessage = outMsg ;
         if (outMessage != null) outMessage.setMessageContext(this);
     };
 
     public AxisClassLoader getClassLoader() {
-      if ( classLoader == null ) 
+      if ( classLoader == null )
         classLoader = AxisClassLoader.getClassLoader(null);
       return( classLoader );
     }
@@ -198,8 +200,28 @@ public class MessageContext {
       return( targetService );
     }
 
-    public void setTargetService(String tServ) {
+    /**
+     * Set the target service for this message.
+     *
+     * This looks up the named service in the registry, and has
+     * the side effect of setting our TypeMappingRegistry to the
+     * service's.
+     *
+     * @param tServ the name of the target service.
+     * @exception AxisFault
+     */
+    public void setTargetService(String tServ) throws AxisFault {
       targetService = tServ ;
+      HandlerRegistry sr = (HandlerRegistry)
+                            getProperty(Constants.SERVICE_REGISTRY);
+      if (sr == null)
+	    return;
+      
+      Handler service = sr.find(tServ);
+      if (service == null)
+        throw new AxisFault("No service named '" + tServ + "' in registry!");
+      
+      setServiceHandler(service);
     }
 
     /** ServiceHandler is the handler that is the "service".  This handler
@@ -209,11 +231,28 @@ public class MessageContext {
     private Handler          serviceHandler ;
 
     public Handler getServiceHandler() {
+      if ((serviceHandler == null) && (targetService != null)) {
+        try {
+          /** This is a bit kludgey for now - what might have happened is
+           * that someone set the target service name before the registry
+           * was set, or before the service was registered.  So just to
+           * make sure, we set it again here and see if that causes the
+           * serviceHandler to be set correctly.
+           */
+          setTargetService(targetService);
+        } catch (AxisFault f) {
+        }
+      }
       return( serviceHandler );
     }
-
-    public void setServiceHandler(Handler h) {
-      serviceHandler = h ;
+    
+    public void setServiceHandler(Handler sh)
+    {
+      serviceHandler = sh;
+      if (sh instanceof SOAPService) {
+        TypeMappingRegistry tmr = ((SOAPService)sh).getTypeMappingRegistry();
+        setTypeMappingRegistry(tmr);
+      }
     }
 
     /** Contains an instance of Handler, which is the
@@ -243,7 +282,7 @@ public class MessageContext {
      */
     public static String PASSWORD            = "user.password";
 
-    /** Just a util so we don't have to cast the result 
+    /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
       return( (String) getProperty(propName) );
