@@ -56,7 +56,10 @@
 package org.apache.axis;
 
 import java.util.Map;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
 
 
 /**
@@ -214,6 +217,54 @@ public class AxisProperties {
         }
     }
 
+    
+    public static Enumeration propertyNames() {
+        Hashtable allProps = new Hashtable();
+
+        ClassLoader classLoader = getThreadContextClassLoader();
+
+        /**
+         * Order doesn't matter, we are only going to use
+         * the set of all keys...
+         */
+        while (true) {
+            HashMap properties = null;
+
+            synchronized (axisPropertiesCache) {
+                properties = (HashMap)axisPropertiesCache.get(classLoader);
+            }
+
+            if (properties != null) {
+                allProps.putAll(properties);
+            }
+
+            if (classLoader == null) break;
+            classLoader = classLoader.getParent();
+        }
+        
+        return allProps.keys();
+    }
+    
+    /**
+     * This is an expensive operation.
+     * 
+     * @return Returns a <code>java.util.Properties</code> instance
+     * that is equivalent to the current state of the scoped
+     * properties, in that getProperty() will return the same value.
+     * However, this is a copy, so setProperty on the
+     * returned value will not effect the scoped properties.
+     */
+    public static Properties getProperties() {
+        Properties p = new Properties();
+        
+        Enumeration names = propertyNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            p.put(name, getProperty(name));
+        }
+        
+        return p;
+    }
 
     /***************** INTERNAL IMPLEMENTATION *****************/
 

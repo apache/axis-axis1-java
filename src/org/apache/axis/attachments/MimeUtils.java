@@ -68,6 +68,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.util.StringTokenizer;
+import java.util.Properties;
 
 
 /**
@@ -228,12 +229,14 @@ public class MimeUtils {
             java.io.OutputStream os, javax.mail.internet.MimeMultipart mp) {
 
         try {
-            System.setProperty(
+            Properties props = AxisProperties.getProperties();
+            
+            props.setProperty(
                     "mail.smtp.host",
                     "localhost");    // this is a bogus since we will never mail it.
 
             javax.mail.Session session =
-                    javax.mail.Session.getInstance(System.getProperties(), null);
+                    javax.mail.Session.getInstance(props, null);
             javax.mail.internet.MimeMessage message =
                     new javax.mail.internet.MimeMessage(session);
 
