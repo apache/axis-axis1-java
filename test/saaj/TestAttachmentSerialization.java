@@ -74,6 +74,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 
 /** Test the attachments load/save sample code.
@@ -91,16 +94,14 @@ public class TestAttachmentSerialization extends TestCase {
     }
 
     public void testAttachments() throws Exception {
-        File f = File.createTempFile("mime",".txt");
         try {
-            int count1 = saveMsgWithAttachments(f.getAbsolutePath());
-            int count2 = loadMsgWithAttachments(f.getAbsolutePath());
-            assertTrue(count1 == count2);
+            ByteArrayOutputStream bais = new ByteArrayOutputStream();
+            int count1 = saveMsgWithAttachments(bais);
+            int count2 = loadMsgWithAttachments(new ByteArrayInputStream(bais.toByteArray()));
+            assertEquals(count1, count2);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Fault returned from test: " + e);
-        } finally {
-            f.delete();
         }
     }
 
@@ -109,7 +110,7 @@ public class TestAttachmentSerialization extends TestCase {
     public static final String NS_PREFIX = "jaxmtst";
     public static final String NS_URI = "http://www.jcommerce.net/soap/jaxm/TestJaxm";
 
-    public int saveMsgWithAttachments(String filename) throws Exception {
+    public int saveMsgWithAttachments(OutputStream os) throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage msg = mf.createMessage();
 
@@ -141,18 +142,20 @@ public class TestAttachmentSerialization extends TestCase {
         ap2.setContentType("image/jpg");
         msg.addAttachmentPart(ap2);
 
-        FileOutputStream fout = new FileOutputStream(filename);
-        msg.writeTo(fout);
-        fout.close();
+        msg.writeTo(os);
+        os.flush();
         return msg.countAttachments();
     }
 
-    public int loadMsgWithAttachments(String filename) throws Exception {
+    public int loadMsgWithAttachments(InputStream is) throws Exception {
         MimeHeaders headers = new MimeHeaders();
         headers.setHeader("Content-Type", MIME_MULTIPART_RELATED);
-        InputStream is = new FileInputStream(filename);
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage msg = mf.createMessage(headers, is);
+        SOAPPart sp = msg.getSOAPPart();
+        SOAPEnvelope envelope = sp.getEnvelope();
+        assertTrue(sp != null);
+        assertTrue(envelope != null);
         return msg.countAttachments();
     }
 }

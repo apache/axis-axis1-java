@@ -66,6 +66,7 @@ import javax.activation.DataHandler;
 import javax.mail.internet.MimeUtility;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.PushbackInputStream;
 
 /**
  * This simulates the multipart stream
@@ -137,13 +138,14 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      * @throws org.apache.axis.AxisFault
      */
     public MultiPartRelatedInputStream(
-            String contentType, java.io.InputStream is)
+            String contentType, java.io.InputStream stream)
             throws org.apache.axis.AxisFault {
 
         super(null);    // don't cache this stream.
 
         try {
-
+            PushbackInputStream is = new PushbackInputStream(stream);
+            
             // First find the start and boundary parameters. There are real weird rules regard what
             // can be in real headers what needs to be escaped etc  let mail parse it.
             javax.mail.internet.ContentType ct =
@@ -385,7 +387,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
         }
     }
 
-    public final String readLine(InputStream is) throws IOException {
+    public final String readLine(PushbackInputStream is) throws IOException {
 
         StringBuffer input = new StringBuffer();
         int c = -1;
@@ -398,6 +400,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     eol = true;
                     break;
                 case '\r':
+                    int next = is.read();
+                    if(next != '\n' && next != -1)
+                        is.unread(next);
                     eol = true;
                     break;
                 default:
