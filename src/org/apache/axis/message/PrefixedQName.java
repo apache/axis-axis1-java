@@ -60,12 +60,17 @@ import javax.xml.soap.Name;
 import javax.xml.namespace.QName;
 
 public class PrefixedQName implements Name {
+    /** comment/shared empty string */
+    private static final String emptyString = "".intern();
+    
     private String prefix;
     private QName qName;
     
     public PrefixedQName(String uri, String localName, String pre) {
         qName = new QName(uri, localName);
-        prefix = pre;
+        prefix = (pre == null)
+                            ? emptyString
+                            : pre.intern();
     }
     
     public String getLocalName() {
@@ -93,8 +98,7 @@ public class PrefixedQName implements Name {
         if (!qName.equals(((PrefixedQName)obj).qName)) {
             return false;
         }
-        if ((prefix == null && ((PrefixedQName) obj).prefix == null) ||
-            prefix.equals(((PrefixedQName)obj).prefix)) {
+        if (prefix == ((PrefixedQName) obj).prefix) {
             return true;
         }
         return false;

@@ -17,6 +17,7 @@ public class PackageTests extends junit.framework.TestCase {
                 suite.addTestSuite(test.saaj.TestAttachment.class);
           }
         }catch( Throwable t){;}
+        suite.addTestSuite(test.saaj.TestEnvelope.class);
         return suite;
     }
 }
