@@ -307,7 +307,7 @@ public class Parser {
                     // If the binding is undefined, then we're parsing a Definition
                     // that didn't contain a binding, merely a service that referred
                     // to a non-existent binding.  Don't bother writing it.
-                    if (binding.isUndefined()) {
+                    if (binding.isUndefined() || !bEntry.isReferenced()) {
                         continue;
                     }
                     gen = genFactory.getGenerator(binding, symbolTable);
