@@ -175,7 +175,10 @@ public class JavaWriterFactory implements WriterFactory {
             if (v.size() > 1) {
                 for (int i = 0; i < v.size(); ++i) {
                     SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                    if (entry instanceof Type) {
+                    if (entry instanceof ElementType) {
+                        entry.setName(entry.getName() + "_ElemType");
+                    }
+                    else if (entry instanceof Type) {
                         entry.setName(entry.getName() + "_Type");
                     }
                     else if (entry instanceof PortTypeEntry) {

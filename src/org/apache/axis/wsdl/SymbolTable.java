@@ -189,6 +189,7 @@ public class SymbolTable {
      * Add the given Definition and Document information to the symbol table (including imported
      * symbols), populating it with SymTabEntries for each of the top-level symbols.
      */
+    private HashSet importedFiles = new HashSet();
     private void populate(Definition def, Document doc) throws IOException {
         if (doc != null) {
             populateTypes(doc);
@@ -202,8 +203,11 @@ public class SymbolTable {
                     Vector v = (Vector) imports.get(importKeys[i]);
                     for (int j = 0; j < v.size(); ++j) {
                         Import imp = (Import) v.get(j);
-                        populate(imp.getDefinition(),
-                            XMLUtils.newDocument(imp.getLocationURI()));
+                        if (!importedFiles.contains(imp.getLocationURI())) {
+                            importedFiles.add(imp.getLocationURI());
+                            populate(imp.getDefinition(),
+                                    XMLUtils.newDocument(imp.getLocationURI()));
+                        }
                     }
                 }
             }
@@ -217,15 +221,22 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the Types from the Document.
      */
-    private void populateTypes(Document doc) {
-        addTypes(doc);
+    private void populateTypes(Document doc) throws IOException {
+        addTypes(doc, ABOVE_SCHEMA_LEVEL);
     } // populateTypes
 
     /**
      * Utility method which walks the Document and creates Type objects for
      * each complexType, simpleType, or element referenced or defined.
+     *
+     * What goes into the symbol table?  In general, only the top-level types (ie., those just below
+     * the schema tag).  But base types and references can appear below the top level.  So anything
+     * at the top level is added to the symbol table, plus non-Element types (ie, base and refd)
+     * that appear deep within other types.
      */
-    private void addTypes(Node node) {
+    private static final int ABOVE_SCHEMA_LEVEL = -1;
+    private static final int SCHEMA_LEVEL = 0;
+    private void addTypes(Node node, int level) throws IOException {
         if (node == null) {
             return;
         }
@@ -238,14 +249,14 @@ public class SymbolTable {
 
                 // This is a definition of a complex type.
                 // Create a Type.
-                createTypeFromDef(node, false);
+                createTypeFromDef(node, false, false);
             }
             if (nodeKind.getLocalPart().equals("simpleType") &&
                 Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
 
                 // This is a definition of a simple type, which could be an enum
                 // Create a Type.
-                createTypeFromDef(node, false);
+                createTypeFromDef(node, false, false);
             }
             else if (nodeKind.getLocalPart().equals("element") &&
                    Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
@@ -259,7 +270,7 @@ public class SymbolTable {
                 // Create a type representing an element.  (This may
                 // seem like overkill, but is necessary to support ref=
                 // and element=.
-                createTypeFromDef(node, true);
+                createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             }
             else if (nodeKind.getLocalPart().equals("part") &&
                      Utils.isWsdlNS(nodeKind.getNamespaceURI())) {
@@ -268,10 +279,20 @@ public class SymbolTable {
                 createTypeFromRef(node);
             }
         }
+
+        if (level == ABOVE_SCHEMA_LEVEL) {
+            if (nodeKind != null && nodeKind.getLocalPart().equals("schema")) {
+                level = SCHEMA_LEVEL;
+            }
+        }
+        else {
+            ++level;
+        }
+
         // Recurse through children nodes
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            addTypes(children.item(i));
+            addTypes(children.item(i), level);
         }
     } // addTypes
 
@@ -279,7 +300,8 @@ public class SymbolTable {
      * Create a Type from the indicated node, which defines a type
      * that represents a complexType, simpleType or element (for ref=).
      */
-    private void createTypeFromDef(Node node, boolean isElement) {
+    private void createTypeFromDef(Node node, boolean isElement,
+            boolean belowSchemaLevel) throws IOException {
         // If this is not an element, make sure it is not an anonymous type.
         // If it is, the the existing ElementType will be used.  If
         // not, create a new type.
@@ -307,7 +329,9 @@ public class SymbolTable {
                     }                         
                 }
                 // Create a type from the referenced type
-                symbolTablePut(new ElementType(qName, refType, node));
+                if (!belowSchemaLevel) {
+                    symbolTablePut(new ElementType(qName, refType, node));
+                }
 
             }   
             else {
@@ -346,7 +370,7 @@ public class SymbolTable {
      * Node may contain a reference (via type=, ref=, or element= attributes) to 
      * another type.  Create a Type object representing this referenced type.
      */
-    private void createTypeFromRef(Node node) {
+    private void createTypeFromRef(Node node) throws IOException {
         // Get the QName of the node's type attribute value
         QName qName = Utils.getNodeTypeRefQName(node);
         if (qName != null) {
@@ -401,7 +425,7 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the MessageEntry's from the Definition.
      */
-    private void populateMessages(Definition def) {
+    private void populateMessages(Definition def) throws IOException {
         Iterator i = def.getMessages().values().iterator();
         while (i.hasNext()) {
             Message message = (Message) i.next();
@@ -629,7 +653,7 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the BindingEntry's from the Definition.
      */
-    private void populateBindings(Definition def) {
+    private void populateBindings(Definition def) throws IOException {
         Iterator i = def.getBindings().values().iterator();
         while (i.hasNext()) {
             int bindingStyle = BindingEntry.STYLE_RPC;
@@ -739,7 +763,7 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.
      */
-    private void populateServices(Definition def) {
+    private void populateServices(Definition def) throws IOException {
         Iterator i = def.getServices().values().iterator();
         while (i.hasNext()) {
             Service service = (Service) i.next();
@@ -1000,7 +1024,7 @@ public class SymbolTable {
     /**
      * Put the given SymTabEntry into the symbol table, if appropriate.  If 
      */
-    private void symbolTablePut(SymTabEntry entry) {
+    private void symbolTablePut(SymTabEntry entry) throws IOException {
         QName name = entry.getQName();
         if (get(name, entry.getClass()) == null) {
             // An entry of the given qname of the given type doesn't exist yet.
@@ -1039,6 +1063,10 @@ public class SymbolTable {
                     types.add(entry);
                 }
             }
+        }
+        else {
+            throw new IOException(
+                    JavaUtils.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
 
@@ -1183,6 +1211,8 @@ public class SymbolTable {
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
+                out.println(
+                        v.elementAt(i).getClass().getName());
                 out.println(v.elementAt(i));
             }
         }

@@ -1,22 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions name="AirportWeather" targetNamespace="http://www.capeclear.com/AirportWeather.wsdl" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.capeclear.com/AirportWeather.wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://www.capeclear.com/AirportWeather.wsdl">
-<types>
-<xsd:schema targetNamespace="http://www.capeclear.com/AirportWeather.wsdl" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<xsd:complexType name="AirportWeather">
-<xsd:sequence>
-<xsd:element maxOccurs="1" minOccurs="1" name="location" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="wind" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="sky" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="temp" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="humidity" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="pressure" type="xsd:string"/>
-<xsd:element maxOccurs="1" minOccurs="1" name="visibility" type="xsd:string"/>
-</xsd:sequence>
-</xsd:complexType>
-</xsd:schema>
+<definitions name="AirportWeather"
+    targetNamespace="http://www.capeclear.com/AirportWeather.wsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://www.capeclear.com/AirportWeather.wsdl"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd1="http://www.capeclear.com/AirportWeather.wsdl">
+  <types>
+    <xsd:schema
+        targetNamespace="http://www.capeclear.com/AirportWeather.wsdl"
+        xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:complexType name="AirportWeather">
+        <xsd:sequence>
+        <xsd:element maxOccurs="1" minOccurs="1" name="location" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="wind" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="sky" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="temp" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="humidity" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="pressure" type="xsd:string"/>
+        <xsd:element maxOccurs="1" minOccurs="1" name="visibility" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SameForTypeAndElement">
+      <xsd:all>
+        <xsd:element name="str" type="xsd:string"/>
+      </xsd:all>
+    </xsd:complexType>
+
+    <xsd:element name="SameForTypeAndElement" ref="SameForTypeAndElement"/>
+
+  </xsd:schema>
 </types>
 <message name="getLocation">
-<part name="arg0" type="xsd:string"/>
+<part name="arg0" type="xsd1:SameForTypeAndElement"/>
 </message>
 <message name="getLocationResponse">
 <part name="return" type="xsd:string"/>
