@@ -162,29 +162,12 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Functional tests, no dependencies (for no-build testing)            -->
-  <!-- =================================================================== -->
-  <target name="functional-tests-only" depends="setenv">
-
-    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
-    <!-- This should be already built in build.xml
-    <ant antfile="test/build_ant.xml" />
-
-    ...and then the functional tests can be run.  If this step yields a
-    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
-    verify that your Ant classpath contains ANT_HOME/lib.
-    -->
-
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
   <target name="functional-tests-noserver" depends="compile">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
-
   </target>
 
   <!-- =================================================================== -->
@@ -263,7 +246,7 @@ Copyright:
 
   <target name="junit-functional-secure" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
     <!-- now, run the actual test -->
-    <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
@@ -376,7 +359,7 @@ Copyright:
    <target name="batch-junit-functional" depends="start-signature-signing-and-verification">
     <foreach target="batch-component-test">
         <param name="file">
-             <fileset dir="." >
+             <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
                  <exclude name="test/wsdl/interop3/compound1/build.xml" />
