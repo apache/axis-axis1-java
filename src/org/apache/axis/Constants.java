@@ -78,12 +78,37 @@ public class Constants {
                                "http://schemas.xmlsoap.org/soap/envelope/" ;
   public static String URI_SOAP_ENC =
                                "http://schemas.xmlsoap.org/soap/encoding/" ;
-  public static String URI_SCHEMA_XSI =
-                               "http://www.w3.org/1999/XMLSchema-instance" ;
-  public static String URI_SCHEMA_XSD =
-                               "http://www.w3.org/1999/XMLSchema" ;
   public static String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
+
+  
+  // Schema namespaces
+  public static final String URI_1999_SCHEMA_XSI =
+    "http://www.w3.org/1999/XMLSchema-instance";
+  public static final String URI_1999_SCHEMA_XSD =
+    "http://www.w3.org/1999/XMLSchema";
+  public static final String URI_2000_SCHEMA_XSI =
+    "http://www.w3.org/2000/10/XMLSchema-instance";
+  public static final String URI_2000_SCHEMA_XSD =
+    "http://www.w3.org/2000/10/XMLSchema";
+  public static final String URI_2001_SCHEMA_XSI =
+    "http://www.w3.org/2001/XMLSchema-instance";
+  public static final String URI_2001_SCHEMA_XSD =
+    "http://www.w3.org/2001/XMLSchema";
+  public static final String URI_CURRENT_SCHEMA_XSI = URI_1999_SCHEMA_XSI;
+  public static final String URI_CURRENT_SCHEMA_XSD = URI_1999_SCHEMA_XSD;
+  
+  public static final String[] URIS_SCHEMA_XSI = {
+    URI_1999_SCHEMA_XSI,
+    URI_2000_SCHEMA_XSI,
+    URI_2001_SCHEMA_XSI,
+  };
+  
+  public static final String[] URIS_SCHEMA_XSD = {
+    URI_1999_SCHEMA_XSD,
+    URI_2000_SCHEMA_XSD,
+    URI_2001_SCHEMA_XSD,
+  };
 
   public static String ELEM_ENVELOPE = "Envelope" ;
   public static String ELEM_HEADER   = "Header" ;

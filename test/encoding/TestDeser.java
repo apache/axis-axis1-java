@@ -1,5 +1,6 @@
 package test.encoding;
 
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
@@ -16,25 +17,32 @@ import junit.framework.TestCase;
  */
 public class TestDeser extends TestCase {
 
+    private String header;
+    private String footer;
+
     public TestDeser(String name) {
-        super(name);
+        this(name, Constants.URI_CURRENT_SCHEMA_XSI, 
+                   Constants.URI_CURRENT_SCHEMA_XSD);
     }
 
-    private static final String header =
-        "<?xml version=\"1.0\"?>\n" +
-        "<soap:Envelope " +
-          "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
-          "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
-          "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" " +
-          "xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-          "<soap:Body>\n" +
-            "<methodResult xmlns=\"http://tempuri.org/\">\n";
+    public TestDeser(String name, String NS_XSI, String NS_XSD) {
+        super(name);
 
-    private static final String footer =
-            "</methodResult>\n" +
-          "</soap:Body>\n" +
-        "</soap:Envelope>\n";
+        header =
+            "<?xml version=\"1.0\"?>\n" +
+            "<soap:Envelope " +
+              "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+              "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
+              "xmlns:xsi=\"" + NS_XSI + "\" " +
+              "xmlns:xsd=\"" + NS_XSD + "\">\n" +
+              "<soap:Body>\n" +
+                "<methodResult xmlns=\"http://tempuri.org/\">\n";
 
+        footer =
+                "</methodResult>\n" +
+              "</soap:Body>\n" +
+            "</soap:Envelope>\n";
+    }
 
     private void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer, "String");

@@ -84,7 +84,9 @@ public class RPCParam extends MessageElement
         name = localName;
 
         // Check for type
-        String type = attrs.getValue(Constants.URI_SCHEMA_XSI, "type");
+        String type = null;
+        for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && type==null; i++)
+            type = attrs.getValue(Constants.URIS_SCHEMA_XSI[i], "type");
         
         if (DEBUG_LOG)
             System.out.println("Got param.  Name ='" + name + "' Type is '" + type + "'");
@@ -223,14 +225,14 @@ public class RPCParam extends MessageElement
             if ((desc == null) || desc.getSendTypeAttr()) {
                 
                 if (typeQName != null) {
-                    attrs.addAttribute(Constants.URI_SCHEMA_XSI, "type", "xsi:type",
+                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
                                        "CDATA",
                                        context.qName2String(typeQName));
                 }
             }
         
             if (value == null)
-                attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
+                attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
                                    "CDATA", "1");
         }
 

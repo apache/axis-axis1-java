@@ -225,14 +225,14 @@ public class MessageElement
                 ServiceDescription desc = getEnvelope().getServiceDescription();
                 if ((desc == null) || desc.getSendTypeAttr()) {
                     if (typeQName != null) {
-                        attrs.addAttribute(Constants.URI_SCHEMA_XSI, "type", "xsi:type",
+                        attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type", "xsi:type",
                                            "CDATA",
                                            context.qName2String(typeQName));
                     }
                 }
                 
                 if (val == null)
-                    attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
+                    attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "null", "xsi:null",
                                        "CDATA", "1");
             } else {
                 attrs = new AttributesImpl(attributes);

@@ -63,14 +63,14 @@ public class SOAPEncoding implements Serializer {
                                       attributes.getLocalName(i),
                                       attributes.getQName(i), "CDATA",
                                       attributes.getValue(i));
-                    if (attributes.getURI(i).equals(Constants.URI_SCHEMA_XSI) &&
+                    if (attributes.getURI(i).equals(Constants.URI_CURRENT_SCHEMA_XSI) &&
                         attributes.getLocalName(i).equals("type"))
                         gotType = true;
                 }
             }
             
             if (!gotType) {
-                impl.addAttribute(Constants.URI_SCHEMA_XSI,
+                impl.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI,
                                "type", "xsi:type",
                                "CDATA", str);
             }
