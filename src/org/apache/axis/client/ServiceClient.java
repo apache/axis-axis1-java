@@ -212,7 +212,7 @@ public class ServiceClient {
         if (currentPackages == null) {
           currentPackages = "";
         } else {
-          currentPackages += " ";
+          currentPackages += "|";
         }
         currentPackages += packageName;
         
