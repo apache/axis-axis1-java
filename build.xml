@@ -524,7 +524,7 @@ Copyright:
     <ant dir="test/wsdl/interop3/import3"/>
     <ant dir="test/wsdl/interop3/compound1"/>
     <ant dir="test/wsdl/interop3/compound2"/>
-    <!-- ant dir="test/wsdl/interop3/docLit"/ -->
+    <ant dir="test/wsdl/interop3/docLit"/>
     <ant dir="test/wsdl/interop3/docLitParam"/>
     <ant dir="test/wsdl/interop3/rpcEnc"/>
   </target>
