@@ -116,7 +116,9 @@ public class AxisServlet extends HttpServlet {
                     Class cls = (Class)msgContext.getProperty("JWSClass");
                     
                     // !!! Need to make this an absolute URI
-                    String url = req.getRequestURI();
+                    String url = req.getScheme() + "://" +
+                                 req.getServerName() + ":" +
+                                 req.getServerPort() + req.getRequestURI();
                     
                     // !!! This should be something reasonable
                     String urn = "urn:service";

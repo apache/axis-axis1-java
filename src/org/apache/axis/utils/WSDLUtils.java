@@ -138,6 +138,11 @@ public class WSDLUtils {
             
             bindingOper.setName(oper.getName());
             
+            SOAPOperation soapOper = new SOAPOperation();
+            soapOper.setSoapActionURI("");
+            soapOper.setStyle("rpc");
+            bindingOper.addExtensibilityElement(soapOper);
+            
             SOAPBody soapBody = new SOAPBody();
             soapBody.setUse("encoded");
             soapBody.setEncodingStyles(encodingList);
