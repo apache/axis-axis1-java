@@ -181,8 +181,9 @@ public class NSStack {
             return parent.getNamespaceURI(prefix);
 
         dump();
-        System.out.println("didn't find prefix '" + prefix + "'");
-        new Exception().printStackTrace();
+        if (DEBUG_LOG) {
+          System.err.println("didn't find prefix '" + prefix + "'");
+        }
         return null;
     }
 
