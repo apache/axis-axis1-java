@@ -83,7 +83,6 @@ Copyright:
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional-prepare" if="junit.present">
-  <mkdir dir="${basedir}/${test.functional.reportdir}" />
 
     <!-- first, put the JWS where the functional test can see it -->
     <mkdir dir="build/jws" />
