@@ -1157,26 +1157,57 @@ public class ServiceDesc {
                 */
 
                 FaultDesc fault = operation.getFaultByClass(ex);
+                // If we didn't find one, create a new one
                 if (fault == null) {
-                    QName xmlType = tm.getTypeQName(ex);
-                    // Create a single part with the dummy name "fault"
-                    // that locates the complexType for this exception.
+                    fault = new FaultDesc();
+                }
+                
+                // Try to fil in any parts of the faultDesc that aren't there
+                
+                // XMLType
+                QName xmlType = fault.getXmlType();
+                if (xmlType == null) {
+                    fault.setXmlType(tm.getTypeQName(ex));
+                }
+                
+                // Name and Class Name
+                String pkgAndClsName = ex.getName();
+                if (fault.getClassName() == null) {
+                    fault.setClassName(pkgAndClsName);
+                }
+                if (fault.getName() == null) {
+                    String name = pkgAndClsName.substring(
+                            pkgAndClsName.lastIndexOf('.') + 1,
+                            pkgAndClsName.length());
+                    fault.setName(name);
+                }
+                
+                // Parameters
+                // We add a single parameter which points to the type
+                if (fault.getParameters() == null) {
+                    if (xmlType == null) {
+                        xmlType = tm.getTypeQName(ex);
+                    }
+                    QName qname = fault.getQName();
+                    if (qname == null) {
+                        qname = new QName("", "fault");
+                    }
                     ParameterDesc param = new ParameterDesc(
-                         new QName("", "fault"),
-                         ParameterDesc.IN,
-                         xmlType);
+                            qname,
+                            ParameterDesc.IN,
+                            xmlType);
                     param.setJavaType(ex);
                     ArrayList exceptionParams = new ArrayList();
                     exceptionParams.add(param);
-                
-                    fault = new FaultDesc();
-                    String pkgAndClsName = ex.getName();
-                    fault.setName(pkgAndClsName);
                     fault.setParameters(exceptionParams);
-                    fault.setClassName(pkgAndClsName);
-                    fault.setXmlType(xmlType);
+                }
+                
+                // QName
+                if (fault.getQName() == null) {
+                    fault.setQName(new QName(pkgAndClsName));
                 }
 
+                // Add the fault to the operation
                 operation.addFault(fault);
             }
         }

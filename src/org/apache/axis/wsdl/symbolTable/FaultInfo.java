@@ -82,6 +82,7 @@ public class FaultInfo {
     private QName   xmlType;
     private Use     use;
     private QName   qName;
+    private String  name;
 
     /**
      * This constructor creates FaultInfo for a binding fault.
@@ -98,6 +99,7 @@ public class FaultInfo {
         this.message = fault.getMessage();
         this.xmlType = getFaultType(symbolTable, getFaultPart());
         this.use     = use;
+        this.name    = fault.getName();
 
         Part part = getFaultPart();
         if (part == null) {
@@ -135,6 +137,8 @@ public class FaultInfo {
         else {
             this.qName = part.getElementName();
         }
+        this.name    = qName.getLocalPart();
+        
     } // ctor
 
     public Message getMessage() {
@@ -165,10 +169,12 @@ public class FaultInfo {
     } // getQName
 
     /**
-     * Convenience method for getting the local part of the QName.
+     * Return the name of the fault.
+     * This is the name= attribute from a portType fault
+     * or the localname of a header fault.
      */
      public String getName() {
-         return qName == null ? null : qName.getLocalPart();
+         return name;
      } // getName
 
     /**

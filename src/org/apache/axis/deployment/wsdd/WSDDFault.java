@@ -84,6 +84,10 @@ public class WSDDFault extends WSDDElement {
 
         desc = new FaultDesc();
         
+        String nameStr = e.getAttribute(ATTR_NAME);
+        if (nameStr != null && !nameStr.equals(""))
+            desc.setName(nameStr);
+
         String qNameStr = e.getAttribute(ATTR_QNAME);
         if (qNameStr != null && !qNameStr.equals(""))
             desc.setQName(XMLUtils.getQNameFromString(qNameStr, e));

@@ -486,6 +486,7 @@ public class JavaDeployWriter extends JavaWriter {
                     String className = Utils.getFullExceptionName(
                             faultInfo.getMessage(), symbolTable);
                     pw.print("        <fault");
+                    pw.print(" name=\"" + faultInfo.getName() + "\"");
                     pw.print(" qname=\"" +
                              Utils.genQNameAttributeString(faultQName, "fns") + "\"");
                     pw.print(" class=\"" + className+ "\"");
