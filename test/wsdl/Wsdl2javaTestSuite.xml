@@ -67,6 +67,19 @@
         <mapping namespace="urn:MultiRefTest2" package="test.wsdl.multiref"/>
     </wsdl2java>
 
+    <!-- AddressBook Sample -->
+    <wsdl2java url="test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </wsdl2java>
+
     <!-- Operation style test (oneway, request/response, -->
     <!-- solicit/response, notification -->
     <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
