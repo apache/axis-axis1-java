@@ -340,9 +340,6 @@ public class AdminClient
                 System.out.println(result);
             else
                 System.exit(1);
-        } catch (AxisFault af) {
-            log.error(JavaUtils.getMessage("axisFault01", af.dumpToString()));
-            System.exit(1);
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
             System.exit(1);

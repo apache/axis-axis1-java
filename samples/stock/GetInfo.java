@@ -98,8 +98,7 @@ public class GetInfo {
       System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
-      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
-      else e.printStackTrace();
+      e.printStackTrace();
     }
   }
 

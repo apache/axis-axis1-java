@@ -339,9 +339,6 @@ public class EchoAttachment {
             }
         }
         catch ( Exception e ) {
-            if ( e instanceof AxisFault ) {
-                ((AxisFault) e).dump();
-            } 
             System.err.println(e);
              e.printStackTrace();
         }

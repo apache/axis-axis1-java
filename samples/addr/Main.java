@@ -162,12 +162,7 @@ public class Main {
             }
         }
         catch (Exception e) {
-            if (e instanceof AxisFault) {
-                System.err.println(((AxisFault) e).dumpToString());
-            }
-            else {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 }
