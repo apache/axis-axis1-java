@@ -55,33 +55,19 @@
 
 package org.apache.axis.utils;
 
+import org.apache.axis.encoding.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import java.text.Collator;
 import java.text.MessageFormat;
-
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.io.IOException;
-
-import org.apache.axis.encoding.Hex;
-import com.techtrader.modules.tools.bytecode.BCClass;
-import com.techtrader.modules.tools.bytecode.BCMethod;
-import com.techtrader.modules.tools.bytecode.Code;
-import com.techtrader.modules.tools.bytecode.LocalVariableTableAttribute;
-import com.techtrader.modules.tools.bytecode.Constants;
-import com.techtrader.modules.tools.bytecode.LocalVariable;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -158,14 +144,6 @@ public class JavaUtils
         
         return null;
     }
-
-    /**
-     * Cache of tt-bytecode BCClass objects which correspond to particular
-     * Java classes.
-     *
-     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
-     */
-    private static Hashtable ttClassCache = new Hashtable();
 
     /**
      * It the argument to the convert(...) method implements
@@ -879,78 +857,4 @@ public class JavaUtils
         return false;
     }
 
-    /**
-     * Get Parameter Names using tt-bytecode
-     *
-     * @param method the Java method we're interested in
-     * @return list of names or null
-     */
-    public static String[] getParameterNamesFromDebugInfo(Method method) {
-        Class c = method.getDeclaringClass();
-        int numParams = method.getParameterTypes().length;
-        Vector temp = new Vector();
-
-        // Don't worry about it if there are no params.
-        if (numParams == 0)
-            return null;
-
-        // Try to obtain a tt-bytecode class object
-        BCClass bclass = (BCClass)ttClassCache.get(c);
-
-        if(bclass == null) {
-            try {
-                bclass = new BCClass(c);
-                ttClassCache.put(c, bclass);
-            } catch (IOException e) {
-                // what now?
-            }
-        }
-
-        // Obtain the exact method we're interested in.
-        BCMethod bmeth = bclass.getMethod(method.getName(),
-                                          method.getParameterTypes());
-
-        if (bmeth == null)
-            return null;
-
-        // Get the Code object, which contains the local variable table.
-        Code code = bmeth.getCode();
-        if (code == null)
-            return null;
-
-        LocalVariableTableAttribute attr =
-                (LocalVariableTableAttribute)code.getAttribute(Constants.ATTR_LOCALS);
-
-        if (attr == null)
-            return null;
-
-        // OK, found it.  Now scan through the local variables and record
-        // the names in the right indices.
-        LocalVariable [] vars = attr.getLocalVariables();
-
-        String [] argNames = new String[numParams + 1];
-        argNames[0] = null; // don't know return name
-
-        // NOTE: we scan through all the variables here, because I have been
-        // told that jikes sometimes produces unpredictable ordering of the
-        // local variable table.
-        for (int j = 0; j < vars.length; j++) {
-            LocalVariable var = vars[j];
-            if (! var.getName().equals("this")) {
-                if(temp.size() < var.getIndex() + 1)
-                    temp.setSize(var.getIndex() + 1);
-                temp.setElementAt(var.getName(), var.getIndex());
-            }
-        }
-        int k = 0;
-        for (int j = 0; j < temp.size(); j++) {
-            if (temp.elementAt(j) != null) {
-                k++;
-                argNames[k] = (String)temp.elementAt(j);
-                if(k + 1 == argNames.length)
-                    break;
-            }
-        }
-        return argNames;
-    }
 }
