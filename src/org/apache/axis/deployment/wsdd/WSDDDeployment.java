@@ -372,6 +372,16 @@ public class WSDDDeployment
     }
 
     /**
+     * Return an array of the services in this deployment
+     */
+    public WSDDService[] getServices()
+    {
+        WSDDService [] serviceArray = new WSDDService[services.size()];
+        services.values().toArray(serviceArray);
+        return serviceArray;
+    }
+
+    /**
      *
      * @param name XXX
      * @return XXX
