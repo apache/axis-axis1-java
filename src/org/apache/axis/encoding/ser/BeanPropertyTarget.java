@@ -63,6 +63,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.SAXException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Class which knows how to update a bean property
@@ -126,6 +127,12 @@ public class BeanPropertyTarget implements Target {
                                                        valueType,
                                                        field,
                                                        pd.getType().getName()}));
+                }
+                if(ex instanceof InvocationTargetException) {
+                    Throwable t = ((InvocationTargetException)ex).getTargetException();
+                    if( t != null) {
+                        throw new SAXException(t.getMessage());
+                    }
                 }
                 throw new SAXException(ex);
             }
