@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario5" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:tns="this-wsdd-ns"
+				xsi:targetNamespace="this-wsdd-ns"
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<handler name="ReusableHandler1" type="java:samples.handlers.testHandler1">
+		<parameter name="parm1" value="ReusableHandler1"/>
+	</handler>
+	<handler name="ReusableHandler2" type="java:samples.handlers.testHandler1">
+		<parameter name="parm1" value="ReusableHandler2"/>
+	</handler>
+	<chain name="ReusableChain1">
+		<handler name="ReusableChain1Handler1" type="java:samples.handler.testHandler1">
+			<parameter name="parm1" value="ReusableChain1 Handler1"/>
+		</handler>
+		<handler type="tns:ReusableHandler1"/>
+	</chain>
+	<service name="wsddScenario5-service1">
+		<documentation>
+    			A simple serviceDeployment descriptor is used to describe the service.
+    			The type is not needed either, as it reflects the default choice (simpleTargetedChain).
+    
+    			This is an example of an external reusable defined by a handlerConfiguration and
+    			reused in a serviceConfiguration.
+ 		 </documentation>
+		<requestFlow>
+			<documentation>This chain is reused.</documentation>
+			<chain type="tns:ReusableChain1"/>
+		</requestFlow>
+		<provider>
+			<java:provider className="samples.wsdd.wsddScenario5" />
+		</provider>
+		<responseFlow>
+			<documentation>This chain is formed from reused handlers.</documentation>
+			<chain type="tns:ReusableChain1"/>
+			<handler type="tns:ReusableHandler1"/>
+			<handler type="tns:ReusableHandler2"/>
+		</responseFlow>
+	</service>
+</deployment>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario10" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<documentation>
+    		This is a test of the WSDL service description and how it generates the right serviceHandler.
+ 	</documentation>
+	<service name="wsddScenario10-service1">
+		<requestFlow>
+			<documentation>
+				The input chain does not need to define type, as this is default
+    				when more than one handler is specified within the flow
+   			 </documentation>
+			<handler name="inputHandler1" type="java:samples.handlers.testHandler1"/>
+			<handler name="inputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">inputHandler2</parameter>
+			</handler>
+		</requestFlow>
+		<provider>
+			<operation name="op1"/>
+			<operation name="op2" alias="somethingDifferentThanOp2"/>
+			<java:provider className="samples.wsdd.wsddScenario10" isStatic="true"/>
+		</provider>
+		<responseFlow>
+			<documentation>
+				The even though no type is specified, the default chain type is taken
+			      because more than one handler is specified
+   			 </documentation>
+			<handler name="outputHandler1" type="java:samples.handlers.testHandler2"/>
+			<handler name="outputHandler2" type="java:samples.handlers.testHandler2"/>
+		</responseFlow>
+	</service>
+</deployment>

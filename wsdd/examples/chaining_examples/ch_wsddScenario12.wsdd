@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment 	name="wsddScenario12" 
+				xmlns="http://xml.apache.org/axis/wsdd/" 
+				xmlns:java="http://xml.apache.org/axis/wsdd/providers/java/"
+				xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
+				xsi:schemaLocation="http://xml.apache.org/axis/wsdd/ D:\Schemas\WSDD\WSDD.xsd">
+	<globalConfiguration>
+		<documentation>
+    			The globalConfiguration deployment element is empty used in this example (defines global chains).
+    			This defines a global input chain of 2 handlers, a global output chain of 2 handlers.
+    			And a global fault chain.
+  		</documentation>
+		<requestFlow>
+			<documentation>The global input chain</documentation>
+			<handler name="inputHandler1" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">global output handler 1</parameter>
+			</handler>
+			<handler name="inputHandler2" type="java:samples.handlers.testHandler1">
+				<parameter name="parm1">global output handler 2</parameter>
+			</handler>
+		</requestFlow>
+		<provider />
+		<responseFlow>
+			<documentation>The global output chain</documentation>
+			<handler name="outputHandler1" type="java:samples.handlers.testHandler2"/>
+			<handler name="outputHandler2" type="java:samples.handlers.testHandler2"/>
+		</responseFlow>
+		<faultFlow>
+			<documentation>global fault chain (all faults)</documentation>
+			<handler name="faultHandler1" type="java:samples.handlers.testHandler3">
+				<parameter name="parm1">global fault handler 1</parameter>
+			</handler>
+			<handler name="faultHandler2" type="java:samples.handlers.testHandler4">
+				<parameter name="parm1">global fault handler 2</parameter>
+			</handler>
+		</faultFlow>
+		<faultFlow name="Server.*">
+			<documentation>global fault chain (all server faults)</documentation>
+			<handler name="faultHandlerS1" type="java:samples.handlers.testHandler3">
+				<parameter name="parm1">global server fault handler 1</parameter>
+			</handler>
+			<handler name="faultHandlerS2" type="java:samples.handlers.testHandler4">
+				<parameter name="parm1">global server fault handler 2</parameter>
+			</handler>
+		</faultFlow>
+	</globalConfiguration>
+</deployment>
