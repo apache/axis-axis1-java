@@ -7,8 +7,10 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -19,7 +21,9 @@ import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
+import junit.framework.AssertionFailedError;
 
 public class TestEnvelope extends junit.framework.TestCase {
 
@@ -222,6 +226,40 @@ public class TestEnvelope extends junit.framework.TestCase {
 	    assertTrue(n instanceof Text);
 		Text t = (Text)n;
 		assertTrue(t.isComment());
+    }
+
+    public void testText4() throws SOAPException, IOException {
+        MessageFactory mf = MessageFactory.newInstance();
+        SOAPMessage smsg =
+            mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(xmlString.getBytes()));
+
+        // Make some change to the message
+        SOAPPart sp = smsg.getSOAPPart();
+        SOAPEnvelope envelope = sp.getEnvelope();
+        envelope.addTextNode("<!-- This is a comment -->");
+        
+        boolean passbody = false;
+        for (Iterator i = envelope.getChildElements(); i.hasNext(); ) {
+            Node n = (Node) i.next();
+            if (n instanceof SOAPElement) {
+                SOAPElement se = (SOAPElement) n;
+                System.out.println("soap element = " + se.getNodeName());
+                if (se.getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_ENVELOPE) 
+                    && se.getLocalName().equals("Body")) {
+                    passbody = true;
+                }
+            }
+            
+            if (n instanceof Text) {
+                Text t = (Text)n; 
+                System.out.println("text = " + t.getValue());
+                if (t.getValue().equals("<!-- This is a comment -->")) {
+                    assertEquals(true, passbody);
+                    return;
+                }
+            }            
+        }
+        throw new AssertionFailedError("Text is not added to expected position.");
     }
 
     private int getIteratorCount(java.util.Iterator i) {

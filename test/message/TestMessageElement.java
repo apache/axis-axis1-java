@@ -392,6 +392,11 @@ public class TestMessageElement extends AxisTestBase {
         
         assertEquals("FooBar", getNodeValueContext(data));
         assertEquals("FooBar", getNodeValueDOM(data));
+         
+        data = "<anElement xmlns:ns1=\"aNamespace\">A&gt;B</anElement>";
+        
+        assertEquals("A>B", getNodeValueContext(data));
+        assertEquals("A>B", getNodeValueDOM(data));
 
         data = "<anElement xmlns:ns1=\"aNamespace\"><bElement>FooBar</bElement></anElement>";
         
@@ -400,8 +405,11 @@ public class TestMessageElement extends AxisTestBase {
 
         data = "<anElement xmlns:ns1=\"aNamespace\"><bElement>FooBar</bElement>Mixed</anElement>";
         
-        assertTrue(getNodeValueContext(data) == null);
-        assertTrue(getNodeValueDOM(data) == null);
+        // SAAJ 1.2 requires "Mixed" for this case.
+        assertEquals("Mixed", getNodeValueContext(data));
+        assertEquals("Mixed", getNodeValueDOM(data));
+//        assertTrue(getNodeValueContext(data) == null);
+//        assertTrue(getNodeValueDOM(data) == null);
 
         data = "<anElement xmlns:ns1=\"aNamespace\">Foo<bElement>FooBar</bElement>Mixed</anElement>";
         

@@ -465,26 +465,23 @@ public class SOAPEnvelope extends MessageElement
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_ENVELOPE), attributes);
 
-        // Output non-SOAPHeader and non-SOAPBody stuff.
+        
+        // Output <SOAP-ENV:Envelope>'s each child as it appears.
         Iterator i = getChildElements();
-        while (i.hasNext()) {
-            NodeImpl element = (NodeImpl)i.next();
-            if(element instanceof SOAPHeader ||
-               element instanceof SOAPBody)
-                continue;
-            element.output(context);
+        while (i.hasNext()) {            
+            NodeImpl node = (NodeImpl)i.next();
+            
+            if (node instanceof SOAPHeader) {
+                header.outputImpl(context);
+            } else if (node instanceof SOAPBody) {
+                body.outputImpl(context);                
+            } else if (node instanceof MessageElement) {
+                ((MessageElement)node).output(context);
+            } else {
+                node.output(context);
+            }    
         }
-
-        // Output headers
-        if (header != null) {
-            header.outputImpl(context);
-        }
-
-        // Output body
-        if (body != null) {
-            body.outputImpl(context);
-        }
-
+        
         // Output trailers
         enumeration = trailers.elements();
         while (enumeration.hasMoreElements()) {
@@ -675,9 +672,4 @@ public class SOAPEnvelope extends MessageElement
             setOwnerDocumentForChildren(node.children, sp);  // recursively
     	}
     }
-
-    public String getValue() {
-        return getValueDOM();
-    }
-    
 }

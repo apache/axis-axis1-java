@@ -2055,6 +2055,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @see javax.xml.soap.Node#getValue() ;
      */
     public String getValue() {
+        /*--- Fix for AXIS-1817
         if ((recorder != null) && (!_isDirty)) {
             StringWriter writer = new StringWriter();
             TextSerializationContext outputContext = 
@@ -2070,6 +2071,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             String value = writer.toString();
             return (value.length() == 0) ? null : value;
         } 
+        ---*/
 
         if (textRep != null) {
             // weird case: error?
@@ -2080,9 +2082,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             return getValueDOM();
         }
 
-        if (children != null && !children.isEmpty()) {
-            if (children.get(0) instanceof org.apache.axis.message.Text) {
-                return ((org.apache.axis.message.Text)children.get(0)).getNodeValue();
+        for (Iterator i = getChildElements(); i.hasNext(); ) {
+            NodeImpl n = (NodeImpl) i.next();
+            if (n instanceof Text) {
+                return ((Text)n).getNodeValue();
             }
         }
 

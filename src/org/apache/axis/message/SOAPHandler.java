@@ -109,18 +109,7 @@ public class SOAPHandler extends DefaultHandler
         throws SAXException
     {
         if (myElement != null) {
-
-            if (val != null && val.size() > 0) {
-                String s = StringUtils.strip(val.toString());
-                val.reset();
-                if(s.length()>0){
-                    try {
-                        myElement.addTextNode(s);
-                    } catch (SOAPException e) {
-                        throw new SAXException(e);
-                    }
-                }
-            }
+            addTextNode();	
 
             if (myElements != null) {
                 myElements[myIndex] = myElement;
@@ -136,8 +125,33 @@ public class SOAPHandler extends DefaultHandler
                                     DeserializationContext context)
         throws SAXException
     {
+        addTextNode();
         SOAPHandler handler = new SOAPHandler();
         return handler;
+    }
+
+    private void addTextNode() throws SAXException {
+        if (myElement != null) {
+            if (val != null && val.size() > 0) {
+                String s = StringUtils.strip(val.toString());
+                val.reset();
+                
+                // we need to check the length of STRIPPED string 
+                // to avoid appending ignorable white spaces as 
+                // message elmenet's child. 
+                // (SOAPHeader and others does not accept text children...
+                // but in SAAJ 1.2's DOM view, this could be incorrect.
+                // we need to keep the ignorable white spaces later)
+                if(s.length()>0){
+                    try {
+                        // add unstripped string as text child.
+                        myElement.addTextNode(s);
+                    } catch (SOAPException e) {
+                        throw new SAXException(e);
+                    }
+                }
+            }
+        }
     }
     
     public void onEndChild(String namespace, String localName,
