@@ -331,6 +331,7 @@ public class HTTPSender extends BasicHandler {
                                                 null,
                                                 null);
                 fault.setFaultDetailsString(new String(buf, 0, len));
+                throw fault;
             }
 
             if ( b != -1 ) {
