@@ -478,11 +478,6 @@ public class JavaBeanWriter extends JavaClassWriter {
                 ElementDecl elem = (ElementDecl)elements.get(j);
                 if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
                     String compName = typeName.substring(0, typeName.lastIndexOf("["));
-                    
-                    int bracketIndex = typeName.indexOf("[");
-                    String newingName = typeName.substring(0, bracketIndex + 1);
-                    String newingSuffix = typeName.substring(bracketIndex + 1);
-                    
                     if (enableGetters) {
                         pw.println("    public " + compName + " " + get + capName +
                                    "(int i) {");
@@ -493,6 +488,15 @@ public class JavaBeanWriter extends JavaClassWriter {
                     if (enableSetters) {
                         pw.println("    public void set" + capName + "(int i, " +
                                    compName + " value) {");
+                        // According to the section 7.2 of the JavaBeans
+                        // specification, the indexed setter should not
+                        // establish or grow the array.  Thus the following
+                        // code is not generated for compliance purposes.
+                        /*                    
+                        int bracketIndex = typeName.indexOf("[");
+                        String newingName = typeName.substring(0, bracketIndex + 1);
+                        String newingSuffix = typeName.substring(bracketIndex + 1);
+                    
                         pw.println("        if (this." + name + " == null ||");
                         pw.println("            this." + name + ".length <= i) {");
                         pw.println("            " + typeName + " a = new " +
@@ -504,6 +508,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                         pw.println("            }");
                         pw.println("            this." + name + " = a;");
                         pw.println("        }");
+                        */
                         pw.println("        this." + name + "[i] = value;");
                         pw.println("    }");
                         pw.println();

@@ -82,12 +82,17 @@ public class BeanPropertyDescriptor
     private String name = null;
     private Method getter = null;
     private Method setter = null;
+    private Method getterIndexed = null;
+    private Method setterIndexed = null;
     private Field field = null;
     private static final Object[] noArgs = new Object[] {};    
 
     /** 
      * Construct a BPD with getter/setter methods
      * Both must be set
+     * @param String _name is the name of the property
+     * @param Method _getter is the accessor method
+     * @param Method _setter is the modifier method
      */
     public BeanPropertyDescriptor(String _name,
                                   Method _getter, 
@@ -101,8 +106,32 @@ public class BeanPropertyDescriptor
     }
 
     /** 
+     * Construct a BPD with getter/setter methods for
+     * an indexed property.  All params must be set.
+     * @param String _name is the name of the property
+     * @param Method _getter is the accessor method
+     * @param Method _setter is the modifier method
+     * @param Method _getterIndexed is the accessor method
+     * @param Method _setterIndexed is the modifier method
+     */
+    public BeanPropertyDescriptor(String _name,
+                                  Method _getter, 
+                                  Method _setter,
+                                  Method _getterIndexed,
+                                  Method _setterIndexed) {
+        this(_name, _getter, _setter);
+        getterIndexed = _getterIndexed;
+        setterIndexed = _setterIndexed;
+        if (_getterIndexed == null || _setterIndexed == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /** 
      * Construct a BPD with a field
      * Both must be set
+     * @param String _name is the name of the property
+     * @param Field _field is the name of the public instance field
      */
     public BeanPropertyDescriptor(String _name,
                                   Field _field) {
@@ -115,6 +144,7 @@ public class BeanPropertyDescriptor
     
     /** 
      * Query if property is readable
+     * @return true if readable
      */
     public boolean isReadable() {
         return (getter != null ||
@@ -122,6 +152,7 @@ public class BeanPropertyDescriptor
     }
     /** 
      * Query if property is writeable
+     * @return true if writeable
      */
     public boolean isWriteable() {
         return (setter != null ||
@@ -130,22 +161,20 @@ public class BeanPropertyDescriptor
     /** 
      * Query if property is indexed.
      * Indexed properties require valid setters/getters
+     * @return true if indexed methods exist
      */
     public boolean isIndexed() {
-        return (getter != null &&
-                getter.getParameterTypes().length == 1 &&
-                setter != null &&
-                setter.getParameterTypes().length == 2);
+        return (getterIndexed != null && 
+                setterIndexed != null);
     }
 
     /**
      * Get the property value
+     * @param obj is the object
+     * @return the entire propery value
      */
     public Object get(Object obj) 
         throws InvocationTargetException, IllegalAccessException {
-        if (isIndexed()) {
-            throw new IllegalArgumentException();
-        }
         if (getter != null) {
             return getter.invoke(obj, noArgs);
         } else if (field != null) {
@@ -155,12 +184,11 @@ public class BeanPropertyDescriptor
     }
     /**
      * Set the property value
+     * @param obj is the object
+     * @param is the new value
      */
     public void set(Object obj, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
-        if (isIndexed()) {
-            throw new IllegalArgumentException();
-        }
         if (setter != null) {
             setter.invoke(obj, new Object[] {newValue});
         } else if (field != null) {
@@ -169,44 +197,79 @@ public class BeanPropertyDescriptor
     }    
     /** 
      * Get an indexed property
+     * @param obj is the object
+     * @param i the index
+     * @return the object at the indicated index
      */
     public Object get(Object obj, int i) 
         throws InvocationTargetException, IllegalAccessException {
         if (!isIndexed()) {
-            throw new IllegalArgumentException();
+            return Array.get(get(obj), i);
+        } else {
+            return getterIndexed.invoke(obj, new Object[] { new Integer(i)});
         }
-        if (getter != null) {
-            return getter.invoke(obj, new Object[] { new Integer(i)});
-        } else if (field != null) {
-            return Array.get(field.get(obj), i);
-        }
-        return null;
     }
     /**
-     * Get an indexed property value
+     * Set an indexed property value
+     * @param obj is the object
+     * @param i the index
+     * @param newValue is the new value
      */
     public void set(Object obj, int i, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
-        if (!isIndexed()) {
-            throw new IllegalArgumentException();
+
+        // Get the entire array and make sure it is large enough
+        Object array = get(obj);
+        if (array == null || Array.getLength(array) <= i) {
+            // Construct a larger array of the same type
+            Class componentType = null;
+            if (getterIndexed != null) {
+                componentType = getterIndexed.getReturnType();
+            } else if (getter != null) {
+                componentType = getter.getReturnType().getComponentType();
+            } else {
+                componentType = field.getType().getComponentType();
+            }
+            Object newArray = 
+                Array.newInstance(componentType,i+1);
+            
+            // Set the object to use the larger array
+            set(obj, newArray);
+
+            // Copy over the old elements
+            int len = 0;
+            if (array != null) {
+                len = Array.getLength(array);
+            }
+            for (int index=0; index<len; index++) {
+                set(obj, index, Array.get(array, index));
+            }
         }
-        if (setter != null) {
-            setter.invoke(obj, new Object[] {new Integer(i), newValue});
-        } else if (field != null) {
-            Array.set(field.get(obj),i, newValue);
+        
+        // Set the new value
+        if (isIndexed()) {
+            setterIndexed.invoke(obj, new Object[] {new Integer(i), newValue});
+        } else {
+            Array.set(get(obj), i, newValue);
         }
     }    
 
     /**
      * Get the name of a property
+     * @return String name of the property
      */     
-    public String getName() {return name;}
+    public String getName() {
+        return name;
+    }
 
     /**
      * Get the type of a property
+     * @return the type of the property
      */     
     public Class getType() {
-        if (getter != null) {
+        if (isIndexed()) {
+            return getterIndexed.getReturnType();
+        } else if (getter != null) {
             return getter.getReturnType();
         } else {
             return field.getType();
