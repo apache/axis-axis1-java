@@ -239,10 +239,12 @@ public class JavaBeanWriter extends JavaWriter {
         // constructor and throw in a value construtor too.
         if (type.isSimpleType() && valueType != null) {
             // emit contructors and toString().
-            pw.println("    public " + className + "(" + valueType + " value) {");
-            pw.println("        this.value = value;");
-            pw.println("    }");
-            pw.println();            
+            if (!valueType.equals("java.lang.String")) {
+                pw.println("    public " + className + "(" + valueType + " value) {");
+                pw.println("        this.value = value;");
+                pw.println("    }");
+                pw.println();
+            }
             
             pw.println("    // " + JavaUtils.getMessage("needStringCtor"));
             pw.println("    public " + className + "(java.lang.String value) {");
