@@ -359,7 +359,7 @@ public class JavaStubWriter extends JavaWriter {
         firstSer = false ;
 
         QName qname = type.getQName();
-        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + Utils.getJavaLocalName(type.getName()) + "\");");
+        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
         pw.println("            cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
@@ -392,15 +392,8 @@ public class JavaStubWriter extends JavaWriter {
 
 
             QName qn = p.type.getQName();
-            String localName = null;
-            if (p.type instanceof BaseJavaType) {
-                localName = qn.getLocalPart();
-            }
-            else {
-                localName = Utils.getJavaLocalName(p.type.getName());
-            }
             String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    localName + "\"))";
+                    qn.getLocalPart() + "\"))";
             if (p.mode == Parameters.Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
@@ -414,15 +407,8 @@ public class JavaStubWriter extends JavaWriter {
         // set output type
         if (parms.returnType != null) {
             QName qn = parms.returnType.getQName();
-            String localName = null;
-            if (parms.returnType instanceof BaseJavaType) {
-                localName = qn.getLocalPart();
-            }
-            else {
-                localName = Utils.getJavaLocalName(parms.returnType.getName());
-            }
             String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-              localName + "\"))";
+                qn.getLocalPart() + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
 
             pw.println();
