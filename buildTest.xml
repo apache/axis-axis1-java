@@ -163,6 +163,15 @@ Copyright:
 
     <!-- now, run the actual test -->
     <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <!-- Pass through the proxy parameters -->
+      <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
+      <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
+      <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
+      <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
+      <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
+      <!-- Pass the port for SimpleAxisServer -->
+      <jvmarg value="-Dtest.functional.SimpleAxisPort=${test.functional.SimpleAxisPort}"/>
+      <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
@@ -171,8 +180,8 @@ Copyright:
                 has its own test class collecting all the tests -->
               <include name="**/FunctionalTests.class" />
               <include name="**/*TestCase.class" />
-          <!-- <include name="**/test/*TestSuite.class"/> -->
               <exclude name="**/Interop3TestCase.class"/>
+              <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
         </fileset>
       </batchtest>
     </junit>
