@@ -27,8 +27,6 @@ import java.io.UnsupportedEncodingException;
  *
  *
  * @author <a href="mailto:jens@void.fm">Jens Schumann</a>
- * @version $Id$
- *
  */
 class EncodedByteArray {
     private byte[] array = null;

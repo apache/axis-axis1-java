@@ -36,8 +36,6 @@ package org.apache.axis.utils;
  * @author Eric Ye, IBM
  * @author Arnaud  Le Hors, IBM
  * @author Rahul Srivastava, Sun Microsystems Inc.
- *
- * @version $Id$
  */
 public class XMLChar {
 

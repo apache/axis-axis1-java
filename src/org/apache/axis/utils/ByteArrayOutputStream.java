@@ -43,7 +43,6 @@ import java.util.List;
  * deprecated toString(int) method that has been ignored.
  *
  * @author <a href="mailto:jeremias@apache.org">Jeremias Maerki</a>
- * @version $Id$
  */
 public class ByteArrayOutputStream extends OutputStream {
 
