@@ -67,6 +67,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.InternalException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -84,6 +85,7 @@ import java.util.Hashtable;
  * write XML files.
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glyn Normington (glyn@apache.org)
  */
 public class FileProvider implements EngineConfiguration {
     protected static Log log =
@@ -120,6 +122,19 @@ public class FileProvider implements EngineConfiguration {
     public FileProvider(String basepath, String filename) {
         this.basepath = basepath;
         this.filename = filename;
+
+        File dir = new File(basepath);
+
+        /*
+         * If the basepath is not a readable directory, throw an internal
+         * exception to make it easier to debug setup problems.
+         */
+        if (!dir.isDirectory() || !dir.canRead()) {
+            throw new InternalException(JavaUtils.
+                                        getMessage("invalidConfigFilePath",
+                                                   basepath));
+        }
+
         File file = new File(basepath, filename);
         readOnly = file.canRead() & !file.canWrite();
 
