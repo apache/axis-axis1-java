@@ -63,6 +63,10 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 
+import org.apache.axis.Message;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPHeaderElement;
+
 /**
  * Test SOAPEnvelope class.
  *
@@ -126,5 +130,32 @@ public class TestSOAPEnvelope extends TestCase {
             assertTrue("second body added", false);
         } catch (SOAPException e) {
         }
+    }
+    
+    // Test for bug #14570
+	public void testNullpointer() throws Exception{
+		org.apache.axis.message.SOAPEnvelope env=new org.apache.axis.message.SOAPEnvelope();
+		SOAPBodyElement bdy=new SOAPBodyElement();
+		bdy.setName("testResponse");
+		env.addBodyElement(bdy);
+		Message msg=new Message(env);
+		SOAPBodyElement sbe = msg.getSOAPEnvelope().getBodyByName(null,"testResponse");
+        assertTrue(sbe != null);
+	}
+
+    // Test for bug 14574
+    public void testNullpointerInHeader() throws Exception{
+		org.apache.axis.message.SOAPEnvelope env=new org.apache.axis.message.SOAPEnvelope();
+		SOAPHeaderElement hdr=new SOAPHeaderElement(null,"testHeader");
+		env.addHeader(hdr);
+		Message msg=new Message(env);
+		SOAPHeaderElement she = msg.getSOAPEnvelope().getHeaderByName(null,"testHeader");
+        assertTrue(she != null);
+	}
+    
+    public static void main(String args[]) throws Exception {
+        TestSOAPEnvelope tester = new TestSOAPEnvelope("TestSOAPEnvelope");
+        tester.testNullpointer();
+        tester.testNullpointerInHeader();
     }
 }
