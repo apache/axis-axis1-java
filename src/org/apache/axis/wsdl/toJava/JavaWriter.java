@@ -192,7 +192,7 @@ public abstract class JavaWriter implements Generator {
         emitter.getGeneratedFileInfo().add(path, fqClass, type);
         namespaces.mkdir(packageName);
         File file = new File(packageDirName, fileName);
-        if (emitter.verbose()) {
+        if (emitter.isVerbose()) {
             System.out.println(message + ":  " + file.getPath());
         }
         pw = new PrintWriter(new FileWriter(file));

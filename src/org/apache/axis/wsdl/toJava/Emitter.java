@@ -134,58 +134,58 @@ public class Emitter extends Parser {
      * Turn on/off server skeleton creation
      * @param value
      */
-    public void setGenerateServerSide(boolean value) {
+    public void setServerSide(boolean value) {
         this.bEmitServer = value;
-    } // setGenerateServerSide
+    } // setServerSide
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
      */ 
-    public boolean generateServerSide() {
+    public boolean isServerSide() {
         return bEmitServer;
-    } // generateServerSide
+    } // isServerSide
 
     /**
      * Turn on/off server skeleton deploy
      * @param value
      */
-    public void setDeploySkeleton(boolean value) {
+    public void setSkeletonWanted(boolean value) {
         bDeploySkeleton = value;
-    }
+    } // setSkeletonWanted
 
     /**
      * Indicate if we should be deploying skeleton or implementation
      */ 
-    public boolean deploySkeleton() {
+    public boolean isSkeletonWanted() {
         return bDeploySkeleton;
-    }
+    } // isSkeletonWanted
 
     /**
      * Turn on/off Helper class generation
      * @param value
      */
-    public void setGenerateHelper(boolean value) {
+    public void setHelperWanted(boolean value) {
         bHelperGeneration = value;
-    }
+    } // setHelperWanted
 
     /**
      * Indicate if we should be generating Helper classes           
      */ 
-    public boolean generateHelper() {
+    public boolean isHelperWanted() {
         return bHelperGeneration;
-    }
+    } // isHelperWanted
 
     /**
      * Turn on/off test case creation
      * @param value
      */
-    public void setGenerateTestCase(boolean value) {
+    public void setTestCaseWanted(boolean value) {
         this.bEmitTestCase = value;
-    } // setGenerateTestCase
+    } // setTestCaseWanted
 
-    public boolean generateTestCase() {
+    public boolean isTestCaseWanted() {
         return bEmitTestCase;
-    } // geneateTestCase
+    } // isTestCaseWanted
 
     /**
      * By default, code is generated only for referenced elements.
@@ -194,13 +194,13 @@ public class Emitter extends Parser {
      * referenced.  Scope means:  by default, all WSDL files; if
      * generateImports(false), then only the immediate WSDL file.
      */
-    public void setGenerateAll(boolean all) {
+    public void setAllWanted(boolean all) {
         bGenerateAll = all;
-    } // setbGenerateAll
+    } // setAllWanted
 
-    public boolean generateAll() {
+    public boolean isAllWanted() {
         return bGenerateAll;
-    } // bGenerateAll
+    } // isAllWanted
 
     public Namespaces getNamespaces() {
         return namespaces;
@@ -415,8 +415,6 @@ public class Emitter extends Parser {
     } // run
 
     private void setup() {
-        addGenerators();
-
         if (baseTypeMapping == null) {
             setTypeMappingVersion(typeMappingVersion);
         }
@@ -437,13 +435,6 @@ public class Emitter extends Parser {
             }
         }
     } // setup
-
-    private void addGenerators() {
-        JavaGeneratorFactory factory = (JavaGeneratorFactory) getFactory();
-        factory.addGenerator(Definition.class, JavaDefinitionWriter.class); // for faults
-        factory.addGenerator(Definition.class, JavaDeployWriter.class); // for deploy.wsdd
-        factory.addGenerator(Definition.class, JavaUndeployWriter.class); // for undeploy.wsdd
-    } // addGenerators
 
     private Timer startTimer() {
         // We run a timout thread that can kill this one if it goes too long.
@@ -583,54 +574,54 @@ public class Emitter extends Parser {
     } // emit
 
     /**
-     * Turn on/off server skeleton creation
+     * Turn on/off server-side binding generation
      * @param value
-     * @deprecated Use setGenerateServerSide(value)
+     * @deprecated Use setServerSide(value)
      */
     public void generateServerSide(boolean value) {
-        setGenerateServerSide(value);
+        setServerSide(value);
     }
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
-     * @deprecated Use generateServerSide()
+     * @deprecated Use isServerSide()
      */ 
     public boolean getGenerateServerSide() {
-        return generateServerSide();
+        return isServerSide();
     }
 
     /**
      * Turn on/off server skeleton deploy
      * @param value
-     * @deprecated Use setbDeploySkeleton(value)
+     * @deprecated Use setSkeletonWanted(value)
      */
     public void deploySkeleton(boolean value) {
-        setDeploySkeleton(value);
+        setSkeletonWanted(value);
     }
 
     /**
      * Indicate if we should be deploying skeleton or implementation
-     * @deprecated Use bDeploySkeleton()
+     * @deprecated Use isSkeletonWanted()
      */ 
     public boolean getDeploySkeleton() {
-        return deploySkeleton();
+        return isSkeletonWanted();
     }
 
     /**
      * Turn on/off Helper class generation
      * @param value
-     * @deprecated Use setbHelperGeneration(value)
+     * @deprecated Use setHelperWanted(value)
      */
     public void setHelperGeneration(boolean value) {
-        setGenerateHelper(value);
+        setHelperWanted(value);
     }
 
     /**
      * Indicate if we should be generating Helper classes
-     * @deprecated Use bHelperGeneration()
+     * @deprecated Use isHelperWanted()
      */ 
     public boolean getHelperGeneration() {
-        return generateHelper();
+        return isHelperWanted();
     }
 
     /**
@@ -653,10 +644,10 @@ public class Emitter extends Parser {
 
     /**
      * Return the status of the debug switch.
-     * @deprecated Use debug()
+     * @deprecated Use isDebug()
      */
     public boolean getDebug() {
-        return debug();
+        return isDebug();
     } // getDebug
 
     /**
@@ -670,25 +661,25 @@ public class Emitter extends Parser {
 
     /**
      * Return the status of the verbose switch
-     * @deprecated Use verbose()
+     * @deprecated Use isVerbose()
      */ 
     public boolean getVerbose() {
-        return verbose();
+        return isVerbose();
     }
 
     /**
      * Turn on/off test case creation
      * @param value
-     * @deprecated Use setGenerateTestCase()
+     * @deprecated Use setTestCaseWanted()
      */
     public void generateTestCase(boolean value) {
-        setGenerateTestCase(value);
+        setTestCaseWanted(value);
     }
 
     /**
-     * @deprecated Use setbGenerateAll(all)
+     * @deprecated Use setAllWanted(all)
      */
      public void generateAll(boolean all) {
-         setGenerateAll(all);
+         setAllWanted(all);
      } // generateAll
 }

@@ -91,7 +91,7 @@ public class JavaUndeployWriter extends JavaWriter {
     } // ctor
 
     public void generate() throws IOException {
-        if (emitter.generateServerSide()) {
+        if (emitter.isServerSide()) {
             super.generate();
         }
     } // generate

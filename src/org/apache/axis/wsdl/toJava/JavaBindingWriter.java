@@ -102,8 +102,8 @@ public class JavaBindingWriter implements Generator {
             stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
 
             // Skeleton and Impl writers
-            if (emitter.generateServerSide()) {
-                if (emitter.deploySkeleton()) {
+            if (emitter.isServerSide()) {
+                if (emitter.isSkeletonWanted()) {
                     skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
                 }
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
