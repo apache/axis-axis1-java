@@ -842,15 +842,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         String name = Utils.xmlNameToJava(opName);
 
         String ret = "void";
-        if (parms.returnType != null) {
-            // Construct a Parameter for the return.
-            // RJB NOTE:  The return info should really just be a Parameter
-            //            rather than duplicating the same info on the
-            //            Parameters object.
-            Parameter returnParm = new Parameter();
-            returnParm.setMIMEType(parms.returnMIMEType);
-            returnParm.setType(parms.returnType);
-            ret = Utils.getParameterTypeName(returnParm);
+        if (parms.returnParam != null) {
+            ret = Utils.getParameterTypeName(parms.returnParam);
         }
         String signature = "    public " + ret + " " + name + "(";
 

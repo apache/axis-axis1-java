@@ -199,12 +199,16 @@ public class JavaSkelWriter extends JavaClassWriter {
                 pw.println("        };");
 
                 // Get the return name QName and type
-                QName retName = parameters.returnName;
-                QName retType = Utils.getXSIType(parameters.returnType);
+                QName retName = null;
+                QName retType = null;
+                if (parameters.returnParam != null) {
+                    retName = parameters.returnParam.getQName();
+                    retType = Utils.getXSIType(parameters.returnParam.getType());
+                }
 
                 String returnStr;
                 if (retName != null) {
-                    returnStr = Utils.getNewQName(parameters.returnName);
+                    returnStr = Utils.getNewQName(retName);
                 } else {
                     returnStr = "null";
                 }
@@ -217,8 +221,9 @@ public class JavaSkelWriter extends JavaClassWriter {
                 }
 
                 // Is the return type a MIME type?
-                if (parameters.returnMIMEType != null) {
-                    pw.println("        _oper.getReturnParamDesc().setMIMEType(\"" + parameters.returnMIMEType + "\");");
+                if (parameters.returnParam != null &&
+                            parameters.returnParam.getMIMEType() != null) {
+                    pw.println("        _oper.getReturnParamDesc().setMIMEType(\"" + parameters.returnParam.getMIMEType() + "\");");
                 }
 
                 // If we need to know the QName (if we have a namespace or
@@ -350,17 +355,10 @@ public class JavaSkelWriter extends JavaClassWriter {
         // in as parameters.
 
         // Call the real implementation
-        if (parms.returnType == null) {
+        if (parms.returnParam == null) {
             pw.print("        ");
         } else {
-            // Construct a Parameter for the return.
-            // RJB NOTE:  The return info should really just be a
-            //            Parameter rather than duplicating the same
-            //            info on the Parameters object.
-            Parameter returnParm = new Parameter();
-            returnParm.setMIMEType(parms.returnMIMEType);
-            returnParm.setType(parms.returnType);
-            pw.print("        " + Utils.getParameterTypeName(returnParm) + " ret = ");
+            pw.print("        " + Utils.getParameterTypeName(parms.returnParam) + " ret = ");
         }
         String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
         boolean needComma = false;
@@ -376,7 +374,7 @@ public class JavaSkelWriter extends JavaClassWriter {
         call = call + ")";
         pw.println(call + ";");
 
-        if (parms.returnType != null) {
+        if (parms.returnParam != null) {
             pw.println("        return ret;");
         }
         pw.println("    }");

@@ -78,6 +78,7 @@ import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
@@ -183,21 +184,15 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             writeBindingAssignment(pw, bindingType, portName);
 
             pw.println("        try {");
-            if (params.returnType != null) {
+            if (params.returnParam != null) {
+                TypeEntry returnType = params.returnParam.getType();
                 pw.print("            ");
-                // Construct a Parameter for the return.
-                // RJB NOTE:  The return info should really just be a
-                //            Parameter rather than duplicating the same
-                //            info on the Parameters object.
-                Parameter returnParm = new Parameter();
-                returnParm.setMIMEType(params.returnMIMEType);
-                returnParm.setType(params.returnType);
-                pw.print(Utils.getParameterTypeName(returnParm));
+                pw.print(Utils.getParameterTypeName(params.returnParam));
                 pw.print(" value = ");
 
-                if (params.returnMIMEType == null &&
-                        Utils.isPrimitiveType(params.returnType)) {
-                    if ( "boolean".equals( params.returnType.getName() ) ) {
+                if (params.returnParam.getMIMEType() == null &&
+                        Utils.isPrimitiveType(returnType)) {
+                    if ("boolean".equals(returnType.getName())) {
                         pw.println("false;");
                     } else {
                         pw.println("-3;");
@@ -209,7 +204,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
             pw.print("            ");
 
-            if (params.returnType != null) {
+            if (params.returnParam != null) {
                 pw.print("value = ");
             }
 

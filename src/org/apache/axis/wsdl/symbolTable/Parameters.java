@@ -67,15 +67,8 @@ public class Parameters {
     // This vector contains instances of the Parameter class
     public Vector list = new Vector();
 
-    // The type of the first output part, used as the method's return value
-    public TypeEntry returnType = null;
-
-    // The name of the return type (from the part name of the output message.
-    // Used to create the RPCParam for the return value.
-    public QName returnName = null;
-
-    // The MIME type of the return, null if it doesn't exist.
-    public String returnMIMEType = null;
+    // The return info is stored as a Parameter.
+    public Parameter returnParam = null;
 
     // A map of the faults
     public Map faults = null;
@@ -89,8 +82,7 @@ public class Parameters {
     public int outputs = 0;
 
     public String toString() {
-        return "\nreturnType = " + returnType
-                + "\nreturnName = " + returnName
+        return "\nreturnParam = " + returnParam
                 + "\nfaults = " + faults
                 + "\nsignature = " + signature
                 + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"

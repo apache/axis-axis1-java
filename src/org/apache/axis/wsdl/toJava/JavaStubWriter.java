@@ -333,8 +333,8 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         
         // Add the return type
-        if (params.returnType != null)
-            v.add(params.returnType);
+        if (params.returnParam != null)
+            v.add(params.returnParam.getType());
         
         // Collect all the types in faults
         Map faults = operation.getFaults();
@@ -542,19 +542,20 @@ public class JavaStubWriter extends JavaClassWriter {
             }
         }
         // set output type
-        if (parms.returnType != null) {
+        if (parms.returnParam != null) {
+            TypeEntry returnType = parms.returnParam.getType();
 
             // Get the QName for the return Type
-            QName returnType = Utils.getXSIType(parms.returnType);
+            QName returnName = Utils.getXSIType(returnType);
             
             // Get the javaType
-            String javaType = parms.returnType.getName();
+            String javaType = returnType.getName();
             if (javaType == null) {
                 pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnType) + ");");
+                           Utils.getNewQName(returnName) + ");");
             } else {
                 pw.println("        _call.setReturnType(" + 
-                           Utils.getNewQName(returnType) + 
+                           Utils.getNewQName(returnName) + 
                            "," + javaType + ".class);");
             }
         }
@@ -692,9 +693,9 @@ public class JavaStubWriter extends JavaClassWriter {
         if (allOuts > 0) {
             pw.println("        else {");
             if (allOuts == 1) {
-                if (parms.returnType != null) {
-                    writeOutputAssign(pw, "return ", parms.returnType,
-                            parms.returnMIMEType, "_resp");
+                if (parms.returnParam != null) {
+                    writeOutputAssign(pw, "return ", parms.returnParam.getType(),
+                            parms.returnParam.getMIMEType(), "_resp");
                 }
                 else {
                     // The resp object must go into a holder
@@ -728,9 +729,9 @@ public class JavaStubWriter extends JavaClassWriter {
                                           "_output.get(" + qnameName + ")");
                     }
                 }
-                if (parms.returnType != null) {
-                    writeOutputAssign(pw, "return ", parms.returnType,
-                            parms.returnMIMEType, "_resp");
+                if (parms.returnParam != null) {
+                    writeOutputAssign(pw, "return ", parms.returnParam.getType(),
+                            parms.returnParam.getMIMEType(), "_resp");
                 }
 
             }

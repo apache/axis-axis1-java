@@ -1073,14 +1073,11 @@ public class SymbolTable {
         // is the return value.  If there are more than 1, then they are 
         // out parameters.
         if (outputs.size() == 1) {
-            Parameter returnParam = (Parameter)outputs.get(0);
-            parameters.returnType = returnParam.getType();
-            parameters.returnMIMEType = returnParam.getMIMEType();
-            if (parameters.returnType instanceof DefinedElement) {
-                parameters.returnName = 
-                        ((DefinedElement)parameters.returnType).getQName();
-            } else {
-                parameters.returnName = returnParam.getQName(); 
+            parameters.returnParam = (Parameter)outputs.get(0);
+            if (parameters.returnParam.getType() instanceof DefinedElement) {
+                parameters.returnParam.setQName(
+                        ((DefinedElement)parameters.returnParam.getType())
+                        .getQName());
             }
             ++parameters.outputs;
         }
