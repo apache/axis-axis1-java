@@ -80,6 +80,7 @@ public class SOAPHeaderElement extends MessageElement
 
     protected String    actor = "";
     protected boolean   mustUnderstand = false;
+    protected boolean   relay = false;
 
     public SOAPHeaderElement(String namespace, String localPart)
     {
@@ -120,6 +121,12 @@ public class SOAPHeaderElement extends MessageElement
                                     roleQName.getLocalPart());
         if (actor == null) {
             actor = "";
+        }
+        
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+            String relayVal = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
+                                                  Constants.ATTR_RELAY);
+            relay = ((relayVal != null) && (relayVal.equals("true") || relayVal.equals("1"))) ? true : false;
         }
     }
 
@@ -164,6 +171,12 @@ public class SOAPHeaderElement extends MessageElement
             actor = "";
         }
 
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+            String relayVal = attributes.getValue(soapConstants.getEnvelopeURI(),
+                                                  Constants.ATTR_RELAY);
+            relay = ((relayVal != null) && (relayVal.equals("true") || relayVal.equals("1"))) ? true : false;
+        }
+
         processed = false;
         alreadySerialized = true;
     }
@@ -182,7 +195,14 @@ public class SOAPHeaderElement extends MessageElement
     public void setRole(String a) {
         actor = a ;
     }
-    
+
+    public boolean getRelay() {
+        return relay;
+    }
+    public void setRelay(boolean relay) {
+        this.relay = relay;
+    }
+
     public void setProcessed(boolean value) {
         processed = value ;
     }
@@ -212,6 +232,11 @@ public class SOAPHeaderElement extends MessageElement
             setAttribute(soapVer.getEnvelopeURI(),
                          Constants.ATTR_MUST_UNDERSTAND,
                          val);
+            
+            if (soapVer == SOAPConstants.SOAP12_CONSTANTS && relay) {
+                setAttribute(soapVer.getEnvelopeURI(), Constants.ATTR_RELAY,
+                             "true");
+            }
         }
 
         super.outputImpl(context);

@@ -568,7 +568,7 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
      * @throws Exception
      */ 
     public void testT1() throws Exception {
-        testEchoOkHeaderWithEmptyBody(Constants.URI_SOAP12_NEXT_ACTOR);
+        testEchoOkHeaderWithEmptyBody(Constants.URI_SOAP12_NEXT_ROLE);
     }
 
     /**

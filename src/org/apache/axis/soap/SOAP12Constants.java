@@ -117,7 +117,7 @@ public class SOAP12Constants implements SOAPConstants {
      * Obtain the "next" role/actor URI
      */
     public String getNextRoleURI() {
-        return Constants.URI_SOAP12_NEXT_ACTOR;
+        return Constants.URI_SOAP12_NEXT_ROLE;
     }
 
     /**
