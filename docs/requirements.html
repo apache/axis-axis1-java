@@ -1,0 +1,413 @@
+<html>
+<head>
+
+ <style type="text/css">
+    small.red { color: red }
+ </style>
+</head>
+
+<body bgcolor=white>
+
+<h1>Requirements</h1>
+
+There is a <a href="#nonreq">non-requirements</a> section below.
+<br>
+<a href="#releases">Release cycles</a> are explained below.
+<p>
+
+<table border="3" cellspacing=0 cellpadding=3 width=600>
+<tr valign=top><th>No.<th>Description<th><th>0.5<th>0.8<th>1.0<th>later</tr>
+
+<tr valign=top><th>&nbsp;<th colspan=6> XML Protocol compliance</tr>
+<tr valign=top><td>10<td>
+	We will diligently track the XP protocol as it evolves, and support it when it's ready.
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+    
+<tr valign=top><th>&nbsp;<th colspan=6> Error and fault handling</tr>
+<tr valign=top><td>20<td>
+	Specify an extensible Java Exception mapping into SOAP faults
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>21<td>
+	Specify an extensible SOAP fault mapping into Java exceptions
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+
+<tr valign=top><th>&nbsp;<th colspan=6> Service and Operation Identification</tr>
+<tr valign=top><td>30<td>
+	Dispatch by transport URL
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>31<td>
+	Dispatch by SOAPAction
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>32<td>
+	Dispatch by QName of the first body entry
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>33<td>
+	Dispatch by a custom handler <i>(to use any information
+	        available)</i>
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+
+<tr valign=top><th>&nbsp;<th colspan=6> Message exchange patterns supported at the client API level</tr>
+<tr valign=top><td>&nbsp;<td colspan=6>
+  <i>Motivation: we believe the following message exchange patterns are in
+    common use and important to implement (e.g. WSDL uses them)</i>
+<tr valign=top><td>40<td>
+	Synchronous request/response
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>41<td>
+	One-way messaging
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>42<td>
+	[??] Asynchronous request/response (non-blocking) <i>(the question
+		marks mean we don't know whether to provide this)</i>
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;
+
+<tr valign=top><th>&nbsp;<th colspan=6> SOAP 1.1 compliance</tr>
+<tr valign=top><td>50<td>
+	All aspects of SOAP 1.1 supported by Apache SOAP 2.x
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>51<td>
+	Support intermediaries
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>52<td>
+	Transparency should be provided when we place intermediaries (hosts)
+	        between requestor and provider (creating a proxy server)
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>53<td>
+	Support the SOAP concept of mustUnderstand headers
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>54<td>
+	Support the SOAP actor header attributes
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Performance</tr>
+
+<tr valign=top><td>60<td>
+	The architecture must not require the whole message to be in
+	        memory at the same time 
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>61<td>
+	Scalable
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>62<td>
+	Faster than Apache SOAP 2.x
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>63<td>
+	Must not be significantly slower than comparable alternative
+        implementations
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Administration and monitoring</tr>
+<tr valign=top><td>70<td>
+	Logging API
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>71<td>
+	Metrics API
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>72<td>
+	Management (JMX) API
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>73<td>
+	Run-time (un)deployment API
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+
+<tr valign=top><th>&nbsp;<th colspan=6> Deployment</tr>
+<tr valign=top><td>80<td>
+	Installation and deployment of both the engine, components, and services should be simple
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>81<td>
+	Support a WebServiceArchive format which associates the
+	        executable and the description files
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>82<td>
+	Support .asmx-like drop-in service deployment
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>83<td>
+	A single SUPER TINY .jar file must be enough for a client to communicate
+	        via SOAP
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>84<td>
+	Defaults packaged with both client and server must be sane,
+	        secure and ready to go
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>85<td>
+	Intermediaries (hosts) should be easy to be configured
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+
+<tr valign=top><th>&nbsp;<th colspan=6> Providers</tr>
+<tr valign=top><td>90<td>
+	Pluggable provider API
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>91<td>
+	Java provider
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>92<td>
+	BSF provider
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>93<td>
+	EJB provider
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>94<td>
+	COM provider
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+
+<tr valign=top><th>&nbsp;<th colspan=6> Pluggable XML protocol support</tr>
+<tr valign=top><td>100<td>
+	SOAP
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>101<td>
+	XML Protocol
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>102<td>
+	Must not name general classes as SOAPWhateverDoer
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>103<td>
+	Simultaneous support for multiple message protocols
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+
+<tr valign=top><th>&nbsp;<th colspan=6> Message processing</tr>
+<tr valign=top><td>110<td>
+	Support a flexible and extensible system allowing message
+		handlers (extensions, applications) to build up orthogonal pieces of a
+		message
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>111<td>
+	Handler invocation order is always deterministic for a given server
+		configuration and message
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>112<td>
+	Some information should be shared between all the handlers in the "chain" on one host - MessageContext
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>112a<td>
+	Have the ability to specify application-specific parameters (like username or other thing) in the context 
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>112b<td>
+	Some encapsulation of the idea of a session that's transport-independent (cookies in the HTTPRequest/HTTPResponse for http) 
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>112b.1<td>
+	An example/sample for a SOAP session header/handler/supplier
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>112b.2<td>
+	Client code needs to support this as well - need to
+            		pass session back across if necessary...
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>113<td>
+	Handlers need to be allowed to reach raw message data
+    <td><td>X<td>X<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Transport</tr>
+<tr valign=top><td>120<td>
+	Pluggable transport API
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>121<td>
+	HTTP listener and sender
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>122<td>
+	HTTPS listener and sender
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>123<td>
+	SMTP sender
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>124<td>
+	POP3 poller
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>125<td>
+	JMS listener and sender
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>126<td>
+	Support for "SOAP messages with attachments"
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>127<td>
+	The transport can insert arbitrary transport-specific stuff into the Context
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>128<td>
+	The transport-specific stuff should be encapsulated, most of the engine should work on a canonical form of the message 
+    <td><td>X<td>X<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Security</tr>
+<tr valign=top><td>130<td>
+	Support transport-level and SOAP-level security
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>131<td>
+	HTTP Basic auth
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>132<td>
+	Support for existing security SOAP-level standards
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>133<td>
+	An example/sample for a SOAP Basic Authentication header/handler
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Service Description and Discovery (for instance, WSDL, DISCO)</tr>
+
+<tr valign=top><td>140<td>
+	Support the ability to query a service's description at runtime (e.g. GET ...?wsdl)
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>140a<td>
+	If deployment params have altered the service
+            	description, the updated version must be returned
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>141<td>
+	Support a basic html page describing the service (via an HTTP GET)
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>142<td>
+	Support a pretty html page describing the service (via an HTTP GET)
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>143<td>
+	Services can be deployed and used without service descriptions
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>144<td>
+	Should abstract the SD layer, at least by keeping the interfaces clean
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>144a<td>
+	The abstract SD layer must support run-time
+            	determination of xsi:types of parts of the message
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>144b<td>
+	Include a WSDL implementation of the SD layer
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>144c<td>
+	Extend WSDL with information on where to get components for stuff
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>144d<td>
+	Tools and/or run-time support for proxy generation from WSDL
+            	and/or WSDD
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>145<td>
+	HTTP GET on the Axis node returns an appropriate DISCO document
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Platforms</tr>
+<tr valign=top><td>150<td>
+	Java implementation
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>151<td>
+	C++ implementation
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>151a<td>
+	C++ impl core should be cross platform with platform-specific
+            	extensions (like COM) 
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>152<td>
+	All implementations should have as much in common as possible 
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>153<td>
+	Use standard APIs wherever possible
+    <td><td>X<td>X<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Data Encoding</tr>
+
+<tr valign=top><td>160<td>
+	Extensible support for encodings
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>161<td>
+	Implement basic SOAP encoding (the level of current Apache SOAP 2.x)
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>162<td>
+	Support for sparse and partially-transmitted arrays
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>163<td>
+	Support for multidimensional arrays
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+<tr valign=top><td>164<td>
+	Support literal XML encoding
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>165<td>
+	It should be relatively easy to write a "Serializer"
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>166<td>
+	Include some general (de)serializers (that handle multiple
+        	types), so that there needn't exist a (de)serializer for every type
+        	that could possibly travel over the wire (needs further discussion
+        	- isomorphism (roundtrip) issues)
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>167<td>
+	(De)serialization may occur at any time on demand
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>168<td>
+	(De)serialization should be available to the application
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+
+
+<tr valign=top><th>&nbsp;<th colspan=6> Release</tr>
+<tr valign=top><td>&nbsp;<td colspan=6>
+  <i>Although these are a 1.0 requirements, significant progress must be made on these 
+    items during interim releases.</i>
+<tr valign=top><td>170<td>
+	Product-level code
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>171<td>
+	Product-level docs
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>172<td>
+	Product-level examples
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>173<td>
+	Product-level performance
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>174<td>
+	Product-level testing
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+
+<tr valign=top><th>&nbsp;<th colspan=6> Migration from Apache SOAP 2.x</tr>
+<tr valign=top><td>180<td>
+	Documentation
+    <td><td>&nbsp;<td>X<td>X<td>&nbsp;
+<tr valign=top><td>181<td>
+	The legacy Call object
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>182<td>
+	Serialization, custom serializers - maybe wrappers
+    <td><td>&nbsp;<td>&nbsp;<td>?<td>?
+<tr valign=top><td>183<td>
+	Support for legacy messaging services
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>184<td>
+	Support for legacy providers
+    <td><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>X
+
+<tr valign=top><th>&nbsp;<th colspan=6> Coding</tr>
+<tr valign=top><td>190<td>Follow the <a href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">
+		Java Coding Style</a> with <b>no</b> tab characters.
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>191<td>Use javadoc style to document all non-private methods in commits.
+    <td><td>X<td>X<td>X<td>&nbsp;
+<tr valign=top><td>192<td>
+	Document packages.
+    <td><td>&nbsp;<td>&nbsp;<td>X<td>&nbsp;
+<tr valign=top><td>193<td>Committing a new package, at least place in a placeholder for the package
+		doc that says "this is to be done".
+    <td><td>X<td>X<td>X<td>&nbsp;
+
+
+</table>
+
+<a name="nonreq"></a>
+<h1>Non-requirements (won't be supported)</h1>
+  <br>
+  <i>We find the SOAP spec. to be unclear on these issues so we decided not to
+    support them.</i>
+  <ol>
+    <li>	RPC calls in SOAP headers
+    <li>	Multiple RPC calls in a single SOAP message
+  </ol>
+
+
+<p>
+<a name="releases"></a>
+<h1>Releases and test cycles</h1>
+We're planning on releasing .5, .8, .9 and 1.0.<br>
+.5 is a preview.<br>
+.8, .9 are to show the growing set of features and docs and test cases and all that.<br>
+We're not functionally complete before 1.0. <br>
+1.0 will have a beta cycle.
+
+<p>
+
+</body></html>
