@@ -414,7 +414,8 @@ public class ServiceDesc {
         Method [] methods = implClass.getDeclaredMethods();
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            if (method.getName().equals(oper.getName())) {
+            if (Modifier.isPublic(method.getModifiers()) &&
+                    method.getName().equals(oper.getName())) {
                 // Check params
                 Class [] paramTypes = method.getParameterTypes();
                 if (paramTypes.length != oper.getNumParams())
@@ -504,7 +505,9 @@ public class ServiceDesc {
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            getSyncedOperationsForName(implClass, methods[i].getName());
+            if (Modifier.isPublic(methods[i].getModifiers())) {
+                getSyncedOperationsForName(implClass, methods[i].getName());
+            }
         }
 
         if (implClass.isInterface()) {
@@ -643,7 +646,8 @@ public class ServiceDesc {
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            if (method.getName().equals(methodName)) {
+            if (Modifier.isPublic(method.getModifiers()) &&
+                    method.getName().equals(methodName)) {
                 createOperationForMethod(method);
             }
         }
