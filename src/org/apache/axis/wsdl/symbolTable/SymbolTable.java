@@ -86,6 +86,10 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
+import javax.wsdl.extensions.mime.MIMEPart;
+
 import javax.wsdl.factory.WSDLFactory;
 
 import javax.xml.namespace.QName;
@@ -987,7 +991,6 @@ public class SymbolTable {
         if (bindingEntry != null) {
             literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
             literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
-            bindingName = bindingEntry.getBinding().getQName().toString();
         }
         
         // Collect all the input parameters
@@ -995,7 +998,7 @@ public class SymbolTable {
         if (input != null) {
             getParametersFromParts(inputs,
                         input.getMessage().getOrderedParts(null), 
-                        literalInput, operation.getName(), bindingName);
+                        literalInput, operation.getName(), bindingEntry);
         }
 
         // Collect all the output parameters
@@ -1003,7 +1006,7 @@ public class SymbolTable {
         if (output != null) {
             getParametersFromParts(outputs,
                         output.getMessage().getOrderedParts(null), 
-                        literalOutput, operation.getName(), bindingName);
+                        literalOutput, operation.getName(), bindingEntry);
         }
 
         if (parameterOrder != null) {
@@ -1048,6 +1051,7 @@ public class SymbolTable {
         if (outputs.size() == 1) {
             Parameter returnParam = (Parameter)outputs.get(0);
             parameters.returnType = returnParam.getType();
+            parameters.returnMIMEType = returnParam.getMIMEType();
             if (parameters.returnType instanceof DefinedElement) {
                 parameters.returnName = 
                         ((DefinedElement)parameters.returnType).getQName();
@@ -1155,10 +1159,43 @@ public class SymbolTable {
                                           Collection parts, 
                                           boolean literal, 
                                           String opName, 
-                                          String bindingName) 
+                                          BindingEntry bindingEntry) 
             throws IOException {
         Iterator i = parts.iterator();
 
+        // Determine if there's only one element.  For wrapped
+        // style, we normally only have 1 part which is an
+        // element.  But with MIME we could have any number of
+        // types along with that single element.  As long as
+        // there's only ONE element, and it's the same name as
+        // the operation, we can unwrap it.
+        int numberOfElements = 0;
+        boolean possiblyWrapped = false;
+        while (i.hasNext()) {
+            Part part = (Part) i.next();
+            if (part.getElementName() != null) {
+                ++numberOfElements;
+                if (part.getElementName().getLocalPart().equals(opName)) {
+                    possiblyWrapped = true;
+                }
+            }
+        }
+
+        // Hack alert - Try to sense "wrapped" document literal mode
+        // if we haven't been told not to.
+        // Criteria:
+        //  - If there is a single element part, 
+        //  - That part is an element
+        //  - That element has the same name as the operation
+        //  - That element has no attributes (check done below)
+        if (!nowrap &&
+                literal && 
+                numberOfElements == 1 &&
+                possiblyWrapped) {
+            wrapped = true;
+        }
+
+        i = parts.iterator();
         while (i.hasNext()) {
             Parameter param = new Parameter();
             Part part = (Part) i.next();
@@ -1166,26 +1203,11 @@ public class SymbolTable {
             QName typeName = part.getTypeName();
             String partName = part.getName();
 
-            // Hack alert - Try to sense "wrapped" document literal mode
-            // if we haven't been told not to.
-            // Criteria:
-            //  - If there is a single part, 
-            //  - That part is an element
-            //  - That element has the same name as the operation
-            //  - That element has no attributes (check done below)
-            if (!nowrap &&
-                    literal && 
-                    !i.hasNext() &&
-                    elementName != null && 
-                    elementName.getLocalPart().equals(opName)) {
-                
-                wrapped = true;
-            }
-            
-            if (!literal || !wrapped) {
+            if (!literal || !wrapped || elementName == null) {
                 // We're either RPC or literal + not wrapped.
                 
                 param.setName(partName);
+                param.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
 
                 // Add this type or element name
                 if (typeName != null) {
@@ -1211,28 +1233,24 @@ public class SymbolTable {
             }
             
             // flow to here means literal + wrapped!
-                
+
             // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
             Node node = null;
-            if (typeName != null) {
+            if (typeName != null && bindingEntry.getMIMETypes().size() == 0) {
                 // Since we can't (yet?) make the Axis engine generate the right
                 // XML for literal parts that specify the type attribute,
-                // abort processing with an error if we encounter this case
+                // (unless they're MIME types) abort processing with an
+                // error if we encounter this case
                 //
                 // node = getTypeEntry(typeName, false).getNode();
+                String bindingName =
+                  bindingEntry == null ? "unknown" : bindingEntry.getBinding().getQName().toString();
                 throw new IOException(
                         JavaUtils.getMessage("literalTypePart00", 
                                              new String[] {partName, 
                                                            opName,  
                                                            bindingName}));
-            }
-            
-            if (elementName == null) {
-                throw new IOException(
-                        JavaUtils.getMessage("noElemOrType", 
-                                             partName, 
-                                             opName));                
             }
             
             // Get the node which corresponds to the type entry for this
@@ -1277,13 +1295,14 @@ public class SymbolTable {
                     SchemaUtils.getContainedElementDeclarations(node, this);
 
             // if we got the types entries and we didn't find attributes
-            // use the tings is this element as the parameters
+            // use the things is this element as the parameters
             if (vTypes != null && wrapped) {
                 // add the elements in this list
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
                     Parameter p = new Parameter();
                     p.setQName(elem.getName());
+                    p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
                     p.setType(elem.getType());
                     v.add(p);
                 }
@@ -1292,6 +1311,7 @@ public class SymbolTable {
                 // we can't use wrapped mode.
                 Parameter p = new Parameter();
                 p.setName(partName);
+                p.setMIMEType(bindingEntry == null ? null : bindingEntry.getMIMEType(partName));
                 
                 if (typeName != null) {
                     p.setType(getType(typeName));
@@ -1303,7 +1323,7 @@ public class SymbolTable {
             }
         } // while
 
-    } // partStrings
+    } // getParametersFromParts
 
     /**
      * Populate the symbol table with all of the BindingEntry's from the Definition.
@@ -1340,6 +1360,7 @@ public class SymbolTable {
             boolean hasLiteral = false;
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
+            Map mimeTypes = new HashMap();
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
                 int inputBodyType = BindingEntry.USE_ENCODED;
                 int outputBodyType = BindingEntry.USE_ENCODED;
@@ -1362,6 +1383,12 @@ public class SymbolTable {
                                 }
                                 break;
                             }
+                            else if (obj instanceof MIMEMultipartRelated) {
+                                IntHolder holder = new IntHolder(inputBodyType);
+                                mimeTypes.putAll(collectMIMETypes(
+                                        (MIMEMultipartRelated) obj, holder, bindOp));
+                                inputBodyType = holder.value;
+                            }
                         }
                     }
                 }
@@ -1382,6 +1409,12 @@ public class SymbolTable {
                                     outputBodyType = BindingEntry.USE_LITERAL;
                                 }
                                 break;
+                            }
+                            else if (obj instanceof MIMEMultipartRelated) {
+                                IntHolder holder = new IntHolder(outputBodyType);
+                                mimeTypes.putAll(collectMIMETypes(
+                                        (MIMEMultipartRelated) obj, holder, bindOp));
+                                outputBodyType = holder.value;
                             }
                         }
                     }
@@ -1428,11 +1461,43 @@ public class SymbolTable {
                     hasLiteral = true;
                 }
             } // binding operations
-
-            BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, hasLiteral, attributes);
+            BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, hasLiteral, attributes, mimeTypes);
             symbolTablePut(bEntry);
         }
     } // populateBindings
+
+    /**
+     * Collect the list of those parts that are really MIME types.
+     */
+    private Map collectMIMETypes(MIMEMultipartRelated mpr, IntHolder bodyType,
+            BindingOperation bindOp) throws IOException {
+        HashMap mimeTypes = new HashMap();
+        List parts = mpr.getMIMEParts();
+        Iterator i = parts.iterator();
+        while (i.hasNext()) {
+            MIMEPart part = (MIMEPart) i.next();
+            List elems = part.getExtensibilityElements();
+            Iterator j = elems.iterator();
+            while (j.hasNext()) {
+                Object obj = j.next();
+                if (obj instanceof MIMEContent) {
+                    MIMEContent content = (MIMEContent) obj;
+                    mimeTypes.put(content.getPart(), content.getType());
+                }
+                else if (obj instanceof SOAPBody) {
+                    String use = ((SOAPBody) obj).getUse();
+                    if (use == null) {
+                        throw new IOException(JavaUtils.getMessage(
+                                "noUse", bindOp.getName()));
+                    }
+                    if (use.equalsIgnoreCase("literal")) {
+                        bodyType.value = BindingEntry.USE_LITERAL;
+                    }
+                }
+            }
+        }
+        return mimeTypes;
+    } // collectMIMETypes
 
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.

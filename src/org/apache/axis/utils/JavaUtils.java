@@ -56,11 +56,13 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.AxisProperties;
+import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.encoding.Hex;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.Collator;
@@ -80,6 +82,8 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import java.beans.Introspector;
+
+import javax.xml.soap.SOAPException;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -233,6 +237,17 @@ public class JavaUtils
         // Convert between HashMap and Hashtable
         if (arg instanceof HashMap && destClass == Hashtable.class) {
             return new Hashtable((HashMap)arg);
+        }
+
+        // Convert an AttachmentPart to the given destination class.
+        if (arg instanceof AttachmentPart && destClass == String.class) {
+            try {
+                return ((AttachmentPart)arg).getDataHandler().getContent();
+            }
+            catch (IOException ioe) {
+            }
+            catch (SOAPException se) {
+            }
         }
 
         // If the destination is an array and the source

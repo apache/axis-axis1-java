@@ -184,10 +184,20 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      */
-    protected void writeDeployTypes(PrintWriter pw, boolean hasLiteral) throws IOException {
+    protected void writeDeployTypes(PrintWriter pw, Binding binding,
+            boolean hasLiteral, boolean hasMIME) throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
+        if (hasMIME) {
+            QName bQName = binding.getQName();
+            writeTypeMapping(pw, bQName.getNamespaceURI(), "DataHandler",
+                    "javax.activation.DataHandler",
+                    "org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory",
+                    "org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory",
+                    Constants.URI_DEFAULT_SOAP_ENC);
+        }
+
         for (int i = 0; i < types.size(); ++i) {
             TypeEntry type = (TypeEntry) types.elementAt(i);
 
@@ -269,6 +279,7 @@ public class JavaDeployWriter extends JavaWriter {
         String serviceName = port.getName();
 
         boolean hasLiteral = bEntry.hasLiteral();
+        boolean hasMIME = Utils.hasMIME(bEntry);
 
         String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
         String styleStr = "";
@@ -293,7 +304,7 @@ public class JavaDeployWriter extends JavaWriter {
                          + serviceName + "\"/>");
 
         writeDeployBinding(pw, binding);
-        writeDeployTypes(pw, hasLiteral);
+        writeDeployTypes(pw, binding, hasLiteral, hasMIME);
 
         pw.println("  </service>");
     } //writeDeployPort
@@ -353,7 +364,7 @@ public class JavaDeployWriter extends JavaWriter {
                     // Write the operation metadata
                     writeOperation(pw, javaOperName, elementQName, 
                                    returnQName, returnType,
-                                   params);
+                                   params, binding.getQName());
                 }
             }
         }
@@ -379,7 +390,8 @@ public class JavaDeployWriter extends JavaWriter {
                                   QName elementQName,
                                   QName returnQName,
                                   QName returnType,
-                                  Parameters params) {
+                                  Parameters params,
+                                  QName bindingQName) {
         pw.print("      <operation name=\"" + javaOperName + "\"");
         if (elementQName != null) {
             pw.print(" qname=\"" +
@@ -405,6 +417,12 @@ public class JavaDeployWriter extends JavaWriter {
             // Get the parameter name QName and type QName
             QName paramQName = param.getQName();
             QName paramType = Utils.getXSIType(param.getType());
+
+            if (param.getMIMEType() != null) {
+                paramType = new QName(
+                        bindingQName.getNamespaceURI(),
+                        "DataHandler");
+            }
 
             pw.print("        <parameter");
             if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {

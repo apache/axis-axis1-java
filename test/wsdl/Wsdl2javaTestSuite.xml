@@ -53,6 +53,14 @@
         <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
     </wsdl2java>
 
+    <!-- attachment test -->
+    <wsdl2java url="test/wsdl/attachments/mime.wsdl"
+               output="build/work"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+    </wsdl2java>
+
     <!-- Multiple-binding test with different literal usage -->
     <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
                output="build/work"
@@ -913,6 +921,8 @@
          file is only for reference.
     <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl"
      -->
+    <!-- NOTE:  THIS DOMAIN HAS EXPIRED!  If it comes back,
+         we can add this test back in.
     <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
                output="build/work"
                verbose="no"
@@ -921,6 +931,7 @@
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
 
     </wsdl2java>
+    -->
 
     <!-- This tests element qualification.  -->
     <wsdl2java url="test/wsdl/qualify/qualifytest.wsdl"

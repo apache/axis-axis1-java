@@ -52,59 +52,33 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
+package org.apache.axis.holders;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.mail.internet.MimeMultipart;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import javax.xml.rpc.holders.Holder;
 
 /**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
-*/
-public class JavaHolderWriter extends JavaClassWriter {
-    private TypeEntry type;
+ * Class MimeMultipartHolder
+ *
+ * @version 1.0
+ */
+public final class MimeMultipartHolder implements Holder {
+
+    /** Field _value */
+    public MimeMultipart value;
 
     /**
-     * Constructor.
+     * Constructor MimeMultipartHolder
      */
-    protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
-        super(emitter, Utils.holder(null, type, emitter), "holder");
-        this.type = type;
-    } // ctor
+    public MimeMultipartHolder() {}
 
     /**
-     * Return "public final ".
+     * Constructor MimeMultipartHolder
+     *
+     * @param value
      */
-    protected String getClassModifiers() {
-        return super.getClassModifiers() + "final ";
-    } // getClassModifiers
-
-    /**
-     * Return "implements javax.xml.rpc.holders.Holder ".
-     */
-    protected String getImplementsText() {
-        return "implements javax.xml.rpc.holders.Holder ";
-    } // getImplementsText
-
-    /**
-     * Generate the holder for the given complex type.
-     */
-    protected void writeFileBody(PrintWriter pw) throws IOException {
-        String holderType = type.getName();
-        pw.println("    public " + holderType + " value;");
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this.value = value;");
-        pw.println("    }");
-        pw.println();
-    } // writeOperation
-
-} // class JavaHolderWriter
+    public MimeMultipartHolder(MimeMultipart value) {
+        this.value = value;
+    }
+}

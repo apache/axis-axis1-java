@@ -182,12 +182,12 @@ public class JavaSkelWriter extends JavaClassWriter {
                     QName paramType = Utils.getXSIType(p.getType());
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
-                               Utils.getNewQName(paramName) +
-                               ", " + modeStr + "," +
-                               Utils.getNewQName(paramType) +
-                               ","+
-                               p.getType().getName() + ".class" 
-                               +"),");
+                        Utils.getNewQName(paramName) +
+                        ", " + modeStr + ", " +
+                        Utils.getNewQName(paramType) +
+                        ", " +
+                        p.getType().getName() + ".class" 
+                        + "), ");
                 }
 
                 pw.println("        };");
@@ -236,7 +236,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                 }
 
                 pw.println("        _myOperationsList.add(_oper);");
-                pw.println("        if (_myOperations.get(\"" + javaOpName + "\")==null) {");
+                pw.println("        if (_myOperations.get(\"" + javaOpName + "\") == null) {");
                 pw.println("            _myOperations.put(\"" + javaOpName + "\", new java.util.ArrayList());");
                 pw.println("        }");
                 pw.println("        ((java.util.List)_myOperations.get(\"" + javaOpName + "\")).add(_oper);");

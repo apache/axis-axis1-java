@@ -58,6 +58,8 @@ package org.apache.axis.providers.java ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.AttachmentPart;
+import org.apache.axis.attachments.PlainTextDataSource;
 import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -74,6 +76,7 @@ import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Method;
@@ -220,6 +223,7 @@ public class RPCProvider extends JavaProvider
         for ( int i = 0 ; i < numArgs ; i++ ) {
             RPCParam rpcParam = (RPCParam)args.get(i);
             Object value = rpcParam.getValue();
+            boolean mimeType = value instanceof AttachmentPart;
             ParameterDesc paramDesc = rpcParam.getParamDesc();
             if (paramDesc != null && paramDesc.getJavaType() != null) {
 
@@ -230,8 +234,13 @@ public class RPCProvider extends JavaProvider
                 value = JavaUtils.convert(value,
                                           sigType);
                 rpcParam.setValue(value);
-                if (paramDesc.getMode() == ParameterDesc.INOUT)
+                if (paramDesc.getMode() == ParameterDesc.INOUT) {
+                    if (mimeType) {
+                        rpcParam.getParamDesc().setTypeQName(
+                                new QName("", "DataHandler"));
+                    }
                     outs.add(rpcParam);
+                }
             }
             if (paramDesc == null || paramDesc.getOrder() == -1) {
                 argValues[i]  = value;
@@ -332,7 +341,18 @@ public class RPCProvider extends JavaProvider
                 // We know this has a holder, so just unwrap the value
                 RPCParam param = (RPCParam) i.next();
                 Holder holder = (Holder)param.getValue();
-                param.setValue(JavaUtils.getHolderValue(holder));
+                Object value = JavaUtils.getHolderValue(holder);
+                ParameterDesc paramDesc = param.getParamDesc();
+                boolean mimeType = paramDesc == null ? false :
+                        new QName("", "DataHandler").equals(
+                            paramDesc.getTypeQName());
+                if (mimeType) {
+                    if (value instanceof String) {
+                        value = new DataHandler(
+                                new PlainTextDataSource("out", (String) value));
+                    }
+                }
+                param.setValue(value);
                 resBody.addParam(param);
             }
         }

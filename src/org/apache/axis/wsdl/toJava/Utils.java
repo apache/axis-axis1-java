@@ -55,12 +55,18 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
+
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -71,15 +77,20 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
-import javax.xml.namespace.QName;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
+
+import javax.xml.namespace.QName;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -88,7 +99,26 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-    public static String holder(TypeEntry type, Emitter emitter) {
+    public static String holder(String mimeType, TypeEntry type, Emitter emitter) {
+
+        // Add the holders that JAX-RPC forgot about - the MIME type holders.
+        if (mimeType != null) {
+            if (mimeType.equals("image/gif") ||
+                mimeType.equals("image/jpeg")) {
+                return "org.apache.axis.holders.ImageHolder";
+            }
+            else if (mimeType.equals("text/plain")) {
+                return "javax.xml.rpc.holders.StringHolder";
+            }
+            else if (mimeType.startsWith("multipart/")) {
+                return "org.apache.axis.holders.MimeMultipartHolder";
+            }
+            else if (mimeType.equals("text/xml") ||
+                     mimeType.equals("application/xml")) {
+                return "org.apache.axis.holders.SourceHolder";
+            }
+        }
+
         String typeValue = type.getName();
 
         // byte[] has a reserved holders
@@ -156,6 +186,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         else if (typeValue.equals("javax.xml.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
         }
+
         // For everything else add "holders" package and append
         // holder to the class name.
         else {
@@ -454,9 +485,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Return the Object variable 'var' cast to the appropriate type
      * doing the right thing for the primitive types.
      */
-    public static String getResponseString(TypeEntry type, String var) {
+    public static String getResponseString(TypeEntry type, String mimeType,
+            String var) {
         if (type == null) {
             return ";";
+        }
+        else if (mimeType != null) {
+            return "(javax.activation.DataHandler) " + var + ";";
         }
         else {
             String objType = (String) TYPES.get(type.getName());
@@ -550,6 +585,47 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 qname.getLocalPart() + "\")";
     }
 
+    /**
+     * Get the parameter type name.  If this is a MIME type, then
+     * figure out the appropriate type from the MIME type, otherwise
+     * use the name of the type itself.
+     */
+    public static String getParameterTypeName(Parameter parm) {
+        String mime = parm.getMIMEType();
+        String ret;
+        if (mime == null) {
+            ret = parm.getType().getName();
+        }
+        else {
+            ret = mimeToJava(mime);
+            if (ret == null) {
+                ret = parm.getType().getName();
+            }
+        }
+        return ret;
+    } // getParameterTypeName
+
+    /**
+     * Given the MIME type string, return the Java mapping.
+     */
+    private static String mimeToJava(String mime) {
+        if ("image/gif".equals(mime) || "image/jpeg".equals(mime)) {
+            return "java.awt.Image";
+        }
+        else if ("text/plain".equals(mime)) {
+            return "java.lang.String";
+        }
+        else if ("text/xml".equals(mime) || "application/xml".equals(mime)) {
+            return "javax.xml.transform.Source";
+        }
+        else if (mime != null && mime.startsWith("multipart/")) {
+            return "javax.mail.internet.MimeMultipart";
+        }
+        else {
+            return null;
+        }
+    } // mimeToJava
+
     /** 
      * Get the QName that could be used in the xsi:type
      * when serializing an object for this parameter/return
@@ -587,4 +663,35 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         return xmlType;
     }
     
+    /**
+     * Are there any MIME parameters in the given binding?
+     */
+    public static boolean hasMIME(BindingEntry bEntry) {
+        List operations = bEntry.getBinding().getBindingOperations();
+        for (int i = 0; i < operations.size(); ++i) {
+            BindingOperation operation = (BindingOperation) operations.get(i);
+            if (hasMIME(bEntry, operation)) {
+                return true;
+            }
+        }
+        return false;
+    } // hasMIME
+
+    /**
+     * Are there any MIME parameters in the given binding's operation?
+     */
+    public static boolean hasMIME(BindingEntry bEntry, BindingOperation operation) {
+        Parameters parameters =
+          bEntry.getParameters(operation.getOperation());
+        if (parameters != null) {
+            for (int idx = 0; idx < parameters.list.size(); ++idx) {
+                Parameter p = (Parameter) parameters.list.get(idx);
+                if (p.getMIMEType() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    } // hasMIME
+
 } // class Utils

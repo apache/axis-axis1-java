@@ -90,7 +90,11 @@ public abstract class Enum implements java.io.Serializable {
     public final int    getValue() { return value; }
     public final String getName()  { return name; }
     public final Type   getType()  { return type; }
-    
+
+    public String toString() {
+        return name;
+    }
+
     public final boolean equals(Object obj) {
         return (obj != null  &&  obj instanceof Enum)
                ? _equals((Enum)obj)
