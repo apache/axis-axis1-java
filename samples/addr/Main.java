@@ -60,7 +60,7 @@ package samples.addr;
 import java.net.*;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.utils.Options;
-import org.apache.axis.utils.Debug;
+
 
 /**
  * This class shows how to use the ServiceClient's ability to
@@ -109,7 +109,6 @@ public class Main {
     
     public static void main (String[] args) throws Exception {
         Options opts = new Options(args);
-        Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
         URL serviceURL = new URL(opts.getURL());
         
         System.err.println ("Using proxy without session maintenance.");

@@ -64,7 +64,7 @@ import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.message.RPCParam ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
@@ -80,8 +80,6 @@ public class GetQuote {
   // helper function; does all the real work
     public float getQuote (String args[]) throws Exception {
       Options opts = new Options( args );
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
       args = opts.getRemainingArgs();
 

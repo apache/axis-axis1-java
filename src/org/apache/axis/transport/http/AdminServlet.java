@@ -73,24 +73,25 @@ import org.apache.axis.utils.* ;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class AdminServlet extends HttpServlet {
-    private AxisServer server;
-    
-    public void init() {
-        // Set the base path for the AxisServer to our WEB-INF directory
-        // (so the config files can't get snooped by a browser)
-        FileProvider provider =
-               new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                "server-config.xml");
-        
-        server = new AxisServer(provider);
-        getServletContext().setAttribute("AxisEngine", server);
+    public AxisServer getEngine() {
+        if (getServletContext().getAttribute("AxisEngine") == null) {
+            // Set the base path for the AxisServer to our WEB-INF directory
+            // (so the config files can't get snooped by a browser)
+            FileProvider provider =
+                    new FileProvider(getServletContext().getRealPath("/WEB-INF"),
+                                     "server-config.xml");
+
+            getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
+        }
+        return (AxisServer)getServletContext().getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         res.setContentType("text/html");
         String str = "";
-        
+        AxisServer server = getEngine();
+
         String cmd = req.getParameter("cmd");
         if (cmd != null) {
             if (cmd.equals("start"))

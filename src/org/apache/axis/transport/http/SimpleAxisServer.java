@@ -66,6 +66,7 @@ import org.apache.axis.utils.* ;
 
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
+import org.apache.log4j.Category;
 
 import org.w3c.dom.Document;
 
@@ -79,7 +80,10 @@ import org.w3c.dom.Document;
  * @author Rob Jellinghaus (robj@unrealities.com)
  */
 public class SimpleAxisServer implements Runnable {
-    
+    static Category category =
+            Category.getInstance(SimpleAxisServer.class.getName());
+
+
     // session state.
     // This table maps session keys (random numbers) to SimpleAxisSession objects.
     //
@@ -462,7 +466,7 @@ public class SimpleAxisServer implements Runnable {
                 }
                 fileName.append(c);
             }
-            Debug.Print(2, "SimpleAxisServer: req filename='" + fileName.toString() + "'");
+            category.debug( "SimpleAxisServer: req filename='" + fileName.toString() + "'");
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
@@ -472,7 +476,7 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 fileName.append(c);
             }
-            Debug.Print(2, "SimpleAxisServer: req filename='" + fileName.toString() + "'");
+            category.debug( "SimpleAxisServer: req filename='" + fileName.toString() + "'");
         } else {
             throw new IOException("Cannot handle non-GET, non-POST request");
         }
@@ -659,8 +663,6 @@ public class SimpleAxisServer implements Runnable {
             e.printStackTrace();
             return;
         }
-        
-        Debug.setDebugLevel(opts.isFlagSet('d'));
         
         try {
             int port = opts.getPort();

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -78,25 +78,25 @@ public class DebugHandler extends BasicHandler {
         category.debug("Enter: DebugHandler::invoke" );
         try {
             Message       msg = msgContext.getRequestMessage();
-            
+
             SOAPEnvelope message = (SOAPEnvelope)msg.getAsSOAPEnvelope();
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, 
+            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG,
                                                         "Debug");
-            
+
             if (header != null) {
                 Integer i = ((Integer)header
                              .getValueAsType(SOAPTypeMappingRegistry.XSD_INT));
                 if (i == null)
                     throw new AxisFault("Couldn't convert value to int");
-                
+
                 int debugVal = i.intValue();
-                Debug.Print( 1, "Setting debug level to: " + debugVal );
-                Debug.setDebugLevel(debugVal);
+                category.debug( "Setting debug level to: " + debugVal );
+                //Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
             }
         }
         catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.error( e );
             throw new AxisFault( e );
         }
         category.debug("Exit: DebugHandler::invoke" );
@@ -106,5 +106,5 @@ public class DebugHandler extends BasicHandler {
         category.debug("Enter: DebugHandler::undo" );
         category.debug("Exit: DebugHandler::undo" );
     }
-    
+
 };

@@ -55,6 +55,8 @@
 
 package org.apache.axis.utils;
 
+import org.apache.log4j.Category;
+
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -65,6 +67,9 @@ import java.util.*;
  */
 public class JavaUtils
 {
+    static Category category =
+            Category.getInstance(JavaUtils.class.getName());
+
     /** Utility function to convert an Object to some desired Class.
      * 
      * Right now this only works for arrays <-> Lists, but it might be
@@ -75,7 +80,7 @@ public class JavaUtils
      */
     public static Object convert(Object arg, Class destClass)
     {
-        Debug.Print(3, "Trying to convert " + arg.getClass().getName() +
+        category.debug( "Trying to convert " + arg.getClass().getName() +
                        " to " + destClass.getName());
         
         if (!(arg instanceof List))

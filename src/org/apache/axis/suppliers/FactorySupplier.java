@@ -58,7 +58,7 @@ package org.apache.axis.suppliers;
 import java.util.Hashtable;
 import org.apache.axis.Supplier;
 import org.apache.axis.Handler;
-import org.apache.axis.utils.Debug;
+
 import org.apache.log4j.Category;
 
 /** A <code>FactorySupplier</code> always gives you a new Handler instance.

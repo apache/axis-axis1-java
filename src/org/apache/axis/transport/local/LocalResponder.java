@@ -57,7 +57,7 @@ package org.apache.axis.transport.local;
 
 import org.apache.axis.*;
 import org.apache.axis.handlers.*;
-import org.apache.axis.utils.Debug;
+
 import org.apache.log4j.Category;
 
 /**

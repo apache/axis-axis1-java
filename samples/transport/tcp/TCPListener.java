@@ -96,10 +96,6 @@ public class TCPListener implements Runnable {
         try {
             Options options = new Options(args);
             port = new URL(options.getURL()).getPort();
-            String tmp;
-            if ((tmp = options.isValueSet('d')) != null) {
-                Debug.setDebugLevel(Integer.parseInt(tmp));
-            }
         } catch (MalformedURLException ex) {
             System.err.println("Hosed URL: "+ex);
             System.exit(1);

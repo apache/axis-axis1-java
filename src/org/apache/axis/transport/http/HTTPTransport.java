@@ -57,7 +57,7 @@ package org.apache.axis.transport.http;
 
 import java.util.* ;
 import org.apache.axis.* ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.client.ServiceClient;

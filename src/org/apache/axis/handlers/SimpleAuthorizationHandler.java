@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -80,7 +80,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             Category.getInstance(SimpleAuthorizationHandler.class.getName());
 
     // Simple hashtable of users.  Null means everybody
-    // will authorize (replace with new Hashtable() if you want 
+    // will authorize (replace with new Hashtable() if you want
     // the default to be that nobody is authorized
     //
     // Values will be hashtables of valid actions for the user
@@ -104,9 +104,9 @@ public class SimpleAuthorizationHandler extends BasicHandler {
                         String userID = st.nextToken();
                         String action = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-                        Debug.Print( 1, "User '", userID, "' authorized to: ", action );
+                        category.info( "User '" + userID + "' authorized to: " + action );
 
-                        // if we haven't seen this user before, create an entry 
+                        // if we haven't seen this user before, create an entry
                         if (!entries.containsKey(userID))
                             entries.put(userID, new Hashtable());
 
@@ -119,7 +119,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
                 lnr.close();
 
             } catch( Exception e ) {
-                Debug.Print( 1, e );
+                category.error( e );
             }
         }
     }
@@ -133,20 +133,20 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         String userID = (String) msgContext.getProperty( MessageContext.USERID );
         String action = msgContext.getTargetService();
 
-        Debug.Print( 1, "User: '", userID, "'" );
-        Debug.Print( 1, "Action: '", action, "'" );
+        category.debug( "User: '" + userID + "'" );
+        category.debug( "Action: '" + action + "'" );
 
         if (entries != null) { // perm.list exists
 
             Hashtable authlist = (Hashtable) entries.get(userID);
             if ( authlist == null || !authlist.containsKey(action) ) {
-                throw new AxisFault( "Server.Unauthorized", 
+                throw new AxisFault( "Server.Unauthorized",
                     "User '" + userID + "' not authorized to '" + action + "'",
                     null, null );
             }
         }
 
-        Debug.Print( 1, "User '", userID, "' authorized to: ", action );
+        category.debug( "User '" + userID + "' authorized to: " + action );
 
         category.debug("Exit: SimpleAuthorizationHandler::invoke" );
     }

@@ -69,7 +69,7 @@ import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.SOAPBodyElement ;
 import org.apache.axis.message.SOAPEnvelope ;
 import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.transport.http.HTTPConstants;
 
 /**
@@ -161,7 +161,7 @@ public class AdminClient
         Options opts = new Options( args );
         
         if (opts.isFlagSet('d') > 0) {
-            Debug.setDebugLevel( opts.isFlagSet('d') );
+            // Set log4j properties... !!!
         }
         
         args = opts.getRemainingArgs();

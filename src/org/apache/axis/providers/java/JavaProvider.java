@@ -181,7 +181,7 @@ public abstract class JavaProvider extends BasicProvider {
      * the message (via processMessage).
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print(1, "Enter: JavaProvider::invoke (for provider "+this+")");
+        category.debug( "Enter: JavaProvider::invoke (for provider "+this+")");
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -245,7 +245,7 @@ public abstract class JavaProvider extends BasicProvider {
             }
         }
         catch( Exception exp ) {
-            Debug.Print( 1, exp );
+            category.error( exp );
             if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
             throw (AxisFault) exp ;
         }

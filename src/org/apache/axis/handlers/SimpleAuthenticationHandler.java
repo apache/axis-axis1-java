@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -78,7 +78,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             Category.getInstance(SimpleAuthenticationHandler.class.getName());
 
     // Simple hashtable of user and password.  Null means everybody
-    // will authenticate (replace with new Hashtable() if you want 
+    // will authenticate (replace with new Hashtable() if you want
     // the default to be that nobody will be authenticated.
     static private Hashtable entries = null;
 
@@ -110,7 +110,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                 lnr.close();
 
             } catch( Exception e ) {
-                Debug.Print( 1, e );
+                category.error( e );
             }
         }
     }
@@ -123,25 +123,25 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
         if (entries != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-            Debug.Print( 1, "User: ",  userID );
+            category.debug( "User: " + userID );
 
             // in order to authenticate, the user must exist
             if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
-                throw new AxisFault( "Server.Unauthenticated", 
+                throw new AxisFault( "Server.Unauthenticated",
                     "User '" + userID + "' not authenticated (unknown user)",
                     null, null );
-            
+
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
             String valid = (String) entries.get(userID);
             category.debug( "Pass: " + passwd );
-            
+
             // if a password is defined, then it must match
-            if ( valid.length()>0 && !valid.equals(passwd) ) 
-                throw new AxisFault( "Server.Unauthenticated", 
+            if ( valid.length()>0 && !valid.equals(passwd) )
+                throw new AxisFault( "Server.Unauthenticated",
                     "User '" + userID + "' not authenticated (bad password)",
                     null, null );
 
-            Debug.Print( 1, "User '", userID, "' authenticated to server" );
+            category.debug( "User '" + userID + "' authenticated to server" );
         }
 
         category.debug("Exit: SimpleAuthenticationHandler::invoke" );

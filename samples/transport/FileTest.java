@@ -6,7 +6,7 @@ import org.apache.axis.AxisFault ;
 import org.apache.axis.client.AxisClient ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.utils.Options ;
 import org.apache.axis.encoding.* ;
 
@@ -24,8 +24,6 @@ public class FileTest {
     reader.start();
 
     Options opts = new Options( args );
-    
-    Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
     
     args = opts.getRemainingArgs();
     

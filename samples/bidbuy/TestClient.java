@@ -69,7 +69,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
-import org.apache.axis.utils.Debug ;
+
 
 /**
  * Test Client for the echo interop service.  See the main entrypoint
@@ -102,7 +102,6 @@ public class TestClient {
     public static void main(String args[]) throws Exception {
         // set up the call object
         Options opts = new Options(args);
-        Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
         call = new ServiceClient(opts.getURL());
         call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Bid");
 

@@ -62,10 +62,22 @@ package org.apache.axis.utils ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
+import org.apache.log4j.Category;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Priority;
+
 import java.net.* ;
 import java.util.* ;
 
 public class Options {
+    static Category category =
+            Category.getInstance(Options.class.getName());
+
+    static {
+        BasicConfigurator.configure();
+        Category.getRoot().setPriority(Priority.FATAL);
+    }
+
     String  args[] = null ;
 
     //////////////////////////////////////////////////////////////////////////
@@ -96,7 +108,7 @@ public class Options {
         try {
             getURL();
         } catch( MalformedURLException e ) {
-            Debug.Print( 1, "getURL failed to correctly process URL; protocol not " +
+            category.error( "getURL failed to correctly process URL; protocol not " +
                             "supported" );
             throw e ;
         }
@@ -261,7 +273,7 @@ public class Options {
             if ( port != null && !port.equals("-1")) tmp += ":" + port ;
             if ( servlet != null ) tmp += servlet ;
         } else tmp = url.toString();
-        Debug.Print( 3, "getURL returned: " + tmp );
+        category.debug( "getURL returned: " + tmp );
         return( tmp );
     }
     

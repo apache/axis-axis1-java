@@ -59,7 +59,7 @@ import java.util.Enumeration;
 import org.apache.axis.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.utils.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.registries.* ;
@@ -172,7 +172,7 @@ public class SOAPService extends SimpleTargetedChain
             category.debug( "Invoking request chain" );
             h.invoke(msgContext);
         } else {
-            Debug.Print( 3, "No request chain" );
+            category.debug( "No request chain" );
         }
 
         // Do SOAP semantics here
@@ -231,7 +231,7 @@ public class SOAPService extends SimpleTargetedChain
             category.debug( "Invoking service/pivot" );
             h.invoke(msgContext);
         } else {
-            Debug.Print( 3, "No service/pivot" );
+            category.debug( "No service/pivot" );
         }
         
         // OK, we're past the pivot, so let the MessageContext know.
@@ -242,7 +242,7 @@ public class SOAPService extends SimpleTargetedChain
             category.debug( "Invoking response chain" );
             h.invoke(msgContext);
         } else {
-            Debug.Print( 3, "No response chain" );
+            category.debug( "No response chain" );
         }
 
         category.debug("Exit : SOAPService::invoke" );
@@ -320,7 +320,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void enableTransport(String transportName)
     {
-        Debug.Print(3, "SOAPService(" + this + ") enabling transport " + transportName);
+        category.debug( "SOAPService(" + this + ") enabling transport " + transportName);
         if (validTransports == null)
             validTransports = new Vector();
         validTransports.addElement(transportName);

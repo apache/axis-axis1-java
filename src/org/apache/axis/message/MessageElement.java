@@ -67,7 +67,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;

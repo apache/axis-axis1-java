@@ -17,7 +17,6 @@ import org.apache.axis.utils.*;
 class put {
     static void main(String[] args) throws Exception {
         Options opts = new Options(args);
-        Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
         String action = opts.isValueSet('a');
 
         ServiceClient sc = new ServiceClient(opts.getURL());

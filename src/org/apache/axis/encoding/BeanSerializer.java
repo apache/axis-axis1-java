@@ -65,7 +65,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
@@ -77,8 +77,8 @@ import org.xml.sax.*;
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class BeanSerializer extends Deserializer 
-    implements Serializer, Serializable 
+public class BeanSerializer extends Deserializer
+    implements Serializer, Serializable
 {
     static Category category =
             Category.getInstance(BeanSerializer.class.getName());
@@ -109,7 +109,7 @@ public class BeanSerializer extends Deserializer
 
         return pd;
     }
-    
+
     protected PropertyDescriptor [] getPd(Object val)
     {
       if (cls == null) cls = val.getClass();
@@ -135,12 +135,12 @@ public class BeanSerializer extends Deserializer
         super();
         this.cls = cls;
     }
-     
+
     /**
      * An array of nothing, defined only once.
      */
     private static final Object[] noArgs = new Object[] {};
-    
+
     public static DeserializerFactory getFactory()
     {
       return new BeanSerFactory();
@@ -156,7 +156,7 @@ public class BeanSerializer extends Deserializer
         public Deserializer getDeserializer(Class cls) {
             PropertyDescriptor [] pd =
                   (PropertyDescriptor [])propertyDescriptors.get(cls);
-            
+
             if (pd == null) {
               try {
                 pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
@@ -165,7 +165,7 @@ public class BeanSerializer extends Deserializer
               }
                 propertyDescriptors.put(cls, pd);
             }
-            
+
             BeanSerializer bs = new BeanSerializer();
             bs.setCls(cls);
             bs.setPd(pd);
@@ -183,7 +183,7 @@ public class BeanSerializer extends Deserializer
         /**
          * Override serialization - all that is needed is the class
          */
-        private static final ObjectStreamField[] serialPersistentFields = 
+        private static final ObjectStreamField[] serialPersistentFields =
             {new ObjectStreamField("cls", Class.class)};
     }
 
@@ -217,8 +217,8 @@ public class BeanSerializer extends Deserializer
             }
         }
     }
-    
-    /** 
+
+    /**
      * Deserializer interface called on each child element encountered in
      * the XML stream.
      */
@@ -250,13 +250,13 @@ public class BeanSerializer extends Deserializer
                 TypeMappingRegistry tmr = context.getTypeMappingRegistry();
                 QName qn = tmr.getTypeQName(pd[i].getPropertyType());
                 if (qn == null)
-                    throw new SAXException("Unregistered type: " + 
+                    throw new SAXException("Unregistered type: " +
                                            pd[i].getPropertyType());
 
                 // get the deserializer
                 Deserializer dSer = tmr.getDeserializer(qn);
                 if (dSer == null)
-                    throw new SAXException("No deserializer for " + 
+                    throw new SAXException("No deserializer for " +
                                            pd[i].getPropertyType());
 
                 // Success!  Register the target and deserializer.
@@ -269,8 +269,8 @@ public class BeanSerializer extends Deserializer
         throw new SAXException("Invalid element in " + cls.getName() +
                                " - " + localName);
     }
-    
-    /** 
+
+    /**
      * Serialize a bean.  Done simply by serializing each bean property.
      */
     public void serialize(QName name, Attributes attributes,
@@ -298,7 +298,7 @@ public class BeanSerializer extends Deserializer
     /**
      * Override serialization - all that is needed is the class
      */
-    private static final ObjectStreamField[] serialPersistentFields = 
+    private static final ObjectStreamField[] serialPersistentFields =
         {new ObjectStreamField("cls", Class.class)};
- 
+
 }

@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -81,19 +81,19 @@ public class LogHandler extends BasicHandler {
             try {
                 FileWriter  fw   = new FileWriter( "axis.log", true );
                 PrintWriter pw   = new PrintWriter( fw );
-    
+
                 Message inMsg = msgContext.getRequestMessage();
                 Message outMsg = msgContext.getResponseMessage();
-                
+
                 pw.println( "=======================================================" );
                 pw.println( "= Elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
                 pw.println( "= InMsg: " + (inMsg == null ? "null" : inMsg.getAsString()));
                 pw.println( "= OutMsg: " + (outMsg == null ? "null" : outMsg.getAsString()));
                 pw.println( "=======================================================" );
-                
+
                 pw.close();
             } catch( Exception e ) {
-                Debug.Print( 1, e );
+                category.error( e );
                 throw new AxisFault( e );
             }
         }
@@ -110,7 +110,7 @@ public class LogHandler extends BasicHandler {
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.error( e );
         }
         category.debug("Exit: LogHandler::undo" );
     }
