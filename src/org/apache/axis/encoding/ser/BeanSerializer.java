@@ -85,6 +85,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.beans.IntrospectionException;
 
 import org.w3c.dom.Element;
@@ -207,6 +208,10 @@ public class BeanSerializer implements Serializer, Serializable {
                     }
                 }
             }
+        } catch (InvocationTargetException ite) {
+            Throwable target = ite.getTargetException();
+            log.error(JavaUtils.getMessage("exception00"), target);
+            throw new IOException(target.toString());
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
             throw new IOException(e.toString());
