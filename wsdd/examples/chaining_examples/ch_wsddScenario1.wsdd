@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="wsddScenario1" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<documentation>
+    A simple serviceDeployment descriptor is used to describe the service.
+    The type is not needed either, as it reflects the default choice (simpleTargetedChain).
+    This defines a simple input flow of 1 handler, a simple output flow of 1 handler.
+	</documentation>
+	<serviceConfiguration name="urn:wsddScenario1-service1" type="org.apache.axis.SimpleTargetedChain">
+		<serviceDeployment>
+			<provider java:className="samples.wsdd.wsddScenario1" xmlns:java="http://xml.apache.org/axis/providers/java"/>
+		</serviceDeployment>
+		<flow flowType="request">
+			<handler id="inputHandler1" type="samples.handlers.testHandler1"/>
+		</flow>
+		<flow flowType="response">
+			<handler id="outputHandler1" type="samples.handlers.testHandler2"/>
+		</flow>
+	</serviceConfiguration>
+</deployments>

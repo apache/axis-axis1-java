@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="wsddScenario11" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<serviceConfiguration name="scenario11_requestor_side_deployment" type="org.apache.axis.SimpleTargetedChain">
+		<documentation>This is a test of a requestor side deployment.	</documentation>
+		<documentation>  play with it </documentation>
+		<serviceDeployment/>
+	</serviceConfiguration>
+</deployments>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v3.5 NT (http://www.xmlspy.com) by Steve Graham (IBM) -->
+<deployments name="Apache_SOAP_v2_AddressBook" xmlns="http://xml.apache.org/axis/wsdd" xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xsi:schemaLocation="http://xml.apache.org/axis/wsdd
+C:\xml-axis\java\wsdd\WSDD.xsd">
+	<documentation>
+    This is a model of the Apache SOAP v2.x example AddressBook.
+    	</documentation>
+	<typeMapping id="urn:xml-soap-address-demo:address" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespaceURI="urn:xml-soap-address-demo" localPart="address" languageSpecificType="samples.addressbook.Address" serializer="org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="org.apache.soap.encoding.soapenc.BeanSerializer"/>
+	<typeMapping id="urn:xml-soap-address-demo:phone" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespaceURI="urn:xml-soap-address-demo" localPart="phone" languageSpecificType="samples.addressbook.PhoneNumber" serializer="org.apache.soap.encoding.soapenc.BeanSerializer" deserializer="org.apache.soap.encoding.soapenc.BeanSerializer"/>
+	<serviceConfiguration name="urn:AddressFetcher">
+		<serviceDeployment style="rpc" supplierType="org.apache.axis.suppliers.ApplicationScopeSupplier">
+			<operation name="getAddressFromName"/>
+			<operation name="addEntry"/>
+			<operation name="getAllListings"/>
+			<operation name="putListings"/>
+			<provider java:className="samples.addressbook.AddressBook" java:isStatic="false" serviceHandler="org.apache.axis.handler.ServiceHandler" xmlns:java="http://xml.apache.org/axis/providers/java"/>
+			<typeMappingUse ref="urn:xml-soap-address-demo:address"/>
+			<typeMappingUse ref="urn:xml-soap-address-demo:phone"/>
+		</serviceDeployment>
+		<flow flowType="fault">
+			<handler type="org.apache.soap.server.DOMFaultListener"/>
+		</flow>
+	</serviceConfiguration>
+</deployments>
