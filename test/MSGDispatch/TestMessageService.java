@@ -72,8 +72,10 @@ import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
+import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * Test for message style service dispatch.
@@ -117,7 +119,7 @@ public class TestMessageService extends TestCase {
         input[0] = new SOAPBodyElement(doc.getDocumentElement());
         Vector          elems = (Vector) call.invoke( input );
         assertNotNull("Return was null!", elems);
-        assert("Return had " + elems.size() + " elements (needed 1)",
+        assertTrue("Return had " + elems.size() + " elements (needed 1)",
                elems.size() == 1);
         SOAPBodyElement firstBody = (SOAPBodyElement)elems.get(0);
         assertEquals("http://db.com", firstBody.getNamespaceURI());
@@ -134,7 +136,7 @@ public class TestMessageService extends TestCase {
         input[0] = new SOAPBodyElement(doc.getDocumentElement());
         Vector          elems = (Vector) call.invoke( input );
         assertNotNull("Return was null!", elems);
-        assert("Return had " + elems.size() + " elements (needed 1)",
+        assertTrue("Return had " + elems.size() + " elements (needed 1)",
                elems.size() == 1);
         SOAPBodyElement firstBody = (SOAPBodyElement)elems.get(0);
         assertEquals("http://db.com", firstBody.getNamespaceURI());
@@ -145,18 +147,59 @@ public class TestMessageService extends TestCase {
         Call call = new Call(new Service());
         call.setTransport(transport);
 
-        String xml = "<m:testEnvelope xmlns:m=\"http://db.com\"></m:testEnvelope>";
+        String xml = "<testEnvelope xmlns=\"http://db.com\"></testEnvelope>";
         Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xml.getBytes()));
         SOAPBodyElement body = new SOAPBodyElement(doc.getDocumentElement());
         SOAPEnvelope env = new SOAPEnvelope();
         env.addBodyElement(body);
         SOAPEnvelope result = call.invoke( env );
         assertNotNull("Return was null!", result);
+        
+        SOAPBodyElement respBody = result.getFirstBody();
+        assertEquals(new QName("http://db.com", "testEnvelope"), respBody.getQName());
+        Iterator i = respBody.getNamespacePrefixes();
+        assertNotNull("No namespace mappings");
+        assertEquals("Non-default namespace found", "", (String)i.next());
+        assertTrue("Multiple namespace mappings", !i.hasNext());
+        
         Vector headers = result.getHeaders();
         assertEquals("Had " + headers.size() + " headers, needed 1", 1, headers.size());
         SOAPHeaderElement firstHeader = (SOAPHeaderElement)headers.get(0);
         assertEquals("http://db.com", firstHeader.getNamespaceURI());
         assertEquals("local", firstHeader.getName());
         assertEquals(firstHeader.getValue(), "value");
+    }
+
+    /**
+     * Confirm that we get back EXACTLY what we put in when using the
+     * Element[]/Element[] signature for MESSAGE services.
+     * 
+     * @throws Exception
+     */ 
+    public void testElementEcho() throws Exception {
+        Call call = new Call(new Service());
+        call.setTransport(transport);
+
+        // Create a DOM document using a default namespace, since bug
+        // http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16666 indicated
+        // that we might have had a problem here.
+        String xml = "<testElementEcho xmlns=\"http://db.com\"></testElementEcho>";
+        Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xml.getBytes()));
+        SOAPBodyElement body = new SOAPBodyElement(doc.getDocumentElement());
+        SOAPEnvelope env = new SOAPEnvelope();
+        env.addBodyElement(body);
+        
+        // Send it along
+        SOAPEnvelope result = call.invoke( env );
+        assertNotNull("Return was null!", result);
+        
+        // Make sure we get back exactly what we expect, with no extraneous
+        // namespace mappings
+        SOAPBodyElement respBody = result.getFirstBody();
+        assertEquals(new QName("http://db.com", "testElementEcho"), respBody.getQName());
+        Iterator i = respBody.getNamespacePrefixes();
+        assertNotNull("No namespace mappings");
+        assertEquals("Non-default namespace found", "", (String)i.next());
+        assertTrue("Multiple namespace mappings", !i.hasNext());
     }
 }
