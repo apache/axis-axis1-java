@@ -450,6 +450,15 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new SimpleDeserializerFactory(org.apache.axis.types.Duration.class,
                                              Constants.XSD_DURATION),
                    true);
+        
+        // a xsd:anyURI
+        myRegister(Constants.XSD_ANYURI, org.apache.axis.types.URI.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.URI.class,
+                                             Constants.XSD_ANYURI),
+                   new SimpleDeserializerFactory(org.apache.axis.types.URI.class,
+                                             Constants.XSD_ANYURI),
+                   true);
+        
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.

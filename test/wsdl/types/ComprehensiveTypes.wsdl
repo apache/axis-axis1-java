@@ -387,6 +387,7 @@
     <part name="unsignedInt" type="xsd:unsignedInt"/>
     <part name="unsignedShort" type="xsd:unsignedShort"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
+    <part name="anyURI" type="xsd:anyURI"/>
   </message>
   <message name="inputBoolean">
     <part name="inBoolean" type="xsd:boolean"/>
@@ -576,6 +577,16 @@
   <message name="outputUnsignedByte">
     <part name="outUnsignedByte" type="xsd:unsignedByte"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
+  </message>
+
+  <message name="inputAnyURI">
+    <part name="inAnyURI" type="xsd:anyURI"/>
+    <part name="anyURI" type="xsd:anyURI"/>
+  </message>
+
+  <message name="outputAnyURI">
+    <part name="outAnyURI" type="xsd:anyURI"/>
+    <part name="anyURI" type="xsd:anyURI"/>
   </message>
 
   <message name="inputSoapString">
@@ -1001,6 +1012,10 @@
     <operation name="methodUnsignedByte">
       <input message="tns:inputUnsignedByte"/>
       <output message="tns:outputUnsignedByte"/>
+    </operation>    
+    <operation name="methodAnyURI">
+      <input message="tns:inputAnyURI"/>
+      <output message="tns:outputAnyURI"/>
     </operation>    
     <operation name="methodSoapString">
       <input message="tns:inputSoapString"/>
@@ -2097,6 +2112,21 @@
       </output>
     </operation>    
     <operation name="methodUnsignedByte">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodAnyURI">
       <soap:operation soapAction=""/>
       <input>
         <soap:body

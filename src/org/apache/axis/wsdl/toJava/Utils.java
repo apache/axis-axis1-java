@@ -81,6 +81,7 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -712,5 +713,109 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         }
         return false;
     } // hasMIME
+
+    private static HashMap constructorMap = new HashMap(50);
+    static {
+        constructorMap.put("boolean", "true");
+    }
+    /**
+     * Return a constructor for the provided Parameter
+     * 
+     * @param param
+     * @param symbolTable used to lookup enumerations
+     * @param bThrow returns true if contructor needs try/catch block
+     */ 
+    static String getConstructorForParam(Parameter param, 
+                                         SymbolTable symbolTable,
+                                         BooleanHolder bThrow) {
+        
+        String paramType = param.getType().getName();
+        String mimeType = param.getMIMEType();
+        String out;
+        
+        if ( Utils.isPrimitiveType(param.getType()) ) {
+             if ( "boolean".equals(paramType) ) {
+                 out = "true";
+             } else if ("byte".equals(paramType)) {
+                 out = "(byte)0";
+             } else if ("short".equals(paramType)) {
+                 out = "(short)0";
+             } else {
+                 out = "0";
+             }
+         } else if (mimeType != null) {
+             if (mimeType.equals("image/gif") ||
+                     mimeType.equals("image/jpeg")) {
+                 out = "java.awt.Toolkit.getDefaultToolkit().getImage(new byte[0])";
+             }
+             else {
+                 out = "new " + Utils.getParameterTypeName(param) + "()";
+             }
+         } else if (paramType.equals("java.lang.Boolean")) {
+             out = "new java.lang.Boolean(false)";
+         } else if (paramType.equals("java.lang.Byte")) {
+             out = "new java.lang.Byte((byte)0)";
+         } else if (paramType.equals("java.lang.Double")) {
+             out = "new java.lang.Double(0)";
+         } else if (paramType.equals("java.lang.Float")) {
+             out = "new java.lang.Float(0)";
+         } else if (paramType.equals("java.lang.Integer")) {
+             out = "new java.lang.Integer(0)";
+         } else if (paramType.equals("java.lang.Long")) {
+             out = "new java.lang.Long(0)";
+         } else if (paramType.equals("java.lang.Short")) {
+             out = "new java.lang.Short((short)0)";
+         } else if (paramType.equals("java.math.BigDecimal")) {
+             out = "new java.math.BigDecimal(0)";
+         } else if (paramType.equals("java.math.BigInteger")) {
+             out = "new java.math.BigInteger(\"0\")";
+         } else if (paramType.equals("java.lang.Object")) {
+             out = "new java.lang.String()";
+         } else if (paramType.equals("byte[]")) {
+             out = "new byte[0]";
+         } else if (paramType.equals("java.util.Calendar")) {
+             out = "java.util.Calendar.getInstance()";
+         } else if (paramType.equals("javax.xml.namespace.QName")) {
+             out = "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")";
+         } else if (paramType.endsWith("[]")) {
+             out = "new " + JavaUtils.replace(paramType, "[]", "[0]");
+         } else if (paramType.equals("org.apache.axis.types.Time")) {
+             out = "new org.apache.axis.types.Time(\"15:45:45.275Z\")";
+         } else if (paramType.equals("org.apache.axis.types.UnsignedLong")) {
+             bThrow.value = true;
+             out = "new org.apache.axis.types.UnsignedLong(0)";
+         } else if (paramType.equals("org.apache.axis.types.UnsignedInt")) {
+             bThrow.value = true;
+             out = "new org.apache.axis.types.UnsignedInt(0)";
+         } else if (paramType.equals("org.apache.axis.types.UnsignedShort")) {
+             bThrow.value = true;
+             out = "new org.apache.axis.types.UnsignedShort(0)";
+         } else if (paramType.equals("org.apache.axis.types.UnsignedByte")) {
+             bThrow.value = true;
+             out = "new org.apache.axis.types.UnsignedByte(0)";
+         } else if (paramType.equals("org.apache.axis.types.URI")) {
+             bThrow.value = true;
+             out = "new org.apache.axis.types.URI(\"urn:testing\")";
+         } else {
+
+             // We have some constructed type.
+             Vector v = Utils.getEnumerationBaseAndValues(
+                     param.getType().getNode(), symbolTable);
+
+             if (v != null) {
+
+                 // This constructed type is an enumeration.  Use the first one.
+                 String enumeration = (String)
+                     JavaEnumTypeWriter.getEnumValueIds(v).get(0);
+                 out = paramType + "." + enumeration;
+             } else {
+
+                 // This constructed type is a normal type, instantiate it.
+                 out = "new " + paramType + "()";
+             }
+         }
+        
+        return out;
+    }
 
 } // class Utils

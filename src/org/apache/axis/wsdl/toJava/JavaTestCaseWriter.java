@@ -67,6 +67,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.xml.rpc.holders.BooleanHolder;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -165,7 +166,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
             Parameters params = bEntry.getParameters(op);
-            boolean unsigned = false;  // did we emit an Unsigned constructor
+            // did we emit a constructor that throws?
+            BooleanHolder bThrow = new BooleanHolder(false);
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
@@ -226,92 +228,17 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 String mimeType = param.getMIMEType();
                 String suffix = "";
 
+                // if we have an out or in/out, we are passing in a holder
                 if (param.getMode() != Parameter.IN) {
                     pw.print("new " + Utils.holder(mimeType, param.getType(), emitter)
                             + "(");
                     suffix = ")";
                 }
 
+                // if we have an in or in/out, write the constructor
                 if (param.getMode() != Parameter.OUT) {
-                    if ( Utils.isPrimitiveType(param.getType()) ) {
-                        if ( "boolean".equals(paramType) ) {
-                            pw.print("true");
-                        } else if ("byte".equals(paramType)) {
-                            pw.print("(byte)0");
-                        } else if ("short".equals(paramType)) {
-                            pw.print("(short)0");
-                        } else {
-                            pw.print("0");
-                        }
-                    } else if (mimeType != null) {
-                        if (mimeType.equals("image/gif") ||
-                                mimeType.equals("image/jpeg")) {
-                            pw.print("java.awt.Toolkit.getDefaultToolkit().getImage(new byte[0])");
-                        }
-                        else {
-                            pw.print("new " + Utils.getParameterTypeName(param) + "()");
-                        }
-                    } else if (paramType.equals("java.lang.Boolean")) {
-                        pw.print("new java.lang.Boolean(false)");
-                    } else if (paramType.equals("java.lang.Byte")) {
-                        pw.print("new java.lang.Byte((byte)0)");
-                    } else if (paramType.equals("java.lang.Double")) {
-                        pw.print("new java.lang.Double(0)");
-                    } else if (paramType.equals("java.lang.Float")) {
-                        pw.print("new java.lang.Float(0)");
-                    } else if (paramType.equals("java.lang.Integer")) {
-                        pw.print("new java.lang.Integer(0)");
-                    } else if (paramType.equals("java.lang.Long")) {
-                        pw.print("new java.lang.Long(0)");
-                    } else if (paramType.equals("java.lang.Short")) {
-                        pw.print("new java.lang.Short((short)0)");
-                    } else if (paramType.equals("java.math.BigDecimal")) {
-                        pw.print("new java.math.BigDecimal(0)");
-                    } else if (paramType.equals("java.math.BigInteger")) {
-                        pw.print("new java.math.BigInteger(\"0\")");
-                    } else if (paramType.equals("java.lang.Object")) {
-                        pw.print("new java.lang.String()");
-                    } else if (paramType.equals("byte[]")) {
-                        pw.print("new byte[0]");
-                    } else if (paramType.equals("java.util.Calendar")) {
-                        pw.print("java.util.Calendar.getInstance()");
-                    } else if (paramType.equals("javax.xml.namespace.QName")) {
-                        pw.print("new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
-                    } else if (paramType.endsWith("[]")) {
-                        pw.print("new "
-                                 + JavaUtils.replace(paramType, "[]", "[0]"));
-                    } else if (paramType.equals("org.apache.axis.types.Time")) {
-                        pw.print("new org.apache.axis.types.Time(\"15:45:45.275Z\")");
-                    } else if (paramType.equals("org.apache.axis.types.UnsignedLong")) {
-                        unsigned = true;
-                        pw.print("new org.apache.axis.types.UnsignedLong(0)");
-                    } else if (paramType.equals("org.apache.axis.types.UnsignedInt")) {
-                        unsigned = true;
-                        pw.print("new org.apache.axis.types.UnsignedInt(0)");
-                    } else if (paramType.equals("org.apache.axis.types.UnsignedShort")) {
-                        unsigned = true;
-                        pw.print("new org.apache.axis.types.UnsignedShort(0)");
-                    } else if (paramType.equals("org.apache.axis.types.UnsignedByte")) {
-                        unsigned = true;
-                        pw.print("new org.apache.axis.types.UnsignedByte(0)");
-                    } else {
-
-                        // We have some constructed type.
-                        Vector v = Utils.getEnumerationBaseAndValues(
-                                param.getType().getNode(), symbolTable);
-
-                        if (v != null) {
-
-                            // This constructed type is an enumeration.  Use the first one.
-                            String enumeration = (String)
-                                JavaEnumTypeWriter.getEnumValueIds(v).get(0);
-                            pw.print(paramType + "." + enumeration);
-                        } else {
-
-                            // This constructed type is a normal type, instantiate it.
-                            pw.print("new " + paramType + "()");
-                        }
-                    }
+                    String constructorString = Utils.getConstructorForParam(param, symbolTable, bThrow);
+                    pw.print(constructorString);
                 }
                 pw.print(suffix);
             }
@@ -342,7 +269,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             pw.print("            ");
             pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
             pw.println("        }");
-            if (unsigned) {
+            if (bThrow.value) {
                 pw.println("        catch (Exception e) {");
                 pw.println("            // Unsigned constructors can throw - ignore");
                 pw.println("        }");

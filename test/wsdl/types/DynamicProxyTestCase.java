@@ -53,11 +53,13 @@ import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedByte;
 import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.types.URI;
 import org.apache.axis.holders.TimeHolder;
 import org.apache.axis.holders.UnsignedLongHolder;
 import org.apache.axis.holders.UnsignedShortHolder;
 import org.apache.axis.holders.UnsignedByteHolder;
 import org.apache.axis.holders.UnsignedIntHolder;
+import org.apache.axis.holders.URIHolder;
 
 public class DynamicProxyTestCase extends TestCase {
     public DynamicProxyTestCase(String name) {
@@ -130,7 +132,8 @@ public class DynamicProxyTestCase extends TestCase {
                     ulong,
                     uint,
                     ushort,
-                    ubyte
+                    ubyte,
+                    new URI("urn:this-is-a-test")
                     );
         }
         catch (RemoteException re) {
@@ -158,6 +161,7 @@ public class DynamicProxyTestCase extends TestCase {
             UnsignedInt uint = new UnsignedInt(0);
             UnsignedShort ushort = new UnsignedShort(0);
             UnsignedByte ubyte = new UnsignedByte(0);
+            URI uri = new URI("urn:this-is-a-test");
 
             binding.allPrimitivesInout(
                     new StringHolder(new String()),
@@ -187,7 +191,8 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedLongHolder(ulong),
                     new UnsignedIntHolder(uint),
                     new UnsignedShortHolder(ushort),
-                    new UnsignedByteHolder(ubyte)
+                    new UnsignedByteHolder(ubyte),
+                    new URIHolder(uri)
                     
             );
         }
@@ -240,7 +245,8 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedLongHolder(),
                     new UnsignedIntHolder(),
                     new UnsignedShortHolder(),
-                    new UnsignedByteHolder()
+                    new UnsignedByteHolder(),
+                    new URIHolder()
             );
         }
         catch (RemoteException re) {

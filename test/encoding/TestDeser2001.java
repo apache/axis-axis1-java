@@ -19,6 +19,7 @@ import org.apache.axis.types.Name;
 import org.apache.axis.types.NCName;
 import org.apache.axis.types.NMToken;
 import org.apache.axis.types.Duration;
+import org.apache.axis.types.URI;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -297,5 +298,13 @@ public class TestDeser2001 extends TestDeser {
         org.apache.axis.types.Duration ym2 = new Duration(true, 2, 3, 8, 8, 1, 3.3);
         deserialize("<result xsi:type=\"xsd:duration\">-P2Y3M8DT8H1M3.3S</result>",
                      ym2);
+    }
+    public void testAnyURI() throws Exception {
+        org.apache.axis.types.URI uri = new URI("urn:this-is-a-test");
+        deserialize("<result xsi:type=\"xsd:anyURI\">urn:this-is-a-test</result>",
+                     uri);
+        uri = new URI("http", "www.macromedia.com", "/testing", "query=1", null);
+        deserialize("<result xsi:type=\"xsd:anyURI\">http://www.macromedia.com/testing?query=1</result>",
+                     uri);
     }
 }

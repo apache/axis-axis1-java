@@ -75,6 +75,7 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
 
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
@@ -158,72 +159,22 @@ public class JavaImplWriter extends JavaClassWriter {
         Iterator iparam = parms.list.iterator();
         while (iparam.hasNext()) {
             Parameter param = (Parameter) iparam.next();
-            String paramType = param.getType().getName();
-
-            // Note that similar code is in JavaTestCaseWriter.
-            // So please check both places if changes are made.
             if (param.getMode() == Parameter.OUT) {
-                pw.print("        " + Utils.xmlNameToJava(param.getName())
-                        + ".value = ");
-                if ( Utils.isPrimitiveType(param.getType()) ) {
-                    if ( "boolean".equals(paramType) ) {
-                        pw.print("false");
-                    } else if ("byte".equals(paramType)) {
-                        pw.print("(byte)-3");
-                    } else if ("short".equals(paramType)) {
-                        pw.print("(short)-3");
-                    } else {
-                        pw.print("-3");
-                    }
-                } else if (paramType.equals("java.lang.Boolean")) {
-                    pw.print("new java.lang.Boolean(false)");
-                } else if (paramType.equals("java.lang.Byte")) {
-                    pw.print("new java.lang.Byte((byte)-3)");
-                } else if (paramType.equals("java.lang.Double")) {
-                    pw.print("new java.lang.Double(-3)");
-                } else if (paramType.equals("java.lang.Float")) {
-                    pw.print("new java.lang.Float(-3)");
-                } else if (paramType.equals("java.lang.Integer")) {
-                    pw.print("new java.lang.Integer(-3)");
-                } else if (paramType.equals("java.lang.Long")) {
-                    pw.print("new java.lang.Long(-3)");
-                } else if (paramType.equals("java.lang.Short")) {
-                    pw.print("new java.lang.Short((short)-3)");
-                } else if (paramType.equals("java.math.BigDecimal")) {
-                    pw.print("new java.math.BigDecimal(-3)");
-                } else if (paramType.equals("java.math.BigInteger")) {
-                    pw.print("new java.math.BigInteger(\"-3\")");
-                } else if (paramType.equals("java.lang.Object")) {
-                    pw.print("new java.lang.String()");
-                } else if (paramType.equals("byte[]")) {
-                    pw.print("new byte[0]");
-                } else if (paramType.equals("java.lang.Byte[]")) {
-                    pw.print("new java.lang.Byte[0]");
-                } else if (paramType.equals("java.util.Calendar")) {
-                    pw.print("java.util.Calendar.getInstance()");
-                } else if (paramType.equals("javax.xml.namespace.QName")) {
-                    pw.print("new javax.xml.namespace.QName(\"\", \"\")");
-                } else if (paramType.endsWith("[]")) {
-                    pw.print("new "
-                             + JavaUtils.replace(paramType, "[]", "[0]"));
-                } else if (paramType.equals("org.apache.axis.types.Time")) {
-                    pw.print("new org.apache.axis.types.Time(\"15:45:45.275Z\")");
-                } else {
-                    // We have some constructed type.
-                    Vector v = Utils.getEnumerationBaseAndValues(
-                            param.getType().getNode(), symbolTable);
-
-                    if (v != null) {
-                        // This constructed type is an enumeration.  Use the first one.
-                        String enumeration = (String)
-                            JavaEnumTypeWriter.getEnumValueIds(v).get(0);
-                        pw.print(paramType + "." + enumeration);
-                    } else {
-                        // This constructed type is a normal type, instantiate it.
-                        pw.print("new " + paramType + "()");
-                    }
+                // write a constructor for each of the parameters
+                
+                BooleanHolder bThrow = new BooleanHolder(false);
+                String constructorString = 
+                       Utils.getConstructorForParam(param, symbolTable, bThrow);
+                if (bThrow.value) {
+                    pw.println("        try {");
                 }
-                pw.println(";");
+                pw.println("        " + Utils.xmlNameToJava(param.getName())
+                         + ".value = " + constructorString + ";");
+                if (bThrow.value) {
+                    pw.println("        } catch (Exception e) {");
+                    pw.println("          // TBD - constructor may throw");
+                    pw.println("        }");
+                }
             }
         }
 
@@ -250,4 +201,5 @@ public class JavaImplWriter extends JavaClassWriter {
         pw.println("    }");
         pw.println();
     } // writeOperation
+
 } // class JavaImplWriter
