@@ -102,8 +102,9 @@ public class ServiceClient {
 
     private static Hashtable transports = new Hashtable();
     private static boolean initialized = false;
-    
-                                                        
+
+    private static FileProvider configProvider = new FileProvider("client-config.xml");
+
     /** Register a Transport that should be used for URLs of the specified
      * protocol.
      * 
@@ -176,8 +177,9 @@ public class ServiceClient {
     // Our Transport, if any
     private Transport transport;
     private String    transportName;
-    
-    private static FileProvider configProvider = new FileProvider("client-config.xml");
+
+    // A place to store output parameters
+    private Vector outParams = null;
 
     /**
      * Basic, no-argument constructor.
@@ -373,7 +375,21 @@ public class ServiceClient {
     {
         this.serviceDesc = serviceDesc;
     }
-    
+
+    /**
+     * Get the output parameters (if any) from the last invocation.
+     *
+     * NOTE that the params returned are all RPCParams, containing
+     * name and value - if you want the value, you'll need to call
+     * param.getValue().
+     *
+     * @return a Vector of RPCParams
+     */
+    public Vector getOutputParams()
+    {
+        return this.outParams;
+    }
+
     /**
      * Map a type for serialization.
      * 
@@ -472,7 +488,10 @@ public class ServiceClient {
         Message              resMsg = null ;
         Vector               resArgs = null ;
         Object               result = null ;
-        
+
+        // Clear the output params
+        outParams = null;
+
         String uri = null;
         if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
@@ -540,6 +559,16 @@ public class ServiceClient {
         if (resArgs != null && resArgs.size() > 0) {
             RPCParam param = (RPCParam)resArgs.get(0);
             result = param.getValue();
+
+            /**
+             * Are there out-params?  If so, return a Vector instead.
+             */
+            if (resArgs.size() > 1) {
+                outParams = new Vector();
+                for (int i = 1; i < resArgs.size(); i++) {
+                    outParams.add(resArgs.get(i));
+                }
+            }
         }
         
         Debug.Print( 1, "Exit: ServiceClient::invoke(RPCElement)" );
