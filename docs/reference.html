@@ -614,9 +614,17 @@ Name of class that implements attachments support. Default is
 
 </td>
 </tr>
+<tr><td><b>axis.enableListQuery</b></td>
+<td>Flag to enable the "list services" feature. Set to true by default
+</td>
+</tr>
 
-<tr><td><b></b></td>
-<td>
+
+<tr><td><b>axis.development.system</b></td>
+<td>Flag to switch the system from <i>production</i> (false) to 
+<i>development</i> (true). A development system gives out stack traces
+and other information that production boxes should not. 
+
 </td>
 </tr>
 
@@ -645,7 +653,11 @@ More may exist.
 <tr><td><b>wsdlFile</b></td>
 <td>The path to a WSDL File; can be an absolute path or
 a resource that axis.jar can load. Useful to export
-your custom WSDL file. 
+your custom WSDL file.  When specify a path to a resource, place a forward
+slash to start at the beginning of the classpath (e.g
+"/org/someone/res/mywsdl.wsdl"). How does Axis know whether to return 
+a file or resource? It looks for a file first, if that is missing a
+resource is returned. 
 
 </td>
 </tr>
