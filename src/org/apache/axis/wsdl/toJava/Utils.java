@@ -395,10 +395,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static String makePackageName(String namespace)
     {
         String hostname = null;
+        String path = "";
 
         // get the target namespace of the document
         try {
-            hostname = new URL(namespace).getHost();
+            URL u = new URL(namespace);
+            hostname = u.getHost();
+            path = u.getPath();
         }
         catch (MalformedURLException e) {
             if (namespace.indexOf(":") > -1) {
@@ -418,6 +421,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
         //convert illegal java identifier
         hostname = hostname.replace('-', '_');
+        path = path.replace('-', '_');
+        
+        // chomp off last forward slash in path, if necessary
+        if (path.length() > 0 && path.charAt(path.length() - 1) == '/') {
+            path = path.substring(0, path.length() - 1);
+        }
 
         // tokenize the hostname and reverse it
         StringTokenizer st = new StringTokenizer( hostname, "." );
@@ -425,22 +434,40 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         for(int i = 0; i < words.length; ++i)
             words[i] = st.nextToken();
 
-        StringBuffer sb = new StringBuffer(80);
+        StringBuffer sb = new StringBuffer(namespace.length());
         for(int i = words.length-1; i >= 0; --i) {
-            String word = words[i];
-            if (JavaUtils.isJavaKeyword(word)) {
-                word = JavaUtils.makeNonJavaKeyword(word);
-            }
-            // seperate with dot
-            if( i != words.length-1 )
-                sb.append('.');
+            addWordToPackageBuffer(sb, words[i], (i == words.length -1));
+        }
 
-            // convert digits to underscores
-            if( Character.isDigit(word.charAt(0)) )
-                sb.append('_');
-            sb.append( word );
+        // tokenize the path
+        StringTokenizer st2 = new StringTokenizer( path, "/" );
+        while (st2.hasMoreTokens()) {
+            addWordToPackageBuffer(sb, st2.nextToken(), false);
         }
         return sb.toString();
+    }
+
+    /**
+     * Massage <tt>word</tt> into a form suitable for use in a Java package name.
+     * Append it to the target string buffer with a <tt>.</tt> delimiter iff
+     * <tt>word</tt> is not the first word in the package name.
+     * 
+     * @param sb the buffer to append to
+     * @param word the word to append
+     * @param firstWord a flag indicating whether this is the first word
+     */
+    private static void addWordToPackageBuffer(StringBuffer sb, String word, boolean firstWord) {
+        if (JavaUtils.isJavaKeyword(word)) {
+            word = JavaUtils.makeNonJavaKeyword(word);
+        }
+        // separate with dot after the first word
+        if( ! firstWord )
+            sb.append('.');
+
+        // convert digits to underscores
+        if( Character.isDigit(word.charAt(0)) )
+            sb.append('_');
+        sb.append( word );
     }
 
     /**
