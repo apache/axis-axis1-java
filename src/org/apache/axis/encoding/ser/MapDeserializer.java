@@ -115,7 +115,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
                                DeserializationContext context)
         throws SAXException {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "MapDeserializer.startElement()"));
+            log.debug("Enter MapDeserializer::startElement()");
         }
         
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -126,7 +126,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
         setValue(new HashMap());
         
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "MapDeserializer.startElement()"));
+            log.debug("Exit: MapDeserializer::startElement()");
         }
     }
     
@@ -150,14 +150,20 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
         throws SAXException {
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "MapDeserializer.onStartChild()"));
+            log.debug("Enter: MapDeserializer::onStartChild()");
         }
 
         if (!localName.equals("item"))
             throw new SAXException(
                     JavaUtils.getMessage("itemInMap00"));
+                    
+        SOAPHandler sh = new ItemHandler(this);
         
-        return new ItemHandler(this);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MapDeserializer::onStartChild()");
+        }
+
+        return sh;
     }
     
     /**

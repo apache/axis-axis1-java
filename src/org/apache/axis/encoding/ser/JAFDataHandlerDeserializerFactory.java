@@ -71,13 +71,11 @@ public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
 
     public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
         super(JAFDataHandlerDeserializer.class, xmlType, javaType);
-        log.debug(JavaUtils.getMessage("enter00",
-                "JAFDataHandlerDeserializerFactory(" + javaType + ", "
-                + xmlType + ")"));
+        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory(" + javaType + ", "
+                + xmlType + ")");
     }
     public JAFDataHandlerDeserializerFactory() {
         super(JAFDataHandlerDeserializer.class);
-        log.debug(JavaUtils.getMessage("enter00",
-                "JAFDataHandlerDeserializerFactory()"));
+        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory()");
     }
 }

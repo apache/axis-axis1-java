@@ -89,8 +89,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "SimpleAuthorizationHandler::invoke") );
+            log.debug("Enter: SimpleAuthorizationHandler::invoke");
         }
 
         boolean allowByDefault = false;
@@ -131,8 +130,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("exit00", 
-                    "SimpleAuthorizationHandler::invoke") );
+                log.debug("Exit: SimpleAuthorizationHandler::invoke");
             }
             return;
         }
@@ -152,8 +150,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
                 }
 
                 if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("exit00", 
-                        "SimpleAuthorizationHandler::invoke") );
+                    log.debug("Exit: SimpleAuthorizationHandler::invoke");
                 }
                 return;
             }
@@ -169,10 +166,8 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      */
     public void undo(MessageContext msgContext) {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "SimpleAuthorizationHandler::undo") );
-            log.debug(JavaUtils.getMessage("exit00", 
-                "SimpleAuthorizationHandler::undo") );
+            log.debug("Enter: SimpleAuthorizationHandler::undo");
+            log.debug("Exit: SimpleAuthorizationHandler::undo");
         }
     }
 };

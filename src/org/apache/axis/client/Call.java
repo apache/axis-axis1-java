@@ -1428,7 +1428,7 @@ public class Call implements javax.xml.rpc.Call {
 
             attachments.setAttachmentParts(attachmentParts);
             }catch(org.apache.axis.AxisFault ex){
-              log.debug(JavaUtils.getMessage("axisFault00"), ex);
+              log.info(JavaUtils.getMessage("axisFault00"), ex);
               throw  new RuntimeException(ex.getMessage());
             }
         }
@@ -1592,8 +1592,7 @@ public class Call implements javax.xml.rpc.Call {
                     throws AxisFault {
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00",
-                                           "Call::invoke(ns, meth, args)") );
+            log.debug("Enter: Call::invoke(ns, meth, args)");
         }
 
         /**
@@ -1611,8 +1610,7 @@ public class Call implements javax.xml.rpc.Call {
         Object ret = invoke( body );
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00",
-                                           "Call::invoke(ns, meth, args)") );
+            log.debug("Exit: Call::invoke(ns, meth, args)");
         }
 
         return ret;
@@ -1648,8 +1646,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Object invoke( RPCElement body ) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00",
-                                           "Call::invoke(RPCElement)") );
+            log.debug("Enter: Call::invoke(RPCElement)");
         }
 
         /**
@@ -1769,8 +1766,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00",
-                                           "Call::invoke(RPCElement)") );
+            log.debug("Exit: Call::invoke(RPCElement)");
         }
 
         // Convert type if needed
@@ -1810,7 +1806,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invoke() throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
+            log.debug("Enter: Call::invoke()");
         }
 
         Message      reqMsg  = null ;
@@ -1928,7 +1924,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
+            log.debug("Exit: Call::invoke()");
         }
     }
 

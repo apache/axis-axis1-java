@@ -89,8 +89,7 @@ public class LocalSender extends BasicHandler {
 
     public void invoke(MessageContext clientContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "LocalSender::invoke") );
+            log.debug("Enter: LocalSender::invoke");
         }
 
         AxisServer targetServer = 
@@ -176,8 +175,7 @@ public class LocalSender extends BasicHandler {
         //clientContext.getResponseMessage().getAsString();
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "LocalSender::invoke"));
+            log.debug("Exit: LocalSender::invoke");
         }
     }
 }

@@ -78,7 +78,7 @@ public class HTTPAuthHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        log.debug(JavaUtils.getMessage("enter00", "HTTPAuthHandler::invoke") );
+        log.debug("Enter: HTTPAuthHandler::invoke");
         
         /* Process the Basic Auth stuff in the headers */
         /***********************************************/
@@ -104,6 +104,6 @@ public class HTTPAuthHandler extends BasicHandler
             }
         }
 
-        log.debug(JavaUtils.getMessage("exit00", "HTTPAuthHandler::invoke") );
+        log.debug("Exit: HTTPAuthHandler::invoke");
     }
 }

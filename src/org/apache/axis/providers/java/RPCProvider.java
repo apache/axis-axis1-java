@@ -99,8 +99,7 @@ public class RPCProvider extends JavaProvider
         throws Exception
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00",
-                "RPCProvider.processMessage()"));
+            log.debug("Enter: RPCProvider.processMessage()");
         }
 
         SOAPService service = msgContext.getService();

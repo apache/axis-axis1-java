@@ -73,7 +73,7 @@ public class ErrorHandler extends BasicHandler {
         LogFactory.getLog(ErrorHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "ErrorHandler::invoke") );
+        log.debug("Enter: ErrorHandler::invoke");
         throw new AxisFault( "Server.Whatever", "ERROR", null, null );
     }
 

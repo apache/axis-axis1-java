@@ -128,8 +128,7 @@ public class RPCHandler extends SOAPHandler
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00",
-                                           "RPCHandler.onStartChild()"));
+            log.debug("Enter: RPCHandler.onStartChild()");
         }
         if (!context.isDoneParsing()) {
             context.pushNewElement(new MessageElement(namespace,
@@ -236,8 +235,7 @@ public class RPCHandler extends SOAPHandler
                  RPCParam.getValueField()));
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00",
-                                           "RPCHandler.onStartChild()"));
+            log.debug("Exit: RPCHandler.onStartChild()");
         }
         return (SOAPHandler) dser;
     }

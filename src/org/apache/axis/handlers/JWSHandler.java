@@ -83,8 +83,7 @@ public class JWSHandler extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "JWSHandler::invoke") );
+            log.debug("Enter: JWSHandler::invoke");
         }
 
         // FORCE the targetService to be JWS if the URL is right.
@@ -95,8 +94,7 @@ public class JWSHandler extends BasicHandler
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "JWSHandler::invoke") );
+            log.debug("Exit: JWSHandler::invoke");
         }
     }
 

@@ -76,7 +76,7 @@ public class URLMapper extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        log.debug(JavaUtils.getMessage("enter00", "URLMapper::invoke") );
+        log.debug("Enter: URLMapper::invoke");
 
         /** If there's already a targetService then just return.
          */
@@ -90,7 +90,7 @@ public class URLMapper extends BasicHandler
             }
         }
 
-        log.debug(JavaUtils.getMessage("exit00", "URLMapper::invoke") );
+        log.debug("Exit: URLMapper::invoke");
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {

@@ -86,8 +86,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
-                "SimpleAuthenticationHandler::invoke"));
+            log.debug("Enter: SimpleAuthenticationHandler::invoke");
         }
 
         SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
@@ -129,8 +128,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
-                "SimpleAuthenticationHandler::invoke") );
+            log.debug("Exit: SimpleAuthenticationHandler::invoke");
         }
     }
 };

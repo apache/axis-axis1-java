@@ -108,7 +108,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
                                DeserializationContext context)
         throws SAXException {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.startElement()"));
+            log.debug("Enter: VectorDeserializer::startElement()");
         }
         
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -119,7 +119,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         setValue(new java.util.Vector());
         
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.startElement()"));
+            log.debug("Exit: VectorDeserializer::startElement()");
         }
     }
     
@@ -142,7 +142,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
                                     DeserializationContext context)
         throws SAXException {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.onStartChild()"));
+            log.debug("Enter: VectorDeserializer::onStartChild()");
         }
         
         if (attributes == null)
@@ -175,7 +175,7 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         curIndex++;
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.onStartChild()"));
+            log.debug("Exit: VectorDeserializer::onStartChild()");
         }
         return (SOAPHandler) dSer;
     }

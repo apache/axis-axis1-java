@@ -101,12 +101,12 @@ public class Admin
     public Element[] AdminService(Vector xml)
         throws Exception
     {
+        log.debug("Enter: Admin::AdminService");
         MessageContext msgContext = MessageContext.getCurrentContext();
-        log.debug(JavaUtils.getMessage("enter00", "Admin:AdminService") );
         Document doc = process( msgContext, (Element) xml.get(0) );
         Element[] result = new Element[1];
         result[0] = doc.getDocumentElement();
-        log.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
+        log.debug("Exit: Admin::AdminService");
         return result;
     }
 

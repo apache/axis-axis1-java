@@ -80,7 +80,7 @@ public class HTTPActionHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        log.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::invoke") );
+        log.debug("Enter: HTTPActionHandler::invoke");
 
         /** If there's already a targetService then just return.
         */
@@ -116,6 +116,6 @@ public class HTTPActionHandler extends BasicHandler
             }
         }
 
-        log.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::invoke") );
+        log.debug("Exit: HTTPActionHandler::invoke");
     }
 }

@@ -238,7 +238,7 @@ public abstract class JavaProvider extends BasicProvider
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled())
-            log.debug( JavaUtils.getMessage("enter00", "JavaProvider::invoke (" + this + ")"));
+            log.debug("Enter: JavaProvider::invoke (" + this + ")");
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -314,8 +314,9 @@ public abstract class JavaProvider extends BasicProvider
             log.info( JavaUtils.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         }
+        
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("exit00", "JavaProvider::invoke (" + this + ")"));
+            log.debug("Exit: JavaProvider::invoke (" + this + ")");
     }
 
     /**
@@ -326,7 +327,7 @@ public abstract class JavaProvider extends BasicProvider
      */ 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("enter00", "JavaProvider::generateWSDL (" + this + ")"));
+            log.debug("Enter: JavaProvider::generateWSDL (" + this + ")");
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
@@ -392,7 +393,7 @@ public abstract class JavaProvider extends BasicProvider
         }
     
         if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("exit00", "JavaProvider::generateWSDL (" + this + ")"));
+            log.debug("Exit: JavaProvider::generateWSDL (" + this + ")");
     }
 
     private String getAllowedMethods(Handler service)

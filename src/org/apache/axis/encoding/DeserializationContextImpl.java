@@ -722,12 +722,16 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public void endDocument() throws SAXException {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("endDoc00"));
+            log.debug("Enter: DeserializationContextImpl::endDocument()");
         }
         if (!doneParsing && (recorder != null))
             recorder.endDocument();
         
         doneParsing = true;
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: DeserializationContextImpl::endDocument()");
+        }
     }
     /**
      * Return if done parsing document.
@@ -745,6 +749,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException
     {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: DeserializationContextImpl::startPrefixMapping(" + prefix + ", " + uri + ")");
+        }
+        
         if (!doneParsing && (recorder != null))
             recorder.startPrefixMapping(prefix, uri);
         
@@ -757,20 +765,20 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             namespaces.add(uri, "");
         }
        
-        if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("startPrefix00", prefix, uri));
-        }
-        
         SOAPHandler handler = getTopHandler();
         if (handler != null)
             handler.startPrefixMapping(prefix, uri);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: DeserializationContextImpl::startPrefixMapping()");
+        }
     }
     
     public void endPrefixMapping(String prefix)
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("endPrefix00", prefix));
+            log.debug("Enter: DeserializationContextImpl::endPrefixMapping(" + prefix + ")");
         }
         
         if (!doneParsing && (recorder != null))
@@ -779,6 +787,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         SOAPHandler handler = getTopHandler();
         if (handler != null)
             handler.endPrefixMapping(prefix);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: DeserializationContextImpl::endPrefixMapping()");
+        }
     }
     
     public void setDocumentLocator(Locator locator) 
@@ -824,13 +836,12 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                              String qName, Attributes attributes)
         throws SAXException
     {
-        SOAPHandler nextHandler = null;
-
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("startElem00",
-                    "['" + namespace + "' " + localName + "]"));
+            log.debug("Enter: DeserializationContextImpl::startElement(" + namespace + ", " + localName + ")");
         }
         
+        SOAPHandler nextHandler = null;
+
         String prefix = "";
         int idx = qName.indexOf(":");
         if (idx > 0)
@@ -863,6 +874,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         namespaces.push();
         
         startOfMappingsPos = -1;
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: DeserializationContextImpl::startElement()");
+        }
     }
 
     /**
@@ -872,8 +887,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("endElem00",
-                    "['" + namespace + "' " + localName + "]"));
+            log.debug("Enter: DeserializationContextImpl::endElement(" + namespace + ", " + localName + ")");
         }
         
         if (!doneParsing && (recorder != null))
@@ -887,14 +901,15 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 getTopHandler().onEndChild(namespace, localName, this);
             } else {
                 // We should be done!
-                if (log.isDebugEnabled()) {
-                    log.debug(JavaUtils.getMessage("endDoc01"));
-                }
             }
             
         } finally {
             if (curElement != null)
                 curElement = (MessageElement)curElement.getParentElement();
+        
+	        if (log.isDebugEnabled()) {
+    	        log.debug("Exit: DeserializationContextImpl::endElement()");
+        	}
         }
     }
 

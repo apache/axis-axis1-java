@@ -78,7 +78,7 @@ public class LogHandler extends BasicHandler {
     long start = 0;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "LogHandler::invoke") );
+        log.debug("Enter: LogHandler::invoke");
         if (msgContext.getPastPivot() == false) {
            start = System.currentTimeMillis();
         } else {
@@ -104,11 +104,11 @@ public class LogHandler extends BasicHandler {
                 throw AxisFault.makeFault(e);
             }
         }
-        log.debug(JavaUtils.getMessage("exit00", "LogHandler::invoke") );
+        log.debug("Exit: LogHandler::invoke");
     }
 
     public void undo(MessageContext msgContext) {
-        log.debug(JavaUtils.getMessage("enter00", "LogHandler::undo") );
+        log.debug("Enter: LogHandler::undo");
         try {
             FileWriter  fw   = new FileWriter( "axis.log", true );
             PrintWriter pw   = new PrintWriter( fw );
@@ -117,8 +117,8 @@ public class LogHandler extends BasicHandler {
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.error(JavaUtils.getMessage("exception00"), e );
         }
-        log.debug(JavaUtils.getMessage("exit00", "LogHandler::undo") );
+        log.debug("Exit: LogHandler::undo");
     }
 };

@@ -96,7 +96,7 @@ public class BodyBuilder extends SOAPHandler
         throws SAXException
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
+            log.debug("Enter: BodyBuilder::onStartChild()");
         }
 
         QName qname = new QName(namespace, localName);
@@ -162,7 +162,7 @@ public class BodyBuilder extends SOAPHandler
         //context.pushNewElement(element);
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onStartChild()"));
+            log.debug("Exit: BodyBuilder::onStartChild()");
         }
         return handler;
     }
@@ -171,7 +171,7 @@ public class BodyBuilder extends SOAPHandler
                            DeserializationContext context)
     {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onEndChild()"));
+            log.debug("Enter: BodyBuilder::onEndChild()");
         }
         
         if (element != null) {
@@ -180,7 +180,7 @@ public class BodyBuilder extends SOAPHandler
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "BodyBuilder.onEndChild()"));
+            log.debug("Exit: BodyBuilder::onEndChild()");
         }
     }
 }
