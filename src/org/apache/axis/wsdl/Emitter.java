@@ -105,12 +105,15 @@ public class Emitter {
     private Definition def = null;
     private boolean bEmitSkeleton = false;
     private boolean bMessageContext = false;
+    private boolean bVerbose = false;
 
     /**
      * Call this method if you have a uri for the WSDL document
      */
     public void emit(String uri) throws IOException {
-        System.out.println ("Parsing XML File: " + uri);
+
+        if (bVerbose)
+            System.out.println ("Parsing XML File: " + uri);
 
         try {
             doc = XMLUtils.newDocument(uri);
@@ -160,6 +163,15 @@ public class Emitter {
     public void generateMessageContext(boolean value) {
         this.bMessageContext = value;
     }
+
+    /**
+     * Turn on/off verbose messages
+     * @param boolean value
+     */
+    public void verbose(boolean value) {
+        this.bVerbose = value;
+    }
+
     /**
      * This method returns a set of all the complex types in a given PortType.  The elements of the returned HashSet are Strings.
      */
@@ -274,7 +286,9 @@ public class Emitter {
         String nameValue = portType.getQName ().getLocalPart ();
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
-        System.out.println("Generating PortType interface: " + nameValue + ".java");
+
+        if (bVerbose)
+            System.out.println("Generating PortType interface: " + nameValue + ".java");
 
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
@@ -302,7 +316,8 @@ public class Emitter {
         String nameValue = portType.getQName ().getLocalPart () + "Axis";
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
-        System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
+        if (bVerbose)
+            System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
         if(bMessageContext)
           interfacePW.println ("import org.apache.axis.MessageContext;");
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
@@ -702,7 +717,9 @@ public class Emitter {
 
         String stubName = name + "Stub";
         PrintWriter stubPW = new PrintWriter (new FileWriter (stubName + ".java"));
-        System.out.println("Generating client-side stub: " + stubName + ".java");
+
+        if (bVerbose)
+            System.out.println("Generating client-side stub: " + stubName + ".java");
 
         stubPW.println ("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
         stubPW.println ("{");
@@ -776,7 +793,8 @@ public class Emitter {
         {
             String skelName = name + "Skeleton";
             skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
-            System.out.println("Generating server-side skeleton: " + skelName + ".java");
+            if (bVerbose)
+                System.out.println("Generating server-side skeleton: " + skelName + ".java");
             if(bMessageContext)
                 skelPW.println ("import org.apache.axis.MessageContext;");
             skelPW.println ("public class " + skelName);
@@ -1163,10 +1181,12 @@ public class Emitter {
     private void writeDeploymentXML(){
         try{
             PrintWriter deployPW = new PrintWriter (new FileWriter ("deploy.xml"));
-            System.out.println("Generating deployment document: deploy.xml");
+            if (bVerbose)
+                System.out.println("Generating deployment document: deploy.xml");
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = new PrintWriter (new FileWriter ("undeploy.xml"));
-            System.out.println("Generating deployment document: undeploy.xml");
+            if (bVerbose)
+                System.out.println("Generating deployment document: undeploy.xml");
             initializeDeploymentDoc(undeployPW, "undeploy");
             writeDeployServices(deployPW, undeployPW);
             writeDeployTypes(deployPW);
@@ -1341,7 +1361,8 @@ public class Emitter {
         NamedNodeMap attributes = node.getAttributes ();
         String nameValue = capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter typePW = new PrintWriter (new FileWriter (nameValue + ".java"));
-                System.out.println("Generating Type Implementation: " + nameValue + ".java");
+        if (bVerbose)
+            System.out.println("Generating Type Implementation: " + nameValue + ".java");
 
         typePW.println ("public class " + nameValue + " implements java.io.Serializable");
         typePW.println ("{");
@@ -1400,7 +1421,8 @@ public class Emitter {
         PrintWriter pw =
             new PrintWriter (new FileWriter (typeName + "Holder.java"));
 
-                System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
+        if (bVerbose)
+            System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
 
         pw.println ("public final class " + typeName + "Holder implements java.io.Serializable");
         pw.println ("{");
