@@ -57,6 +57,7 @@ package org.apache.axis.utils ;
 
 import java.io.* ;
 import java.util.Hashtable ;
+import org.apache.axis.utils.cache.JavaClass ;
 
 /**
  * This allows us to specify that certain classes, the ones we register
@@ -70,7 +71,7 @@ import java.util.Hashtable ;
 public class AxisClassLoader extends ClassLoader {
   static Hashtable classLoaders = new Hashtable();
 
-  Hashtable list         = new Hashtable() ;
+  Hashtable classCache          = new Hashtable() ;
 
   public AxisClassLoader() {
     super();
@@ -120,34 +121,52 @@ public class AxisClassLoader extends ClassLoader {
   public synchronized void registerClass( String name, Class cls ) {
     /* And finally register it */
     /***************************/
-    list.put( name, cls );
+    JavaClass oldClass = (JavaClass)classCache.get(name);
+    if (oldClass!=null && oldClass.getJavaClass()==cls) return;
+    classCache.put( name, new JavaClass(cls) );
   }
 
   public synchronized void deregisterClass( String name ) {
     /* Deregister the passed in className */
     /**************************************/
-    list.remove( name);
+    classCache.remove( name);
   }
 
   public boolean isClassRegistered( String name ) {
-    return( list != null && list.get(name) != null );
+    return( classCache != null && classCache.get(name) != null );
   }
 
   public Class loadClass(String name) throws ClassNotFoundException {
     Object obj ;
 
-    /* Check the 'list' for the className - if there just return the */
-    /* class - if not there use the default class loader.            */
+    /* Check the classCache for the className - if there just return */
+    /* the class - if not there use the default class loader.        */
     /*****************************************************************/
-    if ( list != null ) {
-      obj = list.get( name );
+    if ( classCache != null ) {
+      obj = classCache.get( name );
       if ( obj != null )
-        return( (Class) obj );
+        return( ((JavaClass)obj).getJavaClass() );
     }
 
     ClassLoader cl = this.getClass().getClassLoader();
     Class cls = cl.loadClass( name );
     registerClass( name, cls );
     return cls;
+  }
+
+  /**
+   * Find the cached JavaClass entry for this class, creating one
+   * if necessary.
+   * @param className name of the class desired
+   * @return JavaClass entry
+   */
+  public JavaClass lookup(String className) throws ClassNotFoundException {
+    JavaClass jc = (JavaClass) classCache.get( className );
+    if ( jc == null ) {
+        loadClass( className );
+        jc = (JavaClass) classCache.get( className );
+    }
+
+    return jc;
   }
 };
