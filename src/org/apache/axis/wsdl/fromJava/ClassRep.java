@@ -162,6 +162,13 @@ public class ClassRep extends BaseRep {
     private HashMap  _fieldNames = new HashMap();
     private Vector   _stopList    = null;
     
+    /**
+     * Cache of tt-bytecode BCClass objects which correspond to particular
+     * Java classes.
+     * 
+     * !!! NOTE : AT PRESENT WE DO NOT CLEAN UP THIS CACHE.
+     */ 
+    private static HashMap ttClassCache = new HashMap();
 
     /**
      * Constructor
@@ -289,18 +296,16 @@ public class ClassRep extends BaseRep {
      * Iterate up the inheritance chain and construct the list of methods
      * Appends to the _methods class variable.
      */ 
-    private void walkInheritanceChain(Class cls, boolean inhMethods, Class implClass) {
+    private void walkInheritanceChain(Class cls, 
+                                      boolean inhMethods, 
+                                      Class implClass) {
         Method[] m;
         Class currentClass = cls;
-        HashMap ttClassCache;
-        BCClass bclass;
         
         while (isClassOk(currentClass)) {
 
             // get the methods in this class
             m = currentClass.getDeclaredMethods();
-
-            ttClassCache = new HashMap();
 
             // add each method in this class to the list
             for (int i=0; i < m.length; i++) {
@@ -314,17 +319,7 @@ public class ClassRep extends BaseRep {
                         continue;  // skip it
                     }
                     Class[] types = getParameterTypes(m[i]);
-                    bclass = (BCClass)ttClassCache.get(currentClass);
-                    
-                    if(bclass == null) {
-                        try {
-                            bclass = new BCClass(currentClass);
-                            ttClassCache.put(currentClass, bclass);
-                        } catch (IOException e) {
-                            // what now?
-                        }
-                    }
-                    String[] names = getParameterNames(m[i], implClass, bclass);
+                    String[] names = getParameterNames(m[i], implClass);
                     ParameterMode[] modes = getParameterModes(m[i], implClass);
                     MethodRep methodRep = new MethodRep(m[i], types, modes, names);
                     getMethodMetaData(methodRep, m[i], implClass);
@@ -443,7 +438,7 @@ public class ClassRep extends BaseRep {
      * @param types  are the parameter types after converting Holders.
      * @return array of Strings which represent the return name followed by parameter names
      */ 
-    protected String[] getParameterNames(Method method, Class implClass, BCClass bclass) {
+    protected String[] getParameterNames(Method method, Class implClass) {
         String[] paramNames = null;
         
         paramNames = getParameterNamesFromSkeleton(method);
@@ -451,7 +446,7 @@ public class ClassRep extends BaseRep {
             return paramNames;
         }
         
-        paramNames = getParameterNamesFromDebugInfo(method, bclass); 
+        paramNames = getParameterNamesFromDebugInfo(method); 
         
         // If failed, try getting a method of the impl class.
         if (paramNames == null && implClass != null) {
@@ -469,7 +464,7 @@ public class ClassRep extends BaseRep {
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = getParameterNamesFromDebugInfo(m, bclass); 
+                paramNames = getParameterNamesFromDebugInfo(m); 
             }
         }            
 
@@ -519,7 +514,8 @@ public class ClassRep extends BaseRep {
      * @param method
      * @return list of names or null
      */
-    public String[] getParameterNamesFromDebugInfo(java.lang.reflect.Method method, BCClass bclass) {
+    public String[] 
+            getParameterNamesFromDebugInfo(java.lang.reflect.Method method) {
         Class c = method.getDeclaringClass();
         int numParams = method.getParameterTypes().length;
         Vector temp = new Vector();
@@ -528,17 +524,21 @@ public class ClassRep extends BaseRep {
         if (numParams == 0)
             return null;
 
-        // Try to make a tt-bytecode
-        BCMethod bmeth = null;
-//        BCClass bclass = null;
-//        try {
-//            bclass = new BCClass(c);
-//        } catch (IOException e) {
-//            return null;  // no dice
-//        }
+        // Try to obtain a tt-bytecode class object
+        BCClass bclass = (BCClass)ttClassCache.get(c);
+                    
+        if(bclass == null) {
+            try {
+                bclass = new BCClass(c);
+                ttClassCache.put(c, bclass);
+            } catch (IOException e) {
+                // what now?
+            }
+        }
 
         // Obtain the exact method we're interested in.
-        bmeth = bclass.getMethod(method.getName(), method.getParameterTypes());
+        BCMethod bmeth = bclass.getMethod(method.getName(), 
+                                          method.getParameterTypes());
 
         if (bmeth == null)
             return null;
