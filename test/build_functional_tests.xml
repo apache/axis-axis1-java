@@ -30,7 +30,9 @@ Copyright:
     <pathelement path="${java.class.path}" />
   </path>
 
-  <taskdef name="runaxisfunctionaltests" classname="test.functional.ant.RunAxisFunctionalTestsTask" />
+  <taskdef name="runaxisfunctionaltests"
+    classname="test.functional.ant.RunAxisFunctionalTestsTask"
+    classpath="${build.dir}" />
 
   <!-- =================================================================== -->
   <!-- Launches the functional test TCP server -->

@@ -1,0 +1,17 @@
+<m:deploy xmlns:m="AdminService">
+
+  <chain   name="proxyPivot"   flow="MsgDispatcher" />
+
+  <!-- NEED TO DEPLOY HTTPActionHandler FOR THE FIRST TIME EVER?!?!?! - RobJ -->
+  <handler name="HTTPActionHandler" class="org.apache.axis.handlers.http.HTTPActionHandler"/>
+  <transport name="SimpleHTTP" pivot="HTTPSender" request="HTTPActionHandler" />
+ 
+  <service name="ProxyService" pivot="proxyPivot" >
+    <option name="className" value="samples.proxy.ProxyService" />
+    <option name="methodName" value="ProxyService" />
+    <option name="FullMessageService" value="true" />
+    <option name="URL" value="tcp://localhost:8088/" />
+  </service>
+  
+</m:deploy>
+

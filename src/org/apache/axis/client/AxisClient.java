@@ -80,6 +80,13 @@ public class AxisClient extends AxisEngine
     }
     
     /**
+     * this *is* the client engine!
+     */
+    public AxisEngine getClientEngine () {
+        return this;
+    }
+    
+    /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
@@ -142,7 +149,7 @@ public class AxisClient extends AxisEngine
                     h.invoke(msgContext);
                 
                 /** Process the Transport Specific stuff
-                 * 
+                 *
                  * NOTE: Somewhere in here there is a handler which actually
                  * sends the message and receives a response.  Generally
                  * this is the pivot point in the Transport chain.

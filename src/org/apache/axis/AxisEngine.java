@@ -158,14 +158,14 @@ public abstract class AxisEngine extends BasicHandler
     /**
      * Load up our engine's configuration of Handlers, Chains,
      * Services, etc.
-     * 
+     *
      * NOTE: Right now this can only read an "engine-config.xml" in an
      * appropriate place on the classpath (org/apache/axis/client or
      * org/apache/axis/server).  This should be modified to do something like
      * look in the server startup directory first, or perhaps check a
      * system property for the repository location.  (OK, now it checks the
      * local directory first.)
-     * 
+     *
      * We need to complete discussions about the packaging and deployment
      * patterns for Axis before this code solidifies.
      */
@@ -180,7 +180,7 @@ public abstract class AxisEngine extends BasicHandler
         
         if (is == null) {
           // TODO: Deal with this in a nicer way...
-          System.err.println("No engine configuration in " + 
+          System.err.println("No engine configuration in " +
                              this.getClass().getPackage().getName() +
                              " - aborting!");
           return;
@@ -253,6 +253,19 @@ public abstract class AxisEngine extends BasicHandler
         return _typeMappingRegistry;
     }
     
+    /*********************************************************************
+     * Client engine access
+     *
+     * An AxisEngine may define another specific AxisEngine to be used
+     * by newly created ServiceClients.  For instance, a server may
+     * create an AxisClient and allow deployment to it.  Then
+     * the server's services may create ServiceClient objects which
+     * can access the AxisClient's deployed handlers and transports.
+     *********************************************************************
+     */
+    
+    public abstract AxisEngine getClientEngine ();
+
     /*********************************************************************
      * Administration and management APIs
      *

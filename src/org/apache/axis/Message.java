@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -85,6 +85,10 @@ public class Message {
   private static final int FORM_BODYINSTREAM = 5;
   private static final int FORM_FAULT        = 6;
   private int currentForm ;
+    
+    private static final String[] formNames =
+    { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
+            "FORM_BYTES", "FORM_BODYINSTREAM", "FORM_FAULT" };
   
   private String messageType ;
   private MessageContext msgContext;
@@ -156,7 +160,7 @@ public class Message {
   }
 
   private void setCurrentMessage(Object currMsg, int form) {
-    Debug.Print( 2, "Setting current message form to: " + form );
+    Debug.Print( 2, "Setting current message form to: " + formNames[form] +" (currentMessage is now "+currMsg+")" );
     currentMessage = currMsg ;
     currentForm = form ;
   }
@@ -214,7 +218,7 @@ public class Message {
   public String getAsString() {
     Debug.Print( 2, "Enter: Message::getAsString" );
     if ( currentForm == FORM_STRING ) {
-      Debug.Print( 2, "Exit: Message::getAsString" );
+      Debug.Print( 2, "Exit: Message::getAsString, currentMessage is "+currentMessage );
       return( (String) currentMessage );
     }
 
@@ -226,7 +230,7 @@ public class Message {
 
     if ( currentForm == FORM_BYTES ) {
       setCurrentMessage( new String((byte[]) currentMessage), FORM_STRING );
-      Debug.Print( 2, "Exit: Message::getAsString" );
+      Debug.Print( 2, "Exit: Message::getAsString, currentMessage is "+currentMessage );
       return( (String) currentMessage );
     }
 
@@ -262,8 +266,8 @@ public class Message {
   }
 
   public SOAPEnvelope getAsSOAPEnvelope() {
-    Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope" );
-    if ( currentForm == FORM_SOAPENVELOPE ) 
+    Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope; currentForm is "+formNames[currentForm] );
+    if ( currentForm == FORM_SOAPENVELOPE )
       return( (SOAPEnvelope) currentMessage );
     
     if (currentForm == FORM_BODYINSTREAM) {

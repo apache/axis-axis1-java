@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,75 +53,79 @@
  * <http://www.apache.org/>.
  */
 
-package samples.misc ;
+package samples.proxy;
 
-import java.net.*;
-import java.io.*;
 import java.util.*;
+import org.w3c.dom.* ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.Handler;
+import org.apache.axis.client.ServiceClient;
 
-import org.apache.axis.*;
-import org.apache.axis.utils.Debug ;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import samples.transport.tcp.TCPTransport;
 
 /**
+ * Proxy sample.  Relays message on to hardcoded URL.
+ * Soon, URL becomes configurable (via deployment?!);
+ * later, URL becomes specifiable in custom header.
  *
- * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Rob Jellinghaus <robj@unrealities.com>
  */
-public class TestClient {
-    public static String msg = "<SOAP-ENV:Envelope " +
-        "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
-        "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" > " +
-        "<SOAP-ENV:Body>\n" +
-        "<echo:Echo xmlns:echo=\"EchoService\">\n" +
-        "<symbol>IBM</symbol>\n" +
-        "</echo:Echo>\n" +
-        "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
 
+public class ProxyService {
     /**
-     * Send a hardcoded message to the server, and print the response.
-     *
-     * @param args the command line arguments (mainly for specifying URL)
-     * @param service an optional service argument, which will be used for
-     * specifying the transport-level service
+     * Process the given message, treating it as raw XML.
+     * -- is this sufficient???
      */
-    public static String doTest (String args[], String service) throws Exception {
-      Options      opts    = new Options( args );
-      String       url     = opts.getURL();
-      String       action  = "EchoService" ;
+    public Document ProxyService(MessageContext msgContext)
+        throws AxisFault
+    {
+        /*
+        // Look in the message context for our service...
+        // um... yeh
+        Handler self = msgContext.getServiceHandler();
         
-        if (service != null) {
-            action = service;
-        }
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-
-      args = opts.getRemainingArgs();
-      if ( args != null ) action = args[0];
-
-      ServiceClient client = new ServiceClient(new HTTPTransport());
-      client.set(HTTPTransport.URL, url);
-      client.set(HTTPTransport.ACTION, action);
-
-      Message        reqMsg      = new Message( msg );
-      Message        resMsg     = null ;
-
-      System.out.println( "Request:\n" + msg );
+        // what is our target URL?
+        String dest = (String)self.getOption("URL");
         
-      client.setRequestMessage( reqMsg );
-      client.invoke();
-      resMsg = client.getMessageContext().getResponseMessage();
-
-      System.out.println( "Response:\n" + resMsg.getAsString() );
-        return (String)resMsg.getAsString();
+        // make a ServiceClient going in that direction
+        // (should we cache this?)
+        // (what about deployment of other transports?)
+        ServiceClient client = new ServiceClient(dest);
+        
+        // try plain old simple handoff!!!
+        client.setRequestMessage(msgContext.getRequestMessage());
+        
+        // send it!!!
+        client.invoke();
+        
+        // hmm, will reverse handoff work?
+        msgContext.setResponseMessage(client.getMessageContext().getResponseMessage());
+        
+        // return null so MsgProvider will not muck with our response
+        return null;
+         */
+        Handler self = msgContext.getServiceHandler();
+        
+        // for chat tomorrow:
+        String dest = (String)self.getOption("URL");
+        
+        // use the server's client engine in case anything has been deployed to it
+        ServiceClient client = new ServiceClient(msgContext.getAxisEngine().getClientEngine());
+        
+          // add TCP for proxy testing
+          client.addTransportPackage("samples.transport");
+          client.setTransportForProtocol("tcp", new TCPTransport());
+        
+        // NOW set the client's URL (since now we know what transports we'll want)
+        client.setURL(dest);
+        
+        client.setRequestMessage(msgContext.getRequestMessage());
+        client.invoke();
+        msgContext.setResponseMessage(client.getMessageContext().getResponseMessage());
+        
+        // return null so MsgProvider will not muck with our response
+        return null;
     }
-    
-  public static void main(String args[]) throws Exception{
-    doTest(args, null);
-  }
-  public static void mainWithService(String args[], String service) throws Exception{
-    doTest(args, service);
-  }
 }
+

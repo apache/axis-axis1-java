@@ -5,7 +5,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * soapenc's FunctionalTests test client/server interactions.
+ * Axis's FunctionalTests test client/server interactions.
  */
 public class FunctionalTests extends TestCase
 {
@@ -18,7 +18,7 @@ public class FunctionalTests extends TestCase
     {
         TestSuite suite = new TestSuite();
 
-        // Echo test - end to end serialization and deserialization / 
+        // Echo test - end to end serialization and deserialization /
         // interop tests.
         suite.addTestSuite(TestEchoSample.class);
         
@@ -39,6 +39,12 @@ public class FunctionalTests extends TestCase
 
         // address book test
         suite.addTestSuite(TestAddressBookSample.class);
+
+        // "Raw" echo service test.
+        suite.addTestSuite(TestMiscSample.class);
+
+        // Proxy service test.
+        suite.addTestSuite(TestProxySample.class);
 
         return suite;
     }

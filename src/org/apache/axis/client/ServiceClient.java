@@ -165,7 +165,7 @@ public class ServiceClient {
      */
     
     // Our AxisClient
-    private AxisClient engine;
+    private AxisEngine engine;
     
     // The description of our service
     private ServiceDescription serviceDesc;
@@ -180,11 +180,19 @@ public class ServiceClient {
      * Basic, no-argument constructor.
      */
     public ServiceClient () {
-        engine = new AxisClient();
+        this(new AxisClient());
+    }
+    
+    /**
+     * Construct a ServiceClient with just an AxisEngine.
+     */
+    public ServiceClient (AxisEngine engine) {
+        this.engine = engine;
         msgContext = new MessageContext(engine);
         if (!initialized)
           initialize();
     }
+        
     
     /**
      * Construct a ServiceClient with a given endpoint URL
@@ -194,18 +202,16 @@ public class ServiceClient {
      */
     public ServiceClient(String endpointURL)
     {
-        this();
-        
-        try {
-            URL url = new URL(endpointURL);
-            String protocol = url.getProtocol();
-            setTransport(getTransportForProtocol(protocol));
-            set(MessageContext.TRANS_URL, endpointURL);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this(endpointURL, new AxisClient());
+    }
+    
+    /**
+     * Construct a ServiceClient with a given endpoint URL & engine
+     */
+    public ServiceClient(String endpointURL, AxisEngine engine)
+    {
+        this(engine);
+        this.setURL(endpointURL);
     }
     
     /**
@@ -216,7 +222,14 @@ public class ServiceClient {
      *                  request
      */
     public ServiceClient (Transport transport) {
-        this();
+        this(transport, new AxisClient());
+    }
+    
+    /**
+     * Construct a ServiceClient with the given Transport & engine.
+     */
+    public ServiceClient (Transport transport, AxisEngine engine) {
+        this(engine);
         setTransport(transport);
     }
     
@@ -231,7 +244,24 @@ public class ServiceClient {
         Debug.Print(1, "Transport is " + transport);
     }
     
-    /** Get the Transport registered for the given protocol.
+    /**
+     * Set the URL (and the transport state).
+     */
+    public void setURL (String endpointURL)
+    {
+        try {
+            URL url = new URL(endpointURL);
+            String protocol = url.getProtocol();
+            setTransport(getTransportForProtocol(protocol));
+            set(MessageContext.TRANS_URL, endpointURL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+ /** Get the Transport registered for the given protocol.
      * 
      * @param protocol a protocol such as "http" or "local" which may
      *                 have a Transport object associated with it.
