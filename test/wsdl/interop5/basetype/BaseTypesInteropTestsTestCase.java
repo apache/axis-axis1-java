@@ -21,13 +21,19 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
         junit.textui.TestRunner.run(new junit.framework.TestSuite(BaseTypesInteropTestsTestCase.class));
     } // main
 
+    protected void setUp() throws Exception {
+        if(url == null) {
+            url = new URL(new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPortAddress());
+        }
+    }    
+
     public BaseTypesInteropTestsTestCase(java.lang.String name) {
         super(name);
     }
     public void test1InteropTestsPortEchoDouble() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -45,7 +51,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test2InteropTestsPortEchoDuration() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -63,7 +69,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test3InteropTestsPortEchoDateTime() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -81,7 +87,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test4InteropTestsPortEchoTime() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -99,7 +105,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test5InteropTestsPortEchoGYearMonth() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -117,7 +123,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test6InteropTestsPortEchoGYear() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -135,7 +141,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test7InteropTestsPortEchoGMonthDay() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -153,7 +159,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test8InteropTestsPortEchoGDay() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -171,7 +177,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test9InteropTestsPortEchoGMonth() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -189,7 +195,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test10InteropTestsPortEchoAnyURI() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -207,7 +213,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test11InteropTestsPortEchoQName() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -225,7 +231,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test12InteropTestsPortEchoNotation() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -243,7 +249,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test13InteropTestsPortEchoLanguage() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -261,7 +267,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test14InteropTestsPortEchoNMToken() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -279,7 +285,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test15InteropTestsPortEchoNMTokens() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -297,7 +303,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test16InteropTestsPortEchoName() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -315,7 +321,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test17InteropTestsPortEchoNCName() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -333,7 +339,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test18InteropTestsPortEchoID() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -351,7 +357,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test19InteropTestsPortEchoIDREF() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -369,7 +375,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test20InteropTestsPortEchoIDREFS() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -387,7 +393,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test21InteropTestsPortEchoEntity() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -405,7 +411,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test22InteropTestsPortEchoEntities() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -423,7 +429,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test23InteropTestsPortEchoNonPositiveInteger() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -441,7 +447,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test24InteropTestsPortEchoNegativeInteger() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -459,7 +465,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test25InteropTestsPortEchoLong() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -477,7 +483,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test26InteropTestsPortEchoInt() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -495,7 +501,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test27InteropTestsPortEchoShort() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -513,7 +519,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test28InteropTestsPortEchoByte() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -531,7 +537,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test29InteropTestsPortEchoNonNegativeInteger() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -549,7 +555,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test30InteropTestsPortEchoUnsignedLong() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -567,7 +573,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test31InteropTestsPortEchoUnsignedInt() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -585,7 +591,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test32InteropTestsPortEchoUnsignedShort() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -603,7 +609,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test33InteropTestsPortEchoUnsignedByte() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
@@ -621,7 +627,7 @@ public class BaseTypesInteropTestsTestCase extends junit.framework.TestCase {
     public void test34InteropTestsPortEchoPositiveInteger() throws Exception {
         test.wsdl.interop5.basetype.InteropTestsExpType binding;
         try {
-            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort();
+            binding = new test.wsdl.interop5.basetype.BaseTypesInteropTestsLocator().getInteropTestsPort(url);
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
