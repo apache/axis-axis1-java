@@ -260,10 +260,7 @@ public class AxisFault extends java.rmi.RemoteException {
         // Set the exception message (if any) as the fault string
         setFaultString( target.toString() );
 
-        initFaultDetails();
 
-        Element el;
-        
         // If we're derived from AxisFault, then put the exception class
         // into the "exceptionName" element in the details.  This allows
         // us to get back a correct Java Exception class on the other side
@@ -271,19 +268,14 @@ public class AxisFault extends java.rmi.RemoteException {
         
         if ((target instanceof AxisFault) &&
             (target.getClass() != AxisFault.class)) {
-            el = XMLUtils.StringToElement(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME.getNamespaceURI(),
-                                          Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME.getLocalPart(),
-                                          target.getClass().getName());
-            
-            faultDetails.add(el);
+            addFaultDetail(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME,
+                    target.getClass().getName());
         }
-
         //add stack trace
-        el =  XMLUtils.StringToElement(Constants.QNAME_FAULTDETAIL_STACKTRACE.getNamespaceURI(),
-                Constants.QNAME_FAULTDETAIL_STACKTRACE.getLocalPart(),
-                                       JavaUtils.stackToString(target));
+        addFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE,
+                JavaUtils.stackToString(target));
 
-        faultDetails.add(el);
+
     }
 
     /**
@@ -590,6 +582,28 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
+    /**
+     * append an element to the fault detail list
+     * @param detail the new element to add
+     * @since Axis1.1
+     */
+    public void addFaultDetail(Element detail) {
+        initFaultDetails();
+        faultDetails.add(detail);
+    }
+
+    /**
+     * create an element of the given qname and add it to the details
+     * @param qname qname of the element
+     * @param body string to use as body
+     */
+    public void addFaultDetail(QName qname,String body) {
+        Element detail = XMLUtils.StringToElement(qname.getNamespaceURI(),
+                qname.getLocalPart(),
+                body);
+
+        addFaultDetail(detail);
+    }
     /**
      * get all the fault details
      * @return an array of fault details, or null for none

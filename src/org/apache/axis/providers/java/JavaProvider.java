@@ -331,12 +331,19 @@ public abstract class JavaProvider extends BasicProvider
         } catch( SAXException exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             Exception real = exp.getException();
-            if (real == null)
+            if (real == null) {
                 real = exp;
+            }
             throw AxisFault.makeFault(real);
         } catch( Exception exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
-            throw AxisFault.makeFault(exp);
+            AxisFault fault = AxisFault.makeFault(exp);
+            //make a note if this was a runtime fault, for better logging
+            if (exp instanceof RuntimeException) {
+                fault.addFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION,
+                        "true");
+            }
+            throw fault;
         } finally {
             // If this is a request scoped service object which implements
             // ServiceLifecycle, let it know that it's being destroyed now.

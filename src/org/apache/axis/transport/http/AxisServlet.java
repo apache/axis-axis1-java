@@ -72,6 +72,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -218,7 +219,7 @@ public class AxisServlet extends AxisServletBase {
 
         PrintWriter writer = response.getWriter();
 
-        try
+        try 
         {
             AxisEngine engine = getEngine();
             ServletContext servletContext =
@@ -385,7 +386,13 @@ public class AxisServlet extends AxisServletBase {
      */
     protected void processAxisFault(AxisFault fault) {
         //log the fault
-        if(exceptionLog.isDebugEnabled()) {
+        Element runtimeException = fault.lookupFaultDetail(
+                Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
+        if (runtimeException != null) {
+            exceptionLog.info(Messages.getMessage("axisFault00"), fault);
+            //strip runtime details
+            fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
+        } else if (exceptionLog.isDebugEnabled()) {
             exceptionLog.debug(Messages.getMessage("axisFault00"), fault);
         }
         //dev systems only give fault dumps

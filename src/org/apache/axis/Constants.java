@@ -628,6 +628,11 @@ public class Constants {
      */
     public static final QName QNAME_FAULTDETAIL_EXCEPTIONNAME = new QName(NS_URI_AXIS, "exceptionName");
 
+    /**
+     * QName of stack trace element in an axis fault detail.
+     */
+    public static final QName QNAME_FAULTDETAIL_RUNTIMEEXCEPTION = new QName(NS_URI_AXIS, "isRuntimeException");
+
     //QNames of well known faults
     /**
      * the no-service fault value
