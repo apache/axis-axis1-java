@@ -145,7 +145,9 @@ public class SimpleSecurityProvider implements SecurityProvider {
         String password = msgContext.getStrProp(MessageContext.PASSWORD);
 
         if (users != null) {
-            category.debug( JavaUtils.getMessage("user00", username) );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("user00", username) );
+            }
 
             // in order to authenticate, the user must exist
             if ( username == null ||
@@ -154,13 +156,19 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 return null;
 
             String valid = (String) users.get(username);
-            category.debug( JavaUtils.getMessage("password00", password) );
+
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("password00", password) );
+            }
 
             // if a password is defined, then it must match
             if ( valid.length()>0 && !valid.equals(password) )
                 return null;
 
-            category.debug( JavaUtils.getMessage("auth00", username) );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("auth00", username) );
+            }
+
             return new SimpleAuthenticatedUser(username);
         }
 

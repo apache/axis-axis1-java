@@ -72,13 +72,25 @@ public class LocalResponder extends BasicHandler {
             Category.getInstance(LocalResponder.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "LocalResponder::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "LocalResponder::invoke") );
+        }
+
         msgContext.getResponseMessage().getSOAPPart().getAsString();
-        category.debug(JavaUtils.getMessage("exit00", "LocalResponder::invoke") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "LocalResponder::invoke") );
+        }
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "LocalResponder::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "LocalResponder::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "LocalResponder::undo") );
+            category.debug(JavaUtils.getMessage("exit00", 
+                "LocalResponder::undo") );
+        }
     }
 };
