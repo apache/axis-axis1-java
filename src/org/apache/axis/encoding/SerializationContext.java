@@ -187,7 +187,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * return a valid prefix - if the given URI is already mapped in this
      * serialization, we return the previous prefix.  If it is not mapped,
      * we will add a new mapping and return a generated prefix of the form
-     * "ns<num>".
+     * "ns&lt;num&gt;".
      * @param uri is the namespace uri
      * @return prefix
      */ 
@@ -198,7 +198,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * return a valid prefix - if the given URI is already mapped in this
      * serialization, we return the previous prefix.  If it is not mapped,
      * we will add a new mapping and return a generated prefix of the form
-     * "ns<num>".
+     * "ns&lt;num&gt;".
      * @param uri is the namespace uri
      * @param defaultPrefix optional parameter which is the default prefix
      * @return prefix
