@@ -296,6 +296,14 @@ public class Message extends javax.xml.soap.SOAPMessage
                        String contentType, String contentLocation,
                        MimeHeaders mimeHeaders) {
 
+        if(contentType == null && mimeHeaders != null) {
+            String contentTypes[] = mimeHeaders.getHeader("Content-Type");
+            contentType = (contentTypes != null)? contentTypes[0] : null;
+        }
+        if(contentLocation == null && mimeHeaders != null) {
+            String contentLocations[] = mimeHeaders.getHeader("Content-Location");
+            contentLocation = (contentLocations != null)? contentLocations[0] : null;
+        }
         // Try to construct an AttachmentsImpl object for attachment
         // functionality.
         // If there is no org.apache.axis.attachments.AttachmentsImpl class,

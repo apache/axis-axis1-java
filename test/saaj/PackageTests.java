@@ -15,6 +15,7 @@ public class PackageTests extends junit.framework.TestCase {
           if( null != org.apache.axis.utils.ClassUtils.forName("javax.activation.DataHandler") &&
               null != org.apache.axis.utils.ClassUtils.forName("javax.mail.internet.MimeMultipart")){
                 suite.addTestSuite(test.saaj.TestAttachment.class);
+                suite.addTestSuite(test.saaj.TestAttachmentSerialization.class);
           }
         }catch( Throwable t){;}
         suite.addTestSuite(test.saaj.TestEnvelope.class);
