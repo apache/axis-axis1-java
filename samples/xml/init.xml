@@ -1,0 +1,9 @@
+<!-- use this file to initialize the Admin service      -->
+<!-- usage:  java org.apache.axis.utils.Admin init.xml  -->
+<!--         from the dir that your Axis engines runs   -->
+<!-- This file will be replaced by WSDD once it's ready -->
+
+<deploy>
+  <handler name="admin" class="org.apache.axis.handlers.AdminHandler" />
+  <service name="AdminService" handler="admin" />
+</deploy>
