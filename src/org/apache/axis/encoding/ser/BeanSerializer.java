@@ -187,7 +187,8 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
 
                 if (qname == null) {
-                    qname = new QName("", propName);
+                    qname = new QName(isEncoded ? "" : name.getNamespaceURI(),
+                                      propName);
                 }
 
                 if (xmlType == null) {
