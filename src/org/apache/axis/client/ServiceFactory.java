@@ -245,7 +245,12 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      */
     public javax.xml.rpc.Service createService(QName serviceName)
             throws ServiceException {
-        throw new ServiceException(JavaUtils.getMessage(
-                "notImplemented00", "ServiceFactory.createService"));
+
+        // RJB - this isn't quite proper - I'm dropping the serviceName,
+        // but I don't rightly know what use the service name is without
+        // WSDL.  So I'll just create a default (empty) Service with the
+        // assumption that callers of this method are going to do all
+        // the work themselves.
+        return new Service();
     } // createService
 }

@@ -120,7 +120,6 @@ public class GetQuote1 {
       /* Get symbol and invoke the service */
       /*************************************/
         Object result = call.invoke( new Object[] { symbol = args[0] } );
-        result = call.invoke( new Object[] { symbol = args[0] } );
 
       return( ((Float) result).floatValue() );
     }
@@ -212,9 +211,10 @@ public class GetQuote1 {
       Object result = call.invoke( new Object[] { symbol = args[0] } );
       result = call.invoke( new Object[] { symbol = args[0] } );
 
+      /* Reuse the call object to call the test method */
+      /*************************************************/
       call.setOperation( portQN, "test" );
-      opts.setDefaultURL( call.getTargetEndpointAddress() );
-      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+      call.setReturnType( XMLType.XSD_STRING );
 
       System.out.println( call.invoke(new Object[]{}) );
 

@@ -21,6 +21,9 @@ public class FunctionalTests extends TestCase
         // Echo test - end to end serialization and deserialization /
         // interop tests.
         suite.addTestSuite(TestEchoSample.class);
+
+        // Test the JAX-RPC compliance samples
+        suite.addTestSuite(TestJAXRPCSamples.class);
         
         // stock sample test
         // run this BEFORE ALL OTHER TESTS to minimize confusion;
