@@ -68,8 +68,8 @@ public class Constants {
 
     // Namespace Prefix Constants
     //////////////////////////////////////////////////////////////////////////
-    public static final String NS_PREFIX_SOAP_ENV   = "SOAP-ENV" ;
-    public static final String NS_PREFIX_SOAP_ENC   = "SOAP-ENC" ;
+    public static final String NS_PREFIX_SOAP_ENV   = "soapenv";
+    public static final String NS_PREFIX_SOAP_ENC   = "soapenc";
     public static final String NS_PREFIX_SCHEMA_XSI = "xsi" ;
     public static final String NS_PREFIX_SCHEMA_XSD = "xsd" ;
     public static final String NS_PREFIX_WSDL       = "wsdl" ;
