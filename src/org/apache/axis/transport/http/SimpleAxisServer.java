@@ -267,6 +267,8 @@ public class SimpleAxisServer implements Runnable {
                                            fileName.toString());
                     msgContext.setProperty(Constants.MC_RELATIVE_PATH,
                                            fileName.toString());
+                    msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
+                                           "jwsClasses");
 
                     // !!! Fix string concatenation
                     String url = "http://localhost:" +

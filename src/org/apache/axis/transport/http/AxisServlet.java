@@ -113,20 +113,24 @@ public class AxisServlet extends HttpServlet {
     private boolean isDebug= false;
 
     // Cached path to our WEB-INF directory
-    private String webInfPath;
+    private String webInfPath = null;
     // Cached path to JWS output directory
     private String jwsClassDir = null;
+    // Cached path to our "root" dir
+    private String homeDir = null;
 
     public AxisServlet() {
     }
 
     public void init() {
-        webInfPath = getServletContext().getRealPath("/WEB-INF");
+        ServletContext context = getServletConfig().getServletContext();
 
+        webInfPath = context.getRealPath("/WEB-INF");
+        homeDir = context.getRealPath("/");
+        
         isDebug= category.isDebugEnabled();
         if(isDebug) category.debug("In servlet init");
         String param = getInitParameter("transport.name");
-        ServletContext context = getServletConfig().getServletContext();
 
         if (param == null)
             param = context.getInitParameter("transport.name");
@@ -147,7 +151,7 @@ public class AxisServlet extends HttpServlet {
         // JWS class files.
         param = System.getProperty("axis.jws.servletClassDir");
         if (param != null) {
-            jwsClassDir = param;
+            jwsClassDir = homeDir + param;
         } else {
             jwsClassDir = context.getRealPath("/");
         }
@@ -223,10 +227,13 @@ public class AxisServlet extends HttpServlet {
 
         msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                                jwsClassDir);
+        msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
 
         String realpath = context.getRealPath(req.getServletPath());
         String configPath = webInfPath;
         if (realpath != null) {
+            msgContext.setProperty(Constants.MC_RELATIVE_PATH,
+                                   req.getServletPath());
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
             msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
 
@@ -454,6 +461,7 @@ public class AxisServlet extends HttpServlet {
         /* Save some HTTP specific info in the bag in case someone needs it */
         /********************************************************************/
         msgContext.setProperty(Constants.MC_JWS_CLASSDIR, jwsClassDir);
+        msgContext.setProperty(Constants.MC_HOME_DIR, homeDir);
         msgContext.setProperty(Constants.MC_RELATIVE_PATH,
                                req.getServletPath());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );

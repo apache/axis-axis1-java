@@ -117,16 +117,20 @@ public class JWSProcessor extends BasicHandler
             /* placed there by another handler (ie. HTTPActionHandler)     */
             /***************************************************************/
             Runtime  rt      = Runtime.getRuntime();
-            String   jwsFile = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
+            String rel = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            if (rel.charAt(0) == '/') {
+                rel = rel.substring(1);
+            }
 
-            int lastSlash = jwsFile.lastIndexOf('/');
+            int lastSlash = rel.lastIndexOf('/');
             String dir = null;
 
             if (lastSlash > 0) {
-                dir = jwsFile.substring(0, lastSlash);
+                dir = rel.substring(0, lastSlash);
             }
 
-            String file = jwsFile.substring(lastSlash + 1);
+            String file = rel.substring(lastSlash + 1);
 
             String outdir = msgContext.getStrProp( Constants.MC_JWS_CLASSDIR );
             if ( outdir == null ) outdir = "." ;
@@ -151,7 +155,7 @@ public class JWSProcessor extends BasicHandler
 
             if (category.isInfoEnabled())
                 category.info("jwsFile: " + jwsFile );
-            String   jFile   = jwsFile.substring(0, jwsFile.length()-3) +
+            String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "java" ;
             String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "class" ;
@@ -159,6 +163,7 @@ public class JWSProcessor extends BasicHandler
             if (category.isInfoEnabled()) {
                 category.info("jFile: " + jFile );
                 category.info("cFile: " + cFile );
+                category.info("outdir: " + outdir);
             }
 
             File  f1 = new File( cFile );
