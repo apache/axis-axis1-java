@@ -540,7 +540,7 @@
     <!-- Step 7:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import2TestCase.java -->
 
-
+    <ant antfile="test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
 
     <!-- Name clash test -->
     <wsdl2java url="test/wsdl/clash/clash.wsdl"

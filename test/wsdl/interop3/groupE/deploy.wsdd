@@ -1,0 +1,79 @@
+<!-- Use this file to deploy some handlers/chains and services   -->
+<!-- Two ways to do this:                                        -->
+<!--   java org.apache.axis.utils.Admin deploy.wsdd              -->
+<!--      from the same directory that the Axis engine runs      -->
+<!-- or                                                          -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd       -->
+<!--      after the axis server is running                       -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from InteropTestDocLitService WSDL service -->
+
+  <service name="InteropTestDocLit" provider="java:RPC">
+      <parameter name="className" value="test.wsdl.interop3.groupE.InteropTestDocLitImpl"/>
+      <parameter name="allowedMethods" value="echoString echoStringArray echoStruct echoVoid"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/WSDLInteropTestDocLit"
+        qname="ns:ArrayOf_SOAP-ENC_string"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/WSDLInteropTestDocLit"
+        qname="ns:SOAPStruct"
+        type="java:test.wsdl.interop3.groupE.SOAPStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+
+  <!-- Services from InteropTestRpcEncService WSDL service -->
+
+  <service name="InteropTestRpcEnc" provider="java:RPC">
+      <parameter name="className" value="test.wsdl.interop3.groupE.InteropTestRpcEncImpl"/>
+      <parameter name="allowedMethods" value="echoString echoStringArray echoStruct echoVoid"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/WSDLInteropTestRpcEnc"
+        qname="ns:ArrayOf_SOAP-ENC_string"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/WSDLInteropTestRpcEnc"
+        qname="ns:SOAPStruct"
+        type="java:test.wsdl.interop3.groupE.SOAPStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+
+  <!-- Services from InteropTestListService WSDL service -->
+
+  <service name="InteropTestList" provider="java:RPC">
+      <parameter name="className" value="test.wsdl.interop3.groupE.InteropTestListImpl"/>
+      <parameter name="allowedMethods" value="echoLinkedList"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/WSDLInteropTestList"
+        qname="ns:List"
+        type="java:test.wsdl.interop3.groupE.List"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>
