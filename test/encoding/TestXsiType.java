@@ -7,6 +7,7 @@ import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.message.RPCElement;
@@ -89,7 +90,8 @@ public class TestXsiType extends TestCase {
         // correctly, even without the xsi:type attribute, because
         // we set the return type manually.
         
-        Call call = new Call();
+        Service S_service = new Service();
+        Call call = (Call) S_service.createCall();
         call.setTransport(new LocalTransport(server));
         call.setReturnType(XMLType.XSD_DOUBLE);
         

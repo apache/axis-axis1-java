@@ -12,7 +12,7 @@
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
   <service name="urn:xmltoday-delayed-quotes" provider="java:RPC">
     <parameter name="className" value="samples.stock.StockQuoteService" />
-    <parameter name="methodName" value="getQuote" />
+    <parameter name="methodName" value="getQuote test" />
     <parameter name="allowedRoles" value="user1,user2"/>
 
     <requestFlow name="checks">

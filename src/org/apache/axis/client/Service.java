@@ -2,7 +2,7 @@
 * The Apache Software License, Version 1.1
 *
 *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+* Copyright (c) 2001 The Apache Software Foundation.  All rights
 * reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -103,6 +103,14 @@ public class Service implements javax.xml.rpc.Service {
     private URL                 wsdlLocation   = null ;
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
+
+    Definition getWSDLDefinition() {
+        return( wsdlDefinition );
+    }
+
+    javax.wsdl.Service getWSDLService() {
+        return( wsdlService );
+    }
 
     /**
      * Constructs a new Service object - this assumes the caller will set
@@ -263,7 +271,7 @@ public class Service implements javax.xml.rpc.Service {
         if ( portType == null )
             throw new JAXRPCException( JavaUtils.getMessage("noPortType", "" + portName) );
 
-        org.apache.axis.client.Call call = new org.apache.axis.client.Call();
+        org.apache.axis.client.Call call = new org.apache.axis.client.Call(this);
         call.setPortTypeName( portName );
 
         // Get the URL
@@ -300,142 +308,9 @@ public class Service implements javax.xml.rpc.Service {
     public javax.xml.rpc.Call createCall(QName portName, 
                                          String operationName)
                            throws JAXRPCException {
-        javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
-                                                    portName.getLocalPart() );
-        if ( wsdlDefinition == null )
-            throw new JAXRPCException( JavaUtils.getMessage("wsdlMissing00") );
 
-        Port port = wsdlService.getPort( portName.getLocalPart() );
-        if ( port == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPort00", "" + portName) );
-
-        Binding   binding  = port.getBinding();
-        PortType  portType = binding.getPortType();
-        if ( portType == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPortType00", "" + portName) );
-
-        List operations = portType.getOperations();
-        if ( operations == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noOperation01", operationName) );
-        Operation op = null ;
-        for ( int i = 0 ; i < operations.size() ; i++, op=null ) {
-            op = (Operation) operations.get( i );
-            if ( operationName.equals( op.getName() ) ) break ;
-        }
-        if ( op == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noOperation01", operationName) );
-
-        org.apache.axis.client.Call call = new org.apache.axis.client.Call();
-        call.setPortTypeName( portName );
-        call.setOperationName( operationName );
-
-        // Get the URL
-        ////////////////////////////////////////////////////////////////////
-        List list = port.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-            Object obj = list.get(i);
-            if ( obj instanceof SOAPAddress ) { 
-                try {
-                    SOAPAddress addr = (SOAPAddress) obj ;
-                    URL         url  = new URL(addr.getLocationURI());
-                    call.setTargetEndpointAddress(url);
-                }
-                catch(Exception exp) {
-                    throw new JAXRPCException(
-                            JavaUtils.getMessage("cantSetURI00", "" + exp) );
-                }
-            }
-        }
-
-        // Get the SOAPAction
-        ////////////////////////////////////////////////////////////////////
-        BindingOperation bop = binding.getBindingOperation(operationName,
-                                                           null, null);
-        list = bop.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-            Object obj = list.get(i);
-            if ( obj instanceof SOAPOperation ) { 
-                SOAPOperation sop    = (SOAPOperation) obj ;
-                String        action = sop.getSoapActionURI();
-                if ( action != null )
-                    call.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
-                break ;
-            }
-        }
-
-        // Get the body's namespace URI and encoding style
-        ////////////////////////////////////////////////////////////////////
-        BindingInput bIn = bop.getBindingInput();
-        list = bIn.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-            Object obj = list.get(i);
-            if ( obj instanceof SOAPBody ) { 
-                SOAPBody sBody  = (SOAPBody) obj ;
-                String   tmp     = sBody.getNamespaceURI();
-                if ( tmp != null )
-                    call.setProperty( org.apache.axis.client.Call.NAMESPACE, 
-                                      tmp );
-                list = sBody.getEncodingStyles();
-                if ( list != null && list.size() > 0 )
-                    call.setEncodingStyle( (String) list.get(0) );
-                break ;
-            }
-        }
-
-        // Get the parameters
-        ////////////////////////////////////////////////////////////////////
-        List    paramOrder = op.getParameterOrdering();
-        Input   input      = op.getInput();
-        Message message    = null ;
-        List    parts      = null ;
-
-        if ( input   != null ) message = input.getMessage();
-        if ( message != null ) parts   = message.getOrderedParts( paramOrder );
-        if ( parts != null ) {
-            for ( int i = 0 ; i < parts.size() ; i++ ) {
-                Part    part = (Part) parts.get(i);
-                if ( part == null ) continue ;
-
-                String           name  = part.getName();
-                javax.wsdl.QName type  = part.getTypeName();
-
-                if ( type == null )
-                    throw new JAXRPCException(
-                            JavaUtils.getMessage("typeNotSet00", name) );
-
-                QName            tmpQN = new QName( type.getNamespaceURI(),
-                                                    type.getLocalPart());
-                XMLType          xmlType = new XMLType(tmpQN);
-                int              mode = Call.PARAM_MODE_IN ;
-                call.addParameter( name, xmlType, mode );
-            }
-        }
-
-
-        // Get the return type
-        ////////////////////////////////////////////////////////////////////
-        Output   output  = op.getOutput();
-        message = null ;
-
-        if ( output  != null ) message = output.getMessage();
-        if ( message != null ) parts   = message.getOrderedParts(null);
-
-        if ( parts != null ) {
-            for( int i = 0 ;i < parts.size() ; i++ ) {
-                Part part  = (Part) parts.get( i );
-
-                if (paramOrder != null && paramOrder.contains(part.getName()))
-                        continue ;
-
-                javax.wsdl.QName type  = part.getTypeName();
-                QName            tmpQN = new QName( type.getNamespaceURI(),
-                                                    type.getLocalPart());
-                XMLType          xmlType = new XMLType(tmpQN);
-                call.setReturnType( xmlType );
-                break ;
-            }
-        }
-
+        org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
+        call.setOperation( portName, operationName );
         return( call );
     }
 
@@ -448,7 +323,7 @@ public class Service implements javax.xml.rpc.Service {
      * @throws JAXRPCException If there's an error
      */
     public javax.xml.rpc.Call createCall() throws JAXRPCException {
-        return( new org.apache.axis.client.Call() );
+        return( new org.apache.axis.client.Call(this) );
     }
 
     /**
