@@ -187,16 +187,25 @@ public class TypeDesc {
     /**
      * Get the field name associated with this QName, but only if it's
      * marked as an element.
+     * 
+     * If the "ignoreNS" argument is true, just compare localNames.
      */
-    public String getFieldNameForElement(QName qname)
+    public String getFieldNameForElement(QName qname, boolean ignoreNS)
     {
         if (fields == null)
             return null;
 
         for (int i = 0; i < fields.length; i++) {
             FieldDesc field = fields[i];
-            if (field.isElement() && qname.equals(field.getXmlName()))
-                return field.getFieldName();
+            if (field.isElement()) {
+                QName xmlName = field.getXmlName();
+                if (qname.getLocalPart().equals(xmlName.getLocalPart())) {
+                    if (ignoreNS || qname.getNamespaceURI().
+                                        equals(xmlName.getNamespaceURI())) {
+                        return field.getFieldName();
+                    }
+                }
+            }
         }
 
         return null;
