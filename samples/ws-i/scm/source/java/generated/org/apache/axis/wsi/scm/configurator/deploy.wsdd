@@ -1,0 +1,60 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ConfiguratorService WSDL service -->
+
+  <service name="ConfiguratorPort" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.wsdl"/>
+      <parameter name="wsdlServiceElement" value="ConfiguratorService"/>
+      <parameter name="wsdlServicePort" value="ConfiguratorPort"/>
+      <parameter name="className" value="org.apache.axis.wsi.scm.configurator.ConfiguratorBindingImpl"/>
+      <parameter name="wsdlPortType" value="ConfiguratorPortType"/>
+      <operation name="getConfigurationOptions" qname="getConfigurationOptions" returnQName="retNS:configOptions" xmlns:retNS="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd" returnType="rtns:ConfigOptionsType" xmlns:rtns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd" >
+        <parameter qname="pns:refresh" xmlns:pns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <fault name="configuratorFailedFault" qname="fns:configError" xmlns:fns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd" class="org.apache.axis.wsi.scm.configurator.ConfiguratorFailedFault" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="getConfigurationOptions"/>
+
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd"
+        qname="ns:ConfigurationEndpointRole"
+        type="java:org.apache.axis.wsi.scm.configuration.ConfigurationEndpointRole"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd"
+        qname="ns:ConfigOptionsType"
+        type="java:org.apache.axis.wsi.scm.configurator.ConfigOptionsType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd"
+        qname="ns:ConfigurationEndpointType"
+        type="java:org.apache.axis.wsi.scm.configuration.ConfigurationEndpointType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd"
+        qname="ns:ConfigOptionType"
+        type="java:org.apache.axis.wsi.scm.configurator.ConfigOptionType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

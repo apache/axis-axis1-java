@@ -1,0 +1,79 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from LoggingFacilityService WSDL service -->
+
+  <service name="LoggingFacilityPort" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl"/>
+      <parameter name="wsdlServiceElement" value="LoggingFacilityService"/>
+      <parameter name="wsdlServicePort" value="LoggingFacilityPort"/>
+      <parameter name="className" value="org.apache.axis.wsi.scm.logging.LoggingFacilitySoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="LoggingFacilityLogPortType"/>
+      <operation name="logEvent" qname="logEvent" >
+        <parameter qname="pns:logEventRequestElement" xmlns:pns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" type="tns:logEventRequestType" xmlns:tns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"/>
+      </operation>
+      <operation name="getEvents" qname="getEvents" returnQName="retNS:getEventsResponseElement" xmlns:retNS="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" returnType="rtns:getEventsResponseType" xmlns:rtns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" >
+        <parameter qname="pns:getEventsRequestElement" xmlns:pns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" type="tns:getEventsRequestType" xmlns:tns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"/>
+        <fault name="RepositoryMissingFault" qname="fns:getEventsFaultElement" xmlns:fns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" class="org.apache.axis.wsi.scm.logging.GetEventsFaultType" type="tns:getEventsFaultType" xmlns:tns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"/>
+      </operation>
+      <parameter name="allowedMethods" value="logEvent getEvents"/>
+
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:getEventsFaultType"
+        type="java:org.apache.axis.wsi.scm.logging.GetEventsFaultType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:>getEventsResponseType>LogEntry"
+        type="java:org.apache.axis.wsi.scm.logging._getEventsResponseType_LogEntry"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:logEventRequestType"
+        type="java:org.apache.axis.wsi.scm.logging.LogEventRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:getEventsResponseType"
+        type="java:org.apache.axis.wsi.scm.logging.GetEventsResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:>getEventsFaultType>Reason"
+        type="java:org.apache.axis.wsi.scm.logging._getEventsFaultType_Reason"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd"
+        qname="ns:getEventsRequestType"
+        type="java:org.apache.axis.wsi.scm.logging.GetEventsRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>
