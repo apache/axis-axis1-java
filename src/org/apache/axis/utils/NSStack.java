@@ -118,6 +118,8 @@ public class NSStack {
      * Remove the top frame from the stack.
      */
     public void pop() {
+        top--;
+
         clearFrame();
 
         if (top == 0) {
@@ -127,8 +129,6 @@ public class NSStack {
             return;
         }
         
-        top--;
-
         if (log.isTraceEnabled()){
             log.trace("NSPop (" + stack.length + ")");
         }
