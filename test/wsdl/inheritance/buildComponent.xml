@@ -4,6 +4,7 @@
         <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
@@ -11,10 +12,13 @@
 
 <project default="compile">
 
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/inheritance" />
         &properties;
         &paths;
         &taskdefs;
         &taskdefs_post_compile;
+        &targets;
 
 <target name="clean"/>
 
@@ -103,10 +107,8 @@
     </javac>
 </target>
 
-<target name="deploy"/>
-
-<target name="run"  depends="compile" />
-
-<target name="undeploy"/>
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
 
 </project>
