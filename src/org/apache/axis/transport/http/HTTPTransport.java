@@ -84,7 +84,6 @@ public class HTTPTransport extends Transport
     
     private String url;
     private String action;
-    private String transportName = "http";
     
     public HTTPTransport () {
     }
@@ -96,17 +95,6 @@ public class HTTPTransport extends Transport
     {
         this.url = url;
         this.action = action;
-    }
-    
-    /**
-     * Allows the user to set a particular transport Handler for sending this
-     * message.  Assumes the name passed is in fact a registered transport.
-     * 
-     * @param transportName the name of a transport Handler
-     */
-    public void setTransportName(String transportName)
-    {
-        this.transportName = transportName;
     }
     
     /**
@@ -122,7 +110,7 @@ public class HTTPTransport extends Transport
         if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
         
-        mc.setTransportName(transportName);
+        mc.setTransportName(transportName == null ? "http" : transportName);
         
         // Allow the SOAPAction to determine the service, if the service
         // (a) has not already been determined, and (b) if a service matching

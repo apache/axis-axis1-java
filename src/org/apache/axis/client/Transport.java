@@ -70,6 +70,11 @@ public abstract class Transport {
      */
     public static String USER = MessageContext.USERID;
     public static String PASSWORD = MessageContext.PASSWORD;
+
+    /**
+     * Transport Chain Name - so users can change the default.
+     */
+    public static String transportName = null ;
     
     /**
      * Set up any transport-specific derived properties in the message context.
@@ -81,6 +86,22 @@ public abstract class Transport {
     public abstract void setupMessageContext
         (MessageContext context, ServiceClient message, AxisEngine engine)
         throws AxisFault;
+
+    /**
+     * Sets the transport chain name - to override the default.
+     * @param name the name of the transport chain to use
+     */
+    public void setTransportName(String name) {
+        transportName = name ;
+    }
+
+    /**
+     * Returns the name of the transport chain to use
+     * @return the transport chain name (or null if the default chain)
+     */
+    public String getTransportName() {
+        return( transportName );
+    }
 }
     
 
