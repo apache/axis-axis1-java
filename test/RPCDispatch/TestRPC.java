@@ -17,7 +17,7 @@ import java.util.Vector;
  */
 public class TestRPC extends TestCase {
 
-    private final String header = 
+    private final String header =
         "<?xml version=\"1.0\"?>\n" +
         "<soap:Envelope " +
              "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
@@ -26,12 +26,13 @@ public class TestRPC extends TestCase {
              "xmlns:xsd=\"" + Constants.URI_CURRENT_SCHEMA_XSD + "\">\n" +
              "<soap:Body>\n";
 
-    private final String footer = 
+    private final String footer =
              "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
     private AxisServer engine = new AxisServer();
     private HandlerRegistry hr;
+    private HandlerRegistry sr;
     private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
@@ -41,17 +42,20 @@ public class TestRPC extends TestCase {
         super(name);
         engine.init();
         hr = (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
+        sr = (HandlerRegistry) engine.getOption(Constants.SERVICE_REGISTRY);
         RPCDispatcher = hr.find("RPCDispatcher");
         // Debug.setDebugLevel(5);
     }
 
     /**
      * Invoke a given RPC method, and return the result
-     * @param soapAction action to be performed 
+     * @param soapAction action to be performed
      * @param request XML body of the request
      * @return Deserialized result
      */
-    private final Object rpc(String method, Object[] parms) {
+    private final Object rpc(String method, Object[] parms)
+        throws AxisFault
+    {
 
         // Construct the soap request
         SOAPEnvelope envelope = new SOAPEnvelope();
@@ -65,7 +69,12 @@ public class TestRPC extends TestCase {
         // Create a message context with the action and message
         MessageContext msgContext = new MessageContext();
         msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
-        msgContext.setTargetService(SOAPAction);
+        try {
+                msgContext.setTargetService(SOAPAction);
+        } catch (AxisFault f) {
+            System.err.println("Faulted when setting target service to SOAPAction");
+            throw f;
+        }
 
         // Invoke the Axis engine
         try {
@@ -101,7 +110,7 @@ public class TestRPC extends TestCase {
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseString");
-        hr.add(SOAPAction, reverse);
+        sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
         assertEquals("cba", rpc("reverseString", new Object[] {"abc"}));
@@ -115,7 +124,7 @@ public class TestRPC extends TestCase {
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
         reverse.addOption("className", "test.RPCDispatch.Service");
         reverse.addOption("methodName", "reverseData");
-        hr.add(SOAPAction, reverse);
+        sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
