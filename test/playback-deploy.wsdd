@@ -1,0 +1,11 @@
+<!-- An example of deploying the playback service.  In this case, we  -->
+<!-- set the responseFile property to use the file "soap.xml" instead -->
+<!-- of the default.                                                  -->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <service name="playback" provider="Handler" >
+    <parameter name="handlerClass" value="test.PlaybackService" />
+    <parameter name="responseFile" value="soap.xml"/>
+  </service>
+</deployment>
