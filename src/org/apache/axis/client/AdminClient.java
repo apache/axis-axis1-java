@@ -121,16 +121,8 @@ public abstract class AdminClient {
             
             Message         inMsg      = new Message( input, true );
             
-            // try to get first RPC body & set namespace -- RobJ
-            /* doesn't work; what would?
-             SOAPBodyElement element = inMsg.getAsSOAPEnvelope().getFirstBody();
-            element.setPrefix("m");
-            element.setNamespaceURI("AdminService");
-             */
-            
             client.setRequestMessage( inMsg );
             
-            if ( opts.isFlagSet('t') > 0 ) client.doLocal = true ;
             client.set( Transport.USER, opts.getUser() );
             client.set( Transport.PASSWORD, opts.getPassword() );
             
