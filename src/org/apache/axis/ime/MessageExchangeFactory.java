@@ -54,11 +54,18 @@
  */
 package org.apache.axis.ime;
 
+import org.apache.axis.AxisFault;
+
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public interface MessageExchangeFactory {
 
-    public MessageExchange createMessageExchange();
+    /**
+     * @return MessageExchange
+     * @throws AxisFault
+     */
+    public MessageExchange createMessageExchange()
+            throws AxisFault;
 
 }
