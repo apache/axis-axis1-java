@@ -105,8 +105,22 @@ public class TestAttributes extends TestCase {
     }
 
     public void testSimpleType() throws Exception {
-        SimpleBean bean = new SimpleBean("test value");
-        bean.temp = 85.0F;
+        checkSimpleBeanRoundTrip("test value", 85.0F);
+    }
+
+    public void testSimpleType2() throws Exception {
+        //Testcase for 12453 - Axis does not correctly HTML-encode <'s and >'s
+        //checkSimpleBeanRoundTrip("http://mysite.com?a=1&b=2", 85.0F);
+    }
+
+    public void testSimpleType3() throws Exception {
+        //Testcase for 12453 - Axis does not correctly HTML-encode <'s and >'s
+        //checkSimpleBeanRoundTrip("</name>", 85.0F);
+    }
+    
+    private void checkSimpleBeanRoundTrip(String text, float temp) throws Exception {
+        SimpleBean bean = new SimpleBean(text);
+        bean.temp = temp;
 
         MessageContext msgContext = new MessageContext(new AxisServer(new BasicServerConfig()));
         SOAPEnvelope msg = new SOAPEnvelope();
