@@ -852,7 +852,6 @@ public class JavaStubWriter extends JavaClassWriter {
         int allOuts = parms.outputs + parms.inouts;
         if (allOuts > 0) {
             pw.println("        else {");
-            pw.println("            getResponseHeaders(_call);");
             pw.println("            extractAttachments(_call);");
         
             if (allOuts == 1) {
@@ -900,7 +899,6 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             pw.println("        }");
         } else {
-            pw.println("        getResponseHeaders(_call);");
             pw.println("        extractAttachments(_call);");
         }
     } // writeResponseHandling
