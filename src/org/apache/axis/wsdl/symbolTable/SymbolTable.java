@@ -486,6 +486,11 @@ public class SymbolTable {
                             JavaUtils.getMessage("undefined00",
                                                  entry.getQName().toString()));
                 } // if undefined
+                else if (entry instanceof UndefinedElement) {
+                    throw new IOException(
+                            JavaUtils.getMessage("undefinedElem00",
+                            entry.getQName().toString()));
+                }
             }
         }
     } // checkForUndefined
