@@ -33,6 +33,8 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 
 import java.io.OutputStream;
@@ -219,10 +221,11 @@ public class SimpleAxisWorker implements Runnable {
                 // read headers
                 is.setInputStream(socket.getInputStream());
                 // parse all headers into hashtable
+                MimeHeaders requestHeaders = new MimeHeaders();
                 int contentLength = parseHeaders(is, buf, contentType,
                         contentLocation, soapAction,
                         httpRequest, fileName,
-                        cookie, cookie2, authInfo);
+                        cookie, cookie2, authInfo, requestHeaders);
                 is.setContentLength(contentLength);
 
                 int paramIdx = fileName.toString().indexOf('?');
@@ -374,6 +377,12 @@ public class SimpleAxisWorker implements Runnable {
                     );
                 }
 
+                // Transfer HTTP headers to MIME headers for request message.
+                MimeHeaders requestMimeHeaders = requestMsg.getMimeHeaders();
+                for (Iterator i = requestHeaders.getAllHeaders(); i.hasNext(); ) {
+                    MimeHeader requestHeader = (MimeHeader) i.next();
+                    requestMimeHeaders.addHeader(requestHeader.getName(), requestHeader.getValue());
+                }
                 msgContext.setRequestMessage(requestMsg);
                 // put character encoding of request to message context
                 // in order to reuse it during the whole process.   
@@ -475,6 +484,16 @@ public class SimpleAxisWorker implements Runnable {
                 // OH, THE HUMILITY!  yes this is inefficient.
                 out.write(cookieOut.toString().getBytes());
             }
+            
+            // Transfer MIME headers to HTTP headers for response message.
+            for (Iterator i = responseMsg.getMimeHeaders().getAllHeaders(); i.hasNext(); ) {
+                MimeHeader responseHeader = (MimeHeader) i.next();
+                out.write('\r');
+                out.write('\n');
+                out.write(responseHeader.getName().getBytes());
+                out.write(headerEnder);
+                out.write(responseHeader.getValue().getBytes());
+            }
 
             out.write(SEPARATOR);
             if (responseMsg != null)
@@ -513,6 +532,7 @@ public class SimpleAxisWorker implements Runnable {
      * @param httpRequest StringBuffer for GET / POST
      * @param cookie first cookie header (if doSessions)
      * @param cookie2 second cookie header (if doSessions)
+     * @param headers HTTP headers to transfer to MIME headers
      * @return Content-Length
      */
     private int parseHeaders(NonBlockingBufferedInputStream is,
@@ -524,7 +544,8 @@ public class SimpleAxisWorker implements Runnable {
                              StringBuffer fileName,
                              StringBuffer cookie,
                              StringBuffer cookie2,
-                             StringBuffer authInfo)
+                             StringBuffer authInfo,
+                             MimeHeaders headers)
             throws java.io.IOException {
         int n;
         int len = 0;
@@ -593,6 +614,7 @@ public class SimpleAxisWorker implements Runnable {
                 while ((++i < n) && (buf[i] >= '0') && (buf[i] <= '9')) {
                     len = (len * 10) + (buf[i] - '0');
                 }
+                headers.addHeader(HTTPConstants.HEADER_CONTENT_LENGTH, String.valueOf(len));
 
             } else if (endHeaderIndex == actionLen
                     && matches(buf, actionHeader)) {
@@ -603,6 +625,7 @@ public class SimpleAxisWorker implements Runnable {
                 while ((++i < n) && (buf[i] != '"')) {
                     soapAction.append((char) (buf[i] & 0x7f));
                 }
+                headers.addHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"" + soapAction.toString() + "\"");
 
             } else if (server.isSessionUsed() && endHeaderIndex == cookieLen
                     && matches(buf, cookieHeader)) {
@@ -611,6 +634,7 @@ public class SimpleAxisWorker implements Runnable {
                 while ((++i < n) && (buf[i] != ';') && (buf[i] != '\r') && (buf[i] != '\n')) {
                     cookie.append((char) (buf[i] & 0x7f));
                 }
+                headers.addHeader("Set-Cookie", cookie.toString());
 
             } else if (server.isSessionUsed() && endHeaderIndex == cookie2Len
                     && matches(buf, cookie2Header)) {
@@ -619,6 +643,7 @@ public class SimpleAxisWorker implements Runnable {
                 while ((++i < n) && (buf[i] != ';') && (buf[i] != '\r') && (buf[i] != '\n')) {
                     cookie2.append((char) (buf[i] & 0x7f));
                 }
+                headers.addHeader("Set-Cookie2", cookie.toString());
 
             } else if (endHeaderIndex == authLen && matches(buf, authHeader)) {
                 if (matches(buf, endHeaderIndex, basicAuth)) {
@@ -627,6 +652,7 @@ public class SimpleAxisWorker implements Runnable {
                         if (buf[i] == ' ') continue;
                         authInfo.append((char) (buf[i] & 0x7f));
                     }
+                    headers.addHeader(HTTPConstants.HEADER_AUTHORIZATION, new String(basicAuth) + authInfo.toString());
                 } else {
                     throw new java.io.IOException(
                             Messages.getMessage("badAuth00"));
@@ -636,11 +662,21 @@ public class SimpleAxisWorker implements Runnable {
                     if (buf[i] == ' ') continue;
                     contentLocation.append((char) (buf[i] & 0x7f));
                 }
+                headers.addHeader(HTTPConstants.HEADER_CONTENT_LOCATION, contentLocation.toString());
             } else if (endHeaderIndex == typeLen && matches(buf, typeHeader)) {
                 while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
                     if (buf[i] == ' ') continue;
                     contentType.append((char) (buf[i] & 0x7f));
                 }
+                headers.addHeader(HTTPConstants.HEADER_CONTENT_TYPE, contentLocation.toString());
+            } else {
+                String customHeaderName = new String(buf, 0, endHeaderIndex - 2);
+                StringBuffer customHeaderValue = new StringBuffer();
+                while (++i < n && (buf[i] != '\r') && (buf[i] != '\n')) {
+                    if (buf[i] == ' ') continue;
+                    customHeaderValue.append((char) (buf[i] & 0x7f));
+                }
+                headers.addHeader(customHeaderName, customHeaderValue.toString());
             }
 
         }
