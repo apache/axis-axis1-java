@@ -80,6 +80,8 @@ public class FileProvider implements ConfigurationProvider
 
     String basepath = ".";
     String filename;
+    
+    InputStream myInputStream = null;
 
     /**
      * Constructor which accesses a file in the current directory of the
@@ -99,23 +101,34 @@ public class FileProvider implements ConfigurationProvider
         this.basepath = basepath;
         this.filename = filename;
     }
+    
+    /**
+     * Constructor which takes an input stream directly
+     */ 
+    public FileProvider(InputStream is)
+    {
+        myInputStream = is;
+    }
 
     public void configureEngine(AxisEngine engine) throws Exception
     {
-        InputStream is;
-
-        try {
-            is = new FileInputStream(basepath + sep + filename);
-        } catch (Exception e) {
-            is = engine.getClass().getResourceAsStream(filename);
+        if (myInputStream == null) {
+            try {
+                myInputStream = new FileInputStream(basepath + sep + filename);
+            } catch (Exception e) {
+                myInputStream = engine.
+                                    getClass().getResourceAsStream(filename);
+            }
         }
-
-        if (is == null) {
+        
+        if (myInputStream == null) {
             throw new Exception("No engine configuration file - aborting!");
         }
 
-        WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(is));
+        WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(myInputStream));
         engine.deployWSDD(doc);
+        
+        myInputStream = null;
     }
 
     public void writeEngineConfig(AxisEngine engine) throws Exception

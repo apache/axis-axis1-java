@@ -20,6 +20,7 @@ public class PackageTests extends TestCase {
         suite.addTestSuite(TestScopeOption.class);
         suite.addTestSuite(TestOptions.class);
         suite.addTestSuite(TestUndeployment.class);
+        suite.addTestSuite(TestStructure.class);
 
         return suite;
     }
