@@ -68,6 +68,7 @@ import org.apache.axis.message.* ;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class Message {
   /**
@@ -211,9 +212,20 @@ public class Message {
     try {
       if ( currentForm.equals("InputStream") )
         reader = new InputStreamReader( (InputStream) currentMessage );
-      else if ( currentForm.equals("ServletRequest") )
-        reader = new InputStreamReader( ((HttpServletRequest) currentMessage).
-                                        getInputStream() );
+      else if ( currentForm.equals("ServletRequest") ) {
+        HttpServletRequest req = (HttpServletRequest)currentMessage;
+        
+        int contentLength = req.getContentLength();
+        Reader requestReader = req.getReader ();
+        char[] payload       = new char[contentLength];
+        int    offset        = 0;
+
+        while (offset < contentLength) {
+            offset += requestReader.read (payload, offset, contentLength - offset);
+        }
+        
+        reader = new CharArrayReader(payload);
+      }
       else if ( currentForm.equals("String") ) 
         reader = new StringReader( (String) currentMessage );
       else if ( currentForm.equals("Bytes") )  {
