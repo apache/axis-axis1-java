@@ -114,10 +114,6 @@ public class WSDL2Java {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
-    // Username and password for Authentication
-    protected String username = null;
-    protected String password = null;
-    
     // The emitter framework Emitter class.
     protected Emitter emitter;
     // Timeout, in milliseconds, to let the Emitter do its work
@@ -427,19 +423,19 @@ public class WSDL2Java {
     }
 
     public String getUsername() {
-        return username;
+        return emitter.getUsername();
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        emitter.setUsername(username);
     }
 
     public String getPassword() {
-        return password;
+        return emitter.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        emitter.setPassword(password);
     }
 
     //
@@ -451,7 +447,7 @@ public class WSDL2Java {
      * Returns an object which contains of information on all generated files
      * including the class name, filename and a type string.
      *
-     * @return A org.apache.axis.wsdl.toJava.GeneratedFileInfo object
+     * @return An org.apache.axis.wsdl.toJava.GeneratedFileInfo object
      * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
      */
     public GeneratedFileInfo getGeneratedFileInfo()
@@ -488,8 +484,6 @@ public class WSDL2Java {
      */
     public void emit(String wsdlURL)
             throws Exception {
-
-        Authenticator.setDefault(new DefaultAuthenticator(this));
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
@@ -690,14 +684,23 @@ public class WSDL2Java {
                 printUsage();
             }
 
+            // set the namespace map if provided
             if (!namespaceMap.isEmpty()) {
                 wsdl2java.setNamespaceMap(namespaceMap);
             }
-            
+
+            // Set type mapping version
+            wsdl2java.setTypeMappingVersion(typeMappingVersion);
+
             // Set username and password if provided in URL
             wsdl2java.checkForAuthInfo(wsdlURI);
 
-            wsdl2java.setTypeMappingVersion(typeMappingVersion);
+            // register a default authenticator to handle proxys
+            Authenticator.setDefault(
+                    new DefaultAuthenticator(wsdl2java.getUsername(), 
+                                             wsdl2java.getPassword()));
+
+            // Do the work
             wsdl2java.emit(wsdlURI);
 
             // everything is good
@@ -791,6 +794,10 @@ public class WSDL2Java {
         System.exit(1);
     }
 
+    /**
+     * Extract the username and password info (if any) from a URL
+     * 
+     */ 
     private void checkForAuthInfo(String uri) {
         URL url = null;
         try {
@@ -803,26 +810,28 @@ public class WSDL2Java {
         if (userInfo != null) {
             int i = userInfo.indexOf(':');
             if (i >= 0) {
-                this.username = userInfo.substring(0,i);
-                this.password = userInfo.substring(i+1);
+                setUsername(userInfo.substring(0,i));
+                setPassword(userInfo.substring(i+1));
             } else {
-                this.username = userInfo;
+                setUsername(userInfo);
             }
         } 
     }
 
-    private class DefaultAuthenticator extends Authenticator {
-        private WSDL2Java wsdl2java;
+    /**
+     * This class is used by WSDL2Java main() only
+     * Supports the http.proxyUser and http.proxyPassword properties.
+     */ 
+    public static class DefaultAuthenticator extends Authenticator {
+        private String user;
+        private String password;
         
-        DefaultAuthenticator(WSDL2Java wsdl2java) {
-            this.wsdl2java = wsdl2java;
+        DefaultAuthenticator(String user, String pass) {
+            this.user = user;
+            this.password = pass;
         }
         protected PasswordAuthentication getPasswordAuthentication() {
-            // First check command line options
-            String user = wsdl2java.getUsername();
-            String password = wsdl2java.getPassword();
-            
-            // if we didn't get them, check the system properties
+            // if user and password weren't provided, check the system properties
             if (user == null) {
                 user = System.getProperty("http.proxyUser","");
             }

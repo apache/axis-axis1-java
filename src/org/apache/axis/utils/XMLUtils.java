@@ -56,10 +56,8 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -72,8 +70,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
+import sun.misc.BASE64Encoder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -85,6 +82,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Stack;
 
 public class XMLUtils {
@@ -252,7 +253,22 @@ public class XMLUtils {
     }
 
     public static Document newDocument(String uri) {
-        return XMLUtils.newDocument(new InputSource(uri));
+        // call the authenticated version as there might be 
+        // username/password info embeded in the uri.
+        return XMLUtils.newDocument(uri, null, null);
+    }
+    
+    /**
+     * Create a new document from the given URI, use the username and password
+     * if the URI requires authentication.
+     */ 
+    public static Document newDocument(String uri, String username, String password) {
+        try {
+            return XMLUtils.newDocument(XMLUtils.getInputSourceFromURI(uri, username, password));
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+        }
+        return null;
     }
 
     private static String privateElementToString(Element element,
@@ -471,4 +487,78 @@ public class XMLUtils {
             throw new SAXException(message);
         }
     }
- }
+    
+    
+    /**
+     * Utility to get the bytes at a protected uri
+     * 
+     * This will retrieve the URL if a username and password are provided.
+     * The java.net.URL class does not do Basic Authentication, so we have to
+     * do it manually in this routine.
+     * 
+     * If no username is provided, we create an InputSource from the uri
+     * and let the InputSource go fetch the contents.
+     * 
+     * @param uri the resource to get
+     * @param username basic auth username
+     * @param password basic auth password
+     */ 
+    private static InputSource getInputSourceFromURI(String uri,
+                                                     String username,
+                                                     String password)
+            throws Exception {
+
+        URL wsdlurl = null;
+        try {
+            wsdlurl = new URL(uri);
+        } catch (MalformedURLException e) {
+            // we can't process it, it might be a 'simple' foo.wsdl
+            // let InputSource deal with it
+            return new InputSource(uri);
+        }
+        
+        // if no authentication, just let InputSource deal with it
+        if (username == null && wsdlurl.getUserInfo() == null) {
+            return new InputSource(uri);
+        }
+        
+        // if this is not an HTTP{S} url, let InputSource deal with it
+        if (!wsdlurl.getProtocol().startsWith("http")) {
+            return new InputSource(uri);
+        }
+
+        URLConnection connection = wsdlurl.openConnection();
+        // Does this work for https???
+        if (!(connection instanceof HttpURLConnection)) {
+            // can't do http with this URL, let InputSource deal with it
+            return new InputSource(uri);
+        }
+        HttpURLConnection uconn = (HttpURLConnection) connection;
+        String userinfo = wsdlurl.getUserInfo();
+        uconn.setRequestMethod("GET");
+        uconn.setAllowUserInteraction(false);
+        uconn.setDefaultUseCaches(false);
+        uconn.setDoInput(true);
+        uconn.setDoOutput(false);
+        uconn.setInstanceFollowRedirects(true);
+        uconn.setUseCaches(false);
+        BASE64Encoder enc = new BASE64Encoder();
+        // username/password info in the URL overrides passed in values 
+        if (userinfo != null) {
+            uconn.setRequestProperty("Authorization",
+                                     "Basic " + enc.encode(userinfo.getBytes("ISO-8859-1")));
+        } else if (username != null) {
+            String auth = username;
+            if (password != null) {
+                auth = username + ":" + password;
+            }
+            uconn.setRequestProperty("Authorization",
+                                     "Basic " + 
+                                     enc.encode((auth).getBytes("ISO-8859-1")));
+        }
+        uconn.connect();
+
+        return new InputSource(uconn.getInputStream());
+    }
+
+}
