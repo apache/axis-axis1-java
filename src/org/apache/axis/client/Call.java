@@ -135,7 +135,7 @@ import java.util.Vector;
  *     SEND_TYPE_ATTR - Should we send the XSI type attributes (true/false)
  *     TIMEOUT        - Timeout used by transport sender in seconds
  *     TRANSPORT_NAME - Name of transport handler to use
- *     ATTACHMENT_ENCAPSULATION_FORMAT- Send attachments as MIME the default, or DIME. 
+ *     ATTACHMENT_ENCAPSULATION_FORMAT- Send attachments as MIME the default, or DIME.
  * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -385,7 +385,7 @@ public class Call implements javax.xml.rpc.Call {
                         Messages.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
-            if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) && 
+            if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) &&
                !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
                 throw new JAXRPCException(
                         Messages.getMessage("badattachmenttypeerr", new String[] {
@@ -704,13 +704,13 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Is the caller required to provide the parameter and return type
-     * specification? 
+     * specification?
      * If true, then
      *  addParameter and setReturnType MUST be called to provide the meta data.
      * If false, then
-     *  addParameter and setReturnType SHOULD NOT be called because the 
-     *  Call object already has the meta data describing the 
-     *  parameters and return type. If addParameter is called, the specified 
+     *  addParameter and setReturnType SHOULD NOT be called because the
+     *  Call object already has the meta data describing the
+     *  parameters and return type. If addParameter is called, the specified
      *  parameter is added to the end of the list of parameters.
      */
     public boolean isParameterAndReturnSpecRequired(QName operationName) {
@@ -768,7 +768,7 @@ public class Call implements javax.xml.rpc.Call {
             mode = ParameterDesc.OUT;
         }
         param.setMode(mode);
-        
+
         operation.addParameter(param);
         parmAndRetReq = true;
         //}
@@ -873,7 +873,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param xmlType - QName of the data type of the return value
      * @param javaType - Java class of the return value
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
-     * false, then setReturnType MAY throw JAXRPCException...Axis allows 
+     * false, then setReturnType MAY throw JAXRPCException...Axis allows
      * modification without throwing the exception.
      */
     public void setReturnType(QName xmlType, Class javaType) {
@@ -1455,7 +1455,7 @@ public class Call implements javax.xml.rpc.Call {
             return;
 
         transportPackages.add(packageName);
-        
+
         StringBuffer currentPackages = new StringBuffer();
         for (Iterator i = transportPackages.iterator(); i.hasNext();) {
             String thisPackage = (String) i.next();
@@ -1581,7 +1581,7 @@ public class Call implements javax.xml.rpc.Call {
                 msg.getAttachmentsImpl();
               if(null != attachments) {
                   if( null != attachformat && attachformat.equals(
-                    ATTACHMENT_ENCAPSULATION_FORMAT_MIME)) 
+                    ATTACHMENT_ENCAPSULATION_FORMAT_MIME))
                     attachments.setSendType(attachments.SEND_TYPE_MIME);
                   else if( null != attachformat && attachformat.equals(
                       ATTACHMENT_ENCAPSULATION_FORMAT_DIME)) {
@@ -1978,7 +1978,7 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setProperty( MessageContext.CALL, this );
         msgContext.setProperty( WSDL_SERVICE, service );
         msgContext.setProperty( WSDL_PORT_NAME, getPortName() );
-        if ( isMsg ) 
+        if ( isMsg )
           msgContext.setProperty( MessageContext.IS_MSG, "true" );
 
         if (username != null) {
@@ -2018,9 +2018,10 @@ public class Call implements javax.xml.rpc.Call {
                 reqMsg = msgContext.getRequestMessage();
                 reqEnv = reqMsg.getSOAPEnvelope();
 
+                // haddadc - the code to insert headers is only conditionally executed.
                 // If we have headers to insert, do so now.
-                for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+                //for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
+                //    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
 
                 SOAPBodyElement body = reqEnv.getFirstBody();
 
@@ -2046,6 +2047,13 @@ public class Call implements javax.xml.rpc.Call {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("targetService",
                     msgContext.getTargetService()));
+        }
+
+        reqEnv = msgContext.getRequestMessage().getSOAPEnvelope();
+
+         // If we have headers to insert, do so now.
+        for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
+             reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
         }
 
         // set up transport if there is one
