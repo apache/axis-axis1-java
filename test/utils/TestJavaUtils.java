@@ -29,8 +29,9 @@ public class TestJavaUtils extends TestCase
                 JavaUtils.xmlNameToJava("other_punct\u00B7chars"));
         assertEquals("answer42", JavaUtils.xmlNameToJava("Answer42"));
 
-        assertEquals("\u2160foo", JavaUtils.xmlNameToJava("\u2160foo"));
+        assertEquals("\u2160Foo", JavaUtils.xmlNameToJava("\u2160foo"));
         assertEquals("foo", JavaUtils.xmlNameToJava("2foo"));
+        assertEquals("foo", JavaUtils.xmlNameToJava("_foo_"));
         assertEquals("foobar", JavaUtils.xmlNameToJava("--foobar--"));
 
         assertEquals("foo22Bar", JavaUtils.xmlNameToJava("foo22bar"));
@@ -47,6 +48,8 @@ public class TestJavaUtils extends TestCase
         assertEquals("fOOBar", JavaUtils.xmlNameToJava("FOOBar"));
 
         // the following cases are ambiguous in JSR-101
-        assertEquals("fooBar", JavaUtils.xmlNameToJava("foo bar"), "fooBar");
+        assertEquals("fooBar", JavaUtils.xmlNameToJava("foo bar"));
+        assertEquals("_1", JavaUtils.xmlNameToJava("-"));
+        assertEquals("__", JavaUtils.xmlNameToJava("_"));
     }
 }
