@@ -21,7 +21,6 @@
   <property file="${user.home}/build.properties"/>
   <property file="${user.home}/test.properties"/>
 
-  <property environment="env"/>
   
   <!-- =================================================================== -->
   <!-- Determine what dependencies are present                             -->
@@ -83,11 +82,8 @@
 
     <available property="post-compile.present" file="post-compile.xml" />
 
-    <property environment="env"/>
     <condition property="debug" value="on">
-    <and>
-      <equals arg1="on" arg2="${env.debug}"/>
-    </and>
+      <istrue value="${env.debug}"/>
     </condition>
 
    </target>
@@ -274,7 +270,8 @@
   <!-- =================================================================== -->
   <!-- Interop 3                                                           -->
   <!-- =================================================================== -->
-  <target name="interop3" depends="compile">
+  <target name="interop3" depends="compile" 
+    description="run the round 3 interop tests">
     <ant dir="test/wsdl/interop3/import1"/>
     <ant dir="test/wsdl/interop3/import2"/>
     <ant dir="test/wsdl/interop3/import3"/>
@@ -288,7 +285,7 @@
   <!-- =================================================================== -->
   <!-- Cleans everything                                                   -->
   <!-- =================================================================== -->
-  <target name="clean">
+  <target name="clean" description="clean up">
     <delete dir="${build.dir}/test"/>
   </target>
 
@@ -427,7 +424,8 @@
   <!-- =================================================================== -->
   <!-- Stops the functional test HTTP server -->
   <!-- =================================================================== -->
-  <target name="stop-functional-test-http-server" if="junit.present" depends="stop-signature-signing-and-verification">
+  <target name="stop-functional-test-http-server" if="junit.present" 
+      depends="stop-signature-signing-and-verification">
     <echo message="Stopping test http server."/>
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
@@ -438,7 +436,8 @@
   <!-- =================================================================== -->
   <!-- Stops the functional test HTTP server when testing digital signature -->
   <!-- =================================================================== -->
-  <target name="stop-functional-test-http-server-secure" if="junit.present" depends="stop-signature-signing-and-verification">
+  <target name="stop-functional-test-http-server-secure" if="junit.present" 
+      depends="stop-signature-signing-and-verification">
     <echo message="Stopping test http server."/>
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
