@@ -42,7 +42,7 @@ Copyright:
         &taskdefs_post_compile;
         &targets;
 
-<target name="clean">
+<target name="clean" depends="setenv">
     <echo message="Removing ${build.dir}/**/test/wsdl/filegen" />
     <echo message="componentName is ${componentName}"/>
     <delete dir="${build.dir}/classes/test/wsdl/filegen"/>

@@ -50,7 +50,7 @@ Copyright:
 </target>
 
 <!-- main target, always start from scratch -->
-<target name="compile" depends="clean">
+<target name="compile" depends="setenv, clean">
   <echo message="Compiling test.wsdl.anytype"/>
   
     <!-- Compile the test classes for Java2WSDL -->

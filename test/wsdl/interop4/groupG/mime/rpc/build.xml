@@ -48,7 +48,7 @@ Copyright:
         <delete dir="${build.dir}/work/${componentName}"/>
     </target>
 
-  <target name="compile">
+  <target name="compile" depends="setenv">
     <property name="testname" value="basetype"/>
 
     <!-- generate skeletons -->
