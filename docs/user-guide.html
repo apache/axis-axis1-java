@@ -119,7 +119,13 @@ h1 {  margin-left: -30px}
   the Axis Architecture Guide, a separate document.</p>
 <h3>Handlers and the Message Path in Axis</h3>
 <p>Put simply, Axis is all about processing Messages. When the central Axis processing 
-  logic runs, the </p>
+  logic runs, a series of <b>Handlers</b> are each invoked in order. The particular 
+  oder is determined by two factors - deployment configuration and whether the 
+  engine is a client or a server. The object which is passed to each Handler invocation 
+  is a <b>MessageContext</b>. A MessageContext is a structure which contains several 
+  important parts: 1) a &quot;request&quot; message, 2) a &quot;response&quot; 
+  message, and 3) a bag of properties. We'll go into a little more detail on this 
+  in a bit.</p>
 <p>There are two basic ways which Axis is invoked:</p>
 <ol>
   <li>As a <b>server</b>, a <b>Transport Listener</b> will create a MessageContext 
@@ -130,11 +136,61 @@ h1 {  margin-left: -30px}
 </ol>
 <p>In either case, the Axis framework's job is simply to pass the resulting MessageContext 
   through a configurable set of Handlers, each of which has an opportunity to 
-  do whatever it is designed to do with the MessageContext.</p>
-<h3>From XML to Objects and Back Again - Parsing and Encoding</h3>
-<p>SOAP is an XML protocol, and as such...</p>
-<h4>The Axis SAX Framework</h4>
-<p>Central classes include DeserializationContext, </p>
+  do whatever it is designed to do with the MessageContext. The message path (for 
+  the server side) looks like this:</p>
+<p><img src="AxisServerMessagePath.jpg" width="720" height="540"></p>
+<p>(In the diagram above, each of the small cylinders represents a Handler.)</p>
+<p>A message arrives (in some protocol-specific manner) at a Transport Listener. 
+  Let's posit that in this case it's an HTTP servlet. It's the Listener's job 
+  to package the protocol-specific data into a <b>Message</b> object (org.apache.axis.Message), 
+  and put the Message into a <b>MessageContext</b>. The MessageContext is also 
+  loaded with various <b>properties</b> by the Listener - in this case, an example 
+  would be setting the property &quot;http.SOAPAction&quot; to the value of the 
+  SOAPAction HTTP header. The Transport Listener also sets the <b>transportName</b> 
+  String on the MessageContext - in this case we set it to &quot;http&quot;. Once 
+  the MessageContext is ready to go, the Listener hands it into the AxisEngine.</p>
+<p>The AxisEngine's first job is to look up the transport by name. This will result 
+  in an object which contains a <b>request</b> flow, a <b>response</b> flow, or 
+  perhaps both. If a transport request flow exists, it will be invoked, passing 
+  the MessageContext into the invoke() method. This will result in calling all 
+  the Handlers specified in the request flow configuration.</p>
+<p>After the transport request handler, the engine locates a global request flow, 
+  if configured (in the &lt;requestFlow&gt; element of the WSDD &lt;globalConfiguration&gt;, 
+  as explained in the WSDD deployment section later in this document), and then 
+  invokes any Handlers specified therein.</p>
+<p>At some point during the processing up until now, some Handler has hopefully 
+  set the <b>serviceHandler</b> field of the MessageContext (this is usually done 
+  in the HTTP transport by the &quot;URLMapper&quot; Handler, which maps a URL 
+  like &quot;http://localhost/axis/services/AdminService&quot; to the &quot;AdminService&quot; 
+  service). This field determines the Handler we'll invoke to execute service-specific 
+  functionality, such as making an RPC call on a back-end object. Services in 
+  Axis are typically instances of the &quot;SOAPService&quot; class (org.apache.axis.handlers.soap.SOAPService), 
+  which may contain <b>request</b> and <b>response</b> flows (similar to what 
+  we saw at the transport and global levels), and must contain a <b>provider</b>, 
+  which is simply a Handler responsible for implementing the actual back end logic 
+  of the service.</p>
+<p>In typical RPC examples, the provider is the org.apache.axis.providers.java.RPCProvider 
+  class. This is just another Handler that, when invoked, attempts to call a backend 
+  Java object whose class is determined by the &quot;className&quot; parameter 
+  specified at deployment time. It uses the SOAP RPC convention for determining 
+  the method to call, and makes sure the types of the incoming XML-encoded arguments 
+  match the types of the required parameters of the resulting method.</p>
+<h3>The Message Path on the Client</h3>
+<p>The Message Path on the client side is similar, except the order of scoping 
+  is reversed. In other words:</p>
+<p>The <b>service</b> handler, if any, is called first - on the client side, there 
+  is no &quot;provider&quot; since the service is being provided by a remote node, 
+  but there is still the possibility of request and response flows. The service 
+  request and response flows serve to do any service-specific processing of the 
+  message on its way out of the system, and also for the response message on its 
+  way back to the caller.</p>
+<p>After the service request flow, the global requestFlow, if any, is invoked, 
+  followed by the transport. The <b>Transport Sender</b>, a special Handler whose 
+  job it is to actually perform whatever protocol-specific operations are necessary 
+  to get the message to and from the target SOAP server, is invoked to send the 
+  message. The response (if any) is placed into the responseMessage field of the 
+  MessageContext, and the MessageContext then propagates back up through the response 
+  flows - first the transport, then the global, and finally the service.</p>
 <h2><a name="ConsumingServices"></a>Consuming Web Services with Axis</h2>
 <h3>Basics - Getting Started</h3>
 <p>Let's take a look at an example Web Service client that will call the <b>echoString</b> 
@@ -338,7 +394,7 @@ with the Axis <b>Web Service Deployment Descriptor (WSDD)</b> format. A deployme
 descriptor contains a bunch of things you want to "deploy" into Axis - i.e. make 
 available to the Axis engine. The most common thing to deploy is a Web Service, 
 so let's start by taking a look at a deployment descriptor for a basic service 
-(this file is samples/userguide/example3/deploy.xml): 
+(this file is samples/userguide/example3/deploy.wsdd): 
 <div class="example"> 
   <pre>&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
             xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt;
@@ -484,8 +540,8 @@ If this had been a real order processing system, we'd probably have charged you 
   in WSDD, which looks like this:</p>
 <pre class="xml">&lt;typeMapping qname=&quot;ns:local&quot; xmlns:ns="someNamespace"
              languageSpecificType="java:my.java.thingy"
-             serializer=&quot;&quot;
-             deserializer=&quot;&quot;/&gt;</pre>
+             serializer=&quot;my.java.Serializer&quot;
+             deserializer=&quot;my.java.DeserializerFactory&quot;/&gt;</pre>
 <p>This looks a lot like the &lt;beanMapping&gt; tag we saw earlier, but there 
   are two extra attributes. One, <b>serializer</b>, is the Java class name of 
   the Serializer class which should be used to write the specified Java class 
@@ -599,7 +655,7 @@ If this had been a real order processing system, we'd probably have charged you 
   <li>The Implementation class (<b>MyServiceSoapBindingImpl</b>) is the actual 
     framework class which you'll flesh out with your own code.</li>
 </ul>
-The tool also builds you a &quot;deploy.xml&quot; and an &quot;undeploy.xml&quot; 
+The tool also builds you a &quot;deploy.wsdd&quot; and an &quot;undeploy.wsdd&quot; 
 for use with the AdminClient. These files may be used to deploy the service once 
 you've filled in the methods of the Implementation class, compiled the code, and 
 made the classes available to your Axis engine. 
@@ -612,7 +668,7 @@ made the classes available to your Axis engine.
   stubs or skeletons for operations which contain complex types, you will notice 
   that Java classes corresponding to the XML data types are also generated. For 
   the stub, the code inside the stub handles setting up the type mapping in Axis 
-  - and for the skeleton, the type mappings are included in the generated &quot;deploy.xml&quot; 
+  - and for the skeleton, the type mappings are included in the generated &quot;deploy.wsdd&quot; 
   file. </p>
 <h5>Holders</h5>
 <p>You'll notice that for each data class that Wsdl2java generates, there is a 
@@ -643,9 +699,10 @@ mapping of namespace to package
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 output directory for emitted files
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -d, --deployScope &lt;argument>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-add scope to deploy.xml: "Application", "Request", "Session"
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -t, --testCase
+<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  add scope to deploy.wsdd: "Application", "Request", "Session" <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -t, --testCase
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 emit junit testcase class for web service
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n, --noImports
@@ -693,9 +750,9 @@ in the properties file, the command line entry takes precedence.
 The root directory for all emitted files.
 <h5>
 -d, --deployScope &lt;argument></h5>
-Add scope to deploy.xml: "Application", "Request", or "Session".&nbsp;
-If this option does not appear, no scope tag appears in deploy.xml, which
-the AXIS runtime defaults to "Request".
+Add scope to deploy.wsdd: "Application", "Request", or "Session".&nbsp; If this 
+option does not appear, no scope tag appears in deploy.wsdd, which the AXIS runtime 
+defaults to "Request". 
 <h5>
 -t, --testCase</h5>
 Generate a client-side JUnit test case.
@@ -705,21 +762,19 @@ Only generate code for the WSDL document that appears on the command line.&nbsp;
 The default behaviour is to generate files for all WSDL documents, the
 immediate one and all imported ones.
 <h2><a name="DeploymentReference"></a>Deployment Reference</h2>
-<i>Note: this reference reflects the state of the deploy.xml structure as of the 
-alpha 1 release. This will <b>very likely change</b> in a subsequent release to 
-become a format called WSDD (Web Service Deployment Descriptor). You can find 
-information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i> 
+Note : all the elements referred to in this section are in the WSDD namespace, 
+namely &quot;http://wsdd&quot;. 
 <dl> 
-  <dt><b><font face="Courier New, Courier, mono">&lt;m:deploy xmlns:m=&quot;AdminService&quot;&gt;</font></b></dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;deployment&gt;</font></b></dt>
   <dd>The root element of the deployment document which tells the Axis engine 
     that this is a deployment. Must be in the &quot;AdminService&quot; namespace.</dd>
   <dt>&nbsp;</dt>
-  <dt><b><font face="Courier New, Courier, mono">&lt;m:undeploy xmlns:m=&quot;AdminService&quot;&gt;</font></b></dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;undeployment&gt;</font></b></dt>
   <dd>The root element of the deployment document which tells Axis that this is 
     an undeployment. Must be in the &quot;AdminService&quot; namespace.</dd>
   <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;handler name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    class=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font></b></dt>
+    type=&quot;</font></b><font face="Courier New, Courier, mono"><i>type</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font></b></dt>
   <dd>Belongs inside a deploy or undeploy. Names a Handler, and indicates the 
     class which corresponds to the name. May contain an arbitrary number of <b><font face="Courier New, Courier, mono">&lt;option 
     name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
@@ -727,50 +782,70 @@ information on WSDD in the Axis source tree, under xml-axis/java/wsdd.</i>
     elements, each of which will supply an option to the deployed Handler.</dd>
   <dt>&nbsp;</dt>
   <dt><b><font face="Courier New, Courier, mono">&lt;service name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    request=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    response=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    pivot=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    provider=&quot;</font></b><font face="Courier New, Courier, mono"><i>provider</i></font><b><font face="Courier New, Courier, mono">&quot; 
     &gt;</font></b></dt>
   <dd>Deploys/undeploys an Axis Service. Common options for this element (i.e. 
-    subelements of the form <code><b>&lt;option name=&quot;</b>name<b>&quot; value=&quot;</b>value<b>&quot;/&gt;</b>)</code> 
-    include:<br>
+    subelements of the form <code><b>&lt;parameter name=&quot;</b>name<b>&quot; 
+    value=&quot;</b>value<b>&quot;/&gt;</b>)</code> include:<br>
     <b>className</b> : the backend implementation class<br>
     <b>methodName</b> : the allowed methods<br>
     <b>allowedRoles</b> : comma-separated list of roles allowed to access this 
-    service</dd>
+    service<br>
+    <br>
+    If you wish to define handlers which should be invoked either before or after 
+    the service's provider, you may do so with the <b>&lt;requestFlow&gt;</b> 
+    and the <b>&lt;responseFlow&gt;</b> subelements. Either of those elements 
+    may be specified inside the <b>&lt;service&gt;</b> element, and their semantics 
+    are identical to the <b>&lt;chain&gt;</b> element described below - in other 
+    words, they may contain <b>&lt;handler&gt;</b> and <b>&lt;chain</b>&gt; elements 
+    which will be invoked in the order they are specified.</dd>
   <dt><b><br>
-    <font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    flow=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler handler...</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
+    <font face="Courier New, Courier, mono">&lt;chain name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;</font></b><b><font face="Courier New, Courier, mono">&gt;<br>
+    &lt;<i>subelement</i>/&gt;...<br>
+    &lt;/chain&gt; </font></b></dt>
   <dd>Defines a chain. Each <i>handler</i> (i.e. deployed handler name) in the 
     list will be invoked() in turn when the chain is invoked. This enables you 
-    to build up &quot;modules&quot; of commonly used functionality.</dd>
-  <dt>&nbsp;</dt>
+    to build up &quot;modules&quot; of commonly used functionality. The subelements 
+    inside chains may be &lt;<b>handler</b>&gt;s or &lt;<b>chain</b>&gt;s. &lt;handler&gt;s 
+    inside a &lt;chain&gt; may either be defined in terms of their Java class:<br>
+    <pre>&lt;chain name=&quot;myChain&quot;&gt;
+  &lt;handler type=&quot;java:org.apache.axis.handlers.LogHandler&quot;/&gt;
+&lt;/chain&gt;</pre>
+    or may refer to previously defined &lt;handlers&gt;, with the &quot;type&quot; 
+    of the handler referring to the name of the other handler definition:<br>
+    <pre>&lt;handler name=&quot;logger&quot; type=&quot;java:org.apache.axis.handlers.LogHandler&quot;/&gt;<br>&lt;chain name=&quot;myChain&quot;/&gt;<br>   &lt;handler type=&quot;logger&quot;/&gt;<br>&lt;/chain&gt;</pre>
+  </dd>
   <dt><b><font face="Courier New, Courier, mono">&lt;transport name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b></dt>
-  <dd>Defines a transport.</dd>
+  <dd>Defines a transport on the server side. Server transports are invoked when 
+    an incoming request arrives. A server transport may define <b>&lt;requestFlow&gt;</b> 
+    and/or <b>&lt;responseFlow&gt;</b> elements to specify handlers/chains which 
+    should be invoked during the request (i.e. incoming message) or response (i.e. 
+    outgoing message) portion of processing (this function works just like the 
+    <b>&lt;service&gt;</b> element above). Typically handlers in the transport 
+    request/response flows implement transport-specific functionality, such as 
+    parsing protocol headers, etc.</dd>
   <dt>&nbsp;</dt>
-  <dt><b><font face="Courier New, Courier, mono">&lt;typeMappings&gt;</font></b></dt>
-  <dd>Contains an abitrary number of <b>&lt;typeMapping&gt;</b> elements:<br>
-    <br>
-    <b><font face="Courier New, Courier, mono">&lt;typeMapping qname=&quot;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono">&quot; 
+  <dt><b><font face="Courier New, Courier, mono">&lt;transport name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    pivot=&quot;</font></b><font face="Courier New, Courier, mono"><i>handler 
+    type</i><b>&quot;</b></font><b><font face="Courier New, Courier, mono"> &gt;</font></b></dt>
+  <dd>Defines a transport on the client side, which is invoked when sending a 
+    SOAP message. The &quot;pivot&quot; attribute specifies a Handler to be used 
+    as the actual sender for this transport (for example, the HTTPSender). Request 
+    and response flows may be specified as in server-side transports to do processing 
+    on the request (i.e. outgoing message) or response (i.e. incoming message).</dd>
+  <dt>&nbsp;</dt>
+  <dt><b><font face="Courier New, Courier, mono">&lt;typeMapping qname=&quot;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono">&quot; 
     classname=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot; 
     serializer=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot; 
-    deserializerFactory=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font><br>
-    <br>
-    </b>Each typeMapping maps an XML qualified name to/from a Java class, using 
-    a specified Serializer and DeserializerFactory. (note: the reason we specify 
-    the Serializer directly, and the Deserializer as a factory, is because Deserializers 
-    are stateful, and are tied to a particular element. Serializers, on the other 
-    hand, are stateless and may be freely shared, so we only need one)</dd>
+    deserializer=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font></b></dt>
+  <dd>Each typeMapping maps an XML qualified name to/from a Java class, using 
+    a specified Serializer and Deserializer. </dd>
   <dt>&nbsp;</dt>
-  <dt><b><font face="Courier New, Courier, mono">&lt;beanMappings&gt;</font></b></dt>
-  <dd>Contains an arbitrary number of elements, each of which represents a mapping 
-    of an XML QName to a Java class.<br>
-    <br>
-    <b><font face="Courier New, Courier, mono">&lt;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono"> 
-    classname=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;/&gt;</font><br>
-    <br>
-    </b>The class named by &quot;classname&quot; must follow the JavaBean standard 
-    pattern of get/set accessors.</dd>
+  <dt><b><font face="Courier New, Courier, mono">&lt;beanMapping qname=&quot;</font></b><font face="Courier New, Courier, mono"><i>ns:localName</i></font><b><font face="Courier New, Courier, mono">&quot; 
+    classname=&quot;</font></b><font face="Courier New, Courier, mono"><i>classname</i></font><b><font face="Courier New, Courier, mono">&quot;</font></b><b><font face="Courier New, Courier, mono">&gt;</font></b></dt>
+  <dd><b></b>A simplified type mapping, which uses pre-defined serializers/deserializers 
+    to encode/decode JavaBeans. The class named by &quot;classname&quot; must 
+    follow the JavaBean standard pattern of get/set accessors.</dd>
 </dl>
 <p> </p>
 <h2>Pre-Configured Axis Components Reference</h2>
