@@ -155,16 +155,12 @@ public class SimpleProvider implements EngineConfiguration
     }
 
     /**
-     * Returns a global response handler.
+     * Set the global options Hashtable
+     *
+     * @param options
      */
-    public Handler getGlobalResponse() throws ConfigurationException {
-        if (globalResponse != null)
-            return globalResponse;
-
-        if (defaultConfiguration != null)
-            return defaultConfiguration.getGlobalResponse();
-
-        return null;
+    public void setGlobalOptions(Hashtable options) {
+        globalOptions = options;
     }
 
     /**
@@ -178,6 +174,37 @@ public class SimpleProvider implements EngineConfiguration
             return defaultConfiguration.getGlobalRequest();
 
         return null;
+    }
+
+    /**
+     * Set the global request Handler
+     *
+     * @param globalRequest
+     */
+    public void setGlobalRequest(Handler globalRequest) {
+        this.globalRequest = globalRequest;
+    }
+
+    /**
+     * Returns a global response handler.
+     */
+    public Handler getGlobalResponse() throws ConfigurationException {
+        if (globalResponse != null)
+            return globalResponse;
+
+        if (defaultConfiguration != null)
+            return defaultConfiguration.getGlobalResponse();
+
+        return null;
+    }
+
+    /**
+     * Set the global response Handler
+     *
+     * @param globalResponse
+     */
+    public void setGlobalResponse(Handler globalResponse) {
+        this.globalResponse = globalResponse;
     }
 
     /**
