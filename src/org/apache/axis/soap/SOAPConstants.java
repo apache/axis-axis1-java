@@ -98,4 +98,9 @@ public interface SOAPConstants extends Serializable {
      * Obtain the QName for the Body element
      */
     public QName getBodyQName();
+
+    /**
+     * Obtain the QName for the role attribute (actor/role)
+     */
+    public QName getRoleAttributeQName();
 }

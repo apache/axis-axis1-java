@@ -385,6 +385,7 @@ public class Constants {
     public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
     public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
     public static final String ATTR_ACTOR           = "actor" ;
+    public static final String ATTR_ROLE            = "role" ;
     public static final String ATTR_ROOT            = "root" ;
     public static final String ATTR_ID              = "id" ;
     public static final String ATTR_HREF            = "href" ;
@@ -461,7 +462,7 @@ public class Constants {
 
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
-    
+
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
 

@@ -64,6 +64,7 @@ import org.xml.sax.Attributes;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.Name;
+import javax.xml.namespace.QName;
 
 /** 
  * A simple header element abstraction.  Extends MessageElement with
@@ -101,12 +102,18 @@ public class SOAPHeaderElement extends MessageElement
     public SOAPHeaderElement(Element elem)
     {
         super(elem);
-        String val = elem.getAttributeNS(Constants.URI_SOAP11_ENV,
+
+        // FIXME : This needs to come from someplace reasonable, perhaps
+        // TLS (SOAPConstants.getCurrentVersion() ?)
+        SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
+
+        String val = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
-        actor = elem.getAttributeNS(Constants.URI_SOAP11_ENV,
-                                    Constants.ATTR_ACTOR);
+        QName roleQName = soapConstants.getRoleAttributeQName();
+        actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
+                                    roleQName.getLocalPart());
         if (actor == null) {
             actor = "";
         }
@@ -141,8 +148,9 @@ public class SOAPHeaderElement extends MessageElement
                                          Constants.ATTR_MUST_UNDERSTAND);
         mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
 
-        actor = attributes.getValue(soapConstants.getEnvelopeURI(),
-                                    Constants.ATTR_ACTOR);
+        QName roleQName = soapConstants.getRoleAttributeQName();
+        actor = attributes.getValue(roleQName.getNamespaceURI(),
+                                    roleQName.getLocalPart());
         if (actor == null) {
             actor = "";
         }
@@ -166,6 +174,7 @@ public class SOAPHeaderElement extends MessageElement
     public void setActor(String a) {
         actor = a ;
 
+        // FIXME
         // Instead of doing this can we hang out until serialization time
         // and do it there, so that we can then resolve SOAP version?
         setAttribute(Constants.URI_SOAP11_ENV, Constants.ATTR_ACTOR, a);
