@@ -157,7 +157,8 @@ public class AxisServlet extends HttpServlet
         isDebug= log.isDebugEnabled();
         if(isDebug) log.debug("In servlet init");
 
-        transportName = getOption(context, INIT_PROPERTY_TRANSPORT_NAME,
+        transportName = getOption(context,
+                                  INIT_PROPERTY_TRANSPORT_NAME,
                                   HTTPTransport.DEFAULT_TRANSPORT_NAME);
 
         if (isTrue(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
@@ -204,7 +205,8 @@ public class AxisServlet extends HttpServlet
 
         ServletContext context = servlet.getServletContext();
 
-        if (context.getAttribute(ATTR_AXIS_ENGINE) == null) {
+        AxisServer engine = (AxisServer)context.getAttribute(ATTR_AXIS_ENGINE);
+        if (engine == null) {
             Map environment = getEngineEnvironment(servlet);
 
             // Obtain an AxisServer by using whatever AxisServerFactory is
@@ -218,14 +220,14 @@ public class AxisServlet extends HttpServlet
             // container, and pre-registered in JNDI at deployment time.  It
             // also means we put the standard configuration pattern in one
             // place.
-            context.setAttribute(ATTR_AXIS_ENGINE,
-                                 AxisServer.getServer(environment));
+            engine = AxisServer.getServer(environment);
+            context.setAttribute(ATTR_AXIS_ENGINE, engine);
         }
 
         if (isDebug) 
             log.debug("Exit: getEngine()");
 
-        return (AxisServer)context.getAttribute(ATTR_AXIS_ENGINE);
+        return engine;
     }
 
     
@@ -307,7 +309,7 @@ public class AxisServlet extends HttpServlet
                 /**
                  * get message context w/ various properties set
                  */
-                MessageContext msgContext = getMessageContext(engine, req, res);
+                MessageContext msgContext = createMessageContext(engine, req, res);
     
                 try {
                     // NOTE:  HttpUtils.getRequestURL has been deprecated.
@@ -508,7 +510,7 @@ public class AxisServlet extends HttpServlet
 
             /** get message context w/ various properties set
              */
-            MessageContext msgContext = getMessageContext(engine, req, res);
+            MessageContext msgContext = createMessageContext(engine, req, res);
     
             // ? OK to move this to 'getMessageContext',
             // ? where it would also be picked up for 'doGet()' ?
@@ -643,9 +645,9 @@ public class AxisServlet extends HttpServlet
      * don't know how it's going to be used - perhaps it might not
      * even need to be parsed.
      */
-    private MessageContext getMessageContext(AxisEngine engine,
-                                             HttpServletRequest req,
-                                             HttpServletResponse res)
+    private MessageContext createMessageContext(AxisEngine engine,
+                                                HttpServletRequest req,
+                                                HttpServletResponse res)
     {
         MessageContext msgContext = new MessageContext(engine);
         
