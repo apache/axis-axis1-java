@@ -144,7 +144,7 @@ public class Call implements javax.xml.rpc.Call {
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
-    private QName              portTypeName    = null ;
+    private QName              portTypeName    = new QName("");
     private QName              operationName   = null ;
     private QName              returnType      = null ;
 
@@ -186,7 +186,7 @@ public class Call implements javax.xml.rpc.Call {
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
     // If true, the code will throw a fault if there is no
-    // response message from the server.  Otherwise, the 
+    // response message from the server.  Otherwise, the
     // invoke method will return a null.
     public static final boolean FAULT_ON_NO_RESPONSE = false;
 
@@ -1386,7 +1386,7 @@ public class Call implements javax.xml.rpc.Call {
                                       p );
             }
             // Attach the ParameterDescription to the RPCParam
-            // so that the serializer can use the (javaType, xmlType) 
+            // so that the serializer can use the (javaType, xmlType)
             // information.
             rpcParam.setParamDesc(param);
             result.add( rpcParam );
@@ -1710,7 +1710,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         resMsg = msgContext.getResponseMessage();
-        
+
         if (resMsg == null) {
           if (FAULT_ON_NO_RESPONSE) {
             throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
@@ -1718,7 +1718,7 @@ public class Call implements javax.xml.rpc.Call {
             return null;
           }
         }
-        
+
         resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
         SOAPBodyElement bodyEl = resEnv.getFirstBody();
         if (bodyEl instanceof RPCElement) {
