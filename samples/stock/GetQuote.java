@@ -90,7 +90,9 @@ public class GetQuote {
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
-      String res = (String) call.invoke( "getQuote", new Object[] {symbol} );
+      String res = (String) call.invoke( 
+        "http://schemas.xmlsoap.org/soap/envelope/", "getQuote",
+        new Object[] {symbol} );
 
       System.out.println( symbol + ": " + res );
     }
