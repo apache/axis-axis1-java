@@ -53,12 +53,17 @@
  */
 package test.wsdl;
 
+import org.apache.axis.utils.XMLUtils;
+
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriterFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import java.util.HashMap;
 
@@ -119,7 +124,25 @@ public class Wsdl2javaAntTask extends Task
             emitter.setOutputDir(output);
             emitter.generateSkeleton(skeleton);
             emitter.verbose(verbose);
-            emitter.emit(url);
+
+            Document doc;
+
+            try {
+                doc = XMLUtils.newDocument(url);
+                doc.getDocumentElement().getTagName();
+            } catch (Throwable e) {
+                if (url.startsWith("http://")) {
+                    // What we have is either a network error or invalid XML -
+                    // the latter most likely an HTML error page.  This makes
+                    // it impossible to continue with the test, so issue
+                    // a warning, and return without reporting a fatal error.
+                    log(e.toString(), Project.MSG_WARN);
+                    return;
+                }
+                throw e;
+            }
+
+            emitter.emit(doc);
         } catch (Throwable t) {
             throw new BuildException("Error while running " + getClass().getName(), t); 
         }
