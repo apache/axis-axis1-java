@@ -54,12 +54,21 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
@@ -69,19 +78,9 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Element;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
 
 
 /**
@@ -92,7 +91,8 @@ import java.util.Vector;
  */
 public class WSDDDeployment
     extends WSDDElement
-    implements WSDDTypeMappingContainer, EngineConfiguration
+    implements WSDDTypeMappingContainer,
+               WSDDEngineConfiguration
 {
     protected static Log log =
         LogFactory.getLog(WSDDDeployment.class.getName());
@@ -594,4 +594,6 @@ public class WSDDDeployment
     public AxisEngine getEngine() {
         return engine;
     }
+
+    public WSDDDeployment getDeployment() { return this; }
 }

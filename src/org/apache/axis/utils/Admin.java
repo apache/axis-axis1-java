@@ -55,28 +55,6 @@
 
 package org.apache.axis.utils ;
 
-import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.Handler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.AxisClient;
-import org.apache.axis.configuration.FileProvider;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.deployment.wsdd.WSDDDeployment;
-import org.apache.axis.deployment.wsdd.WSDDDocument;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.SerializationContextImpl;
-import org.apache.axis.server.AxisServer;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -84,6 +62,27 @@ import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
+import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.client.AxisClient;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDDeployment;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
+import org.apache.axis.server.AxisServer;
+import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * Handy static utility functions for turning XML into
@@ -153,9 +152,9 @@ public class Admin
 
         WSDDDocument wsddDoc = new WSDDDocument(root);
         EngineConfiguration config = engine.getConfig();
-        if (config instanceof FileProvider) {
-            FileProvider wsddProvider = (FileProvider)config;
-            WSDDDeployment deployment = wsddProvider.getDeployment();
+        if (config instanceof WSDDEngineConfiguration) {
+            WSDDDeployment deployment =
+                ((WSDDEngineConfiguration)config).getDeployment();
             wsddDoc.deploy(deployment);
         }
         engine.refreshGlobalOptions();
@@ -247,9 +246,13 @@ public class Admin
         SerializationContext context = new SerializationContextImpl(writer, null);
         context.setPretty(true);
         try {
-            FileProvider config = (FileProvider)engine.getConfig();
-            WSDDDeployment deployment = config.getDeployment();
-            deployment.writeToContext(context);
+            EngineConfiguration config = engine.getConfig();
+            
+            if (config instanceof WSDDEngineConfiguration) {
+                WSDDDeployment deployment =
+                    ((WSDDEngineConfiguration)config).getDeployment();
+                deployment.writeToContext(context);
+            }
         } catch (Exception e) {
             // If the engine config isn't a FileProvider, or we have no
             // engine config for some odd reason, we'll end up here.

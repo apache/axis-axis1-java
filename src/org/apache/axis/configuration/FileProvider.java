@@ -55,39 +55,32 @@
 
 package org.apache.axis.configuration;
 
-import org.apache.axis.AxisEngine;
-import org.apache.axis.ConfigurationException;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.Handler;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.deployment.wsdd.WSDDDeployment;
-import org.apache.axis.deployment.wsdd.WSDDDocument;
-import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
-import org.apache.axis.deployment.wsdd.WSDDService;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.utils.Admin;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.InternalException;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.w3c.dom.Document;
-
-import javax.xml.namespace.QName;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.Handler;
+import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.deployment.wsdd.WSDDDeployment;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to read +
@@ -96,7 +89,7 @@ import java.util.Iterator;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * @author Glyn Normington (glyn@apache.org)
  */
-public class FileProvider implements EngineConfiguration {
+public class FileProvider implements WSDDEngineConfiguration {
     protected static Log log =
         LogFactory.getLog(FileProvider.class.getName());
 
