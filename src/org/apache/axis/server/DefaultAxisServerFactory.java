@@ -58,6 +58,10 @@ package org.apache.axis.server;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -68,91 +72,135 @@ import java.io.File;
  * Helper class for obtaining AxisServers.  Default implementation.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
- */ 
+ */
 
 public class DefaultAxisServerFactory implements AxisServerFactory {
+    protected static Log log =
+        LogFactory.getLog(DefaultAxisServerFactory.class.getName());
 
     /**
-     * Get an AxisServer.  This factory looks for an "engineConfig" in the
-     * environment Map, and if one is found, uses that.  Otherwise it
-     * uses the default initialization.
-     * 
+     * Get an AxisServer.
+     * <p>
+     * Factory obtains EngineConfiguration as first found of the following:
+     * a) EngineConfiguration instance, keyed to
+     *    EngineConfiguration.PROPERTY_NAME in 'environment', or
+     * b) EngineConfiguration class name, keyed to
+     *    AxisEngine.PROP_CONFIG_CLASS in System Properties.
+     *    Class is instantiated if found.
+     * <p>
+     * If an EngineConfiguration cannot be located, the default
+     * AxisServer constructor is used.
+     * <p>
+     * The AxisServer's option AxisEngine.PROP_ATTACHMENT_DIR is set to
+     * the (first found) value of either AxisEngine.ENV_ATTACHMENT_DIR
+     * or AxisEngine.ENV_SERVLET_REALPATH.
+     *
+     * @param environment The following keys are used:
+     *        AxisEngine.ENV_ATTACHMENT_DIR
+     *                   - Set as default value for Axis option
+     *                     AxisEngine.PROP_ATTACHMENT_DIR
+     *        AxisEngine.ENV_SERVLET_REALPATH
+     *                   - Set as alternate default value for Axis option
+     *                     AxisEngine.PROP_ATTACHMENT_DIR
+     *        EngineConfiguration.PROPERTY_NAME
+     *                   - Instance of EngineConfiguration,
+     *                     if not set then an attempt is made to retreive
+     *                     a class name from AxisEngine.PROP_CONFIG_CLASS
      */
-    public AxisServer getServer(Map environment)
-        throws AxisFault
-    {
-        EngineConfiguration config = null;
-        try {
-            config = (EngineConfiguration)environment.
-                get(EngineConfiguration.PROPERTY_NAME);
-        } catch (ClassCastException e) {
-            // Just in case, fall through here.
-        }
+    public AxisServer getServer(Map environment) throws AxisFault {
+        log.debug("Enter: DefaultAxisServerFactory::getServer");
 
-        
-        AxisServer ret= createNewServer(config);
+        AxisServer ret = createServer(environment);
 
-        String attachmentsdirservlet=  null;
-        if( null != ret &&  environment != null ){
-          if( null !=  (attachmentsdirservlet= (String) 
-                environment.get("axis.attachments.Directory"))){
-              ret.setOption(AxisEngine.PROP_ATTACHMENT_DIR,
-               attachmentsdirservlet);
-          }
-          if(null == (attachmentsdirservlet= (String)
-                ret.getOption(AxisEngine.PROP_ATTACHMENT_DIR))){
-              if( null !=  (attachmentsdirservlet= (String) 
-                  environment.get("servlet.realpath"))){
-                 ret.setOption(AxisEngine.PROP_ATTACHMENT_DIR, attachmentsdirservlet);
-              }
-          }    
-        }
-        if(ret != null){
-            attachmentsdirservlet= (String) ret.getOption(AxisEngine.PROP_ATTACHMENT_DIR);
-            File attdirFile= new File(attachmentsdirservlet);
-            if( !attdirFile.isDirectory()){
-                      attdirFile.mkdirs();
+        if (ret != null) {
+            if (environment != null) {
+                ret.setOptionDefault(AxisEngine.PROP_ATTACHMENT_DIR,
+                    (String)environment.get(AxisEngine.ENV_ATTACHMENT_DIR));
+
+                ret.setOptionDefault(AxisEngine.PROP_ATTACHMENT_DIR,
+                    (String)environment.get(AxisEngine.ENV_SERVLET_REALPATH));
+            }
+
+            String attachmentsdir = (String)ret.getOption(AxisEngine.PROP_ATTACHMENT_DIR);
+
+            if (attachmentsdir != null) {
+                File attdirFile = new File(attachmentsdir);
+                if (!attdirFile.isDirectory()) {
+                    attdirFile.mkdirs();
+                }
             }
         }
+
+        log.debug("Exit: DefaultAxisServerFactory::getServer");
 
         return ret;
     }
 
     /**
-     * Do the actual work of creating a new AxisServer, using the passed
-     * configuration provider, or going through the default configuration
-     * steps if null is passed.
+     * Do the actual work of creating a new AxisServer, using the
+     * configuration, or using the default constructor if null is passed.
      *
      * @return a shiny new AxisServer, ready for use.
      */
-    static private AxisServer createNewServer(EngineConfiguration config)
+    private static AxisServer createServer(Map environment) {
+        EngineConfiguration config = getEngineConfiguration(environment);
+
+        // Return new AxisServer using the appropriate config
+        return (config == null) ? new AxisServer() : new AxisServer(config);
+    }
+	
+    /**
+     * Look for EngineConfiguration, it is first of:
+     * a) EngineConfiguration instance, keyed to
+     *    EngineConfiguration.PROPERTY_NAME in 'environment', or
+     * b) EngineConfiguration class name, keyed to
+     *    AxisEngine.PROP_CONFIG_CLASS in System Properties.
+     *    Class is instantiated if found.
+     */
+    private static EngineConfiguration getEngineConfiguration(Map environment)
     {
+        log.debug("Enter: DefaultAxisServerFactory::getEngineConfiguration");
+
+        EngineConfiguration config = null;
+		
+        if (environment != null) {
+            try {
+                config = (EngineConfiguration)environment.get(EngineConfiguration.PROPERTY_NAME);
+            } catch (ClassCastException e) {
+                log.warn(JavaUtils.getMessage("engineConfigWrongClass00"), e);
+                // Fall through
+            }
+        }
+		
         if (config == null) {
             // A default engine configuration class may be set in a system
             // property. If so, try creating an engine configuration.
-            String configClass = System.getProperty("axis.engineConfigClass");
+            String configClass = System.getProperty(AxisEngine.PROP_CONFIG_CLASS);
             if (configClass != null) {
-                // Got one - so try to make it (which means it had better have
-                // a default constructor - may make it possible later to pass
-                // in some kind of environmental parameters...)
                 try {
+                    // Got one - so try to make it (which means it had better have
+                    // a default constructor - may make it possible later to pass
+                    // in some kind of environmental parameters...)
                     Class cls = Class.forName(configClass);
                     config = (EngineConfiguration)cls.newInstance();
                 } catch (ClassNotFoundException e) {
-                    // Fall through???
+                    log.warn(JavaUtils.getMessage("engineConfigNoClass00", configClass), e);
+                    // Fall through
                 } catch (InstantiationException e) {
-                    // Fall through???
+                    log.warn(JavaUtils.getMessage("engineConfigNoInstance00", configClass), e);
+                    // Fall through
                 } catch (IllegalAccessException e) {
-                    // Fall through???
+                    log.warn(JavaUtils.getMessage("engineConfigIllegalAccess00", configClass), e);
+                    // Fall through
+                } catch (ClassCastException e) {
+                    log.warn(JavaUtils.getMessage("engineConfigWrongClass01", configClass), e);
+                    // Fall through
                 }
             }
         }
 
-        // Create an AxisServer using the appropriate config
-        if (config == null) {
-            return new AxisServer();
-        } else {
-            return new AxisServer(config);
-        }
+        log.debug("Exit: DefaultAxisServerFactory::getEngineConfiguration");
+
+        return config;
     }
 }
