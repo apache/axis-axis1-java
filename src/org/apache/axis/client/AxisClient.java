@@ -151,10 +151,6 @@ public class AxisClient extends AxisEngine {
                             Messages.getMessage("noTransport00", hName));
                 }
 
-                if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
-                    checker.invoke(msgContext);
-                }
-                
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
 
