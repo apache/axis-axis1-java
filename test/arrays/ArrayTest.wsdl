@@ -32,6 +32,16 @@
           </xsd:restriction>
         </xsd:complexContent>
       </xsd:complexType>
+
+      <xsd:complexType name="intArray">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="xsd:int" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
 <!--
       <xsd:complexType name="foodArray">
             <xsd:sequence>
@@ -52,6 +62,8 @@
             <xsd:element name="hobbies" type="typens:hobbyArray"/>
             <!-- Style 3: Array defined using derivation of soapenc:Array -->
             <xsd:element name="pets" type="typens:petArray"/>
+            <xsd:element name="id"   type="typens:intArray"/>
+            <xsd:element name="id2"  type="xsd:int"/>
             <!-- Microsoft 1 (not JAX-RPC): Array defined using sequence of single unbounded element -->
             <!-- <xsd:element name="foods" type="typens:foodArray"/> -->
             <!-- Microsoft 2 (not JAX-RPC): Array defined using single unbounded element -->
@@ -86,6 +98,22 @@
     <part name="pets" type="typens:petArray"/>
   </message>
 
+  <message name="GetIDFromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetIDFromNameResponse">
+    <part name="id" type="typens:intArray"/>
+  </message>
+
+  <message name="GetID2FromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetID2FromNameResponse">
+    <part name="id" type="xsd:int"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="PersonalInfoBook">
     <operation name="addEntry">
@@ -98,6 +126,14 @@
     <operation name="getPetsFromName">
       <input message="tns:GetPetsFromNameRequest"/>
       <output message="tns:GetPetsFromNameResponse"/>
+    </operation>
+    <operation name="getIDFromName">
+      <input message="tns:GetIDFromNameRequest"/>
+      <output message="tns:GetIDFromNameResponse"/>
+    </operation>
+    <operation name="getID2FromName">
+      <input message="tns:GetID2FromNameRequest"/>
+      <output message="tns:GetID2FromNameResponse"/>
     </operation>
   </portType>
 
@@ -132,6 +168,32 @@
       </output>
     </operation>
     <operation name="getPetsFromName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getIDFromName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getID2FromName">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded"
