@@ -87,7 +87,7 @@ public class MerlinIO extends Component implements ImageIO {
         if (iter.hasNext()) {
             writer = (ImageWriter) iter.next();
         }
-        writer.setOutput(os);
+        writer.setOutput(javax.imageio.ImageIO.createImageOutputStream(os));
         BufferedImage rendImage = null;
         if (image instanceof BufferedImage) {
             rendImage = (BufferedImage) image;
