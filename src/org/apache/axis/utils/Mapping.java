@@ -68,6 +68,11 @@ public class Mapping {
     {
         return namespaceURI;
     }
+
+    public void setNamespaceURI(String namespaceURI) {
+        this.namespaceURI = namespaceURI;
+    }
+
     public String getPrefix()
     {
         return prefix;

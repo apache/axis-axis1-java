@@ -364,19 +364,38 @@ public class SerializationContextImpl implements SerializationContext
 
     /**
      * Convert QName to a string of the form <prefix>:<localpart>
-     * @param QName
+     * @param qName
      * @return prefixed qname representation for serialization.
      */
-    public String qName2String(QName qName)
+    public String qName2String(QName qName, boolean writeNS)
     {
-        String prefix = getPrefixForURI(qName.getNamespaceURI());
-        return (((prefix != null)&&(!prefix.equals(""))) ? prefix + ":" : "") +
-               qName.getLocalPart();
+        String prefix = null;
+
+        if (qName.getNamespaceURI().equals("")) {
+            if (writeNS) {
+                // If this is unqualified (i.e. prefix ""), set the default
+                // namespace to ""
+                String defaultNS = nsStack.getNamespaceURI("");
+                if (defaultNS != null) {
+                    registerPrefixForURI("", "");
+                }
+            }
+        } else {
+            prefix = getPrefixForURI(qName.getNamespaceURI());
+        }
+
+        return (((prefix != null) && (!prefix.equals(""))) ?
+                      prefix + ":" : "") +
+           qName.getLocalPart();
     }
 
+    public String qName2String(QName qName)
+    {
+        return qName2String(qName, false);
+    }
     /**
      * Get the QName associated with the specified class.
-     * @param Class of an object requiring serialization.
+     * @param cls Class of an object requiring serialization.
      * @return appropriate QName associated with the class.
      */
     public QName getQNameForClass(Class cls)
@@ -617,7 +636,7 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
-        String elementQName = qName2String(qName);
+        String elementQName = qName2String(qName, true);
         writer.write("<");
 
         writer.write(elementQName);
@@ -875,15 +894,20 @@ public class SerializationContextImpl implements SerializationContext
      * associated java.lang class.  So the javaType is needed to know that the value
      * is really a wrapped primitive.
      */
-    public void serializeActual(QName name, Attributes attributes, Object value, Class javaType)
+    public void serializeActual(QName qName,
+                                Attributes attributes,
+                                Object value,
+                                Class javaType)
         throws IOException
     {
         if (value != null) {
             TypeMapping tm = getTypeMapping();
 
             if (tm == null) {
-                throw new IOException(JavaUtils.getMessage("noSerializer00",
-                                                           value.getClass().getName(), "" + this));
+                throw new IOException(
+                        JavaUtils.getMessage("noSerializer00",
+                                             value.getClass().getName(),
+                                             "" + this));
             }
 
             Class_Serializer pair = getSerializer(javaType, value);
@@ -897,7 +921,7 @@ public class SerializationContextImpl implements SerializationContext
                 // in the interop tests.
                 //if (name.equals(multirefQName) && type != null)
                 //    name = type;
-                pair.ser.serialize(name, attributes, value, this);
+                pair.ser.serialize(qName, attributes, value, this);
                 return;
             }
 

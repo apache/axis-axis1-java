@@ -486,7 +486,8 @@ public class WSDDService
         }
 
         for (int i=0; i < namespaces.size(); i++ ) {
-            context.startElement(new QName("", "namespace"), null);
+            context.startElement(new QName(WSDDConstants.WSDD_NS, "namespace"),
+                                 null);
             context.writeString((String)namespaces.get(i));
             context.endElement();
         }
