@@ -151,7 +151,7 @@ public class WSDDDeployment
             addTypeMapping(mapping);
         }
         
-        Element el = getChildElement(e, "globalConfig");
+        Element el = getChildElement(e, "globalConfiguration");
         if (el != null)
             globalConfig = new WSDDGlobalConfiguration(el);
     }
