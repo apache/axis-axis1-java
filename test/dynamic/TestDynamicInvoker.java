@@ -70,12 +70,15 @@ public class TestDynamicInvoker extends TestCase {
         try {
             String[] args = new String[]{"http://www.xmethods.net/sd/2001/TemperatureService.wsdl", "getTemp", "02067"};
             DynamicInvoker.main(args);
+        }  catch (java.net.ConnectException ce) {
+            System.err.println("getTemp connect error: " + ce);
+            return;
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
+                    System.err.println("getTemp HTTP error: " + fault);
                     return;
                 }
             }
@@ -87,12 +90,15 @@ public class TestDynamicInvoker extends TestCase {
         try {
             String[] args = new String[]{"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl", "getQuote", "IBM"};
             DynamicInvoker.main(args);
+        }  catch (java.net.ConnectException ce) {
+            System.err.println("getQuote connect error: " + ce);
+            return;
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
+                    System.err.println("getQuote HTTP error: " + fault);
                     return;
                 }
             }
@@ -104,12 +110,15 @@ public class TestDynamicInvoker extends TestCase {
         try {
             String[] args = new String[]{"http://mssoapinterop.org/asmx/xsd/round4XSD.wsdl", "echoString(Round4XSDTestSoap)", "Hello World!!!"};
             DynamicInvoker.main(args);
+        }  catch (java.net.ConnectException ce) {
+            System.err.println("round4XSD connect error: " + ce);
+            return;
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
+                    System.err.println("round4XSD HTTP error: " + fault);
                     return;
                 }
             }
@@ -124,12 +133,15 @@ public class TestDynamicInvoker extends TestCase {
                                         "3", 
                                         "4"};
             DynamicInvoker.main(args);
+        }  catch (java.net.ConnectException ce) {
+            System.err.println("MathService connect error: " + ce);
+            return;
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
-                    System.err.println("TerraService HTTP error: " + fault);
+                    System.err.println("MathService HTTP error: " + fault);
                     return;
                 }
             }
