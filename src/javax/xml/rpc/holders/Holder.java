@@ -59,7 +59,6 @@ package javax.xml.rpc.holders;
  *
  * @version 0.7
  */
-public interface Holder extends java.io.Serializable {
-};
-
+public interface Holder {
+}
 

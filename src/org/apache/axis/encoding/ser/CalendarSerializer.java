@@ -68,22 +68,20 @@ import org.apache.axis.encoding.SerializationContext;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
- * Serializer for Dates.
+ * Serializer for dateTime (Calendar).
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
  */
-public class DateSerializer implements Serializer {
+public class CalendarSerializer implements Serializer {
 
     private static SimpleDateFormat zulu =
-       new SimpleDateFormat("yyyy-MM-dd");
-
-    private static Calendar calendar = Calendar.getInstance();
+       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                         //  0123456789 0 123456789
 
     static {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -97,20 +95,14 @@ public class DateSerializer implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
-        String fdate;
 
-        synchronized (calendar) {
-            calendar.setTime((Date)value);
-            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
-                context.writeString("-");
-                calendar.setTime((Date)value);
-                calendar.set(Calendar.ERA, GregorianCalendar.AD);
-                value = calendar.getTime();
-            }
-            fdate = zulu.format((Date)value);
-        }
+        Calendar calendar = (Calendar) value;
+        SimpleDateFormat format = 
+          new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        format.setTimeZone(calendar.getTimeZone());
+        Date date = calendar.getTime();
+        context.writeString(format.format(date));
 
-        context.writeString(fdate);
         context.endElement();
     }
 

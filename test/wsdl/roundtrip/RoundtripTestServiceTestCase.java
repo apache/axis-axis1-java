@@ -55,8 +55,9 @@
 
 package test.wsdl.roundtrip;
 
-
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import java.math.BigInteger;
 import java.math.BigDecimal;
@@ -203,9 +204,16 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
             CallOptions[] callOptions = new CallOptions[2];
             callOptions[0] = new CallOptions();
-            callOptions[0].setCallDate(new Date(1013441507388L));
+            Calendar date = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507388L));
+            callOptions[0].setCallDate(date);
             callOptions[1] = new CallOptions();
-            callOptions[1].setCallDate(new Date(1013441507390L));
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507390L));
+            callOptions[1].setCallDate(date);
 
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
@@ -227,7 +235,10 @@ public class RoundtripTestServiceTestCase extends TestCase {
             sendValue.setWrapperBoolean(new Boolean(true));
             sendValue.setShortArray(shortArray);
             sendValue.setByteArray(byteArray);
-            sendValue.setCallableDate(new Date(1012937861996L));
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1012937861996L));
+            sendValue.setCallableDate(date);
             sendValue.setBondAmount(new BigDecimal("2675.23"));
             sendValue.setPortfolioType(new BigInteger("2093"));
             sendValue.setTradeExchange("NYSE");
@@ -239,12 +250,14 @@ public class RoundtripTestServiceTestCase extends TestCase {
             sendValue.setTaxIndicator((byte) 3);
 
             BondInvestment actual = binding.methodBondInvestmentInOut(sendValue);
+            date.setTime(new Date(1013441507308L));
 
             assertEquals("The expected and actual values did not match.",
-                         new Date(1013441507308L),
+                         date,
                          actual.getOptions()[0].getCallDate());
+            date.setTime(new Date(1013441507328L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1013441507328L),
+                         date,
                          actual.getOptions()[1].getCallDate());
             assertEquals("The expected and actual values did not match.",
                          new Short((short) 33),
@@ -281,9 +294,10 @@ public class RoundtripTestServiceTestCase extends TestCase {
                          actual.getShortArray()[0]);
             assertEquals("The expected and actual values did not match.",
                          (byte) 7,
-                         actual.getByteArray()[0]); 
+                         actual.getByteArray()[0]);
+            date.setTime(new Date(1012937862997L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1012937862997L),
+                         date,
                          actual.getCallableDate());
             assertEquals("The expected and actual values did not match.",
                          new BigDecimal("2735.23"),
@@ -331,11 +345,16 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
         try {
             BondInvestment actual = binding.methodBondInvestmentOut();
+            Calendar date = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507308L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1013441507308L),
+                         date,
                          actual.getOptions()[0].getCallDate());
+            date.setTime(new Date(1013441507328L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1013441507328L),
+                         date,
                          actual.getOptions()[1].getCallDate());
             assertEquals("The expected and actual values did not match.",
                          new Short((short) 33),
@@ -373,8 +392,9 @@ public class RoundtripTestServiceTestCase extends TestCase {
             assertEquals("The expected and actual values did not match.",
                          (byte) 7,
                          actual.getByteArray()[0]); 
+            date.setTime(new Date(1012937862997L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1012937862997L),
+                         date,
                          actual.getCallableDate());
             assertEquals("The expected and actual values did not match.",
                          new BigDecimal("2735.23"),
@@ -423,9 +443,16 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
             CallOptions[] callOptions = new CallOptions[2];
             callOptions[0] = new CallOptions();
-            callOptions[0].setCallDate(new Date(1013441507388L));
+            Calendar date = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507388L));
+            callOptions[0].setCallDate(date);
             callOptions[1] = new CallOptions();
-            callOptions[1].setCallDate(new Date(1013441507390L));
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507390L));
+            callOptions[1].setCallDate(date);
 
             short[] shortArray = {(short) 30};
             byte[] byteArray = {(byte) 1};
@@ -447,7 +474,10 @@ public class RoundtripTestServiceTestCase extends TestCase {
             sendValue.setWrapperBoolean(new Boolean(true));
             sendValue.setShortArray(shortArray);
             sendValue.setByteArray(byteArray);
-            sendValue.setCallableDate(new Date(1012937861996L));
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1012937861996L));
+            sendValue.setCallableDate(date);
             sendValue.setBondAmount(new BigDecimal("2675.23"));
             sendValue.setPortfolioType(new BigInteger("2093"));
             sendValue.setTradeExchange("NYSE");
@@ -613,10 +643,15 @@ public class RoundtripTestServiceTestCase extends TestCase {
         try {
             byte[] sendByteArray = {(byte) 5, (byte) 10, (byte) 12};
             Byte[] sendWrapperByteArray = {new Byte((byte) 9), new Byte((byte) 7)};
+            Calendar dateTime = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            dateTime.setTimeZone(gmt);
+            dateTime.setTime(new Date(1012937861986L));
             binding.methodAllTypesIn(new String("Request methodAllTypesIn"),
                                      new BigInteger("545"),
                                      new BigDecimal("546.545"),
-                                     new Date(1012937861986L),
+                                     new Date(1017532800000L),
+                                     dateTime,
                                      true,
                                      (byte) 2,
                                      (short) 14,
@@ -687,11 +722,35 @@ public class RoundtripTestServiceTestCase extends TestCase {
      *  Test to insure that a Date object matches the expected values
      *  on both the client and server.
      */
+    public void testMethodDate() {
+
+        try {
+            Date expected = new Date(1017532800000L);
+            Date actual = binding.methodDate(new Date(1017532800000L));
+            assertEquals("The expected and actual values did not match.",
+                         expected,
+                         actual);
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testMethodDateTime
+
+    /**
+     *  Test to insure that a Calendar object matches the expected values
+     *  on both the client and server.
+     */
     public void testMethodDateTime() {
 
         try {
-            Date expected = new Date(1012937861800L);
-            Date actual = binding.methodDateTime(new Date(1012937861996L));
+            Calendar expected = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            expected.setTimeZone(gmt);
+            expected.setTime(new Date(1012937861800L));
+            Calendar parameter = Calendar.getInstance();
+            parameter.setTimeZone(gmt);
+            parameter.setTime(new Date(1012937861996L));
+            Calendar actual = binding.methodDateTime(parameter);
             assertEquals("The expected and actual values did not match.",
                          expected,
                          actual);
@@ -893,11 +952,16 @@ public class RoundtripTestServiceTestCase extends TestCase {
         try {
             CallOptions[] callOptions = new CallOptions[1];
             callOptions[0] = new CallOptions();
-            callOptions[0].setCallDate(new Date(1013459984577L));
+            Calendar cal = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            cal.setTimeZone(gmt);
+            cal.setTime(new Date(1013459984577L));
+            callOptions[0].setCallDate(cal);
 
             CallOptions[] actual = binding.methodCallOptions(callOptions);
+            cal.setTime(new Date(1013459984507L));
             assertEquals("The expected and actual values did not match.",
-                         new Date(1013459984507L),
+                         cal,
                          actual[0].getCallDate());
         } catch(RemoteException re) {
             fail("Remote Exception caught: " + re);

@@ -85,6 +85,7 @@ import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -400,6 +401,7 @@ public class SerializationContextImpl implements SerializationContext
         if (javaType.isPrimitive()) return true;
 
         if (String.class.isAssignableFrom(javaType)) return true;
+        if (Calendar.class.isAssignableFrom(javaType)) return true;
         if (Date.class.isAssignableFrom(javaType)) return true;
         if (Hex.class.isAssignableFrom(javaType)) return true;
         if (Element.class.isAssignableFrom(javaType)) return true;

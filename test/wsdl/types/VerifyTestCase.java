@@ -7,6 +7,9 @@
 
 package test.wsdl.types;
 
+import java.util.Date;
+import java.util.Calendar;
+
 import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.holders.BigDecimalHolder;
@@ -16,6 +19,7 @@ import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.ByteArrayHolder;
 import javax.xml.rpc.holders.ByteWrapperArrayHolder;
 import javax.xml.rpc.holders.ByteHolder;
+import javax.xml.rpc.holders.CalendarHolder;
 import javax.xml.rpc.holders.DateHolder;
 import javax.xml.rpc.holders.DoubleWrapperHolder;
 import javax.xml.rpc.holders.DoubleHolder;
@@ -82,7 +86,30 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
         try {
-            binding.allPrimitivesIn("hi", new java.math.BigInteger("5"), 0, (long) 0, (short) 0, new java.math.BigDecimal(6), (float) 0, (double) 0, true, (byte) 0, new QName("hi", "ho"), new java.util.Date(), new byte[]{(byte) 5}, new byte[]{(byte) 6}, "hi ho", new Boolean(true), new Float(0), new Double(0), new java.math.BigDecimal(7), new Integer(0), new Short((short) 0), new Byte[]{new Byte((byte) 7)});
+            binding.allPrimitivesIn(
+                    "hi",
+                    new java.math.BigInteger("5"),
+                    0,
+                    (long) 0,
+                    (short) 0,
+                    new java.math.BigDecimal(6),
+                    (float) 0,
+                    (double) 0,
+                    true,
+                    (byte) 0,
+                    new QName("hi", "ho"),
+                    new Date(),
+                    Calendar.getInstance(),
+                    new byte[]{(byte) 5},
+                    new byte[]{(byte) 6},
+                    "hi ho",
+                    new Boolean(true),
+                    new Float(0),
+                    new Double(0),
+                    new java.math.BigDecimal(7),
+                    new Integer(0),
+                    new Short((short) 0),
+                    new Byte[]{new Byte((byte) 7)});
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -99,7 +126,8 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new BooleanHolder(true),
                     new ByteHolder((byte) 7),
                     new QNameHolder(new QName("ho", "hi")),
-                    new DateHolder(new java.util.Date()),
+                    new DateHolder(new Date()),
+                    new CalendarHolder(Calendar.getInstance()),
                     new ByteArrayHolder(new byte[]{(byte) 8}),
                     new ByteArrayHolder(new byte[]{(byte) 9}),
                     new StringHolder("ho hi"),
@@ -127,6 +155,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new ByteHolder(),
                     new QNameHolder(),
                     new DateHolder(),
+                    new CalendarHolder(),
                     new ByteArrayHolder(),
                     new ByteArrayHolder(),
                     new StringHolder(),
@@ -430,9 +459,17 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
-            java.util.Date sendValue = new java.util.Date(1012182070626L);
+            Date sendValue = new Date(1012182070626L);
             DateHolder dh = new DateHolder(sendValue);
-            java.util.Date actual = binding.methodDateTime(sendValue, dh);
+            Date actual = binding.methodDate(sendValue, dh);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            Calendar sendValue = Calendar.getInstance();
+            sendValue.setTime(new Date(1012182070626L));
+            CalendarHolder ch = new CalendarHolder(sendValue);
+            Calendar actual = binding.methodDateTime(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

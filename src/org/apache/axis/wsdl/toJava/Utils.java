@@ -550,7 +550,7 @@ public class Utils {
         else if (typeValue.equals("java.math.BigInteger")) {
             return "javax.xml.rpc.holders.BigIntegerHolder";
         }
-        else if (typeValue.equals("java.util.Date")) {
+        else if  (typeValue.equals("java.util.Date")) {
             return "javax.xml.rpc.holders.DateHolder";
         }
         else if (typeValue.equals("java.util.Calendar")) {

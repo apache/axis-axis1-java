@@ -55,7 +55,9 @@
 
 package test.wsdl.roundtrip;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -120,9 +122,16 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         byte[] byteArray = {(byte) 7};
         CallOptions[] callOptions = new CallOptions[2];
         callOptions[0] = new CallOptions();
-        callOptions[0].setCallDate(new Date(1013441507308L));
+        Calendar date = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1013441507308L));
+        callOptions[0].setCallDate(date);
         callOptions[1] = new CallOptions();
-        callOptions[1].setCallDate(new Date(1013441507328L));
+        date = Calendar.getInstance();
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1013441507328L));
+        callOptions[1].setCallDate(date);
 
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
@@ -142,7 +151,10 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         sendValue.setWrapperBoolean(new Boolean(false));
         sendValue.setShortArray(shortArray);
         sendValue.setByteArray(byteArray);
-        sendValue.setCallableDate(new Date(1012937862997L));
+        date = Calendar.getInstance();
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1012937862997L));
+        sendValue.setCallableDate(date);
         sendValue.setBondAmount(new BigDecimal("2735.23"));
         sendValue.setPortfolioType(new BigInteger("21093"));
         sendValue.setTradeExchange("AMEX");
@@ -157,13 +169,28 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
             (in0.getDocType() == (short) 35) &&
             (in0.getTaxIndicator() == (byte) 3)) 
             ;
-        else 
+        else
             throw new RemoteException("Actual attribute values did not match expected values.");
 
-        if ((in0.getOptions()[0].getCallDate().equals(new Date(1013441507388L))) &&
-            (in0.getOptions()[1].getCallDate().equals(new Date(1013441507390L))) &&
-            (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(new Date(1013441507388L))) &&
-            (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(new Date(1013441507390L))) &&
+        Calendar expectedDate0 = Calendar.getInstance();
+        expectedDate0.setTimeZone(gmt);
+        expectedDate0.setTime(new Date(1013441507388L));
+        Calendar expectedDate1 = Calendar.getInstance();
+        expectedDate1.setTimeZone(gmt);
+        expectedDate1.setTime(new Date(1013441507390L));
+        Calendar expectedDate2 = Calendar.getInstance();
+        expectedDate2.setTimeZone(gmt);
+        expectedDate2.setTime(new Date(1013441507388L));
+        Calendar expectedDate3 = Calendar.getInstance();
+        expectedDate3.setTimeZone(gmt);
+        expectedDate3.setTime(new Date(1013441507390L));
+        Calendar expectedDate4 = Calendar.getInstance();
+        expectedDate4.setTimeZone(gmt);
+        expectedDate4.setTime(new Date(1012937861996L));
+        if ((in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
+            (in0.getOptions()[1].getCallDate().equals(expectedDate1)) &&
+            (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(expectedDate2)) &&
+            (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(expectedDate3)) &&
             (in0.getWrapperShortArray()[0].equals(new Short((short) 23))) &&
             (in0.getWrapperShortArray()[1].equals(new Short((short) 56))) &&
             (in0.getWrapperByteArray()[0].equals(new Byte((byte) 2))) &&
@@ -176,7 +203,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
             (in0.getWrapperBoolean().equals(new Boolean(true))) &&
             (in0.getShortArray()[0] == (short) 30) &&
             (in0.getByteArray()[0] == (byte) 1) &&
-            (in0.getCallableDate().equals(new Date(1012937861996L))) &&
+            (in0.getCallableDate().equals(expectedDate4)) &&
             (in0.getBondAmount().equals(new BigDecimal("2675.23"))) &&
             (in0.getPortfolioType().equals(new BigInteger("2093"))) &&
             (in0.getTradeExchange().equals("NYSE")) &&
@@ -199,9 +226,16 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         byte[] byteArray = {(byte) 7};
         CallOptions[] callOptions = new CallOptions[2];
         callOptions[0] = new CallOptions();
-        callOptions[0].setCallDate(new Date(1013441507308L));
+        Calendar date = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1013441507308L));
+        callOptions[0].setCallDate(date);
         callOptions[1] = new CallOptions();
-        callOptions[1].setCallDate(new Date(1013441507328L));
+        date = Calendar.getInstance();
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1013441507328L));
+        callOptions[1].setCallDate(date);
         Short[] wrapperShortArray = {new Short((short) 33), new Short((short) 86)};
         Byte[] wrapperByteArray = {new Byte((byte) 4), new Byte((byte) 18)};
 
@@ -220,7 +254,10 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         sendValue.setWrapperBoolean(new Boolean(false));
         sendValue.setShortArray(shortArray);
         sendValue.setByteArray(byteArray);
-        sendValue.setCallableDate(new Date(1012937862997L));
+        date = Calendar.getInstance();
+        date.setTimeZone(gmt);
+        date.setTime(new Date(1012937862997L));
+        sendValue.setCallableDate(date);
         sendValue.setBondAmount(new BigDecimal("2735.23"));
         sendValue.setPortfolioType(new BigInteger("21093"));
         sendValue.setTradeExchange("AMEX");
@@ -236,11 +273,26 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     } // methodBondInvestmentOut
 
     public void methodBondInvestmentIn(BondInvestment in0) throws RemoteException {
-
-        if (!((in0.getOptions()[0].getCallDate().equals(new Date(1013441507388L))) &&
-              (in0.getOptions()[1].getCallDate().equals(new Date(1013441507390L))) &&
-              (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(new Date(1013441507388L))) &&
-              (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(new Date(1013441507390L))) &&
+        Calendar expectedDate0 = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        expectedDate0.setTimeZone(gmt);
+        expectedDate0.setTime(new Date(1013441507388L));
+        Calendar expectedDate1 = Calendar.getInstance();
+        expectedDate1.setTimeZone(gmt);
+        expectedDate1.setTime(new Date(1013441507390L));
+        Calendar expectedDate2 = Calendar.getInstance();
+        expectedDate2.setTimeZone(gmt);
+        expectedDate2.setTime(new Date(1013441507388L));
+        Calendar expectedDate3 = Calendar.getInstance();
+        expectedDate3.setTimeZone(gmt);
+        expectedDate3.setTime(new Date(1013441507390L));
+        Calendar expectedDate4 = Calendar.getInstance();
+        expectedDate4.setTimeZone(gmt);
+        expectedDate4.setTime(new Date(1012937861996L));
+        if (!((in0.getOptions()[0].getCallDate().equals(expectedDate0)) &&
+              (in0.getOptions()[1].getCallDate().equals(expectedDate1)) &&
+              (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(expectedDate2)) &&
+              (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(expectedDate3)) &&
               (in0.getWrapperShortArray()[0].equals(new Short((short) 23))) &&
               (in0.getWrapperShortArray()[1].equals(new Short((short) 56))) &&
               (in0.getWrapperByteArray()[0].equals(new Byte((byte) 2))) &&
@@ -253,7 +305,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
               (in0.getWrapperBoolean().equals(new Boolean(true))) &&
               (in0.getShortArray()[0] == (short) 30) &&
               (in0.getByteArray()[0] == (byte) 1) &&
-              (in0.getCallableDate().equals(new Date(1012937861996L))) &&
+              (in0.getCallableDate().equals(expectedDate4)) &&
               (in0.getBondAmount().equals(new BigDecimal("2675.23"))) &&
               (in0.getPortfolioType().equals(new BigInteger("2093"))) &&
               (in0.getTradeExchange().equals("NYSE")) &&
@@ -340,6 +392,7 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
                                  BigInteger in1,
                                  BigDecimal in2,
                                  Date in3,
+                                 Calendar in35,
                                  boolean in4,
                                  byte in5,
                                  short in6,
@@ -356,10 +409,15 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
                                  Float in18,
                                  Double in19,
                                  Byte[] in12) throws RemoteException {
+        Calendar expectedDateTime = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        expectedDateTime.setTimeZone(gmt);
+        expectedDateTime.setTime(new Date(1012937861986L));
         if (!((in0.equals(new String("Request methodAllTypesIn"))) &&
               (in1.equals(new BigInteger("545"))) &&
               (in2.equals(new BigDecimal("546.545"))) &&
-              (in3.equals(new Date(1012937861986L))) &&
+              (in3.equals(new Date(1017532800000L))) &&
+              (in35.equals(expectedDateTime)) &&
               (in13.equals(new Boolean(false))) &&
               (in14.equals(new Byte((byte) 11))) &&
               (in15.equals(new Short((short) 45))) &&
@@ -409,14 +467,32 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
 
     } // methodByteArray
 
-    public Date methodDateTime(Date in0) throws RemoteException {
+    public Date methodDate(Date in0) throws RemoteException {
 
-        Date expectedDate = new Date(1012937861996L);
+        Date expectedDate = new Date(1017532800000L);
 
         if (in0.equals(expectedDate)) {
-            return new Date(1012937861800L);
+            return new Date(1017532800000L);
         } else {
             throw new RemoteException("Expecting a Date value of " + expectedDate + ".");
+        }
+
+    } // methodDate
+
+    public Calendar methodDateTime(Calendar in0) throws RemoteException {
+
+        Calendar expectedDateTime = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        expectedDateTime.setTimeZone(gmt);
+        expectedDateTime.setTime(new Date(1012937861996L));
+
+        if (in0.equals(expectedDateTime)) {
+            Calendar dateTime = Calendar.getInstance();
+            dateTime.setTimeZone(gmt);
+            dateTime.setTime(new Date(1012937861800L));
+            return dateTime;
+        } else {
+            throw new RemoteException("Expecting a Date value of " + expectedDateTime + ".");
         }
 
     } // methodDateTime
@@ -522,10 +598,14 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     } // methodBoolean
 
     public CallOptions[] methodCallOptions(CallOptions[] in0) throws RemoteException {
-
-        if (in0[0].getCallDate().equals(new Date(1013459984577L))) {
+        Calendar dateTime = Calendar.getInstance();
+        TimeZone gmt = TimeZone.getTimeZone("GMT");
+        dateTime.setTimeZone(gmt);
+        dateTime.setTime(new Date(1013459984577L));
+        if (in0[0].getCallDate().equals(dateTime)) {
             in0[0] = new CallOptions();
-            in0[0].setCallDate(new Date(1013459984507L));
+            dateTime.setTime(new Date(1013459984507L));
+            in0[0].setCallDate(dateTime);
             return in0;
         } else {
             throw new RemoteException("Actual value did not match expected value.");

@@ -258,6 +258,8 @@ public class JavaTestCaseWriter extends JavaWriter {
                         pw.print("new java.lang.String()");
                     } else if (paramType.equals("byte[]")) {
                         pw.print("new byte[0]");
+                    } else if (paramType.equals("java.util.Calendar")) {
+                        pw.print("java.util.Calendar.getInstance()");
                     } else if (paramType.endsWith("[]")) {
                         pw.print("new "
                                  + JavaUtils.replace(paramType, "[]", "[0]"));

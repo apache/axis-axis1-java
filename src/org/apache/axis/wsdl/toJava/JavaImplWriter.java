@@ -188,6 +188,8 @@ public class JavaImplWriter extends JavaWriter {
                     pw.print("new byte[0]");
                 } else if (paramType.equals("java.lang.Byte[]")) {
                     pw.print("new java.lang.Byte[0]");
+                } else if (paramType.equals("java.util.Calendar")) {
+                    pw.print("java.util.Calendar.getInstance()");
                 } else {
                     pw.print("new " + paramType + "()");
                 }

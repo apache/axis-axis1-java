@@ -55,77 +55,16 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializationContext;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 /**
- * Serializer for Dates.
+ * A CalendarDeserializer Factory
  *
- * @author Sam Ruby <rubys@us.ibm.com>
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">XML Schema 3.2.16</a>
+ *  @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class DateSerializer implements Serializer {
+public class CalendarDeserializerFactory extends BaseDeserializerFactory {
 
-    private static SimpleDateFormat zulu =
-       new SimpleDateFormat("yyyy-MM-dd");
-
-    private static Calendar calendar = Calendar.getInstance();
-
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
-    /**
-     * Serialize a Date.
-     */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
-        throws IOException
-    {
-        context.startElement(name, attributes);
-        String fdate;
-
-        synchronized (calendar) {
-            calendar.setTime((Date)value);
-            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
-                context.writeString("-");
-                calendar.setTime((Date)value);
-                calendar.set(Calendar.ERA, GregorianCalendar.AD);
-                value = calendar.getTime();
-            }
-            fdate = zulu.format((Date)value);
-        }
-
-        context.writeString(fdate);
-        context.endElement();
-    }
-
-    public String getMechanismType() { return Constants.AXIS_SAX; }
-
-    /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
-     *
-     * @param types the Java2WSDL Types object which holds the context
-     *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
-     * @see org.apache.axis.wsdl.fromJava.Types
-     */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public CalendarDeserializerFactory(Class javaType, QName xmlType) {
+        super(CalendarDeserializer.class, false, xmlType, javaType); 
     }
 }
