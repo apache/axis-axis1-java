@@ -187,8 +187,13 @@ public class JavaBindingWriter implements Generator {
                             symbolTable);
                 }
 
-                String fileName = Utils.getJavaLocalName(bEntry.getName())
-                        + "Impl.java";
+                // Use custom implementation classname if available
+                String fileName = emitter.getImplementationClassName(); 
+                if ( fileName == null)
+					fileName = Utils.getJavaLocalName(bEntry.getName())
+                    	    + "Impl.java";
+				else
+					fileName = Utils.getJavaLocalName(fileName) + ".java";
 
                 try {
                     if (Utils.fileExists(fileName,

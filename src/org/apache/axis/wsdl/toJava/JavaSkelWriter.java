@@ -329,10 +329,16 @@ public class JavaSkelWriter extends JavaClassWriter {
         pw.println("    }");
         pw.println();
 
-        // Skeleton constructors
+        // Skeleton constructors 
         pw.println("    public " + className + "() {");
-        pw.println("        this.impl = new " + bEntry.getName() + "Impl();");
+
+		// Use custom implementation class if available.
+		String implementationClassName = emitter.getImplementationClassName(); 
+		if ( implementationClassName == null)
+			implementationClassName = bEntry.getName() + "Impl";
+        pw.println("        this.impl = new " + implementationClassName + "();");
         pw.println("    }");
+        
         pw.println();
         pw.println("    public " + className + "(" + implType + ") {");
         pw.println("        this.impl = impl;");

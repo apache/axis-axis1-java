@@ -84,8 +84,11 @@ public class WSDL2Java extends WSDL2 {
     /** Field namespace include */
     protected static final int NS_INCLUDE_OPT = 'i';
     
-    /** Filed namespace exclude */
-    protected static final int NS_EXCLUDE_OPT = 'x';
+	/** Filed namespace exclude */
+	protected static final int NS_EXCLUDE_OPT = 'x';
+	
+	/** Field IMPL_CLASS_OPT */
+	protected static final int IMPL_CLASS_OPT = 'c';
 
     /** Field emitter */
     private Emitter emitter;
@@ -162,11 +165,15 @@ public class WSDL2Java extends WSDL2 {
                         + CLOptionDescriptor.ARGUMENT_REQUIRED,
                         NS_INCLUDE_OPT,
                         Messages.getMessage("optionNSInclude")),
-                new CLOptionDescriptor("nsExclude",
-                        CLOptionDescriptor.DUPLICATES_ALLOWED
-                        + CLOptionDescriptor.ARGUMENT_REQUIRED,
-                        NS_EXCLUDE_OPT,
-                        Messages.getMessage("optionNSExclude"))
+				new CLOptionDescriptor("nsExclude",
+						CLOptionDescriptor.DUPLICATES_ALLOWED
+						+ CLOptionDescriptor.ARGUMENT_REQUIRED,
+						NS_EXCLUDE_OPT,
+						Messages.getMessage("optionNSExclude")),
+				new CLOptionDescriptor("implementationClassName",
+						CLOptionDescriptor.ARGUMENT_REQUIRED,
+						IMPL_CLASS_OPT,
+						Messages.getMessage("implementationClassName"))
             };
 
     /**
@@ -298,6 +305,10 @@ public class WSDL2Java extends WSDL2 {
                 exclude.setNamespace(option.getArgument());
                 emitter.getNamespaceExcludes().add(exclude);
                 break;
+
+			case IMPL_CLASS_OPT:
+				emitter.setImplementationClassName(option.getArgument());
+				break;
 
             default :
                 super.parseOption(option);

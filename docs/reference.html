@@ -122,6 +122,10 @@ username to access the WSDL-URI <br>
 &lt;argument&gt; <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 password to access the WSDL-URI <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c, --implementationClassName
+&lt;argument&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+use this as the implementation class <br>
 &nbsp; </p>
 <h4> -h, --help</h4>
 Print the usage statement and exit
@@ -272,6 +276,15 @@ password is: <code>http://user:password@hostname:port/path/to/service?WSDL</code
 This password is used in resolving the WSDL-URI provided as the input
 to WSDL2Java. &nbsp;If the URI contains a password, this will override
 the command line switch.&nbsp; <br>
+<h4> -c, --implementationClassName &lt;argument&gt;</h4>
+<p>Set the name of the implementation class.Especially useful when
+exporting an existing class as a web service using java2wsdl 
+followed by wsdl2java.&nbsp;If you are using the skeleton deploy option you must make sure, after generation, 
+that your implementation class implements the port type name interface generated
+by wsdl2java.&nbsp;You should also make sure that all your exported methods throws
+java.lang.RemoteException.
+</p>
+<br>
 <h3><a name="Java2WSDL"></a>Java2WSDL Reference</h3>
 <p>Here is the help message generated from the current tool: </p>
 <p><font color="#993366">

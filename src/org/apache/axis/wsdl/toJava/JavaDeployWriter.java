@@ -388,11 +388,16 @@ public class JavaDeployWriter extends JavaWriter {
         Binding binding = bEntry.getBinding();
         String className = bEntry.getName();
 
-        if (emitter.isSkeletonWanted()) {
-            className += "Skeleton";
-        } else {
-            className += "Impl";
-        }
+		if (emitter.isSkeletonWanted()) {
+			 className += "Skeleton";
+		 } else 
+		 {
+			 String customClassName  = emitter.getImplementationClassName();
+			 if ( customClassName != null )
+				 className = customClassName;
+			 else
+				 className += "Impl";
+		 }
 
         pw.println("      <parameter name=\"className\" value=\"" + className
                 + "\"/>");

@@ -102,7 +102,7 @@ public class Wsdl2javaAntTask extends Task
     private List nsIncludes = new ArrayList();
     private List nsExcludes = new ArrayList();
     private List properties = new ArrayList();
-
+	private String implementationClassName = null;
 
     /**
      * do we print a stack trace when something goes wrong?
@@ -177,7 +177,8 @@ public class Wsdl2javaAntTask extends Task
         log("\tnamespaceMappingFile:" + namespaceMappingFile, logLevel);
         log("\tusername:" + username, logLevel);
         log("\t:password" + password, logLevel);
-        log("\t:noWrapped" + noWrapped, logLevel);
+		log("\t:noWrapped" + noWrapped, logLevel);
+		log("\t:implementationClassName" + implementationClassName, logLevel);
         log("\t:classpath" + classpath, logLevel);
         traceNetworkSettings(logLevel);
     }
@@ -233,7 +234,8 @@ public class Wsdl2javaAntTask extends Task
             if (namespaceMappingFile != null) {
                 emitter.setNStoPkg(namespaceMappingFile.toString());
             }
-            emitter.setTimeout(timeout);
+			emitter.setTimeout(timeout);
+			emitter.setImplementationClassName(implementationClassName);
 
             Authenticator.setDefault(new DefaultAuthenticator(username, password));
             if (classpath != null) {
@@ -510,6 +512,18 @@ public class Wsdl2javaAntTask extends Task
     public void setNoWrapped(boolean noWrapped) {
         this.noWrapped = noWrapped;
     }
+
+	/**
+	 * Set the name of the class implementing the web service.
+	 * This is especially useful when exporting a java class
+	 * as a web service using Java2WSDL followed by WSDL2Java.
+	 * 
+	 * @param implementationClassName
+	 */
+	public void setImplementationClassName(String implementationClassName) {
+		this.implementationClassName = implementationClassName;
+	}
+
 
     /**
      * set the classpath

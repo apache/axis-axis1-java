@@ -54,11 +54,13 @@ public class JavaImplWriter extends JavaClassWriter {
      * @param symbolTable 
      */
     protected JavaImplWriter(Emitter emitter, BindingEntry bEntry,
-                             SymbolTable symbolTable) {
-
-        super(emitter, bEntry.getName() + "Impl", "templateImpl");
-
-        this.binding = bEntry.getBinding();
+                             SymbolTable symbolTable) 
+    {
+        super(emitter, ( emitter.getImplementationClassName() == null ? 
+        		bEntry.getName() + "Impl" :
+				emitter.getImplementationClassName()), "templateImpl");
+		
+		this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;
     }    // ctor
