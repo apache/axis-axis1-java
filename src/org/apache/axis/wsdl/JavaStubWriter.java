@@ -245,7 +245,8 @@ public class JavaStubWriter extends JavaWriter {
             if (!types.contains(type)) {
                 types.add(type);
                 if (type.isDefined() && type.getBaseType() == null) {
-                    types.addAll(getNestedTypes(type.getNode()));
+                    types.addAll(
+                            Utils.getNestedTypes(type.getNode(), symbolTable));
                 }
             }
         }
@@ -297,28 +298,6 @@ public class JavaStubWriter extends JavaWriter {
             types.add(v.get(i));
         return types;
     } // getTypesInOperation
-
-    /**
-     * This method returns a set of all the nested Types.
-     * The elements of the returned HashSet are Types.
-     */
-    private HashSet getNestedTypes(Node type) {
-        HashSet types = new HashSet();
-        getNestedTypes(type, types);
-        return types;
-    } // getNestedTypes
-
-    private void getNestedTypes(Node type, HashSet types) {
-        Vector v = Utils.getComplexElementTypesAndNames(type, symbolTable);
-        if (v != null) {
-            for (int i = 0; i < v.size(); i+=2) {
-                if (!types.contains(v.get(i))) {
-                    types.add(v.get(i));
-                    getNestedTypes(((Type) v.get(i)).getNode(), types);
-                }
-            }
-        }
-    } // getNestedTypes
 
     /**
      * This method returns a vector of Types for the parts.
