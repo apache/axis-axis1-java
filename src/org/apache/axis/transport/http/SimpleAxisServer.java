@@ -237,8 +237,9 @@ public class SimpleAxisServer implements Runnable {
                     // read headers
                     is.setInputStream(socket.getInputStream());
                     // parse all headers into hashtable
-                    int contentLength = parseHeaders(is, soapAction, httpRequest,
-                        fileName, cookie, cookie2, authInfo);
+                    int contentLength = parseHeaders(is, soapAction, 
+                                                     httpRequest, fileName, 
+                                                     cookie, cookie2, authInfo);
                     is.setContentLength(contentLength);
 
                     int paramIdx = fileName.toString().indexOf('?');
@@ -262,8 +263,8 @@ public class SimpleAxisServer implements Runnable {
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
 
                     String filePart = fileName.toString();
-                    if (filePart.startsWith("services/")) {
-                        msgContext.setTargetService(filePart.substring(9));
+                    if (filePart.startsWith("axis/services/")) {
+                        msgContext.setTargetService(filePart.substring(14));
                     }
 
                     if (authInfo.length() > 0) {
