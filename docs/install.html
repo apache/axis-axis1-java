@@ -30,6 +30,7 @@
   <li> <a href="#advanced">Advanced Installation</a> </li>
   <li> <a href="#broken">What if it doesn't work?</a> </li>
   <li> <a href="#summary">Summary</a> </li>
+  <li> <a href="#soapmon">Appendix: Enabling the SOAP Monitor</a></li>
 </ul>
 <a name="intro"></a>
 <h2>Introduction</h2>
@@ -524,6 +525,91 @@ it can be a bit fiddly, especially given Java 1.4's stricter
 requirements. If you follow a methodical process, including testing
 along the way, using happyaxis and the bundled test services, you will
 find it easier to get started with Axis.
+<h2> <a NAME="soapmon"></a>Appendix: Enabling the SOAP Monitor </h2>
+<p>
+SOAP Monitor allows for the monitoring of SOAP requests and responses via 
+a web browser with Java plug-in 1.3 or higher. For a more comprehensive 
+explanation of its usage, read <a href="user-guide.html#soapmon">Using the 
+SOAP Monitor</a> in the User's Guide.
+</p><p>
+By default, the SOAP Monitor is not enabled. The basic steps for enabling 
+it are compiling the SOAP Monitor java applet, deploying the SOAP Monitor
+web service and adding request and response flow definitions for each monitored
+web service. In more detail:
+<ol>
+<li> Go to $AXIS_HOME/webapps/axis (or %AXIS_HOME%\webapps\axis)
+ 	and compile SOAPMonitorApplet.java.
+	<blockquote> <span style="font-weight: bold;">On Windows</span> 
+	<code class="java"><br/>
+javac -classpath %AXIS_HOME%\lib\axis.jar SOAPMonitorApplet.java</code><br/>
+	<br/>
+	<span style="font-weight: bold;">On Unix</span> 
+	<code class="java"><br/>
+javac -classpath $AXIS_HOME/lib/axis.jar SOAPMonitorApplet.java</code><br/>      
+    </blockquote>
+	 Copy all resulting class files (i.e. SOAPMonitorApplet*.class) to the root
+	 directory of the web application using the SOAP Monitor 
+	 (e.g. .../tomcat/webapps/axis)
+</li>
+<li> Deploy the SOAPMonitorService web service with the admin client and the
+	 deploy-monitor.wsdd file (shown below).
+	 <blockquote>Go to the directory deploy-monitor.wsdd is located and execute
+	 the command below. The command assume that /axis is the intended
+	 web application and it is available on port 8080.<br/>
+	 <b>On Windows</b> <br/>
+  <code class="java">java -cp %AXISCLASSPATH%
+org.apache.axis.client.AdminClient
+-lhttp://localhost:8080/axis/services/AdminService deploy-monitor.wsdd<br/>
+  </code>&nbsp;<b><br/>
+On UNIX</b> <br/>
+  <code class="java">java -cp $AXISCLASSPATH
+org.apache.axis.client.AdminClient <br/>
+-lhttp://localhost:8080/axis/services/AdminService deploy-monitor.wsdd</code> </blockquote>
+	 <span style="font-weight: bold;">SOAPMonitorService Deployment Descriptor (deploy-monitor.wsdd)</span>
+<pre class="xml">&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
+    xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt;
+  &lt;handler name=&quot;soapmonitor&quot; 
+      type=&quot;java:org.apache.axis.handlers.SOAPMonitorHandler&quot;&gt;
+    &lt;parameter name=&quot;wsdlURL&quot; 
+      value=&quot;/axis/SOAPMonitorService-impl.wsdl&quot;/&gt;
+    &lt;parameter name=&quot;namespace&quot; 
+      value=&quot;http://tempuri.org/wsdl/2001/12/SOAPMonitorService-impl.wsdl&quot;/&gt;
+    &lt;parameter name=&quot;serviceName&quot; value=&quot;SOAPMonitorService&quot;/&gt;
+    &lt;parameter name=&quot;portName&quot; value=&quot;Demo&quot;/&gt;
+  &lt;/handler&gt;
+  &lt;service name=&quot;SOAPMonitorService&quot; provider=&quot;java:RPC&quot;&gt;
+    &lt;parameter name=&quot;allowedMethods&quot; value=&quot;publishMessage&quot;/&gt;
+    &lt;parameter name=&quot;className&quot; 
+      value=&quot;org.apache.axis.monitor.SOAPMonitorService&quot;/&gt;
+    &lt;parameter name=&quot;scope&quot; value=&quot;Application&quot;/&gt;
+  &lt;/service&gt;
+&lt;/deployment&gt;
+</pre>
+</li>
+<li>For each service that is to be monitored, add request and response flow definitions 
+to the service's deployment descriptor and deploy (or redeploy) the service. The 
+<span style="font-weight: bold;">requestFlow</span> and <span style="font-weight: bold;">
+responseFlow</span> definitions follow the start tag of the <span style="font-weight: bold;">
+&lt;service&gt;</span> element. If a service is already deployed, undeploy it and deploy 
+it with the modified deployment descriptor. An example is shown below:
+<pre class="xml">...  
+&lt;service name=&quot;xmltoday-delayed-quotes&quot; provider=&quot;java:RPC&quot;&gt;
+    &lt;requestFlow&gt;
+      &lt;handler type=&quot;soapmonitor&quot;/&gt;
+    &lt;/requestFlow&gt;
+    &lt;responseFlow&gt;
+      &lt;handler type=&quot;soapmonitor&quot;/&gt;
+    &lt;/responseFlow&gt;
+    ...</pre> 
+</li>
+<li>With a web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor 
+(e.g. http://localhost:8080/axis/SOAPMonitor) substituting the correct values 
+for your web application. This will show the SOAP Monitor applet for viewing service
+requests and responses. Any requests to services that have been configured 
+and deployed correctly should show up in the applet.
+</li>
+<ol>
+</p>
 <hr size="1" noshade="noshade">
 <div class="copyright" align="center">Copyright &copy; 2001-2003,
 Apache Software Foundation</div>
