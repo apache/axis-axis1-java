@@ -96,9 +96,6 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
-      <exclude name="**/org/apache/axis/transport/http/AxisServletBase.java" unless="servlet.present"/>
-      <exclude name="**/org/apache/axis/transport/http/ServletEndpointContextImpl.java" unless="servlet.present"/>
-      <exclude name="**/org/apache/axis/security/servlet/*.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
@@ -145,6 +142,10 @@ Copyright:
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
     <copy file="${tt-bytecode.jar}" toDir="${build.lib}"/>
+
+<!-- stub in my task generations -->
+    <ant antfile="buildPreTestTaskdefs.xml" />
+
     <antcall target="post-compile"/>
   </target>
 
