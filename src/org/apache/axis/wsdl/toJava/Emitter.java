@@ -115,9 +115,6 @@ public class Emitter extends Parser {
     private HashMap delayedNamespacesMap = new HashMap();
     private String outputDir = null;
 
-    // Timeout, in milliseconds, to let the Emitter do its work
-    private long timeoutms = 45000; // 45 sec default
-
     /**
      * Default constructor.
      */
@@ -279,20 +276,6 @@ public class Emitter extends Parser {
         return delayedNamespacesMap;
     }
 
-    /**
-     * Return the current timeout setting
-     */
-    public long getTimeout() {
-        return timeoutms;
-    }
-
-    /**
-     * Set the timeout, in milliseconds
-     */
-    public void setTimeout(long timeout) {
-        this.timeoutms = timeout;
-    }
-
    /**
     * Sets the <code>WriterFactory Class</code> to use
     * @param className the name of the factory <code>Class</code> 
@@ -394,12 +377,9 @@ public class Emitter extends Parser {
      * by our timeoutms member.
      *
      */
-    public void run(String wsdlURL) throws IOException, WSDLException {
+    public void run(String wsdlURL) throws Exception {
         setup();
-
-        Timer timer = startTimer();
         super.run(wsdlURL);
-        timer.stop();
     } // run
 
     /**
@@ -409,9 +389,7 @@ public class Emitter extends Parser {
      */
     public void run(String context, Document doc) throws IOException, WSDLException {
         setup();
-        Timer timer = startTimer();
         super.run(context, doc);
-        timer.stop();
     } // run
 
     private void setup() {
@@ -435,15 +413,6 @@ public class Emitter extends Parser {
             }
         }
     } // setup
-
-    private Timer startTimer() {
-        // We run a timout thread that can kill this one if it goes too long.
-        Timer timer = new Timer(Thread.currentThread(), timeoutms);
-        Thread timerThread = new Thread(timer);
-        timerThread.setDaemon(true);
-        timerThread.start();
-        return timer;
-    } // startTimer
 
     /**
      * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
@@ -472,40 +441,6 @@ public class Emitter extends Parser {
         catch (Throwable t) {
         }
     } // getNStoPkgFromPropsFile
-
-    private class Timer implements Runnable {
-        private Thread wsdl2JavaThread;
-        private long timeout;
-        private boolean stop = false;
-
-        public Timer(Thread wsdl2JavaThread, long timeout) {
-            this.wsdl2JavaThread = wsdl2JavaThread;
-            this.timeout = timeout;
-        }
-
-        public void run() {
-            try {
-                if (timeout > 0)
-                    wsdl2JavaThread.join(timeoutms);
-                else
-                    wsdl2JavaThread.join();
-            }
-            catch (InterruptedException e) {
-            }
-
-            if (!stop && wsdl2JavaThread.isAlive()) {
-                // Calling this:  wsdl2JavaThread.interrupt();
-                // doesn't accomplish anything, so just exit.
-                System.out.println(JavaUtils.getMessage("timedOut"));
-                System.exit(1);
-            }
-        } // run
-
-        public void stop() {
-            stop = true;
-        } // stop
-        
-    } // class Timer
 
     public void setTypeMappingVersion(String typeMappingVersion) {
         if (typeMappingVersion.equals("1.1")) {
@@ -559,7 +494,7 @@ public class Emitter extends Parser {
      * @param uri wsdlURI the location of the WSDL file.
      * @deprecated Call run(uri) instead.
      */
-    public void emit(String uri) throws IOException, WSDLException {
+    public void emit(String uri) throws Exception {
         run(uri);
     } // emit
 

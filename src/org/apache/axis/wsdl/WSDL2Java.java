@@ -81,7 +81,6 @@ public class WSDL2Java extends WSDL2 {
     protected static final int PACKAGE_OPT = 'p';
     protected static final int ALL_OPT = 'a';
     protected static final int TYPEMAPPING_OPT = 'T';
-    protected static final int NETWORK_TIMEOUT_OPT = 'O';
     protected static final int FACTORY_CLASS_OPT = 'F';
     protected static final int HELPER_CLASS_OPT = 'H';
     protected static final int USERNAME_OPT = 'U';
@@ -148,10 +147,6 @@ public class WSDL2Java extends WSDL2 {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELPER_CLASS_OPT,
                 JavaUtils.getMessage("optionHelper00")),
-        new CLOptionDescriptor("timeout",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                NETWORK_TIMEOUT_OPT,
-                JavaUtils.getMessage("optionTimeout00")),
         new CLOptionDescriptor("user",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 USERNAME_OPT,
@@ -250,15 +245,6 @@ public class WSDL2Java extends WSDL2 {
                 } else {
                     System.out.println(JavaUtils.getMessage("badTypeMappingOption00"));
                 }
-                break;
-
-            case NETWORK_TIMEOUT_OPT:
-                String timeoutValue = option.getArgument();
-                long timeout = Long.parseLong(timeoutValue);
-                        // Convert seconds to milliseconds.
-                if(timeout > 0)
-                    timeout = timeout * 1000;
-                emitter.setTimeout(timeout);
                 break;
 
             case USERNAME_OPT:
