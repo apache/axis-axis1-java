@@ -1,16 +1,16 @@
   <taskdef name="foreach" classname="org.apache.axis.tools.ant.foreach.ForeachTask">
-        <classpath refid="classpath"/>
+        <classpath refid="classpath"loaderref="axis" />
   </taskdef>
 
   <taskdef name="runaxisfunctionaltests" classname="org.apache.axis.tools.ant.axis.RunAxisFunctionalTestsTask">
-      <classpath refid="classpath" />
+      <classpath refid="classpath" loaderref="axis" />
   </taskdef>
 
   <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
-      <classpath refid="classpath" />
+      <classpath refid="classpath" loaderref="axis" />
   </taskdef>
 
   <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask">
-      <classpath refid="classpath" />
+      <classpath refid="classpath" loaderref="axis" />
   </taskdef>
 
