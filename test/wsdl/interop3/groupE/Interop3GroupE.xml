@@ -69,14 +69,14 @@ Copyright:
             className="test.wsdl.interop3.groupE.InteropTestDocLit"
             namespace="http://soapinterop.org/WSDLInteropTestDocLit"
             location="http://localhost:8080/axis/services/InteropTestDocLit">
-            <mapping namespace="http://soapinterop.org/WSDLInteropTestDocLit"
+            <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE"/>
         </java2wsdl>
         <java2wsdl output="build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
             className="test.wsdl.interop3.groupE.InteropTestRpcEnc"
             namespace="http://soapinterop.org/WSDLInteropTestRpcEnc"
             location="http://localhost:8080/axis/services/InteropTestRpcEnc">
-            <mapping namespace="http://soapinterop.org/WSDLInteropTestRpcEnc"
+            <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE"/>
         </java2wsdl>
         <java2wsdl output="build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
@@ -97,6 +97,8 @@ Copyright:
                    testcase="no">
             <mapping namespace="http://soapinterop.org/WSDLInteropTestDocLit"
                      package="test.wsdl.interop3.groupE.client"/>
+            <mapping namespace="http://soapinterop.org/xsd"
+                     package="test.wsdl.interop3.groupE.client"/>
         </wsdl2java>
         <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
                    output="build/work"
@@ -106,6 +108,8 @@ Copyright:
                    verbose="no"
                    testcase="no">
             <mapping namespace="http://soapinterop.org/WSDLInteropTestRpcEnc"
+                     package="test.wsdl.interop3.groupE.client"/>
+            <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE.client"/>
         </wsdl2java>
         <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
