@@ -48,7 +48,7 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
 
         try {
             org.apache.axis.client.AdminClient client =
-                new org.apache.axis.client.AdminClient();
+                new org.apache.axis.client.AdminClient(true);
 
             System.out.println(client.process(args));
         }
