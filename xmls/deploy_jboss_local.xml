@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+  <!ENTITY properties SYSTEM "file:properties.xml">
+  <!ENTITY paths  SYSTEM "file:path_refs.xml">
+  <!ENTITY taskdefs SYSTEM "file:taskdefs.xml">
+  <!ENTITY taskdefs_post_compile SYSTEM "xmls/taskdefs_post_compile.xml">
+]>
+
+<project name="deploy" default="default" basedir=".">
+  <description>
+    This build file deploys axis to a local version of JBoss.
+    It does not attempt to integrate with JBoss.NET, whose versions
+    of Axis will clash witha new build.
+    Read http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages/JBoss
+    before continuing. 
+  </description>
+
+  <property name="axis.home" location=".." />
+  &properties;
+  &paths;
+
+
+  <!-- init the deploy by probing for catalina -->
+  <target name="init">
+    <fail unless="env.JBOSS_HOME"> 
+      JBoss not found; please set JBOSS_HOME to point to it 
+    </fail>
+    <property name="deploy.dir" 
+      location="${env.JBOSS_HOME}/server/default/deploy"/>
+  </target>
+
+  <!-- deployment target -->
+  <target name="deploy" depends="init"
+    description="deploy to jboss">
+
+    <available file="${axis.war}" property="webapp.found"/>
+    <fail unless="webapp.found">Could not find ${build.webapp.war}; please run "ant war" to build it</fail>     
+    <!-- webapp goes over as the WAR; jboss will pick it up and expand it
+     Overwriting is used to force install this over anything newer. Why so? So that even if this script and WAR
+     were on a CD that ops wanted to use to restore a system, the copy has to go through -->
+    <copy todir="${deploy.dir}" file="${axis.war}" overwrite="true"/>
+    <!-- be helpful -->
+    <echo message="Axis deployed"/>
+  </target>
+
+  
+  <target name="default" depends="deploy" />
+  
+  <!--
+    Question: what does JBoss do when a war is deleted?     
+      -->
+  <target name="clean" depends="init"
+    description="clean deployment">
+    <delete file="${deploy.dir}/${axis.war.filename}"/>
+    
+  </target>
+</project>
