@@ -67,6 +67,8 @@ import org.apache.axis.utils.SessionUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import java.util.StringTokenizer;
+
 
 /**
  * This class is defines utilities for mime.
@@ -250,7 +252,17 @@ public class MimeUtils {
      * @return
      */
     public static String getContentType(javax.mail.internet.MimeMultipart mp) {
-        return mp.getContentType();
+        StringBuffer contentType = new StringBuffer(mp.getContentType());
+        // TODO (dims): Commons HttpClient croaks if we don't do this.
+        //              Need to get Commons HttpClient fixed.
+        for(int i=0;i<contentType.length();){
+            char ch = contentType.charAt(i);
+            if(ch=='\r'||ch=='\n')
+                contentType.deleteCharAt(i);
+            else
+                i++;
+        }
+        return contentType.toString();
     }
 
     /**
