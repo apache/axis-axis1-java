@@ -70,6 +70,8 @@ public class SOAP11Constants implements SOAPConstants {
                                                Constants.ELEM_BODY);
     private static QName faultQName = new QName(Constants.URI_SOAP11_ENV,
                                                 Constants.ELEM_FAULT);
+    private static QName roleQName = new QName(Constants.URI_SOAP11_ENV,
+                                                Constants.ATTR_ACTOR);
 
     public String getEnvelopeURI() {
         return Constants.URI_SOAP11_ENV;
@@ -89,5 +91,12 @@ public class SOAP11Constants implements SOAPConstants {
 
     public QName getFaultQName() {
         return faultQName;
+    }
+
+    /**
+     * Obtain the QName for the role attribute (actor/role)
+     */
+    public QName getRoleAttributeQName() {
+        return roleQName;
     }
 }
