@@ -251,7 +251,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
         // ComplexType representation of SimpleType bean class
         Element complexType = types.createElement("complexType");
-        types.writeSchemaElement(xmlType, complexType);
+        types.writeSchemaTypeDecl(xmlType, complexType);
         complexType.setAttribute("name", xmlType.getLocalPart());
 
         // Produce simpleContent extending base type.

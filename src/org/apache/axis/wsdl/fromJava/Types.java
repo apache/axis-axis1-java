@@ -128,7 +128,7 @@ public class Types {
     ServiceDesc serviceDesc = null;
     
     /** Keep track of the element QNames we've written to avoid dups */
-    private Set writtenQNames = new HashSet();
+    private Set writtenElementQNames = new HashSet();
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -435,11 +435,11 @@ public class Types {
         }
 
         // Write the namespace definition for the wrapper
-        writeTypeNamespace(qname);
+        writeTypeNamespace(qname.getNamespaceURI());
         
         // Create an <element> for the wrapper
         Element wrapperElement = docHolder.createElement("element");
-        writeSchemaElement(qname, wrapperElement);
+        writeSchemaElementDecl(qname, wrapperElement);
         wrapperElement.setAttribute("name", qname.getLocalPart());
 
         // Create an anonymous <complexType> for the wrapper
@@ -515,9 +515,9 @@ public class Types {
 
         String elementType = writeType(type, qName);
         if (elementType != null) {
-            Element element = createElementDecl(qName.getLocalPart(), type, qName, isNullable(type), false);
-            if (element != null)
-                writeSchemaElement(typeQName,element);
+//            Element element = createElementDecl(qName.getLocalPart(), type, qName, isNullable(type), false);
+//            if (element != null)
+//                writeSchemaElement(typeQName,element);
             return qName;
         }
         return null;
@@ -535,21 +535,21 @@ public class Types {
         if (qName == null) {
             qName = getTypeQName(type);
         }
-        writeTypeNamespace(qName);
+        writeTypeNamespace(qName.getNamespaceURI());
         return qName;
     }
 
     /**
      * write out the namespace declaration.
      *
-     * @param qName qname of the type
+     * @param namespaceURI qname of the type
      */
-    private void writeTypeNamespace(QName qName) {
-        if (qName != null && !qName.getNamespaceURI().equals("")) {
-            String pref = def.getPrefix(qName.getNamespaceURI());
+    private void writeTypeNamespace(String namespaceURI) {
+        if (namespaceURI != null && !namespaceURI.equals("")) {
+            String pref = def.getPrefix(namespaceURI);
             if (pref == null)
-                def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()),
-                                 qName.getNamespaceURI());
+                def.addNamespace(namespaces.getCreatePrefix(namespaceURI),
+                                 namespaceURI);
 
         }
     }
@@ -664,22 +664,35 @@ public class Types {
         else
             return full.substring(full.lastIndexOf('.')+1) + end;
     }
+    
+    public void writeSchemaTypeDecl(QName qname, Element element)
+            throws AxisFault
+    {
+        writeSchemaElement(qname.getNamespaceURI(), element);        
+    }
+    
+    public void writeSchemaElementDecl(QName qname, Element element)
+            throws AxisFault
+    {
+        if (writtenElementQNames.contains(qname)) {
+            throw new AxisFault(Constants.FAULT_SERVER_GENERAL,
+                                Messages.getMessage("duplicateSchemaElement",
+                                                    qname.toString()),
+                                null, null);
+        }
+        writeSchemaElement(qname.getNamespaceURI(), element);
+        writtenElementQNames.add(qname);        
+    }
 
     /**
      * Write out the given Element into the appropriate schema node.
      * If need be create the schema node as well
      *
-     * @param qName qName to get the namespace of the schema node
+     * @param namespaceURI namespace this node should get dropped into
      * @param element the Element to append to the Schema node
      */
-    public void writeSchemaElement(QName qName, Element element) 
+    public void writeSchemaElement(String namespaceURI, Element element) 
         throws AxisFault {
-        if (writtenQNames.contains(qName)) {
-            throw new AxisFault(Constants.FAULT_SERVER_GENERAL,
-                                Messages.getMessage("duplicateSchemaElement",
-                                                    qName.toString()),
-                                null, null);
-        }
         if (wsdlTypesElem == null) {
             try {
                 writeWsdlTypesElement();
@@ -688,11 +701,10 @@ public class Types {
                 return;
             }
         }
-        String namespaceURI = qName.getNamespaceURI();
         if (namespaceURI == null || namespaceURI.equals("")) {
             throw new AxisFault(Constants.FAULT_SERVER_GENERAL,
                                 Messages.getMessage("noNamespace00",
-                                                    qName.toString()),
+                                                    namespaceURI),
                                 null, null);
         }
 
@@ -722,10 +734,9 @@ public class Types {
                 importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
             }
             
-            writeTypeNamespace(qName);
+            writeTypeNamespace(namespaceURI);
         }
         schemaElem.appendChild(element);
-        writtenQNames.add(qName);
     }
 
     /**
@@ -1032,21 +1043,23 @@ public class Types {
      */
     private boolean addToTypesList (QName qName) {
         boolean added = false;
-        ArrayList types = (ArrayList)schemaTypes.get(qName.getNamespaceURI());
+
+        String namespaceURI = qName.getNamespaceURI();
+        ArrayList types = (ArrayList)schemaTypes.get(namespaceURI);
 
         // Quick return if schema type (will never add these ourselves)
-        if (Constants.isSchemaXSD(qName.getNamespaceURI()) ||
-                (Constants.isSOAP_ENC(qName.getNamespaceURI()) &&
+        if (Constants.isSchemaXSD(namespaceURI) ||
+                (Constants.isSOAP_ENC(namespaceURI) &&
                       !"Array".equals(qName.getLocalPart()))) {
             // Make sure we do have the namespace declared, though...
-            writeTypeNamespace(qName);
+            writeTypeNamespace(namespaceURI);
             return false;
         }
 
         if (types == null) {
             types = new ArrayList();
             types.add(qName.getLocalPart());
-            schemaTypes.put(qName.getNamespaceURI(), types);
+            schemaTypes.put(namespaceURI, types);
             added = true;
         }
         else {
@@ -1059,7 +1072,7 @@ public class Types {
         // If addded, look at the namespace uri to see if the schema element should be
         // generated.
         if (added) {
-            String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
+            String prefix = namespaces.getCreatePrefix(namespaceURI);
             if (prefix.equals(Constants.NS_PREFIX_SOAP_ENV) ||
                 prefix.equals(Constants.NS_PREFIX_SOAP_ENC) ||
                 prefix.equals(Constants.NS_PREFIX_SCHEMA_XSD) ||
@@ -1383,7 +1396,7 @@ public class Types {
                 typeEl.setAttribute("name", qName.getLocalPart());
 
                 // Write the type in the appropriate <schema>
-                writeSchemaElement(qName, typeEl);
+                writeSchemaTypeDecl(qName, typeEl);
             }
 
             if (containingElement != null)
