@@ -230,7 +230,7 @@ public abstract class JavaProvider extends BasicProvider {
                 allowedMethods = ((AxisServiceConfig)obj).getMethods();
             }
 
-            processMessage(msgContext, serviceName, allowedMethods, reqEnv,
+            processMessage(msgContext, clsName, allowedMethods, reqEnv,
                            resEnv, jc, obj);
 
             // get the response message again! It may have been explicitly set!
