@@ -29,7 +29,6 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.MethodTarget;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
@@ -244,9 +243,7 @@ public class RPCHandler extends SOAPHandler
         // item not being added to the list
         if (context.isNil(attributes)) {
           Deserializer nilDSer =  new DeserializerImpl();
-          nilDSer.registerValueTarget(
-             new MethodTarget(currentParam,
-                              RPCParam.getValueSetMethod()));
+          nilDSer.registerValueTarget(new RPCParamTarget(currentParam));
           return (SOAPHandler) nilDSer;
         }
         
@@ -293,9 +290,7 @@ public class RPCHandler extends SOAPHandler
 
         dser.setDefaultType(type);
 
-        dser.registerValueTarget(
-             new MethodTarget(currentParam,
-                 RPCParam.getValueSetMethod()));
+        dser.registerValueTarget(new RPCParamTarget(currentParam));
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: RPCHandler.onStartChild()");
