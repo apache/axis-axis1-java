@@ -1,6 +1,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
     xmlns:lxslt="http://xml.apache.org/xslt"
     xmlns:redirect="org.apache.xalan.lib.Redirect"
+    xmlns:stringutils="xalan://org.apache.tools.ant.util.StringUtils"
     extension-element-prefixes="redirect">
 <xsl:output method="html" indent="yes" encoding="US-ASCII"/>
 <xsl:decimal-format decimal-separator="." grouping-separator=","/>
@@ -686,23 +687,10 @@ h6 {
 
 <xsl:template name="JS-escape">
     <xsl:param name="string"/>
-    <xsl:choose>
-        <xsl:when test="contains($string,&quot;'&quot;)">
-            <xsl:value-of select="substring-before($string,&quot;'&quot;)"/>\&apos;<xsl:call-template name="JS-escape">
-                <xsl:with-param name="string" select="substring-after($string,&quot;'&quot;)"/>
-            </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="contains($string,'\')">
-            <xsl:value-of select="substring-before($string,'\')"/>\\<xsl:call-template name="JS-escape">
-                <xsl:with-param name="string" select="substring-after($string,'\')"/>
-            </xsl:call-template>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:value-of select="$string"/>
-        </xsl:otherwise>
-    </xsl:choose>
+    <xsl:param name="tmp1" select="stringutils:replace(string($string),'\','\\')"/>
+    <xsl:param name="tmp2" select="stringutils:replace(string($tmp1),&quot;'&quot;,&quot;\&apos;&quot;)"/>
+    <xsl:value-of select="$tmp2"/>
 </xsl:template>
-
 
 <!--
     template that will convert a carriage return into a br tag
