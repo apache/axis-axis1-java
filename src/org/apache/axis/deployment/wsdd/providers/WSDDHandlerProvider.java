@@ -62,6 +62,7 @@ import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 /**
  * This is a simple provider for using Handler-based services which don't
@@ -72,6 +73,10 @@ import org.apache.axis.utils.Messages;
 public class WSDDHandlerProvider
     extends WSDDProvider
 {
+    public String getName() {
+        return WSDDConstants.PROVIDER_HANDLER;
+    }
+
     public Handler newProviderInstance(WSDDService service,
                                        EngineConfiguration registry)
         throws Exception
