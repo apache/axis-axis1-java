@@ -9,6 +9,7 @@ package test.wsdl.wrapped;
 
 import test.wsdl.wrapped.City_BBBPortType;
 import test.wsdl.wrapped.Attraction;
+import test.wsdl.wrapped.Query;
 
 public class City_BBBBindingImpl implements City_BBBPortType {
     public static final String OID_STRING = "Attraction@cityCF::1028:1028";
@@ -60,6 +61,19 @@ public class City_BBBBindingImpl implements City_BBBPortType {
             attractions = new Attraction[attnames.length]; 
             for (int i=0; i < attnames.length; i++) {
                 attractions[i] = getAttraction(attnames[i]);
+            }
+        }
+        return attractions;
+    }
+
+    public Attraction[] getAttractions2(Query[] attnames) throws java.rmi.RemoteException {
+        Attraction[] attractions = null;
+        if (attnames != null) {
+            attractions = new Attraction[attnames.length]; 
+            for (int i=0; i < attnames.length; i++) {
+                if (attnames[i] != null) {
+                    attractions[i] = getAttraction(attnames[i].getValue());
+                }
             }
         }
         return attractions;

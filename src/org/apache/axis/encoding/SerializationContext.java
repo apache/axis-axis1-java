@@ -319,6 +319,13 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
     public void writeDOMElement(Element el) throws IOException;
 
     public String getValueAsString(Object value, QName xmlType) throws IOException;
+
+    /**
+     * Get the currently prefered xmlType
+     `* @return QName of xmlType or null
+     */
+    public QName getCurrentXMLType();
+
 }
 
 

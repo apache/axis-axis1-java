@@ -118,6 +118,7 @@ public class SerializationContextImpl implements SerializationContext
     private Writer writer;
     private int lastPrefixIndex = 1;
     private MessageContext msgContext;
+    private QName currentXMLType;
 
     /** The SOAP context we're using */
     private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
@@ -1177,6 +1178,11 @@ public class SerializationContextImpl implements SerializationContext
                                              "" + this));
             }
 
+            // Set currentXMLType to the one desired one.
+            // Note for maxOccurs usage this xmlType is the 
+            // type of the component not the type of the array.
+            currentXMLType = xmlType;
+
             // if we're looking for xsd:anyType, accept anything...
             if (Constants.XSD_ANYTYPE.equals(xmlType)) {
                 xmlType = null;
@@ -1209,6 +1215,13 @@ public class SerializationContextImpl implements SerializationContext
         // !!! Write out a generic null, or get type info from somewhere else?
     }
 
+    /**
+     * Get the currently prefered xmlType
+     * @return QName of xmlType or null
+     */
+    public QName getCurrentXMLType() {
+        return currentXMLType;
+    }
 
     /**
      * Walk the interfaces of a class looking for a serializer for that
