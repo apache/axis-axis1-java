@@ -309,14 +309,13 @@ public class AxisServlet extends AxisServletBase {
 
                         SOAPService s = engine.getService(serviceName);
                         if (s == null) {
-                            // no such service....
-                            response.setStatus(java.net.HttpURLConnection.HTTP_NOT_FOUND);
-                            response.setContentType("text/html");
-                            writer.println("<h2>" +
-                                           Messages.getMessage("error00") + "</h2>");
-                            writer.println("<p>" +
-                                           Messages.getMessage("noService06") +
-                                           "</p>");
+                            //no service: report it
+                            if(isJWSPage) {
+                                reportCantGetJWSService(request, response, writer);
+                            } else {
+                                reportCantGetAxisService(request, response, writer);
+                            }
+
                         } else {
                             //print a snippet of service info.
                             reportServiceInfo(response, writer, s, serviceName);
@@ -376,7 +375,8 @@ public class AxisServlet extends AxisServletBase {
 
     /**
      * scan through the request for parameters, invoking the endpoint
-     * if we get a method param.
+     * if we get a method param. If there was no method param then the
+     * response is set to a 400 Bad Request and some error text
      * @param msgContext current message
      * @param request incoming requests
      * @param response response to generate
@@ -403,7 +403,7 @@ public class AxisServlet extends AxisServletBase {
 
         if (method == null) {
             response.setContentType("text/html");
-            //TODO: what error code should we send back for no method?
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             writer.println("<h2>" +
                            Messages.getMessage("error00") +
                            ":  " +
@@ -635,6 +635,41 @@ public class AxisServlet extends AxisServletBase {
         }
         writer.println("</ul>");
     }
+
+    /**
+     * generate the error response to indicate that there is apparently no endpoint there
+     * @param request the request that didnt have an edpoint
+     * @param response response we are generating
+     * @param writer open writer for the request
+     */
+    protected void reportCantGetAxisService(HttpServletRequest request, HttpServletResponse response, PrintWriter writer) {
+        // no such service....
+        response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+        response.setContentType("text/html");
+        writer.println("<h2>" +
+                Messages.getMessage("error00") + "</h2>");
+        writer.println("<p>" +
+                Messages.getMessage("noService06") +
+                "</p>");
+    }
+
+    /**
+     * indicate that there may be a JWS page, and that the user should look
+     * at the WSDL to se
+     * @param request the request that didnt have an edpoint
+     * @param response response we are generating
+     * @param writer open writer for the request
+     */
+    protected void reportCantGetJWSService(HttpServletRequest request, HttpServletResponse response, PrintWriter writer) {
+        // no such service....
+        response.setStatus(HttpURLConnection.HTTP_OK);
+        response.setContentType("text/html");
+        String urltext= Messages.getMessage("noService08");
+        String url=request.getRequestURI();
+        writer.println(Messages.getMessage("noService07") + "<p>");
+        writer.println("<a href='"+url+"?wsdl'>"+urltext+"</a>");
+    }
+
 
     /**
      * Process a POST to the servlet by handing it off to the Axis Engine.
