@@ -55,7 +55,6 @@
 
 package org.apache.axis.client ;
 
-import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
@@ -66,11 +65,11 @@ import org.w3c.dom.Document;
 import javax.naming.Reference;
 import javax.naming.Referenceable;
 import javax.naming.StringRefAddr;
-
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.rpc.ServiceException;
@@ -80,6 +79,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -87,7 +87,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.lang.reflect.Proxy;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -111,6 +110,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
 
+    /**
+     * Thread local storage used for storing the last call object
+     */
+    private static ThreadLocal previousCall = new ThreadLocal();
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -291,7 +294,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
 
         try {
-            Call call = new Call(endpoint);
+            Call call = (org.apache.axis.client.Call)createCall();
+            call.setTargetEndpointAddress(new URL(endpoint));
             ClassLoader classLoader =
                     Thread.currentThread().getContextClassLoader();
             return (java.rmi.Remote)Proxy.newProxyInstance(classLoader,
@@ -326,7 +330,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         if ( portType == null )
             throw new ServiceException( JavaUtils.getMessage("noPortType00", "" + portName) );
 
-        org.apache.axis.client.Call call = new org.apache.axis.client.Call(this);
+        Call call = (org.apache.axis.client.Call)createCall();
         call.setPortTypeName( portName );
 
         // Get the URL
@@ -364,7 +368,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                                          String operationName)
                            throws ServiceException {
 
-        org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
+        Call call = (org.apache.axis.client.Call)createCall();
         call.setOperation( portName, operationName );
         return( call );
     }
@@ -383,7 +387,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                                          QName operationName)
                            throws ServiceException {
 
-        org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
+        Call call = (org.apache.axis.client.Call)createCall();
         call.setOperation( portName, operationName.getLocalPart() );
         return( call );
     }
@@ -397,7 +401,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall() throws ServiceException {
-        return( new org.apache.axis.client.Call(this) );
+        Call call = new org.apache.axis.client.Call(this);
+        previousCall.set(call);
+        return call;
     }
 
     /**
@@ -565,5 +571,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public boolean getMaintainSession() {
         return maintainSession;
+    }
+
+    public Call getCall() throws ServiceException {
+        Call call = (Call) previousCall.get();
+        return call;
     }
 }
