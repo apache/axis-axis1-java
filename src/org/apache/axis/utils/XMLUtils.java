@@ -128,9 +128,24 @@ public class XMLUtils {
             return "";
         }
 
-        StringBuffer strBuf = new StringBuffer();
         char[] chars = orig.toCharArray();
 
+        // if the string doesn't have any of the magic characters, leave
+        // it alone.
+        boolean needsEncoding = false;
+
+        search:
+        for(int i = 0; i < chars.length; i++) {
+            switch(chars[i]) {
+            case '&': case '"': case '\'': case '<': case '>':
+                needsEncoding = true;
+                break search;
+            }
+        }
+
+        if (!needsEncoding) return orig;
+
+        StringBuffer strBuf = new StringBuffer();
         for (int i = 0; i < chars.length; i++)
         {
             switch (chars[i])
