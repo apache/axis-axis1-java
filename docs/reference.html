@@ -363,7 +363,7 @@ in this top level schema element.<br>
   or portTypes.
 <p><b>-l, --location &lt;location></b> <br>
   Indicates the url of the location of the service.&nbsp; The name after the last 
-  slash or backslash is the name of the service port (unless overriden by the 
+  slash or backslash is the name of the service port (unless overridden by the 
   -s option).&nbsp; The service port address location attribute is assigned the 
   specified value. 
 <p><b>-p, --portTypeName &lt;name></b> <br>
@@ -414,7 +414,7 @@ WSDL.
 <p><b>-f, --factory &lt;class></b> <br>
   (No longer used.) 
 <p><b>-i, --implClass &lt;impl-class></b> <br>
-  Sometimes extra information is avalable in the implementation class file. Use 
+  Sometimes extra information is available in the implementation class file. Use 
   this option to specify the implementation class. 
 <p><b>-f, --factory &lt;class></b> <br>
   (No longer used.) 
@@ -449,7 +449,7 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
     Defines a Handler, and indicates the type of the handler. &quot;Type&quot; 
     is either the name of another previously defined Handler, or a QName of the 
     form &quot;<b>java:<i>class.name</i></b>&quot;. The optional &quot;name&quot; 
-    attribute allows you to refer to this Handler defintion in other parts of 
+    attribute allows you to refer to this Handler definition in other parts of 
     the deployment. May contain an arbitrary number of <b><font face="Courier New, Courier, mono">&lt;option 
     name=&quot;</font></b><font face="Courier New, Courier, mono"><i>name</i></font><b><font face="Courier New, Courier, mono">&quot; 
     value=&quot;</font></b><font face="Courier New, Courier, mono"><i>value</i></font><b><font face="Courier New, Courier, mono">&quot;&gt;</font></b> 
@@ -464,11 +464,35 @@ namely &quot;http://xml.apache.org/axis/wsdd/&quot;.
     <b>Options</b> may be specified as follows : <code><b>&lt;parameter name=&quot;</b>name<b>&quot; 
     value=&quot;</b>value<b>&quot;/&gt;</b></code>, and common ones include:<br>
     <br>
-    <b>className</b> : the backend implementation class<br>
-    <b>allowedMethods</b> : the allowed methods (use &quot;*&quot; to allow all 
-    public methods)<br>
-    <b>allowedRoles</b> : comma-separated list of roles allowed to access this 
+    <ul>
+    <li><b>className</b> : the backend implementation class<br>
+    <li><b>allowedMethods</b> : 
+    Each provider can determine which methods are allowed to be exposed as web services.
+    <br>To summaries for Axis supplied providers:<br>
+    <p><u>Java RPC Provider</u> (provider="java:RPC") by default all public methods specified by the class
+    in the className option, including any inherited methods are 
+    available as web services.<br> For more details regarding the Java Provider 
+    please see <B>WHERE???</B>.
+    <P><u>Java MsgProvder</u> (provider="java:MSG") 
+    <!-- Glen to provide details -->
+    <P>In order to further restrict the above methods, the <b>allowedMethods</b> option  may
+    be used to specify in a space delimited list the names of only those methods which are allowed 
+    as web services. It is also possible to specify for this option the value <b>"*"</b> which is
+    functionally equivalent to not specify the option at all.
+    Also, it is worth mentioning  that the <b>operation</b> element is used to further define the methods being offered, but it does not affect
+    which methods are made available.
+    <p><i>Note, while this is true for Axis supplied providers,  it is implementation dependent on each individual provider. Please review
+    your providers documentation on how or if it supports this option.</i>
+   </i> 
+   <P>
+   <B><u>Note, Exposing any web service has security implications.</u><br></B>As a best practices guide it is
+   <u>highly</u> recommend when offering a web service in un secure environment to restrict allowed methods to only those
+   required for the service being offered. And, for those that are made available, to <b>fully</b> understand their function
+   and how they may access and expose your systems's resources.
+   <P>
+    <li><b>allowedRoles</b> : comma-separated list of roles allowed to access this 
     service<br>
+    </ul>
     <br>
     If you wish to define handlers which should be invoked either before or after 
     the service's provider, you may do so with the <b>&lt;requestFlow&gt;</b> 
