@@ -1,0 +1,31 @@
+<project name="Round3" default="main">
+  <property name="root.dir" value="../../.."/>
+
+  <path id="test-classpath">
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+    <pathelement location="${java.home}/../lib/tools.jar"/>
+    <fileset dir="../../../lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <taskdef name="wsdl2java" classname="test.wsdl.Wsdl2javaAntTask">
+      <classpath refid="test-classpath"/>
+  </taskdef>
+
+  <target name="main">
+
+    <!-- generate skeletons -->
+    <wsdl2java url="http://www.whitemesa.net/wsdl/r3/compound2.wsdl"
+               output="${root.dir}/build/work" skeleton="yes"/>
+
+    <!-- compile the skeletons -->
+    <javac srcdir="${root.dir}/${build.dir}/work" 
+      destdir="${root.dir}/${build.dest}" debug="on">
+      <classpath refid="test-classpath" />
+      <include name="test/wsdl/interop3/**/*.java" />
+    </javac>
+  </target>
+
+</project>
