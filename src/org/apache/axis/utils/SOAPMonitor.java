@@ -405,7 +405,7 @@ public class SOAPMonitor extends JFrame implements ActionListener, ChangeListene
         progress.setSize(d);
         d = getToolkit().getScreenSize();
         progress.getContentPane().add(progressBar);
-        progress.setTitle("Now, data loading ...");
+        progress.setTitle("Now loading data ...");
         progress.setLocation((d.width - progress.getWidth()) / 2,
                 (d.height - progress.getHeight()) / 2);
         progress.show();
