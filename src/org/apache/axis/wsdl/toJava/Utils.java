@@ -693,7 +693,10 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             } else if (mimeType.startsWith("multipart/")) {
                 return "(javax.mail.internet.MimeMultipart" + mimeDimensions
                         + ") " + var + ";";
-            } else if (mimeType.startsWith("application/octetstream")) {
+            } else if (mimeType.startsWith("application/octetstream")
+                    || mimeType.startsWith("application/octet-stream")) {
+                //the hyphenated test is new and RFC compliant; the old one was retained
+                //for backwards compatibility.
                 return "(org.apache.axis.attachments.OctetStream"
                         + mimeDimensions + ") " + var + ";";
             } else {
