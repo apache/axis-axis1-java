@@ -247,24 +247,6 @@ public class SOAPHeader extends MessageElement
         return header;
     }
 
-    private MessageElement findElement(Vector vec, String namespace,
-                                       String localPart)
-    {
-        if (vec.isEmpty())
-            return null;
-        
-        QName qname = new QName(namespace, localPart);
-        Enumeration e = vec.elements();
-        MessageElement element;
-        while (e.hasMoreElements()) {
-            element = (MessageElement)e.nextElement();
-            if (element.getQName().equals(qname))
-                return element;
-        }
-        
-        return null;
-    }
-
     /**
      * Return an Enumeration of headers which match the given namespace
      * and localPart.  Depending on the value of the accessAllHeaders
@@ -343,8 +325,12 @@ public class SOAPHeader extends MessageElement
         context.setPretty(oldPretty);
     }
 
-    public void addChild(MessageElement el) throws SOAPException {
-        headers.addElement(el);
+    public void addChild(MessageElement element) throws SOAPException {
+        if (!(element instanceof SOAPHeaderElement)) {
+          throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
+        }
+        ((SOAPHeaderElement)element).setEnvelope(getEnvelope());
+        headers.addElement(element);
     }
 
     public java.util.Iterator getChildElements() {
@@ -384,9 +370,10 @@ public class SOAPHeader extends MessageElement
     public SOAPElement addChildElement(SOAPElement element) 
       throws SOAPException
     {
-      if (!(element instanceof javax.xml.soap.SOAPHeaderElement)) {
+      if (!(element instanceof SOAPHeaderElement)) {
         throw new SOAPException(Messages.getMessage("badSOAPHeader00"));
-      } 
+      }
+      ((SOAPHeaderElement)element).setEnvelope(getEnvelope());
       return super.addChildElement(element);
     }
 

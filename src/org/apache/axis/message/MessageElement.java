@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Enumeration;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.encoding.TypeMapping;
@@ -1633,4 +1634,21 @@ public class MessageElement implements SOAPElement,
 
     // getEncodingStyle() implemented above
     
+    MessageElement findElement(Vector vec, String namespace,
+                                         String localPart)
+    {
+        if (vec.isEmpty())
+            return null;
+     
+        QName qname = new QName(namespace, localPart);
+        Enumeration e = vec.elements();
+        MessageElement element;
+        while (e.hasMoreElements()) {
+            element = (MessageElement)e.nextElement();
+            if (element.getQName().equals(qname))
+                return element;
+        }
+        
+        return null;
+    }
 }
