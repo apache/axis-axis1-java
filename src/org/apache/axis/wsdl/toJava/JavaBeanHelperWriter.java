@@ -228,16 +228,15 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 //}
             }
         }
-        // if we have attributes, create metadata function which returns the
-        // list of properties that are attributes instead of elements
+        pw.println("    // " + JavaUtils.getMessage("typeMeta"));
+        pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
+        pw.println("        new org.apache.axis.description.TypeDesc(" +
+                   Utils.getJavaLocalName(type.getName()) + ".class);");
+        pw.println();
 
+        // Add attribute and element field descriptors    
         if (attributes != null || elementMetaData != null) {
             boolean wroteFieldType = false;
-            pw.println("    // " + JavaUtils.getMessage("typeMeta"));
-            pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
-            pw.println("        new org.apache.axis.description.TypeDesc(" +
-                       Utils.getJavaLocalName(type.getName()) + ".class);");
-            pw.println();
             pw.println("    static {");
 
             if (attributes != null) {
