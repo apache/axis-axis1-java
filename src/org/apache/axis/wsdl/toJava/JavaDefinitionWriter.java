@@ -74,6 +74,7 @@ import org.apache.axis.wsdl.gen.Generator;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
+import org.apache.axis.utils.Messages;
 
 /**
  * This is Wsdl2java's Definition Writer.  
@@ -148,8 +149,13 @@ public class JavaDefinitionWriter implements Generator {
             }
             if (emitSimpleFault) {
                 QName faultQName = (QName) entry.getValue();
-                new JavaFaultWriter(emitter, faultQName, fault,
-                                    symbolTable).generate();
+                try {
+                    new JavaFaultWriter(emitter, faultQName, fault,
+                                        symbolTable).generate();
+                } catch (DuplicateFileException dfe) {
+                    System.err.println(
+                            Messages.getMessage("fileExistError00", dfe.getFileName()));
+                }
             }
         }
     } // writeFaults
