@@ -100,30 +100,76 @@ public class Admin {
     }
   }
 
-  public Document AdminService(MessageContext msgContext, Document xml) {
+  public Document AdminService(MessageContext msgContext, Document xml) 
+                  throws AxisFault
+  {
     Debug.Print( 1, "Enter: Admin:AdminService" );
     hr = (HandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
     sr = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
-    process( xml );
-    Element  root = new Element( "Admin" );
-    Document doc  = new Document(root);
-    root.addContent( "Done processing" );
+    Document doc = process( xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
   }
 
-  public void process(Document doc) {
-    process( doc.getRootElement() );
+  public Document process(Document doc) throws AxisFault {
+    return( process( doc.getRootElement() ) );
   }
 
-  public void process(Element root) {
+  public Document process(Element root) throws AxisFault {
+    Document doc = null ;
     try {
       init();
       ClassLoader   cl     = new AxisClassLoader();
       String        action = root.getName();
 
-      if ( !action.equals("deploy") && !action.equals("undeploy") ) 
-        Error( "Root element must be 'deploy' or 'undeploy'" );
+      if ( !action.equals("deploy") && !action.equals("undeploy") &&
+           !action.equals("list") )
+        throw new AxisFault( "Admin.error", 
+                             "Root element must be 'deploy', 'undeploy' " +
+                             "or 'list'",
+                             null, null );
+
+      if ( action.equals("list") ) {
+        String[]   names ;
+        Handler    h ;
+        int        i, j ;
+        root = new Element("Admin");
+        doc = new Document(root);
+        Element    elem = null ;
+        Hashtable  opts = null ;
+
+        /* Process Handlers first */
+        /**************************/
+        for ( int loop = 0 ; loop < 2 ; loop++ ) {
+          if ( loop == 0 )
+            names = hr.list();
+          else
+            names = sr.list();
+
+          for( i = 0 ; i < names.length ; i++ ) {
+            h = hr.find(names[i]);
+            if ( loop == 1 ) 
+              elem = new Element( "service" );
+            else 
+              elem = new Element( "handler" );
+            elem.addAttribute( "class", h.getClass().getName() );
+            root.addContent( elem );
+            opts = h.getOptions();
+            if ( opts != null ) {
+              Enumeration e = opts.keys();
+              while ( e.hasMoreElements() ) {
+                String k = (String) e.nextElement();
+                Object v = opts.get(k);
+                Element e1 = new Element( "option" );
+                e1.addAttribute( "name", k );
+                e1.addAttribute( "value", v.toString() );
+                elem.addContent( e1 );
+              }
+            }
+          }
+        }
+        return( doc );
+      }
   
       List list = root.getChildren();
       for ( int loop = 0 ; loop < list.size() ; loop++ ) {
@@ -142,7 +188,9 @@ public class Admin {
             hr.remove( name );
           }
           else
-            Error( "Unknown type: " + type );
+            throw new AxisFault( "Admin.error", 
+                                 "Unknown type; " + type, 
+                                 null, null );
           continue ;
         }
   
@@ -193,7 +241,9 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                Error( "Unknown handler: " + hName );
+                throw new AxisFault( "Admin.error", 
+                                     "Unknown handler: " + hName,
+                                     null, null );
               c.addHandler( tmpH );
             }
             getOptions( elem, c );
@@ -217,7 +267,9 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                Error( "Unknown handler: " + hName );
+                throw new AxisFault( "Admin.error", 
+                                     "Unknown handler: " + hName,
+                                     null, null );
               c.addHandler( tmpH );
             }
           
@@ -230,7 +282,9 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                Error( "Unknown handler: " + hName );
+                throw new AxisFault( "Admin.error", 
+                                     "Unknown handler: " + hName,
+                                     null, null );
               c.addHandler( tmpH );
             }
             getOptions( elem, cc );
@@ -244,7 +298,9 @@ public class Admin {
           Chain                c  = null ;
 
           if ( pivot == null && input == null && output == null )
-            Error( "Services must be use targetted chains" );
+            throw new AxisFault( "Admin.error", 
+                                 "Services must use targeted chains", 
+                                 null, null );
 
           cc = (SimpleTargetedChain) hr.find( name );
 
@@ -259,7 +315,9 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                Error( "Unknown handler: " + hName );
+                throw new AxisFault( "Admin.error", 
+                                     "Unknown handler: " + hName,
+                                     null, null );
               c.addHandler( tmpH );
             }
           }
@@ -274,7 +332,9 @@ public class Admin {
               hName = st.nextToken();
               tmpH = hr.find( hName );
               if ( tmpH == null )
-                Error( "Unknown handler: " + hName );
+                throw new AxisFault( "Admin.error", 
+                                     "Unknown handler: " + hName,
+                                     null, null );
               c.addHandler( tmpH );
             }
           }
@@ -283,18 +343,18 @@ public class Admin {
           sr.add( name, cc );
         }
         else 
-          Error( "Unknown type to " + action + ": " + type );
+          throw new AxisFault( "Admin.error", 
+                               "Unknown type to " + action + ": " + type,
+                               null, null );
       }
+      root = new Element( "Admin" );
+      doc  = new Document(root);
+      root.addContent( "Done processing" );
     }
     catch( Exception e ) {
-      e.printStackTrace( System.err );
-      System.exit( 1 );
+      throw new AxisFault( e );
     }
-  }
-
-  public static void Error(String str) {
-    System.err.println( str );
-    System.exit( 1 );
+    return( doc );
   }
 
   public static void main(String args[]) {
@@ -316,6 +376,7 @@ public class Admin {
       System.err.println( "  <chain name=a/>" );
       System.err.println( "  <service name=a/>" );
       System.err.println( "</undeploy>\n" );
+      System.err.println( "<list/>\n" );
 
       System.exit( 1 );
     }
@@ -333,6 +394,10 @@ public class Admin {
 
         admin.process( doc );
       }
+    }
+    catch( AxisFault e ) {
+      e.dump();
+      System.exit(1);
     }
     catch( Exception e ) {
       System.err.println( "Error processing '" + args[i] + "'" );
