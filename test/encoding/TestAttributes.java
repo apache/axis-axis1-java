@@ -8,9 +8,17 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
+import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
 import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.Call;
 import org.apache.axis.message.RPCElement;
@@ -25,6 +33,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Vector;
 
 import AttributeBean;
 
@@ -32,6 +41,7 @@ import AttributeBean;
  *  Test the serialization of a bean with attributes
  * 
  * @author Tom Jordahl (tomj@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestAttributes extends TestCase {
     static Log log =
@@ -43,34 +53,16 @@ public class TestAttributes extends TestCase {
     {
         TestAttributes tester = new TestAttributes("TestAttributes");
         tester.testBean();
+        tester.testSimpleType();
     }
     
     public TestAttributes(String name) {
         super(name);
     }
     
-    static final String expectedXML =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-            " <SOAP-ENV:Body>\n" +
-            "  <method1 xmlns=\"urn:myNamespace\">\n" +
-            "   <struct name=\"James Bond\" male=\"true\">\n" +
-            "    <ID>1.15</ID>\n" +
-            "    <age>35</age>\n" +
-            "   </struct>\n" +
-            "  </method1>\n" +
-            " </SOAP-ENV:Body>\n" +
-            "</SOAP-ENV:Envelope>";
-    
     public void testBean () throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer());
         SOAPEnvelope msg = new SOAPEnvelope();
-        
-        // set no encoding (use=literal)
-        msgContext.setEncodingStyle(null);
-        // Don't serialize xsi:type attributes
-        msgContext.setProperty(Call.SEND_TYPE_ATTR, "false" );
-
         
         // Create bean with data
         AttributeBean bean = new AttributeBean();
@@ -93,8 +85,8 @@ public class TestAttributes extends TestCase {
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
         // The "" namespace is literal (no encoding).
-        tm.setSupportedNamespaces(new String[] {""});
-        reg.register("", tm);
+        tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+        reg.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         
         QName beanQName = new QName("typeNS", "TheBean");
         tm.register(AttributeBean.class, 
@@ -106,40 +98,79 @@ public class TestAttributes extends TestCase {
         msg.output(context);
         // Get the XML as a string
         String msgString = stringWriter.toString();
-        // verify results
-        assertEquals("Serialized bean and expected results don't match",
-                      expectedXML, msgString);
-        
+
         log.debug("---");
         log.debug(msgString);
         log.debug("---");
-/*        
-        TODO: This part of the test is wrong
-        
-        // Now feed the XML in to the deserializer
-        StringReader reader = new StringReader(msgString);
-        DeserializationContext dser = new DeserializationContextImpl(
-            new InputSource(reader), msgContext, org.apache.axis.Message.REQUEST);
 
-        // deserialize it
-        dser.parse();
+        Message message = new Message(msgString);
+        message.setMessageContext(msgContext);
+        SOAPEnvelope env = message.getSOAPPart().getAsSOAPEnvelope();
+        RPCElement rpcEl = (RPCElement)env.getFirstBody();
+        Vector params = rpcEl.getParams();
+        assertEquals("Wrong # of params in deserialized message!",
+                     1,
+                     params.size());
 
-        // get the results
-        SOAPEnvelope env = dser.getEnvelope();
-        RPCElement rpcElem = (RPCElement)env.getFirstBody();
-        RPCParam struct = rpcElem.getParam("struct");
-        assertNotNull("No <struct> param", struct);
-        
-        Object obj = struct.getValue();
-        System.out.println(obj.toString());
-        AttributeBean val = (AttributeBean)struct.getValue();
-        assertNotNull("No value for struct param", val);
-        
-        assertEquals("Bean and Val Age members are not equal", bean.getAge(), val.getAge());
-        assertEquals("Bean and Val ID members are not equal",bean.getID(), bean.getID(), 1.15F);
-        assertEquals("Bean and Val boolean attributes are not equal",bean.getMale(), bean.getMale());
-        assertEquals("Bean and Val name attributes are not equal",bean.getName(), bean.getName());
-*/
+        Object obj = ((RPCParam)params.get(0)).getValue();
+        assertTrue("Deserialized param not an AttributeBean!",
+                   (obj instanceof AttributeBean));
+
+        AttributeBean deserBean = (AttributeBean)obj;
+        assertTrue("Deserialized bean not equal to expected values!",
+                   (bean.equals(deserBean)));
     }
 
+    public void testSimpleType() throws Exception {
+        SimpleBean bean = new SimpleBean("test value");
+        bean.temp = 85.0F;
+
+        MessageContext msgContext = new MessageContext(new AxisServer());
+        SOAPEnvelope msg = new SOAPEnvelope();
+
+        RPCParam arg = new RPCParam("", "simple", bean);
+        RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[]{ arg });
+        msg.addBodyElement(body);
+        body.setEncodingStyle(null);
+
+        StringWriter writer = new StringWriter();
+        SerializationContext context = new SerializationContextImpl(writer,
+                                                                    msgContext);
+        context.setDoMultiRefs(false);
+
+        // Create a TypeMapping and register the Bean serializer/deserializer
+        TypeMappingRegistry reg = context.getTypeMappingRegistry();
+        TypeMapping tm = (TypeMapping) reg.createTypeMapping();
+        // The "" namespace is literal (no encoding).
+        tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+        reg.register(Constants.URI_CURRENT_SOAP_ENC, tm);
+
+        QName beanQName = new QName("typeNS", "Bean");
+        tm.register(SimpleBean.class,
+                    beanQName,
+                    new SimpleNonPrimitiveSerializerFactory(SimpleBean.class, beanQName),
+                    new SimpleDeserializerFactory(SimpleBean.class, beanQName));
+
+        // Serialize the bean in to XML
+        msg.output(context);
+        // Get the XML as a string
+        String msgString = writer.toString();
+
+        Message message = new Message(msgString);
+        message.setMessageContext(msgContext);
+        SOAPEnvelope env = message.getSOAPPart().getAsSOAPEnvelope();
+        RPCElement rpcEl = (RPCElement)env.getFirstBody();
+        Vector params = rpcEl.getParams();
+        assertEquals("Wrong # of params in deserialized message!",
+                     1,
+                     params.size());
+
+        Object obj = ((RPCParam)params.get(0)).getValue();
+        assertTrue("Deserialized param not a SimpleBean!",
+                   (obj instanceof SimpleBean));
+
+        SimpleBean deserBean = (SimpleBean)obj;
+        assertTrue("Deserialized bean not equal to expected values!",
+                   (bean.equals(deserBean)));
+    }
 }

@@ -59,12 +59,14 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
 
 import org.apache.axis.InternalException;
+import org.apache.axis.description.TypeDesc;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
 
@@ -103,6 +105,8 @@ public class SimpleDeserializer extends DeserializerImpl {
     public QName xmlType;
     public Class javaType;
 
+    private TypeDesc typeDesc = null;
+
     /**
      * The Deserializer is constructed with the xmlType and 
      * javaType (which could be a java primitive like int.class)
@@ -118,6 +122,17 @@ public class SimpleDeserializer extends DeserializerImpl {
             for (int i = 0; i < pd.length; i++) {
                 BeanPropertyDescriptor descriptor = pd[i];
                 propertyMap.put(descriptor.getName(), descriptor);
+            }
+
+            // Get the class' TypeDesc if it provides one
+            try {
+                Method getTypeDesc =
+                        javaType.getMethod("getTypeDesc",
+                                           new Class [] {});
+                // get string array
+                typeDesc = (TypeDesc)getTypeDesc.invoke(null,
+                                                        BeanSerializer.noArgs);
+            } catch (Exception e) {
             }
         }
         
@@ -251,76 +266,66 @@ public class SimpleDeserializer extends DeserializerImpl {
             throws SAXException 
     {
 
-        // if this isn't a simpleType bean, wont have attributes
-        if (! SimpleType.class.isAssignableFrom(javaType))
+        // If we have no metadata, we have no attributes.  Q.E.D.
+        if (typeDesc == null)
             return;
         
-        // get list of properties that are really attributes
-        Vector beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
-        
-        // loop through the attributes and set bean properties that 
+        // loop through the attributes and set bean properties that
         // correspond to attributes
-        if (beanAttributeNames != null && 
-            beanAttributeNames.size() > 0) {
-            for (int i=0; i < attributes.getLength(); i++) {
-                String attrName = attributes.getLocalName(i);
-                String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
-                String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
-                String mangledName = JavaUtils.xmlNameToJava(attrName);
+        for (int i=0; i < attributes.getLength(); i++) {
+            QName attrQName = new QName(attributes.getURI(i),
+                                        attributes.getLocalName(i));
+            String fieldName = typeDesc.getFieldNameForAttribute(attrQName);
+            if (fieldName == null)
+                continue;
 
-                // See if the attribute is a beanAttribute name
-                if (!beanAttributeNames.contains(attrName) &&
-                    !beanAttributeNames.contains(attrNameUp) &&
-                    !beanAttributeNames.contains(attrNameLo))
-                    continue;
+            String attrName = attributes.getLocalName(i);
+            String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
+            String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
+            String mangledName = JavaUtils.xmlNameToJava(attrName);
 
-                if (attributeMap == null)
-                    attributeMap = new HashMap();
-                
-                // look for the attribute property, save the name
-                attrName = attrNameUp;
-                BeanPropertyDescriptor bpd = 
-                    (BeanPropertyDescriptor) propertyMap.get(attrNameUp);
-                if (bpd == null) {
-                    attrName = attrNameLo;
-                    bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
-                }
-                if (bpd == null) {
-                    attrName = mangledName;
-                    bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
-                }
-                if (bpd != null) {
-                    // determine the QName for this child element
-                    TypeMapping tm = context.getTypeMapping();
-                    Class type = bpd.getType();
-                    QName qn = tm.getTypeQName(type);
-                    if (qn == null)
-                        throw new SAXException(
+            // look for the attribute property
+            BeanPropertyDescriptor bpd =
+                    (BeanPropertyDescriptor) propertyMap.get(fieldName);
+            if (bpd != null) {
+                if (bpd.getWriteMethod() == null ) continue ;
+
+                // determine the QName for this child element
+                TypeMapping tm = context.getTypeMapping();
+                Class type = bpd.getType();
+                QName qn = tm.getTypeQName(type);
+                if (qn == null)
+                    throw new SAXException(
                             JavaUtils.getMessage("unregistered00", type.toString()));
-                
-                    // get the deserializer
-                    Deserializer dSer = context.getDeserializerForType(qn);
-                    if (dSer == null)
-                        throw new SAXException(
+
+                // get the deserializer
+                Deserializer dSer = context.getDeserializerForType(qn);
+                if (dSer == null)
+                    throw new SAXException(
                             JavaUtils.getMessage("noDeser00", type.toString()));
-                    if (! (dSer instanceof SimpleDeserializer))
-                        throw new SAXException(
-                                JavaUtils.getMessage("AttrNotSimpleType00", 
-                                        bpd.getName(), 
-                                        type.toString()));
-                    
-                    // Success!  Store name, value in HashMap for later
+                if (! (dSer instanceof SimpleDeserializer))
+                    throw new SAXException(
+                            JavaUtils.getMessage("AttrNotSimpleType00",
+                                                 bpd.getName(),
+                                                 type.toString()));
+
+                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
+                    // Success!  Create an object from the string and save
+                    // it in our attribute map for later.
+                    if (attributeMap == null) {
+                        attributeMap = new HashMap();
+                    }
                     try {
                         Object val = ((SimpleDeserializer)dSer).
                                 makeValue(attributes.getValue(i));
-                        attributeMap.put(attrName, val);
+                        attributeMap.put(fieldName, val);
                     } catch (Exception e) {
                         throw new SAXException(e);
                     }
-                
-                } // if bpd != null
-            } // attribute loop
-        } // if attributes exist
+                }
+
+            } // if
+        } // attribute loop
     } // onStartElement
 
     /**
@@ -328,7 +333,8 @@ public class SimpleDeserializer extends DeserializerImpl {
      */ 
     private void setSimpleTypeAttributes() throws SAXException {
         // if this isn't a simpleType bean, wont have attributes
-        if (! SimpleType.class.isAssignableFrom(javaType))
+        if (! SimpleType.class.isAssignableFrom(javaType) ||
+            attributeMap == null)
             return;
         
         // loop through map

@@ -315,6 +315,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         QName typeQName = null;
         
+        // Check for type
+        String type = Constants.getValue(attrs, Constants.URI_CURRENT_SCHEMA_XSI, "type");
+        if (type != null) {
+            // Return the type attribute value converted to a QName
+            return getQNameFromString(type);
+        }
+
         if (typeQName == null) {
 
             // If the element is a SOAP-ENC element, the name of the element is the type.
@@ -351,12 +358,6 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (typeQName != null)
             return typeQName;
         
-        // Check for type
-        String type = Constants.getValue(attrs, Constants.URI_CURRENT_SCHEMA_XSI, "type");
-        if (type != null) {
-            // Return the type attribute value converted to a QName
-            return getQNameFromString(type);
-        }
 
         /*  Removing this code for now - Glen 2/20/02
         

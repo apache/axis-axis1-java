@@ -123,6 +123,15 @@ public class JavaComplexTypeWriter extends JavaWriter {
         if (type.isSimpleType())
             implementsText = ", org.apache.axis.encoding.SimpleType";
 
+        // For now, do the imports only if we have attributes.  This will
+        // need to happen for any mapping later.
+        if (attributes != null) {
+            pw.println("import org.apache.axis.description.FieldDesc;");
+            pw.println("import org.apache.axis.description.TypeDesc;");
+            pw.println("import org.apache.axis.description.AttributeDesc;");
+            pw.println();
+        }
+
         pw.println("public class " + className + extendsText +
                    " implements java.io.Serializable" + implementsText + " {");
 
@@ -223,20 +232,36 @@ public class JavaComplexTypeWriter extends JavaWriter {
        
         // if we have attributes, create metadata function which returns the
         // list of properties that are attributes instead of elements
+
+        // Glen 3/7/02 : This is now using the type metadata model which
+        // provides for arbitrary mapping of XML elements or attributes
+        // <-> Java fields.  We need to generalize this to support element
+        // mappings as well, but right now this is just to keep the attribute
+        // mechanism working.
+
         if (attributes != null) {
-            pw.println("    // List of fields that are XML attributes");
-            pw.println("    private static java.lang.String[] _attrs = new String[] {");
+            pw.println("    // Type metadata");
+            pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
+            pw.println("        new org.apache.axis.description.TypeDesc();");
+            pw.println();
+            pw.println("    static {");
             for (int i = 0; i < attributes.size(); i += 2) {
-                pw.println("        \"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\", ");
+                String fieldName =
+                        Utils.xmlNameToJava((String) attributes.get(i + 1));
+                pw.print("        ");
+                if (i == 0) pw.print("org.apache.axis.description.FieldDesc ");
+                pw.println("field = new org.apache.axis.description.AttributeDesc();");
+                pw.println("        field.setFieldName(\"" + fieldName + "\");");
+                pw.println("        typeDesc.addFieldDesc(field);");
             }
             pw.println("    };");
             pw.println();
 
             pw.println("    /**");
-            pw.println("     * Return list of bean field names that are attributes");
+            pw.println("     * Return type metadata object");
             pw.println("     */");
-            pw.println("    public static java.lang.String[] getAttributeElements() {");
-            pw.println("        return _attrs;");
+            pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
+            pw.println("        return typeDesc;");
             pw.println("    }");
             pw.println();
         }
