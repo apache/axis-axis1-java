@@ -80,12 +80,6 @@ import org.apache.axis.transport.http.HTTPConstants;
 
 public abstract class AdminClient {
 
-    // Temporary home until we find something better.
-    static {
-        // System.out.println("Registering URL stream handler factory.");
-        URL.setURLStreamHandlerFactory(Transport.getURLStreamHandlerFactory());
-    }
-    
     // do the real work, and throw exception if fubar
     // this is reused by the TestHTTPDeploy functional tests
     public void doAdmin (String[] args)
