@@ -58,7 +58,25 @@ package org.apache.axis;
 /**
  * EngineConfigurationFactory is an interface used to construct
  * concrete EngineConfiguration instances.
+ * 
+ * Each EngineConfigurationFactory must also (directly) implement
+ * the following static method:
  *
+ *     //Creates and returns a new EngineConfigurationFactory.
+ *     //If a factory cannot be created, return 'null'.
+ *     //
+ *     //The factory may return non-NULL only if:
+ *     //  - it knows what to do with the param (check type & process value)
+ *     //  - it can find it's configuration information
+ *     //
+ *     //@see org.apache.axis.configuration.EngineConfigurationFactoryFinder
+ * 
+ *     public static EngineConfigurationFactory newFactory(Object param);
+ *
+ * This is checked at runtime and a warning generated for
+ * factories found that do NOT implement this.
+ *
+ * @author Richard A. Sitze
  * @author Glyn Normington (glyn@apache.org)
  */
 public interface EngineConfigurationFactory {
@@ -67,12 +85,12 @@ public interface EngineConfigurationFactory {
      * in creating engines.
      */
     public static final String SYSTEM_PROPERTY_NAME = "axis.EngineConfigFactory";
-
+    
      /**
-     * Get a default client engine configuration.
-     *
-     * @return a client EngineConfiguration
-     */
+      * Get a default client engine configuration.
+      *
+      * @return a client EngineConfiguration
+      */
     public EngineConfiguration getClientEngineConfig();
 
     /**

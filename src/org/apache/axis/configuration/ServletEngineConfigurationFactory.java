@@ -70,6 +70,6 @@ public class ServletEngineConfigurationFactory
     extends DefaultEngineConfigurationFactory
 {
     public ServletEngineConfigurationFactory(ServletContext ctx) {
-        super(EngineConfigurationFactoryFinder.newServletFactory(ctx));
+        super(EngineConfigurationFactoryFinder.newFactory(ctx));
     }
 }
