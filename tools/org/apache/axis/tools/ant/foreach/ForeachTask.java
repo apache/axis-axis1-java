@@ -185,7 +185,9 @@ public class ForeachTask extends Task {
         String args = "-buildfile " + properties.get("file");
         Commandline.Argument arguments = callee2.createArg();
         arguments.setLine(args);
-        callee2.execute();
+        if (callee2.executeJava() != 0) {
+            throw new BuildException("Execution of ANT Task failed");
+        }
     }
 
     private void executeAntTask() {
