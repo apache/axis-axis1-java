@@ -807,6 +807,24 @@ public class Utils {
     {
         return new QName(qname.getNamespaceURI(), qname.getLocalPart());
     }
+    
+    /**
+     * Generate an XML prefixed attribute value with a corresponding xmlns 
+     * declaration for the prefix.  If there is no namespace, 
+     * don't prefix the name or emit the xmlns attribute.
+     * 
+     * Caller should provide the enclosing quotes.
+     * 
+     * Usage:  println("name=\"" + genXMLQNameString(qname, "foo") + "\""
+     */ 
+    public static String genQNameAttributeString(QName qname, String prefix) {
+        String result;
+        if (qname.getNamespaceURI() == null || qname.getNamespaceURI().equals(""))
+            return qname.getLocalPart();
+        
+        return prefix + ":" + qname.getLocalPart() + "\" xmlns:" + prefix +
+                "=\"" + qname.getNamespaceURI();
+    }
 }
 
 

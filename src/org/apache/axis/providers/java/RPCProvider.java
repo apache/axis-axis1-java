@@ -197,7 +197,7 @@ public class RPCProvider extends JavaProvider
 
             // Check if we can find a Method by this name
             // FIXME : Shouldn't this type of thing have already occurred?
-            checkMethodName(msgContext, allowedMethods, methodName);
+            checkMethodName(msgContext, allowedMethods, operation.getName());
 
             // Now create any out holders we need to pass in
             if (numArgs < argValues.length) {

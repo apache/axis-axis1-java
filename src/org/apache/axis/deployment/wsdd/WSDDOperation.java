@@ -74,6 +74,13 @@ import java.util.Iterator;
 
 /**
  *
+ * Parse the WSDD operation elements.
+ * 
+ * Example: 
+ * <operation name="name" qname="element QName" returnQName="QName">
+ *   <parameter ... />
+ * </operation>
+ * 
  */
 public class WSDDOperation extends WSDDElement
 {
@@ -92,6 +99,10 @@ public class WSDDOperation extends WSDDElement
 
         desc.setName(e.getAttribute("name"));
 
+        String qNameStr = e.getAttribute("qname");
+        if (qNameStr != null && !qNameStr.equals(""))
+            desc.setElementQName(XMLUtils.getQNameFromString(qNameStr, e));
+        
         String retQNameStr = e.getAttribute("returnQName");
         if (retQNameStr != null && !retQNameStr.equals(""))
             desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
@@ -103,6 +114,9 @@ public class WSDDOperation extends WSDDElement
             desc.addParameter(parameter.getParameter());
         }
 
+        // FIXME: No longer needed now that we have the qname attribute on the
+        // operation itself.
+        /*
         if (parent.getStyle() == ServiceDesc.STYLE_DOCUMENT) {
             Element [] mappingElements = getChildElements(e, "elementMapping");
             if (mappingElements.length > 1) {
@@ -119,6 +133,7 @@ public class WSDDOperation extends WSDDElement
                 desc.setElementQName(elQName);
             }
         }
+        */
     }
 
     /**
@@ -137,17 +152,15 @@ public class WSDDOperation extends WSDDElement
         if (desc.getName() != null) {
             attrs.addAttribute("", "name", "name", "CDATA", desc.getName());
         }
+        
+        if (desc.getElementQName() != null) {
+            attrs.addAttribute("", "qname", "qname", 
+                               "CDATA", 
+                               context.qName2String(desc.getElementQName()));
+        }
 
         context.startElement(getElementName(), attrs);
 
-        if (desc.getElementQName() != null) {
-            attrs = new AttributesImpl();
-            attrs.addAttribute("", "qname", "qname", "CDATA",
-                               context.qName2String(desc.getElementQName()));
-            context.startElement(WSDDConstants.ELEMENTMAP_QNAME, attrs);
-            context.endElement();
-        }
-        
         ArrayList params = desc.getParameters();
         for (Iterator i = params.iterator(); i.hasNext();) {
             ParameterDesc parameterDesc = (ParameterDesc) i.next();

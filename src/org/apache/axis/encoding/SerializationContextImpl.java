@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.wsdl.toJava.SymbolTable;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
@@ -909,6 +910,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         if (type == null ||
             !shouldSendXSIType() ||
+             type.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0 ||
             ((attributes != null) &&
              (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
                                 "type") != -1)))

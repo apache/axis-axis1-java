@@ -79,7 +79,6 @@ public class RPCElement extends SOAPBodyElement
     protected Vector params = new Vector();
     protected boolean needDeser = false;
     protected boolean elementIsFirstParam = false;
-    protected OperationDesc myOperation = null;
 
     public RPCElement(String namespace,
                       String localName,
@@ -96,9 +95,6 @@ public class RPCElement extends SOAPBodyElement
         needDeser = true;
 
         if (operation != null) {
-            this.name = operation.getName();
-            myOperation = operation;
-
             // IF we're doc/literal... we can't count on the element name
             // being the method name.
             elementIsFirstParam = (operation.getStyle() ==
@@ -136,11 +132,6 @@ public class RPCElement extends SOAPBodyElement
         return name;
     }
 
-    public OperationDesc getOperation()
-    {
-        return myOperation;
-    }
-
     protected Class  defaultParamTypes[] = null;
 
     public Class [] getJavaParamTypes()
@@ -156,12 +147,13 @@ public class RPCElement extends SOAPBodyElement
         SOAPService service    = msgContext.getService();
         OperationDesc [] operations = null;
 
+        // Obtain our possible operations
         if (service != null) {
             ServiceDesc serviceDesc = service.getServiceDescription();
-
+            
             if (serviceDesc.getImplClass() == null) {
                 String clsName = (String)service.getOption("className");
-
+                
                 if (clsName != null) {
                     ClassLoader cl       = msgContext.getClassLoader();
                     ClassCache cache     = msgContext.getAxisEngine().
@@ -179,14 +171,22 @@ public class RPCElement extends SOAPBodyElement
                     serviceDesc.setImplClass(jc.getJavaClass());
                 }
             }
-
+            
             // If we've got a service description now, we want to use
             // the matching operations in there.
-            operations = serviceDesc.getOperationsByName(name);
-
+            QName qname = new QName(namespaceURI, name);
+            operations = serviceDesc.getOperationsByQName(qname);
+            
             if (operations == null) {
                 String lc = Utils.xmlNameToJava(name);
                 operations = serviceDesc.getOperationsByName(lc);
+            }
+        } else {
+            // if we don't have a service (i.e. for client side), the operation
+            // may already be set in the message context.
+            OperationDesc oper = msgContext.getOperation();
+            if (oper != null) {
+                operations = new OperationDesc [] { oper };
             }
         }
 
@@ -199,7 +199,7 @@ public class RPCElement extends SOAPBodyElement
         // We're going to need this below, so create one.
         RPCHandler rpcHandler = new RPCHandler(this, isResponse);
 
-        if (operations != null) {
+        if (operations != null && !msgContext.isClient()) {
             int numParams = (getChildren() == null) ? 0 : getChildren().size();
 
             SAXException savedException = null;
@@ -213,7 +213,7 @@ public class RPCElement extends SOAPBodyElement
                 OperationDesc operation = operations[i];
                 if (operation.getNumInParams() == numParams) {
                     // Set the operation so the RPCHandler can get at it
-                    myOperation = operation;
+                    rpcHandler.setOperation(operation);
                     try {
                         if (elementIsFirstParam) {
                             context.pushElementHandler(rpcHandler);
@@ -227,7 +227,7 @@ public class RPCElement extends SOAPBodyElement
                         publishToHandler((org.xml.sax.ContentHandler) context);
 
                         // Success!!  This is the right one...
-                        msgContext.setOperation(myOperation);
+                        msgContext.setOperation(operation);
                         return;
                     } catch (SAXException e) {
                         // If there was a problem, try the next one.
@@ -246,6 +246,10 @@ public class RPCElement extends SOAPBodyElement
             }
         }
 
+        if (operations != null) {
+            rpcHandler.setOperation(operations[0]);
+        }
+        
         if (elementIsFirstParam) {
             context.pushElementHandler(rpcHandler);
             context.setCurElement(null);

@@ -71,6 +71,7 @@ import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.Part;
+import javax.wsdl.Input;
 
 import org.w3c.dom.Node;
 
@@ -175,21 +176,10 @@ public class JavaDeployWriter extends JavaWriter {
                 process = false;
             }
 
-            // If a root Element named Foo has an anon type, the 
-            // anon type is named ">Foo".  The following hack
-            // uses the name "Foo" so that the right qname gets 
-            // registered.
-            String localPart = type.getQName().getLocalPart();
-            if (localPart.startsWith(SymbolTable.ANON_TOKEN)) {
-                localPart = localPart.substring(1);
-            }
-            QName qName = new QName(type.getQName().getNamespaceURI(), 
-                                    localPart);
-
             if (process) {
                 pw.println("      <typeMapping");
-                pw.println("        xmlns:ns=\"" + qName.getNamespaceURI() + "\"");
-                pw.println("        qname=\"ns:" + qName.getLocalPart() + '"');
+                pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
+                pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
                 pw.println("        type=\"java:" + type.getName() + '"');
                 if (type.getName().endsWith("[]")) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");
@@ -271,53 +261,54 @@ public class JavaDeployWriter extends JavaWriter {
             BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
             Operation operation = bindingOper.getOperation();
             OperationType type = operation.getStyle();
+            String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
+            String operationName = operation.getName();
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
             if (type != OperationType.NOTIFICATION
                     && type != OperationType.SOLICIT_RESPONSE) {
-                methodList = methodList + " " + bindingOper.getName();
+                methodList = methodList + " " + javaOperName;
             }
 
             // We pass "" as the namespace argument because we're just
             // interested in the return type for now.
             Parameters params =
                     symbolTable.getOperationParameters(operation, "", bEntry);
-            String operName = JavaUtils.xmlNameToJava(operation.getName());
             if (params != null) {
-                if (params.returnType instanceof DefinedElement) {
-                    QName returnQName = params.returnType.getQName();
-                    pw.println("      <operation name=\"" + operName +
-                             "\" returnQName=\"retNS:" +
-                             returnQName.getLocalPart() +
-                             "\" xmlns:retNS=\"" +
-                             returnQName.getNamespaceURI() +
-                             "\">");
 
-                    // map doc/lit elements to this operation
-                    Map parts = operation.getInput().getMessage().getParts();
-                    if (!parts.isEmpty()) {
+                pw.print("      <operation name=\"" + javaOperName + "\"");
+
+                QName elementQName = null;
+                Input input = operation.getInput();
+                if (input != null) {
+                    Map parts = input.getMessage().getParts();
+                    if (parts != null && !parts.isEmpty()) {
                         Iterator i = parts.values().iterator();
                         Part p = (Part) i.next();
-                        QName elementQName = p.getElementName();
-                        String ns = elementQName.getNamespaceURI();
-                        pw.println("        <elementMapping xmlns:ns=\"" +
-                                   ns + "\" element=\"ns:" +
-                                   elementQName.getLocalPart() + "\"/>");
+                        elementQName = p.getElementName();
                     }
-                } else {
-                    pw.print("      <operation name=\"" + 
-                               operName + "\"");
-                    if (params.returnName != null) {
-                        QName returnQName = Utils.getWSDLQName(params.returnName);
-                        pw.print(" returnQName=\"retNS:" +
-                             returnQName.getLocalPart() +
-                             "\" xmlns:retNS=\"" +
-                             returnQName.getNamespaceURI() + "\"");
+                    if (elementQName == null) {
+                        // FIXME - get namespace from WSDL?
+                        elementQName = new QName("", operationName);
                     }
-                    pw.println(">");
+                    QName defaultQName = new QName("", javaOperName);
+                    if (! defaultQName.equals(elementQName)) {
+                        pw.print(" qname=\"" + 
+                                 Utils.genQNameAttributeString(elementQName, "operNS") +
+                                 "\"");
+                    }
                 }
-                
+                QName returnQName = null;
+                if (params.returnName != null)
+                    returnQName = Utils.getWSDLQName(params.returnName);
+                if (returnQName != null) {
+                    pw.print(" returnQName=\"" + 
+                             Utils.genQNameAttributeString(returnQName, "retNS") + 
+                             "\"");
+                }
+                pw.println(">");
+
                 Vector paramList = params.list;
                 for (int i = 0; i < paramList.size(); i++) {
                     Parameter param = (Parameter) paramList.elementAt(i);
@@ -325,10 +316,7 @@ public class JavaDeployWriter extends JavaWriter {
                     TypeEntry typeEntry = param.getType();
                     QName paramType;
                     if (typeEntry instanceof DefinedElement) {
-                        Node node = symbolTable.getTypeEntry(typeEntry.getQName(), true).getNode();
-                        paramType = Utils.getNodeTypeRefQName(node, "type");
-                        if (paramType == null)
-                            paramType = typeEntry.getQName(); // FIXME
+                        paramType = typeEntry.getRefType().getQName();
                     } else {
                         paramType = typeEntry.getQName();
                     }
