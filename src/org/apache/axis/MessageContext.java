@@ -841,6 +841,7 @@ public class MessageContext {
         }
         serviceHandler = null;
         havePassedPivot = false;
+        currentOperation = null;
     }
 
     /**
