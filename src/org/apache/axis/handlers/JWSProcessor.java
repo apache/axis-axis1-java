@@ -133,9 +133,15 @@ public class JWSProcessor extends BasicHandler
 
             /* Get the class */
             /*****************/
-            String clsName = f2.getName();
-            clsName = clsName.substring( 0, clsName.length()-4 );
+            String clsName = null ;
+            clsName = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            if ( clsName == null ) clsName = f2.getName();
+            if ( clsName != null && clsName.charAt(0) == '/' )
+                clsName = clsName.substring(1);
 
+            clsName = clsName.substring( 0, clsName.length()-4 );
+            clsName = clsName.replace('/', '.');
+            
             if (category.isInfoEnabled())
                 category.info("ClsName: " + clsName );
 
@@ -164,10 +170,12 @@ public class JWSProcessor extends BasicHandler
                 // proc.waitFor();
                 FileOutputStream  out      = new FileOutputStream( errFile );
                 Main              compiler = new Main( out, "javac" );
-                String            outdir   = f1.getParent();
+                String            outdir   = null ;
                 String[]          args     = null ;
 
-                if (outdir == null) outdir=".";
+                outdir = msgContext.getStrProp( Constants.MC_HOME_DIR );
+                if ( outdir == null ) outdir = f1.getParent();
+                if ( outdir == null ) outdir = "." ;
 
                 args = new String[] { "-d", outdir,
                           "-classpath",

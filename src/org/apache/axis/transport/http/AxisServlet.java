@@ -145,6 +145,8 @@ public class AxisServlet extends HttpServlet {
         HandlerRegistry hr = engine.getHandlerRegistry();
         PrintWriter writer = res.getWriter();
 
+        msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));
+
         String realpath = context.getRealPath(req.getServletPath());
         String configPath = context.getRealPath("/WEB-INF");
         if (realpath != null) {
@@ -328,6 +330,8 @@ public class AxisServlet extends HttpServlet {
 
         /* Save some HTTP specific info in the bag in case a handler needs it */
         /**********************************************************************/
+        msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));
+        msgContext.setProperty(Constants.MC_RELATIVE_PATH, req.getServletPath());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
