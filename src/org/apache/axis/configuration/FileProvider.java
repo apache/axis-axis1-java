@@ -96,8 +96,8 @@ public class FileProvider implements EngineConfiguration {
     protected WSDDDeployment deployment = null;
 
     private static final String CURRENT_DIR = ".";
-    protected String basepath;
     protected String filename;
+    protected File configFile = null;
 
     protected InputStream myInputStream = null;
 
@@ -109,18 +109,20 @@ public class FileProvider implements EngineConfiguration {
 
     /**
      * Constructor which accesses a file in the current directory of the
-     * engine.
+     * engine or at an absolute path.
      */
     public FileProvider(String filename) {
-        this(CURRENT_DIR, filename);
+        this.filename = filename;
+        configFile = new File(filename);
+        check();
     }
 
     /**
      * Constructor which accesses a file relative to a specific base
      * path.
      */
-    public FileProvider(String basepath, String filename) {
-        this.basepath = basepath;
+    public FileProvider(String basepath, String filename) 
+        throws ConfigurationException {
         this.filename = filename;
 
         File dir = new File(basepath);
@@ -130,13 +132,21 @@ public class FileProvider implements EngineConfiguration {
          * exception to make it easier to debug setup problems.
          */
         if (!dir.isDirectory() || !dir.canRead()) {
-            throw new InternalException(JavaUtils.
-                                        getMessage("invalidConfigFilePath",
-                                                   basepath));
+            throw new ConfigurationException(JavaUtils.getMessage
+                                             ("invalidConfigFilePath",
+                                              basepath));
         }
 
-        File file = new File(basepath, filename);
-        readOnly = file.canRead() & !file.canWrite();
+        configFile = new File(basepath, filename);
+        check();
+    }
+
+    /**
+     * Check the configuration file attributes and remember whether
+     * or not the file is read-only.
+     */
+    private void check() {
+        readOnly = configFile.canRead() & !configFile.canWrite();
 
         /*
          * If file is read-only, log informational message
@@ -178,8 +188,7 @@ public class FileProvider implements EngineConfiguration {
         try {
             if (myInputStream == null) {
                 try {
-                    myInputStream = new FileInputStream(basepath + sep +
-                                                        filename);
+                    myInputStream = new FileInputStream(configFile);
                 } catch (Exception e) {
                     if (searchClasspath) {
                         myInputStream = engine.getClass().
@@ -219,8 +228,7 @@ public class FileProvider implements EngineConfiguration {
                 StringWriter writer = new StringWriter();
                 XMLUtils.DocumentToWriter(doc, writer);
                 writer.close();
-                FileOutputStream fos = new FileOutputStream(basepath + sep +
-                                                            filename);
+                FileOutputStream fos = new FileOutputStream(configFile);
                 fos.write(writer.getBuffer().toString().getBytes());
                 fos.close();
             } catch (Exception e) {
