@@ -504,12 +504,12 @@
     -->
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
-      <arg line="samples/security/serversecuritydeploy.wsdd"/>
+      <arg line="${axis.home}/samples/security/serversecuritydeploy.wsdd"/>
     </java>
     <java classname="org.apache.axis.utils.Admin" fork="yes">
       <classpath refid="classpath" />
       <arg value="client"/>
-      <arg value="samples/security/clientsecuritydeploy.wsdd"/>
+      <arg value="${axis.home}/samples/security/clientsecuritydeploy.wsdd"/>
     </java>
   </target>
 
@@ -591,6 +591,7 @@
       <batchtest todir="${test.functional.reportdir}">
         <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
            <include name="${extraTestCases}/*TestCase.class" />
+           <include name="${extraTestCases}/**/*TestCase.class" />
            <include name="${componentName}/*TestCase.class" />
            <include name="${componentName}/**/*TestCase.class" />
            <include name="${componentName}/**/PackageTests.class" />
