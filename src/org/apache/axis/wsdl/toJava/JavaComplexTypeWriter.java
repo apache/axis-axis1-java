@@ -221,17 +221,17 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 pw.println("    }");
                 pw.println();
                 pw.println("    public void set" + capName + "(int i, " + compName + " value) {");
-                pw.println("        if (" + name + " == null ||");
-                pw.println("            " + name + ".length <= i) {");
+                pw.println("        if (this." + name + " == null ||");
+                pw.println("            this." + name + ".length <= i) {");
                 pw.println("            " + typeName + " a = new " +
                            newingName + "i + 1" + newingSuffix + ";");
-                pw.println("            if (" + name + " != null) {");
-                pw.println("                for(int j=0; j<" + name + ".length; j++)");
-                pw.println("                    a[j] = " + name + "[j];");
+                pw.println("            if (this." + name + " != null) {");
+                pw.println("                for(int j = 0; j < this." + name + ".length; j++)");
+                pw.println("                    a[j] = this." + name + "[j];");
                 pw.println("            }");
-                pw.println("            " + name + " = a;");
+                pw.println("            this." + name + " = a;");
                 pw.println("        }");
-                pw.println("        " + name + "[i] = value;");
+                pw.println("        this." + name + "[i] = value;");
                 pw.println("    }");
                 pw.println();
             }
