@@ -86,7 +86,7 @@ import java.net.UnknownHostException;
  * Axis deployment operations.
  *
  * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class Admin
 {

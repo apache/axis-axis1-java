@@ -59,7 +59,7 @@ package org.apache.axis;
  * implements this interface, it may convey metadata about its
  * configuration to the Axis engine.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface AxisServiceConfig
 {

@@ -66,7 +66,7 @@ import java.lang.reflect.Constructor;
  * this class is designed so that subclasses need only override the makeValue 
  * method in order to construct objects of their own type.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Sam Ruby (rubys@us.ibm.com)
  * Modified for JAX-RPC @author Rich Scheuerle (scheu@us.ibm.com)
  */

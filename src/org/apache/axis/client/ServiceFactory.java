@@ -78,7 +78,7 @@ import java.util.Map;
  *
  * !!! WORK IN PROGRESS
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 
 public class ServiceFactory extends javax.xml.rpc.ServiceFactory

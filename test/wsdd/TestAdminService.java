@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
 /**
  * Test WSDD functions via the AdminService.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public class TestAdminService extends TestCase
 {

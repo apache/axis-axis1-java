@@ -75,7 +75,7 @@ import java.util.Random;
 /**
  * A fairly comprehensive test of MustUnderstand/Actor combinations.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestHeaderAttrs extends TestCase {
     static final String PROP_DOUBLEIT = "double_result";

@@ -76,7 +76,7 @@ import java.io.ByteArrayInputStream;
  *        "me=\"enableRemoteAdmin\" value=\"false\"/></service></se" +
  *        "rvices></engineConfig>");
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class XMLStringProvider extends FileProvider
 {

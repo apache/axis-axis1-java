@@ -65,7 +65,7 @@ import org.apache.axis.MessageContext;
  * to obtain authentication information from an opaque source which
  * will presumably be configured into the engine at startup time.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface SecurityProvider
 {

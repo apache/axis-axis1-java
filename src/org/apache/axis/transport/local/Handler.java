@@ -63,7 +63,7 @@ import java.net.URLStreamHandler;
  * A stub URLStreamHandler, so the system will recognize our
  * custom URLs as valid.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class Handler extends URLStreamHandler
 {

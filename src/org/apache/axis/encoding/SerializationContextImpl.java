@@ -108,7 +108,7 @@ import java.util.Stack;
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class SerializationContextImpl implements SerializationContext

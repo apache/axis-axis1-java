@@ -85,7 +85,7 @@ import java.util.StringTokenizer;
  * 
  * Some code borrowed from ApacheSOAP - thanks to Matt Duftler!
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * 
  * Multi-reference stuff:
  * @author Rich Scheuerle (scheu@us.ibm.com)

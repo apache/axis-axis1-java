@@ -64,7 +64,7 @@ import org.apache.axis.deployment.wsdd.WSDDService;
 /**
  * A WSDD EJB provider
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class WSDDJavaEJBProvider
     extends WSDDProvider

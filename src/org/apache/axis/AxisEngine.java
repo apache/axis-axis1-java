@@ -78,7 +78,7 @@ import java.util.Hashtable;
  * AxisServer.  Handles common functionality like dealing with the
  * handler/service registries and loading properties.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Glyn Normington (glyn@apache.org)
  */
 public abstract class AxisEngine extends BasicHandler

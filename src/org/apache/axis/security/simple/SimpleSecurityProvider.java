@@ -72,7 +72,7 @@ import java.util.StringTokenizer;
 /**
  * SimpleSecurityProvider
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SimpleSecurityProvider implements SecurityProvider {
     protected static Log log =

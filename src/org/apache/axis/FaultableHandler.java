@@ -70,7 +70,7 @@ import java.util.Hashtable;
  *
  *
  * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class FaultableHandler extends BasicHandler {
     protected static Log log =

@@ -75,7 +75,7 @@ import javax.xml.namespace.QName;
 /**
  * Handle deserializing fault details.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback

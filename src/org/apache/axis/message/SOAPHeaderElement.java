@@ -72,7 +72,7 @@ import javax.xml.soap.SOAPException;
  * A simple header element abstraction.  Extends MessageElement with
  * header-specific stuff like mustUnderstand, actor, and a 'processed' flag.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Glyn Normington (glyn@apache.org)
  */
 public class SOAPHeaderElement extends MessageElement

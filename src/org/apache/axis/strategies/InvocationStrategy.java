@@ -63,7 +63,7 @@ import org.apache.axis.MessageContext;
  * A Strategy which calls invoke() on the specified Handler, passing
  * it the specified MessageContext.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class InvocationStrategy implements HandlerIterationStrategy {
     public void visit(Handler handler, MessageContext msgContext)

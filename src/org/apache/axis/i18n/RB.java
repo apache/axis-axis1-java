@@ -100,7 +100,7 @@ import java.util.Properties;
  * Argument values are specified in the various overloaded getString() methods.</p>
  * 
  * @author Karl Moss (kmoss@macromedia.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class RB {
     // The static cache of properties. The key is the basename + the local +

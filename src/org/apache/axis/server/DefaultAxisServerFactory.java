@@ -70,7 +70,7 @@ import java.util.Map;
 /**
  * Helper class for obtaining AxisServers.  Default implementation.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 
 public class DefaultAxisServerFactory implements AxisServerFactory {

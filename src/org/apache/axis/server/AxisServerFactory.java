@@ -60,7 +60,7 @@ import org.apache.axis.AxisFault;
 import java.util.Map;
 
 /**
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 
 public interface AxisServerFactory {    

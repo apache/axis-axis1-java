@@ -122,7 +122,7 @@ import java.util.Vector;
  * Axis browser function and Java2WSDL commandline utility.
  * See Java2WSDL and Java2WSDLFactory for more information.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class Emitter {

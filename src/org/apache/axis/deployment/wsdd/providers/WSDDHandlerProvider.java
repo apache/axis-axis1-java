@@ -67,7 +67,7 @@ import org.apache.axis.utils.Messages;
  * This is a simple provider for using Handler-based services which don't
  * need further configuration (such as Java classes, etc).
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class WSDDHandlerProvider
     extends WSDDProvider

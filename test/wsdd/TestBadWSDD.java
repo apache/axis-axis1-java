@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
  * Try various bad deployments, and make sure that we get back reasonable
  * errors and don't screw up the engine's configuration.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public class TestBadWSDD extends TestCase
 {

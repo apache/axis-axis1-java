@@ -66,7 +66,7 @@ import java.security.Principal;
  * so that request can be used by the ServletSecurityProvider to
  * check roles.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class ServletAuthenticatedUser implements AuthenticatedUser {
     private String name;

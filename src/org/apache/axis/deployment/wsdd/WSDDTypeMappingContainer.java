@@ -59,7 +59,7 @@ package org.apache.axis.deployment.wsdd;
  * A common interface for things which contain type mappings (i.e. services
  * and deployments).   This simplifies the code in Admin for now.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public interface WSDDTypeMappingContainer {
     public void deployTypeMapping(WSDDTypeMapping mapping)

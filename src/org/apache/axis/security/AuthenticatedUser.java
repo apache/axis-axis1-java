@@ -58,7 +58,7 @@ package org.apache.axis.security;
 /** A small (mostly marker) interface for wrapping provider-specific
  * user classes.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface AuthenticatedUser
 {

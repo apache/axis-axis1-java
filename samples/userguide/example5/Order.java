@@ -57,7 +57,7 @@ package samples.userguide.example5;
 
 /** This is a JavaBean which represents an order for some products.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class Order
 {
