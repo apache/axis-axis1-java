@@ -1140,13 +1140,15 @@ public class ServiceDesc {
             for (int k = 0; k < paramTypes.length; k++) {
                 Class type = paramTypes[k];
                 ParameterDesc paramDesc = new ParameterDesc();
+                String opNamespace = operation.getElementQName().getNamespaceURI();
+
                 // If we have a name for this param, use it, otherwise call
                 // it "in*"
                 if (paramNames != null && paramNames[k] != null &&
                         paramNames[k].length()>0) {
-                    paramDesc.setName(paramNames[k]);
+                    paramDesc.setQName(new QName(opNamespace, paramNames[k]));
                 } else {
-                    paramDesc.setName("in" + k);
+                    paramDesc.setQName(new QName(opNamespace, "in" + k));
                 }
 
                 // If it's a Holder, mark it INOUT, and set the XML type QName

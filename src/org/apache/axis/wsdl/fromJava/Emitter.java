@@ -568,8 +568,15 @@ public class Emitter {
                 }
             }
 
-            if(cls != null)
+ 			// set the namespaces in the serviceDesc(s)
+ 			serviceDesc.setDefaultNamespace(intfNS);
+ 			if (serviceDesc2 != null) {
+                serviceDesc2.setDefaultNamespace(implNS);
+            }
+ 	
+            if(cls != null) {
                 namespaces.put(cls.getName(), intfNS, "intf");
+            }
             namespaces.putPrefix(implNS, "impl");
         }
     }
