@@ -17,6 +17,7 @@
 package org.apache.axis.management;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import java.lang.reflect.InvocationTargetException;
@@ -194,7 +195,7 @@ public class Registrar {
             // handle any of these exceptions
             if (ex != null) {
                 //log the error
-                log.warn("Unable to initialize commons-modeler Registry.", ex);
+                log.warn(Messages.getMessage("Registrar.cantregister"), ex);
                 //mark the registration as a failure
                 registry = null;
                 //and fail
