@@ -59,6 +59,8 @@ import javax.xml.namespace.QName;
 import java.beans.IntrospectionException;
 import java.lang.reflect.Method;
 
+import org.apache.axis.utils.cache.MethodCache;
+
 /**
  * Deserializer for a JAX-RPC enum.
  *
@@ -82,7 +84,7 @@ public class EnumDeserializer extends SimpleDeserializer {
             return null;
         if (fromStringMethod == null) {
             try {
-                fromStringMethod = javaType.getMethod("fromString", STRING_CLASS);
+                fromStringMethod = MethodCache.getInstance().getMethod(javaType, "fromString", STRING_CLASS);
             } catch (Exception e) {
                 throw new IntrospectionException(e.toString());
             }
