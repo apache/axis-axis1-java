@@ -103,12 +103,12 @@ public class FaultableHandler extends BasicHandler {
      * and already done its fault processing - as needed.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        log.debug(JavaUtils.getMessage("enter00", "FaultableHandler::invoke"));
+        log.debug("Enter: FaultableHandler::invoke");
         try {
             workHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.info(JavaUtils.getMessage("toAxisFault00"), e );
             AxisFault fault = AxisFault.makeFault(e);
 
             AxisEngine engine = msgContext.getAxisEngine();
@@ -146,16 +146,16 @@ public class FaultableHandler extends BasicHandler {
                 throw fault;
             }
         }
-        log.debug(JavaUtils.getMessage("exit00", "FaultableHandler::invoke"));
+        log.debug("Exit: FaultableHandler::invoke");
     }
 
     /**
      * Some handler later on has faulted so we need to process the fault.
      */
     public void onFault(MessageContext msgContext) {
-        log.debug(JavaUtils.getMessage("enter00", "FaultableHandler::onFault"));
+        log.debug("Enter: FaultableHandler::onFault");
         workHandler.onFault( msgContext );
-        log.debug(JavaUtils.getMessage("exit00", "FaultableHandler::onFault"));
+        log.debug("Exit: FaultableHandler::onFault");
     };
 
     public boolean canHandleBlock(QName qname) {
