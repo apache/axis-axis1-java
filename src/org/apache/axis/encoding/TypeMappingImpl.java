@@ -255,11 +255,15 @@ public class TypeMappingImpl implements TypeMapping
 
         Pair pair = new Pair(javaType, xmlType);
 
-        // Only register the appropriate mappings.
-        if ((dsf != null) || (qName2Pair.get(xmlType) == null))
-            qName2Pair.put(xmlType, pair);
-        if ((sf != null) || (class2Pair.get(javaType) == null))
-            class2Pair.put(javaType, pair);
+        // This code used to not put the xmlType and the JavaType
+        // in the maps if it already existed:
+        //    if ((dsf != null) || (qName2Pair.get(xmlType) == null))
+        // This goes against the philosphy that "last one registered wins".
+        // In particular, the mapping for java.lang.Object --> anyType
+        // was coming out in WSDL generation under the 1999 XML Schema
+        // namespace, which .NET doesn't understand (and is not great anyway).
+        qName2Pair.put(xmlType, pair);
+        class2Pair.put(javaType, pair);
 
         if (sf != null)
             pair2SF.put(pair, sf);

@@ -289,13 +289,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         );
 
         // Serialize all extensions of Map to SOAP_MAP
-        // The SOAP_MAP will be deserialized into a HashMap by default.
-        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
-                   new MapSerializerFactory(java.util.Map.class,
-                                            Constants.SOAP_MAP),
-                   new MapDeserializerFactory(java.util.HashMap.class,
-                                              Constants.SOAP_MAP)
-        );
+        // Order counts here, HashMap should be last.
         myRegister(Constants.SOAP_MAP,       java.util.Hashtable.class,
                    new MapSerializerFactory(java.util.Hashtable.class,
                                             Constants.SOAP_MAP),
@@ -305,6 +299,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),
                    null  // Make sure not to override the deser mapping
+        );
+        // The SOAP_MAP will be deserialized into a HashMap by default.
+        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
+                   new MapSerializerFactory(java.util.Map.class,
+                                            Constants.SOAP_MAP),
+                   new MapDeserializerFactory(java.util.HashMap.class,
+                                              Constants.SOAP_MAP)
         );
 
         // Use the Element Serializeration for elements
