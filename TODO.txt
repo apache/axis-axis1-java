@@ -10,7 +10,26 @@ owner (if any) in "<>" brackets.  Example:
 
 BETA 3 MUST DO LIST
 -------------------
-
+Bugzillas for beta 3: (must:  must fix; nice:  it would be nice to have; post:  post beta 3; pend:  pending more info, maybe beta 3)
+7132 - nice - Glen
+7407 - nice - Rich?
+8419 - post
+8423 - pend - Glen
+8435 - post
+8476 - must - Rich
+8480 - pend - Glen
+8481 - pend - Glen
+8578 - post
+8598 - nice - Rich
+8646 - must - ?
+8680 - close, fixed?
+9045 - pend - Glen
+9239 - must - dims
+9393 - must - Rich
+9405 - must - Tom
+9452 - post
+9473 - post
+9642 ...
 
 
 MESSAGE PARSING / ENCODING
