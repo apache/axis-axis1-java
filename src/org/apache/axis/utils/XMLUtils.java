@@ -102,6 +102,8 @@ public class XMLUtils {
         LogFactory.getLog(XMLUtils.class.getName());
         
     public static final String charEncoding = "ISO-8859-1";
+    private static final String saxParserFactoryProperty =
+        "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
     private static SAXParserFactory       saxFactory;
@@ -161,11 +163,14 @@ public class XMLUtils {
 
     /** Initialize the SAX parser factory.
      *
-     * @param factoryClassName The (optional) class name of the desired SAXParserFactory
-     *                         implementation.  Will be assigned to the system
-     *                         property <b>javax.xml.parsers.SAXParserFactory</b>.
-     *                         If <code>null</code>, leaves current setting alone.
-     * @param namespaceAware true if we want a namespace-aware parser (which we do)
+     * @param factoryClassName The (optional) class name of the desired
+     *                         SAXParserFactory implementation. Will be
+     *                         assigned to the system property
+     *                         <b>javax.xml.parsers.SAXParserFactory</b>
+     *                         unless this property is already set.
+     *                         If <code>null</code>, leaves current setting
+     *                         alone.
+     * @param namespaceAware true if we want a namespace-aware parser
      * @param validating true if we want a validating parser
      *
      */
@@ -174,10 +179,24 @@ public class XMLUtils {
                                       boolean validating)
     {
         if (factoryClassName != null) {
-            System.setProperty("javax.xml.parsers.SAXParserFactory",
-                               factoryClassName);
+            try {
+                saxFactory = (SAXParserFactory)Class.forName(factoryClassName).
+                    newInstance();
+                /*
+                 * Set the system property only if it is not already set to
+                 * avoid corrupting environments in which Axis is embedded.
+                 */
+                if (System.getProperty(saxParserFactoryProperty) == null) {
+                    System.setProperty(saxParserFactoryProperty,
+                                       factoryClassName);
+                }
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+                saxFactory = null;
+            }
+       } else {
+            saxFactory = SAXParserFactory.newInstance();
         }
-        saxFactory = SAXParserFactory.newInstance();
         saxFactory.setNamespaceAware(namespaceAware);
         saxFactory.setValidating(validating);
     }
