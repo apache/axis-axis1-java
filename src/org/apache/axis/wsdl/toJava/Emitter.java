@@ -304,7 +304,7 @@ public class Emitter extends Parser {
      * Returns an object which contains of information on all generated files
      * including the class name, filename and a type string.
      *
-     * @return Anorg.apache.axis.wsdl.toJava.GeneratedFileInfo object
+     * @return An org.apache.axis.wsdl.toJava.GeneratedFileInfo object
      * @see org.apache.axis.wsdl.toJava.GeneratedFileInfo
      */
     public GeneratedFileInfo getGeneratedFileInfo()
