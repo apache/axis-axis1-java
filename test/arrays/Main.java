@@ -75,10 +75,12 @@ public class Main {
     static String[] movies = new String[] { "Star Trek", "A.I." };
     static String[] hobbies= new String[] { "programming", "reading about programming" };
     static String[] pets   = new String[] { "Byte", "Nibbles" };
+    static int[]    id     = new int[]    { 0, 0, 7 };
+    static int id2         = 123;
     static String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
     static String[] games  = new String[] { "Doom", "Axis & Allies" };
     static byte[]   nickName = new byte[] { 'g', 'e', 'e', 'k' };
-    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,
+    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets, id, id2,
                                               //foods,games,
                                               nickName);
     
@@ -103,6 +105,15 @@ public class Main {
         for(int i=0; i<pets.length; i++)
             System.err.print(" \"" + (String) pets[i] + "\"");
         System.err.println("");
+
+        System.err.print ("\tId=");
+        for(int i=0; i<id.length; i++)
+            System.err.print(" \"" + id[i] + "\"");
+        System.err.println("");
+
+        System.err.print ("\tId2="+id2);
+        System.err.println("");
+
 
         /*
         Object[] foods =pi.getFoods();
@@ -133,6 +144,10 @@ public class Main {
 
         // Get just the pets to test return of an array.
         pets = pib.getPetsFromName (name);
+        // Get just the id to test return of an int array.
+        id = pib.getIDFromName (name);
+        // Get just id2 to test return of int.
+        id2 = pib.getID2FromName (name);
         System.err.println (">> Response is:");
         printPersonalInfo (resp);
         pib.addEntry (name, pi);
