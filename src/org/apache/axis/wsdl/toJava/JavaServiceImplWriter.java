@@ -60,8 +60,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -69,9 +67,8 @@ import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 
-import javax.wsdl.extensions.soap.SOAPAddress;
-
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
@@ -169,14 +166,13 @@ public class JavaServiceImplWriter extends JavaWriter {
             }
 
             // Get endpoint address and validate it
-            String address = getAddressFromPort(p);
+            String address = WSDLUtils.getAddressFromPort(p);
             if (address == null) {
                 // now what?
                 throw new IOException(JavaUtils.getMessage("emitFail02",
                         portName, className));
             }
             try {
-//                URL ep = new URL(address);
                 new URL(address);
             }
             catch (MalformedURLException e) {
@@ -259,22 +255,5 @@ public class JavaServiceImplWriter extends JavaWriter {
         pw.println("}");
         pw.close();
     } // writeFileBody
-
-    /**
-     * Return the endpoint address from a <soap:address location="..."> tag
-     */
-    private String getAddressFromPort(Port p) {
-        // Get the endpoint for a port
-        List extensibilityList = p.getExtensibilityElements();
-        for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
-            Object obj = li.next();
-            if (obj instanceof SOAPAddress) {
-                return XMLUtils.xmlEncodeString(
-                        ((SOAPAddress) obj).getLocationURI());
-            }
-        }
-        // didn't find it
-        return null;
-    } // getAddressFromPort
 
 } // class JavaServiceImplWriter
