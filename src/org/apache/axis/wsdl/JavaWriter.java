@@ -263,26 +263,32 @@ public abstract class JavaWriter implements Writer {
      * and opening tag.
      */
     protected void initializeDeploymentDoc(String deploymentOpName) throws IOException {
-        pw.println("<!--                                         " +
-                "                    -->");
-        pw.println("<!--Use this file to " + deploymentOpName +
-                " some handlers/chains and services  -->");
-        pw.println("<!--Two ways to do this:                     " +
-                "                    -->");
-        pw.println("<!--  java org.apache.axis.utils.Admin " +
-                deploymentOpName + ".xml              -->");
-        pw.println("<!--     from the same dir that the Axis " +
-                "engine runs             -->");
-        pw.println("<!--or                                     " +
-                "                      -->");
-        pw.println("<!--  java org.apache.axis.client.AdminClient " +
-                deploymentOpName + ".xml       -->");
-        pw.println("<!--     after the axis server is running    " +
-                "                    -->");
-        pw.println("<!--This file will be replaced by WSDD once " +
-                "it's ready           -->");
+        if ("deploy".equals(deploymentOpName)) {
+            pw.println(JavaUtils.getMessage("deploy00"));
+        }
+        else {
+            pw.println(JavaUtils.getMessage("deploy01"));
+        }
+        pw.println(JavaUtils.getMessage("deploy02"));
+        if ("deploy".equals(deploymentOpName)) {
+            pw.println(JavaUtils.getMessage("deploy03"));
+        }
+        else {
+            pw.println(JavaUtils.getMessage("deploy04"));
+        }
+        pw.println(JavaUtils.getMessage("deploy05"));
+        pw.println(JavaUtils.getMessage("deploy06"));
+        if ("deploy".equals(deploymentOpName)) {
+            pw.println(JavaUtils.getMessage("deploy07"));
+        }
+        else {
+            pw.println(JavaUtils.getMessage("deploy08"));
+        }
+        pw.println(JavaUtils.getMessage("deploy09"));
         pw.println();
-        pw.println("<m:" + deploymentOpName + " xmlns:m=\"AdminService\">");
+        pw.println("<deployment");
+        pw.println("    xmlns=\"http://xml.apache.org/axis/wsdd/\"");
+        pw.println("    xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">");
     } // initializeDeploymentDoc
 
     /**

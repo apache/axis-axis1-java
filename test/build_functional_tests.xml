@@ -148,12 +148,12 @@ Copyright:
     </copy>
     <path id="deploy.xml.files">
         <fileset dir="${build.dir}/work">
-          <include name="**/deploy.xml"/>
+          <include name="**/deploy.wsdd"/>
         </fileset>
     </path>
     <path id="undeploy.xml.files">
         <fileset dir="${build.dir}/work">
-          <include name="**/undeploy.xml"/>
+          <include name="**/undeploy.wsdd"/>
         </fileset>
     </path>
     <property name="deploy.xml.property" refid="deploy.xml.files"/>

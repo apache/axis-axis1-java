@@ -81,7 +81,7 @@ public class JavaUndeployWriter extends JavaWriter {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "undeploy"),
                 "",
-                "xml",
+                "wsdd",
                 JavaUtils.getMessage("genUndeploy00"));
         this.definition = definition;
         this.symbolTable = symbolTable;
@@ -100,7 +100,7 @@ public class JavaUndeployWriter extends JavaWriter {
     protected void writeFileBody() throws IOException {
         try {
             writeDeployServices();
-            pw.println("</m:undeploy>");
+            pw.println("</deployment>");
             pw.close();
         }
         catch (IOException e) {
@@ -119,7 +119,7 @@ public class JavaUndeployWriter extends JavaWriter {
             Service myService = (Service) mapIterator.next();
 
             pw.println();
-            pw.println("   <!-- " + JavaUtils.getMessage("wsdlService00",
+            pw.println("  <!-- " + JavaUtils.getMessage("wsdlService00",
                     myService.getQName().getLocalPart()) + " -->");
             pw.println();
 
@@ -140,9 +140,9 @@ public class JavaUndeployWriter extends JavaWriter {
 
         boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
-        pw.println("   <service name=\"" + serviceName
-                + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
-        pw.println("   </service>");
+        pw.println("  <service name=\"" + serviceName
+                + "\" provider=\"" + (isRPC ? "java:RPC" : "java:MSG") + "\">");
+        pw.println("  </service>");
     } //writeDeployPort
 
 } // class JavaUndeployWriter
