@@ -269,7 +269,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" description="functional tests">
+  <target name="functional-tests" depends="buildTest" description="functional tests">
     <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
   </target>
 
