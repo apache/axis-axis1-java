@@ -55,7 +55,7 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.*;
@@ -163,7 +163,14 @@ public class RPCParam extends MessageElement
         if (value instanceof ElementRecorder) {
             // !!! Lazy deserialization here... We have the SAX events,
             //     but haven't run them through a deserializer yet.
-            return null;
+            StringWriter xml = new StringWriter();
+            try {
+               ((ElementRecorder)value).output(new SerializationContext(xml));
+            } catch (Exception e) {
+               if (DEBUG_LOG) e.printStackTrace();
+               return null;
+            }
+            return xml.getBuffer();
         }
         
         if (deserializer != null) {
@@ -177,10 +184,10 @@ public class RPCParam extends MessageElement
     public void output(SerializationContext context) throws IOException
     {
         AttributesImpl attrs = new AttributesImpl();
-        Object val = getValue();
+        if (deserializer != null) getValue();
         
-        if ((val != null) && (typeQName == null))
-            typeQName = context.getQNameForClass(val.getClass());
+        if ((value != null) && (typeQName == null))
+            typeQName = context.getQNameForClass(value.getClass());
         
         if (attributes != null) {
             // Must be writing a message we parsed earlier, so just put out
@@ -203,17 +210,19 @@ public class RPCParam extends MessageElement
                 }
             }
         
-            if (val == null)
+            if (value == null)
                 attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
                                    "CDATA", "1");
         }
         
         context.startElement(new QName(getNamespaceURI(), getName()), attrs);
+
         // Output the value...
-        if (val != null)
-            context.writeString(value.toString());
-        else if (value instanceof ElementRecorder)
-            ((ElementRecorder)value).output(context);
+        if (value != null)
+            if (value instanceof ElementRecorder)
+                ((ElementRecorder)value).output(context);
+            else
+                context.writeString(value.toString());
         
         context.endElement();
     }
