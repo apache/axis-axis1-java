@@ -88,7 +88,7 @@ public class EchoAttachment {
 
     Options opts = null;
 
-    EchoAttachment( Options opts) {
+    public EchoAttachment( Options opts) {
         this.opts = opts;
     }
 
