@@ -158,8 +158,28 @@ public class TestMessageElement extends TestCase {
         assertEquals(attrs.getLength(), 1);
     }
     
+    public void testAddNamespaceDeclaration() throws Exception {
+        MessageElement me = 
+            new MessageElement("http://www.wolfram.com","Test");
+        me.addNamespaceDeclaration("pre", "http://www.wolfram2.com");
+        me.addAttribute(
+            "http://www.w3.org/2001/XMLSchema-instance", 
+            "type",
+            "pre:test1");
+        boolean found = false;
+        Iterator it = me.getNamespacePrefixes();
+        while(!found && it.hasNext()){ 
+            String prefix = (String)it.next();
+            if (prefix.equals("pre") && 
+                me.getNamespaceURI(prefix).equals("http://www.wolfram2.com")) {
+                found = true;
+            }
+        }
+        assertTrue("Did not find namespace declaration \"pre\"", found);
+    }
+    
     public static void main(String[] args) throws Exception {
         TestMessageElement tester = new TestMessageElement("TestMessageElement");
-        tester.testGetCompleteAttributes();
+        tester.testAddNamespaceDeclaration();
     }
 }
