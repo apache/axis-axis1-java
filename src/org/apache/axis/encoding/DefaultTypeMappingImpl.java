@@ -275,35 +275,35 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // namespace versions.
         // XSD_DATE is the current one, which is why it is
         // registered after the other two
-        myRegister(Constants.XSD_DATE2,      java.util.Calendar.class,
+        myRegister(Constants.XSD_TIMEINSTANT1999,      java.util.Calendar.class,
                    new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_DATE2),
+                                             Constants.XSD_TIMEINSTANT1999),
                    new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_DATE2),
+                                               Constants.XSD_TIMEINSTANT1999),
                    true);
-        myRegister(Constants.XSD_DATE3,      java.util.Calendar.class,
+        myRegister(Constants.XSD_TIMEINSTANT2000,      java.util.Calendar.class,
                    new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_DATE3),
+                                             Constants.XSD_TIMEINSTANT2000),
                    new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_DATE3),
-                   true);
-        myRegister(Constants.XSD_DATE1,       java.util.Date.class,
-                   new DateSerializerFactory(java.util.Date.class,
-                                             Constants.XSD_DATE1),
-                   new DateDeserializerFactory(java.util.Date.class,
-                                               Constants.XSD_DATE1),
+                                               Constants.XSD_TIMEINSTANT2000),
                    true);
         myRegister(Constants.XSD_DATE,       java.util.Date.class,
-                   new CalendarSerializerFactory(java.util.Date.class,
+                   new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE),
-                   new CalendarDeserializerFactory(java.util.Date.class,
+                   new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE),
                    true);
-        myRegister(Constants.XSD_DATE,       java.util.Calendar.class,
+        myRegister(Constants.XSD_DATETIME,       java.util.Date.class,
+                   new CalendarSerializerFactory(java.util.Date.class,
+                                             Constants.XSD_DATETIME),
+                   new CalendarDeserializerFactory(java.util.Date.class,
+                                               Constants.XSD_DATETIME),
+                   true);
+        myRegister(Constants.XSD_DATETIME,       java.util.Calendar.class,
                    new CalendarSerializerFactory(java.util.Calendar.class,
-                                             Constants.XSD_DATE),
+                                             Constants.XSD_DATETIME),
                    new CalendarDeserializerFactory(java.util.Calendar.class,
-                                               Constants.XSD_DATE),
+                                               Constants.XSD_DATETIME),
                    true);
 
         // Serialize all extensions of Map to SOAP_MAP
@@ -428,7 +428,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // Register all known flavors of the namespace.
         try {
             if (xmlType.getNamespaceURI().equals(
-                       Constants.URI_DEFAULT_SCHEMA_XSD)) {
+                    Constants.URI_DEFAULT_SCHEMA_XSD)) {
                 for (int i=0; i < Constants.URIS_SCHEMA_XSD.length; i++) {
                     QName qName = new QName(Constants.URIS_SCHEMA_XSD[i],
                                             xmlType.getLocalPart());
@@ -436,7 +436,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                 }
             }
             else if (xmlType.getNamespaceURI().equals(
-                       Constants.URI_DEFAULT_SOAP_ENC)) {
+                    Constants.URI_DEFAULT_SOAP_ENC)) {
                 for (int i=0; i < Constants.URIS_SOAP_ENC.length; i++) {
                     QName qName = new QName(Constants.URIS_SOAP_ENC[i],
                                             xmlType.getLocalPart());
@@ -446,7 +446,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
             // Register with the specified xmlType.
             // This is the prefered mapping and the last registed one wins
             super.register(javaType, xmlType, sf, df);
-        } catch (Exception e) {}
+        } catch (JAXRPCException e) { }
     }
 
     // Don't allow anyone to muck with the default type mapping because
