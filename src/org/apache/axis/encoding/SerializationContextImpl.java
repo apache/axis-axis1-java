@@ -1163,7 +1163,7 @@ public class SerializationContextImpl implements SerializationContext
             if (info == null) {
                 info = getSerializer(javaType, value);
                 // Must send type if it does not match preferred type
-                if (xmlType != null) {
+                if ((xmlType != null) && (sendType != null)){
                     shouldSendType = true;
                 }
                 xmlType = null;
