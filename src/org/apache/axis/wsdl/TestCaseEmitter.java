@@ -57,9 +57,11 @@ package org.apache.axis.wsdl;
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
+import javax.wsdl.Fault;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Generate the TestCase code for use in testing services derived from the
@@ -219,7 +221,17 @@ public class TestCaseEmitter {
                 }
 
                 Emitter.Parameter param = (Emitter.Parameter) iparam.next();
-                String paramType = param.type;
+                String paramType = null;
+
+                switch (param.mode) {
+                    case Emitter.Parameter.IN:
+                        paramType = param.type;
+                        break;
+
+                    default:
+                        paramType = emitter.holder(param.type);
+                }
+                
                 if ( this.emitter.isPrimitiveType(paramType) ) {
                     if ( "boolean".equals(paramType) ) {
                         writer.print("true");
@@ -228,7 +240,7 @@ public class TestCaseEmitter {
                     }
                 } else {
                     writer.print("new ");
-                    writer.print(param.type);
+                    writer.print(paramType);
                     writer.print("()");
                 }
             }
@@ -252,7 +264,27 @@ public class TestCaseEmitter {
             writer.println("        } catch (java.rmi.RemoteException re) {");
             writer.print(INDENT);
             writer.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
-            writer.println("        }");
+            writer.print("        }");
+            
+            Map faultMap = op.getFaults();
+
+            if (faultMap != null) {
+                Iterator i = faultMap.values().iterator();
+                int count = 0;
+
+                while (i.hasNext()) {
+                    count++;
+                    Fault f = (Fault) i.next();
+                    writer.print(" catch (");
+                    writer.print(f.getName());
+                    writer.println(" e" + count + ") {");
+                    writer.print(INDENT);
+                    writer.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
+                    writer.print("        }");
+                }
+            }
+
+            writer.println();
         }
     }
 
