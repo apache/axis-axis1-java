@@ -105,6 +105,7 @@ public class HTTPDispatchHandler implements Handler {
       InputStream   inp  = sock.getInputStream();
       String        header = "POST " + tmpURL.getPath() + " HTTP/1.0\n" +
                              "Content-Length: " + reqEnv.length() + "\n" +
+                             "Content-Type: text/xml\n" +
                              "SOAPAction: " + action + "\n\n" ;
 
       out.write( header.getBytes() );
