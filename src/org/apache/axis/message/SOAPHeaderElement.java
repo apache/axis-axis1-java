@@ -158,7 +158,7 @@ public class SOAPHeaderElement extends MessageElement
 
     private void setMustUnderstandFromString(String val, boolean isSOAP12) 
             throws AxisFault {
-        if (val != null) {
+        if (val != null && val.length() > 0) {
             if ("0".equals(val)) {
                 mustUnderstand = false;
             } else if ("1".equals(val)) {
