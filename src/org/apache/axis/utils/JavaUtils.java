@@ -982,25 +982,52 @@ public class JavaUtils
      */
     public static boolean isEnumClass(Class cls) {
         try {
-            java.lang.reflect.Method m  = cls.getMethod("getValue", null);
-            java.lang.reflect.Method m2 = cls.getMethod("toString", null);
-            java.lang.reflect.Method m3 = cls.getMethod("fromString",
-                                                        new Class[] {java.lang.String.class});
+            java.lang.reflect.Method[] methods = cls.getMethods();
+            java.lang.reflect.Method getValueMethod = null, fromValueMethod = null,
+                setValueMethod = null, fromStringMethod = null;
 
-            if (m != null && m2 != null && m3 != null &&
-                cls.getMethod("fromValue", new Class[] {m.getReturnType()}) != null) {
-                try {
-                    if (cls.getMethod("setValue",  new Class[] {m.getReturnType()}) == null)
-                        return true;
-                    return false;
-                } catch (java.lang.NoSuchMethodException e) {
-                    return true;  // getValue & fromValue exist.  setValue does not exist.  Thus return true.
+            // linear search: in practice, this is faster than
+            // sorting/searching a short array of methods.
+            for (int i = 0; i < methods.length; i++) {
+                String name = methods[i].getName();
+
+                if (name.equals("getValue")
+                    && methods[i].getParameterTypes().length == 0) { // getValue()
+                    getValueMethod = methods[i];
+                } else if (name.equals("fromString")) { // fromString(String s)
+                    Object[] params = methods[i].getParameterTypes();
+                    if (params.length == 1
+                        && params[0] == String.class) {
+                        fromStringMethod = methods[i];
+                    }
+                } else if (name.equals("fromValue")
+                           && methods[i].getParameterTypes().length == 1) { // fromValue(Something s)
+                    fromValueMethod = methods[i];
+                } else if (name.equals("setValue")
+                           && methods[i].getParameterTypes().length == 1) { // setValue(Something s)
+                    setValueMethod = methods[i];
                 }
             }
-        } catch (java.lang.NoSuchMethodException e) {}
-        return false;
-    }
 
+            // must have getValue and fromString, but not setValue
+            // must also have toString(), but every Object subclass has that, so
+            // no need to check for it.
+            if (null != getValueMethod && null != fromStringMethod) {
+                if (null != setValueMethod
+                    && setValueMethod.getParameterTypes().length == 1
+                    && getValueMethod.getReturnType() == setValueMethod.getParameterTypes()[0]) {
+                    // setValue exists: return false
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } catch (java.lang.SecurityException e) {
+            return false;
+        } // end of catch
+    }
 
     public static String stackToString(Throwable e){
       java.io.StringWriter sw= new java.io.StringWriter(1024); 
