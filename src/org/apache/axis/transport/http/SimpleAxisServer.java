@@ -59,6 +59,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.server.AxisServer;
@@ -102,11 +104,11 @@ public class SimpleAxisServer implements Runnable {
     // cleanup (perhaps just a cap on max # of sessions, and some kind of LRU
     // cleanup policy).
     private Hashtable sessions = new Hashtable();
-    
+
     // Are we doing sessions?
     // Set this to false if you don't want any session overhead.
     public static boolean doSessions = true;
-    
+
     // What is our current session index?
     // This is a monotonically increasing, non-thread-safe integer
     // (thread safety not considered crucial here)
@@ -114,10 +116,10 @@ public class SimpleAxisServer implements Runnable {
 
     // Configuration provider
     private static FileProvider provider = new FileProvider("server-config.xml");
-    
+
     // Another example of configuration (AdminService only) might look like this...
     //private static XMLStringProvider provider = new XMLStringProvider("<engineConfig><handlers><handler name=\"MsgDispatcher\" class=\"org.apache.axis.providers.java.MsgProvider\"/></handlers><services><service name=\"AdminService\" pivot=\"MsgDispatcher\"><option name=\"className\" value=\"org.apache.axis.utils.Admin\"/><option name=\"methodName\" value=\"AdminService\"/><option name=\"enableRemoteAdmin\" value=\"false\"/></service></services></engineConfig>");
-    
+
     // Axis server (shared between instances)
     private static AxisServer myAxisServer = null;
     private static synchronized AxisServer getAxisServer() {
@@ -147,7 +149,7 @@ public class SimpleAxisServer implements Runnable {
 
     // Mime/Content separator
     private static byte SEPARATOR[] = "\n\n".getBytes();
-    
+
     // Tiddly little response
     private static final String responseStr =
             "<html><head><title>SimpleAxisServer</title></head>" +
@@ -158,7 +160,7 @@ public class SimpleAxisServer implements Runnable {
 
     // Axis specific constants
     private static String transportName = "SimpleHTTP";
-    
+
     // are we stopped?
     // latch to true if stop() is called
     private boolean stopped = false;
@@ -174,7 +176,7 @@ public class SimpleAxisServer implements Runnable {
         // create an Axis server
         AxisServer engine = getAxisServer();
         engine.init();
-        
+
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
         Message        requestMsg;
@@ -207,7 +209,7 @@ public class SimpleAxisServer implements Runnable {
             msgContext.reset();
             //msgContext.setProperty("transport", "HTTPTransport");
             msgContext.setTransportName(transportName);
-            
+
             try {
                 try {
                     socket = serverSocket.accept();
@@ -223,7 +225,7 @@ public class SimpleAxisServer implements Runnable {
 
                 // cookie for this session, if any
                 String cooky = null;
-                
+
                 try {
                     // wipe cookies if we're doing sessions
                     if (doSessions) {
@@ -357,22 +359,39 @@ public class SimpleAxisServer implements Runnable {
                     // invoke the Axis engine
                     engine.invoke(msgContext);
 
-                } catch( AxisFault af ) {
-                    category.error("HTTP server fault", af);
+                } catch( Exception e ) {
+                    AxisFault af;
+                    if (e instanceof AxisFault) {
+                        af = (AxisFault)e;
+                        category.error("HTTP server fault", af);
 
-                    if ("Server.Unauthorized".equals(af.getFaultCode())) {
-                        status = UNAUTH; // SC_UNAUTHORIZED
+                        if ("Server.Unauthorized".equals(af.getFaultCode())) {
+                            status = UNAUTH; // SC_UNAUTHORIZED
+                        } else {
+                            status = ISE; // SC_INTERNAL_SERVER_ERROR
+                        }
                     } else {
                         status = ISE; // SC_INTERNAL_SERVER_ERROR
+                        af = new AxisFault(e);
                     }
 
-                    msgContext.setResponseMessage(new Message(af));
-
-                } catch( Exception e ) {
-                    status = ISE; // SC_INTERNAL_SERVER_ERROR
-                    msgContext.setResponseMessage(new Message(new AxisFault(e)));
+                    // There may be headers we want to preserve in the
+                    // response message - so if it's there, just add the
+                    // FaultElement to it.  Otherwise, make a new one.
+                    Message msg = msgContext.getResponseMessage();
+                    if (msg == null) {
+                        msg = new Message((AxisFault)e);
+                        msgContext.setResponseMessage(msg);
+                    } else {
+                        try {
+                            SOAPEnvelope env = msg.getAsSOAPEnvelope();
+                            env.clearBody();
+                            env.addBodyElement(new SOAPFaultElement((AxisFault)e));
+                        } catch (AxisFault fault) {
+                            // Should never reach here!
+                        }
+                    }
                 }
-
 
                 // Retrieve the response from Axis
                 Message responseMsg = msgContext.getResponseMessage();
@@ -511,18 +530,18 @@ public class SimpleAxisServer implements Runnable {
     {
         int n;
         int len = 0;
-        
+
         // parse first line as GET or POST
         n=this.readLine(is, buf, 0, buf.length);
         if (n < 0) {
             // nothing!
             throw new IOException("Unexpected end of stream");
         }
-        
+
         // which does it begin with?
         httpRequest.delete(0, httpRequest.length());
         fileName.delete(0, fileName.length());
-        
+
         if (buf[0] == getHeader[0]) {
             httpRequest.append("GET");
             for (int i = 0; i < n - 5; i++) {
@@ -545,17 +564,17 @@ public class SimpleAxisServer implements Runnable {
         } else {
             throw new IOException("Cannot handle non-GET, non-POST request");
         }
-        
+
         while ((n=readLine(is,buf,0,buf.length)) > 0) {
-        
+
             // if we are at the separator blank line, bail right now
             if ((n<=2) && (buf[0]=='\n'||buf[0]=='\r') && (len>0)) break;
-            
+
             // RobJ gutted the previous logic; it was too hard to extend for more headers.
             // Now, all it does is search forwards for ": " in the buf,
             // then do a length / byte compare.
             // Hopefully this is still somewhat efficient (Sam is watching!).
-            
+
             // First, search forwards for ": "
             int endHeaderIndex = 0;
             while (endHeaderIndex < n && toLower[buf[endHeaderIndex]] != headerEnder[0]) {
@@ -564,50 +583,50 @@ public class SimpleAxisServer implements Runnable {
             endHeaderIndex += 2;
             // endHeaderIndex now points _just past_ the ": ", and is
             // comparable to the various lenLen, actionLen, etc. values
-            
+
             // convenience; i gets pre-incremented, so initialize it to one less
             int i = endHeaderIndex - 1;
-            
+
             // which header did we find?
             if (endHeaderIndex == lenLen && matches(buf, lenHeader)) {
                 // parse content length
-                
+
                 while ((++i<n) && (buf[i]>='0') && (buf[i]<='9')) {
                     len = (len*10) + (buf[i]-'0');
                 }
-                
+
             }
             else if (endHeaderIndex == actionLen
                        && matches(buf, actionHeader))
             {
-                           
+
                 soapAction.delete(0,soapAction.length());
                 // skip initial '"'
                 i++;
                 while ((++i<n) && (buf[i]!='"')) {
                     soapAction.append((char)(buf[i] & 0x7f));
                 }
-                           
+
             }
             else if (doSessions && endHeaderIndex == cookieLen
                        && matches(buf, cookieHeader))
             {
-                           
+
                 // keep everything up to first ;
                 while ((++i<n) && (buf[i]!=';') && (buf[i]!='\r') && (buf[i]!='\n')) {
                     cookie.append((char)(buf[i] & 0x7f));
                 }
-                           
+
             }
             else if (doSessions && endHeaderIndex == cookie2Len
                        && matches(buf, cookie2Header))
             {
-                           
+
                 // keep everything up to first ;
                 while ((++i<n) && (buf[i]!=';') && (buf[i]!='\r') && (buf[i]!='\n')) {
                     cookie2.append((char)(buf[i] & 0x7f));
                 }
-                           
+
             }
             else if (endHeaderIndex == authLen && matches(buf, authHeader)) {
                 if (matches(buf, endHeaderIndex, basicAuth)) {
@@ -624,8 +643,8 @@ public class SimpleAxisServer implements Runnable {
         }
         return len;
     }
-    
-    
+
+
     /**
      * does tolower[buf] match the target byte array, up to the target's length?
      */
@@ -752,7 +771,7 @@ public class SimpleAxisServer implements Runnable {
             e.printStackTrace();
             return;
         }
-        
+
         try {
             int port = opts.getPort();
             ServerSocket ss = new ServerSocket(port);
