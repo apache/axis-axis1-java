@@ -121,7 +121,7 @@ public class ArraySerializer extends Deserializer
      * converted array values.  This class is essential to support
      * arrays that are multi-referenced.
      **/
-    public class ArrayListExtension extends ArrayList {
+    public class ArrayListExtension extends ArrayList implements JavaUtils.ConvertCache {
         private Hashtable table = null;
         
         /**
