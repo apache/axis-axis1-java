@@ -273,10 +273,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      */
     public String getNamespaceURI(String prefix) 
     {
+        String result = namespaces.getNamespaceURI(prefix);
+        if (result != null)
+            return result;
+
         if (curElement != null)
             return curElement.getNamespaceURI(prefix);
 
-        return namespaces.getNamespaceURI(prefix);
+        return null;
     }
     
     /**
