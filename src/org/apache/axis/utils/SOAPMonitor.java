@@ -13,91 +13,221 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis.utils;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.axis.utils.Options;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.monitor.SOAPMonitorConstants;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
- * This is a SOAP Mointor Application class.  This class provides
+ * This is a SOAP Monitor Application class.  This class provides
  * the user interface for deploying the SOAP monitor service and
  * displaying data from the service.
- *
+ * 
  * @author Toshiyuki Kimura (toshi@apache.org)
  * @author Brian Price (pricebe@us.ibm.com)
- *
  */
 public class SOAPMonitor extends JFrame implements ActionListener {
 
     /**
      * Private data
      */
-    private JPanel      main_panel = null;
+    private JPanel main_panel = null;
+
+    /**
+     * Field tabbed_pane
+     */
     private JTabbedPane tabbed_pane = null;
-    private JTabbedPane top_pane    = null;
-    private int         port = 5001;
-    private String      axisHost = "localhost";
-    private int         axisPort = 8080;
-    private String      axisURI  = null;
-    private Vector      pages = null;
+
+    /**
+     * Field top_pane
+     */
+    private JTabbedPane top_pane = null;
+
+    /**
+     * Field port
+     */
+    private int port = 5001;
+
+    /**
+     * Field axisHost
+     */
+    private String axisHost = "localhost";
+
+    /**
+     * Field axisPort
+     */
+    private int axisPort = 8080;
+
+    /**
+     * Field axisURI
+     */
+    private String axisURI = null;
+
+    /**
+     * Field pages
+     */
+    private Vector pages = null;
+
+    /**
+     * Field titleStr
+     */
     private final String titleStr = "SOAP Monitor Administration";
 
+    /**
+     * Field set_panel
+     */
     private JPanel set_panel = null;
+
+    /**
+     * Field titleLabel
+     */
     private JLabel titleLabel = null;
 
+    /**
+     * Field add_btn
+     */
     private JButton add_btn = null;
+
+    /**
+     * Field del_btn
+     */
     private JButton del_btn = null;
+
+    /**
+     * Field save_btn
+     */
     private JButton save_btn = null;
+
+    /**
+     * Field login_btn
+     */
     private JButton login_btn = null;
 
+    /**
+     * Field model1
+     */
     private DefaultListModel model1 = null;
+
+    /**
+     * Field model2
+     */
     private DefaultListModel model2 = null;
 
+    /**
+     * Field list1
+     */
     private JList list1 = null;
+
+    /**
+     * Field list2
+     */
     private JList list2 = null;
 
+    /**
+     * Field serviceMap
+     */
     private HashMap serviceMap = null;
+
+    /**
+     * Field originalDoc
+     */
     private Document originalDoc = null;
 
+    /**
+     * Field axisUser
+     */
     private static String axisUser = null;
+
+    /**
+     * Field axisPass
+     */
     private static String axisPass = null;
 
+    /**
+     * Field adminClient
+     */
     private AdminClient adminClient = new AdminClient();
 
     /**
      * Main method for this class
+     * 
+     * @param args 
+     * @throws Exception 
      */
     public static void main(String args[]) throws Exception {
-		SOAPMonitor soapMonitor = null;
-
-        Options opts = new Options( args );
-        if ( opts.isFlagSet('?') > 0) {
-            System.out.println("Usage: SOAPMonitor [-l<url>] [-u<user>] [-w<password>] [-?]");
+        SOAPMonitor soapMonitor = null;
+        Options opts = new Options(args);
+        if (opts.isFlagSet('?') > 0) {
+            System.out.println(
+                    "Usage: SOAPMonitor [-l<url>] [-u<user>] [-w<password>] [-?]");
             System.exit(0);
         }
 
@@ -118,7 +248,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         if (soapMonitor.doLogin()) {
             soapMonitor.start();
         }
-	}
+    }
 
     /**
      * Constructor
@@ -126,22 +256,21 @@ public class SOAPMonitor extends JFrame implements ActionListener {
     public SOAPMonitor() {
         setTitle("SOAP Monitor Application");
         Dimension d = getToolkit().getScreenSize();
-        setSize(640,480);
-        setLocation((d.width-getWidth())/2,(d.height-getHeight())/2);
+        setSize(640, 480);
+        setLocation((d.width - getWidth()) / 2, (d.height - getHeight()) / 2);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new MyWindowAdapter());
 
         // Try to use the system look and feel
         try {
-           UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e){
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
         }
 
         // Create main panel to hold notebook
         main_panel = new JPanel();
         main_panel.setBackground(Color.white);
         main_panel.setLayout(new BorderLayout());
-
         top_pane = new JTabbedPane();
         set_panel = new JPanel();
 
@@ -164,37 +293,35 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         // buttons for CENTER panel to chage the monitoring state
         add_btn = new JButton("Turn On [ >> ]");
         del_btn = new JButton("[ << ] Turn Off");
-
         JPanel center_panel = new JPanel();
-        GridBagLayout layout=new GridBagLayout();
+        GridBagLayout layout = new GridBagLayout();
         center_panel.setLayout(layout);
-        GridBagConstraints c=new GridBagConstraints();
-        c.gridx=0;
-        c.gridy=0;
-        c.insets = new Insets(10,10,10,10);
-        layout.setConstraints(add_btn,c);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(10, 10, 10, 10);
+        layout.setConstraints(add_btn, c);
         center_panel.add(add_btn);
-        c.gridx=0;
-        c.gridy=1;
-        c.insets = new Insets(10,10,10,10);
-        layout.setConstraints(del_btn,c);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.insets = new Insets(10, 10, 10, 10);
+        layout.setConstraints(del_btn, c);
         center_panel.add(del_btn);
 
         // buttons for SOUTH panel
         save_btn = new JButton("Save changes");
         login_btn = new JButton("Change server");
-
         JPanel south_panel = new JPanel();
-        layout=new GridBagLayout();
-        c.gridx=0;
-        c.gridy=0;
-        c.insets = new Insets(10,10,10,10);
-        layout.setConstraints(save_btn,c);
+        layout = new GridBagLayout();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.insets = new Insets(10, 10, 10, 10);
+        layout.setConstraints(save_btn, c);
         south_panel.add(save_btn);
-        c.gridx=1;
-        c.gridy=0;
-        c.insets = new Insets(10,10,10,10);
-        layout.setConstraints(login_btn,c);
+        c.gridx = 1;
+        c.gridy = 0;
+        c.insets = new Insets(10, 10, 10, 10);
+        layout.setConstraints(login_btn, c);
         south_panel.add(login_btn);
 
         // set all controls to the border layout
@@ -216,21 +343,21 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         del_btn.setEnabled(false);
         save_btn.setEnabled(false);
         login_btn.setEnabled(false);
-
         top_pane.add("Setting", set_panel);
         top_pane.add("Monitoring", main_panel);
         getContentPane().add(top_pane);
 
         // Create the notebook
         tabbed_pane = new JTabbedPane(JTabbedPane.TOP);
-        main_panel.add(tabbed_pane,BorderLayout.CENTER);
+        main_panel.add(tabbed_pane, BorderLayout.CENTER);
         top_pane.setEnabled(false);
-
         setVisible(true);
     }
 
     /**
      * Do login process
+     * 
+     * @return 
      */
     private boolean doLogin() {
         Dimension d = null;
@@ -238,83 +365,77 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         // Login
         LoginDlg login = new LoginDlg();
         login.show();
-
         if (!login.isLogin()) {
             login_btn.setEnabled(true);
             return false;
         }
         login.dispose();
-
         save_btn.setEnabled(false);
         login_btn.setEnabled(false);
 
         // Get the axisHost & axisPort to be used
         String uri_str = login.getURI();
         try {
-            URI uri = new URI( uri_str );
+            URI uri = new URI(uri_str);
             axisHost = uri.getHost();
             axisPort = uri.getPort();
-            if (axisPort==-1) {
+            if (axisPort == -1) {
                 axisPort = 8080;
             }
             String axisPath = uri.getPath();
-            axisURI = "http://"+ axisHost +":"+ axisPort + axisPath;
-        } catch (URISyntaxException e) {}
-        titleLabel.setText(titleStr + " for ["+axisHost+":"+axisPort+"]");
-
+            axisURI = "http://" + axisHost + ":" + axisPort + axisPath;
+        } catch (URISyntaxException e) {
+        }
+        titleLabel.setText(titleStr + " for [" + axisHost + ":" + axisPort
+                + "]");
         final JProgressBar progressBar = new JProgressBar(0, 100);
         BarThread stepper = new BarThread(progressBar);
         stepper.start();
-
         JFrame progress = new JFrame();
-        d = new Dimension(250,50);
+        d = new Dimension(250, 50);
         progress.setSize(d);
         d = getToolkit().getScreenSize();
         progress.getContentPane().add(progressBar);
         progress.setTitle("Now, data loading ...");
-        progress.setLocation((d.width-progress.getWidth())/2,(d.height-progress.getHeight())/2);
+        progress.setLocation((d.width - progress.getWidth()) / 2,
+                (d.height - progress.getHeight()) / 2);
         progress.show();
 
         // Add notebook page for default host connection
         pages = new Vector();
         addPage(new SOAPMonitorPage(axisHost));
-
         serviceMap = new HashMap();
         originalDoc = getServerWSDD();
-
         model1.clear();
         model2.clear();
-
-        if (originalDoc!=null) {
+        if (originalDoc != null) {
             String ret = null;
             NodeList nl = originalDoc.getElementsByTagName("service");
-            for (int i=0; i<nl.getLength(); i++) {
+            for (int i = 0; i < nl.getLength(); i++) {
                 Node node = nl.item(i);
                 NamedNodeMap map = node.getAttributes();
                 ret = map.getNamedItem("name").getNodeValue();
                 serviceMap.put(ret, node);
                 if (!isMonitored(node)) {
-                    model1.addElement((String)ret);
+                    model1.addElement((String) ret);
                 } else {
-                    model2.addElement((String)ret);
+                    model2.addElement((String) ret);
                 }
             }
-            if (model1.size()>0) {
+            if (model1.size() > 0) {
                 add_btn.setEnabled(true);
             }
-            if (model2.size()>0) {
+            if (model2.size() > 0) {
                 del_btn.setEnabled(true);
             }
             progress.dispose();
             save_btn.setEnabled(true);
             login_btn.setEnabled(true);
             top_pane.setEnabled(true);
-
             return true;
         } else {
             progress.dispose();
             login_btn.setEnabled(true);
-
             return false;
         }
     }
@@ -323,104 +444,124 @@ public class SOAPMonitor extends JFrame implements ActionListener {
      * This class is a thred for a JProgressBar.
      */
     class BarThread extends Thread {
+
+        /**
+         * Field wait
+         */
         private int wait = 50;
+
+        /**
+         * Field progressBar
+         */
         JProgressBar progressBar = null;
 
+        /**
+         * Constructor BarThread
+         * 
+         * @param bar 
+         */
         public BarThread(JProgressBar bar) {
             progressBar = bar;
         }
 
+        /**
+         * Method run
+         */
         public void run() {
             int min = progressBar.getMinimum();
             int max = progressBar.getMaximum();
-            Runnable runner = new Runnable()
-            {
+            Runnable runner = new Runnable() {
                 public void run() {
                     int val = progressBar.getValue();
-                    progressBar.setValue(val+1);
+                    progressBar.setValue(val + 1);
                 }
             };
-            for (int i=min; i<max; i++) {
+            for (int i = min; i < max; i++) {
                 try {
                     SwingUtilities.invokeAndWait(runner);
                     Thread.sleep(wait);
                 } catch (InterruptedException ignoredException) {
-                } catch (InvocationTargetException ignoredException) {}
+                } catch (InvocationTargetException ignoredException) {
+                }
             }
         }
     }
 
     /**
      * Get the server-config.wsdd as a document to retrieve deployed services
+     * 
+     * @return 
      */
-    private Document getServerWSDD()
-    {
+    private Document getServerWSDD() {
         Document doc = null;
-
         try {
-            String [] param = new String [] {"-u"+axisUser,"-w"+axisPass,"-l "+axisURI, "list"};
-            String ret = adminClient.process( param );
-            doc = XMLUtils.newDocument(new ByteArrayInputStream(ret.getBytes()));
+            String[] param = new String[]{"-u" + axisUser, "-w" + axisPass,
+                                          "-l " + axisURI, "list"};
+            String ret = adminClient.process(param);
+            doc = XMLUtils.newDocument(
+                    new ByteArrayInputStream(ret.getBytes()));
         } catch (Exception e) {
             JOptionPane pane = new JOptionPane();
             String msg = e.toString();
             pane.setMessageType(JOptionPane.WARNING_MESSAGE);
             pane.setMessage(msg);
-            pane.setOptions(new String [] {"OK"});
+            pane.setOptions(new String[]{"OK"});
             JDialog dlg = pane.createDialog(null, "Login status");
             dlg.setVisible(true);
         }
-
         return doc;
     }
 
     /**
      * Deploy the specified wsdd to change the monitoring state
+     * 
+     * @param wsdd 
+     * @return 
      */
-    private boolean doDeploy(Document wsdd)
-    {
+    private boolean doDeploy(Document wsdd) {
         String deploy = null;
         Options opt = null;
-
-        deploy = XMLUtils.ElementToString( wsdd.getDocumentElement() );
+        deploy = XMLUtils.ElementToString(wsdd.getDocumentElement());
         try {
-            String [] param = new String [] {"-u"+axisUser,"-w"+axisPass,"-l "+axisURI, ""};
-            opt = new Options( param );
-            adminClient.process(opt, new ByteArrayInputStream(deploy.getBytes()));
+            String[] param = new String[]{"-u" + axisUser, "-w" + axisPass,
+                                          "-l " + axisURI, ""};
+            opt = new Options(param);
+            adminClient.process(opt,
+                    new ByteArrayInputStream(deploy.getBytes()));
         } catch (Exception e) {
             return false;
         }
-
         return true;
     }
 
     /**
      * Get a new document which has the specified node as the document root
+     * 
+     * @param target 
+     * @return 
      */
-    private Document getNewDocumentAsNode(Node target)
-    {
+    private Document getNewDocumentAsNode(Node target) {
         Document doc = null;
         Node node = null;
-
         try {
             doc = XMLUtils.newDocument();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
-
         node = doc.importNode(target, true);
         doc.appendChild(node);
-
         return doc;
     }
 
     /**
      * Add needed nodes for monitoring to the specified node
-     *
+     * <p/>
      * TODO: support JAX-RPC type definition (i.e. <handlerInfoChain/>)
+     * 
+     * @param target 
+     * @return 
      */
-    private Node addMonitor(Node target)
-    {
+    private Node addMonitor(Node target) {
         Document doc = null;
         Node node = null;
         Node newNode = null;
@@ -431,19 +572,19 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         final String monitor = "soapmonitor";
         final String handler = "handler";
         final String type = "type";
-
         doc = getNewDocumentAsNode(target);
 
         // Add "responseFlow node
         nl = doc.getElementsByTagName(resFlow);
-        if (nl.getLength()==0) {
+        if (nl.getLength() == 0) {
             node = doc.getDocumentElement().getFirstChild();
             newNode = doc.createElement(resFlow);
             doc.getDocumentElement().insertBefore(newNode, node);
         }
+
         // Add "requestFlow" node
         nl = doc.getElementsByTagName(reqFlow);
-        if (nl.getLength()==0) {
+        if (nl.getLength() == 0) {
             node = doc.getDocumentElement().getFirstChild();
             newNode = doc.createElement(reqFlow);
             doc.getDocumentElement().insertBefore(newNode, node);
@@ -453,26 +594,27 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         nl = doc.getElementsByTagName(reqFlow);
         node = nl.item(0).getFirstChild();
         newNode = doc.createElement(handler);
-        ((Element)newNode).setAttribute(type, monitor);
+        ((Element) newNode).setAttribute(type, monitor);
         nl.item(0).insertBefore(newNode, node);
 
         // Add "handler" node and "soapmonitor" attribute for "responseFlow"
         nl = doc.getElementsByTagName(resFlow);
         node = nl.item(0).getFirstChild();
         newNode = doc.createElement(handler);
-        ((Element)newNode).setAttribute(type, monitor);
+        ((Element) newNode).setAttribute(type, monitor);
         nl.item(0).insertBefore(newNode, node);
-
-        return (Node)doc.getDocumentElement();
+        return (Node) doc.getDocumentElement();
     }
 
     /**
      * Remove a few nodes for stoping monitor from the specified node
-     *
+     * <p/>
      * TODO: support JAX-RPC type definition (i.e. <handlerInfoChain/>)
+     * 
+     * @param target 
+     * @return 
      */
-    private Node delMonitor(Node target)
-    {
+    private Node delMonitor(Node target) {
         Document doc = null;
         Node node = null;
         Node newNode = null;
@@ -483,17 +625,15 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         final String monitor = "soapmonitor";
         final String handler = "handler";
         final String type = "type";
-
         doc = getNewDocumentAsNode(target);
-
         nl = doc.getElementsByTagName(handler);
         int size;
         size = nl.getLength();
-        Node [] removeNode = new Node [size];
-
-        if (size>0) newNode = nl.item(0).getParentNode();
-
-        for (int i=0; i<size; i++) {
+        Node[] removeNode = new Node[size];
+        if (size > 0) {
+            newNode = nl.item(0).getParentNode();
+        }
+        for (int i = 0; i < size; i++) {
             node = nl.item(i);
             NamedNodeMap map = node.getAttributes();
             ret = map.getNamedItem(type).getNodeValue();
@@ -501,50 +641,53 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 removeNode[i] = node;
             }
         }
-        for (int i=0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             Node child = removeNode[i];
-            if (child!=null) {
+            if (child != null) {
                 child.getParentNode().removeChild(child);
             }
         }
-        return (Node)doc.getDocumentElement();
+        return (Node) doc.getDocumentElement();
     }
 
     /**
      * Get a boolean value whether the specified node is monitoring or not
+     * 
+     * @param target 
+     * @return 
      */
-    private boolean isMonitored(Node target)
-    {
+    private boolean isMonitored(Node target) {
         Document doc = null;
-    	Node node = null;
-    	String ret = null;
+        Node node = null;
+        String ret = null;
         NodeList nl = null;
-    	final String monitor = "soapmonitor";
+        final String monitor = "soapmonitor";
         final String handler = "handler";
         final String type = "type";
-
         doc = getNewDocumentAsNode(target);
-		nl = doc.getElementsByTagName(handler);
-		for (int i=0; i<nl.getLength(); i++) {
-			node = nl.item(i);
-			NamedNodeMap map = node.getAttributes();
-			ret = map.getNamedItem(type).getNodeValue();
-			if (ret.equals(monitor)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-    	return false;
+        nl = doc.getElementsByTagName(handler);
+        for (int i = 0; i < nl.getLength(); i++) {
+            node = nl.item(i);
+            NamedNodeMap map = node.getAttributes();
+            ret = map.getNamedItem(type).getNodeValue();
+            if (ret.equals(monitor)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
      * Add a few nodes for authentification
-     *
+     * <p/>
      * TODO: support JAX-RPC type definition (i.e. <handlerInfoChain/>)
+     * 
+     * @param target 
+     * @return 
      */
-    private Node addAuthenticate(Node target)
-    {
+    private Node addAuthenticate(Node target) {
         Document doc = null;
         Node node = null;
         Node newNode = null;
@@ -553,21 +696,20 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         final String reqFlow = "requestFlow";
         final String handler = "handler";
         final String type = "type";
-        final String auth = "java:org.apache.axis.handlers.SimpleAuthenticationHandler";
-        final String param= "parameter";
+        final String auth =
+                "java:org.apache.axis.handlers.SimpleAuthenticationHandler";
+        final String param = "parameter";
         final String name = "name";
         final String role = "allowedRoles";
-        final String value= "value";
-        final String admin= "admin";
-
+        final String value = "value";
+        final String admin = "admin";
         boolean authNode = false;
         boolean roleNode = false;
-
         doc = getNewDocumentAsNode(target);
 
         // Add "requestFlow" node
         nl = doc.getElementsByTagName(reqFlow);
-        if (nl.getLength()==0) {
+        if (nl.getLength() == 0) {
             node = doc.getDocumentElement().getFirstChild();
             newNode = doc.createElement(reqFlow);
             doc.getDocumentElement().insertBefore(newNode, node);
@@ -575,9 +717,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         // Add "SimpleAuthenticationHandler"
         // (i.e. <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>)
-
         nl = doc.getElementsByTagName(handler);
-        for (int i=0; i<nl.getLength(); i++) {
+        for (int i = 0; i < nl.getLength(); i++) {
             node = nl.item(i);
             NamedNodeMap map = node.getAttributes();
             ret = map.getNamedItem(type).getNodeValue();
@@ -590,17 +731,17 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             nl = doc.getElementsByTagName(reqFlow);
             node = nl.item(0).getFirstChild();
             newNode = doc.createElement(handler);
-            ((Element)newNode).setAttribute(type, auth);
+            ((Element) newNode).setAttribute(type, auth);
             nl.item(0).insertBefore(newNode, node);
         }
 
         // Add "allowedRoles" (i.e. <parameter name="allowedRoles" value="admin"/> )
         nl = doc.getElementsByTagName(param);
-        for (int i=0; i<nl.getLength(); i++) {
+        for (int i = 0; i < nl.getLength(); i++) {
             node = nl.item(i);
             NamedNodeMap map = node.getAttributes();
-            node =map.getNamedItem(name);
-            if (node!=null) {
+            node = map.getNamedItem(name);
+            if (node != null) {
                 ret = node.getNodeValue();
                 if (ret.equals(role)) {
                     roleNode = true;
@@ -611,29 +752,35 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         if (!roleNode) {
             nl = doc.getElementsByTagName(param);
             newNode = doc.createElement(param);
-            ((Element)newNode).setAttribute(type, role);
-            ((Element)newNode).setAttribute(value, admin);
+            ((Element) newNode).setAttribute(type, role);
+            ((Element) newNode).setAttribute(value, admin);
             doc.insertBefore(newNode, nl.item(0));
         }
-
-        return (Node)doc.getDocumentElement();
+        return (Node) doc.getDocumentElement();
     }
 
     /**
      * Handle the window close event
      */
-    class MyWindowAdapter extends WindowAdapter
-	{
-		public void windowClosing(WindowEvent e){
+    class MyWindowAdapter extends WindowAdapter {
+
+        /**
+         * Method windowClosing
+         * 
+         * @param e 
+         */
+        public void windowClosing(WindowEvent e) {
             System.exit(0);
-		}
-	}
+        }
+    }
 
     /**
      * Add a page to the notebook
+     * 
+     * @param pg 
      */
     private void addPage(SOAPMonitorPage pg) {
-        tabbed_pane.addTab("  "+pg.getHost()+"  ", pg);
+        tabbed_pane.addTab("  " + pg.getHost() + "  ", pg);
         pages.addElement(pg);
     }
 
@@ -662,6 +809,10 @@ public class SOAPMonitor extends JFrame implements ActionListener {
     /*
      * Frame is no longer displayed
      */
+
+    /**
+     * Method stop
+     */
     public void stop() {
         // Tell all pages to stop talking to the server
         Enumeration e = pages.elements();
@@ -676,85 +827,102 @@ public class SOAPMonitor extends JFrame implements ActionListener {
     /**
      * This class is for the Login Dialog
      */
-    class LoginDlg extends JDialog implements ActionListener
-    {
+    class LoginDlg extends JDialog implements ActionListener {
 
-    	private JButton ok_button = null;
-    	private JButton cancel_button = null;
-    	private JTextField     user = new JTextField(20);
-    	private JPasswordField pass = new JPasswordField(20);
-        private JTextField     uri  = new JTextField(20);
+        /**
+         * Field ok_button
+         */
+        private JButton ok_button = null;
 
-    	private boolean loginState = false;
+        /**
+         * Field cancel_button
+         */
+        private JButton cancel_button = null;
 
-		/**
-		 * Constructor (create and layout page)
-		 */
-		public LoginDlg() {
-			setTitle("SOAP Monitor Login");
+        /**
+         * Field user
+         */
+        private JTextField user = new JTextField(20);
 
-			UIManager.put("Label.font", new Font("Dialog", Font.BOLD , 12));
+        /**
+         * Field pass
+         */
+        private JPasswordField pass = new JPasswordField(20);
 
+        /**
+         * Field uri
+         */
+        private JTextField uri = new JTextField(20);
+
+        /**
+         * Field loginState
+         */
+        private boolean loginState = false;
+
+        /**
+         * Constructor (create and layout page)
+         */
+        public LoginDlg() {
+            setTitle("SOAP Monitor Login");
+            UIManager.put("Label.font", new Font("Dialog", Font.BOLD, 12));
             JPanel panel = new JPanel();
-
-			ok_button = new JButton("OK");
-			ok_button.addActionListener(this);
-			cancel_button = new JButton("Cancel");
-			cancel_button.addActionListener(this);
+            ok_button = new JButton("OK");
+            ok_button.addActionListener(this);
+            cancel_button = new JButton("Cancel");
+            cancel_button.addActionListener(this);
 
             // default URI for AxisServlet
-            uri.setText( axisURI );
-
+            uri.setText(axisURI);
             JLabel userLabel = new JLabel("User:");
             JLabel passLabel = new JLabel("Password:");
-            JLabel uriLabel  = new JLabel("Axis URI:");
-
+            JLabel uriLabel = new JLabel("Axis URI:");
             userLabel.setHorizontalAlignment(JTextField.RIGHT);
             passLabel.setHorizontalAlignment(JTextField.RIGHT);
             uriLabel.setHorizontalAlignment(JTextField.RIGHT);
-
             panel.add(userLabel);
             panel.add(user);
             panel.add(passLabel);
-			panel.add(pass);
+            panel.add(pass);
             panel.add(uriLabel);
             panel.add(uri);
             panel.add(ok_button);
-			panel.add(cancel_button);
+            panel.add(cancel_button);
             setContentPane(panel);
-
             user.setText(SOAPMonitor.axisUser);
             pass.setText(SOAPMonitor.axisPass);
-
-			GridLayout layout = new GridLayout(4,2);
-			layout.setHgap(15);
-			layout.setVgap(5);
+            GridLayout layout = new GridLayout(4, 2);
+            layout.setHgap(15);
+            layout.setVgap(5);
             panel.setLayout(layout);
-
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             setModal(true);
             pack();
             Dimension d = getToolkit().getScreenSize();
-            setLocation((d.width-getWidth())/2,(d.height-getHeight())/2);
-		}
+            setLocation((d.width - getWidth()) / 2,
+                    (d.height - getHeight()) / 2);
+        }
 
-		/**
-		 * Listener to handle button actions
-		 */
-		public void actionPerformed(ActionEvent e) {
-			// Check if the user pressed the OK button
-			if (e.getSource() == ok_button) {
-                loginState=true;
+        /**
+         * Listener to handle button actions
+         * 
+         * @param e 
+         */
+        public void actionPerformed(ActionEvent e) {
+            // Check if the user pressed the OK button
+            if (e.getSource() == ok_button) {
+                loginState = true;
                 SOAPMonitor.axisUser = user.getText();
                 SOAPMonitor.axisPass = pass.getText();
-				this.hide();
-			} else if (e.getSource() == cancel_button) {
-				this.dispose();
-			}
-	    }
+                this.hide();
+            } else if (e.getSource() == cancel_button) {
+                this.dispose();
+            }
+        }
 
         /**
          * Get the URI of the AxisServlet we are using
+         * 
+         * @return 
          */
         public String getURI() {
             return uri.getText();
@@ -762,11 +930,12 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the login status as a boolean
+         * 
+         * @return 
          */
         public boolean isLogin() {
             return loginState;
         }
-
     }
 
     /**
@@ -774,80 +943,269 @@ public class SOAPMonitor extends JFrame implements ActionListener {
      * representing a server connection.
      */
     class SOAPMonitorPage extends JPanel
-                          implements Runnable,
-                                     ListSelectionListener,
-                                     ActionListener {
+            implements Runnable, ListSelectionListener, ActionListener {
 
         /**
          * Status Strings
          */
-        private final String STATUS_ACTIVE    = "The SOAP Monitor is started.";
-        private final String STATUS_STOPPED   = "The SOAP Monitor is stopped.";
-        private final String STATUS_CLOSED    = "The server communication has been terminated.";
-        private final String STATUS_NOCONNECT = "The SOAP Monitor is unable to communcate with the server.";
+        private final String STATUS_ACTIVE = "The SOAP Monitor is started.";
+
+        /**
+         * Field STATUS_STOPPED
+         */
+        private final String STATUS_STOPPED = "The SOAP Monitor is stopped.";
+
+        /**
+         * Field STATUS_CLOSED
+         */
+        private final String STATUS_CLOSED =
+                "The server communication has been terminated.";
+
+        /**
+         * Field STATUS_NOCONNECT
+         */
+        private final String STATUS_NOCONNECT =
+                "The SOAP Monitor is unable to communcate with the server.";
 
         /**
          * Private data
          */
-        private String                host = null;
-        private Socket                socket = null;
-        private ObjectInputStream     in = null;
-        private ObjectOutputStream    out = null;
+        private String host = null;
+
+        /**
+         * Field socket
+         */
+        private Socket socket = null;
+
+        /**
+         * Field in
+         */
+        private ObjectInputStream in = null;
+
+        /**
+         * Field out
+         */
+        private ObjectOutputStream out = null;
+
+        /**
+         * Field model
+         */
         private SOAPMonitorTableModel model = null;
-        private JTable                table = null;
-        private JScrollPane           scroll = null;
-        private JPanel                list_panel = null;
-        private JPanel                list_buttons = null;
-        private JButton               remove_button = null;
-        private JButton               remove_all_button = null;
-        private JButton               filter_button = null;
-        private JPanel                details_panel = null;
-        private JPanel                details_header = null;
-        private JSplitPane            details_soap = null;
-        private JPanel                details_buttons = null;
-        private JLabel                details_time = null;
-        private JLabel                details_target = null;
-        private JLabel                details_status = null;
-        private JLabel                details_time_value = null;
-        private JLabel                details_target_value = null;
-        private JLabel                details_status_value = null;
-        private EmptyBorder           empty_border = null;
-        private EtchedBorder          etched_border = null;
-        private JPanel                request_panel = null;
-        private JPanel                response_panel = null;
-        private JLabel                request_label = null;
-        private JLabel                response_label = null;
-        private SOAPMonitorTextArea   request_text = null;
-        private SOAPMonitorTextArea   response_text = null;
-        private JScrollPane           request_scroll = null;
-        private JScrollPane           response_scroll = null;
-        private JButton               layout_button = null;
-        private JSplitPane            split = null;
-        private JPanel                status_area = null;
-        private JPanel                status_buttons = null;
-        private JButton               start_button = null;
-        private JButton               stop_button = null;
-        private JLabel                status_text = null;
-        private JPanel                status_text_panel = null;
-        private SOAPMonitorFilter     filter = null;
-        private GridBagLayout         details_header_layout = null;
-        private GridBagConstraints    details_header_constraints = null;
-        private JCheckBox             reflow_xml = null;
+
+        /**
+         * Field table
+         */
+        private JTable table = null;
+
+        /**
+         * Field scroll
+         */
+        private JScrollPane scroll = null;
+
+        /**
+         * Field list_panel
+         */
+        private JPanel list_panel = null;
+
+        /**
+         * Field list_buttons
+         */
+        private JPanel list_buttons = null;
+
+        /**
+         * Field remove_button
+         */
+        private JButton remove_button = null;
+
+        /**
+         * Field remove_all_button
+         */
+        private JButton remove_all_button = null;
+
+        /**
+         * Field filter_button
+         */
+        private JButton filter_button = null;
+
+        /**
+         * Field details_panel
+         */
+        private JPanel details_panel = null;
+
+        /**
+         * Field details_header
+         */
+        private JPanel details_header = null;
+
+        /**
+         * Field details_soap
+         */
+        private JSplitPane details_soap = null;
+
+        /**
+         * Field details_buttons
+         */
+        private JPanel details_buttons = null;
+
+        /**
+         * Field details_time
+         */
+        private JLabel details_time = null;
+
+        /**
+         * Field details_target
+         */
+        private JLabel details_target = null;
+
+        /**
+         * Field details_status
+         */
+        private JLabel details_status = null;
+
+        /**
+         * Field details_time_value
+         */
+        private JLabel details_time_value = null;
+
+        /**
+         * Field details_target_value
+         */
+        private JLabel details_target_value = null;
+
+        /**
+         * Field details_status_value
+         */
+        private JLabel details_status_value = null;
+
+        /**
+         * Field empty_border
+         */
+        private EmptyBorder empty_border = null;
+
+        /**
+         * Field etched_border
+         */
+        private EtchedBorder etched_border = null;
+
+        /**
+         * Field request_panel
+         */
+        private JPanel request_panel = null;
+
+        /**
+         * Field response_panel
+         */
+        private JPanel response_panel = null;
+
+        /**
+         * Field request_label
+         */
+        private JLabel request_label = null;
+
+        /**
+         * Field response_label
+         */
+        private JLabel response_label = null;
+
+        /**
+         * Field request_text
+         */
+        private SOAPMonitorTextArea request_text = null;
+
+        /**
+         * Field response_text
+         */
+        private SOAPMonitorTextArea response_text = null;
+
+        /**
+         * Field request_scroll
+         */
+        private JScrollPane request_scroll = null;
+
+        /**
+         * Field response_scroll
+         */
+        private JScrollPane response_scroll = null;
+
+        /**
+         * Field layout_button
+         */
+        private JButton layout_button = null;
+
+        /**
+         * Field split
+         */
+        private JSplitPane split = null;
+
+        /**
+         * Field status_area
+         */
+        private JPanel status_area = null;
+
+        /**
+         * Field status_buttons
+         */
+        private JPanel status_buttons = null;
+
+        /**
+         * Field start_button
+         */
+        private JButton start_button = null;
+
+        /**
+         * Field stop_button
+         */
+        private JButton stop_button = null;
+
+        /**
+         * Field status_text
+         */
+        private JLabel status_text = null;
+
+        /**
+         * Field status_text_panel
+         */
+        private JPanel status_text_panel = null;
+
+        /**
+         * Field filter
+         */
+        private SOAPMonitorFilter filter = null;
+
+        /**
+         * Field details_header_layout
+         */
+        private GridBagLayout details_header_layout = null;
+
+        /**
+         * Field details_header_constraints
+         */
+        private GridBagConstraints details_header_constraints = null;
+
+        /**
+         * Field reflow_xml
+         */
+        private JCheckBox reflow_xml = null;
 
         /**
          * Constructor (create and layout page)
+         * 
+         * @param host_name 
          */
         public SOAPMonitorPage(String host_name) {
             host = host_name;
+
             // Set up default filter (show all messages)
             filter = new SOAPMonitorFilter();
+
             // Use borders to help improve appearance
             etched_border = new EtchedBorder();
+
             // Build top portion of split (list panel)
             model = new SOAPMonitorTableModel();
             table = new JTable(model);
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            table.setRowSelectionInterval(0,0);
+            table.setRowSelectionInterval(0, 0);
             table.setPreferredScrollableViewportSize(new Dimension(600, 96));
             table.getSelectionModel().addListSelectionListener(this);
             scroll = new JScrollPane(table);
@@ -865,12 +1223,14 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             list_buttons.add(filter_button);
             list_panel = new JPanel();
             list_panel.setLayout(new BorderLayout());
-            list_panel.add(scroll,BorderLayout.CENTER);
+            list_panel.add(scroll, BorderLayout.CENTER);
             list_panel.add(list_buttons, BorderLayout.SOUTH);
             list_panel.setBorder(empty_border);
+
             // Build bottom portion of split (message details)
             details_time = new JLabel("Time: ", SwingConstants.RIGHT);
-            details_target = new JLabel("Target Service: ", SwingConstants.RIGHT);
+            details_target = new JLabel("Target Service: ",
+                    SwingConstants.RIGHT);
             details_status = new JLabel("Status: ", SwingConstants.RIGHT);
             details_time_value = new JLabel();
             details_target_value = new JLabel();
@@ -887,21 +1247,27 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             details_header_layout = new GridBagLayout();
             details_header.setLayout(details_header_layout);
             details_header_constraints = new GridBagConstraints();
-            details_header_constraints.fill=GridBagConstraints.BOTH;
-            details_header_constraints.weightx=0.5;
-            details_header_layout.setConstraints(details_time,details_header_constraints);
+            details_header_constraints.fill = GridBagConstraints.BOTH;
+            details_header_constraints.weightx = 0.5;
+            details_header_layout.setConstraints(details_time,
+                    details_header_constraints);
             details_header.add(details_time);
-            details_header_layout.setConstraints(details_time_value,details_header_constraints);
+            details_header_layout.setConstraints(details_time_value,
+                    details_header_constraints);
             details_header.add(details_time_value);
-            details_header_layout.setConstraints(details_target,details_header_constraints);
+            details_header_layout.setConstraints(details_target,
+                    details_header_constraints);
             details_header.add(details_target);
-            details_header_constraints.weightx=1.0;
-            details_header_layout.setConstraints(details_target_value,details_header_constraints);
+            details_header_constraints.weightx = 1.0;
+            details_header_layout.setConstraints(details_target_value,
+                    details_header_constraints);
             details_header.add(details_target_value);
-            details_header_constraints.weightx=.5;
-            details_header_layout.setConstraints(details_status,details_header_constraints);
+            details_header_constraints.weightx = .5;
+            details_header_layout.setConstraints(details_status,
+                    details_header_constraints);
             details_header.add(details_status);
-            details_header_layout.setConstraints(details_status_value,details_header_constraints);
+            details_header_layout.setConstraints(details_status_value,
+                    details_header_constraints);
             details_header.add(details_status_value);
             details_header.setBorder(etched_border);
             request_label = new JLabel("SOAP Request", SwingConstants.CENTER);
@@ -912,7 +1278,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             request_panel.setLayout(new BorderLayout());
             request_panel.add(request_label, BorderLayout.NORTH);
             request_panel.add(request_scroll, BorderLayout.CENTER);
-            response_label = new JLabel("SOAP Response", SwingConstants.CENTER);
+            response_label =
+                    new JLabel("SOAP Response", SwingConstants.CENTER);
             response_text = new SOAPMonitorTextArea();
             response_text.setEditable(false);
             response_scroll = new JScrollPane(response_text);
@@ -934,14 +1301,16 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             details_buttons.add(reflow_xml);
             details_buttons.add(layout_button);
             details_panel.setLayout(new BorderLayout());
-            details_panel.add(details_header,BorderLayout.NORTH);
-            details_panel.add(details_soap,BorderLayout.CENTER);
-            details_panel.add(details_buttons,BorderLayout.SOUTH);
+            details_panel.add(details_header, BorderLayout.NORTH);
+            details_panel.add(details_soap, BorderLayout.CENTER);
+            details_panel.add(details_buttons, BorderLayout.SOUTH);
             details_panel.setBorder(empty_border);
+
             // Add the two parts to the age split pane
             split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
             split.setTopComponent(list_panel);
             split.setRightComponent(details_panel);
+
             // Build status area
             start_button = new JButton("Start");
             start_button.addActionListener(this);
@@ -962,6 +1331,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             status_area.add(status_buttons, BorderLayout.WEST);
             status_area.add(status_text_panel, BorderLayout.CENTER);
             status_area.setBorder(etched_border);
+
             // Add the split and status area to page
             setLayout(new BorderLayout());
             add(split, BorderLayout.CENTER);
@@ -970,6 +1340,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the name of the host we are displaying
+         * 
+         * @return 
          */
         public String getHost() {
             return host;
@@ -977,33 +1349,38 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Set the status text
+         * 
+         * @param txt 
          */
         public void setStatus(String txt) {
             status_text.setForeground(Color.black);
-            status_text.setText("  "+txt);
+            status_text.setText("  " + txt);
         }
 
         /**
          * Set the status text to an error
+         * 
+         * @param txt 
          */
         public void setErrorStatus(String txt) {
             status_text.setForeground(Color.red);
-            status_text.setText("  "+txt);
+            status_text.setText("  " + txt);
         }
 
         /**
          * Start talking to the server
          */
         public void start() {
-			String codehost = axisHost;
+            String codehost = axisHost;
             if (socket == null) {
                 try {
-
                     // Open the socket to the server
                     socket = new Socket(codehost, port);
+
                     // Create output stream
                     out = new ObjectOutputStream(socket.getOutputStream());
                     out.flush();
+
                     // Create input stream and start background
                     // thread to read data from the server
                     in = new ObjectInputStream(socket.getInputStream());
@@ -1012,7 +1389,6 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                     // Exceptions here are unexpected, but we can't
                     // really do anything (so just write it to stdout
                     // in case someone cares and then ignore it)
-                    System.out.println("Exception! "+e.toString());
                     e.printStackTrace();
                     setErrorStatus(STATUS_NOCONNECT);
                     socket = null;
@@ -1058,6 +1434,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             } else {
                 // Already stopped
             }
+
             // Make sure the right buttons are enabled
             start_button.setEnabled(true);
             stop_button.setEnabled(false);
@@ -1069,28 +1446,32 @@ public class SOAPMonitor extends JFrame implements ActionListener {
          * the server.
          */
         public void run() {
-            Long            id;
-            Integer         message_type;
-            String          target;
-            String          soap;
+            Long id;
+            Integer message_type;
+            String target;
+            String soap;
             SOAPMonitorData data;
-            int             selected;
-            int             row;
-            boolean         update_needed;
+            int selected;
+            int row;
+            boolean update_needed;
             while (socket != null) {
                 try {
                     // Get the data from the server
                     message_type = (Integer) in.readObject();
+
                     // Process the data depending on its type
                     switch (message_type.intValue()) {
                         case SOAPMonitorConstants.SOAP_MONITOR_REQUEST:
+
                             // Get the id, target and soap info
                             id = (Long) in.readObject();
                             target = (String) in.readObject();
                             soap = (String) in.readObject();
+
                             // Add new request data to the table
-                            data = new SOAPMonitorData(id,target,soap);
+                            data = new SOAPMonitorData(id, target, soap);
                             model.addData(data);
+
                             // If "most recent" selected then update
                             // the details area if needed
                             selected = table.getSelectedRow();
@@ -1099,28 +1480,34 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                             }
                             break;
                         case SOAPMonitorConstants.SOAP_MONITOR_RESPONSE:
+
                             // Get the id and soap info
                             id = (Long) in.readObject();
                             soap = (String) in.readObject();
                             data = model.findData(id);
                             if (data != null) {
                                 update_needed = false;
+
                                 // Get the selected row
                                 selected = table.getSelectedRow();
+
                                 // If "most recent", then always
                                 // update details area
                                 if (selected == 0) {
                                     update_needed = true;
                                 }
+
                                 // If the data being updated is
                                 // selected then update details
                                 row = model.findRow(data);
                                 if ((row != -1) && (row == selected)) {
                                     update_needed = true;
                                 }
+
                                 // Set the response and update table
                                 data.setSOAPResponse(soap);
                                 model.updateData(data);
+
                                 // Refresh details area (if needed)
                                 if (update_needed) {
                                     valueChanged(null);
@@ -1128,7 +1515,6 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                             }
                             break;
                     }
-
                 } catch (Exception e) {
                     // Exceptions are expected here when the
                     // server communication has been terminated.
@@ -1142,15 +1528,19 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Listener to handle table selection changes
+         * 
+         * @param e 
          */
         public void valueChanged(ListSelectionEvent e) {
             int row = table.getSelectedRow();
+
             // Check if they selected a specific row
             if (row > 0) {
                 remove_button.setEnabled(true);
             } else {
                 remove_button.setEnabled(false);
             }
+
             // Check for "most recent" selection
             if (row == 0) {
                 row = model.getRowCount() - 1;
@@ -1188,6 +1578,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Listener to handle button actions
+         * 
+         * @param e 
          */
         public void actionPerformed(ActionEvent e) {
             // Check if the user pressed the remove button
@@ -1198,13 +1590,15 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 table.repaint();
                 valueChanged(null);
             }
+
             // Check if the user pressed the remove all button
             if (e.getSource() == remove_all_button) {
                 model.clearAll();
-                table.setRowSelectionInterval(0,0);
+                table.setRowSelectionInterval(0, 0);
                 table.repaint();
                 valueChanged(null);
             }
+
             // Check if the user pressed the filter button
             if (e.getSource() == filter_button) {
                 filter.showDialog();
@@ -1214,19 +1608,23 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                     table.repaint();
                 }
             }
+
             // Check if the user pressed the start button
             if (e.getSource() == start_button) {
                 start();
             }
+
             // Check if the user pressed the stop button
             if (e.getSource() == stop_button) {
                 stop();
             }
+
             // Check if the user wants to switch layout
             if (e.getSource() == layout_button) {
                 details_panel.remove(details_soap);
                 details_soap.removeAll();
-                if (details_soap.getOrientation() == JSplitPane.HORIZONTAL_SPLIT) {
+                if (details_soap.getOrientation()
+                        == JSplitPane.HORIZONTAL_SPLIT) {
                     details_soap = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
                 } else {
                     details_soap = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -1238,6 +1636,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 details_panel.validate();
                 details_panel.repaint();
             }
+
             // Check if the user is changing the reflow option
             if (e.getSource() == reflow_xml) {
                 request_text.setReflowXML(reflow_xml.isSelected());
@@ -1254,17 +1653,38 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         /**
          * Private data
          */
-        private Long    id;
-        private String  time;
-        private String  target;
-        private String  soap_request;
-        private String  soap_response;
+        private Long id;
+
+        /**
+         * Field time
+         */
+        private String time;
+
+        /**
+         * Field target
+         */
+        private String target;
+
+        /**
+         * Field soap_request
+         */
+        private String soap_request;
+
+        /**
+         * Field soap_response
+         */
+        private String soap_response;
 
         /**
          * Constructor
+         * 
+         * @param id           
+         * @param target       
+         * @param soap_request 
          */
         public SOAPMonitorData(Long id, String target, String soap_request) {
             this.id = id;
+
             // A null id is used to signal that the "most recent" entry
             // is being created.
             if (id == null) {
@@ -1273,7 +1693,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 this.soap_request = null;
                 this.soap_response = null;
             } else {
-                this.time = DateFormat.getTimeInstance().format(new Date());
+                this.time =
+                        DateFormat.getTimeInstance().format(new Date());
                 this.target = target;
                 this.soap_request = soap_request;
                 this.soap_response = null;
@@ -1282,6 +1703,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the id for the SOAP message
+         * 
+         * @return 
          */
         public Long getId() {
             return id;
@@ -1289,6 +1712,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the time the SOAP request was received by the application
+         * 
+         * @return 
          */
         public String getTime() {
             return time;
@@ -1296,6 +1721,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the SOAP request target service name
+         * 
+         * @return 
          */
         public String getTargetService() {
             return target;
@@ -1303,6 +1730,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the status of the request
+         * 
+         * @return 
          */
         public String getStatus() {
             String status = "---";
@@ -1317,6 +1746,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the request SOAP contents
+         * 
+         * @return 
          */
         public String getSOAPRequest() {
             return soap_request;
@@ -1324,6 +1755,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Set the resposne SOAP contents
+         * 
+         * @param response 
          */
         public void setSOAPResponse(String response) {
             soap_response = response;
@@ -1331,6 +1764,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the response SOAP contents
+         * 
+         * @return 
          */
         public String getSOAPResponse() {
             return soap_response;
@@ -1348,32 +1783,54 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         /**
          * Column titles
          */
-        private final String[] column_names = { "Time",
-                                                "Target Service",
-                                                "Status" };
+        private final String[] column_names = {"Time", "Target Service",
+                                               "Status"};
+
         /**
          * Private data
          */
-        private Vector  data;
-        private Vector  filter_include;
-        private Vector  filter_exclude;
+        private Vector data;
+
+        /**
+         * Field filter_include
+         */
+        private Vector filter_include;
+
+        /**
+         * Field filter_exclude
+         */
+        private Vector filter_exclude;
+
+        /**
+         * Field filter_active
+         */
         private boolean filter_active;
+
+        /**
+         * Field filter_complete
+         */
         private boolean filter_complete;
-        private Vector  filter_data;
+
+        /**
+         * Field filter_data
+         */
+        private Vector filter_data;
 
         /**
          * Constructor
          */
         public SOAPMonitorTableModel() {
             data = new Vector();
+
             // Add "most recent" entry to top of table
-            SOAPMonitorData soap = new SOAPMonitorData(null,null,null);
+            SOAPMonitorData soap = new SOAPMonitorData(null, null, null);
             data.addElement(soap);
             filter_include = null;
             filter_exclude = null;
             filter_active = false;
             filter_complete = false;
             filter_data = null;
+
             // By default, exclude NotificationService and
             // EventViewerService messages
             filter_exclude = new Vector();
@@ -1385,6 +1842,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get column count (part of table model interface)
+         * 
+         * @return 
          */
         public int getColumnCount() {
             return column_names.length;
@@ -1392,6 +1851,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get row count (part of table model interface)
+         * 
+         * @return 
          */
         public int getRowCount() {
             int count = data.size();
@@ -1403,6 +1864,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get column name (part of table model interface)
+         * 
+         * @param col 
+         * @return 
          */
         public String getColumnName(int col) {
             return column_names[col];
@@ -1410,10 +1874,14 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get value at (part of table model interface)
+         * 
+         * @param row 
+         * @param col 
+         * @return 
          */
         public Object getValueAt(int row, int col) {
             SOAPMonitorData soap;
-            String          value = null;
+            String value = null;
             soap = (SOAPMonitorData) data.elementAt(row);
             if (filter_data != null) {
                 soap = (SOAPMonitorData) filter_data.elementAt(row);
@@ -1434,6 +1902,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Check if soap data matches filter
+         * 
+         * @param soap 
+         * @return 
          */
         public boolean filterMatch(SOAPMonitorData soap) {
             boolean match = true;
@@ -1470,6 +1941,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                     match = false;
                 }
             }
+
             // The "most recent" is always a match
             if (soap.getId() == null) {
                 match = true;
@@ -1479,6 +1951,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Add data to the table as a new row
+         * 
+         * @param soap 
          */
         public void addData(SOAPMonitorData soap) {
             int row = data.size();
@@ -1487,20 +1961,23 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 if (filterMatch(soap)) {
                     row = filter_data.size();
                     filter_data.addElement(soap);
-                    fireTableRowsInserted(row,row);
+                    fireTableRowsInserted(row, row);
                 }
             } else {
-                fireTableRowsInserted(row,row);
+                fireTableRowsInserted(row, row);
             }
         }
 
         /**
          * Find the data for a given id
+         * 
+         * @param id 
+         * @return 
          */
         public SOAPMonitorData findData(Long id) {
             SOAPMonitorData soap = null;
-            for (int row=data.size(); (row > 0) && (soap == null); row--) {
-                soap = (SOAPMonitorData) data.elementAt(row-1);
+            for (int row = data.size(); (row > 0) && (soap == null); row--) {
+                soap = (SOAPMonitorData) data.elementAt(row - 1);
                 if (soap.getId().longValue() != id.longValue()) {
                     soap = null;
                 }
@@ -1510,6 +1987,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Find the row in the table for a given message id
+         * 
+         * @param soap 
+         * @return 
          */
         public int findRow(SOAPMonitorData soap) {
             int row = -1;
@@ -1528,7 +2008,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             int last_row = data.size() - 1;
             if (last_row > 0) {
                 data.removeAllElements();
-                SOAPMonitorData soap = new SOAPMonitorData(null,null,null);
+                SOAPMonitorData soap = new SOAPMonitorData(null, null, null);
                 data.addElement(soap);
                 if (filter_data != null) {
                     filter_data.removeAllElements();
@@ -1540,6 +2020,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Remove a message from the table
+         * 
+         * @param row 
          */
         public void removeRow(int row) {
             SOAPMonitorData soap = null;
@@ -1551,11 +2033,13 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 filter_data.remove(soap);
                 data.remove(soap);
             }
-            fireTableRowsDeleted(row,row);
+            fireTableRowsDeleted(row, row);
         }
 
         /**
          * Set a new filter
+         * 
+         * @param filter 
          */
         public void setFilter(SOAPMonitorFilter filter) {
             // Save new filter criteria
@@ -1572,9 +2056,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         public void applyFilter() {
             // Re-filter using new criteria
             filter_data = null;
-            if ((filter_include != null) ||
-                (filter_exclude != null) ||
-                 filter_active || filter_complete ) {
+            if ((filter_include != null) || (filter_exclude != null)
+                    || filter_active || filter_complete) {
                 filter_data = new Vector();
                 Enumeration e = data.elements();
                 SOAPMonitorData soap;
@@ -1590,6 +2073,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the data for a row
+         * 
+         * @param row 
+         * @return 
          */
         public SOAPMonitorData getData(int row) {
             SOAPMonitorData soap = null;
@@ -1603,83 +2089,140 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Update a message
+         * 
+         * @param soap 
          */
-        public void updateData (SOAPMonitorData soap) {
-           int row;
-           if (filter_data == null) {
-               // No filter, so just fire table updated
-               row = data.indexOf(soap);
-               if (row != -1) {
-                   fireTableRowsUpdated(row,row);
-               }
-           } else {
-               // Check if the row was being displayed
-               row = filter_data.indexOf(soap);
-               if (row == -1) {
-                   // Row was not displayed, so check for if it
-                   // now needs to be displayed
-                   if (filterMatch(soap)) {
-                       int index = -1;
-                       row = data.indexOf(soap) + 1;
-                       while ((row < data.size()) && (index == -1)) {
-                           index = filter_data.indexOf(data.elementAt(row));
-                           if (index != -1) {
-                               // Insert at this location
-                               filter_data.add(index,soap);
-                           }
-                           row++;
-                       }
-                       if (index == -1) {
-                           // Insert at end
-                           index = filter_data.size();
-                           filter_data.addElement(soap);
-                       }
-                       fireTableRowsInserted(index,index);
-                   }
-               } else {
-                   // Row was displayed, so check if it needs to
-                   // be updated or removed
-                   if (filterMatch(soap)) {
-                       fireTableRowsUpdated(row,row);
-                   } else {
-                       filter_data.remove(soap);
-                       fireTableRowsDeleted(row,row);
-                   }
-               }
-           }
+        public void updateData(SOAPMonitorData soap) {
+            int row;
+            if (filter_data == null) {
+                // No filter, so just fire table updated
+                row = data.indexOf(soap);
+                if (row != -1) {
+                    fireTableRowsUpdated(row, row);
+                }
+            } else {
+                // Check if the row was being displayed
+                row = filter_data.indexOf(soap);
+                if (row == -1) {
+                    // Row was not displayed, so check for if it
+                    // now needs to be displayed
+                    if (filterMatch(soap)) {
+                        int index = -1;
+                        row = data.indexOf(soap) + 1;
+                        while ((row < data.size()) && (index == -1)) {
+                            index = filter_data.indexOf(data.elementAt(row));
+                            if (index != -1) {
+                                // Insert at this location
+                                filter_data.add(index, soap);
+                            }
+                            row++;
+                        }
+                        if (index == -1) {
+                            // Insert at end
+                            index = filter_data.size();
+                            filter_data.addElement(soap);
+                        }
+                        fireTableRowsInserted(index, index);
+                    }
+                } else {
+                    // Row was displayed, so check if it needs to
+                    // be updated or removed
+                    if (filterMatch(soap)) {
+                        fireTableRowsUpdated(row, row);
+                    } else {
+                        filter_data.remove(soap);
+                        fireTableRowsDeleted(row, row);
+                    }
+                }
+            }
         }
-
     }
 
     /**
      * Panel with checkbox and list
      */
     class ServiceFilterPanel extends JPanel
-                             implements ActionListener,
-                                        ListSelectionListener,
-                                        DocumentListener {
+            implements ActionListener, ListSelectionListener, DocumentListener {
 
-        private JCheckBox    service_box = null;
-        private Vector       filter_list = null;
-        private Vector       service_data = null;
-        private JList        service_list = null;
-        private JScrollPane  service_scroll = null;
-        private JButton      remove_service_button = null;
-        private JPanel       remove_service_panel = null;
-        private EmptyBorder  indent_border = null;
-        private EmptyBorder  empty_border = null;
-        private JPanel       service_area = null;
-        private JPanel       add_service_area = null;
-        private JTextField   add_service_field = null;
-        private JButton      add_service_button = null;
-        private JPanel       add_service_panel = null;
+        /**
+         * Field service_box
+         */
+        private JCheckBox service_box = null;
+
+        /**
+         * Field filter_list
+         */
+        private Vector filter_list = null;
+
+        /**
+         * Field service_data
+         */
+        private Vector service_data = null;
+
+        /**
+         * Field service_list
+         */
+        private JList service_list = null;
+
+        /**
+         * Field service_scroll
+         */
+        private JScrollPane service_scroll = null;
+
+        /**
+         * Field remove_service_button
+         */
+        private JButton remove_service_button = null;
+
+        /**
+         * Field remove_service_panel
+         */
+        private JPanel remove_service_panel = null;
+
+        /**
+         * Field indent_border
+         */
+        private EmptyBorder indent_border = null;
+
+        /**
+         * Field empty_border
+         */
+        private EmptyBorder empty_border = null;
+
+        /**
+         * Field service_area
+         */
+        private JPanel service_area = null;
+
+        /**
+         * Field add_service_area
+         */
+        private JPanel add_service_area = null;
+
+        /**
+         * Field add_service_field
+         */
+        private JTextField add_service_field = null;
+
+        /**
+         * Field add_service_button
+         */
+        private JButton add_service_button = null;
+
+        /**
+         * Field add_service_panel
+         */
+        private JPanel add_service_panel = null;
 
         /**
          * Constructor
+         * 
+         * @param text 
+         * @param list 
          */
         public ServiceFilterPanel(String text, Vector list) {
-            empty_border = new EmptyBorder(5,5,0,5);
-            indent_border = new EmptyBorder(5,25,5,5);
+            empty_border = new EmptyBorder(5, 5, 0, 5);
+            indent_border = new EmptyBorder(5, 25, 5, 5);
             service_box = new JCheckBox(text);
             service_box.addActionListener(this);
             service_data = new Vector();
@@ -1732,6 +2275,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get the current list of services
+         * 
+         * @return 
          */
         public Vector getServiceList() {
             Vector list = null;
@@ -1743,6 +2288,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Listener to handle button actions
+         * 
+         * @param e 
          */
         public void actionPerformed(ActionEvent e) {
             // Check if the user changed the service filter option
@@ -1754,9 +2301,10 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 add_service_field.setText("");
                 add_service_button.setEnabled(false);
             }
+
             // Check if the user pressed the add service button
-            if ((e.getSource() == add_service_button) ||
-                (e.getSource() == add_service_field)) {
+            if ((e.getSource() == add_service_button)
+                    || (e.getSource() == add_service_field)) {
                 String text = add_service_field.getText();
                 if ((text != null) && (text.length() > 0)) {
                     service_data.addElement(text);
@@ -1765,10 +2313,11 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 add_service_field.setText("");
                 add_service_field.requestFocus();
             }
+
             // Check if the user pressed the remove service button
             if (e.getSource() == remove_service_button) {
                 Object[] sels = service_list.getSelectedValues();
-                for (int i=0; i<sels.length; i++) {
+                for (int i = 0; i < sels.length; i++) {
                     service_data.removeElement(sels[i]);
                 }
                 service_list.setListData(service_data);
@@ -1778,6 +2327,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Handle changes to the text field
+         * 
+         * @param e 
          */
         public void changedUpdate(DocumentEvent e) {
             String text = add_service_field.getText();
@@ -1790,6 +2341,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Handle changes to the text field
+         * 
+         * @param e 
          */
         public void insertUpdate(DocumentEvent e) {
             changedUpdate(e);
@@ -1797,6 +2350,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Handle changes to the text field
+         * 
+         * @param e 
          */
         public void removeUpdate(DocumentEvent e) {
             changedUpdate(e);
@@ -1804,6 +2359,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Listener to handle service list selection changes
+         * 
+         * @param e 
          */
         public void valueChanged(ListSelectionEvent e) {
             if (service_list.getSelectedIndex() == -1) {
@@ -1822,26 +2379,102 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         /**
          * Private data
          */
-        private JDialog            dialog = null;
-        private JPanel             panel = null;
-        private JPanel             buttons = null;
-        private JButton            ok_button = null;
-        private JButton            cancel_button = null;
+        private JDialog dialog = null;
+
+        /**
+         * Field panel
+         */
+        private JPanel panel = null;
+
+        /**
+         * Field buttons
+         */
+        private JPanel buttons = null;
+
+        /**
+         * Field ok_button
+         */
+        private JButton ok_button = null;
+
+        /**
+         * Field cancel_button
+         */
+        private JButton cancel_button = null;
+
+        /**
+         * Field include_panel
+         */
         private ServiceFilterPanel include_panel = null;
+
+        /**
+         * Field exclude_panel
+         */
         private ServiceFilterPanel exclude_panel = null;
-        private JPanel             status_panel = null;
-        private JCheckBox          status_box = null;
-        private EmptyBorder  empty_border = null;
-        private EmptyBorder  indent_border = null;
-        private JPanel             status_options = null;
-        private ButtonGroup        status_group = null;
-        private JRadioButton       status_active = null;
-        private JRadioButton       status_complete = null;
-        private Vector             filter_include_list = null;
-        private Vector             filter_exclude_list = null;
-        private boolean            filter_active = false;
-        private boolean            filter_complete = false;
-        private boolean            ok_pressed = false;
+
+        /**
+         * Field status_panel
+         */
+        private JPanel status_panel = null;
+
+        /**
+         * Field status_box
+         */
+        private JCheckBox status_box = null;
+
+        /**
+         * Field empty_border
+         */
+        private EmptyBorder empty_border = null;
+
+        /**
+         * Field indent_border
+         */
+        private EmptyBorder indent_border = null;
+
+        /**
+         * Field status_options
+         */
+        private JPanel status_options = null;
+
+        /**
+         * Field status_group
+         */
+        private ButtonGroup status_group = null;
+
+        /**
+         * Field status_active
+         */
+        private JRadioButton status_active = null;
+
+        /**
+         * Field status_complete
+         */
+        private JRadioButton status_complete = null;
+
+        /**
+         * Field filter_include_list
+         */
+        private Vector filter_include_list = null;
+
+        /**
+         * Field filter_exclude_list
+         */
+        private Vector filter_exclude_list = null;
+
+        /**
+         * Field filter_active
+         */
+        private boolean filter_active = false;
+
+        /**
+         * Field filter_complete
+         */
+        private boolean filter_complete = false;
+
+        /**
+         * Field ok_pressed
+         */
+        private boolean ok_pressed = false;
 
         /**
          * Constructor
@@ -1856,6 +2489,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get list of services to be included
+         * 
+         * @return 
          */
         public Vector getFilterIncludeList() {
             return filter_include_list;
@@ -1863,6 +2498,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Get list of services to be excluded
+         * 
+         * @return 
          */
         public Vector getFilterExcludeList() {
             return filter_exclude_list;
@@ -1870,6 +2507,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Check if filter active messages
+         * 
+         * @return 
          */
         public boolean getFilterActive() {
             return filter_active;
@@ -1877,6 +2516,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Check if filter complete messages
+         * 
+         * @return 
          */
         public boolean getFilterComplete() {
             return filter_complete;
@@ -1886,12 +2527,14 @@ public class SOAPMonitor extends JFrame implements ActionListener {
          * Show the filter dialog
          */
         public void showDialog() {
-            empty_border = new EmptyBorder(5,5,0,5);
-            indent_border = new EmptyBorder(5,25,5,5);
-            include_panel = new ServiceFilterPanel("Include messages based on target service:",
-                                                   filter_include_list);
-            exclude_panel = new ServiceFilterPanel("Exclude messages based on target service:",
-                                                   filter_exclude_list);
+            empty_border = new EmptyBorder(5, 5, 0, 5);
+            indent_border = new EmptyBorder(5, 25, 5, 5);
+            include_panel = new ServiceFilterPanel(
+                    "Include messages based on target service:",
+                    filter_include_list);
+            exclude_panel = new ServiceFilterPanel(
+                    "Exclude messages based on target service:",
+                    filter_exclude_list);
             status_box = new JCheckBox("Filter messages based on status:");
             status_box.addActionListener(this);
             status_active = new JRadioButton("Active messages only");
@@ -1911,7 +2554,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 }
             }
             status_options = new JPanel();
-            status_options.setLayout(new BoxLayout(status_options, BoxLayout.Y_AXIS));
+            status_options.setLayout(new BoxLayout(status_options,
+                    BoxLayout.Y_AXIS));
             status_options.add(status_active);
             status_options.add(status_complete);
             status_options.setBorder(indent_border);
@@ -1941,14 +2585,16 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             dialog.setModal(true);
             dialog.pack();
             Dimension d = dialog.getToolkit().getScreenSize();
-            dialog.setLocation((d.width-dialog.getWidth())/2,
-                               (d.height-dialog.getHeight())/2);
+            dialog.setLocation((d.width - dialog.getWidth()) / 2,
+                    (d.height - dialog.getHeight()) / 2);
             ok_pressed = false;
             dialog.show();
         }
 
         /**
          * Listener to handle button actions
+         * 
+         * @param e 
          */
         public void actionPerformed(ActionEvent e) {
             // Check if the user pressed the ok button
@@ -1965,10 +2611,12 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 ok_pressed = true;
                 dialog.dispose();
             }
+
             // Check if the user pressed the cancel button
             if (e.getSource() == cancel_button) {
                 dialog.dispose();
             }
+
             // Check if the user changed the status filter option
             if (e.getSource() == status_box) {
                 status_active.setEnabled(status_box.isSelected());
@@ -1978,6 +2626,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Check if the user pressed the ok button
+         * 
+         * @return 
          */
         public boolean okPressed() {
             return ok_pressed;
@@ -1993,8 +2643,16 @@ public class SOAPMonitor extends JFrame implements ActionListener {
          * Private data
          */
         private boolean format = false;
-        private String  original = "";
-        private String  formatted = null;
+
+        /**
+         * Field original
+         */
+        private String original = "";
+
+        /**
+         * Field formatted
+         */
+        private String formatted = null;
 
         /**
          * Constructor
@@ -2004,6 +2662,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Override setText to do formatting
+         * 
+         * @param text 
          */
         public void setText(String text) {
             original = text;
@@ -2018,6 +2678,8 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
         /**
          * Turn reflow on or off
+         * 
+         * @param reflow 
          */
         public void setReflowXML(boolean reflow) {
             format = reflow;
@@ -2035,48 +2697,54 @@ public class SOAPMonitor extends JFrame implements ActionListener {
          * Reflow XML
          */
         public void doFormat() {
-            Vector       parts = new Vector();
-            char[]       chars = original.toCharArray();
-            int          index = 0;
-            int          first = 0;
-            String       part = null;
+            Vector parts = new Vector();
+            char[] chars = original.toCharArray();
+            int index = 0;
+            int first = 0;
+            String part = null;
             while (index < chars.length) {
                 // Check for start of tag
                 if (chars[index] == '<') {
                     // Did we have data before this tag?
                     if (first < index) {
-                        part = new String(chars,first,index-first);
+                        part = new String(chars, first, index - first);
                         part = part.trim();
+
                         // Save non-whitespace data
                         if (part.length() > 0) {
                             parts.addElement(part);
                         }
                     }
+
                     // Save the start of tag
                     first = index;
                 }
+
                 // Check for end of tag
                 if (chars[index] == '>') {
                     // Save the tag
-                    part = new String(chars,first,index-first+1);
+                    part = new String(chars, first, index - first + 1);
                     parts.addElement(part);
-                    first = index+1;
+                    first = index + 1;
                 }
+
                 // Check for end of line
                 if ((chars[index] == '\n') || (chars[index] == '\r')) {
                     // Was there data on this line?
                     if (first < index) {
-                        part = new String(chars,first,index-first);
+                        part = new String(chars, first, index - first);
                         part = part.trim();
+
                         // Save non-whitespace data
                         if (part.length() > 0) {
                             parts.addElement(part);
                         }
                     }
-                    first = index+1;
+                    first = index + 1;
                 }
                 index++;
             }
+
             // Reflow as XML
             StringBuffer buf = new StringBuffer();
             Object[] list = parts.toArray();
@@ -2091,29 +2759,33 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 } else {
                     // All other parts need to start on a new line
                     buf.append('\n');
+
                     // If we're at an end tag then decrease indent
                     if (part.startsWith("</")) {
                         indent--;
                     }
+
                     // Add any indent
                     for (pad = 0; pad < indent; pad++) {
                         buf.append("  ");
                     }
+
                     // Add the tag or data
                     buf.append(part);
+
                     // If this is a start tag then increase indent
-                    if (part.startsWith("<") &&
-                        !part.startsWith("</") &&
-                        !part.endsWith("/>")) {
+                    if (part.startsWith("<") && !part.startsWith("</")
+                            && !part.endsWith("/>")) {
                         indent++;
+
                         // Check for special <tag>data</tag> case
                         if ((index + 2) < list.length) {
-                            part = (String) list[index+2];
+                            part = (String) list[index + 2];
                             if (part.startsWith("</")) {
-                                part = (String) list[index+1];
+                                part = (String) list[index + 1];
                                 if (!part.startsWith("<")) {
                                     buf.append(part);
-                                    part = (String) list[index+2];
+                                    part = (String) list[index + 2];
                                     buf.append(part);
                                     index = index + 2;
                                     indent--;
@@ -2130,34 +2802,35 @@ public class SOAPMonitor extends JFrame implements ActionListener {
 
     /**
      * Listener to handle button actions
+     * 
+     * @param e 
      */
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-
         if (obj == add_btn) {
             int selected[] = list1.getSelectedIndices();
             int len = selected.length - 1;
-            for (int i=len; i>=0; i--) {
+            for (int i = len; i >= 0; i--) {
                 model2.addElement(model1.getElementAt(selected[i]));
                 model1.remove(selected[i]);
             }
-            if (model1.size()==0) {
+            if (model1.size() == 0) {
                 add_btn.setEnabled(false);
             }
-            if (model2.size()>0) {
+            if (model2.size() > 0) {
                 del_btn.setEnabled(true);
             }
         } else if (obj == del_btn) {
             int selected[] = list2.getSelectedIndices();
             int len = selected.length - 1;
-            for (int i=len; i>=0; i--) {
+            for (int i = len; i >= 0; i--) {
                 model1.addElement(model2.getElementAt(selected[i]));
                 model2.remove(selected[i]);
             }
-            if (model2.size()==0) {
+            if (model2.size() == 0) {
                 del_btn.setEnabled(false);
             }
-            if (model1.size()>0) {
+            if (model1.size() > 0) {
                 add_btn.setEnabled(true);
             }
         } else if (obj == login_btn) {
@@ -2174,43 +2847,44 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             Node node = null;
             Node impNode = null;
             Document wsdd = null;
-
-            JOptionPane pane  = null;
+            JOptionPane pane = null;
             JDialog dlg = null;
             String msg = null;
             final String title = "Deployment status";
-
-            final String deploy = "<deployment name=\"SOAPMonitor\"" +
-                " xmlns=\"http://xml.apache.org/axis/wsdd/\"" +
-                " xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">\n"+
-                " <handler name=\"soapmonitor\"" +
-                " type=\"java:org.apache.axis.handlers.SOAPMonitorHandler\" />\n" +
-                " </deployment>";
+            final String deploy =
+                    "<deployment name=\"SOAPMonitor\""
+                    + " xmlns=\"http://xml.apache.org/axis/wsdd/\""
+                    +
+                    " xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">\n"
+                    + " <handler name=\"soapmonitor\""
+                    +
+                    " type=\"java:org.apache.axis.handlers.SOAPMonitorHandler\" />\n"
+                    + " </deployment>";
 
             // Create a new wsdd document
             try {
-                wsdd = XMLUtils.newDocument(new ByteArrayInputStream(deploy.getBytes()));
+                wsdd = XMLUtils.newDocument(
+                        new ByteArrayInputStream(deploy.getBytes()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
             Collection col = serviceMap.keySet();
             Iterator ite = col.iterator();
 
             // Add all of service nodes to the new wsdd
             while (ite.hasNext()) {
-                service = (String)ite.next();
-                node = (Node)serviceMap.get(service);
+                service = (String) ite.next();
+                node = (Node) serviceMap.get(service);
                 if (model2.contains(service)) {
-                    if (isMonitored(node)) {  // It's already been monitored
+                    if (isMonitored(node)) {    // It's already been monitored
                         impNode = wsdd.importNode(node, true);
-                    } else {                  // It's to be monitored
+                    } else {                    // It's to be monitored
                         impNode = wsdd.importNode(addMonitor(node), true);
                     }
                 } else {
-                    if (isMonitored(node)) {  // It's not to be monitored
+                    if (isMonitored(node)) {    // It's not to be monitored
                         impNode = wsdd.importNode(delMonitor(node), true);
-                    } else {                  // It's not already been monitored
+                    } else {                    // It's not already been monitored
                         impNode = wsdd.importNode(node, true);
                     }
                 }
@@ -2231,7 +2905,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 msg = "The deploy was NOT successful.";
                 pane.setMessageType(JOptionPane.WARNING_MESSAGE);
             }
-            pane.setOptions(new String [] {"OK"});
+            pane.setOptions(new String[]{"OK"});
             pane.setMessage(msg);
             dlg = pane.createDialog(null, title);
             dlg.setVisible(true);
