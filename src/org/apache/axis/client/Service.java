@@ -422,11 +422,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             }
             ClassLoader classLoader =
                     Thread.currentThread().getContextClassLoader();
-            return (Remote) Proxy.newProxyInstance(classLoader,
+            javax.xml.rpc.Stub stub = (javax.xml.rpc.Stub) Proxy.newProxyInstance(classLoader,
                     new Class[]{proxyInterface, javax.xml.rpc.Stub.class},
                     new AxisClientProxy(call, portName));
+            ((org.apache.axis.client.Stub) stub).setPortName(portName);
+            return (Remote) stub;
         } catch (Exception e) {
-            throw new ServiceException(e.toString());
+            throw new ServiceException(e);
         }
     } // getPort
 
