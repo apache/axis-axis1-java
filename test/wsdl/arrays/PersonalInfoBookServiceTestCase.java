@@ -7,6 +7,8 @@
 
 package test.wsdl.arrays;
 
+import java.util.Vector;
+
 public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
     public PersonalInfoBookServiceTestCase(String name) {
         super(name);
@@ -20,7 +22,10 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
         String name = "Joe Geek";
         String[] movies = new String[] { "Star Trek", "A.I." };
         String[] hobbies= new String[] { "programming", "reading about programming" };
-        String[] pets   = new String[] { "Byte", "Nibbles" };
+        Vector pets = new Vector();
+        pets.add(new String("Byte"));
+        pets.add(new String("Nibbles"));
+        //String[] pets   = new String[] { "Byte", "Nibbles" };
         int[]    id     = new int[]    { 0, 0, 7 };
         int id2         = 123;
         String[] foods  = new String[] { "Cheeze Whiz", "Jolt Cola" };
@@ -65,7 +70,7 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
             assertTrue("Hobbies are corrupted " + value, 
                        value.getHobbies()[1].equals(pi.getHobbies()[1]));
             assertTrue("Pets are corrupted " + value, 
-                       value.getPets()[1].equals(pi.getPets()[1]));
+                       value.getPets().elementAt(1).equals(pi.getPets().elementAt(1)));
             assertTrue("Id is corrupted " + value, 
                        value.getId()[0] == 0 && value.getId()[1] == 0 && value.getId()[2] == 7);
             assertTrue("Id2 is corrupted " + value, 
@@ -80,10 +85,10 @@ public class PersonalInfoBookServiceTestCase extends junit.framework.TestCase {
         }
 
         try {
-            java.lang.String[] value = null;
+            Vector value = null;
             value = binding.getPetsFromName(name);
             assertTrue("PetsFromName is broken " + value, 
-                       value[1].equals(pi.getPets()[1]));
+                       value.elementAt(1).equals(pi.getPets().elementAt(1)));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

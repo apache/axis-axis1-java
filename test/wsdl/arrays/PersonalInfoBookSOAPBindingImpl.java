@@ -7,6 +7,7 @@
 package test.wsdl.arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 public class PersonalInfoBookSOAPBindingImpl implements test.wsdl.arrays.PersonalInfoBook {
     private Map table = new HashMap();
@@ -16,7 +17,7 @@ public class PersonalInfoBookSOAPBindingImpl implements test.wsdl.arrays.Persona
     public test.wsdl.arrays.PersonalInfo getPersonalInfoFromName(java.lang.String name) throws java.rmi.RemoteException {
         return (test.wsdl.arrays.PersonalInfo) table.get(name);
     }
-    public String[] getPetsFromName(java.lang.String name) throws java.rmi.RemoteException {
+    public Vector getPetsFromName(java.lang.String name) throws java.rmi.RemoteException {
         return ((test.wsdl.arrays.PersonalInfo) table.get(name)).getPets();
     }
     public int[] getIDFromName(java.lang.String name) throws java.rmi.RemoteException {

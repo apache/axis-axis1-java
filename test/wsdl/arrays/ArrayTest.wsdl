@@ -8,6 +8,7 @@
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soapy="http://xml.apache.org/xml-soap"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
@@ -51,9 +52,10 @@
             <!-- Style 2: Array defined using derivation and wsdl:ArrayType -->
             <xsd:element name="hobbies" type="typens:hobbyArray"/>
             <!-- Style 3: Array defined using derivation of soapenc:Array -->
-            <xsd:element name="pets" type="typens:petArray"/>
             <xsd:element name="id"   type="typens:intArray"/>
             <xsd:element name="id2"  type="xsd:int"/>
+
+            <xsd:element name="pets" type="soapy:Vector"/>
 
             <!-- Collection defined using sequence of single unbounded element --> 
             <xsd:element name="foods" type="xsd:string" maxOccurs="unbounded"/> 
@@ -86,7 +88,7 @@
   </message>
 
   <message name="GetPetsFromNameResponse">
-    <part name="pets" type="typens:petArray"/>
+    <part name="pets" type="soapy:Vector"/>
   </message>
 
   <message name="GetIDFromNameRequest">
