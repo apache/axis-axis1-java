@@ -309,9 +309,17 @@ public class MessageElement implements SOAPElement
     }
     
     private ArrayList children = null;
-    
+
+    /**
+     * Note that this method will log a error and no-op if there is
+     * a value (set using setObjectValue) in the MessageElement.
+     */
     public void addChild(MessageElement el)
     {
+        if (objectValue != null) {
+            log.error(JavaUtils.getMessage("valuePresent"));
+            return;
+        }
         if (children == null)
             children = new ArrayList();
         children.add(el);
@@ -400,9 +408,16 @@ public class MessageElement implements SOAPElement
      * Sets value of this node to an Object.
      * A serializer needs to be registered for this object class for proper
      * operation.
+     * <p>
+     * Note that this method will log and error and no-op if there are
+     * any children in the MessageElement.
      * @param newValue node's value or null.
      */
-    protected void setObjectValue(Object newValue){
+    public void setObjectValue(Object newValue){
+        if (children != null) {
+            log.error(JavaUtils.getMessage("childPresent"));
+            return;
+        }
         this.objectValue = newValue;
     }
     
@@ -569,7 +584,9 @@ public class MessageElement implements SOAPElement
     public final void output(SerializationContext context) throws Exception
     {
         if ((recorder != null) && (!_isDirty)) {
-            recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
+            recorder.replay(startEventIndex,
+                            endEventIndex,
+                            new SAXOutputter(context));
             return;
         }
 
@@ -622,7 +639,25 @@ public class MessageElement implements SOAPElement
         if (prefix != null)
             context.registerPrefixForURI(prefix, namespaceURI);
 
+        if (objectValue != null) {
+            Serializer typeSerial = context.
+                getSerializerForJavaType(objectValue.getClass());
+
+            if (typeSerial != null) {
+                typeSerial.serialize(new QName(namespaceURI, name),
+                                     attributes,
+                                     objectValue,
+                                     context);
+                return;
+            }
+        }
+
         context.startElement(new QName(namespaceURI, name), attributes);
+        if (children != null) {
+            for (Iterator it = children.iterator(); it.hasNext();) {
+                ((MessageElement)it.next()).output(context);
+            }
+        }
         context.endElement();
     }
 
