@@ -130,7 +130,7 @@ public class Admin
             if (msgContext != null) {
                 // put a flag into message context so listener will exit after
                 // sending response
-                msgContext.setProperty(msgContext.QUIT_REQUESTED, "true");
+                msgContext.setProperty(MessageContext.QUIT_REQUESTED, "true");
             }
             doc = XMLUtils.newDocument();
             doc.appendChild( root = doc.createElementNS("", "Admin" ) );

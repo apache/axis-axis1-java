@@ -425,7 +425,7 @@ public class SimpleAxisWorker implements Runnable {
                         // fake one up!
                         // make it be an arbitrarily increasing number
                         // (no this is not thread safe because ++ isn't atomic)
-                        int i = server.sessionIndex++;
+                        int i = SimpleAxisServer.sessionIndex++;
                         cooky = "" + i;
                     }
 
@@ -513,7 +513,7 @@ public class SimpleAxisWorker implements Runnable {
             } catch (Exception e) {
             }
         }
-        if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null) {
             // why then, quit!
             try {
                 server.stop();

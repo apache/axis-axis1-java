@@ -109,7 +109,7 @@ public class MailWorker implements Runnable {
      */
     public void run() {
         // create an Axis server
-        AxisServer engine = server.getAxisServer();
+        AxisServer engine = MailServer.getAxisServer();
 
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
@@ -204,7 +204,7 @@ public class MailWorker implements Runnable {
             e.printStackTrace();
             log.debug(Messages.getMessage("exception00"), e);
         }
-        if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
+        if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null) {
             // why then, quit!
             try {
                 server.stop();

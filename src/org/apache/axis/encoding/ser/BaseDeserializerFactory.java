@@ -97,8 +97,8 @@ public abstract class BaseDeserializerFactory extends BaseFactory
                             Deserializer.class.getName()));
         }
         this.deserClass = deserClass;
-        this.mechanisms = new Vector();
-        this.mechanisms.add(Constants.AXIS_SAX);
+        mechanisms = new Vector();
+        mechanisms.add(Constants.AXIS_SAX);
     }
 
     public BaseDeserializerFactory(Class deserClass,
