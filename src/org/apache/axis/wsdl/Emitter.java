@@ -393,6 +393,11 @@ public class Emitter {
         Vector outputs = new Vector ();
         List parameterOrder = operation.getParameterOrdering ();
 
+        // Handle parameterOrder="", which is techinically illegal
+        if (parameterOrder != null && parameterOrder.isEmpty() ) {
+            parameterOrder = null;
+        }
+
         // Collect the input parts
         Input input = operation.getInput ();
         if (input != null)
