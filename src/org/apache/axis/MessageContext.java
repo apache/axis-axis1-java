@@ -164,6 +164,13 @@ public class MessageContext {
     private int              timeout = 0;
 
     /**
+     * An indication of whether we require "high fidelity" recording of
+     * deserialized messages for this interaction.  Defaults to true for
+     * now, and can be set to false, usually at service-dispatch time.
+     */
+    private boolean highFidelity = true;
+
+    /**
      * Storage for an arbitrary bag of properties associated with this
      * MessageContext.
      */
@@ -543,6 +550,11 @@ public class MessageContext {
             // This MessageContext should now defer properties it can't find
             // to the Service's options.
             bag.setParent(sh.getOptions());
+
+            // Note that we need (or don't need) high-fidelity SAX recording
+            // of deserialized messages according to the setting on the
+            // new service.
+            highFidelity = service.needsHighFidelityRecording();
         }
     }
 
@@ -929,5 +941,13 @@ public class MessageContext {
         }
 
         return null;
+    }
+
+    public boolean isHighFidelity() {
+        return highFidelity;
+    }
+
+    public void setHighFidelity(boolean highFidelity) {
+        this.highFidelity = highFidelity;
     }
 };

@@ -55,10 +55,8 @@
 
 package org.apache.axis.configuration;
 
-import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
-import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -121,12 +119,14 @@ public class ServletEngineConfigurationFactory extends DefaultEngineConfiguratio
  
             FileProvider config = null ;
 
-            if (!(new File(webInfPath,
-                           SERVER_CONFIG_FILE)).exists()){
-                InputStream is = null ;
-                is = ctx.getResourceAsStream("/WEB-INF/"+
-                                                 SERVER_CONFIG_FILE);
-                if (is != null) config = new FileProvider(is);
+            if (webInfPath == null || !(new File(webInfPath,
+                                                 SERVER_CONFIG_FILE)).exists()){
+                InputStream is = ctx.getResourceAsStream("/WEB-INF/"+
+                                                         SERVER_CONFIG_FILE);
+                if (is == null) {
+                    // !!! THROW EXCEPTION
+                }
+                config = new FileProvider(is);
             }
             if ( config == null ) {
                 try {

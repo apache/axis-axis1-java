@@ -65,13 +65,11 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.soap.SOAPException;
 import javax.xml.rpc.namespace.QName;
 
 public class BodyBuilder extends SOAPHandler
@@ -94,15 +92,21 @@ public class BodyBuilder extends SOAPHandler
                              DeserializationContext context)
         throws SAXException
     {
+        super.startElement(namespace, localName, qName, attributes, context);
         if (!context.isDoneParsing()) {
-            if (myElement == null) {
-                myElement = new SOAPBody(namespace, localName, qName,
-                                         attributes, context,
-                                         envelope.getSOAPConstants());
-                envelope.setBody((SOAPBody)myElement);
-            }
-            context.pushNewElement(myElement);
+            envelope.setBody((SOAPBody)myElement);
         }
+    }
+
+    public MessageElement makeNewElement(String namespace, String localName,
+                                         String qName, Attributes attributes,
+                                         DeserializationContext context) {
+        return new SOAPBody(namespace,
+                            localName,
+                            qName,
+                            attributes,
+                            context,
+                            context.getMessageContext().getSOAPConstants());
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -153,14 +157,19 @@ public class BodyBuilder extends SOAPHandler
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
                                          attributes, context, operations);
-// * This will be a first cut at switching streaming deserialization back on. *
-// Only deserialize this way if there is a unique operation for this QName for
-// now.  If there are overloads, we'll need to start recording.
-//                if (operations != null && operations.length == 1) {
-//                    handler = new RPCHandler((RPCElement)element, false);
-//                    ((RPCHandler)handler).setOperation(operations[0]);
-//                    msgContext.setOperation(operations[0]);
-//                }
+                // Only deserialize this way if there is a unique operation
+                // for this QName.  If there are overloads,
+                // we'll need to start recording.  If we're making a high-
+                // fidelity recording anyway, don't bother (for now).
+                if (!msgContext.isHighFidelity() &&
+                        (operations == null || operations.length == 1)) {
+                    ((RPCElement)element).setNeedDeser(false);
+                    handler = new RPCHandler((RPCElement)element, false);
+                    if (operations != null) {
+                        ((RPCHandler)handler).setOperation(operations[0]);
+                        msgContext.setOperation(operations[0]);
+                    }
+                }
             }
         }
 
@@ -168,7 +177,7 @@ public class BodyBuilder extends SOAPHandler
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)
-                handler = (SOAPHandler) element.getFixupDeserializer();
+                handler = element.getFixupDeserializer();
         }
 
         if (handler == null)
@@ -176,7 +185,7 @@ public class BodyBuilder extends SOAPHandler
         
         handler.myElement = element;
 
-        //context.pushNewElement(element);
+        context.pushNewElement(element);
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: BodyBuilder::onStartChild()");

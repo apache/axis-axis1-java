@@ -159,14 +159,12 @@ public class EnvelopeBuilder extends SOAPHandler
         if (!gotBody)
             throw new SAXException(JavaUtils.getMessage("noCustomElems00"));
 
-        /*
-        element = new MessageElement(namespace, localName, prefix,
+        MessageElement element = new MessageElement(namespace, localName, prefix,
                                      attributes, context);
         
         if (element.getFixupDeserializer() != null)
             return element.getFixupDeserializer();
-        */
-        
+
         return null;
     }
     

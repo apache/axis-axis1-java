@@ -27,16 +27,6 @@ public class TestHrefs extends TestCase {
                    Constants.URI_CURRENT_SCHEMA_XSD);
     }
 
-    public static void main(String [] args)
-    {
-        TestHrefs tester = new TestHrefs("me");
-        try {
-            tester.testStringReference2();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public TestHrefs(String name, String NS_XSI, String NS_XSD) {
         super(name);
 

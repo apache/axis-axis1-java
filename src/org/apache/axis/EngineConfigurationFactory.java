@@ -55,8 +55,6 @@
 
 package org.apache.axis;
 
-import javax.xml.rpc.namespace.QName;
-
 /**
  * EngineConfigurationFactory is an interface used to construct
  * concrete EngineConfiguration instances.

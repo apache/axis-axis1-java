@@ -53,6 +53,7 @@ public class TestDOM extends TestCase {
        AxisEngine engine = new AxisServer();
        engine.init();
        MessageContext msgContext = new MessageContext(engine);
+        msgContext.setHighFidelity(true);
        Message message = new Message(request);
        message.setMessageContext(msgContext);
 

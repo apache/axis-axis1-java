@@ -147,6 +147,10 @@ public class RPCElement extends SOAPBodyElement
         return name;
     }
 
+    public void setNeedDeser(boolean needDeser) {
+        this.needDeser = needDeser;
+    }
+
     public void deserialize() throws SAXException
     {
         needDeser = false;

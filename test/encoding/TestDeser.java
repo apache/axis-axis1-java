@@ -344,12 +344,6 @@ public class TestDeser extends TestCase {
                     null);
     }
     
-    public static void main(String [] args) throws Exception
-    {
-        TestDeser tester = new TestDeser("test");
-        tester.testString();
-    }
-
     // Complicated array tests
 
     // type=soapenc:Array

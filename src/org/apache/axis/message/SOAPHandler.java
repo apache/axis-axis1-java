@@ -75,13 +75,21 @@ public class SOAPHandler extends DefaultHandler
     {
         // By default, make a new element
         if (!context.isDoneParsing()) {
-            if (myElement == null)
-                myElement = new MessageElement(namespace, localName,
-                                               qName, attributes, context);
-            context.pushNewElement(myElement);
+            if (myElement == null) {
+                myElement = makeNewElement(namespace, localName, qName, attributes, context);
+                context.pushNewElement(myElement);
+            }
         }
     }
-    
+
+    public MessageElement makeNewElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+    {
+        return new MessageElement(namespace, localName,
+                                               qName, attributes, context);
+    }
+
     public void endElement(String namespace, String localName,
                            DeserializationContext context)
         throws SAXException

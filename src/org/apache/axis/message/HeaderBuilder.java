@@ -61,13 +61,10 @@ package org.apache.axis.message;
  */
 
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
-import javax.xml.soap.SOAPException;
 
 public class HeaderBuilder extends SOAPHandler
 {

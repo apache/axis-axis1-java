@@ -256,8 +256,14 @@ public class SOAPPart extends Part
      */
     private void setCurrentMessage(Object currMsg, int form) {
         if (log.isDebugEnabled()) {
+            String msgStr;
+            if (currMsg instanceof String) {
+                msgStr = (String)currMsg;
+            } else {
+                msgStr = currMsg.getClass().getName();
+            }
             log.debug(JavaUtils.getMessage("setMsgForm", formNames[form],
-                    "" + currMsg));
+                    "" + msgStr));
         }
         currentMessage = currMsg ;
         currentForm = form ;
@@ -428,8 +434,9 @@ public class SOAPPart extends Part
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
-        DeserializationContext dser =
-            new DeserializationContextImpl(is, getMessage().getMessageContext(), getMessage().getMessageType());
+        DeserializationContext dser = new DeserializationContextImpl(is,
+                                           getMessage().getMessageContext(),
+                                           getMessage().getMessageType());
 
         // This may throw a SAXException
         try {

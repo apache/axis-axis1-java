@@ -56,30 +56,9 @@
 package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
-import org.apache.axis.Message;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.activation.DataHandler;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-
-/**
- * An AttachmentPart contains attachment data along with MIME
- * headers, and implements the standard Part API.
- * <p>
- * It provides access to attachment content via
- * javax.activation.DataHandlers, so it will not be built if Axis
- * is built without activation.jar, and core Axis code must not
- * import it (lest it also become dependent on axis.jar).
- * Attachment-aware code, of course, is no problem.
- * 
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Rick Rineholt 
- */
-
-import org.apache.axis.transport.http.HTTPConstants ;
 
 public class AttachmentPart extends Part {
     protected static Log log =

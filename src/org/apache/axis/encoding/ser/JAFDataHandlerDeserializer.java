@@ -55,44 +55,39 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.attachments.AttachmentUtils;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.attachments.AttachmentUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * JAFDataHandler Serializer
  * @author Rick Rineholt 
  * Modified by Rich Scheuerle <scheu@us.ibm.com>
  */
-public class JAFDataHandlerDeserializer extends DeserializerImpl implements Deserializer  {
-
+public class JAFDataHandlerDeserializer extends Deserializer {
     protected static Log log =
         LogFactory.getLog(JAFDataHandlerDeserializer.class.getName());
 
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
-        throws SAXException{
+        throws SAXException {
+
+        if (!context.isDoneParsing()) {
+            if (myElement == null) {
+                myElement = makeNewElement(namespace, localName, qName, attributes, context);
+                context.pushNewElement(myElement);
+            }
+        }
+//        super.startElement(namespace, localName, qName, attributes, context);
 
         QName type = context.getTypeFromAttributes(namespace,
                                                    localName,
@@ -125,7 +120,5 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl implements Dese
         throws SAXException {
         throw new SAXException(JavaUtils.getMessage(
                 "noSubElements", namespace + ":" + localName));
-
-
     }
 }

@@ -57,14 +57,10 @@ package org.apache.axis.configuration;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * This is a default implementation of EngineConfigurationFactory.

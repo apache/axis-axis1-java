@@ -30,12 +30,6 @@ public class TestSer extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
-    public static void main(String [] args) throws Exception
-    {
-        TestSer tester = new TestSer("TestSer");
-        tester.testRPCElement();
-    }
-    
     public TestSer(String name) {
         super(name);
     }
