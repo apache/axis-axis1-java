@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,7 +81,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
- * Some more general docs will go here.
+ * A MessageContext is the Axis implementation of the javax
+ * SOAPMessageContext class, and is core to message processing
+ * in handlers and other parts of the system.
  *
  * This class also contains constants for accessing some
  * well-known properties. Using a hierarchical namespace is
@@ -195,13 +197,22 @@ public class MessageContext implements SOAPMessageContext {
     /** Schema version information - defaults to 2001 */
     private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
+    /** what is our current operation */
     private OperationDesc currentOperation = null;
 
+    /**
+     * the current operation
+     * @return the current operation; may be null
+     */
     public  OperationDesc getOperation()
     {
         return currentOperation;
     }
 
+    /**
+     * set the current operation
+     * @param operation
+     */
     public void setOperation(OperationDesc operation)
     {
         currentOperation = operation;
@@ -271,6 +282,15 @@ public class MessageContext implements SOAPMessageContext {
         return possibleOperations;
     }
 
+    /**
+     * get the first possible operation that could match a
+     * body containing an element of the given QName. Sets the currentOperation
+     * field in the process; if that field is already set then its value
+     * is returned instead
+     * @param qname name of the message body
+     * @return an operation or null
+     * @throws AxisFault
+     */
     public OperationDesc getOperationByQName(QName qname) throws AxisFault
     {
         if (currentOperation == null) {
@@ -291,9 +311,18 @@ public class MessageContext implements SOAPMessageContext {
        return AxisEngine.getCurrentMessageContext();
     }
 
+    /**
+     * temporary directory to store attachments
+     */
     protected static String systemTempDir= null;
+    /**
+     * set the temp dir
+     * TODO: move this piece of code out of this class and into a utilities
+     * class.
+     */
     static {
         try {
+            //get the temp dir from the engine
             systemTempDir=AxisProperties.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
         } catch(Throwable t) {
             systemTempDir= null;
@@ -301,27 +330,41 @@ public class MessageContext implements SOAPMessageContext {
 
         if(systemTempDir== null) {
             try {
+                //or create and delete a file in the temp dir to make
+                //sure we have write access to it.
                 File tf= File.createTempFile("Axis", "Axis");
                 File dir= tf.getParentFile();
-                if (tf.exists()) tf.delete();
+                if (tf.exists()) {
+                    tf.delete();
+                }
                 if (dir != null) {
                   systemTempDir= dir.getCanonicalPath();
                 }
             } catch(Throwable t) {
+                log.debug("Unable to find a temp dir with write access");
                 systemTempDir= null;
             }
         }
     }
 
+    /**
+     * Create a message context.
+     * @param engine the controlling axis engine. Null is actually accepted here,
+     * though passing a null engine in is strongly discouraged as many of the methods
+     * assume that it is in fact defined.
+     */
     public MessageContext(AxisEngine engine) {
         this.axisEngine = engine;
 
         if(null != engine){
             java.util.Hashtable opts= engine.getOptions();
             String attachmentsdir= null;
-            if(null!=opts) attachmentsdir= (String)
-                opts.get(AxisEngine.PROP_ATTACHMENT_DIR);
-            if(null == attachmentsdir) attachmentsdir= systemTempDir;
+            if(null!=opts) {
+                attachmentsdir= (String) opts.get(AxisEngine.PROP_ATTACHMENT_DIR);
+            }
+            if(null == attachmentsdir) {
+                attachmentsdir= systemTempDir;
+            }
             if(attachmentsdir != null){
                 setProperty(ATTACHMENTS_DIR, attachmentsdir);
             }
@@ -330,8 +373,9 @@ public class MessageContext implements SOAPMessageContext {
             // switch the constants over.
             String defaultSOAPVersion = (String)engine.getOption(
                                                  AxisEngine.PROP_SOAP_VERSION);
-            if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion))
+            if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion)) {
                 setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+            }
         }
     }
 
@@ -341,6 +385,10 @@ public class MessageContext implements SOAPMessageContext {
      */
     private TypeMappingRegistry mappingRegistry = null;
 
+    /**
+     * replace the engine's type mapping registry with a local one
+     * @param reg
+     */
     public void setTypeMappingRegistry(TypeMappingRegistry reg) {
         mappingRegistry = reg;
     }
@@ -355,8 +403,9 @@ public class MessageContext implements SOAPMessageContext {
      * @return the type mapping registry to use for this request.
      */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        if (mappingRegistry == null)
+        if (mappingRegistry == null) {
             return axisEngine.getTypeMappingRegistry();
+        }
 
         return mappingRegistry;
     }
@@ -435,6 +484,7 @@ public class MessageContext implements SOAPMessageContext {
 
     /**
      * Set whether we are maintaining session state
+     * @param yesno flag to set to true to maintain sessions
      */
     public void setMaintainSession (boolean yesno) {
         maintainSession = yesno;
@@ -464,7 +514,9 @@ public class MessageContext implements SOAPMessageContext {
      */
     public void setRequestMessage(Message reqMsg) {
         requestMessage = reqMsg ;
-        if (requestMessage != null) requestMessage.setMessageContext(this);
+        if (requestMessage != null) {
+            requestMessage.setMessageContext(this);
+        }
     };
 
     /**
@@ -481,21 +533,22 @@ public class MessageContext implements SOAPMessageContext {
      * @param respMsg the new response Message.
      */
     public void setResponseMessage(Message respMsg) {
-        responseMessage = respMsg ;
-        if (responseMessage != null){
-          responseMessage.setMessageContext(this);
+        responseMessage = respMsg;
+        if (responseMessage != null) {
+            responseMessage.setMessageContext(this);
 
-          //if we have received attachments of a particular type
-          // than that should be the default type to send.
-          Message reqMsg= getRequestMessage();
-          if( null != reqMsg){
-            Attachments reqAttch= reqMsg.getAttachmentsImpl();
-            Attachments respAttch= respMsg.getAttachmentsImpl();
-            if(null != reqAttch  && null != respAttch){
-              if(respAttch.getSendType() == Attachments.SEND_TYPE_NOTSET)
-                respAttch.setSendType(reqAttch.getSendType());//only if not explicity set.
+            //if we have received attachments of a particular type
+            // than that should be the default type to send.
+            Message reqMsg = getRequestMessage();
+            if (null != reqMsg) {
+                Attachments reqAttch = reqMsg.getAttachmentsImpl();
+                Attachments respAttch = respMsg.getAttachmentsImpl();
+                if (null != reqAttch && null != respAttch) {
+                    if (respAttch.getSendType() == Attachments.SEND_TYPE_NOTSET)
+                        //only if not explicity set.
+                        respAttch.setSendType(reqAttch.getSendType());
+                }
             }
-          }
         }
     }
 
@@ -576,12 +629,22 @@ public class MessageContext implements SOAPMessageContext {
         return timeout;
     }
 
+    /**
+     * get the classloader, implicitly binding to the thread context
+     * classloader if an override has not been supplied
+     * @return
+     */
     public ClassLoader getClassLoader() {
-        if ( classLoader == null )
+        if ( classLoader == null ) {
             classLoader = Thread.currentThread().getContextClassLoader();
+        }
         return( classLoader );
     }
 
+    /**
+     * set a new classloader
+     * @param cl
+     */
     public void setClassLoader(ClassLoader cl ) {
         classLoader = cl ;
     }
@@ -590,6 +653,11 @@ public class MessageContext implements SOAPMessageContext {
         return( targetService );
     }
 
+    /**
+     * get the axis engine. Will be null if the message was created outside
+     * an engine
+     * @return the current axis engine
+     */
     public AxisEngine getAxisEngine()
     {
         return axisEngine;
@@ -714,6 +782,12 @@ public class MessageContext implements SOAPMessageContext {
      */
     public static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
 
+    /*
+     * IMPORTANT.
+     * If adding any new constants to this class. Make them final. The
+     * ones above are left non-final for compatibility reasons.
+     */
+
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
@@ -834,7 +908,7 @@ public class MessageContext implements SOAPMessageContext {
      */
     public boolean containsProperty(String name) {
         Object propertyValue = getProperty(name);
-        return (propertyValue != null)?true:false;
+        return (propertyValue != null);
     }
 
     /**
@@ -984,10 +1058,12 @@ public class MessageContext implements SOAPMessageContext {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
-        if (namespaceURI == null)
+        if (namespaceURI == null) {
             namespaceURI = Constants.URI_LITERAL_ENC;
-        else if (Constants.isSOAP_ENC(namespaceURI))
+        }
+        else if (Constants.isSOAP_ENC(namespaceURI)) {
             namespaceURI = soapConstants.getEncodingURI();
+        }
 
         encodingStyle = namespaceURI;
     } // setEncodingStype
@@ -1028,6 +1104,8 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
+     * <i>Not (yet) implemented method in the SOAPMessageContext interface</i>
+     * 
      * Gets the SOAP actor roles associated with an execution of the HandlerChain and its contained Handler instances.
      * Note that SOAP actor roles apply to the SOAP node and are managed using HandlerChain.setRoles and
      * HandlerChain.getRoles. Handler instances in the HandlerChain use this information about the SOAP actor roles
