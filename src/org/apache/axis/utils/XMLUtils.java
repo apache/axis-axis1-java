@@ -63,7 +63,6 @@ import org.xml.sax.* ;
 import org.apache.axis.Constants;
 
 public class XMLUtils {
-  private static DocumentBuilder        db  ;
   private static DocumentBuilderFactory dbf = init();
   private static SAXParserFactory       saxFactory;
   
@@ -100,7 +99,6 @@ public class XMLUtils {
     try {
       dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
-      db  = dbf.newDocumentBuilder();
     }
     catch( Exception e ) {
       e.printStackTrace();
@@ -127,12 +125,16 @@ public class XMLUtils {
   }
 
   public static Document newDocument() {
-    return( db.newDocument() );
+    try {
+      return dbf.newDocumentBuilder().newDocument();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public static Document newDocument(InputSource inp) {
     try {
-      return( db.parse( inp ) );
+      return( dbf.newDocumentBuilder().parse( inp ) );
     }
     catch( Exception e ) {
       e.printStackTrace();
@@ -142,7 +144,7 @@ public class XMLUtils {
 
   public static Document newDocument(InputStream inp) {
     try {
-      return( db.parse( inp ) );
+      return( dbf.newDocumentBuilder().parse( inp ) );
     }
     catch( Exception e ) {
       e.printStackTrace();
@@ -152,7 +154,7 @@ public class XMLUtils {
 
   public static Document newDocument(String uri) {
     try {
-      return( db.parse( uri ) );
+      return( dbf.newDocumentBuilder().parse( uri ) );
     }
     catch( Exception e ) {
       e.printStackTrace();
