@@ -57,6 +57,8 @@ package org.apache.axis.message;
 
 import org.xml.sax.Attributes;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.MessageContext;
+import org.apache.axis.utils.Debug;
 
 /** A Body element.
  * 
@@ -68,6 +70,19 @@ public class SOAPBodyElement extends MessageElement
                       Attributes attributes, DeserializationContext context)
     {
         super(namespace, localPart, attributes, context);
+
+        /** The algorithm we use here is to find the first
+         * element without an ID attribute (assuming that
+         * ID'ed attributes are multi-ref encodings).
+         */
+        if (getID() == null) {
+            MessageContext msgContext = context.getMessageContext();
+            if (msgContext.getServiceHandler() == null) {
+                Debug.Print(2, "Dispatching to body namespace '",
+                            namespace, "'");
+                msgContext.setTargetService(namespace);
+            }
+        }
     }
     
     public SOAPBodyElement()
