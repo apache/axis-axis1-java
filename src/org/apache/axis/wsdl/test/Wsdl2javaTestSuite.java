@@ -92,12 +92,19 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static List fileNames = null;
     private static final AxisClassLoader loader = AxisClassLoader.getClassLoader();
 
+    /**
+     * Instantiate a new TestSuite with all the tasks necessary to collect, compile,
+     * and prepare the tests.
+     */
     public Wsdl2javaTestSuite() {
         super();
         this.setupTasks();
         this.prepareTests();
     }
 
+    /**
+     * Standard JUnit invocation.  This is not the standard entry point.
+     */
     public Wsdl2javaTestSuite(String name) {
         super(name);
 
@@ -105,30 +112,101 @@ public class Wsdl2javaTestSuite extends TestSuite {
         this.prepareTests();
     } //public Wsdl2javaTestSuite(String Name_)
 
+    /**
+     * Setup the Ant Tasks to handle the compilation and cleanup of the test environment.
+     * We programatically create a project instead of using an XML file.  The project is
+     * a singleton, so we only perform this once.
+     */
+    private void setupTasks() {
+        if (Wsdl2javaTestSuite.testSuiteProject == null) {
+            File workDir = new File(Wsdl2javaTestSuite.WORK_DIR);
+            workDir.mkdirs();
+
+            /* Create the project.  We name it "Wsdl2javaTestSuite", and set the base
+             * directory to the current directory.  This means if it is called from the
+             * main ant task, it will find everything correctly.  We also set the
+             * default target name to COMPILE_TASK.
+             */
+            testSuiteProject = new Project();
+            testSuiteProject.init();
+            testSuiteProject.setName("Wsdl2javaTestSuite");
+            testSuiteProject.addReference("Wsdl2javaTestSuite", testSuiteProject);
+            testSuiteProject.setBasedir("./");
+            testSuiteProject.setDefaultTarget(Wsdl2javaTestSuite.COMPILE_TASK);
+
+            /* Set up the default task (the compile task).  We add the "javac" target,
+             * and all the options for it.
+             */
+            Target defaultTarget = new Target();
+            defaultTarget.setName(Wsdl2javaTestSuite.COMPILE_TASK);
+            testSuiteProject.addTarget(Wsdl2javaTestSuite.COMPILE_TASK, defaultTarget);
+
+            Javac compile = (Javac) testSuiteProject.createTask("javac");
+            compile.setLocation(new Location("Wsdl2javaTestSuite"));
+            compile.setOwningTarget(defaultTarget);
+            defaultTarget.addTask(compile);
+            compile.init();
+
+            compile.setDebug(true);
+            Path root = new Path(testSuiteProject);
+            root.setPath(Wsdl2javaTestSuite.WORK_DIR);
+            compile.setSrcdir(root);
+            compile.setDestdir(workDir);
+            compile.setVerbose(true);
+
+            /* Set up the CLEAN_TASK.  It has the "delete" task, and will clean up all
+             * the working files.
+             */
+            Target cleanup = new Target();
+            cleanup.setName(Wsdl2javaTestSuite.CLEAN_TASK);
+            testSuiteProject.addTarget(Wsdl2javaTestSuite.CLEAN_TASK, cleanup);
+            Delete delete = (Delete) testSuiteProject.createTask("delete");
+            delete.setLocation(new Location("Wsdl2javaTestSuite"));
+            delete.setOwningTarget(cleanup);
+            cleanup.addTask(delete);
+            delete.init();
+
+            delete.setDir(workDir);
+            delete.setVerbose(true);
+        }
+    }
+
+    /**
+     * Prepare the tests we will generate and run.  Here we gather all the WSDL files we will generate classes from.
+     * Next, we run them through Wsdl2java with a standard set of options.  Then we run the COMPILE_TASK
+     * from the previously created Ant Project.  Lastly, we iterate over all the generated classes, add
+     * them to the ClassLoader, and add the ones that end in "TestCase" to the list of tests we will run.
+     */
     private void prepareTests() {
         if (null ==  Wsdl2javaTestSuite.classNames) {
             Wsdl2javaTestSuite.classNames = new ArrayList();
             Wsdl2javaTestSuite.fileNames = new ArrayList();
+            // The file is the same as this class name, but with the ".list" extension.
             BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader()
                     .getResourceAsStream(this.getClass().getName().replace('.', '/') + ".list")));
 
             try {
+                // Each line is a new WSDL file.
                 String curLine = reader.readLine();
                 int testNum = 0;
                 while (curLine != null) {
-                    this.prepareTest(curLine, testNum);
+                    // Run Wsdl2java on the WSDL file.
+                    // The test number is used to keep each WSDL file in a different package.
+                    this.prepareTest(curLine.trim(), testNum);
 
-                    //setup tests
+                    // Setup Tests
                     Iterator names = ((List) Wsdl2javaTestSuite.classNames.get(testNum)).iterator();
                     while (names.hasNext()) {
                         String className = (String) names.next();
 
+                        // Register all generated classes with the classloader.
                         if ( !loader.isClassRegistered(className) ) {
                             String classFile = Wsdl2javaTestSuite.WORK_DIR;
                             classFile += className.replace('.', File.separatorChar) + ".class";
                             loader.registerClass(className, classFile);
                         }
 
+                        // Add all "TestCase" classes to the list of tests we run
                         if (className.endsWith("TestCase")) {
                             try {
                                 this.addTestSuite(loader.loadClass(className));
@@ -149,49 +227,11 @@ public class Wsdl2javaTestSuite extends TestSuite {
         }
     }
 
-    private void setupTasks() {
-        if (Wsdl2javaTestSuite.testSuiteProject == null) {
-            File workDir = new File(Wsdl2javaTestSuite.WORK_DIR);
-            workDir.mkdirs();
-
-            testSuiteProject = new Project();
-            testSuiteProject.init();
-            testSuiteProject.setName("Wsdl2javaTestSuite");
-            testSuiteProject.addReference("Wsdl2javaTestSuite", testSuiteProject);
-            testSuiteProject.setBasedir("./");
-            testSuiteProject.setDefaultTarget("default");
-
-            Target defaultTarget = new Target();
-            defaultTarget.setName(Wsdl2javaTestSuite.COMPILE_TASK);
-            testSuiteProject.addTarget(Wsdl2javaTestSuite.COMPILE_TASK, defaultTarget);
-
-            Javac compile = (Javac) testSuiteProject.createTask("javac");
-            compile.setLocation(new Location("Wsdl2javaTestSuite"));
-            compile.setOwningTarget(defaultTarget);
-            defaultTarget.addTask(compile);
-            compile.init();
-
-            compile.setDebug(true);
-            Path root = new Path(testSuiteProject);
-            root.setPath(Wsdl2javaTestSuite.WORK_DIR);
-            compile.setSrcdir(root);
-            compile.setDestdir(workDir);
-            compile.setVerbose(true);
-
-            Target cleanup = new Target();
-            cleanup.setName(Wsdl2javaTestSuite.CLEAN_TASK);
-            testSuiteProject.addTarget(Wsdl2javaTestSuite.CLEAN_TASK, cleanup);
-            Delete delete = (Delete) testSuiteProject.createTask("delete");
-            delete.setLocation(new Location("Wsdl2javaTestSuite"));
-            delete.setOwningTarget(cleanup);
-            cleanup.addTask(delete);
-            delete.init();
-
-            delete.setDir(workDir);
-            delete.setVerbose(true);
-        }
-    }
-
+    /**
+     * Generate the classes using Wsdl2java.  Currently we use Emitter directly, but as Emitter gets redesigned, we will
+     * have to make an acceptible wrapper class.  We generate the package name to be "org.apache.axisttest" with the
+     * testNum appended to it.  We also enablt skeleton generation and testcase generation.  We also turn on verbosity.
+     */
     protected void prepareTest(String fileName, int testNum) throws Exception {
         Emitter wsdl2java = new Emitter();
         wsdl2java.setPackageName("org.apache.axisttest" + testNum);
@@ -226,11 +266,20 @@ public class Wsdl2javaTestSuite extends TestSuite {
         testSuiteProject.executeTarget(Wsdl2javaTestSuite.CLEAN_TASK);
     }
 
+    /**
+     * Convenience method to run the test case from the command-line.
+     */
     public static void main(String[] args) {
         junit.swingui.TestRunner.main(new String[] {"-noloading", Wsdl2javaTestSuite.class.getName()});
     } //public static void main(String[] args)
 
+    /**
+     * Override JUnit's <code>run(TestResult)</code> method.  Basically all we are doing is wrapping it
+     * with code to start the SimpleAxisServer, deploy all the generated services, undeploy all the
+     * generated services, stop the SimpleAxisServer, and clean up the test environment.
+     */
     public void run(TestResult result) {
+        // Get the SimpleAxisServer running--using the default port.
         System.out.println("Starting test http server.");
         SimpleAxisServer server = new SimpleAxisServer();
 
@@ -244,6 +293,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
             serverThread.setContextClassLoader(loader);
             serverThread.start();
 
+            // Find all the "deploy.xml" files and run them through the AdminClient.
             Iterator testIterator = Wsdl2javaTestSuite.fileNames.iterator();
             while (testIterator.hasNext()) {
                 String deploy = null;
@@ -255,14 +305,17 @@ public class Wsdl2javaTestSuite extends TestSuite {
                         deploy = fileName;
                     }
                 }
-                //deploy
+                // Perform actual deployment
                 String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + deploy };
                 AdminClient.main(args);
             }
 
-            //run tests
+            AdminClient.main(new String[] {"list"});
+
+            // Run the tests
             super.run(result);
 
+            // Find all the "undeploy.xml" files and run them through the AdminClient.
             testIterator = Wsdl2javaTestSuite.fileNames.iterator();
             while (testIterator.hasNext()) {
                 String undeploy = null;
@@ -274,13 +327,17 @@ public class Wsdl2javaTestSuite extends TestSuite {
                         undeploy = fileName;
                     }
                 }
-                //undeploy
+                // Perform actual undeployment
                 String[] args = new String[] { Wsdl2javaTestSuite.WORK_DIR + undeploy };
                 AdminClient.main(args);
             }
 
+            AdminClient.main(new String[] {"list"});
+
+            // Clean up the test environment
             this.cleanTest();
 
+            // Stop the SimpleAxisServer
             System.out.println("Stopping test http server.");
             server.stop();
         } catch (Exception e) {
@@ -288,6 +345,9 @@ public class Wsdl2javaTestSuite extends TestSuite {
         }
     }
 
+    /**
+     * Static method for JUnit to treat this like a TestSuite.
+     */
     public static final TestSuite suite() {
         return new Wsdl2javaTestSuite();
     }
