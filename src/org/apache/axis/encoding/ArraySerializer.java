@@ -186,6 +186,12 @@ public class ArraySerializer extends Deserializer
                         JavaUtils.getMessage("badInteger00", lengthStr));
             }
         }
+        else
+        {
+            // asize with no integers: size must be determined by inspection
+            // of the actual members.
+            value = new ArrayList();
+        }
         
         String offset = attributes.getValue(Constants.URI_SOAP_ENC,
                                             Constants.ATTR_OFFSET);
@@ -264,7 +270,15 @@ public class ArraySerializer extends Deserializer
             category.debug(JavaUtils.getMessage("gotValue00", "ArraySerializer", "[" + hint +
                                "] = " + value));
         }
-        ((ArrayList)this.value).set(((Integer)hint).intValue(), value);
+        ArrayList list = (ArrayList)this.value;
+        int offset = ((Integer)hint).intValue();
+
+        // grow the list if necessary to accomodate the new member
+        while (list.size() <= offset) {
+          list.add(null);
+        }
+
+        list.set(offset, value);
     }
 
     public void serialize(QName name, Attributes attributes,
