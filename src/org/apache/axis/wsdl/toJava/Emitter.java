@@ -132,7 +132,13 @@ public class Emitter {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        emit((String) null, XMLUtils.newDocument(uri));
+        // calculate baseURI so that imported relative URI's work
+        int lastSlash = uri.lastIndexOf('/');
+        String baseURI = null;
+        if (lastSlash > 0) {
+            baseURI = uri.substring(0, lastSlash + 1);
+        }
+        emit(baseURI, XMLUtils.newDocument(uri));
     } // emit
 
     /**
