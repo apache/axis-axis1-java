@@ -653,4 +653,18 @@ public class TypeMappingImpl implements TypeMapping
     public void setDoAutoTypes(boolean doAutoTypes) {
         this.doAutoTypes = doAutoTypes;
     }
+
+    /**
+     * Returns an array of all the classes contained within this mapping
+     */
+    public Class [] getAllClasses()
+    {
+        java.util.HashSet temp = new java.util.HashSet();
+        if (delegate != null)
+        {
+            temp.addAll(java.util.Arrays.asList(delegate.getAllClasses()));
+        }
+        temp.addAll(class2Pair.keySet());
+        return (Class[])temp.toArray(new Class[temp.size()]);
+    }
 }

@@ -123,6 +123,11 @@ public interface TypeMapping
      * @return javaType class or type
      */
     public Class getClassForQName(QName xmlType);
+
+    /**
+     * Returns an array of all the classes contained within this mapping
+     */
+    public Class [] getAllClasses();
 }
 
 
