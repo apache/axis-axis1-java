@@ -69,9 +69,6 @@ import javax.wsdl.QName;
 public class CollectionType extends DefinedType {
     public CollectionType(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
-
-        // Initially these CollectionTypes are not emitted.  This may change.
-        setShouldEmit(false); 
     }
 };
 

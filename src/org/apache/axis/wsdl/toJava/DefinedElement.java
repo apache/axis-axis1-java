@@ -71,13 +71,11 @@ public class DefinedElement extends Element {
      */
     public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
-        setShouldEmit(false);  // No need to emit since code will use ref info
     };
     /**
      * Create an element type defined directly.               
      */
     public DefinedElement(QName pqName, String pjName, Node pNode) {
         super(pqName, pjName, pNode);
-        setShouldEmit(false);  // Only emit if refd
     }
 };
