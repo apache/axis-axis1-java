@@ -122,12 +122,23 @@ public class TestDeser2001 extends TestDeser {
         deserializeCalendar(TimeZone.getTimeZone("PST8PDT"));
     }
 */
-    
+
     /**
-     * test that this works in Wintertime
+     * this isnt a test, it is here to list timezones
+     */
+
+    public void NotestListTimeZones() throws Exception {
+        String ids[] = TimeZone.getAvailableIDs();
+        for (int i = 9; i < ids.length; i++) {
+            System.out.println(ids[i]);
+        }
+    }
+
+    /**
+     * test local time costs
      * @throws Exception
      */
-    public void testTimeLocal() throws Exception {
+    public void NotestTimeLocal() throws Exception {
         deserializeCalendar(TimeZone.getDefault());
     }
 
@@ -135,10 +146,31 @@ public class TestDeser2001 extends TestDeser {
 //     * test that this works in Wintertime
 //     * @throws Exception
 //     */
-//    public void testTimeUK() throws Exception {
-//        deserializeCalendar(TimeZone.getTimeZone("GMT0BST"));
-//    }
+    public void testTimeUKWinter() throws Exception {
+        deserializeCalendar(TimeZone.getTimeZone("GMT+0:00"));
+    }
 
+    public void testTimeUKSummer() throws Exception {
+        deserializeCalendar(TimeZone.getTimeZone("GMT+1:00"));
+    }
+
+    public void testTimeUK() throws Exception {
+        deserializeCalendar(TimeZone.getTimeZone("Europe/London"));
+    }
+
+    /**
+     * this test is here to track down odd behaviour on one system related to these TZ tests
+     *
+     */
+    public void testTimeZoneLogicWorks() {
+
+        TimeZone tz=TimeZone.getTimeZone("GMT");
+        assertEquals(0,tz.getDSTSavings());
+        assertEquals(0,tz.getRawOffset());
+        Time time=new Time("12:01:30.150+00:00");
+        String timeVal=time.toString();
+        assertEquals("12:01:30.150Z",timeVal);
+    }
 
     private void deserializeCalendar(TimeZone tz) throws Exception {
         deserializeCalendar(2004, 1, 1, tz);
@@ -157,7 +189,9 @@ public class TestDeser2001 extends TestDeser {
         date.setTimeZone(tz);
         Time time = new Time(date);
         String offset = calcGMTOffset(date);
-        String comment=" [time="+time.toString()+"; tz="+tz.getDisplayName()+"]";
+        //diagnostics string
+        String comment=" [time="+time.toString()+"; tz="+tz.getDisplayName()
+                +"; offset="+offset+"]";
 
         deserialize("<result xsi:type=\"xsd:time\">" +
                        "12:01:30.150" + offset +
@@ -168,8 +202,8 @@ public class TestDeser2001 extends TestDeser {
     }
 
 
-    private static final int msecsInMinute = 60000;
-    private static final int msecsInHour = 60 * msecsInMinute;
+    private static final int MILLISECONDS_IN_MINUTE = 60000;
+    private static final int MILLISECONDS_IN_HOUR = 60 * MILLISECONDS_IN_MINUTE;
 
     /**
      *
@@ -183,11 +217,11 @@ public class TestDeser2001 extends TestDeser {
     private String calcGMTOffset(Calendar cal) {
         int msecOffset = cal.get(Calendar.ZONE_OFFSET) +
                 cal.get(Calendar.DST_OFFSET);
-        int hourOffset = Math.abs(msecOffset / msecsInHour);
+        int hourOffset = Math.abs(msecOffset / MILLISECONDS_IN_HOUR);
         String offsetString = msecOffset > 0 ? "+" : "-";
         offsetString += hourOffset >= 10 ? "" + hourOffset : "0" + hourOffset;
         offsetString += ":";
-        int minOffset = Math.abs(msecOffset % msecsInHour);
+        int minOffset = Math.abs(msecOffset % MILLISECONDS_IN_HOUR);
         if (minOffset == 0) {
             offsetString += "00";
         }
@@ -376,5 +410,10 @@ public class TestDeser2001 extends TestDeser {
         uri = new URI("http", "www.macromedia.com", "/testing", "query=1", null);
         deserialize("<result xsi:type=\"xsd:anyURI\">http://www.macromedia.com/testing?query=1</result>",
                      uri);
+    }
+
+    public static void main() throws Exception {
+        TestDeser2001 deser=new TestDeser2001("");
+        deser.testTimeUKWinter();
     }
 }
