@@ -119,7 +119,7 @@ public class HTTPDispatchHandler extends BasicHandler {
                                           + reqEnv.length() + "\n" +
                        HTTPConstants.HEADER_CONTENT_TYPE + ": text/xml\n" +
                        (otherHeaders == null ? "" : otherHeaders) + 
-                       HTTPConstants.HEADER_SOAP_ACTION + ":" + action + "\n\n" ;
+                       HTTPConstants.HEADER_SOAP_ACTION + ": \"" + action + "\"\n\n" ;
 
       out.write( header.getBytes() );
       out.write( reqEnv.getBytes() );
