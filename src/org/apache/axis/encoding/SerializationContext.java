@@ -183,8 +183,14 @@ public class SerializationContext
                                                   AxisEngine.PROP_XML_DECL);
             if (shouldSendDecl != null)
                 sendXMLDecl = shouldSendDecl.booleanValue();
-            Boolean shouldSendMultiRefs = (Boolean)engine.getOption(
-                                                  AxisEngine.PROP_DOMULTIREFS);
+            
+            Boolean shouldSendMultiRefs = 
+                  (Boolean)msgContext.getProperty(AxisEngine.PROP_DOMULTIREFS);
+            
+            if (shouldSendMultiRefs == null)
+                shouldSendMultiRefs =
+                        (Boolean)engine.getOption(AxisEngine.PROP_DOMULTIREFS);
+            
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
 
