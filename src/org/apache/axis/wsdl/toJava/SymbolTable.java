@@ -986,13 +986,14 @@ public class SymbolTable {
                     
                     // Check if this element is of the form:
                     //    <element name="foo" type="tns:foo_type"/> 
-                    QName type = Utils.getNodeTypeRefQName(e.getNode(), "type");
-                    if (type != null)
-                        node = getTypeEntry(type, false).getNode();
+                    //QName type = Utils.getNodeTypeRefQName(e.getNode(), "type");
+                    //if (type != null)
+                    //    node = getTypeEntry(type, false).getNode();
                     
                     // Get the nested type entries.
                     Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
-                            node, 
+                            getTypeEntry(elementName, true).getNode(), 
+                            //node, 
                             this);
                     
                     if (vTypes != null) {
@@ -1217,7 +1218,8 @@ public class SymbolTable {
                 if (referentName != null) {
                     TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
-                        setTypeReferences(referent, doc, literal);
+                        //  setTypeReferences(referent, doc, literal);
+                        setTypeReferences(referent, doc, false);
                     }
                 }
             }
@@ -1228,7 +1230,8 @@ public class SymbolTable {
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
             if (!nestedType.isReferenced()) {
-                setTypeReferences(nestedType, doc, literal);
+                //  setTypeReferences(nestedType, doc, literal);
+                setTypeReferences(nestedType, doc, false);
             }
         }
     } // setTypeReferences
@@ -1265,10 +1268,10 @@ public class SymbolTable {
             type = getElement(part.getElementName());
             if (type != null) {
                 setTypeReferences(type, doc, literal);
-                QName ref = Utils.getNodeTypeRefQName(type.getNode(), "type");
-                if (ref != null) {
-                    setTypeReferences(getTypeEntry(ref, false), doc, literal);
-                }
+                //QName ref = Utils.getNodeTypeRefQName(type.getNode(), "type");
+                //if (ref != null) {
+                //  setTypeReferences(getTypeEntry(ref, false), doc, literal);
+                //}
             }
         }
     } // setMessageReference
