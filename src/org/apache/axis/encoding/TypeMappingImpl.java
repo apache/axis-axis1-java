@@ -573,7 +573,17 @@ public class TypeMappingImpl implements TypeMapping
         if (xmlType == null && (javaType.isArray() ||
              javaType == List.class ||
              List.class.isAssignableFrom(javaType))) {
-            xmlType = Constants.SOAP_ARRAY;
+
+            // get the registered array if any
+            pair = (Pair) class2Pair.get(Object[].class);
+            // TODO: it always returns the last registered one,
+            //  so that's why the soap 1.2 typemappings have to 
+            //  move to an other registry to differentiate them
+            if (pair != null) {
+                xmlType = pair.xmlType;
+            } else {
+                xmlType = Constants.SOAP_ARRAY;
+            }
         }
 
         //log.debug("getTypeQName xmlType =" + xmlType);

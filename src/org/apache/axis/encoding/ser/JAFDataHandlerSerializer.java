@@ -63,6 +63,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -99,6 +100,7 @@ public class JAFDataHandlerSerializer implements Serializer {
             // we used to do, throw something meaningful.
             throw new IOException(Messages.getMessage("noAttachments"));
         }
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
 
         Part attachmentPart= attachments.createAttachmentPart(dh);
 
@@ -114,7 +116,7 @@ public class JAFDataHandlerSerializer implements Serializer {
             attrs.removeAttribute(typeIndex);
         }
 
-        attrs.addAttribute("", Constants.ATTR_HREF, "href",
+        attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
                                "CDATA", attachmentPart.getContentIdRef() );
 
         context.startElement(name, attrs);

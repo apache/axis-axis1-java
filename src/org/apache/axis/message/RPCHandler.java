@@ -70,6 +70,7 @@ import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.MethodTarget;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -171,6 +172,13 @@ public class RPCHandler extends SOAPHandler
         QName type = null;
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
+
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
+            Constants.QNAME_RPC_RESULT.equals(qname)) {
+            // TODO: fix it ... now we just skip it
+            return new DeserializerImpl();
+        }
 
         Vector params = rpcElem.getParams();
         

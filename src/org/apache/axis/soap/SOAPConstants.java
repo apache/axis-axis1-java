@@ -113,4 +113,18 @@ public interface SOAPConstants extends Serializable {
      * Obtain the "next" role/actor URI
      */ 
     public String getNextRoleURI();
+
+    /**
+     * Obtain the href attribute name
+     */
+    public String getAttrHref();
+
+    /**
+     * Obtain the item type name of an array
+     */
+    public String getAttrItemType();
+
+
+
+
 }

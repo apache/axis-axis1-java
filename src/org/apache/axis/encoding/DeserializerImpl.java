@@ -64,6 +64,7 @@ import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -360,6 +361,8 @@ public class DeserializerImpl extends SOAPHandler
             return;
         }
 
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+
         // If this element has an id, then associate the value with the id.
         // (Prior to this association, the MessageElement of the element is
         // associated with the id. Failure to replace the MessageElement at this
@@ -376,7 +379,7 @@ public class DeserializerImpl extends SOAPHandler
             context.registerFixup("#" + id, this);
         }
 
-        String href = attributes.getValue("href");
+        String href = attributes.getValue(soapConstants.getAttrHref());
         if (href != null) {
             isHref = true;
 

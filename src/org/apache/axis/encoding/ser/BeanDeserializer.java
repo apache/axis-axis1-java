@@ -66,6 +66,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -187,6 +188,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         BeanPropertyDescriptor propDesc = null;
         FieldDesc fieldDesc = null;
 
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
         String encodingStyle = context.getMessageContext().getEncodingStyle();
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 
@@ -265,7 +267,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                                                             localName,
                                                             attributes);
 
-        String href = attributes.getValue("href");
+        String href = attributes.getValue(soapConstants.getAttrHref());
 
         // If no xsi:type or href, check the meta-data for the field
         if (childXMLType == null && fieldDesc != null && href == null) {

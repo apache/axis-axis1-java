@@ -594,6 +594,18 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArrayDeserializerFactory()
         );
 
+        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
+        myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+        myRegister(Constants.SOAP_ARRAY12,     Object[].class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+
+
         //
         // Now register the schema specific types
         //

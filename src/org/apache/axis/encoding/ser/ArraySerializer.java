@@ -144,7 +144,10 @@ public class ArraySerializer implements Serializer
         String dims = "";
         while (componentType.isArray()) {
             componentType = componentType.getComponentType();
-            dims += "[]";
+            if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                dims += "* ";
+            else
+                dims += "[]";
         }
 
         // Get the QName of the componentType.
@@ -170,8 +173,11 @@ public class ArraySerializer implements Serializer
         String compType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
 
-        String arrayType = compType + dims + "[" + len + "]";
-
+        String arrayType;
+        if (soap == SOAPConstants.SOAP12_CONSTANTS)
+            arrayType = dims + len;
+        else
+            arrayType = dims + "[" + len + "]";
 
         // Discover whether array can be serialized directly as a two-dimensional
         // array (i.e. arrayType=int[2,3]) versus an array of arrays.
@@ -231,7 +237,10 @@ public class ArraySerializer implements Serializer
                 // Update the arrayType to use mult-dim array encoding
                 if (okay) {
                     dims = dims.substring(0, dims.length()-2);
-                    arrayType = compType + dims + "[" + len + "," + dim2Len + "]";
+                    if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                        arrayType = dims + len + " " + dim2Len;
+                    else
+                        arrayType = dims + "[" + len + "," + dim2Len + "]";
                 } else {
                     dim2Len = -1;
                 }
@@ -255,15 +264,33 @@ public class ArraySerializer implements Serializer
                 attrs = new AttributesImpl(attributes);
             }
 
-            if (attrs.getIndex(soap.getEncodingURI(),
-                               Constants.ATTR_ARRAY_TYPE) == -1) {
+
+            if (attrs.getIndex(soap.getEncodingURI(), soap.getAttrItemType()) == -1) {
                 String encprefix =
                        context.getPrefixForURI(soap.getEncodingURI());
+
+                if (soap != SOAPConstants.SOAP12_CONSTANTS) {
+                    compType = compType + arrayType;
+
                 attrs.addAttribute(soap.getEncodingURI(),
-                                   Constants.ATTR_ARRAY_TYPE,
+                                       soap.getAttrItemType(),
                                    encprefix + ":arrayType",
                                    "CDATA",
+                                       compType);
+
+                } else {
+                    attrs.addAttribute(soap.getEncodingURI(),
+                                       soap.getAttrItemType(),
+                                       encprefix + ":itemType",
+                                       "CDATA",
+                                       compType);
+
+                    attrs.addAttribute(soap.getEncodingURI(),
+                                       "arraySize",
+                                       encprefix + ":arraySize",
+                                       "CDATA",
                                    arrayType);
+                }
             }
 
             // Force type to be SOAP_ARRAY for all array serialization.
@@ -286,12 +313,19 @@ public class ArraySerializer implements Serializer
                 String qname =
                       context.getPrefixForURI(schema.getXsiURI(),
                                               "xsi") + ":type";
+                QName soapArray;
+                if (soap == SOAPConstants.SOAP12_CONSTANTS) {
+                    soapArray = Constants.SOAP_ARRAY12;
+                } else {
+                    soapArray = Constants.SOAP_ARRAY;
+                }
+
                 attrs.setAttribute(typeI,
                                    schema.getXsiURI(),
                                    "type",
                                    qname,
                                    "CDATA",
-                                   context.qName2String(Constants.SOAP_ARRAY));
+                                   context.qName2String(soapArray));
             }
             attributes = attrs;
         }

@@ -61,6 +61,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -89,6 +90,8 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
         }
 //        super.startElement(namespace, localName, qName, attributes, context);
 
+        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+
         QName type = context.getTypeFromAttributes(namespace,
                                                    localName,
                                                    attributes);
@@ -96,8 +99,7 @@ public class JAFDataHandlerDeserializer extends DeserializerImpl {
             log.debug(Messages.getMessage("gotType00", "Deser", "" + type));
         }
         
-        String href = attributes.getValue("href");
-        log.debug("href=" + href);
+        String href = attributes.getValue(soapConstants.getAttrHref());
         if (href != null) {
             Object ref = context.getObjectByRef(href);
             try{

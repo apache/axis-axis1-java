@@ -15,6 +15,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -23,8 +24,6 @@ import test.encoding.DataDeserFactory;
 import test.encoding.DataSerFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -70,8 +69,8 @@ public class TestSer extends TestCase {
         // Create a TypeMapping and register the specialized Type Mapping
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
-        tm.setSupportedEncodings(new String[] {Constants.URI_DEFAULT_SOAP_ENC});
-        reg.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[] {Constants.URI_SOAP12_ENC});
+        reg.register(Constants.URI_SOAP12_ENC, tm);
 
         QName dataQName = new QName("typeNS", "Data");
         tm.register(Data.class, dataQName, new DataSerFactory(), new DataDeserFactory());
@@ -126,8 +125,9 @@ public class TestSer extends TestCase {
     {
         try {
             MessageContext msgContext = new MessageContext(new AxisServer());
+            msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
             String req =
-                "<xsd1:A xmlns:xsd1='urn:myNamespace'>"
+                "<xsd1:A xmlns:xsd1=\"urn:myNamespace\">"
                     + "<xsd1:B>"
                     + "<xsd1:C>foo bar</xsd1:C>"
                     + "</xsd1:B>"
@@ -137,12 +137,11 @@ public class TestSer extends TestCase {
             StringReader reqReader = new StringReader(req);
             InputSource reqSource = new InputSource(reqReader);
 
-            DocumentBuilder xdb = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = xdb.parse(reqSource );
+            Document document = XMLUtils.newDocument(reqSource);
 
             String msgString = null;
 
-            SOAPEnvelope msg = new SOAPEnvelope();
+            SOAPEnvelope msg = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
             RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", document.getFirstChild());
             arg1.setXSITypeGeneration(Boolean.FALSE);
 
