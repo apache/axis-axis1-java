@@ -671,7 +671,27 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             // Return an empty iterator;
             return new Vector().iterator();
         }
-        return wsdlService.getPorts().keySet().iterator();
+
+        Map portmap = wsdlService.getPorts();
+        List portlist = new java.util.ArrayList(portmap.size());
+        // we could simply iterate over keys instead and skip
+        // the lookup, but while keys are probably the same as
+        // port names, the documentation does not make any
+        // guarantee on this, so we'll just play it safe
+        // Aaron Hamid
+        Iterator portiterator = portmap.values().iterator();
+        while (portiterator.hasNext()) {
+          Port port = (Port) portiterator.next();
+          // maybe we should use Definition.getTargetNamespace() here,
+          // but this class does not hold a reference to the object,
+          // so we'll just use the namespace of the service's QName
+          // (it should all be the same wsdl targetnamespace value, right?)
+          // Aaron Hamid
+          portlist.add(new QName(wsdlService.getQName().getNamespaceURI(), port.getName()));
+        }
+
+        // ok, return the real list of QNames
+        return portlist.iterator();
     }
 
     /**
@@ -849,7 +869,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         Map map = new HashMap();
 
         public List getHandlerChain(QName portName) {
-            List list = (List) map.get(portName);
+            // namespace is not significant, so use local part directly
+            String key = portName.getLocalPart();
+            List list = (List) map.get(key);
             if (list == null) {
                 list = new java.util.ArrayList();
                 setHandlerChain(portName, list);
@@ -858,7 +880,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
 
         public void setHandlerChain(QName portName, List chain) {
-            map.put(portName, chain);
+            // namespace is not significant, so use local part directly
+            map.put(portName.getLocalPart(), chain);
         }
     }
 
