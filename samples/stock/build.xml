@@ -47,7 +47,7 @@ Copyright:
 <target name="copy"/>
 
 <target name="compile">
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
@@ -56,11 +56,10 @@ Copyright:
     <exclude name="**/old/**/*.java" />
   </javac>
   <!-- first, put the JWS where the functional test can see it -->
-  <mkdir dir="build/jws" />
-  <copy file="samples/stock/StockQuoteService.jws" todir="build/jws" />
-
+  <mkdir dir="${axis.home}/build/jws" />
+  <copy file="${axis.home}/samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
   <!--...not to mention the sample user list -->
-  <copy file="samples/stock/users.lst" todir="build"/>
+  <copy file="${axis.home}/samples/stock/users.lst" todir="${axis.home}/build"/>
 
 </target>
 

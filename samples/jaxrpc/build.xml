@@ -49,8 +49,8 @@ Copyright:
 
 <target name="compile">
     <!-- jaxrpc Dynamic proxy with bean - Bug 10824 -->
-    <wsdl2java url="samples/jaxrpc/address/Address.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/samples/jaxrpc/address/Address.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                testcase="no">
     </wsdl2java>
@@ -63,14 +63,14 @@ Copyright:
     </javac>
 
     <!-- jaxrpc sample -->
-    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
                output="${build.dir}/work"
                serverSide="yes"
                testcase="no">
     </wsdl2java>
 
     <!-- jaxrpc sample -->
-    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
                output="${build.dir}/work"
                serverSide="yes"
                testcase="no">
