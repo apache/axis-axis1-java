@@ -54,11 +54,17 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -68,23 +74,10 @@ import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
-import javax.wsdl.Part;
-import javax.wsdl.Input;
-
-import org.apache.axis.Constants;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
@@ -309,32 +302,14 @@ public class JavaDeployWriter extends JavaWriter {
                 Parameters params =
                         symbolTable.getOperationParameters(operation, "", bEntry);
                 if (params != null) {
-                    QName elementQName = null;
                     QName returnQName = null;
-
-                    // Get the operation qname
-                    Input input = operation.getInput();
-                    if (input != null) {
-                        Map parts = input.getMessage().getParts();
-                        if (parts != null && !parts.isEmpty()) {
-                            Iterator i = parts.values().iterator();
-                            Part p = (Part) i.next();
-                            elementQName = p.getElementName();
-                        }
-                        if (elementQName == null) {
-                            // FIXME - get namespace from WSDL?
-                            elementQName = new QName("", operationName);
-                        }
-                        QName defaultQName = new QName("", javaOperName);
-                        if (defaultQName.equals(elementQName)) {
-                            elementQName = null;
-                        }
-                    }
+                    
+                    // Get the operation QName
+                    QName elementQName = Utils.getOperationQName(bindingOper);
 
                     // Get the operation's return QName
                     if (params.returnName != null)
                         returnQName = Utils.getWSDLQName(params.returnName);
-
 
                     // Write the operation metadata
                     writeOperation(javaOperName, elementQName, returnQName,

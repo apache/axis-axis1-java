@@ -54,10 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import java.util.Iterator;
-import java.util.List;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -65,22 +68,13 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
-import javax.wsdl.PortType;
-
 import javax.wsdl.extensions.ExtensibilityElement;
-
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
@@ -206,29 +200,15 @@ public class JavaSkelWriter extends JavaWriter {
                 pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
                             javaOpName + "\", _params, " + returnStr + ");");
 
-                String ns = "";
-                BindingInput input = operation.getBindingInput();
-                if (input != null) {
-                    List elems = input.getExtensibilityElements();
-                    Iterator it = elems.iterator();
-                    while (it.hasNext()) {
-                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
-                        if (elem instanceof SOAPBody) {
-                            SOAPBody body = (SOAPBody) elem;
-                            ns = body.getNamespaceURI();
-                            break;
-                        }
-                    }
-                }
 
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc
-                if (!"".equals(ns) || !javaOpName.equals(opName)) {
-                    javax.xml.rpc.namespace.QName qn =
-                            new javax.xml.rpc.namespace.QName(ns, opName);
+                QName elementQName = Utils.getAxisQName(
+                        Utils.getOperationQName(operation));
+                if (elementQName != null) {
                     pw.println("        _oper.setElementQName(" +
-                            Utils.getNewQName(qn) + ");");
+                            Utils.getNewQName(elementQName) + ");");
                 }
 
                 // Find the SOAPAction.

@@ -54,30 +54,33 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.wsdl.Fault;
-import javax.wsdl.Message;
-import javax.wsdl.QName;
-
 import org.apache.axis.Constants;
-
 import org.apache.axis.utils.JavaUtils;
-
+import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Fault;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.Part;
+import javax.wsdl.QName;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPBody;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
@@ -445,5 +448,66 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     public static boolean isPrimitiveType(TypeEntry type) {
         return TYPES.get(type.getName()) != null;
     } // isPrimitiveType
+
+    /**
+     * Return the XML Element which will trigger a particular operation
+     * or null if the default case (localPart equals operation name) will
+     * work fine.
+     * 
+     * @param operation the operation
+     * @return element QName for doc/lit operation or null
+     */ 
+    public static QName getOperationQName(BindingOperation bindingOper) {
+        Operation operation = bindingOper.getOperation();
+        String operationName = operation.getName();
+        String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
+        QName elementQName = null;
+
+        // Get a namespace from the soap:body tag, if any
+        // example:
+        //   <soap:body namespace="this_is_what_we_want" ..>
+        String ns = null;
+        BindingInput bindInput = bindingOper.getBindingInput();
+        if (bindInput != null) {
+            Iterator it = bindInput.getExtensibilityElements().iterator();
+            while (it.hasNext()) {
+                ExtensibilityElement elem = (ExtensibilityElement) it.next();
+                if (elem instanceof SOAPBody) {
+                    SOAPBody body = (SOAPBody) elem;
+                    ns = body.getNamespaceURI();
+                    break;
+                }
+            }
+        }
+        // Get the qname from the first message part, if it is an element
+        // example:
+        //   <part name="paramters" element="ns:myelem">
+        Input input = operation.getInput();
+        if (input != null) {
+            Map parts = input.getMessage().getParts();
+            if (parts != null && !parts.isEmpty()) {
+                Iterator i = parts.values().iterator();
+                Part p = (Part) i.next();
+                elementQName = p.getElementName();
+            }
+        }
+        
+        // NOTE: it is possible for someone to define a part as an element
+        // while using rpc/encoded, which is wrong and we might want to catch it
+        // here.
+        
+        // If we didn't find an element declared in the part (assume it's a
+        // type), so the QName will be the operation name with the
+        // namespace (if any) from the binding soap:body tag..
+        if (elementQName == null) {
+            // We don't need to even set the QName in the meta data if we don't
+            // have a namespace or we didn't mangle the XML name to a java name
+            if (ns != null || !javaOperName.equals(operationName)) {
+                elementQName = new QName(ns, operationName);
+            }
+        }
+
+        return elementQName;
+    }
 
 } // class Utils
