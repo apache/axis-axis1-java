@@ -103,9 +103,6 @@ public class TestProxySample extends TestCase {
             String[] args2 = { "samples/proxy/client_deploy.xml" };
             AdminClient.main(args2);
             
-            // mysterious magic -- RobJ
-            ServiceClient.addTransportPackage("samples.transport");
-            
             System.out.println("Testing service...");
             doTest();
             System.out.println("Test complete.");
