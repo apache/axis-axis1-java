@@ -72,13 +72,20 @@ public class SkeletonImpl implements Skeleton {
         }
     }
 
-    class NamesAndModes {
+    class MetaInfo {
         String[] names;
         ParameterMode[] modes;
+        String inputNamespace;
+        String outputNamespace;
+	String soapAction;
 
-        NamesAndModes(String[] names, ParameterMode[] modes) {
+        MetaInfo(String[] names, ParameterMode[] modes, String inputNamespace,
+                String outputNamespace, String soapAction) {
             this.names = names;
             this.modes = modes;
+            this.inputNamespace = inputNamespace;
+            this.outputNamespace = outputNamespace;
+            this.soapAction = soapAction;
         }
     }
 
@@ -87,8 +94,10 @@ public class SkeletonImpl implements Skeleton {
      * The first name in the array is either the return name (which
      * should be set to null if there is no return name)
      **/
-    public void add(String operation, String[] names, ParameterMode[] modes) {
-        table.put(operation, new NamesAndModes(names, modes));
+    public void add(String operation, String[] names, ParameterMode[] modes,
+            String inputNamespace, String outputNamespace, String soapAction) {
+        table.put(operation, new MetaInfo(names, modes, inputNamespace, 
+                outputNamespace, soapAction));
     }
 
     /**
@@ -97,7 +106,7 @@ public class SkeletonImpl implements Skeleton {
      * Returns null if problems occur or the parameter is not known.
      */
     public String getParameterName(String operationName, int n) {
-        NamesAndModes value = (NamesAndModes) table.get(operationName);
+        MetaInfo value = (MetaInfo) table.get(operationName);
         if (value == null ||
             value.names == null ||
             value.names.length <= n+1) {
@@ -112,7 +121,7 @@ public class SkeletonImpl implements Skeleton {
      * Returns null if problems occur or the parameter is not known.
      */
     public ParameterMode getParameterMode(String operationName, int n) {
-        NamesAndModes value = (NamesAndModes) table.get(operationName);
+        MetaInfo value = (MetaInfo) table.get(operationName);
         if (value == null ||
             value.modes == null ||
             value.modes.length <= n+1) {
@@ -120,4 +129,41 @@ public class SkeletonImpl implements Skeleton {
         }
         return value.modes[n+1];
     }
+
+    /**
+     * Used to return the namespace of the input clause of the given
+     * operation.  Returns null if problems occur.
+     */
+    public String getInputNamespace(String operationName) {
+        MetaInfo value = (MetaInfo) table.get(operationName);
+        if (value == null) {
+            return null;
+        }
+        return value.inputNamespace;
+    }
+
+    /**
+     * Used to return the namespace of the output clause of the given
+     * operation.  Returns null if problems occur.
+     */
+    public String getOutputNamespace(String operationName) {
+        MetaInfo value = (MetaInfo) table.get(operationName);
+        if (value == null) {
+            return null;
+        }
+        return value.outputNamespace;
+    }
+
+    /**
+     * Used to return the SOAPAction of the given operation.
+     * Returns null if problems occur.
+     */
+    public String getSOAPAction(String operationName) {
+        MetaInfo value = (MetaInfo) table.get(operationName);
+        if (value == null) {
+            return null;
+        }
+        return value.soapAction;
+    }
+
 }
