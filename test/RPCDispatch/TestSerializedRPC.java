@@ -50,7 +50,7 @@ public class TestSerializedRPC extends TestCase {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
         reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverseString reverseData");
+        reverse.addOption("methodName", "*");
         engine.deployService(SOAPAction, reverse);
         
     }
@@ -160,6 +160,25 @@ public class TestSerializedRPC extends TestCase {
         arg += "</arg0>";
         Data expected = new Data(3, "cba", 5);
         assertEquals(expected, rpc("reverseData", arg, true));
+    }
+    
+    /**
+     * Test DOM round tripping
+     */
+    public void testArgAsDOM() throws Exception {
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
+        
+        // invoke the service and verify the result
+        String arg = "<arg0 xmlns:foo=\"urn:foo\" xsi:type=\"foo:Data\">";
+        arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
+        arg += "</arg0>";
+        
+        // invoke the service and verify the result
+        assertEquals(arg, rpc("argAsDOM", arg, false));
     }
     
     public static void main(String args[]) {
