@@ -41,6 +41,8 @@ Contents</h3>
 <br><a href="#Message Model Subsystem">Message Model Subsystem</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#SOAP message model">SOAP Message Model</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Message elements">Message Elements</a>
+<br><a href="#WSDL Subsystem">WSDL Subsystem</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="#WSDL2Java">WSDL2Java</a>
 <br><a href="#Sequence Diagrams">Interaction Diagrams</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Client Interaction">Client Side Processing</a>
 <br><a href="#Open Issues">Open Issues</a>
@@ -150,7 +152,7 @@ are independent of the higher layers. The 'stacked' boxes represent mutually
 independent, although not necessary mutually exclusive, alternatives. For
 example, the HTTP and SMTP transports are independent of each other but
 may be used together.
-<p><img SRC="subsystems.jpg" height=217 width=652>
+<p><img SRC="subsystems.jpg">
 <h2>
 <a NAME="Message Flow"></a>Message Flow Subsystem</h2>
 
@@ -313,6 +315,29 @@ The classes which represent SOAP messages form a hierarchy based on
 the MessageElement class which takes care of namespaces and encodings.
 The SOAPHeader class looks after the actor and mustUnderstand attributes.
 <br><img SRC="messagemodelclasses.jpg">
+
+<h2>
+<a NAME="WSDL Subsystem"></a>WSDL Subsystem</h2>
+The WSDL subsystem contains the WSDL2Java and Java2WSDL tools. The
+Axis runtime does not depend on these tools -- they are just there
+to make life easier for the user.
+
+<a name="WSDL2Java"></a><h3>WSDL2Java</h3>
+This tool takes a description of a web service written in WSDL
+and emits Java artefacts used to access the web service.
+<p>
+There are three layers inside the tool:
+<ul>
+<li>framework:  SymbolTable, Emitter, WriterFactory</li>
+<li>WSDL2Java plugin to the framework:  WSDL2Java (the main),
+JavaWriterFactory, and all the WSDL-relative writers:  JavaPortTypeWriter,
+JavaBindingWriter, etc.</li>
+<li>The actual WSDL2Java emitters, one for each file generated:
+JavaInterfaceWriter, JavaStubWriter, etc.</li>
+</ul>
+
+<a name="Java2WSDL"></a><h3>Java2WSDL</h3>
+tbd.
 
 <h2>
 <a NAME="Sequence Diagrams"></a>Interaction Diagrams</h2>
