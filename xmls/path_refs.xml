@@ -7,7 +7,7 @@
     <pathelement location="${jimi.jar}"/>
     <pathelement location="${tools.jar}"/>
     <fileset dir="${lib.dir}">
-        <include name="*.jar"/>
+        <include name="**/*.jar"/>
     </fileset>
     <pathelement path="${java.class.path}"/>
     <pathelement location="${build.dest}" />
