@@ -60,7 +60,7 @@ import org.apache.axis.types.NonNegativeInteger;
 import javax.xml.rpc.holders.Holder;
 
 /**
- * Class UnsignedIntHolder
+ * Class NonNegativeIntegerHolder
  *
  */
 public final class NonNegativeIntegerHolder implements Holder {
