@@ -338,8 +338,9 @@ public class AxisServer extends AxisEngine
                                 " preInvoke=" + ( t3-t2 ) +
                                 " invoke=" + ( t4-t3 ) +
                                 " postInvoke=" + ( t5-t4 ) +
-                                msgContext.getTargetService() +
-                                "." + msgContext.getOperation().getName());
+                                " " + msgContext.getTargetService() + "." +
+                                 ((msgContext.getOperation( ) == null) ?
+                                 "" : msgContext.getOperation().getName()) );
                 }
 
             }
