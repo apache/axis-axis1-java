@@ -78,7 +78,7 @@ public class OperationDesc {
 
     // public SOAPBodyElement [] method(SOAPBodyElement [])
     public static final int MSG_METHOD_BODYARRAY = 1;
-    // public SOAPEnvelope method(SOAPEnvelope)
+    // public void method(SOAPEnvelope, SOAPEnvelope)
     public static final int MSG_METHOD_SOAPENVELOPE = 2;
     // public Element [] method(Element [])
     public static final int MSG_METHOD_ELEMENTARRAY = 3;
