@@ -133,6 +133,8 @@ public class JWSProcessor extends BasicHandler
         String            outdir   = f1.getParent();
         String[]          args     = null ;
         
+        if (outdir == null) outdir=".";
+
         args = new String[] { "-d", outdir,
                               "-classpath",
                                 System.getProperty("java.class.path" ),

@@ -73,7 +73,7 @@ public class Options {
 
   String  host ;      // -h    also -l (url)
   String  port ;      // -p
-  String  servlet ;   // -s
+  String  servlet ;   // -s    also -f (file)
   String  protocol ;
 
   String  user ;      // -u
@@ -234,6 +234,13 @@ public class Options {
       protocol = url.getProtocol();
     }
 
+    if ( (tmp = isValueSet( 'f' )) != null ) {
+      host = "";
+      port = "-1";
+      servlet = tmp;
+      protocol = "file";
+    }
+
     tmp = isValueSet( 'h' ); if ( host == null ) host = tmp ;
     tmp = isValueSet( 'p' ); if ( port == null ) port = tmp ;
     tmp = isValueSet( 's' ); if ( servlet == null ) servlet = tmp ;
@@ -242,12 +249,13 @@ public class Options {
     if ( port == null ) port = "8080" ;
     if ( servlet == null ) servlet = "/axis/servlet/AxisServlet" ;
     else
-      if ( servlet.charAt(0) != '/' ) servlet = "/" + servlet ;
+      if ( servlet.length()>0 && servlet.charAt(0)!='/' ) 
+        servlet = "/" + servlet ;
 
     if (url == null) {
       if (protocol == null) protocol = "http";
       tmp = protocol + "://" + host ;
-      if ( port != null ) tmp += ":" + port ;
+      if ( port != null && !port.equals("-1")) tmp += ":" + port ;
       if ( servlet != null ) tmp += servlet ;
     } else tmp = url.toString();
     Debug.Print( 3, "getURL returned: " + tmp );

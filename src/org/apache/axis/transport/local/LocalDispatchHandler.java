@@ -61,6 +61,8 @@ import org.apache.axis.server.*;
 import org.apache.axis.transport.http.*;
 import org.apache.axis.utils.*;
 
+import java.net.*;
+
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.
  *
@@ -99,6 +101,20 @@ public class LocalDispatchHandler extends BasicHandler {
     if (action != null) {
        serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action); 
        serverContext.setProperty(MessageContext.TRANS_INPUT , "HTTPAction");
+    }
+
+    // set the realpath if possible
+    String transURL = clientContext.getStrProp(MessageContext.TRANS_URL);
+    if (transURL != null) {
+      try {
+        URL url = new URL(transURL);
+        if (url.getProtocol().equals("file")) {
+          String file = url.getFile();
+          if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
+          serverContext.setProperty(Constants.MC_REALPATH, file);
+        }
+      } catch (Exception e) {
+      }
     }
 
     // invoke the request
