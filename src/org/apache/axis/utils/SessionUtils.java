@@ -57,8 +57,6 @@ package org.apache.axis.utils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
@@ -70,29 +68,10 @@ public class SessionUtils {
     protected static Log log = LogFactory.getLog(SessionUtils.class.getName());
 
     /**
-     * The default message digest algorithm to use if we cannot use
-     * the requested one.
-     */
-    protected static final String DEFAULT_ALGORITHM = "MD5";
-
-    /**
      * The number of random bytes to include when generating a
      * session identifier.
      */
     protected static final int SESSION_ID_BYTES = 16;
-
-    /**
-     * The message digest algorithm to be used when generating session
-     * identifiers.  This must be an algorithm supported by the
-     * <code>java.security.MessageDigest</code> class on your platform.
-     */
-    protected static String algorithm = DEFAULT_ALGORITHM;
-
-    /**
-     * Return the MessageDigest implementation to be used when
-     * creating session identifiers.
-     */
-    protected static MessageDigest digest = null;
 
     /**
      * A random number generator to use when generating session identifiers.
@@ -120,7 +99,6 @@ public class SessionUtils {
         byte bytes[] = new byte[SESSION_ID_BYTES];
 
         getRandom().nextBytes(bytes);
-        bytes = getDigest().digest(bytes);
 
         // Render the result as a String of hexadecimal digits
         StringBuffer result = new StringBuffer();
@@ -150,28 +128,6 @@ public class SessionUtils {
      */
     public static synchronized Long generateSession() {
         return new Long(getRandom().nextLong());
-    }
-
-    /**
-     * Return the MessageDigest object to be used for calculating
-     * session identifiers.  If none has been created yet, initialize
-     * one the first time this method is called.
-     *
-     * @return Message Digest
-     */
-    private static synchronized MessageDigest getDigest() {
-        if (digest == null) {
-            try {
-                digest = MessageDigest.getInstance(algorithm);
-            } catch (NoSuchAlgorithmException e) {
-                try {
-                    digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
-                } catch (NoSuchAlgorithmException f) {
-                    digest = null;
-                }
-            }
-        }
-        return (digest);
     }
 
     /**
