@@ -1,4 +1,12 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
 <!-- ===================================================================
 <description>
    WS-I Sample Application - Supply Chain Manangement for Axis
@@ -13,100 +21,101 @@ Prerequisites:
 Build Instructions:
    To compile
         ant compile
+   To execute
+        ant run
 
 Author:
   Ias iasandcb@tmax.co.kr
+  dims@yahoo.com
 
 Copyright:
   Copyright (c) 2003 Apache Software Foundation.
 </description>
 ==================================================================== -->
-<project name="ws-i-scm" default="compile" basedir="..">
-	<property name="axis.home" value="${basedir}/../../../../"/>
-	<property name="src.dir" value="${basedir}/source"/>
-	<property name="dist.dir" value="${basedir}/distribution"/>
-	<property name="classes.dir" value="${dist.dir}/classes"/>
-	<property name="results.dir" value="${basedir}/results"/>
-	<property name="src.java.dir" value="${src.dir}/java"/>
-	<property name="src.wsdl.dir" value="${src.dir}/wsdl"/>
-	<property name="src.generated.dir" value="${src.java.dir}/generated"/>
-	<property name="src.implemented.dir" value="${src.java.dir}/implemented"/>
-	<property name="target.port" value="8080"/>
-	<property name="target.server" value="localhost"/>
-	<property name="target.appname" value="axis"/>
-	<property name="debug" value="on"/>
-	<property name="optimize" value="on"/>
-	<path id="axis.classpath">
-		<fileset dir="${axis.home}/java/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-		<fileset dir="${axis.home}/java/build/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-		<pathelement location="${axis.home}/java/tools"/>
-	</path>
-	<taskdef resource="axis-tasks.properties" classpathref="axis.classpath"/>
-	<target name="init">
-		<mkdir dir="${dist.dir}"/>
-		<mkdir dir="${classes.dir}"/>
-		<mkdir dir="${results.dir}"/>
-	</target>
-	<target name="clean-generated">
-		<delete dir="${src.generated.dir}/org"/>
-		<delete dir="${classes.dir}/org/apache/axis/wsi"/>
-	</target>
-	<target name="clean-classes">
-		<delete dir="${classes.dir}/org/apache/axis/wsi"/>
-	</target>
-	<target name="generate-logging">
-		<axis-wsdl2java output="${src.generated.dir}" verbose="true" serverside="true" url="${src.wsdl.dir}/LoggingFacilityImpl.wsdl">
+<project default="compile">
+    <property name="axis.home" location="../../.."/>
+    <property name="componentName" value="samples/ws-i/scm"/>
+    <property name="extraTestCases" value="org/apache/axis/wsi/scm/**" />
+
+    &properties;
+    &paths;
+    &taskdefs;
+    &taskdefs_post_compile;
+    &targets;
+
+    <target name="clean">
+        <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+        <delete dir="${build.dir}/classes/${componentName}"/>
+        <delete dir="${build.dir}/work/${componentName}"/>
+    </target>
+
+    <target name="copy" depends="setenv"/>
+
+    <target name="compile" depends="copy">
+        <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
+        <mkdir dir="${axis.home}/build/work/${componentName}"/>
+
+		<wsdl2java output="${axis.home}/build/work/${componentName}" testcase="true" verbose="true" serverside="true" url="${axis.home}/samples/ws-i/scm/source/wsdl/LoggingFacilityImpl.wsdl">
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl" package="org.apache.axis.wsi.scm.logging"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.xsd" package="org.apache.axis.wsi.scm.logging"/>
-		</axis-wsdl2java>
-	</target>
-	<target name="generate-manufacturer">
-		<axis-wsdl2java output="${src.generated.dir}" verbose="true" serverside="true" url="${src.wsdl.dir}/ManufacturerImpl.wsdl">
+		</wsdl2java>
+
+		<wsdl2java output="${axis.home}/build/work/${componentName}" testcase="true" verbose="true" serverside="true" url="${axis.home}/samples/ws-i/scm/source/wsdl/ManufacturerImpl.wsdl">
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl" package="org.apache.axis.wsi.scm.manufacturer"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.xsd" package="org.apache.axis.wsi.scm.manufacturer"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/ManufacturerPO.xsd" package="org.apache.axis.wsi.scm.manufacturer.po"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/ManufacturerSN.xsd" package="org.apache.axis.wsi.scm.manufacturer.sn"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd" package="org.apache.axis.wsi.scm.configuration"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer/CallBack" package="org.apache.axis.wsi.scm.manufacturer.callback"/>
-		</axis-wsdl2java>
-	</target>
-	<target name="generate-retailer">
-		<axis-wsdl2java output="${src.generated.dir}" verbose="true" serverside="true" url="${src.wsdl.dir}/RetailerImpl.wsdl">
+		</wsdl2java>
+
+		<wsdl2java output="${axis.home}/build/work/${componentName}" testcase="true" verbose="true" serverside="true" url="${axis.home}/samples/ws-i/scm/source/wsdl/RetailerImpl.wsdl">
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Retailer.wsdl" package="org.apache.axis.wsi.scm.retailer"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/RetailCatalog.xsd" package="org.apache.axis.wsi.scm.retailer.catalog"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/RetailOrder.xsd" package="org.apache.axis.wsi.scm.retailer.order"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd" package="org.apache.axis.wsi.scm.configuration"/>
-		</axis-wsdl2java>
-	</target>
-	<target name="generate-configurator">
-		<axis-wsdl2java output="${src.generated.dir}" verbose="true" serverside="true" url="${src.wsdl.dir}/ConfiguratorImpl.wsdl">
+		</wsdl2java>
+
+		<wsdl2java output="${axis.home}/build/work/${componentName}" testcase="true" verbose="true" serverside="true" url="${axis.home}/samples/ws-i/scm/source/wsdl/ConfiguratorImpl.wsdl">
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.wsdl" package="org.apache.axis.wsi.scm.configurator"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configurator.xsd" package="org.apache.axis.wsi.scm.configurator"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd" package="org.apache.axis.wsi.scm.configuration"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.wsdl" package="org.apache.axis.wsi.scm.configuration"/>
-		</axis-wsdl2java>
-	</target>
-	<target name="generate-warehouse">
-		<axis-wsdl2java output="${src.generated.dir}" verbose="true" serverside="true" url="${src.wsdl.dir}/WarehouseImpl.wsdl">
+		</wsdl2java>
+
+		<wsdl2java output="${axis.home}/build/work/${componentName}" testcase="true" verbose="true" serverside="true" url="${axis.home}/samples/ws-i/scm/source/wsdl/WarehouseImpl.wsdl">
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl" package="org.apache.axis.wsi.scm.warehouse"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.xsd" package="org.apache.axis.wsi.scm.warehouse"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.wsdl" package="org.apache.axis.wsi.scm.configuration"/>
 			<mapping namespace="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Configuration.xsd" package="org.apache.axis.wsi.scm.configuration"/>
-		</axis-wsdl2java>
-	</target>
-	<target name="deploy-logging">
-		<axis-admin port="${target.port}" hostname="${target.server}" failonerror="true" servletpath="${target.appname}/services/AdminService" debug="true" xmlfile="${src.generated.dir}/org/apache/axis/wsi/scm/logging/deploy.wsdd"/>
-	</target>
-	<target name="deploy-retailer">
-		<axis-admin port="${target.port}" hostname="${target.server}" failonerror="true" servletpath="${target.appname}/services/AdminService" debug="true" xmlfile="${src.generated.dir}/org/apache/axis/wsi/scm/retailer/deploy.wsdd"/>
-	</target>
-  	<target name="compile" depends="init">
-	    <javac srcdir="${src.generated.dir}:${src.implemented.dir}" destdir="${classes.dir}" debug="on">
-    	    <classpath refid="axis.classpath" />
-	    </javac>
-	</target>
+		</wsdl2java>
+
+        <delete dir="${build.dir}/classes/samples/ws-i/scm"/>
+
+        <copy todir="${build.dir}/work/${componentName}" overwrite="yes">
+            <fileset dir="${axis.home}/samples/ws-i/scm/source/java/implemented">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+
+        <javac srcdir="${build.dir}/work/${componentName}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+            <include name="**/*.java"/>
+        </javac>
+    </target>
+    
+    <!--
+    <target name="deploy"/>
+    -->
+
+    <target name="run">
+        <antcall target="execute-Component"/>
+    </target>
+
+    <!--
+    <target name="undeploy"/>
+    -->
+
 </project>
