@@ -58,7 +58,6 @@ import org.apache.axis.wsdl.toJava.TypeEntry;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.Vector;
 
 /**
  * A Parameter descriptor, collecting the interesting info about an
