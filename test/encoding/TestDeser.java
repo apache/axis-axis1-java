@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
+import samples.echo.SOAPStruct;
+import samples.echo.SOAPStructStruct;
 /**
  * Test deserialization of SOAP responses
  */
@@ -476,10 +477,20 @@ public class TestDeser extends TestCase {
 
     // This was created from a return received from a .NET service
     public void testArrayL() throws Exception {
-        samples.echo.SOAPStruct[] s = new samples.echo.SOAPStruct[]
-            {new samples.echo.SOAPStruct(1, "one",   1.1F),
-             new samples.echo.SOAPStruct(2, "two",   2.2F),
-             new samples.echo.SOAPStruct(3, "three", 3.3F)};
+        SOAPStruct[] s = new SOAPStruct[] {
+                new SOAPStruct(),
+                new SOAPStruct(),
+                new SOAPStruct()};
+            s[0].setVarInt(1);
+            s[0].setVarString("one");
+            s[0].setVarFloat(1.1F);
+            s[1].setVarInt(2);
+            s[1].setVarString("two");
+            s[1].setVarFloat(2.2F);
+            s[2].setVarInt(3);
+            s[2].setVarString("three");
+            s[2].setVarFloat(3.3F);
+
         deserialize("<soapenc:Array id=\"ref-7\" soapenc:arrayType=\"me:SOAPStruct[3]\">" +
                     "<item href=\"#ref-8\"/>" + 
                     "<item href=\"#ref-9\"/>" +
@@ -508,10 +519,19 @@ public class TestDeser extends TestCase {
 
     // Like above without multiref
     public void testArrayM() throws Exception {
-        samples.echo.SOAPStruct[] s = new samples.echo.SOAPStruct[]
-            {new samples.echo.SOAPStruct(1, "one",   1.1F),
-             new samples.echo.SOAPStruct(2, "two",   2.2F),
-             new samples.echo.SOAPStruct(3, "three", 3.3F)};
+        SOAPStruct[] s = new SOAPStruct[] {
+                new SOAPStruct(),
+                new SOAPStruct(),
+                new SOAPStruct()};
+            s[0].setVarInt(1);
+            s[0].setVarString("one");
+            s[0].setVarFloat(1.1F);
+            s[1].setVarInt(2);
+            s[1].setVarString("two");
+            s[1].setVarFloat(2.2F);
+            s[2].setVarInt(3);
+            s[2].setVarString("three");
+            s[2].setVarFloat(3.3F);
         deserialize("<soapenc:Array id=\"ref-7\" soapenc:arrayType=\"me:SOAPStruct[3]\">" +
                     "<me:SOAPStruct>" +
                     "<varString xsi:type=\"xsd:string\">one</varString>" +
@@ -537,8 +557,17 @@ public class TestDeser extends TestCase {
 
     // Struct within Struct
     public void testStructStruct() throws Exception {
-        samples.echo.SOAPStruct s = new samples.echo.SOAPStruct(1, "one",   1.1F);
-        samples.echo.SOAPStructStruct ss = new samples.echo.SOAPStructStruct("hello", 2, 2.2F, s);
+
+        SOAPStruct s = new samples.echo.SOAPStruct();
+        s.setVarInt(1);
+        s.setVarString("one");
+        s.setVarFloat(1.1F);
+        SOAPStructStruct ss = new SOAPStructStruct();
+        ss.setVarString("hello");
+        ss.setVarInt(2);
+        ss.setVarFloat(2.2F);
+        ss.setVarStruct(s);
+
         deserialize("<whatever xsi:type=\"me:SOAPStructStruct\">" +
                     "<varString xsi:type=\"xsd:string\">hello</varString>" +
                     "<varInt xsi:type=\"xsd:int\">2</varInt>" +
@@ -553,8 +582,16 @@ public class TestDeser extends TestCase {
 
     // Struct within Struct
     public void testStructStruct2() throws Exception {
-        samples.echo.SOAPStruct s = new samples.echo.SOAPStruct(1, "one",   1.1F);
-        samples.echo.SOAPStructStruct ss = new samples.echo.SOAPStructStruct("hello", 2, 2.2F, s);
+        SOAPStruct s = new samples.echo.SOAPStruct();
+        s.setVarInt(1);
+        s.setVarString("one");
+        s.setVarFloat(1.1F);
+        SOAPStructStruct ss = new SOAPStructStruct();
+        ss.setVarString("hello");
+        ss.setVarInt(2);
+        ss.setVarFloat(2.2F);
+        ss.setVarStruct(s);
+
         deserialize("<whatever xsi:type=\"me:SOAPStructStruct\">" +
                     "<varString>hello</varString>" +
                     "<varInt>2</varInt>" +
