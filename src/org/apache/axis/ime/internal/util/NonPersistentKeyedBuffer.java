@@ -57,6 +57,7 @@ package org.apache.axis.ime.internal.util;
 
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.threadpool.ThreadPool;
 import org.apache.commons.logging.Log;
 
 import java.util.Vector;
@@ -77,10 +78,10 @@ public class NonPersistentKeyedBuffer
 
     private final KeyedQueue messages = new KeyedQueue();
 
-    private WorkerPool WORKERS;
+    private ThreadPool WORKERS;
 
     public NonPersistentKeyedBuffer(
-            WorkerPool workers) {
+            ThreadPool workers) {
         this.WORKERS = workers;
     }
 
