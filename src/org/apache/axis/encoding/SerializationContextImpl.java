@@ -753,16 +753,42 @@ public class SerializationContextImpl implements SerializationContext
     }
 
     /**
-     * Get a String representation of the identity hashCode for a given
-     * Object.  This can be used as a unique key into a HashMap which will
+     * Get an IDKey that represents the unique identity of the object.
+     * This is used as a unique key into a HashMap which will
      * not give false hits on other Objects where hashCode() and equals()
      * have been overriden to match.
      *
      * @param value the Object to hash
-     * @return a String containing the unique identity hashCode
+     * @return a unique IDKey for the identity
      */
-    private String getIdentityKey(Object value) {
-        return "" + System.identityHashCode(value);
+    private IDKey getIdentityKey(Object value) {
+        return new IDKey(value);
+    }
+    class IDKey {
+        private Object value = null;
+        private int id = 0;
+        public IDKey(Object _value) {
+            // This is the Object hashcode 
+            id = System.identityHashCode(_value);  
+            // There have been some cases (bug 11706) that return the 
+            // same identity hash code for different objects.  So 
+            // the value is also added to disambiguate these cases.
+            value = _value;  
+        }
+        public int hashCode() {
+            return id;
+        }
+        public boolean equals(Object other) {
+            if (!(other instanceof IDKey)) {
+                return false;
+            }
+            IDKey idKey = (IDKey) other;
+            if (id != idKey.id) {
+                return false;
+            }
+            // Note that identity equals is used.
+            return value == idKey.value;
+        }
     }
 
     /**
@@ -802,8 +828,11 @@ public class SerializationContextImpl implements SerializationContext
                            "CDATA",
                            encodingStyle);
 
-        Iterator i =
-            ((HashMap)multiRefValues.clone()).keySet().iterator();
+        // Make a copy of the keySet because it could be updated 
+        // during processing
+        HashSet keys = new HashSet();
+        keys.addAll(multiRefValues.keySet());
+        Iterator i = keys.iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
                 Object val = i.next();
@@ -832,8 +861,13 @@ public class SerializationContextImpl implements SerializationContext
                 secondLevelObjects = null;
             }
         }
+
+        // Reset maps and flags
         forceSer = null;
         outputMultiRefsFlag = false;
+        multiRefValues = null;
+        multiRefIndex = -1;
+        secondLevelObjects = null;
     }
 
     /**
