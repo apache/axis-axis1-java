@@ -117,6 +117,8 @@ public class JavaStubWriter extends JavaClassWriter {
         uses.put(Use.LITERAL, "org.apache.axis.enum.Use.LITERAL");
     }
 
+    static int OPERDESC_PER_BLOCK = 10;
+
     /**
      * Constructor.
      */
@@ -363,11 +365,18 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("    static {");
         pw.println("        _operations = new org.apache.axis.description.OperationDesc[" +
                 operations.size() + "];");
-        pw.println("        org.apache.axis.description.OperationDesc oper;");
-        for (int i = 0; i < operations.size(); ++i) {
-            if(((i+1)%10) == 0) {
-                pw.println("    }");
-                pw.println("    static {");
+
+        for (int j = 0, k = 0; j < operations.size(); ++j) {
+            if((j%OPERDESC_PER_BLOCK) == 0) {
+                k++;
+                pw.println("        _initOperationDesc" + k + "();");
+            }
+        }
+        for (int i = 0, k = 0; i < operations.size(); ++i) {
+            if((i%OPERDESC_PER_BLOCK) == 0) {
+                k++;
+                pw.println("    }\n");
+                pw.println("    private static void _initOperationDesc" + k + "(){");
                 pw.println("        org.apache.axis.description.OperationDesc oper;");
             }
             BindingOperation operation = (BindingOperation) operations.get(i);
