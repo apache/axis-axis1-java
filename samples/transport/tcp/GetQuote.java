@@ -149,10 +149,7 @@ public class GetQuote {
             System.out.println(gq.symbol + ": " + val);
         }
         catch( Exception e ) {
-            if ( e instanceof AxisFault ) {
-                ((AxisFault)e).dump();
-            } else
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
     

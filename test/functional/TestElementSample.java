@@ -111,7 +111,6 @@ public class TestElementSample extends TestCase {
             log.info("Test complete.");
         }
         catch( Exception e ) {
-            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
             throw new Exception("Fault returned from test: "+e);
         }

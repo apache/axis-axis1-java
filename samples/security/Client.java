@@ -89,12 +89,7 @@ public class Client {
             XMLUtils.PrettyElementToStream(mc.getResponseMessage().getSOAPEnvelope().getAsDOM(), System.out);
         }
         catch (Exception e) {
-            if (e instanceof AxisFault) {
-                System.err.println(((AxisFault) e).dumpToString());
-            }
-            else {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 }

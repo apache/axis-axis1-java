@@ -310,4 +310,14 @@ public class AxisFault extends java.rmi.RemoteException {
     public String toString() {
         return faultString;
     }
+
+    public void printStackTrace(PrintStream ps) {
+        ps.println(dumpToString());
+        super.printStackTrace(ps);
+    }
+
+    public void printStackTrace(java.io.PrintWriter pw) {
+        pw.println(dumpToString());
+        super.printStackTrace(pw);
+    }
 };

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:ram" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:impl="urn:Ram-impl" 
+xmlns:intf="urn:ram" xmlns:tns1="http://ram.uspto.gov"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <types>
+  <schema targetNamespace="http://ram.uspto.gov" 
+xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="RamData">
+    <sequence>
+     <element name="mailRoomDate" nillable="true" type="xsd:date"/>
+     <element name="callingClientUserIdentifier" nillable="true" 
+type="xsd:string"/>
+     <element name="bankInfoRequestType" nillable="true" type="xsd:string"/>
+     <element name="callingClientPortNumber" nillable="true" type="xsd:string"/>
+     <element name="salePostingReferenceText" nillable="true" 
+type="xsd:string"/>
+     <element name="bankInfoPaymentType" nillable="true" type="xsd:string"/>
+     <element name="saleOtherPaymentTotalAmount" type="xsd:double"/>
+     <element name="fees" nillable="true" type="intf:ArrayOf_tns1_Fee"/>
+     <element name="creditCard" nillable="true" type="tns1:CreditCard"/>
+    </sequence>
+   </complexType>
+   <complexType name="Fee">
+    <sequence>
+     <element name="code" nillable="true" type="xsd:string"/>
+     <element name="amount" type="xsd:double"/>
+     <element name="quantity" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="CreditCard">
+    <sequence>
+     <element name="name" nillable="true" type="xsd:string"/>
+     <element name="expires" nillable="true" type="xsd:date"/>
+     <element name="number" nillable="true" type="xsd:string"/>
+     <element name="postalCode" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="Response">
+    <sequence>
+     <element name="salePostingReferenceText" nillable="true" 
+type="xsd:string"/>
+     <element name="authorization" nillable="true" type="xsd:string"/>
+     <element name="hostResponseCode" nillable="true" type="xsd:string"/>
+     <element name="hostResponseMessage" nillable="true" type="xsd:string"/>
+     <element name="protoBaseResponseCode" nillable="true" type="xsd:string"/>
+     <element name="protoBaseResponseMessage" nillable="true" 
+type="xsd:string"/>
+     <element name="transactionReferenceNumber" nillable="true" 
+type="xsd:string"/>
+     <element name="reasonCode" nillable="true" type="xsd:string"/>
+     <element name="returnCode" nillable="true" type="xsd:string"/>
+     <element name="accountingDate" nillable="true" type="xsd:date"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:ram" xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="ArrayOf_tns1_Fee">
+    <complexContent>
+     <restriction base="SOAP-ENC:Array">
+      <attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns1:Fee[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns1_RamData">
+    <complexContent>
+     <restriction base="SOAP-ENC:Array">
+      <attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns1:RamData[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <element name="ArrayOf_tns1_RamData" nillable="true" 
+type="intf:ArrayOf_tns1_RamData"/>
+   <complexType name="ArrayOf_tns1_Response">
+    <complexContent>
+     <restriction base="SOAP-ENC:Array">
+      <attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns1:Response[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <element name="ArrayOf_tns1_Response" nillable="true" 
+type="intf:ArrayOf_tns1_Response"/>
+  </schema>
+ </types>
+
+   <wsdl:message name="validateResponse">
+
+      <wsdl:part name="return" type="intf:ArrayOf_tns1_Response"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="validateRequest">
+
+      <wsdl:part name="in0" type="intf:ArrayOf_tns1_RamData"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="Ram">
+
+      <wsdl:operation name="validate" parameterOrder="in0">
+
+         <wsdl:input message="intf:validateRequest"/>
+
+         <wsdl:output message="intf:validateResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="RamSoapBinding" type="intf:Ram">
+
+      <wsdlsoap:binding style="rpc" 
+transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="validate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input>
+
+            <wsdlsoap:body 
+encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="validate" 
+use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output>
+
+            <wsdlsoap:body 
+encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ram" 
+use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="RamService">
+
+      <wsdl:port binding="intf:RamSoapBinding" name="Ram">
+
+         <wsdlsoap:address location="http://localhost:8080/axis/services/Ram"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

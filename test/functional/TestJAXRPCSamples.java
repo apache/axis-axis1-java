@@ -112,7 +112,6 @@ public class TestJAXRPCSamples extends TestCase {
             log.info("Test complete.");
         }
         catch (Throwable t) {
-            if (t instanceof AxisFault) ((AxisFault)t).dump();
             t.printStackTrace();
             throw new Exception("Fault returned from test: " + t);
         }
@@ -135,7 +134,6 @@ public class TestJAXRPCSamples extends TestCase {
             log.info("Test complete.");
         }
         catch (Throwable t) {
-            if (t instanceof AxisFault) ((AxisFault)t).dump();
             t.printStackTrace();
             throw new Exception("Fault returned from test: " + t);
         }

@@ -318,10 +318,6 @@ public class Admin
                 admin.process(msgContext, doc.getDocumentElement());
             }
         }
-        catch( AxisFault af ) {
-            log.error( JavaUtils.getMessage("axisFault01", af.dumpToString()) );
-            throw af;
-        }
         catch( Exception e ) {
             log.error( JavaUtils.getMessage("errorProcess00", args[i]), e );
             //System.exit( 1 );

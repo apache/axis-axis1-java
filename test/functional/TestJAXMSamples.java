@@ -80,7 +80,6 @@ public class TestJAXMSamples extends TestCase {
             UddiPing.searchUDDI("IBM", "http://www-3.ibm.com/services/uddi/testregistry/inquiryapi");
             log.info("Test complete.");
         } catch (Throwable t) {
-            if (t instanceof AxisFault) ((AxisFault) t).dump();
             t.printStackTrace();
             throw new Exception("Fault returned from test: " + t);
         }
@@ -97,7 +96,6 @@ public class TestJAXMSamples extends TestCase {
             if (t != null) {
                 t.printStackTrace();
                 if (t instanceof AxisFault) {
-                    ((AxisFault) t).dump();
                     if (((AxisFault) t).detail instanceof ConnectException) {
                         System.out.println("Connect failure caused JAXM DelayedStockQuote to be skipped.");
                         return;
@@ -109,7 +107,6 @@ public class TestJAXMSamples extends TestCase {
                 throw new Exception("Exception returned from test: " + e);
             }
         } catch (Throwable t) {
-            if (t instanceof AxisFault) ((AxisFault) t).dump();
             t.printStackTrace();
             throw new Exception("Fault returned from test: " + t);
         }

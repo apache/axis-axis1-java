@@ -132,7 +132,6 @@ public class TestTCPTransportSample extends TestCase {
 
         //    }
         catch( Exception e ) {
-            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
             throw new AssertionFailedError("Fault returned from TCP stock test: "+e);
         }
@@ -162,7 +161,6 @@ public class TestTCPTransportSample extends TestCase {
             log.info("Test complete.");
         }
         catch( Exception e ) {
-            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
             e.printStackTrace();
             throw new AssertionFailedError("Fault returned from test: "+e);
         }

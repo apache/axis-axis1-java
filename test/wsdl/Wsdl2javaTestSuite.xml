@@ -28,13 +28,13 @@
     <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
     -->
     <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
-    
+
     <!-- Omit Test -->
     <wsdl2java url="test/wsdl/omit/omit.wsdl"
                output="build/work"
                serverSide="yes">
     </wsdl2java>
-    
+
     <!-- WidgetPrice Java to WSDL Samples -->
     <java2wsdl output="build/work/samples/userguide/example6/WidgetPrice.wsdl"
                className= "samples.userguide.example6.WidgetPrice"
@@ -121,7 +121,7 @@
                namespace="http://addrNoImplSEI.wsdl.test"
                location="http://localhost:8080/axis/services/AddressBookNoImplSEI">
         <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
-    </java2wsdl> 
+    </java2wsdl>
 
     <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
     <wsdl2java url="build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
@@ -866,6 +866,15 @@
                serverSide="yes"
                testcase="yes">
         <mapping namespace="urn:qualifyTest" package="test.wsdl.qualify"/>
+    </wsdl2java>
+
+    <!-- This tests element qualification.  -->
+    <wsdl2java url="test/wsdl/ram/ram.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:ram" package="test.wsdl.ram"/>
+        <mapping namespace="http://ram.uspto.gov" package="test.wsdl.ram"/>
     </wsdl2java>
 
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
