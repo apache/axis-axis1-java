@@ -43,4 +43,8 @@
     <url-pattern>servlet/AdminServlet</url-pattern>
   </servlet-mapping>
 
+  <welcome-file-list id="WelcomeFileList_1">
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
 </web-app>
