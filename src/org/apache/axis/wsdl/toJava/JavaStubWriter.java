@@ -110,7 +110,7 @@ public class JavaStubWriter extends JavaWriter {
 
         // If there is not literal use, the interface name is the portType name.
         // Otherwise it is the binding name.
-        String portTypeName = bEntry.hasLiteral() ?
+        String portTypeName = (bEntry.hasLiteral()) ?
                 bEntry.getName() : ptEntry.getName();
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {

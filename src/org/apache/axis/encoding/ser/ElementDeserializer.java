@@ -64,8 +64,9 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
-import org.apache.axis.message.MessageElement ;
-import org.apache.axis.message.SOAPHandler ;
+import org.apache.axis.MessageContext;
+import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.SOAPHandler;
 
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
@@ -98,6 +99,13 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
         try {
             MessageElement msgElem = context.getCurElement();
             if ( msgElem != null ) {
+                MessageContext messageContext = context.getMessageContext();
+                Boolean currentElement = (Boolean) messageContext.getProperty("DeserializeCurrentElement");
+                if (currentElement != null && currentElement.booleanValue()) {
+                    value = msgElem.getAsDOM();
+                    messageContext.setProperty("SerializeCurrentElement", Boolean.FALSE);
+                    return;
+                }
                 ArrayList children = msgElem.getChildren();
                 if ( children != null ) {
                     msgElem = (MessageElement) children.get(0);

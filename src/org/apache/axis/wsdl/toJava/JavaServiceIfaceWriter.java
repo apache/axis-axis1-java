@@ -142,7 +142,7 @@ public class JavaServiceIfaceWriter extends JavaWriter {
 
             // If there is not literal use, the interface name is the portType name.
             // Otherwise it is the binding name.
-            String bindingType = bEntry.hasLiteral() ?
+            String bindingType = (bEntry.hasLiteral()) ?
                     bEntry.getName() : ptEntry.getName();
 
             // Write out the get<PortName> methods

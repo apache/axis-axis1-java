@@ -216,8 +216,11 @@ public class RPCHandler extends SOAPHandler
         if ( isNil != null && isNil.equals("true") )
           return( (SOAPHandler) new DeserializerImpl() );
         
-        Deserializer dser;
-        if (type != null) {
+        Deserializer dser = null;
+        if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
+            dser = context.getDeserializerForType(qname);
+        }
+        if ((type != null) && (dser == null)) {
             dser = context.getDeserializerForType(type);
         } else {
             dser = new DeserializerImpl();

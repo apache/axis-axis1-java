@@ -55,6 +55,8 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
@@ -72,6 +74,7 @@ import org.xml.sax.SAXException;
 import javax.xml.rpc.namespace.QName;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * General purpose deserializer for an arbitrary java bean.
@@ -181,7 +184,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         // code attempts to get the meta data from the base class.  
         // (this fix does not work in all cases, but is necessary to 
         // get comprehensive tests Animal - Cat inheritance to work).
-        if (propDesc == null) {
+        if (propDesc == null) { 
             Class superClass = javaType;
             while (superClass != null && propDesc == null) {
                 superClass = superClass.getSuperclass(); 
@@ -204,6 +207,25 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                 }
             }
         }
+        // try and see if this is an xsd:any namespace="##any" element before reporting a problem
+        QName qn = null;
+        Deserializer dSer = null;
+        MessageContext messageContext = context.getMessageContext();
+        if (propDesc == null && !messageContext.isEncoded()) {
+            // try to put unknown elements into an Object[] property
+            propDesc = getObjectPropertyDesc(elemQName, context);
+            if (propDesc != null) {
+                dSer = context.getDeserializerForType(elemQName);
+                if (dSer == null)  {
+                    qn = Constants.XSD_ANYTYPE;
+                    // make sure that the Element Deserializer deserializes the current element and not the child
+                    messageContext.setProperty("DeserializeCurrentElement", Boolean.TRUE);
+                } else {
+                    qn = elemQName;
+                }
+            }
+        }
+
 
         if (propDesc == null) {
             // No such field
@@ -215,10 +237,14 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         // Determine the QName for this child element.
         // Look at the type attribute specified.  If this fails,
         // use the javaType of the property to get the type qname.
-        QName qn = context.getTypeFromAttributes(namespace, localName, attributes);
+        if (qn == null) {
+            qn = context.getTypeFromAttributes(namespace, localName, attributes);
+        }
         
         // get the deserializer
-        Deserializer dSer = context.getDeserializerForType(qn);
+        if (dSer == null) {
+            dSer = context.getDeserializerForType(qn);
+        }
         
         // If no deserializer, use the base DeserializerImpl.
         // There may not be enough information yet to choose the
@@ -247,6 +273,17 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         }
         }
         return (SOAPHandler)dSer;
+    }
+
+     public BeanPropertyDescriptor getObjectPropertyDesc(QName qname, DeserializationContext context) {
+        for (Iterator iterator = propertyMap.values().iterator(); iterator.hasNext();) {
+            BeanPropertyDescriptor propertyDesc = (BeanPropertyDescriptor) iterator.next();
+            // try to find xsd:any namespace="##any" property
+            if (propertyDesc.getName().equals("any") && propertyDesc.getType().getName().equals("java.lang.Object")) {
+                return propertyDesc;
+            }
+        }
+        return null;
     }
 
     /**
@@ -320,6 +357,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                 // Success!  Create an object from the string and set
                 // it in the bean
                 try {
+                    dSer.onStartElement(namespace, localName, qName, attributes, context);
                     Object val = ((SimpleDeserializer)dSer).
                         makeValue(attributes.getValue(i));
                     bpd.set(value, val);

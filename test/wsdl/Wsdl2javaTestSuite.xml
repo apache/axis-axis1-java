@@ -325,6 +325,24 @@
         <mapping namespace="urn:CityBBB" package="test.wsdl.wrapped"/>
     </wsdl2java>
 
+    <!-- Extensibility Sample Test -->
+    <wsdl2java url="test/wsdl/extensibility/QueryTypes.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="no"
+               skeletonDeploy="no"
+               testcase="no">
+        <mapping namespace="urn:QueryTypes" package="test.wsdl.extensibility"/>
+    </wsdl2java>
+    <wsdl2java url="test/wsdl/extensibility/ExtensibilityQuery.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               testcase="yes">
+        <mapping namespace="urn:ExtensibilityQuery" package="test.wsdl.extensibility"/>
+    </wsdl2java>
+
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
     <!--                 NStoPkg.properties.                       -->

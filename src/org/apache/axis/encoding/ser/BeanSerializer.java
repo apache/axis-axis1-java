@@ -60,6 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.AttributeSerializationContextImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
@@ -74,6 +75,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -125,7 +127,14 @@ public class BeanSerializer implements Serializer, Serializable {
         // properties are actually attributes, add those to the element
         // attribute list
         Attributes beanAttrs = getObjectAttributes(value, attributes, context);
-        context.startElement(name, beanAttrs);
+
+        // check whether we have and xsd:any namespace="##any" type
+        boolean suppressElement = !context.getMessageContext().isEncoded() &&
+                                  name.getNamespaceURI().equals("") && 
+                                  name.getLocalPart().equals("any");
+
+        if (!suppressElement) 
+            context.startElement(name, beanAttrs);
 
         try {
             // Serialize each property
@@ -133,7 +142,6 @@ public class BeanSerializer implements Serializer, Serializable {
                 String propName = propertyDescriptor[i].getName();
                 if (propName.equals("class"))
                     continue;
-
                 QName qname = null;
 
                 // If we have type metadata, check to see what we're doing
@@ -203,7 +211,8 @@ public class BeanSerializer implements Serializer, Serializable {
             throw new IOException(e.toString());
         }
 
-        context.endElement();
+        if (!suppressElement) 
+            context.endElement();
     }
 
 
@@ -407,15 +416,7 @@ public class BeanSerializer implements Serializer, Serializable {
                     // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        String propString = propValue.toString();
-                        String namespace = qname.getNamespaceURI();
-                        String localName = qname.getLocalPart();
-
-                        attrs.addAttribute(namespace,
-                                           localName,
-                                           context.qName2String(qname),
-                                           "CDATA",
-                                           propString);
+                        setAttributeProperty(propValue, qname, attrs, context);
                     } 
                 }
             }
@@ -426,4 +427,25 @@ public class BeanSerializer implements Serializer, Serializable {
 
         return attrs;
     }
+
+    private void setAttributeProperty(Object propValue, 
+                                      QName qname, 
+                                      AttributesImpl attrs, 
+                                      SerializationContext context) throws Exception {
+        StringWriter writer = new StringWriter();
+        SerializationContext attributeContext = new AttributeSerializationContextImpl(writer, context);
+        attributeContext.serialize(qname,
+                                   null,
+                                   propValue, propValue.getClass());
+        writer.close();
+        String propString = writer.getBuffer().toString();
+        String namespace = qname.getNamespaceURI();
+        String localName = qname.getLocalPart();
+
+        attrs.addAttribute(namespace,
+                           localName,
+                           context.qName2String(qname),
+                           "CDATA",
+                           propString);
+    } 
 }

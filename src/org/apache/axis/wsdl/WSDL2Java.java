@@ -441,6 +441,7 @@ public class WSDL2Java {
     public void setPassword(String password) {
         this.password = password;
     }
+
     //
     // Command line switches
     //
@@ -672,7 +673,6 @@ public class WSDL2Java {
                     case PASSWORD_OPT:
                         wsdl2java.setPassword(option.getArgument());
                         break;
-                        
                 }
             }
 
