@@ -258,7 +258,11 @@ public class FileProvider implements WSDDEngineConfiguration {
      * @throws ConfigurationException XXX
      */
     public SOAPService getService(QName qname) throws ConfigurationException {
-        return deployment.getService(qname);
+        SOAPService service = deployment.getService(qname);
+        if (service == null) {
+            throw new ConfigurationException(Messages.getMessage("noService"));
+        }
+        return service;
     }
 
     /**
